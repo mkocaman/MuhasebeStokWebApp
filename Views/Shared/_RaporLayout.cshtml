@@ -1,0 +1,155 @@
+<!DOCTYPE html>
+<html lang="tr">
+<head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>@ViewData["Title"] - Muhasebe Stok Web App</title>
+    <link rel="stylesheet" href="~/lib/bootstrap/dist/css/bootstrap.min.css" />
+    <link rel="stylesheet" href="~/css/site.css" asp-append-version="true" />
+    <link rel="stylesheet" href="~/MuhasebeStokWebApp.styles.css" asp-append-version="true" />
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/5.15.4/css/all.min.css" />
+    <link rel="stylesheet" href="https://cdn.datatables.net/1.11.5/css/dataTables.bootstrap5.min.css" />
+    <link rel="stylesheet" href="https://cdn.datatables.net/buttons/2.2.2/css/buttons.bootstrap5.min.css" />
+    
+    <style>
+        @* Yazdırma için stil tanımlamaları *@
+        @@media print {
+            .no-print {
+                display: none !important;
+            }
+            
+            .page-break {
+                page-break-before: always;
+            }
+            
+            body {
+                font-size: 12pt;
+            }
+            
+            .table {
+                width: 100%;
+                border-collapse: collapse;
+            }
+            
+            .table th, .table td {
+                border: 1px solid #ddd;
+                padding: 8px;
+            }
+            
+            .card {
+                border: none;
+            }
+            
+            .card-header {
+                background-color: #f8f9fa !important;
+                color: #000 !important;
+                font-weight: bold;
+                border-bottom: 2px solid #000;
+            }
+            
+            .bg-primary, .bg-success, .bg-danger, .bg-info, .bg-warning {
+                background-color: #f8f9fa !important;
+                color: #000 !important;
+                border: 1px solid #ddd;
+            }
+            
+            .text-white {
+                color: #000 !important;
+            }
+            
+            .badge {
+                border: 1px solid #ddd;
+                padding: 3px 6px;
+            }
+            
+            .text-success {
+                color: #000 !important;
+                font-weight: bold;
+            }
+            
+            .text-danger {
+                color: #000 !important;
+                font-weight: bold;
+            }
+        }
+    </style>
+</head>
+<body>
+    <div class="container-fluid">
+        <div class="row no-print mb-3">
+            <div class="col-md-12">
+                <div class="d-flex justify-content-between align-items-center">
+                    <h2>@ViewData["Title"]</h2>
+                    <div>
+                        <button class="btn btn-primary btn-print">
+                            <i class="fa fa-print"></i> Yazdır
+                        </button>
+                        <button class="btn btn-success btn-excel">
+                            <i class="fa fa-file-excel"></i> Excel
+                        </button>
+                        <button class="btn btn-danger btn-pdf">
+                            <i class="fa fa-file-pdf"></i> PDF
+                        </button>
+                        <button class="btn btn-secondary" onclick="window.close()">
+                            <i class="fa fa-times"></i> Kapat
+                        </button>
+                    </div>
+                </div>
+                <hr />
+            </div>
+        </div>
+        
+        <main role="main">
+            @RenderBody()
+        </main>
+        
+        <footer class="border-top footer text-muted no-print">
+            <div class="container">
+                &copy; @DateTime.Now.Year - Muhasebe Stok Web App
+            </div>
+        </footer>
+    </div>
+
+    <script src="~/lib/jquery/dist/jquery.min.js"></script>
+    <script src="~/lib/bootstrap/dist/js/bootstrap.bundle.min.js"></script>
+    <script src="~/js/site.js" asp-append-version="true"></script>
+    <script src="https://cdn.datatables.net/1.11.5/js/jquery.dataTables.min.js"></script>
+    <script src="https://cdn.datatables.net/1.11.5/js/dataTables.bootstrap5.min.js"></script>
+    <script src="https://cdn.datatables.net/buttons/2.2.2/js/dataTables.buttons.min.js"></script>
+    <script src="https://cdn.datatables.net/buttons/2.2.2/js/buttons.bootstrap5.min.js"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/jszip/3.1.3/jszip.min.js"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/pdfmake/0.1.53/pdfmake.min.js"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/pdfmake/0.1.53/vfs_fonts.js"></script>
+    <script src="https://cdn.datatables.net/buttons/2.2.2/js/buttons.html5.min.js"></script>
+    <script src="https://cdn.datatables.net/buttons/2.2.2/js/buttons.print.min.js"></script>
+    
+    <script>
+        $(document).ready(function() {
+            // Yazdırma işlemi
+            $('.btn-print').click(function() {
+                window.print();
+            });
+            
+            // Excel'e aktarma
+            $('.btn-excel').click(function() {
+                if ($.fn.DataTable.isDataTable('.table')) {
+                    $('.table').DataTable().button('.buttons-excel').trigger();
+                } else {
+                    alert('Tablo bulunamadı veya DataTable olarak tanımlanmamış.');
+                }
+            });
+            
+            // PDF'e aktarma
+            $('.btn-pdf').click(function() {
+                if ($.fn.DataTable.isDataTable('.table')) {
+                    $('.table').DataTable().button('.buttons-pdf').trigger();
+                } else {
+                    alert('Tablo bulunamadı veya DataTable olarak tanımlanmamış.');
+                }
+            });
+        });
+    </script>
+    
+    @await RenderSectionAsync("Scripts", required: false)
+</body>
+</html> 

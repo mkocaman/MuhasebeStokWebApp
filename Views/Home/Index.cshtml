@@ -1,0 +1,430 @@
+﻿@{
+    ViewData["Title"] = "Ana Sayfa";
+}
+
+@if (!string.IsNullOrEmpty(ViewBag.ErrorMessage))
+{
+    <div class="alert alert-danger" role="alert">
+        <strong>Hata!</strong> @ViewBag.ErrorMessage
+    </div>
+}
+
+<div class="container-fluid dashboard-default-sec">
+    <div class="row">
+        <!-- Toplam Cari Sayısı -->
+        <div class="col-sm-6 col-xl-3 col-lg-6">
+            <div class="card o-hidden border-0">
+                <div class="bg-primary b-r-4 card-body">
+                    <div class="media static-top-widget">
+                        <div class="align-self-center text-center">
+                            <i class="fa fa-users"></i>
+                        </div>
+                        <div class="media-body">
+                            <span class="m-0">Toplam Cari</span>
+                            <h4 class="mb-0 counter">@ViewBag.ToplamCariSayisi</h4>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+        
+        <!-- Toplam Ürün Sayısı -->
+        <div class="col-sm-6 col-xl-3 col-lg-6">
+            <div class="card o-hidden border-0">
+                <div class="bg-secondary b-r-4 card-body">
+                    <div class="media static-top-widget">
+                        <div class="align-self-center text-center">
+                            <i class="fa fa-box"></i>
+                        </div>
+                        <div class="media-body">
+                            <span class="m-0">Toplam Ürün</span>
+                            <h4 class="mb-0 counter">@ViewBag.ToplamUrunSayisi</h4>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+        
+        <!-- Toplam Fatura Sayısı -->
+        <div class="col-sm-6 col-xl-3 col-lg-6">
+            <div class="card o-hidden border-0">
+                <div class="bg-primary b-r-4 card-body">
+                    <div class="media static-top-widget">
+                        <div class="align-self-center text-center">
+                            <i class="fa fa-file-invoice"></i>
+                        </div>
+                        <div class="media-body">
+                            <span class="m-0">Toplam Fatura</span>
+                            <h4 class="mb-0 counter">@ViewBag.ToplamFaturaSayisi</h4>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+        
+        <!-- Toplam Ciro -->
+        <div class="col-sm-6 col-xl-3 col-lg-6">
+            <div class="card o-hidden border-0">
+                <div class="bg-secondary b-r-4 card-body">
+                    <div class="media static-top-widget">
+                        <div class="align-self-center text-center">
+                            <i class="fa fa-money-bill"></i>
+                        </div>
+                        <div class="media-body">
+                            <span class="m-0">Toplam Ciro</span>
+                            <h4 class="mb-0 counter">₺ @ViewBag.ToplamCiro.ToString("N0")</h4>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+    
+    <div class="row mt-4">
+        <div class="col-12">
+            <div class="card">
+                <div class="card-header">
+                    <h5>Hoş Geldiniz</h5>
+                </div>
+                <div class="card-body">
+                    <p>Muhasebe ve Stok Yönetim Sistemine hoş geldiniz. Soldaki menüden işlemlerinize devam edebilirsiniz.</p>
+                    <p>Yardıma ihtiyacınız olursa, sağ üst köşedeki yardım butonuna tıklayabilirsiniz.</p>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+
+@section Scripts {
+    <!-- Grafik Kütüphaneleri -->
+    <script src="~/assets/js/chart/apex-chart/apex-chart.js"></script>
+    <script src="~/assets/js/chart/apex-chart/stock-prices.js"></script>
+    
+    <script>
+        $(document).ready(function() {
+            // Aylık Satış ve Gider Grafiği
+            var aylikSatisVerileri = @Html.Raw(ViewBag.AylikSatisVerileri);
+            var aylikGiderVerileri = @Html.Raw(ViewBag.AylikGiderVerileri);
+            
+            var options1 = {
+                series: [{
+                    name: 'Satış',
+                    data: aylikSatisVerileri
+                }, {
+                    name: 'Gider',
+                    data: aylikGiderVerileri
+                }],
+                chart: {
+                    type: 'area',
+                    height: 400,
+                    stacked: false,
+                    toolbar: {
+                        show: false
+                    },
+                    zoom: {
+                        enabled: false
+                    }
+                },
+                colors: ['#7366ff', '#f73164'],
+                dataLabels: {
+                    enabled: false
+                },
+                stroke: {
+                    curve: 'smooth',
+                    width: 2
+                },
+                fill: {
+                    type: 'gradient',
+                    gradient: {
+                        opacityFrom: 0.6,
+                        opacityTo: 0.2
+                    }
+                },
+                legend: {
+                    position: 'top',
+                    horizontalAlign: 'left'
+                },
+                xaxis: {
+                    categories: ['Oca', 'Şub', 'Mar', 'Nis', 'May', 'Haz', 'Tem', 'Ağu', 'Eyl', 'Eki', 'Kas', 'Ara']
+                },
+                tooltip: {
+                    y: {
+                        formatter: function (val) {
+                            return "₺ " + val.toLocaleString('tr-TR');
+                        }
+                    }
+                }
+            };
+            
+            var chart1 = new ApexCharts(document.querySelector("#chart-timeline-dashbord"), options1);
+            chart1.render();
+            
+            // Cari Bakiye Dağılımı Grafiği
+            var cariBakiyeTipleri = @Html.Raw(ViewBag.CariBakiyeTipleri);
+            var cariBakiyeDagilimi = @Html.Raw(ViewBag.CariBakiyeDagilimi);
+            
+            var options2 = {
+                series: cariBakiyeDagilimi,
+                chart: {
+                    type: 'donut',
+                    height: 300
+                },
+                labels: cariBakiyeTipleri,
+                colors: ['#7366ff', '#f73164', '#51bb25'],
+                responsive: [{
+                    breakpoint: 480,
+                    options: {
+                        chart: {
+                            width: 200
+                        },
+                        legend: {
+                            position: 'bottom'
+                        }
+                    }
+                }],
+                plotOptions: {
+                    pie: {
+                        donut: {
+                            size: '70%'
+                        }
+                    }
+                }
+            };
+            
+            var chart2 = new ApexCharts(document.querySelector("#chart-cari-bakiye"), options2);
+            chart2.render();
+            
+            // Stok Kategorileri Grafiği
+            var stokKategorileri = @Html.Raw(ViewBag.StokKategorileri);
+            var stokMiktarlari = @Html.Raw(ViewBag.StokMiktarlari);
+            
+            var options3 = {
+                series: [{
+                    name: 'Stok Miktarı',
+                    data: stokMiktarlari
+                }],
+                chart: {
+                    type: 'bar',
+                    height: 300,
+                    toolbar: {
+                        show: false
+                    }
+                },
+                colors: ['#7366ff'],
+                plotOptions: {
+                    bar: {
+                        horizontal: false,
+                        columnWidth: '55%',
+                        borderRadius: 4,
+                        distributed: true
+                    }
+                },
+                dataLabels: {
+                    enabled: false
+                },
+                stroke: {
+                    show: true,
+                    width: 2,
+                    colors: ['transparent']
+                },
+                xaxis: {
+                    categories: stokKategorileri
+                },
+                yaxis: {
+                    title: {
+                        text: 'Adet'
+                    }
+                },
+                fill: {
+                    opacity: 1
+                },
+                tooltip: {
+                    y: {
+                        formatter: function (val) {
+                            return val + " adet";
+                        }
+                    }
+                }
+            };
+            
+            var chart3 = new ApexCharts(document.querySelector("#chart-stok-kategorileri"), options3);
+            chart3.render();
+            
+            // En Çok Satılan Ürünler Grafiği
+            var enCokSatilanUrunler = @Html.Raw(ViewBag.EnCokSatilanUrunler);
+            var enCokSatilanUrunAdetleri = @Html.Raw(ViewBag.EnCokSatilanUrunAdetleri);
+            
+            var options5 = {
+                series: [{
+                    name: 'Satış Adedi',
+                    data: enCokSatilanUrunAdetleri
+                }],
+                chart: {
+                    type: 'bar',
+                    height: 350,
+                    toolbar: {
+                        show: false
+                    }
+                },
+                colors: ['#51bb25'],
+                plotOptions: {
+                    bar: {
+                        horizontal: true,
+                        barHeight: '50%',
+                        borderRadius: 4
+                    }
+                },
+                dataLabels: {
+                    enabled: true,
+                    formatter: function (val) {
+                        return val + " adet";
+                    },
+                    style: {
+                        fontSize: '12px',
+                        colors: ['#000']
+                    }
+                },
+                xaxis: {
+                    categories: enCokSatilanUrunler
+                },
+                grid: {
+                    borderColor: '#e0e0e0',
+                    strokeDashArray: 5
+                },
+                tooltip: {
+                    y: {
+                        formatter: function (val) {
+                            return val + " adet";
+                        }
+                    }
+                }
+            };
+            
+            var chart5 = new ApexCharts(document.querySelector("#chart-en-cok-satilan-urunler"), options5);
+            chart5.render();
+            
+            // En Çok Satış Yapılan Cariler Grafiği
+            var enCokSatisYapilanCariler = @Html.Raw(ViewBag.EnCokSatisYapilanCariler);
+            var enCokSatisYapilanCariTutarlari = @Html.Raw(ViewBag.EnCokSatisYapilanCariTutarlari);
+            
+            var options6 = {
+                series: [{
+                    name: 'Satış Tutarı',
+                    data: enCokSatisYapilanCariTutarlari
+                }],
+                chart: {
+                    type: 'bar',
+                    height: 350,
+                    toolbar: {
+                        show: false
+                    }
+                },
+                colors: ['#f73164'],
+                plotOptions: {
+                    bar: {
+                        horizontal: true,
+                        barHeight: '50%',
+                        borderRadius: 4
+                    }
+                },
+                dataLabels: {
+                    enabled: true,
+                    formatter: function (val) {
+                        return "₺ " + val.toLocaleString('tr-TR');
+                    },
+                    style: {
+                        fontSize: '12px',
+                        colors: ['#000']
+                    }
+                },
+                xaxis: {
+                    categories: enCokSatisYapilanCariler
+                },
+                grid: {
+                    borderColor: '#e0e0e0',
+                    strokeDashArray: 5
+                },
+                tooltip: {
+                    y: {
+                        formatter: function (val) {
+                            return "₺ " + val.toLocaleString('tr-TR');
+                        }
+                    }
+                }
+            };
+            
+            var chart6 = new ApexCharts(document.querySelector("#chart-en-cok-satis-yapilan-cariler"), options6);
+            chart6.render();
+            
+            // Haftalık Satış Grafiği
+            var haftaGunleri = @Html.Raw(ViewBag.HaftaGunleri);
+            var haftaninSatislari = @Html.Raw(ViewBag.HaftaninSatislari);
+            
+            var options4 = {
+                series: [{
+                    name: 'Satış',
+                    data: haftaninSatislari
+                }],
+                chart: {
+                    height: 350,
+                    type: 'line',
+                    toolbar: {
+                        show: false
+                    }
+                },
+                colors: ['#7366ff'],
+                dataLabels: {
+                    enabled: true,
+                    formatter: function (val) {
+                        return "₺ " + val.toLocaleString('tr-TR');
+                    },
+                    style: {
+                        fontSize: '12px',
+                        colors: ['#000']
+                    },
+                    background: {
+                        enabled: true,
+                        foreColor: '#fff',
+                        borderRadius: 2,
+                        padding: 4,
+                        opacity: 0.9,
+                        borderWidth: 1,
+                        borderColor: '#fff'
+                    }
+                },
+                stroke: {
+                    curve: 'smooth',
+                    width: 3
+                },
+                grid: {
+                    row: {
+                        colors: ['#f3f3f3', 'transparent'],
+                        opacity: 0.5
+                    }
+                },
+                markers: {
+                    size: 6,
+                    colors: ['#7366ff'],
+                    strokeColors: '#fff',
+                    strokeWidth: 2,
+                    hover: {
+                        size: 8
+                    }
+                },
+                xaxis: {
+                    categories: haftaGunleri
+                },
+                tooltip: {
+                    y: {
+                        formatter: function (val) {
+                            return "₺ " + val.toLocaleString('tr-TR');
+                        }
+                    }
+                }
+            };
+            
+            var chart4 = new ApexCharts(document.querySelector("#chart-haftalik-satis"), options4);
+            chart4.render();
+        });
+    </script>
+}

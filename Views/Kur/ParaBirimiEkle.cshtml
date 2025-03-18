@@ -1,0 +1,63 @@
+@model MuhasebeStokWebApp.ViewModels.Kur.ParaBirimiViewModel
+
+@{
+    ViewData["Title"] = "Para Birimi Ekle";
+}
+
+<div class="container-fluid">
+    <div class="row">
+        <div class="col-md-6 offset-md-3">
+            <div class="card">
+                <div class="card-header">
+                    <h3 class="card-title">Para Birimi Ekle</h3>
+                    <div class="card-tools">
+                        <a asp-action="ParaBirimleri" class="btn btn-sm btn-secondary">
+                            <i class="fas fa-arrow-left"></i> Para Birimlerine Dön
+                        </a>
+                    </div>
+                </div>
+                <form asp-action="ParaBirimiEkle" method="post">
+                    <div class="card-body">
+                        <div asp-validation-summary="ModelOnly" class="text-danger"></div>
+                        
+                        <div class="form-group">
+                            <label asp-for="Kod" class="control-label"></label>
+                            <input asp-for="Kod" class="form-control" />
+                            <span asp-validation-for="Kod" class="text-danger"></span>
+                            <small class="form-text text-muted">Örnek: USD, EUR, TRY</small>
+                        </div>
+                        
+                        <div class="form-group">
+                            <label asp-for="Ad" class="control-label"></label>
+                            <input asp-for="Ad" class="form-control" />
+                            <span asp-validation-for="Ad" class="text-danger"></span>
+                            <small class="form-text text-muted">Örnek: Amerikan Doları, Euro, Türk Lirası</small>
+                        </div>
+                        
+                        <div class="form-group">
+                            <label asp-for="Sembol" class="control-label"></label>
+                            <input asp-for="Sembol" class="form-control" />
+                            <span asp-validation-for="Sembol" class="text-danger"></span>
+                            <small class="form-text text-muted">Örnek: $, €, ₺</small>
+                        </div>
+                        
+                        <div class="form-group form-check">
+                            <input asp-for="Aktif" class="form-check-input" />
+                            <label asp-for="Aktif" class="form-check-label"></label>
+                        </div>
+                    </div>
+                    <div class="card-footer">
+                        <div class="text-right">
+                            <a asp-action="ParaBirimleri" class="btn btn-secondary">İptal</a>
+                            <button type="submit" class="btn btn-primary">Kaydet</button>
+                        </div>
+                    </div>
+                </form>
+            </div>
+        </div>
+    </div>
+</div>
+
+@section Scripts {
+    @{await Html.RenderPartialAsync("_ValidationScriptsPartial");}
+} 

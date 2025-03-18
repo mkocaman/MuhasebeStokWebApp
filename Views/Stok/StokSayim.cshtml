@@ -1,0 +1,197 @@
+@model MuhasebeStokWebApp.ViewModels.Stok.StokSayimViewModel
+@{
+    ViewData["Title"] = "Stok Sayımı";
+}
+
+<div class="container-fluid">
+    <div class="page-title">
+        <div class="row">
+            <div class="col-6">
+                <h3>Stok Sayımı</h3>
+            </div>
+            <div class="col-6">
+                <ol class="breadcrumb">
+                    <li class="breadcrumb-item"><a asp-controller="Home" asp-action="Index"><i class="material-icons">home</i></a></li>
+                    <li class="breadcrumb-item"><a asp-controller="Stok" asp-action="Index">Stok Yönetimi</a></li>
+                    <li class="breadcrumb-item active">Stok Sayımı</li>
+                </ol>
+            </div>
+        </div>
+    </div>
+</div>
+
+<div class="container-fluid">
+    <div class="card">
+        <div class="card-header p-3">
+            <h5 class="mb-0">Stok Sayım Formu</h5>
+        </div>
+        <div class="card-body">
+            <div class="mb-4">
+                <p class="text-muted">
+                    <i class="material-icons align-middle me-1" style="font-size: 18px;">info</i>
+                    Stok sayım işleminde, sayım sonucu girilen miktar ile sistemdeki mevcut miktar arasında fark varsa,
+                    otomatik olarak stok düzeltme işlemi yapılacaktır.
+                </p>
+            </div>
+            
+            <form asp-action="StokSayim" method="post">
+                <div asp-validation-summary="ModelOnly" class="text-danger"></div>
+                
+                <div class="row mb-4">
+                    <div class="col-md-6">
+                        <div class="input-group input-group-static mb-4">
+                            <label asp-for="DepoID" class="ms-0"></label>
+                            <select asp-for="DepoID" class="form-control" asp-items="ViewBag.Depolar" id="depoSelect">
+                                <option value="">Depo Seçiniz</option>
+                            </select>
+                            <span asp-validation-for="DepoID" class="text-danger"></span>
+                        </div>
+                    </div>
+                    <div class="col-md-6">
+                        <div class="input-group input-group-static mb-4">
+                            <label asp-for="Tarih" class="ms-0"></label>
+                            <input asp-for="Tarih" class="form-control" type="date" />
+                            <span asp-validation-for="Tarih" class="text-danger"></span>
+                        </div>
+                    </div>
+                </div>
+                
+                <div class="table-responsive">
+                    <table class="table table-hover" id="sayimTablosu">
+                        <thead>
+                            <tr>
+                                <th>Ürün Kodu</th>
+                                <th>Ürün Adı</th>
+                                <th>Birim</th>
+                                <th>Sistem Stok Miktarı</th>
+                                <th>Sayım Miktarı</th>
+                                <th>Fark</th>
+                            </tr>
+                        </thead>
+                        <tbody>
+                            @for (int i = 0; i < Model.UrunListesi.Count; i++)
+                            {
+                                <tr>
+                                    <td>
+                                        <input type="hidden" asp-for="UrunListesi[i].UrunID" />
+                                        <span>@Model.UrunListesi[i].UrunKodu</span>
+                                    </td>
+                                    <td>@Model.UrunListesi[i].UrunAdi</td>
+                                    <td>
+                                        <input type="hidden" asp-for="UrunListesi[i].Birim" />
+                                        <span>@Model.UrunListesi[i].Birim</span>
+                                    </td>
+                                    <td>
+                                        <input type="hidden" asp-for="UrunListesi[i].SistemStokMiktari" class="sistemStokMiktari" />
+                                        <span>@Model.UrunListesi[i].SistemStokMiktari @Model.UrunListesi[i].Birim</span>
+                                    </td>
+                                    <td>
+                                        <div class="input-group input-group-static mb-0">
+                                            <input asp-for="UrunListesi[i].SayimMiktari" class="form-control sayimMiktari" />
+                                            <span asp-validation-for="UrunListesi[i].SayimMiktari" class="text-danger"></span>
+                                        </div>
+                                    </td>
+                                    <td>
+                                        <input type="hidden" asp-for="UrunListesi[i].Fark" class="farkMiktari" />
+                                        <span class="farkGosterim">0</span> <span>@Model.UrunListesi[i].Birim</span>
+                                    </td>
+                                </tr>
+                            }
+                        </tbody>
+                    </table>
+                </div>
+                
+                <div class="row">
+                    <div class="col-md-12">
+                        <div class="input-group input-group-static mb-4">
+                            <label asp-for="SayimNotu" class="ms-0"></label>
+                            <textarea asp-for="SayimNotu" class="form-control" rows="3" placeholder="Stok sayımı hakkında notlar..."></textarea>
+                            <span asp-validation-for="SayimNotu" class="text-danger"></span>
+                        </div>
+                    </div>
+                </div>
+                
+                <div class="row">
+                    <div class="col-12 text-end">
+                        <a asp-action="Index" class="btn btn-secondary">İptal</a>
+                        <button type="submit" class="btn btn-primary">Stok Sayımını Tamamla</button>
+                    </div>
+                </div>
+            </form>
+        </div>
+    </div>
+</div>
+
+@section Scripts {
+    @{await Html.RenderPartialAsync("_ValidationScriptsPartial");}
+    
+    <script>
+        $(document).ready(function () {
+            // DataTable başlat
+            var table = $('#sayimTablosu').DataTable({
+                language: {
+                    url: '//cdn.datatables.net/plug-ins/1.10.25/i18n/Turkish.json'
+                }
+            });
+            
+            // Depo değiştiğinde ürünleri getir
+            $("#depoSelect").change(function() {
+                var depoID = $(this).val();
+                if (depoID) {
+                    $.ajax({
+                        url: '@Url.Action("GetDepoUrunleri", "Stok")',
+                        type: 'GET',
+                        data: { depoID: depoID },
+                        success: function(result) {
+                            if (result && result.urunler) {
+                                // Tabloyu temizle
+                                table.clear().draw();
+                                
+                                // Yeni verileri ekle
+                                $.each(result.urunler, function(index, urun) {
+                                    table.row.add([
+                                        '<input type="hidden" name="UrunListesi[' + index + '].UrunID" value="' + urun.urunID + '" />' + urun.urunKodu,
+                                        urun.urunAdi,
+                                        '<input type="hidden" name="UrunListesi[' + index + '].Birim" value="' + urun.birim + '" />' + urun.birim,
+                                        '<input type="hidden" name="UrunListesi[' + index + '].SistemStokMiktari" value="' + urun.stokMiktari + '" class="sistemStokMiktari" />' + urun.stokMiktari + ' ' + urun.birim,
+                                        '<div class="input-group input-group-static mb-0"><input type="text" name="UrunListesi[' + index + '].SayimMiktari" class="form-control sayimMiktari" value="0" /></div>',
+                                        '<input type="hidden" name="UrunListesi[' + index + '].Fark" value="0" class="farkMiktari" /><span class="farkGosterim">0</span> ' + urun.birim
+                                    ]).draw();
+                                });
+                                
+                                // Sayım miktarı değiştiğinde farkı hesapla
+                                yenidenHesaplaFark();
+                            }
+                        }
+                    });
+                }
+            });
+            
+            // Sayım miktarı değiştiğinde farkı hesapla
+            $(document).on('input', '.sayimMiktari', function() {
+                yenidenHesaplaFark();
+            });
+            
+            function yenidenHesaplaFark() {
+                $('#sayimTablosu tbody tr').each(function() {
+                    var sistemStok = parseFloat($(this).find('.sistemStokMiktari').val()) || 0;
+                    var sayimMiktari = parseFloat($(this).find('.sayimMiktari').val()) || 0;
+                    var fark = sayimMiktari - sistemStok;
+                    
+                    $(this).find('.farkMiktari').val(fark);
+                    var farkSpan = $(this).find('.farkGosterim');
+                    farkSpan.text(fark.toFixed(2));
+                    
+                    // Farka göre renklendirme
+                    if (fark < 0) {
+                        farkSpan.removeClass('text-success').addClass('text-danger');
+                    } else if (fark > 0) {
+                        farkSpan.removeClass('text-danger').addClass('text-success');
+                    } else {
+                        farkSpan.removeClass('text-danger text-success');
+                    }
+                });
+            }
+        });
+    </script>
+} 

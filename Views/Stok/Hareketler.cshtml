@@ -1,0 +1,237 @@
+@model MuhasebeStokWebApp.ViewModels.Stok.StokHareketViewModel
+@{
+    ViewData["Title"] = "Stok Hareketleri";
+    Layout = "~/Views/Shared/_Layout.cshtml";
+}
+
+<div class="container-fluid">
+    <div class="card">
+        <div class="card-header bg-primary text-white">
+            <div class="d-flex justify-content-between align-items-center">
+                <h4 class="mb-0">Stok Hareketleri - @Model.UrunAdi</h4>
+                <a asp-action="Index" class="btn btn-light">
+                    <i class="fas fa-arrow-left"></i> Listeye Dön
+                </a>
+            </div>
+        </div>
+        <div class="card-body">
+            <div class="row mb-4">
+                <div class="col-md-6">
+                    <div class="card">
+                        <div class="card-header bg-info text-white">
+                            <h5 class="mb-0">Ürün Bilgileri</h5>
+                        </div>
+                        <div class="card-body">
+                            <table class="table table-bordered">
+                                <tr>
+                                    <th style="width: 40%">Ürün Kodu:</th>
+                                    <td>@Model.UrunKodu</td>
+                                </tr>
+                                <tr>
+                                    <th>Ürün Adı:</th>
+                                    <td>@Model.UrunAdi</td>
+                                </tr>
+                                <tr>
+                                    <th>Kategori:</th>
+                                    <td>@Model.Kategori</td>
+                                </tr>
+                                <tr>
+                                    <th>Birim:</th>
+                                    <td>@Model.Birim</td>
+                                </tr>
+                                <tr>
+                                    <th>Stok Miktarı:</th>
+                                    <td>@Model.StokMiktar.ToString("N2") @Model.Birim</td>
+                                </tr>
+                            </table>
+                        </div>
+                    </div>
+                </div>
+                <div class="col-md-6">
+                    <div class="card">
+                        <div class="card-header bg-success text-white">
+                            <h5 class="mb-0">Maliyet Bilgileri</h5>
+                        </div>
+                        <div class="card-body">
+                            <table class="table table-bordered">
+                                <tr>
+                                    <th style="width: 40%">Ortalama Maliyet (TL):</th>
+                                    <td class="text-end">@Model.OrtalamaMaliyetTL.ToString("N2") ₺</td>
+                                </tr>
+                                <tr>
+                                    <th>Ortalama Maliyet (USD):</th>
+                                    <td class="text-end">@Model.OrtalamaMaliyetUSD.ToString("N2") $</td>
+                                </tr>
+                                <tr>
+                                    <th>Toplam Stok Değeri (TL):</th>
+                                    <td class="text-end">@((Model.OrtalamaMaliyetTL * Model.StokMiktar).ToString("N2")) ₺</td>
+                                </tr>
+                            </table>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <ul class="nav nav-tabs" id="myTab" role="tablist">
+                <li class="nav-item" role="presentation">
+                    <button class="nav-link active" id="hareketler-tab" data-bs-toggle="tab" data-bs-target="#hareketler" type="button" role="tab" aria-controls="hareketler" aria-selected="true">Stok Hareketleri</button>
+                </li>
+                <li class="nav-item" role="presentation">
+                    <button class="nav-link" id="fifo-tab" data-bs-toggle="tab" data-bs-target="#fifo" type="button" role="tab" aria-controls="fifo" aria-selected="false">FIFO Kayıtları</button>
+                </li>
+            </ul>
+            <div class="tab-content" id="myTabContent">
+                <div class="tab-pane fade show active" id="hareketler" role="tabpanel" aria-labelledby="hareketler-tab">
+                    <div class="table-responsive mt-3">
+                        <table class="table table-bordered table-hover" id="hareketlerTable">
+                            <thead class="table-light">
+                                <tr>
+                                    <th>Tarih</th>
+                                    <th>Hareket Türü</th>
+                                    <th>Depo</th>
+                                    <th>Miktar</th>
+                                    <th>Birim Fiyat</th>
+                                    <th>Tutar</th>
+                                    <th>Referans</th>
+                                    <th>Açıklama</th>
+                                </tr>
+                            </thead>
+                            <tbody>
+                                @foreach (var hareket in Model.StokHareketleri)
+                                {
+                                    <tr>
+                                        <td>@hareket.Tarih.ToString("dd.MM.yyyy HH:mm")</td>
+                                        <td>
+                                            @if (hareket.HareketTuru == "Giriş")
+                                            {
+                                                <span class="badge bg-success">Giriş</span>
+                                            }
+                                            else if (hareket.HareketTuru == "Çıkış")
+                                            {
+                                                <span class="badge bg-danger">Çıkış</span>
+                                            }
+                                            else
+                                            {
+                                                <span class="badge bg-info">@hareket.HareketTuru</span>
+                                            }
+                                        </td>
+                                        <td>@hareket.DepoAdi</td>
+                                        <td class="text-end">@hareket.Miktar.ToString("N2") @hareket.Birim</td>
+                                        <td class="text-end">@hareket.BirimFiyat.ToString("N2") ₺</td>
+                                        <td class="text-end">@((hareket.Miktar * hareket.BirimFiyat).ToString("N2")) ₺</td>
+                                        <td>
+                                            @if (!string.IsNullOrEmpty(hareket.ReferansTuru))
+                                            {
+                                                <span>@hareket.ReferansTuru</span>
+                                            }
+                                            @if (!string.IsNullOrEmpty(hareket.ReferansNo))
+                                            {
+                                                <span> - @hareket.ReferansNo</span>
+                                            }
+                                        </td>
+                                        <td>@hareket.Aciklama</td>
+                                    </tr>
+                                }
+                            </tbody>
+                        </table>
+                    </div>
+                </div>
+                <div class="tab-pane fade" id="fifo" role="tabpanel" aria-labelledby="fifo-tab">
+                    <div class="table-responsive mt-3">
+                        <table class="table table-bordered table-hover" id="fifoTable">
+                            <thead class="table-light">
+                                <tr>
+                                    <th>Giriş Tarihi</th>
+                                    <th>Son Çıkış</th>
+                                    <th>Miktar</th>
+                                    <th>Kalan</th>
+                                    <th>Birim Fiyat (TL)</th>
+                                    <th>Birim Fiyat (USD)</th>
+                                    <th>Döviz Kuru</th>
+                                    <th>Referans</th>
+                                    <th>Durum</th>
+                                </tr>
+                            </thead>
+                            <tbody>
+                                @foreach (var fifo in Model.FifoKayitlari)
+                                {
+                                    <tr>
+                                        <td>@fifo.GirisTarihi.ToString("dd.MM.yyyy HH:mm")</td>
+                                        <td>
+                                            @if (fifo.SonCikisTarihi.HasValue)
+                                            {
+                                                @fifo.SonCikisTarihi.Value.ToString("dd.MM.yyyy HH:mm")
+                                            }
+                                            else
+                                            {
+                                                <span>-</span>
+                                            }
+                                        </td>
+                                        <td class="text-end">@fifo.Miktar.ToString("N2")</td>
+                                        <td class="text-end">@fifo.KalanMiktar.ToString("N2")</td>
+                                        <td class="text-end">@fifo.BirimFiyat.ToString("N2") ₺</td>
+                                        <td class="text-end">@fifo.BirimFiyatUSD.ToString("N2") $</td>
+                                        <td class="text-end">@fifo.DovizKuru.ToString("N6")</td>
+                                        <td>
+                                            @if (!string.IsNullOrEmpty(fifo.ReferansTuru))
+                                            {
+                                                <span>@fifo.ReferansTuru</span>
+                                            }
+                                            @if (!string.IsNullOrEmpty(fifo.ReferansNo))
+                                            {
+                                                <span> - @fifo.ReferansNo</span>
+                                            }
+                                        </td>
+                                        <td>
+                                            @if (fifo.KalanMiktar > 0)
+                                            {
+                                                <span class="badge bg-success">Aktif</span>
+                                            }
+                                            else
+                                            {
+                                                <span class="badge bg-secondary">Tüketildi</span>
+                                            }
+                                        </td>
+                                    </tr>
+                                }
+                            </tbody>
+                        </table>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+
+@section Scripts {
+    <script>
+        $(document).ready(function () {
+            // DataTable başlatma
+            try {
+                $('#hareketlerTable').DataTable({
+                    language: {
+                        url: '//cdn.datatables.net/plug-ins/1.13.7/i18n/tr.json',
+                        info: "" // Bilgilendirme yazısını kaldır
+                    },
+                    responsive: true,
+                    retrieve: true,
+                    pageLength: 25,
+                    order: [[0, "desc"]] // Tarih sütununa göre azalan sıralama
+                });
+                
+                $('#fifoTable').DataTable({
+                    language: {
+                        url: '//cdn.datatables.net/plug-ins/1.13.7/i18n/tr.json',
+                        info: "" // Bilgilendirme yazısını kaldır
+                    },
+                    responsive: true,
+                    retrieve: true,
+                    pageLength: 25,
+                    order: [[0, "asc"]] // Giriş tarihine göre artan sıralama
+                });
+            } catch (e) {
+                console.log("DataTable başlatılırken bir hata oluştu, ancak işlem devam ediyor.");
+            }
+        });
+    </script>
+} 

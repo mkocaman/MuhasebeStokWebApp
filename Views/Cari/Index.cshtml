@@ -1,0 +1,314 @@
+@model IEnumerable<MuhasebeStokWebApp.Data.Entities.Cari>
+
+@{
+    ViewData["Title"] = "Cari Listesi";
+    Layout = "~/Views/Shared/_Layout.cshtml";
+}
+
+<div class="container-fluid">
+    <div class="card">
+        <div class="card-header bg-primary text-white">
+            <div class="d-flex justify-content-between align-items-center">
+                <h4 class="mb-0">Cari Listesi</h4>
+                <button type="button" class="btn btn-success" data-bs-toggle="modal" data-bs-target="#createCariModal">
+                    <i class="fas fa-plus"></i> Yeni Cari Ekle
+                </button>
+            </div>
+        </div>
+        <div class="card-body">
+            @if (TempData["SuccessMessage"] != null)
+            {
+                <div class="alert alert-success alert-dismissible fade show" role="alert">
+                    @TempData["SuccessMessage"]
+                    <button type="button" class="btn-close" data-bs-dismiss="alert" aria-label="Close"></button>
+                </div>
+            }
+            
+            @if (TempData["ErrorMessage"] != null)
+            {
+                <div class="alert alert-danger alert-dismissible fade show" role="alert">
+                    @TempData["ErrorMessage"]
+                    <button type="button" class="btn-close" data-bs-dismiss="alert" aria-label="Close"></button>
+                </div>
+            }
+            
+            <!-- Sekme Başlıkları -->
+            <ul class="nav nav-tabs mb-3" id="cariTabs" role="tablist">
+                <li class="nav-item" role="presentation">
+                    <button class="nav-link active" id="aktif-tab" data-bs-toggle="tab" data-bs-target="#aktif" type="button" role="tab" aria-controls="aktif" aria-selected="true">
+                        <i class="fas fa-check-circle text-success"></i> Aktif Cariler
+                    </button>
+                </li>
+                <li class="nav-item" role="presentation">
+                    <button class="nav-link" id="pasif-tab" data-bs-toggle="tab" data-bs-target="#pasif" type="button" role="tab" aria-controls="pasif" aria-selected="false">
+                        <i class="fas fa-times-circle text-danger"></i> Pasif Cariler
+                    </button>
+                </li>
+            </ul>
+            
+            <!-- Sekme İçerikleri -->
+            <div class="tab-content" id="cariTabsContent">
+                <!-- Aktif Cariler Sekmesi -->
+                <div class="tab-pane fade show active" id="aktif" role="tabpanel" aria-labelledby="aktif-tab">
+                    <div class="table-responsive">
+                        <table class="table table-bordered table-hover" id="aktifCariTable">
+                            <thead class="table-light">
+                                <tr>
+                                    <th>Cari Adı</th>
+                                    <th>Vergi No</th>
+                                    <th>Telefon</th>
+                                    <th>E-posta</th>
+                                    <th>Yetkili</th>
+                                    <th>Bakiye</th>
+                                    <th>İşlemler</th>
+                                </tr>
+                            </thead>
+                            <tbody>
+                                @foreach (var item in Model.Where(c => c.Aktif))
+                                {
+                                    <tr>
+                                        <td>@item.CariAdi</td>
+                                        <td>@item.VergiNo</td>
+                                        <td>@item.Telefon</td>
+                                        <td>@item.Email</td>
+                                        <td>@item.Yetkili</td>
+                                        <td class="text-end">
+                                            @{
+                                                var bakiye = ViewBag.CariBakiyeleri != null && ViewBag.CariBakiyeleri.ContainsKey(item.CariID) 
+                                                    ? ViewBag.CariBakiyeleri[item.CariID] 
+                                                    : 0;
+                                                
+                                                var bakiyeClass = bakiye > 0 ? "text-success" : (bakiye < 0 ? "text-danger" : "");
+                                            }
+                                            <span class="@bakiyeClass">@bakiye.ToString("N2") ₺</span>
+                                        </td>
+                                        <td class="text-center">
+                                            <div class="btn-group" role="group">
+                                                <button type="button" class="btn btn-sm btn-info edit-cari" data-id="@item.CariID">
+                                                    <i class="fas fa-edit"></i>
+                                                </button>
+                                                <a asp-action="Details" asp-route-id="@item.CariID" class="btn btn-sm btn-primary">
+                                                    <i class="fas fa-info-circle"></i>
+                                                </a>
+                                                <a asp-action="Delete" asp-route-id="@item.CariID" class="btn btn-sm btn-danger">
+                                                    <i class="fas fa-trash"></i>
+                                                </a>
+                                            </div>
+                                        </td>
+                                    </tr>
+                                }
+                            </tbody>
+                        </table>
+                    </div>
+                </div>
+                
+                <!-- Pasif Cariler Sekmesi -->
+                <div class="tab-pane fade" id="pasif" role="tabpanel" aria-labelledby="pasif-tab">
+                    <div class="table-responsive">
+                        <table class="table table-bordered table-hover" id="pasifCariTable">
+                            <thead class="table-light">
+                                <tr>
+                                    <th>Cari Adı</th>
+                                    <th>Vergi No</th>
+                                    <th>Telefon</th>
+                                    <th>E-posta</th>
+                                    <th>Yetkili</th>
+                                    <th>Bakiye</th>
+                                    <th>İşlemler</th>
+                                </tr>
+                            </thead>
+                            <tbody>
+                                @foreach (var item in Model.Where(c => !c.Aktif))
+                                {
+                                    <tr>
+                                        <td>@item.CariAdi</td>
+                                        <td>@item.VergiNo</td>
+                                        <td>@item.Telefon</td>
+                                        <td>@item.Email</td>
+                                        <td>@item.Yetkili</td>
+                                        <td class="text-end">
+                                            @{
+                                                var bakiye = ViewBag.CariBakiyeleri != null && ViewBag.CariBakiyeleri.ContainsKey(item.CariID) 
+                                                    ? ViewBag.CariBakiyeleri[item.CariID] 
+                                                    : 0;
+                                                
+                                                var bakiyeClass = bakiye > 0 ? "text-success" : (bakiye < 0 ? "text-danger" : "");
+                                            }
+                                            <span class="@bakiyeClass">@bakiye.ToString("N2") ₺</span>
+                                        </td>
+                                        <td class="text-center">
+                                            <div class="btn-group" role="group">
+                                                <button type="button" class="btn btn-sm btn-info edit-cari" data-id="@item.CariID">
+                                                    <i class="fas fa-edit"></i>
+                                                </button>
+                                                <a asp-action="Details" asp-route-id="@item.CariID" class="btn btn-sm btn-primary">
+                                                    <i class="fas fa-info-circle"></i>
+                                                </a>
+                                                <a asp-action="Activate" asp-route-id="@item.CariID" class="btn btn-sm btn-success">
+                                                    <i class="fas fa-check"></i>
+                                                </a>
+                                            </div>
+                                        </td>
+                                    </tr>
+                                }
+                            </tbody>
+                        </table>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+
+<!-- Yeni Cari Ekleme Modal -->
+<div class="modal fade" id="createCariModal" tabindex="-1" aria-labelledby="createCariModalLabel" aria-hidden="true">
+    <div class="modal-dialog modal-lg">
+        <div class="modal-content">
+            <div id="createCariModalContent">
+                <!-- Partial view içeriği buraya yüklenecek -->
+                <div class="modal-body text-center">
+                    <div class="spinner-border text-primary" role="status">
+                        <span class="visually-hidden">Yükleniyor...</span>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+
+<!-- Cari Düzenleme Modal -->
+<div class="modal fade" id="editCariModal" tabindex="-1" aria-labelledby="editCariModalLabel" aria-hidden="true">
+    <div class="modal-dialog modal-lg">
+        <div class="modal-content">
+            <div id="editCariModalContent">
+                <!-- Partial view içeriği buraya yüklenecek -->
+                <div class="modal-body text-center">
+                    <div class="spinner-border text-primary" role="status">
+                        <span class="visually-hidden">Yükleniyor...</span>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+
+@section Scripts {
+    <script>
+        $(document).ready(function() {
+            // DataTable uyarılarını gizle
+            $.fn.dataTable.ext.errMode = 'none';
+            
+            // Aktif Cariler DataTable başlatma
+            try {
+                $('#aktifCariTable').DataTable({
+                    language: {
+                        url: '//cdn.datatables.net/plug-ins/1.13.7/i18n/tr.json',
+                        info: "" // Bilgilendirme yazısını kaldır (çift görünme sorununu çözmek için)
+                    },
+                    responsive: true,
+                    retrieve: true
+                });
+            } catch (e) {
+                console.log("DataTable başlatılırken bir hata oluştu, ancak işlem devam ediyor.");
+            }
+            
+            // Pasif Cariler DataTable başlatma
+            try {
+                $('#pasifCariTable').DataTable({
+                    language: {
+                        url: '//cdn.datatables.net/plug-ins/1.13.7/i18n/tr.json',
+                        info: "" // Bilgilendirme yazısını kaldır (çift görünme sorununu çözmek için)
+                    },
+                    responsive: true,
+                    retrieve: true
+                });
+            } catch (e) {
+                console.log("DataTable başlatılırken bir hata oluştu, ancak işlem devam ediyor.");
+            }
+            
+            // Otomatik kapanan alertler
+            window.setTimeout(function() {
+                $(".alert").fadeTo(500, 0).slideUp(500, function() {
+                    $(this).remove();
+                });
+            }, 4000);
+            
+            // Yeni Cari Modal açıldığında
+            $('#createCariModal').on('show.bs.modal', function (e) {
+                $.ajax({
+                    url: '@Url.Action("Create", "Cari")',
+                    type: 'GET',
+                    success: function(result) {
+                        $('#createCariModalContent').html(result);
+                    },
+                    error: function() {
+                        alert('Form yüklenirken bir hata oluştu.');
+                        $('#createCariModal').modal('hide');
+                    }
+                });
+            });
+            
+            // Düzenleme Modal açıldığında
+            $(document).on('click', '.edit-cari', function() {
+                var id = $(this).data('id');
+                $.ajax({
+                    url: '@Url.Action("Edit", "Cari")/' + id,
+                    type: 'GET',
+                    success: function(result) {
+                        $('#editCariModalContent').html(result);
+                        $('#editCariModal').modal('show');
+                    },
+                    error: function() {
+                        alert('Form yüklenirken bir hata oluştu.');
+                    }
+                });
+            });
+            
+            // Yeni Cari Form Submit
+            $(document).on('submit', '#createCariForm', function(e) {
+                e.preventDefault();
+                
+                $.ajax({
+                    url: '@Url.Action("Create", "Cari")',
+                    type: 'POST',
+                    data: $(this).serialize(),
+                    success: function(result) {
+                        if (result.success) {
+                            $('#createCariModal').modal('hide');
+                            window.location.reload();
+                        } else {
+                            $('#createCariModalContent').html(result);
+                        }
+                    },
+                    error: function() {
+                        alert('İşlem sırasında bir hata oluştu.');
+                    }
+                });
+            });
+            
+            // Düzenleme Form Submit
+            $(document).on('submit', '#editCariForm', function(e) {
+                e.preventDefault();
+                
+                var id = $('#editCariForm input[name="CariID"]').val();
+                
+                $.ajax({
+                    url: '@Url.Action("Edit", "Cari")/' + id,
+                    type: 'POST',
+                    data: $(this).serialize(),
+                    success: function(result) {
+                        if (result.success) {
+                            $('#editCariModal').modal('hide');
+                            window.location.reload();
+                        } else {
+                            $('#editCariModalContent').html(result);
+                        }
+                    },
+                    error: function() {
+                        alert('İşlem sırasında bir hata oluştu.');
+                    }
+                });
+            });
+        });
+    </script>
+} 

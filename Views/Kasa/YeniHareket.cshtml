@@ -1,0 +1,159 @@
+@model MuhasebeStokWebApp.ViewModels.Kasa.KasaHareketCreateViewModel
+@{
+    ViewData["Title"] = "Yeni Kasa Hareketi";
+}
+
+<div class="container-fluid">
+    <div class="card shadow mb-4">
+        <div class="card-header py-3 d-flex justify-content-between align-items-center">
+            <h6 class="m-0 font-weight-bold text-primary">Yeni Kasa Hareketi</h6>
+            <a asp-action="Index" class="btn btn-outline-secondary btn-sm">
+                <i class="fas fa-arrow-left"></i> Listeye Dön
+            </a>
+        </div>
+        <div class="card-body">
+            <form asp-action="YeniHareket" method="post" id="kasaHareketForm">
+                <div asp-validation-summary="ModelOnly" class="text-danger"></div>
+                
+                <div class="row">
+                    <div class="col-md-6">
+                        <div class="form-group">
+                            <label asp-for="KasaID" class="control-label">Kasa</label>
+                            <select asp-for="KasaID" asp-items="Model.Kasalar" class="form-control">
+                                <option value="">Kasa Seçiniz</option>
+                            </select>
+                            <span asp-validation-for="KasaID" class="text-danger"></span>
+                        </div>
+                    </div>
+                    <div class="col-md-6">
+                        <div class="form-group">
+                            <label asp-for="HareketTuru" class="control-label">Hareket Türü</label>
+                            <select asp-for="HareketTuru" asp-items="Model.HareketTurleri" class="form-control">
+                                <option value="">Hareket Türü Seçiniz</option>
+                            </select>
+                            <span asp-validation-for="HareketTuru" class="text-danger"></span>
+                        </div>
+                    </div>
+                </div>
+                
+                <div class="row">
+                    <div class="col-md-6">
+                        <div class="form-group">
+                            <label asp-for="CariID" class="control-label">Cari</label>
+                            <select asp-for="CariID" asp-items="Model.Cariler" class="form-control">
+                                <option value="">Cari Seçiniz</option>
+                            </select>
+                            <span asp-validation-for="CariID" class="text-danger"></span>
+                        </div>
+                    </div>
+                    <div class="col-md-6">
+                        <div class="form-group">
+                            <label asp-for="Tutar" class="control-label">Tutar</label>
+                            <div class="input-group">
+                                <input asp-for="Tutar" class="form-control" min="0.01" step="0.01" />
+                                <div class="input-group-append">
+                                    <span class="input-group-text" id="paraBirimiLabel">TRY</span>
+                                </div>
+                            </div>
+                            <span asp-validation-for="Tutar" class="text-danger"></span>
+                        </div>
+                    </div>
+                </div>
+                
+                <div class="row">
+                    <div class="col-md-6">
+                        <div class="form-group">
+                            <label asp-for="Tarih" class="control-label">Tarih</label>
+                            <input asp-for="Tarih" class="form-control" type="date" />
+                            <span asp-validation-for="Tarih" class="text-danger"></span>
+                        </div>
+                    </div>
+                    <div class="col-md-6">
+                        <div class="form-group">
+                            <label asp-for="HareketNo" class="control-label">Hareket No</label>
+                            <input asp-for="HareketNo" class="form-control" readonly />
+                            <span asp-validation-for="HareketNo" class="text-danger"></span>
+                        </div>
+                    </div>
+                </div>
+                
+                <div class="form-group">
+                    <label asp-for="Aciklama" class="control-label">Açıklama</label>
+                    <textarea asp-for="Aciklama" class="form-control" rows="3"></textarea>
+                    <span asp-validation-for="Aciklama" class="text-danger"></span>
+                </div>
+                
+                <div class="form-group">
+                    <button type="submit" class="btn btn-primary">
+                        <i class="fas fa-save"></i> Kaydet
+                    </button>
+                    <a asp-action="Index" class="btn btn-secondary">
+                        <i class="fas fa-arrow-left"></i> İptal
+                    </a>
+                </div>
+            </form>
+        </div>
+    </div>
+</div>
+
+@section Scripts {
+    <partial name="_ValidationScriptsPartial" />
+    <script>
+        $(document).ready(function() {
+            // Kasa seçildiğinde para birimini güncelle
+            $("#KasaID").change(function() {
+                var selectedOption = $(this).find("option:selected");
+                var text = selectedOption.text();
+                var paraBirimi = "TRY";
+                
+                // Para birimini metin içinden çıkar
+                var match = text.match(/\(([^)]+)\)/);
+                if (match && match.length > 1) {
+                    paraBirimi = match[1];
+                }
+                
+                $("#paraBirimiLabel").text(paraBirimi);
+            });
+            
+            // Hareket türü değiştiğinde etiketleri güncelle
+            $("#HareketTuru").change(function() {
+                var hareketTuru = $(this).val();
+                
+                if (hareketTuru === "Tahsilat") {
+                    // Tahsilat seçildiğinde
+                    $("#tutarLabel").text("Tahsilat Tutarı");
+                } else if (hareketTuru === "Ödeme") {
+                    // Ödeme seçildiğinde
+                    $("#tutarLabel").text("Ödeme Tutarı");
+                }
+            });
+            
+            // Form gönderilmeden önce kontrol
+            $("#kasaHareketForm").submit(function(e) {
+                var kasaID = $("#KasaID").val();
+                var hareketTuru = $("#HareketTuru").val();
+                var tutar = parseFloat($("#Tutar").val()) || 0;
+                
+                if (!kasaID) {
+                    e.preventDefault();
+                    alert("Lütfen bir kasa seçin!");
+                    return false;
+                }
+                
+                if (!hareketTuru) {
+                    e.preventDefault();
+                    alert("Lütfen hareket türü seçin!");
+                    return false;
+                }
+                
+                if (tutar <= 0) {
+                    e.preventDefault();
+                    alert("Lütfen geçerli bir tutar girin!");
+                    return false;
+                }
+                
+                return true;
+            });
+        });
+    </script>
+} 

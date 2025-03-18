@@ -1,0 +1,368 @@
+@model MuhasebeStokWebApp.ViewModels.Irsaliye.IrsaliyeEditViewModel
+@{
+    ViewData["Title"] = "İrsaliye Düzenle";
+}
+
+<div class="container-fluid">
+    <div class="page-title">
+        <div class="row">
+            <div class="col-6">
+                <h3>İrsaliye Düzenle</h3>
+            </div>
+            <div class="col-6">
+                <ol class="breadcrumb">
+                    <li class="breadcrumb-item"><a href="/"><i data-feather="home"></i></a></li>
+                    <li class="breadcrumb-item"><a asp-controller="Irsaliye" asp-action="Index">İrsaliye</a></li>
+                    <li class="breadcrumb-item active">İrsaliye Düzenle</li>
+                </ol>
+            </div>
+        </div>
+    </div>
+</div>
+
+<div class="container-fluid">
+    <div class="row">
+        <div class="col-sm-12">
+            <div class="card">
+                <div class="card-header">
+                    <h5>İrsaliye Bilgileri</h5>
+                </div>
+                <div class="card-body">
+                    <form asp-action="Edit" method="post">
+                        <div asp-validation-summary="ModelOnly" class="text-danger"></div>
+                        <input type="hidden" asp-for="IrsaliyeID" />
+                        <div class="row">
+                            <div class="col-md-4">
+                                <div class="form-group">
+                                    <label asp-for="IrsaliyeNumarasi" class="control-label"></label>
+                                    <input asp-for="IrsaliyeNumarasi" class="form-control" />
+                                    <span asp-validation-for="IrsaliyeNumarasi" class="text-danger"></span>
+                                </div>
+                            </div>
+                            <div class="col-md-4">
+                                <div class="form-group">
+                                    <label asp-for="IrsaliyeTarihi" class="control-label"></label>
+                                    <input asp-for="IrsaliyeTarihi" class="form-control" type="date" />
+                                    <span asp-validation-for="IrsaliyeTarihi" class="text-danger"></span>
+                                </div>
+                            </div>
+                            <div class="col-md-4">
+                                <div class="form-group">
+                                    <label asp-for="SevkTarihi" class="control-label"></label>
+                                    <input asp-for="SevkTarihi" class="form-control" type="date" />
+                                    <span asp-validation-for="SevkTarihi" class="text-danger"></span>
+                                </div>
+                            </div>
+                        </div>
+                        <div class="row mt-3">
+                            <div class="col-md-4">
+                                <div class="form-group">
+                                    <label asp-for="IrsaliyeTuru" class="control-label"></label>
+                                    <select asp-for="IrsaliyeTuru" class="form-control" asp-items="ViewBag.IrsaliyeTurleri"></select>
+                                    <span asp-validation-for="IrsaliyeTuru" class="text-danger"></span>
+                                </div>
+                            </div>
+                            <div class="col-md-4">
+                                <div class="form-group">
+                                    <label asp-for="CariID" class="control-label"></label>
+                                    <select asp-for="CariID" class="form-control" asp-items="ViewBag.Cariler"></select>
+                                    <span asp-validation-for="CariID" class="text-danger"></span>
+                                </div>
+                            </div>
+                            <div class="col-md-4">
+                                <div class="form-group">
+                                    <label asp-for="FaturaID" class="control-label"></label>
+                                    <select asp-for="FaturaID" class="form-control" asp-items="ViewBag.Faturalar">
+                                        <option value="">-- Fatura Seçiniz --</option>
+                                    </select>
+                                    <span asp-validation-for="FaturaID" class="text-danger"></span>
+                                </div>
+                            </div>
+                        </div>
+                        <div class="row mt-3">
+                            <div class="col-md-8">
+                                <div class="form-group">
+                                    <label asp-for="Aciklama" class="control-label"></label>
+                                    <textarea asp-for="Aciklama" class="form-control" rows="3"></textarea>
+                                    <span asp-validation-for="Aciklama" class="text-danger"></span>
+                                </div>
+                            </div>
+                            <div class="col-md-4">
+                                <div class="form-group">
+                                    <label asp-for="Durum" class="control-label"></label>
+                                    <select asp-for="Durum" class="form-control" asp-items="ViewBag.Durumlar"></select>
+                                    <span asp-validation-for="Durum" class="text-danger"></span>
+                                </div>
+                            </div>
+                        </div>
+
+                        <div class="card mt-4">
+                            <div class="card-header">
+                                <h5>İrsaliye Kalemleri</h5>
+                                <button type="button" id="btnAddItem" class="btn btn-primary btn-sm float-right">
+                                    <i class="fa fa-plus"></i> Kalem Ekle
+                                </button>
+                            </div>
+                            <div class="card-body">
+                                <div class="table-responsive">
+                                    <table class="table table-bordered" id="itemsTable">
+                                        <thead>
+                                            <tr>
+                                                <th>Ürün</th>
+                                                <th>Miktar</th>
+                                                <th>Birim</th>
+                                                <th>Açıklama</th>
+                                                <th>İşlemler</th>
+                                            </tr>
+                                        </thead>
+                                        <tbody id="itemsBody">
+                                            @for (int i = 0; i < Model.IrsaliyeKalemleri.Count; i++)
+                                            {
+                                                var kalem = Model.IrsaliyeKalemleri[i];
+                                                <tr class="item-row">
+                                                    <td>
+                                                        <div class="d-flex align-items-center">
+                                                            <input type="hidden" name="IrsaliyeKalemleri[@i].UrunID" value="@kalem.UrunID" class="urun-id" />
+                                                            <span class="urun-adi">@kalem.UrunAdi</span>
+                                                            <button type="button" class="btn btn-sm btn-info ml-2 btn-select-urun">
+                                                                <i class="fa fa-search"></i>
+                                                            </button>
+                                                        </div>
+                                                    </td>
+                                                    <td>
+                                                        <input type="number" name="IrsaliyeKalemleri[@i].Miktar" value="@kalem.Miktar" class="form-control miktar" step="0.01" min="0.01" required />
+                                                    </td>
+                                                    <td>
+                                                        <input type="text" name="IrsaliyeKalemleri[@i].Birim" value="@kalem.Birim" class="form-control birim" readonly />
+                                                    </td>
+                                                    <td>
+                                                        <input type="text" name="IrsaliyeKalemleri[@i].Aciklama" value="@kalem.Aciklama" class="form-control aciklama" />
+                                                    </td>
+                                                    <td>
+                                                        <button type="button" class="btn btn-sm btn-danger btn-remove-item">
+                                                            <i class="fa fa-trash"></i>
+                                                        </button>
+                                                    </td>
+                                                </tr>
+                                            }
+                                        </tbody>
+                                    </table>
+                                </div>
+                            </div>
+                        </div>
+
+                        <div class="form-group mt-4 text-right">
+                            <a asp-action="Index" class="btn btn-secondary">
+                                <i class="fa fa-arrow-left"></i> İptal
+                            </a>
+                            <button type="submit" class="btn btn-primary">
+                                <i class="fa fa-save"></i> Kaydet
+                            </button>
+                        </div>
+                    </form>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+
+<!-- Ürün Seçme Modal -->
+<div class="modal fade" id="urunModal" tabindex="-1" role="dialog" aria-labelledby="urunModalLabel" aria-hidden="true">
+    <div class="modal-dialog modal-lg" role="document">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h5 class="modal-title" id="urunModalLabel">Ürün Seç</h5>
+                <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+                    <span aria-hidden="true">&times;</span>
+                </button>
+            </div>
+            <div class="modal-body">
+                <div class="form-group">
+                    <input type="text" id="urunSearch" class="form-control" placeholder="Ürün ara..." />
+                </div>
+                <div class="table-responsive">
+                    <table class="table table-hover" id="urunTable">
+                        <thead>
+                            <tr>
+                                <th>Ürün Kodu</th>
+                                <th>Ürün Adı</th>
+                                <th>Stok Miktarı</th>
+                                <th>Birim</th>
+                                <th>İşlem</th>
+                            </tr>
+                        </thead>
+                        <tbody id="urunTableBody">
+                            <!-- Ürünler AJAX ile doldurulacak -->
+                        </tbody>
+                    </table>
+                </div>
+            </div>
+            <div class="modal-footer">
+                <button type="button" class="btn btn-secondary" data-dismiss="modal">Kapat</button>
+            </div>
+        </div>
+    </div>
+</div>
+
+<!-- Kalem Template -->
+<template id="itemTemplate">
+    <tr class="item-row">
+        <td>
+            <div class="d-flex align-items-center">
+                <input type="hidden" name="IrsaliyeKalemleri[{index}].UrunID" class="urun-id" />
+                <span class="urun-adi"></span>
+                <button type="button" class="btn btn-sm btn-info ml-2 btn-select-urun">
+                    <i class="fa fa-search"></i>
+                </button>
+            </div>
+        </td>
+        <td>
+            <input type="number" name="IrsaliyeKalemleri[{index}].Miktar" class="form-control miktar" step="0.01" min="0.01" required />
+        </td>
+        <td>
+            <input type="text" name="IrsaliyeKalemleri[{index}].Birim" class="form-control birim" readonly />
+        </td>
+        <td>
+            <input type="text" name="IrsaliyeKalemleri[{index}].Aciklama" class="form-control aciklama" />
+        </td>
+        <td>
+            <button type="button" class="btn btn-sm btn-danger btn-remove-item">
+                <i class="fa fa-trash"></i>
+            </button>
+        </td>
+    </tr>
+</template>
+
+@section Scripts {
+    @{await Html.RenderPartialAsync("_ValidationScriptsPartial");}
+    <script>
+        $(document).ready(function () {
+            // Fatura seçildiğinde cari bilgilerini getir
+            $("#FaturaID").change(function () {
+                var faturaId = $(this).val();
+                if (faturaId) {
+                    $.get("/Irsaliye/GetFaturaBilgileri", { faturaId: faturaId }, function (data) {
+                        $("#CariID").val(data.cariId);
+                    });
+                }
+            });
+
+            // Kalem sayacı
+            let itemIndex = @Model.IrsaliyeKalemleri.Count;
+
+            // Kalem ekle butonu
+            $("#btnAddItem").click(function () {
+                addNewItem();
+            });
+
+            // Mevcut kalemlere event handler'ları ekle
+            $(".btn-select-urun").each(function () {
+                $(this).click(function () {
+                    const row = $(this).closest("tr");
+                    $("#urunModal").data("row", row);
+                    $("#urunModal").modal("show");
+                    loadProducts();
+                });
+            });
+
+            $(".btn-remove-item").each(function () {
+                $(this).click(function () {
+                    if ($("#itemsBody tr").length > 1) {
+                        $(this).closest("tr").remove();
+                        renumberItems();
+                    } else {
+                        alert("En az bir kalem olmalıdır.");
+                    }
+                });
+            });
+
+            // Yeni kalem ekleme fonksiyonu
+            function addNewItem() {
+                const template = document.getElementById("itemTemplate").innerHTML;
+                const newRow = template.replace(/{index}/g, itemIndex);
+                $("#itemsBody").append(newRow);
+                
+                // Ürün seçme butonuna tıklandığında
+                $(".btn-select-urun").last().click(function () {
+                    const row = $(this).closest("tr");
+                    $("#urunModal").data("row", row);
+                    $("#urunModal").modal("show");
+                    loadProducts();
+                });
+                
+                // Kalem silme butonu
+                $(".btn-remove-item").last().click(function () {
+                    if ($("#itemsBody tr").length > 1) {
+                        $(this).closest("tr").remove();
+                        renumberItems();
+                    } else {
+                        alert("En az bir kalem olmalıdır.");
+                    }
+                });
+                
+                itemIndex++;
+            }
+
+            // Kalemleri yeniden numaralandır
+            function renumberItems() {
+                $("#itemsBody tr").each(function (index) {
+                    $(this).find("input, select").each(function () {
+                        const name = $(this).attr("name");
+                        if (name) {
+                            const newName = name.replace(/\[\d+\]/, "[" + index + "]");
+                            $(this).attr("name", newName);
+                        }
+                    });
+                });
+            }
+
+            // Ürünleri yükle
+            function loadProducts() {
+                $.get("/Urun/GetUrunlerJson", function (data) {
+                    $("#urunTableBody").empty();
+                    data.forEach(function (urun) {
+                        const row = `
+                            <tr>
+                                <td>${urun.urunKodu}</td>
+                                <td>${urun.urunAdi}</td>
+                                <td>${urun.stokMiktar}</td>
+                                <td>${urun.birim}</td>
+                                <td>
+                                    <button type="button" class="btn btn-sm btn-primary btn-select"
+                                            data-id="${urun.urunID}"
+                                            data-adi="${urun.urunAdi}"
+                                            data-birim="${urun.birim}">
+                                        Seç
+                                    </button>
+                                </td>
+                            </tr>
+                        `;
+                        $("#urunTableBody").append(row);
+                    });
+
+                    // Ürün seçme butonu
+                    $(".btn-select").click(function () {
+                        const urunId = $(this).data("id");
+                        const urunAdi = $(this).data("adi");
+                        const birim = $(this).data("birim");
+                        
+                        const row = $("#urunModal").data("row");
+                        row.find(".urun-id").val(urunId);
+                        row.find(".urun-adi").text(urunAdi);
+                        row.find(".birim").val(birim);
+                        
+                        $("#urunModal").modal("hide");
+                    });
+                });
+            }
+
+            // Ürün arama
+            $("#urunSearch").keyup(function () {
+                const searchText = $(this).val().toLowerCase();
+                $("#urunTableBody tr").filter(function () {
+                    $(this).toggle($(this).text().toLowerCase().indexOf(searchText) > -1);
+                });
+            });
+        });
+    </script>
+} 

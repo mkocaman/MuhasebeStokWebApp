@@ -1,0 +1,211 @@
+@model MuhasebeStokWebApp.ViewModels.Irsaliye.IrsaliyeDetailViewModel
+@{
+    ViewData["Title"] = "İrsaliye Detayı";
+    Layout = "~/Views/Shared/_Layout.cshtml";
+}
+
+<div class="container-fluid">
+    <div class="row">
+        <!-- İrsaliye Bilgileri -->
+        <div class="col-xl-6 col-md-12 box-col-12">
+            <div class="card">
+                <div class="card-header bg-primary text-white">
+                    <div class="d-flex justify-content-between align-items-center">
+                        <h5 class="mb-0">İrsaliye Bilgileri</h5>
+                        <div>
+                            <a asp-action="Edit" asp-route-id="@Model.IrsaliyeID" class="btn btn-warning btn-sm">
+                                <i class="fas fa-edit"></i> Düzenle
+                            </a>
+                            <a asp-action="Print" asp-route-id="@Model.IrsaliyeID" class="btn btn-light btn-sm" target="_blank">
+                                <i class="fas fa-print"></i> Yazdır
+                            </a>
+                            @if (Model.FaturaID == null || Model.FaturaID == Guid.Empty)
+                            {
+                                <a asp-controller="Fatura" asp-action="CreateFromIrsaliye" asp-route-id="@Model.IrsaliyeID" class="btn btn-success btn-sm">
+                                    <i class="fas fa-file-invoice"></i> Fatura Oluştur
+                                </a>
+                            }
+                        </div>
+                    </div>
+                </div>
+                <div class="card-body">
+                    <div class="row">
+                        <div class="col-sm-6 col-md-12 col-lg-6">
+                            <div class="info-group">
+                                <h6 class="f-w-600">İrsaliye No</h6>
+                                <p>@Model.IrsaliyeNumarasi</p>
+                            </div>
+                        </div>
+                        <div class="col-sm-6 col-md-12 col-lg-6">
+                            <div class="info-group">
+                                <h6 class="f-w-600">İrsaliye Türü</h6>
+                                <p>
+                                    @if (Model.IrsaliyeTuru == "Giriş")
+                                    {
+                                        <span class="badge bg-info">Giriş</span>
+                                    }
+                                    else
+                                    {
+                                        <span class="badge bg-primary">Çıkış</span>
+                                    }
+                                </p>
+                            </div>
+                        </div>
+                        <div class="col-sm-6 col-md-12 col-lg-6">
+                            <div class="info-group">
+                                <h6 class="f-w-600">İrsaliye Tarihi</h6>
+                                <p>@(Model.IrsaliyeTarihi.HasValue ? Model.IrsaliyeTarihi.Value.ToString("dd.MM.yyyy") : "-")</p>
+                            </div>
+                        </div>
+                        <div class="col-sm-6 col-md-12 col-lg-6">
+                            <div class="info-group">
+                                <h6 class="f-w-600">Sevk Tarihi</h6>
+                                <p>@(Model.SevkTarihi.HasValue ? Model.SevkTarihi.Value.ToString("dd.MM.yyyy") : "-")</p>
+                            </div>
+                        </div>
+                        <div class="col-12">
+                            <div class="info-group">
+                                <h6 class="f-w-600">Cari</h6>
+                                <p><a asp-controller="Cari" asp-action="Details" asp-route-id="@Model.CariID">@Model.CariAdi</a></p>
+                            </div>
+                        </div>
+                        <div class="col-sm-6 col-md-12 col-lg-6">
+                            <div class="info-group">
+                                <h6 class="f-w-600">Vergi No</h6>
+                                <p>@(string.IsNullOrEmpty(Model.CariVergiNo) ? "-" : Model.CariVergiNo)</p>
+                            </div>
+                        </div>
+                        <div class="col-sm-6 col-md-12 col-lg-6">
+                            <div class="info-group">
+                                <h6 class="f-w-600">Telefon</h6>
+                                <p>@(string.IsNullOrEmpty(Model.CariTelefon) ? "-" : Model.CariTelefon)</p>
+                            </div>
+                        </div>
+                        <div class="col-12">
+                            <div class="info-group">
+                                <h6 class="f-w-600">Adres</h6>
+                                <p>@(string.IsNullOrEmpty(Model.CariAdres) ? "-" : Model.CariAdres)</p>
+                            </div>
+                        </div>
+                        <div class="col-sm-6 col-md-12 col-lg-6">
+                            <div class="info-group">
+                                <h6 class="f-w-600">Durum</h6>
+                                <p>
+                                    @switch (Model.Durum)
+                                    {
+                                        case "Açık":
+                                            <span class="badge bg-warning">Açık</span>
+                                            break;
+                                        case "Kapalı":
+                                            <span class="badge bg-success">Kapalı</span>
+                                            break;
+                                        case "İptal":
+                                            <span class="badge bg-danger">İptal</span>
+                                            break;
+                                        default:
+                                            <span class="badge bg-secondary">@Model.Durum</span>
+                                            break;
+                                    }
+                                </p>
+                            </div>
+                        </div>
+                        <div class="col-sm-6 col-md-12 col-lg-6">
+                            <div class="info-group">
+                                <h6 class="f-w-600">İlişkili Fatura</h6>
+                                <p>
+                                    @if (!string.IsNullOrEmpty(Model.FaturaNumarasi))
+                                    {
+                                        <a asp-controller="Fatura" asp-action="Details" asp-route-id="@Model.FaturaID">@Model.FaturaNumarasi</a>
+                                    }
+                                    else
+                                    {
+                                        <span>-</span>
+                                    }
+                                </p>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+        
+        <!-- Açıklama -->
+        <div class="col-xl-6 col-md-12 box-col-12">
+            <div class="card">
+                <div class="card-header bg-primary text-white">
+                    <h5 class="mb-0">Açıklama</h5>
+                </div>
+                <div class="card-body">
+                    <p>@(string.IsNullOrEmpty(Model.Aciklama) ? "Açıklama bulunmamaktadır." : Model.Aciklama)</p>
+                </div>
+            </div>
+        </div>
+    </div>
+    
+    <!-- İrsaliye Kalemleri -->
+    <div class="row mt-4">
+        <div class="col-12">
+            <div class="card">
+                <div class="card-header bg-primary text-white">
+                    <h5 class="mb-0">İrsaliye Kalemleri</h5>
+                </div>
+                <div class="card-body">
+                    <div class="table-responsive">
+                        <table class="table table-hover table-striped">
+                            <thead class="table-light">
+                                <tr>
+                                    <th>Ürün Kodu</th>
+                                    <th>Ürün Adı</th>
+                                    <th>Miktar</th>
+                                    <th>Birim</th>
+                                    <th>Açıklama</th>
+                                </tr>
+                            </thead>
+                            <tbody>
+                                @foreach (var kalem in Model.IrsaliyeKalemleri)
+                                {
+                                    <tr>
+                                        <td>@kalem.UrunKodu</td>
+                                        <td>
+                                            <a asp-controller="Urun" asp-action="Details" asp-route-id="@kalem.UrunID">
+                                                @kalem.UrunAdi
+                                            </a>
+                                        </td>
+                                        <td>@kalem.Miktar</td>
+                                        <td>@kalem.Birim</td>
+                                        <td>@(string.IsNullOrEmpty(kalem.Aciklama) ? "-" : kalem.Aciklama)</td>
+                                    </tr>
+                                }
+                            </tbody>
+                        </table>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+
+<div class="container-fluid">
+    <div class="row">
+        <div class="col-12 text-right">
+            <a asp-action="Index" class="btn btn-secondary">
+                <i class="fa fa-arrow-left"></i> Listeye Dön
+            </a>
+            <a asp-action="Edit" asp-route-id="@Model.IrsaliyeID" class="btn btn-primary">
+                <i class="fa fa-edit"></i> Düzenle
+            </a>
+            <a asp-action="Print" asp-route-id="@Model.IrsaliyeID" class="btn btn-info" target="_blank">
+                <i class="fas fa-print"></i> Yazdır
+            </a>
+            @if (Model.FaturaID == null || Model.FaturaID == Guid.Empty)
+            {
+                <a asp-controller="Fatura" asp-action="CreateFromIrsaliye" asp-route-id="@Model.IrsaliyeID" class="btn btn-warning">
+                    <i class="fas fa-file-invoice"></i> Fatura Oluştur
+                </a>
+            }
+            <a asp-action="Delete" asp-route-id="@Model.IrsaliyeID" class="btn btn-danger">
+                <i class="fas fa-trash"></i> Sil
+            </a>
+        </div>
+    </div>
+</div> 

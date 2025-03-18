@@ -1,0 +1,82 @@
+@model List<MuhasebeStokWebApp.ViewModels.Kur.ParaBirimiViewModel>
+
+@{
+    ViewData["Title"] = "Para Birimleri";
+}
+
+<div class="container-fluid">
+    <div class="row">
+        <div class="col-12">
+            <div class="card">
+                <div class="card-header">
+                    <h3 class="card-title">Para Birimleri</h3>
+                    <div class="card-tools">
+                        <a asp-action="ParaBirimiEkle" class="btn btn-sm btn-primary">
+                            <i class="fas fa-plus"></i> Yeni Para Birimi
+                        </a>
+                        <a asp-action="Index" class="btn btn-sm btn-secondary">
+                            <i class="fas fa-arrow-left"></i> Kur Yönetimine Dön
+                        </a>
+                    </div>
+                </div>
+                <div class="card-body">
+                    <table class="table table-bordered table-striped table-hover datatable">
+                        <thead>
+                            <tr>
+                                <th>Kod</th>
+                                <th>Ad</th>
+                                <th>Sembol</th>
+                                <th>Durum</th>
+                                <th>İşlemler</th>
+                            </tr>
+                        </thead>
+                        <tbody>
+                            @foreach (var item in Model)
+                            {
+                                <tr>
+                                    <td>@item.Kod</td>
+                                    <td>@item.Ad</td>
+                                    <td>@item.Sembol</td>
+                                    <td>
+                                        @if (item.Aktif)
+                                        {
+                                            <span class="badge badge-success">Aktif</span>
+                                        }
+                                        else
+                                        {
+                                            <span class="badge badge-danger">Pasif</span>
+                                        }
+                                    </td>
+                                    <td>
+                                        <div class="btn-group">
+                                            <a asp-action="ParaBirimiDuzenle" asp-route-id="@item.ParaBirimiID" class="btn btn-sm btn-info">
+                                                <i class="fas fa-edit"></i>
+                                            </a>
+                                            <a asp-action="ParaBirimiSil" asp-route-id="@item.ParaBirimiID" class="btn btn-sm btn-danger">
+                                                <i class="fas fa-trash"></i>
+                                            </a>
+                                        </div>
+                                    </td>
+                                </tr>
+                            }
+                        </tbody>
+                    </table>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+
+@section Scripts {
+    <script>
+        $(document).ready(function () {
+            $('.datatable').DataTable({
+                "responsive": true,
+                "autoWidth": false,
+                "language": {
+                    "url": "//cdn.datatables.net/plug-ins/1.10.25/i18n/Turkish.json"
+                }
+            });
+        });
+    </script>
+} 

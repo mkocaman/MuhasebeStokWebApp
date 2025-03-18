@@ -1,0 +1,310 @@
+@model MuhasebeStokWebApp.ViewModels.Stok.StokRaporViewModel
+@{
+    ViewData["Title"] = "Stok Raporu";
+    Layout = "~/Views/Shared/_Layout.cshtml";
+}
+
+<div class="container-fluid">
+    <div class="card">
+        <div class="card-header bg-primary text-white">
+            <div class="d-flex justify-content-between align-items-center">
+                <h4 class="mb-0">Stok Raporu</h4>
+                <a asp-action="Index" class="btn btn-light">
+                    <i class="fas fa-arrow-left"></i> Listeye Dön
+                </a>
+            </div>
+        </div>
+        <div class="card-body">
+            <div class="row mb-4">
+                <div class="col-md-12">
+                    <form asp-action="StokRapor" method="get" class="mb-4">
+                        <div class="row">
+                            <div class="col-md-3">
+                                <div class="form-group">
+                                    <label class="form-label">Kategori</label>
+                                    <select name="kategoriID" class="form-select">
+                                        <option value="">Tüm Kategoriler</option>
+                                        @foreach (var kategori in ViewBag.Kategoriler)
+                                        {
+                                            if (ViewBag.SelectedKategoriID == kategori.Value)
+                                            {
+                                                <option value="@kategori.Value" selected>@kategori.Text</option>
+                                            }
+                                            else
+                                            {
+                                                <option value="@kategori.Value">@kategori.Text</option>
+                                            }
+                                        }
+                                    </select>
+                                </div>
+                            </div>
+                            <div class="col-md-3">
+                                <div class="form-group">
+                                    <label class="form-label">Depo</label>
+                                    <select name="depoID" class="form-select">
+                                        <option value="">Tüm Depolar</option>
+                                        @foreach (var depo in ViewBag.Depolar)
+                                        {
+                                            if (ViewBag.SelectedDepoID == depo.Value)
+                                            {
+                                                <option value="@depo.Value" selected>@depo.Text</option>
+                                            }
+                                            else
+                                            {
+                                                <option value="@depo.Value">@depo.Text</option>
+                                            }
+                                        }
+                                    </select>
+                                </div>
+                            </div>
+                            <div class="col-md-3">
+                                <div class="form-group">
+                                    <label class="form-label">Stok Durumu</label>
+                                    <select name="stokDurumu" class="form-select">
+                                        <option value="">Tümü</option>
+                                        @if (ViewBag.SelectedStokDurumu == "kritik")
+                                        {
+                                            <option value="kritik" selected>Kritik Seviye</option>
+                                        }
+                                        else
+                                        {
+                                            <option value="kritik">Kritik Seviye</option>
+                                        }
+                                        
+                                        @if (ViewBag.SelectedStokDurumu == "dusuk")
+                                        {
+                                            <option value="dusuk" selected>Düşük Seviye</option>
+                                        }
+                                        else
+                                        {
+                                            <option value="dusuk">Düşük Seviye</option>
+                                        }
+                                        
+                                        @if (ViewBag.SelectedStokDurumu == "normal")
+                                        {
+                                            <option value="normal" selected>Normal Seviye</option>
+                                        }
+                                        else
+                                        {
+                                            <option value="normal">Normal Seviye</option>
+                                        }
+                                    </select>
+                                </div>
+                            </div>
+                            <div class="col-md-3">
+                                <div class="form-group">
+                                    <label class="form-label">&nbsp;</label>
+                                    <button type="submit" class="btn btn-primary w-100">
+                                        <i class="fas fa-filter"></i> Filtrele
+                                    </button>
+                                </div>
+                            </div>
+                        </div>
+                    </form>
+                </div>
+            </div>
+
+            <div class="row mb-4">
+                <div class="col-md-3">
+                    <div class="card bg-primary text-white">
+                        <div class="card-body">
+                            <h5 class="card-title">Toplam Ürün</h5>
+                            <h2 class="card-text">@Model.ToplamUrunSayisi</h2>
+                        </div>
+                    </div>
+                </div>
+                <div class="col-md-3">
+                    <div class="card bg-success text-white">
+                        <div class="card-body">
+                            <h5 class="card-title">Toplam Stok Değeri</h5>
+                            <h2 class="card-text">@Model.ToplamStokDegeri.ToString("N2") ₺</h2>
+                        </div>
+                    </div>
+                </div>
+                <div class="col-md-3">
+                    <div class="card bg-warning text-white">
+                        <div class="card-body">
+                            <h5 class="card-title">Düşük Stok</h5>
+                            <h2 class="card-text">@Model.DusukStokUrunSayisi</h2>
+                        </div>
+                    </div>
+                </div>
+                <div class="col-md-3">
+                    <div class="card bg-danger text-white">
+                        <div class="card-body">
+                            <h5 class="card-title">Kritik Stok</h5>
+                            <h2 class="card-text">@Model.KritikStokUrunSayisi</h2>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <ul class="nav nav-tabs" id="myTab" role="tablist">
+                <li class="nav-item" role="presentation">
+                    <button class="nav-link active" id="urunler-tab" data-bs-toggle="tab" data-bs-target="#urunler" type="button" role="tab" aria-controls="urunler" aria-selected="true">Ürün Bazlı Rapor</button>
+                </li>
+                <li class="nav-item" role="presentation">
+                    <button class="nav-link" id="kategoriler-tab" data-bs-toggle="tab" data-bs-target="#kategoriler" type="button" role="tab" aria-controls="kategoriler" aria-selected="false">Kategori Bazlı Rapor</button>
+                </li>
+                <li class="nav-item" role="presentation">
+                    <button class="nav-link" id="depolar-tab" data-bs-toggle="tab" data-bs-target="#depolar" type="button" role="tab" aria-controls="depolar" aria-selected="false">Depo Bazlı Rapor</button>
+                </li>
+            </ul>
+            <div class="tab-content" id="myTabContent">
+                <div class="tab-pane fade show active" id="urunler" role="tabpanel" aria-labelledby="urunler-tab">
+                    <div class="table-responsive mt-3">
+                        <table class="table table-bordered table-hover" id="urunlerTable">
+                            <thead class="table-light">
+                                <tr>
+                                    <th>Ürün Kodu</th>
+                                    <th>Ürün Adı</th>
+                                    <th>Kategori</th>
+                                    <th>Birim</th>
+                                    <th>Stok Miktarı</th>
+                                    <th>Birim Fiyat</th>
+                                    <th>Toplam Değer</th>
+                                    <th>Durum</th>
+                                </tr>
+                            </thead>
+                            <tbody>
+                                @foreach (var urun in Model.Urunler)
+                                {
+                                    <tr>
+                                        <td>@urun.UrunKodu</td>
+                                        <td>@urun.UrunAdi</td>
+                                        <td>@urun.Kategori</td>
+                                        <td>@urun.Birim</td>
+                                        <td class="text-end">@urun.StokMiktar.ToString("N2") @urun.Birim</td>
+                                        <td class="text-end">@urun.BirimFiyat.ToString("N2") ₺</td>
+                                        <td class="text-end">@((urun.StokMiktar * urun.BirimFiyat).ToString("N2")) ₺</td>
+                                        <td>
+                                            @if (urun.StokMiktar <= 10)
+                                            {
+                                                <span class="badge bg-danger">Kritik</span>
+                                            }
+                                            else if (urun.StokMiktar <= 20)
+                                            {
+                                                <span class="badge bg-warning">Düşük</span>
+                                            }
+                                            else
+                                            {
+                                                <span class="badge bg-success">Normal</span>
+                                            }
+                                        </td>
+                                    </tr>
+                                }
+                            </tbody>
+                        </table>
+                    </div>
+                </div>
+                <div class="tab-pane fade" id="kategoriler" role="tabpanel" aria-labelledby="kategoriler-tab">
+                    <div class="table-responsive mt-3">
+                        <table class="table table-bordered table-hover" id="kategorilerTable">
+                            <thead class="table-light">
+                                <tr>
+                                    <th>Kategori</th>
+                                    <th>Ürün Sayısı</th>
+                                    <th>Toplam Stok Değeri</th>
+                                    <th>Kritik Stok Sayısı</th>
+                                    <th>Düşük Stok Sayısı</th>
+                                </tr>
+                            </thead>
+                            <tbody>
+                                @foreach (var kategori in Model.KategoriBazliRapor)
+                                {
+                                    <tr>
+                                        <td>@kategori.KategoriAdi</td>
+                                        <td class="text-end">@kategori.UrunSayisi</td>
+                                        <td class="text-end">@kategori.ToplamStokDegeri.ToString("N2") ₺</td>
+                                        <td class="text-end">@kategori.KritikStokUrunSayisi</td>
+                                        <td class="text-end">@kategori.DusukStokUrunSayisi</td>
+                                    </tr>
+                                }
+                            </tbody>
+                        </table>
+                    </div>
+                </div>
+                <div class="tab-pane fade" id="depolar" role="tabpanel" aria-labelledby="depolar-tab">
+                    <div class="table-responsive mt-3">
+                        <table class="table table-bordered table-hover" id="depolarTable">
+                            <thead class="table-light">
+                                <tr>
+                                    <th>Depo</th>
+                                    <th>Ürün Sayısı</th>
+                                    <th>Toplam Stok Değeri</th>
+                                    <th>Kritik Stok Sayısı</th>
+                                    <th>Düşük Stok Sayısı</th>
+                                </tr>
+                            </thead>
+                            <tbody>
+                                @foreach (var depo in Model.DepoBazliRapor)
+                                {
+                                    <tr>
+                                        <td>@depo.DepoAdi</td>
+                                        <td class="text-end">@depo.UrunSayisi</td>
+                                        <td class="text-end">@depo.ToplamStokDegeri.ToString("N2") ₺</td>
+                                        <td class="text-end">@depo.KritikStokUrunSayisi</td>
+                                        <td class="text-end">@depo.DusukStokUrunSayisi</td>
+                                    </tr>
+                                }
+                            </tbody>
+                        </table>
+                    </div>
+                </div>
+            </div>
+            
+            <div class="card-footer bg-light text-end mt-3">
+                <a asp-action="StokRaporExcel" asp-route-kategoriID="@ViewBag.SelectedKategoriID" asp-route-depoID="@ViewBag.SelectedDepoID" asp-route-stokDurumu="@ViewBag.SelectedStokDurumu" class="btn btn-success">
+                    <i class="fas fa-file-excel"></i> Excel'e Aktar
+                </a>
+                <a asp-action="StokRaporPdf" asp-route-kategoriID="@ViewBag.SelectedKategoriID" asp-route-depoID="@ViewBag.SelectedDepoID" asp-route-stokDurumu="@ViewBag.SelectedStokDurumu" class="btn btn-danger">
+                    <i class="fas fa-file-pdf"></i> PDF'e Aktar
+                </a>
+                <button type="button" onclick="window.print()" class="btn btn-info">
+                    <i class="fas fa-print"></i> Yazdır
+                </button>
+            </div>
+        </div>
+    </div>
+</div>
+
+@section Scripts {
+    <script>
+        $(document).ready(function () {
+            // DataTable başlatma
+            try {
+                $('#urunlerTable').DataTable({
+                    language: {
+                        url: '//cdn.datatables.net/plug-ins/1.13.7/i18n/tr.json',
+                        info: "" // Bilgilendirme yazısını kaldır
+                    },
+                    responsive: true,
+                    retrieve: true,
+                    order: [[1, 'asc']] // Ürün adına göre artan sıralama
+                });
+                
+                $('#kategorilerTable').DataTable({
+                    language: {
+                        url: '//cdn.datatables.net/plug-ins/1.13.7/i18n/tr.json',
+                        info: "" // Bilgilendirme yazısını kaldır
+                    },
+                    responsive: true,
+                    retrieve: true,
+                    order: [[0, 'asc']] // Kategori adına göre artan sıralama
+                });
+                
+                $('#depolarTable').DataTable({
+                    language: {
+                        url: '//cdn.datatables.net/plug-ins/1.13.7/i18n/tr.json',
+                        info: "" // Bilgilendirme yazısını kaldır
+                    },
+                    responsive: true,
+                    retrieve: true,
+                    order: [[0, 'asc']] // Depo adına göre artan sıralama
+                });
+            } catch (e) {
+                console.log("DataTable başlatılırken bir hata oluştu, ancak işlem devam ediyor.");
+            }
+        });
+    </script>
+} 

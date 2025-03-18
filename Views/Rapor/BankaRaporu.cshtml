@@ -1,0 +1,229 @@
+@model MuhasebeStokWebApp.ViewModels.Rapor.BankaRaporViewModel
+@{
+    ViewData["Title"] = "Banka Raporu";
+    Layout = "~/Views/Shared/_RaporLayout.cshtml";
+}
+
+<div class="container-fluid">
+    <div class="row mb-4">
+        <div class="col-md-12">
+            <div class="card">
+                <div class="card-header bg-success text-white">
+                    <h5 class="mb-0">@Model.RaporAdi</h5>
+                </div>
+                <div class="card-body">
+                    <div class="row">
+                        <div class="col-md-6">
+                            <dl class="row">
+                                <dt class="col-sm-4">Rapor Tarihi:</dt>
+                                <dd class="col-sm-8">@Model.RaporTarihi.ToString("dd.MM.yyyy HH:mm")</dd>
+                                
+                                <dt class="col-sm-4">Kullanıcı:</dt>
+                                <dd class="col-sm-8">@Model.KullaniciAdi</dd>
+                            </dl>
+                        </div>
+                        <div class="col-md-6">
+                            <dl class="row">
+                                <dt class="col-sm-4">Açıklama:</dt>
+                                <dd class="col-sm-8">@Model.Aciklama</dd>
+                            </dl>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <div class="row mb-4">
+        <div class="col-md-12">
+            <div class="card">
+                <div class="card-header">
+                    <h5 class="mb-0">Özet Bilgiler</h5>
+                </div>
+                <div class="card-body">
+                    <div class="row">
+                        <div class="col-md-4">
+                            <div class="info-box bg-success text-white p-3">
+                                <h6>Toplam Giriş</h6>
+                                <h3>@Model.ToplamGiris.ToString("N2") ₺</h3>
+                            </div>
+                        </div>
+                        <div class="col-md-4">
+                            <div class="info-box bg-danger text-white p-3">
+                                <h6>Toplam Çıkış</h6>
+                                <h3>@Model.ToplamCikis.ToString("N2") ₺</h3>
+                            </div>
+                        </div>
+                        <div class="col-md-4">
+                            <div class="info-box bg-primary text-white p-3">
+                                <h6>Net Bakiye</h6>
+                                <h3>@Model.NetBakiye.ToString("N2") ₺</h3>
+                            </div>
+                        </div>
+                    </div>
+                    
+                    @if (Model.ParaBirimiToplamlari.Count > 0)
+                    {
+                        <div class="row mt-3">
+                            <div class="col-md-12">
+                                <h6>Para Birimi Bazında Bakiyeler</h6>
+                                <table class="table table-sm table-bordered">
+                                    <thead class="table-light">
+                                        <tr>
+                                            <th>Para Birimi</th>
+                                            <th class="text-right">Bakiye</th>
+                                        </tr>
+                                    </thead>
+                                    <tbody>
+                                        @foreach (var item in Model.ParaBirimiToplamlari)
+                                        {
+                                            <tr>
+                                                <td>@item.Key</td>
+                                                <td class="text-right">
+                                                    @if (item.Value >= 0)
+                                                    {
+                                                        <span class="text-success">@item.Value.ToString("N2")</span>
+                                                    }
+                                                    else
+                                                    {
+                                                        <span class="text-danger">@item.Value.ToString("N2")</span>
+                                                    }
+                                                </td>
+                                            </tr>
+                                        }
+                                    </tbody>
+                                </table>
+                            </div>
+                        </div>
+                    }
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <div class="row">
+        <div class="col-md-12">
+            <div class="card">
+                <div class="card-header">
+                    <h5 class="mb-0">Banka Hareketleri</h5>
+                </div>
+                <div class="card-body">
+                    <div class="table-responsive">
+                        <table class="table table-bordered table-striped">
+                            <thead class="table-light">
+                                <tr>
+                                    <th>Banka Adı</th>
+                                    <th>Tarih</th>
+                                    <th>Hareket Türü</th>
+                                    <th>Referans No</th>
+                                    <th>Dekont No</th>
+                                    <th>Para Birimi</th>
+                                    <th>Açıklama</th>
+                                    <th class="text-right">Tutar</th>
+                                </tr>
+                            </thead>
+                            <tbody>
+                                @if (Model.BankaHareketleri.Count == 0)
+                                {
+                                    <tr>
+                                        <td colspan="8" class="text-center">Kayıt bulunamadı.</td>
+                                    </tr>
+                                }
+                                else
+                                {
+                                    @foreach (var hareket in Model.BankaHareketleri)
+                                    {
+                                        <tr>
+                                            <td>@hareket.BankaAdi</td>
+                                            <td>@hareket.Tarih.ToString("dd.MM.yyyy HH:mm")</td>
+                                            <td>
+                                                @if (hareket.HareketTuru == "Giriş" || hareket.HareketTuru == "Açılış Bakiyesi" || hareket.HareketTuru == "Bakiye Artışı")
+                                                {
+                                                    <span class="badge bg-success text-white">@hareket.HareketTuru</span>
+                                                }
+                                                else if (hareket.HareketTuru == "Çıkış" || hareket.HareketTuru == "Bakiye Azalışı")
+                                                {
+                                                    <span class="badge bg-danger text-white">@hareket.HareketTuru</span>
+                                                }
+                                                else
+                                                {
+                                                    <span class="badge bg-info text-white">@hareket.HareketTuru</span>
+                                                }
+                                            </td>
+                                            <td>@hareket.ReferansNo</td>
+                                            <td>@hareket.DekontNo</td>
+                                            <td>@hareket.ParaBirimi</td>
+                                            <td>@hareket.Aciklama</td>
+                                            <td class="text-right">
+                                                @if (hareket.HareketTuru == "Giriş" || hareket.HareketTuru == "Açılış Bakiyesi" || hareket.HareketTuru == "Bakiye Artışı")
+                                                {
+                                                    <span class="text-success">+@hareket.Tutar.ToString("N2") @hareket.ParaBirimi</span>
+                                                }
+                                                else if (hareket.HareketTuru == "Çıkış" || hareket.HareketTuru == "Bakiye Azalışı")
+                                                {
+                                                    <span class="text-danger">-@hareket.Tutar.ToString("N2") @hareket.ParaBirimi</span>
+                                                }
+                                                else
+                                                {
+                                                    @hareket.Tutar.ToString("N2") <span>@hareket.ParaBirimi</span>
+                                                }
+                                            </td>
+                                        </tr>
+                                    }
+                                }
+                            </tbody>
+                            <tfoot>
+                                <tr class="table-primary">
+                                    <th colspan="7" class="text-right">Toplam Giriş:</th>
+                                    <th class="text-right text-success">+@Model.ToplamGiris.ToString("N2") ₺</th>
+                                </tr>
+                                <tr class="table-primary">
+                                    <th colspan="7" class="text-right">Toplam Çıkış:</th>
+                                    <th class="text-right text-danger">-@Model.ToplamCikis.ToString("N2") ₺</th>
+                                </tr>
+                                <tr class="table-primary">
+                                    <th colspan="7" class="text-right">Net Bakiye:</th>
+                                    <th class="text-right">@Model.NetBakiye.ToString("N2") ₺</th>
+                                </tr>
+                            </tfoot>
+                        </table>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+
+@section Scripts {
+    <script>
+        $(document).ready(function () {
+            // DataTable uyarılarını gizle
+            $.fn.dataTable.ext.errMode = 'none';
+            
+            // Yazdırma işlemi için
+            $('.btn-print').click(function () {
+                window.print();
+            });
+
+            // Tablonun sıralanabilir olmasını sağlar
+            if ($.fn.DataTable) {
+                try {
+                    $('.table').DataTable({
+                        "order": [[1, "asc"]], // Tarihe göre sıralama
+                        "language": {
+                            "url": "//cdn.datatables.net/plug-ins/1.10.25/i18n/Turkish.json",
+                            "info": "" // Bilgilendirme yazısını kaldır (çift görünme sorununu çözmek için)
+                        },
+                        "dom": 'Bfrtip',
+                        "buttons": [
+                            'copy', 'excel', 'pdf', 'print'
+                        ],
+                        "retrieve": true
+                    });
+                } catch (e) {
+                    console.log("DataTable başlatılırken bir hata oluştu, ancak işlem devam ediyor.");
+                }
+            }
+        });
+    </script>
+} 

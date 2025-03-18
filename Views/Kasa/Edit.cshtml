@@ -1,0 +1,104 @@
+@model MuhasebeStokWebApp.ViewModels.Kasa.KasaEditViewModel
+@{
+    ViewData["Title"] = "Kasa Düzenle";
+}
+
+<div class="container-fluid">
+    <div class="page-title">
+        <div class="row">
+            <div class="col-6">
+                <h3>Kasa Düzenle</h3>
+            </div>
+            <div class="col-6">
+                <ol class="breadcrumb">
+                    <li class="breadcrumb-item"><a href="/"><i data-feather="home"></i></a></li>
+                    <li class="breadcrumb-item"><a asp-controller="Kasa" asp-action="Index">Kasalar</a></li>
+                    <li class="breadcrumb-item active">Kasa Düzenle</li>
+                </ol>
+            </div>
+        </div>
+    </div>
+</div>
+
+<div class="container-fluid">
+    <div class="row">
+        <div class="col-md-12">
+            <div class="card">
+                <div class="card-header">
+                    <h5 class="mb-0">Kasa Bilgileri</h5>
+                </div>
+                <div class="card-body">
+                    <form asp-action="Edit">
+                        <div asp-validation-summary="ModelOnly" class="text-danger"></div>
+                        <input type="hidden" asp-for="KasaID" />
+                        
+                        <div class="row">
+                            <div class="col-md-6">
+                                <div class="form-group mb-3">
+                                    <label asp-for="KasaAdi" class="control-label"></label>
+                                    <input asp-for="KasaAdi" class="form-control" />
+                                    <span asp-validation-for="KasaAdi" class="text-danger"></span>
+                                </div>
+                            </div>
+                            <div class="col-md-6">
+                                <div class="form-group mb-3">
+                                    <label asp-for="KasaTuru" class="control-label"></label>
+                                    <select asp-for="KasaTuru" class="form-control">
+                                        <option value="">-- Kasa Türü Seçiniz --</option>
+                                        <option value="Ana Kasa">Ana Kasa</option>
+                                        <option value="Şube Kasası">Şube Kasası</option>
+                                        <option value="Yardımcı Kasa">Yardımcı Kasa</option>
+                                    </select>
+                                    <span asp-validation-for="KasaTuru" class="text-danger"></span>
+                                </div>
+                            </div>
+                        </div>
+                        
+                        <div class="row">
+                            <div class="col-md-4">
+                                <div class="form-group mb-3">
+                                    <label asp-for="AcilisBakiye" class="control-label"></label>
+                                    <input asp-for="AcilisBakiye" class="form-control" />
+                                    <span asp-validation-for="AcilisBakiye" class="text-danger"></span>
+                                    <small class="form-text text-muted">Açılış bakiyesi değiştirildiğinde güncel bakiye de güncellenir.</small>
+                                </div>
+                            </div>
+                            <div class="col-md-4">
+                                <div class="form-group mb-3">
+                                    <label asp-for="GuncelBakiye" class="control-label"></label>
+                                    <input asp-for="GuncelBakiye" class="form-control" readonly />
+                                    <span asp-validation-for="GuncelBakiye" class="text-danger"></span>
+                                </div>
+                            </div>
+                            <div class="col-md-4">
+                                <div class="form-group mb-3">
+                                    <label asp-for="Aktif" class="control-label"></label>
+                                    <div class="form-check mt-2">
+                                        <input asp-for="Aktif" class="form-check-input" />
+                                        <label class="form-check-label" for="Aktif">Aktif</label>
+                                    </div>
+                                    <span asp-validation-for="Aktif" class="text-danger"></span>
+                                </div>
+                            </div>
+                        </div>
+                        
+                        <div class="form-group mb-3">
+                            <label asp-for="Aciklama" class="control-label"></label>
+                            <textarea asp-for="Aciklama" class="form-control" rows="3"></textarea>
+                            <span asp-validation-for="Aciklama" class="text-danger"></span>
+                        </div>
+                        
+                        <div class="form-group text-end mt-4">
+                            <a asp-action="Index" class="btn btn-secondary">İptal</a>
+                            <input type="submit" value="Kaydet" class="btn btn-primary" />
+                        </div>
+                    </form>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+
+@section Scripts {
+    @{await Html.RenderPartialAsync("_ValidationScriptsPartial");}
+} 

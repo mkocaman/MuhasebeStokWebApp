@@ -1,0 +1,120 @@
+@model MuhasebeStokWebApp.ViewModels.Banka.BankaEditViewModel
+@{
+    ViewData["Title"] = "Banka Hesabı Düzenle";
+}
+
+<div class="container-fluid py-4">
+    <div class="row">
+        <div class="col-12">
+            <div class="card my-4">
+                <div class="card-header p-0 position-relative mt-n4 mx-3 z-index-2">
+                    <div class="bg-gradient-primary shadow-primary border-radius-lg pt-4 pb-3">
+                        <h6 class="text-white text-capitalize ps-3">Banka Hesabı Düzenle</h6>
+                    </div>
+                </div>
+                <div class="card-body px-0 pb-2">
+                    <div class="container">
+                        <form asp-action="Edit" method="post">
+                            <div asp-validation-summary="ModelOnly" class="text-danger"></div>
+                            <input type="hidden" asp-for="BankaID" />
+                            
+                            <div class="row">
+                                <div class="col-md-6">
+                                    <div class="input-group input-group-outline my-3">
+                                        <label asp-for="BankaAdi" class="form-label"></label>
+                                        <input asp-for="BankaAdi" class="form-control" />
+                                    </div>
+                                    <span asp-validation-for="BankaAdi" class="text-danger"></span>
+                                </div>
+                                <div class="col-md-6">
+                                    <div class="input-group input-group-outline my-3">
+                                        <label asp-for="SubeAdi" class="form-label"></label>
+                                        <input asp-for="SubeAdi" class="form-control" />
+                                    </div>
+                                    <span asp-validation-for="SubeAdi" class="text-danger"></span>
+                                </div>
+                            </div>
+                            
+                            <div class="row">
+                                <div class="col-md-6">
+                                    <div class="input-group input-group-outline my-3">
+                                        <label asp-for="SubeKodu" class="form-label"></label>
+                                        <input asp-for="SubeKodu" class="form-control" />
+                                    </div>
+                                    <span asp-validation-for="SubeKodu" class="text-danger"></span>
+                                </div>
+                                <div class="col-md-6">
+                                    <div class="input-group input-group-outline my-3">
+                                        <label asp-for="HesapNo" class="form-label"></label>
+                                        <input asp-for="HesapNo" class="form-control" />
+                                    </div>
+                                    <span asp-validation-for="HesapNo" class="text-danger"></span>
+                                </div>
+                            </div>
+                            
+                            <div class="row">
+                                <div class="col-md-6">
+                                    <div class="input-group input-group-outline my-3">
+                                        <label asp-for="IBAN" class="form-label"></label>
+                                        <input asp-for="IBAN" class="form-control" />
+                                    </div>
+                                    <span asp-validation-for="IBAN" class="text-danger"></span>
+                                </div>
+                                <div class="col-md-6">
+                                    <div class="input-group input-group-static my-3">
+                                        <label asp-for="ParaBirimi" class="ms-0"></label>
+                                        <select asp-for="ParaBirimi" class="form-control" disabled>
+                                            <option value="TRY">TRY - Türk Lirası</option>
+                                            <option value="USD">USD - Amerikan Doları</option>
+                                            <option value="EUR">EUR - Euro</option>
+                                            <option value="GBP">GBP - İngiliz Sterlini</option>
+                                        </select>
+                                        <input type="hidden" asp-for="ParaBirimi" />
+                                        <small class="text-muted">Para birimi değiştirilemez.</small>
+                                    </div>
+                                </div>
+                            </div>
+                            
+                            <div class="row">
+                                <div class="col-md-6">
+                                    <div class="input-group input-group-static my-3">
+                                        <label asp-for="AcilisBakiye" class="ms-0"></label>
+                                        <input asp-for="AcilisBakiye" class="form-control" type="number" step="0.01" readonly />
+                                        <small class="text-muted">Açılış bakiyesi değiştirilemez.</small>
+                                    </div>
+                                </div>
+                                <div class="col-md-6">
+                                    <div class="form-check form-switch mt-4">
+                                        <input asp-for="Aktif" class="form-check-input" type="checkbox" />
+                                        <label asp-for="Aktif" class="form-check-label"></label>
+                                    </div>
+                                </div>
+                            </div>
+                            
+                            <div class="row">
+                                <div class="col-md-12">
+                                    <div class="input-group input-group-outline my-3">
+                                        <label asp-for="Aciklama" class="form-label"></label>
+                                        <textarea asp-for="Aciklama" class="form-control" rows="3"></textarea>
+                                    </div>
+                                    <span asp-validation-for="Aciklama" class="text-danger"></span>
+                                </div>
+                            </div>
+                            
+                            <div class="row">
+                                <div class="col-md-12 text-end">
+                                    <a asp-action="Index" class="btn btn-outline-secondary">İptal</a>
+                                    <button type="submit" class="btn btn-primary">Güncelle</button>
+                                </div>
+                            </div>
+                        </form>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+
+@section Scripts {
+    @{await Html.RenderPartialAsync("_ValidationScriptsPartial");}
+} 

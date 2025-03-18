@@ -1,0 +1,147 @@
+@model IEnumerable<MuhasebeStokWebApp.ViewModels.Irsaliye.IrsaliyeViewModel>
+@{
+    ViewData["Title"] = "İrsaliye Listesi";
+    Layout = "~/Views/Shared/_Layout.cshtml";
+}
+
+<div class="container-fluid">
+    <div class="card">
+        <div class="card-header bg-primary text-white">
+            <div class="d-flex justify-content-between align-items-center">
+                <h4 class="mb-0">İrsaliye Listesi</h4>
+                <a asp-action="Create" class="btn btn-success">
+                    <i class="fas fa-plus"></i> Yeni İrsaliye Oluştur
+                </a>
+            </div>
+        </div>
+        <div class="card-body">
+            @if (TempData["SuccessMessage"] != null)
+            {
+                <div class="alert alert-success alert-dismissible fade show" role="alert">
+                    @TempData["SuccessMessage"]
+                    <button type="button" class="btn-close" data-bs-dismiss="alert" aria-label="Close"></button>
+                </div>
+            }
+            
+            @if (TempData["ErrorMessage"] != null)
+            {
+                <div class="alert alert-danger alert-dismissible fade show" role="alert">
+                    @TempData["ErrorMessage"]
+                    <button type="button" class="btn-close" data-bs-dismiss="alert" aria-label="Close"></button>
+                </div>
+            }
+            
+            <!-- İrsaliye Tablosu -->
+            <div class="table-responsive">
+                <table class="table table-bordered table-hover" id="irsaliyeTable">
+                    <thead class="table-light">
+                        <tr>
+                            <th>İrsaliye No</th>
+                            <th>Tarih</th>
+                            <th>Sevk Tarihi</th>
+                            <th>Cari</th>
+                            <th>Tür</th>
+                            <th>Durum</th>
+                            <th>İşlemler</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        @foreach (var item in Model)
+                        {
+                            <tr>
+                                <td>@item.IrsaliyeNumarasi</td>
+                                <td>@(item.IrsaliyeTarihi.HasValue ? item.IrsaliyeTarihi.Value.ToString("dd.MM.yyyy") : "-")</td>
+                                <td>@(item.SevkTarihi.HasValue ? item.SevkTarihi.Value.ToString("dd.MM.yyyy") : "-")</td>
+                                <td>@item.CariAdi</td>
+                                <td>
+                                    @if (item.IrsaliyeTuru == "Giriş")
+                                    {
+                                        <span class="badge bg-info">Giriş</span>
+                                    }
+                                    else
+                                    {
+                                        <span class="badge bg-primary">Çıkış</span>
+                                    }
+                                </td>
+                                <td>
+                                    @switch (item.Durum)
+                                    {
+                                        case "Açık":
+                                            <span class="badge bg-warning">Açık</span>
+                                            break;
+                                        case "Kapalı":
+                                            <span class="badge bg-success">Kapalı</span>
+                                            break;
+                                        case "İptal":
+                                            <span class="badge bg-danger">İptal</span>
+                                            break;
+                                        default:
+                                            <span class="badge bg-secondary">@item.Durum</span>
+                                            break;
+                                    }
+                                </td>
+                                <td>
+                                    <div class="btn-group" role="group">
+                                        <a asp-action="Details" asp-route-id="@item.IrsaliyeID" class="btn btn-sm btn-info">
+                                            <i class="fas fa-eye"></i>
+                                        </a>
+                                        <a asp-action="Edit" asp-route-id="@item.IrsaliyeID" class="btn btn-sm btn-warning">
+                                            <i class="fas fa-edit"></i>
+                                        </a>
+                                        <a asp-action="Print" asp-route-id="@item.IrsaliyeID" class="btn btn-sm btn-secondary" target="_blank">
+                                            <i class="fas fa-print"></i>
+                                        </a>
+                                        <a asp-action="Delete" asp-route-id="@item.IrsaliyeID" class="btn btn-sm btn-danger">
+                                            <i class="fas fa-trash"></i>
+                                        </a>
+                                    </div>
+                                </td>
+                            </tr>
+                        }
+                    </tbody>
+                </table>
+            </div>
+        </div>
+    </div>
+</div>
+
+@section Scripts {
+    <script>
+        $(document).ready(function () {
+            // DataTable başlatma
+            try {
+                $('#irsaliyeTable').DataTable({
+                    language: {
+                        url: '//cdn.datatables.net/plug-ins/1.13.7/i18n/tr.json',
+                        info: "" // Bilgilendirme yazısını kaldır (çift görünme sorununu çözmek için)
+                    },
+                    responsive: true,
+                    retrieve: true,
+                    order: [[1, 'desc']] // Tarih sütununa göre azalan sıralama
+                });
+            } catch (e) {
+                console.log("DataTable başlatılırken bir hata oluştu, ancak işlem devam ediyor.");
+            }
+
+            // Otomatik kapanan alertler
+            window.setTimeout(function() {
+                $(".alert").fadeTo(500, 0).slideUp(500, function() {
+                    $(this).remove();
+                });
+            }, 4000);
+            
+            // SweetAlert ile başarı mesajı göster
+            @if (TempData["SuccessMessage"] != null)
+            {
+                <text>
+                Swal.fire({
+                    title: 'Başarılı!',
+                    text: '@TempData["SuccessMessage"]',
+                    icon: 'success',
+                    confirmButtonText: 'Tamam'
+                });
+                </text>
+            }
+        });
+    </script>
+} 

@@ -1,0 +1,102 @@
+@model MuhasebeStokWebApp.ViewModels.Irsaliye.IrsaliyeViewModel
+@{
+    ViewData["Title"] = "İrsaliye Sil";
+}
+
+<div class="container-fluid">
+    <div class="page-title">
+        <div class="row">
+            <div class="col-6">
+                <h3>İrsaliye Sil</h3>
+            </div>
+            <div class="col-6">
+                <ol class="breadcrumb">
+                    <li class="breadcrumb-item"><a href="/"><i data-feather="home"></i></a></li>
+                    <li class="breadcrumb-item"><a asp-controller="Irsaliye" asp-action="Index">İrsaliye</a></li>
+                    <li class="breadcrumb-item active">İrsaliye Sil</li>
+                </ol>
+            </div>
+        </div>
+    </div>
+</div>
+
+<div class="container-fluid">
+    <div class="row">
+        <div class="col-sm-12">
+            <div class="card">
+                <div class="card-header">
+                    <h5>İrsaliye Silme Onayı</h5>
+                </div>
+                <div class="card-body">
+                    <div class="alert alert-danger" role="alert">
+                        <h4 class="alert-heading">Dikkat!</h4>
+                        <p>Bu irsaliyeyi silmek istediğinizden emin misiniz? Bu işlem geri alınamaz.</p>
+                    </div>
+                    <div class="row">
+                        <div class="col-md-6">
+                            <div class="form-group">
+                                <label>İrsaliye No</label>
+                                <p class="form-control-static">@Model.IrsaliyeNumarasi</p>
+                            </div>
+                        </div>
+                        <div class="col-md-6">
+                            <div class="form-group">
+                                <label>İrsaliye Tarihi</label>
+                                <p class="form-control-static">@(Model.IrsaliyeTarihi.HasValue ? Model.IrsaliyeTarihi.Value.ToString("dd.MM.yyyy") : "-")</p>
+                            </div>
+                        </div>
+                        <div class="col-md-6">
+                            <div class="form-group">
+                                <label>Sevk Tarihi</label>
+                                <p class="form-control-static">@(Model.SevkTarihi.HasValue ? Model.SevkTarihi.Value.ToString("dd.MM.yyyy") : "-")</p>
+                            </div>
+                        </div>
+                        <div class="col-md-6">
+                            <div class="form-group">
+                                <label>Cari</label>
+                                <p class="form-control-static">@Model.CariAdi</p>
+                            </div>
+                        </div>
+                        <div class="col-md-6">
+                            <div class="form-group">
+                                <label>İrsaliye Türü</label>
+                                <p class="form-control-static">
+                                    <span class="badge badge-@(Model.IrsaliyeTuru == "Çıkış" ? "success" : "info")">
+                                        @Model.IrsaliyeTuru
+                                    </span>
+                                </p>
+                            </div>
+                        </div>
+                        <div class="col-md-6">
+                            <div class="form-group">
+                                <label>Durum</label>
+                                <p class="form-control-static">
+                                    <span class="badge badge-@(Model.Durum == "Kapalı" ? "success" : (Model.Durum == "Açık" ? "warning" : "danger"))">
+                                        @Model.Durum
+                                    </span>
+                                </p>
+                            </div>
+                        </div>
+                        <div class="col-md-12">
+                            <div class="form-group">
+                                <label>Açıklama</label>
+                                <p class="form-control-static">@(string.IsNullOrEmpty(Model.Aciklama) ? "-" : Model.Aciklama)</p>
+                            </div>
+                        </div>
+                    </div>
+                    <form asp-action="Delete" method="post">
+                        <input type="hidden" asp-for="IrsaliyeID" />
+                        <div class="form-group text-right">
+                            <a asp-action="Index" class="btn btn-secondary">
+                                <i class="fa fa-arrow-left"></i> İptal
+                            </a>
+                            <button type="submit" class="btn btn-danger">
+                                <i class="fa fa-trash"></i> Sil
+                            </button>
+                        </div>
+                    </form>
+                </div>
+            </div>
+        </div>
+    </div>
+</div> 

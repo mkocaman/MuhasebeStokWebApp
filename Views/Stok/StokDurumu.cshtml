@@ -1,0 +1,199 @@
+@model MuhasebeStokWebApp.ViewModels.Stok.StokDurumuViewModel
+@{
+    ViewData["Title"] = "Stok Durumu Raporu";
+}
+
+<div class="container-fluid">
+    <div class="page-title">
+        <div class="row">
+            <div class="col-6">
+                <h3>Stok Durumu Raporu</h3>
+            </div>
+            <div class="col-6">
+                <ol class="breadcrumb">
+                    <li class="breadcrumb-item"><a asp-controller="Home" asp-action="Index"><i class="material-icons">home</i></a></li>
+                    <li class="breadcrumb-item"><a asp-controller="Stok" asp-action="Index">Stok Yönetimi</a></li>
+                    <li class="breadcrumb-item active">Stok Durumu</li>
+                </ol>
+            </div>
+        </div>
+    </div>
+</div>
+
+<div class="container-fluid">
+    <div class="card">
+        <div class="card-header p-3">
+            <div class="d-flex justify-content-between align-items-center">
+                <h5 class="mb-0">Stok Durumu</h5>
+                <div>
+                    <button class="btn btn-sm btn-outline-primary me-2" onclick="printReport()">
+                        <i class="material-icons">print</i> Yazdır
+                    </button>
+                    <button class="btn btn-sm btn-outline-success" onclick="exportExcel()">
+                        <i class="material-icons">grid_on</i> Excel
+                    </button>
+                </div>
+            </div>
+        </div>
+        <div class="card-body">
+            <form asp-action="StokDurumu" method="get" id="filterForm" class="mb-4">
+                <div class="row">
+                    <div class="col-md-3">
+                        <div class="input-group input-group-static mb-4">
+                            <label for="DepoID" class="ms-0">Depo</label>
+                            <select name="DepoID" id="DepoID" class="form-control" asp-items="ViewBag.Depolar">
+                                <option value="">Tüm Depolar</option>
+                            </select>
+                        </div>
+                    </div>
+                    <div class="col-md-3">
+                        <div class="input-group input-group-static mb-4">
+                            <label for="KategoriID" class="ms-0">Kategori</label>
+                            <select name="KategoriID" id="KategoriID" class="form-control" asp-items="ViewBag.Kategoriler">
+                                <option value="">Tüm Kategoriler</option>
+                            </select>
+                        </div>
+                    </div>
+                    <div class="col-md-3">
+                        <div class="input-group input-group-static mb-4">
+                            <label for="UrunAdi" class="ms-0">Ürün Adı</label>
+                            <input name="UrunAdi" id="UrunAdi" class="form-control" value="@ViewBag.UrunAdi" />
+                        </div>
+                    </div>
+                    <div class="col-md-3">
+                        <div class="input-group input-group-static mb-4">
+                            <label for="SadeceKritik" class="ms-0">Stok Durumu</label>
+                            <select name="SadeceKritik" id="SadeceKritik" class="form-control">
+                                <option value="">Tüm Stoklar</option>
+                                @if (ViewBag.SadeceKritik == true)
+                                {
+                                    <option value="true" selected>Sadece Kritik Stoklar</option>
+                                }
+                                else
+                                {
+                                    <option value="true">Sadece Kritik Stoklar</option>
+                                }
+                                
+                                @if (ViewBag.SadeceKritik == false)
+                                {
+                                    <option value="false" selected>Kritik Olmayanlar</option>
+                                }
+                                else
+                                {
+                                    <option value="false">Kritik Olmayanlar</option>
+                                }
+                            </select>
+                        </div>
+                    </div>
+                    <div class="col-md-12 text-end">
+                        <button type="submit" class="btn btn-primary">
+                            <i class="material-icons">filter_list</i> Filtrele
+                        </button>
+                        <a asp-action="StokDurumu" class="btn btn-outline-secondary">
+                            <i class="material-icons">refresh</i> Sıfırla
+                        </a>
+                    </div>
+                </div>
+            </form>
+
+            <div class="table-responsive">
+                <table class="table table-hover" id="stokDurumuTablosu">
+                    <thead>
+                        <tr>
+                            <th>Ürün Kodu</th>
+                            <th>Ürün Adı</th>
+                            <th>Kategori</th>
+                            <th>Birim</th>
+                            <th>Depo</th>
+                            <th>Stok Miktarı</th>
+                            <th>Ortalama Maliyet</th>
+                            <th>Toplam Değer</th>
+                            <th>Satış Fiyatı</th>
+                            <th>Durum</th>
+                            <th>İşlemler</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        @foreach (var stokDurumu in Model.StokDurumuListesi)
+                        {
+                            <tr>
+                                <td>@stokDurumu.UrunKodu</td>
+                                <td>@stokDurumu.UrunAdi</td>
+                                <td>@stokDurumu.Kategori</td>
+                                <td>@stokDurumu.Birim</td>
+                                <td>@stokDurumu.DepoAdi</td>
+                                <td>@stokDurumu.StokMiktari.ToString("N2") @stokDurumu.Birim</td>
+                                <td>@stokDurumu.OrtalamaMaliyet.ToString("N2") ₺</td>
+                                <td>@((stokDurumu.OrtalamaMaliyet * stokDurumu.StokMiktari).ToString("N2")) ₺</td>
+                                <td>@stokDurumu.SatisFiyati.ToString("N2") ₺</td>
+                                <td>
+                                    @if (stokDurumu.StokMiktari <= stokDurumu.KritikStokSeviyesi)
+                                    {
+                                        <span class="badge bg-danger">Kritik</span>
+                                    }
+                                    else if (stokDurumu.StokMiktari <= stokDurumu.KritikStokSeviyesi * 1.5m)
+                                    {
+                                        <span class="badge bg-warning">Düşük</span>
+                                    }
+                                    else
+                                    {
+                                        <span class="badge bg-success">Normal</span>
+                                    }
+                                </td>
+                                <td>
+                                    <a asp-action="StokGiris" asp-route-urunID="@stokDurumu.UrunID" asp-route-depoID="@stokDurumu.DepoID" class="btn btn-sm btn-success">
+                                        <i class="material-icons">add</i>
+                                    </a>
+                                    <a asp-action="StokCikis" asp-route-urunID="@stokDurumu.UrunID" asp-route-depoID="@stokDurumu.DepoID" class="btn btn-sm btn-danger">
+                                        <i class="material-icons">remove</i>
+                                    </a>
+                                    <a asp-action="Hareketler" asp-route-urunID="@stokDurumu.UrunID" class="btn btn-sm btn-info">
+                                        <i class="material-icons">history</i>
+                                    </a>
+                                </td>
+                            </tr>
+                        }
+                    </tbody>
+                    <tfoot>
+                        <tr class="fw-bold">
+                            <td colspan="7" class="text-end">Toplam Stok Değeri:</td>
+                            <td>@Model.ToplamStokDegeri.ToString("N2") ₺</td>
+                            <td colspan="3"></td>
+                        </tr>
+                    </tfoot>
+                </table>
+            </div>
+        </div>
+    </div>
+</div>
+
+@section Scripts {
+    <script>
+        $(document).ready(function () {
+            $('#stokDurumuTablosu').DataTable({
+                language: {
+                    url: '//cdn.datatables.net/plug-ins/1.10.25/i18n/Turkish.json'
+                },
+                order: [[5, 'asc']],
+                dom: 'Bfrtip',
+                buttons: [
+                    'copy', 'excel', 'pdf', 'print'
+                ]
+            });
+            
+            // Form elemanları değiştiğinde otomatik submit
+            $('#DepoID, #KategoriID, #SadeceKritik').change(function() {
+                $('#filterForm').submit();
+            });
+        });
+        
+        function printReport() {
+            window.print();
+        }
+        
+        function exportExcel() {
+            // DataTables Excel export butonunu kullan
+            $('.buttons-excel').click();
+        }
+    </script>
+} 

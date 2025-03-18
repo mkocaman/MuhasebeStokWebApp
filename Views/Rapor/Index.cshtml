@@ -1,0 +1,95 @@
+@{
+    ViewData["Title"] = "Raporlar";
+}
+
+<div class="container-fluid">
+    <div class="page-title">
+        <div class="row">
+            <div class="col-6">
+                <h3>Raporlar</h3>
+            </div>
+            <div class="col-6">
+                <ol class="breadcrumb">
+                    <li class="breadcrumb-item"><a href="/"><i data-feather="home"></i></a></li>
+                    <li class="breadcrumb-item active">Raporlar</li>
+                </ol>
+            </div>
+        </div>
+    </div>
+</div>
+
+<div class="container-fluid">
+    <div class="row">
+        <div class="col-md-12">
+            <div class="card">
+                <div class="card-header">
+                    <h5 class="mb-0">Rapor Türleri</h5>
+                </div>
+                <div class="card-body">
+                    <div class="row">
+                        <div class="col-md-4 mb-4">
+                            <div class="card h-100">
+                                <div class="card-body text-center">
+                                    <i class="fa fa-money-bill-alt fa-3x text-primary mb-3"></i>
+                                    <h5 class="card-title">Kasa Raporu</h5>
+                                    <p class="card-text">Kasa hareketleri ve bakiye durumunu gösteren rapor.</p>
+                                    <a asp-action="Kasa" class="btn btn-primary">Raporu Görüntüle</a>
+                                </div>
+                            </div>
+                        </div>
+                        <div class="col-md-4 mb-4">
+                            <div class="card h-100">
+                                <div class="card-body text-center">
+                                    <i class="fa fa-university fa-3x text-success mb-3"></i>
+                                    <h5 class="card-title">Banka Raporu</h5>
+                                    <p class="card-text">Banka hesap hareketleri ve bakiye durumunu gösteren rapor.</p>
+                                    <a asp-action="Banka" class="btn btn-success">Raporu Görüntüle</a>
+                                </div>
+                            </div>
+                        </div>
+                        <div class="col-md-4 mb-4">
+                            <div class="card h-100">
+                                <div class="card-body text-center">
+                                    <i class="fa fa-users fa-3x text-info mb-3"></i>
+                                    <h5 class="card-title">Cari Raporu</h5>
+                                    <p class="card-text">Cari hesap hareketleri ve bakiye durumunu gösteren rapor.</p>
+                                    <a asp-action="Cari" class="btn btn-info">Raporu Görüntüle</a>
+                                </div>
+                            </div>
+                        </div>
+                        <div class="col-md-4 mb-4">
+                            <div class="card h-100">
+                                <div class="card-body text-center">
+                                    <i class="fa fa-boxes fa-3x text-warning mb-3"></i>
+                                    <h5 class="card-title">Stok Raporu</h5>
+                                    <p class="card-text">Stok hareketleri ve mevcut stok durumunu gösteren rapor.</p>
+                                    <a asp-action="Stok" class="btn btn-warning">Raporu Görüntüle</a>
+                                </div>
+                            </div>
+                        </div>
+                        <div class="col-md-4 mb-4">
+                            <div class="card h-100">
+                                <div class="card-body text-center">
+                                    <i class="fa fa-shopping-cart fa-3x text-danger mb-3"></i>
+                                    <h5 class="card-title">Satış Raporu</h5>
+                                    <p class="card-text">Satış faturalarının detaylı analizini gösteren rapor.</p>
+                                    <a asp-action="Satis" class="btn btn-danger">Raporu Görüntüle</a>
+                                </div>
+                            </div>
+                        </div>
+                        <div class="col-md-4 mb-4">
+                            <div class="card h-100">
+                                <div class="card-body text-center">
+                                    <i class="fa fa-chart-pie fa-3x text-secondary mb-3"></i>
+                                    <h5 class="card-title">Özet Rapor</h5>
+                                    <p class="card-text">Genel durum ve kar/zarar analizini gösteren özet rapor.</p>
+                                    <a asp-action="Ozet" class="btn btn-secondary">Raporu Görüntüle</a>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</div> 

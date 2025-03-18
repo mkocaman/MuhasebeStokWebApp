@@ -1,0 +1,354 @@
+@model MuhasebeStokWebApp.ViewModels.Cari.CariEkstreViewModel
+@{
+    ViewData["Title"] = "Cari Hesap Ekstresi";
+}
+
+<div class="container-fluid">
+    <div class="row">
+        <!-- Filtre Kartı -->
+        <div class="col-12 mb-4 no-print">
+            <div class="card">
+                <div class="card-header">
+                    <h5>Filtre</h5>
+                </div>
+                <div class="card-body">
+                    <form asp-action="Ekstre" method="get" class="row">
+                        <input type="hidden" asp-for="CariID" />
+                        
+                        <div class="col-md-4 mb-3">
+                            <label asp-for="BaslangicTarihi" class="form-label">Başlangıç Tarihi</label>
+                            <input asp-for="BaslangicTarihi" class="form-control" type="date" />
+                        </div>
+                        
+                        <div class="col-md-4 mb-3">
+                            <label asp-for="BitisTarihi" class="form-label">Bitiş Tarihi</label>
+                            <input asp-for="BitisTarihi" class="form-control" type="date" />
+                        </div>
+                        
+                        <div class="col-md-4 mb-3 d-flex align-items-end">
+                            <button type="submit" class="btn btn-primary w-100">Filtrele</button>
+                        </div>
+                    </form>
+                </div>
+            </div>
+        </div>
+        
+        <!-- Cari Bilgileri -->
+        <div class="col-12 mb-4">
+            <div class="card">
+                <div class="card-header">
+                    <h5>Cari Bilgileri</h5>
+                    <div class="card-header-right no-print">
+                        <a asp-controller="Cari" asp-action="Details" asp-route-id="@Model.CariID" class="btn btn-primary btn-sm">
+                            <i class="fa fa-eye"></i> Cari Detayı
+                        </a>
+                    </div>
+                </div>
+                <div class="card-body">
+                    <div class="row">
+                        <div class="col-md-6">
+                            <div class="mb-3">
+                                <h6 class="f-w-600">Cari Adı</h6>
+                                <p>@Model.CariAdi</p>
+                            </div>
+                            <div class="mb-3">
+                                <h6 class="f-w-600">Vergi No</h6>
+                                <p>@(string.IsNullOrEmpty(Model.VergiNo) ? "-" : Model.VergiNo)</p>
+                            </div>
+                        </div>
+                        <div class="col-md-6">
+                            <div class="mb-3">
+                                <h6 class="f-w-600">Adres</h6>
+                                <p>@(string.IsNullOrEmpty(Model.Adres) ? "-" : Model.Adres)</p>
+                            </div>
+                            <div class="mb-3">
+                                <h6 class="f-w-600">Rapor Tarihi</h6>
+                                <p>@Model.RaporTarihi.ToString("dd.MM.yyyy HH:mm")</p>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+        
+        <!-- Özet Bilgiler -->
+        <div class="col-12 mb-4">
+            <div class="row">
+                <div class="col-md-4">
+                    <div class="card o-hidden">
+                        <div class="card-body bg-primary">
+                            <div class="media static-widget">
+                                <div class="media-body">
+                                    <h6 class="font-roboto">Toplam Borç</h6>
+                                    <h4 class="mb-0 counter">@Model.ToplamBorc.ToString("N2") ₺</h4>
+                                </div>
+                                <i class="fa fa-arrow-down icon-bg"></i>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+                <div class="col-md-4">
+                    <div class="card o-hidden">
+                        <div class="card-body bg-success">
+                            <div class="media static-widget">
+                                <div class="media-body">
+                                    <h6 class="font-roboto">Toplam Alacak</h6>
+                                    <h4 class="mb-0 counter">@Model.ToplamAlacak.ToString("N2") ₺</h4>
+                                </div>
+                                <i class="fa fa-arrow-up icon-bg"></i>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+                <div class="col-md-4">
+                    <div class="card o-hidden">
+                        <div class="card-body @(Model.Bakiye >= 0 ? "bg-success" : "bg-danger")">
+                            <div class="media static-widget">
+                                <div class="media-body">
+                                    <h6 class="font-roboto">Bakiye</h6>
+                                    <h4 class="mb-0 counter">@Model.Bakiye.ToString("N2") ₺</h4>
+                                </div>
+                                <i class="fa fa-balance-scale icon-bg"></i>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+        
+        <!-- Ekstre Tablosu -->
+        <div class="col-12">
+            <div class="card">
+                <div class="card-header">
+                    <h5>Cari Hesap Ekstresi</h5>
+                    <div class="card-header-right no-print">
+                        <button type="button" class="btn btn-primary btn-sm" onclick="printEkstre()">
+                            <i class="fa fa-print"></i> Yazdır
+                        </button>
+                        <button type="button" class="btn btn-success btn-sm" onclick="exportToPDF()">
+                            <i class="fa fa-file-pdf"></i> PDF İndir
+                        </button>
+                    </div>
+                </div>
+                <div class="card-body">
+                    <div class="table-responsive">
+                        <table class="table table-hover" id="ekstreTable">
+                            <thead>
+                                <tr>
+                                    <th>Tarih</th>
+                                    <th>Vade Tarihi</th>
+                                    <th>Açıklama</th>
+                                    <th>İşlem Türü</th>
+                                    <th>Evrak No</th>
+                                    <th>Kaynak</th>
+                                    <th class="text-end">Borç</th>
+                                    <th class="text-end">Alacak</th>
+                                    <th class="text-end">Bakiye</th>
+                                </tr>
+                            </thead>
+                            <tbody>
+                                @if (Model.Hareketler != null && Model.Hareketler.Any())
+                                {
+                                    foreach (var hareket in Model.Hareketler)
+                                    {
+                                        <tr>
+                                            <td>@hareket.Tarih.ToString("dd.MM.yyyy")</td>
+                                            <td>@(hareket.VadeTarihi.HasValue ? hareket.VadeTarihi.Value.ToString("dd.MM.yyyy") : "-")</td>
+                                            <td>@hareket.Aciklama</td>
+                                            <td>
+                                                @if (hareket.IslemTuru == "Tahsilat" || hareket.IslemTuru == "Alacak" || hareket.IslemTuru == "Giriş")
+                                                {
+                                                    <span class="badge badge-success">@hareket.IslemTuru</span>
+                                                }
+                                                else if (hareket.IslemTuru == "Ödeme" || hareket.IslemTuru == "Borç" || hareket.IslemTuru == "Çıkış")
+                                                {
+                                                    <span class="badge badge-danger">@hareket.IslemTuru</span>
+                                                }
+                                                else
+                                                {
+                                                    <span class="badge badge-info">@hareket.IslemTuru</span>
+                                                }
+                                            </td>
+                                            <td>@hareket.EvrakNo</td>
+                                            <td>
+                                                @if (hareket.Kaynak == "Cari")
+                                                {
+                                                    <span class="badge badge-primary">Cari</span>
+                                                }
+                                                else if (hareket.Kaynak == "Banka")
+                                                {
+                                                    <span class="badge badge-info">Banka</span>
+                                                }
+                                                else if (hareket.Kaynak == "Kasa")
+                                                {
+                                                    <span class="badge badge-warning">Kasa</span>
+                                                }
+                                                else if (hareket.Kaynak == "Fatura")
+                                                {
+                                                    <span class="badge badge-secondary">Fatura</span>
+                                                }
+                                            </td>
+                                            <td class="text-end text-danger">
+                                                @(hareket.Borc.HasValue ? hareket.Borc.Value.ToString("N2") + " ₺" : "")
+                                            </td>
+                                            <td class="text-end text-success">
+                                                @(hareket.Alacak.HasValue ? hareket.Alacak.Value.ToString("N2") + " ₺" : "")
+                                            </td>
+                                            <td class="text-end @(hareket.Bakiye >= 0 ? "text-success" : "text-danger")">
+                                                @hareket.Bakiye.ToString("N2") ₺
+                                            </td>
+                                        </tr>
+                                    }
+                                }
+                                else
+                                {
+                                    <tr>
+                                        <td colspan="9" class="text-center">Belirtilen tarih aralığında hareket bulunamadı.</td>
+                                    </tr>
+                                }
+                            </tbody>
+                            <tfoot>
+                                <tr class="table-primary">
+                                    <th colspan="6" class="text-end">Toplam:</th>
+                                    <th class="text-end text-danger">@Model.ToplamBorc.ToString("N2") ₺</th>
+                                    <th class="text-end text-success">@Model.ToplamAlacak.ToString("N2") ₺</th>
+                                    <th class="text-end @(Model.Bakiye >= 0 ? "text-success" : "text-danger")">@Model.Bakiye.ToString("N2") ₺</th>
+                                </tr>
+                            </tfoot>
+                        </table>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+
+@section Styles {
+    <style>
+        @@media print {
+            .breadcrumb, .page-title, .card-header-right, .btn, .footer {
+                display: none !important;
+            }
+            
+            .card {
+                border: none !important;
+                box-shadow: none !important;
+            }
+            
+            .card-header {
+                border-bottom: 1px solid #ddd !important;
+            }
+            
+            body {
+                padding: 0 !important;
+                margin: 0 !important;
+            }
+            
+            .container-fluid {
+                padding: 0 !important;
+                margin: 0 !important;
+            }
+        }
+    </style>
+}
+
+@section Scripts {
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/jspdf/2.5.1/jspdf.umd.min.js"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/html2canvas/1.4.1/html2canvas.min.js"></script>
+    <script>
+        $(document).ready(function() {
+            // DataTable uyarılarını gizle
+            $.fn.dataTable.ext.errMode = 'none';
+            
+            // DataTable başlatma
+            try {
+                $('#ekstreTable').DataTable({
+                    language: {
+                        url: '//cdn.datatables.net/plug-ins/1.13.7/i18n/tr.json',
+                        info: "" // Bilgilendirme yazısını kaldır (çift görünme sorununu çözmek için)
+                    },
+                    responsive: true,
+                    order: [[0, 'asc']],
+                    retrieve: true
+                });
+            } catch (e) {
+                console.log("DataTable başlatılırken bir hata oluştu, ancak işlem devam ediyor.");
+            }
+        });
+        
+        function printEkstre() {
+            // Yazdırma işlemi için özel bir div oluştur
+            var printContent = document.createElement('div');
+            printContent.innerHTML = `
+                <div style="text-align: center; margin-bottom: 20px;">
+                    <h2>Cari Hesap Ekstresi</h2>
+                    <h3>${document.querySelector('.card-body p').textContent}</h3>
+                    <p>Rapor Tarihi: ${document.querySelectorAll('.card-body p')[3].textContent}</p>
+                </div>
+            `;
+            
+            // Tabloyu kopyala
+            var tableClone = document.getElementById('ekstreTable').cloneNode(true);
+            printContent.appendChild(tableClone);
+            
+            // Mevcut sayfayı kaydet
+            var originalContent = document.body.innerHTML;
+            
+            // Yazdırma içeriğini ayarla
+            document.body.innerHTML = printContent.innerHTML;
+            
+            // Yazdır
+            window.print();
+            
+            // Orijinal içeriği geri yükle
+            document.body.innerHTML = originalContent;
+            
+            // Feather ikonlarını yeniden başlat
+            if (typeof feather !== 'undefined') {
+                feather.replace();
+            }
+        }
+        
+        function exportToPDF() {
+            // PDF oluşturma için gerekli kütüphaneleri kontrol et
+            if (typeof window.jspdf === 'undefined' || typeof html2canvas === 'undefined') {
+                alert('PDF oluşturmak için gerekli kütüphaneler yüklenemedi. Lütfen internet bağlantınızı kontrol edin.');
+                return;
+            }
+            
+            // Yazdırma içeriğini oluştur
+            var content = document.createElement('div');
+            content.innerHTML = `
+                <div style="text-align: center; margin-bottom: 20px;">
+                    <h2>Cari Hesap Ekstresi</h2>
+                    <h3>${document.querySelector('.card-body p').textContent}</h3>
+                    <p>Rapor Tarihi: ${document.querySelectorAll('.card-body p')[3].textContent}</p>
+                </div>
+            `;
+            
+            // Tabloyu kopyala
+            var tableClone = document.getElementById('ekstreTable').cloneNode(true);
+            content.appendChild(tableClone);
+            
+            // Geçici olarak DOM'a ekle
+            content.style.position = 'absolute';
+            content.style.left = '-9999px';
+            document.body.appendChild(content);
+            
+            // PDF oluştur
+            html2canvas(content).then(canvas => {
+                const imgData = canvas.toDataURL('image/png');
+                const pdf = new jspdf.jsPDF('p', 'mm', 'a4');
+                const imgProps = pdf.getImageProperties(imgData);
+                const pdfWidth = pdf.internal.pageSize.getWidth();
+                const pdfHeight = (imgProps.height * pdfWidth) / imgProps.width;
+                
+                pdf.addImage(imgData, 'PNG', 0, 0, pdfWidth, pdfHeight);
+                pdf.save('cari_ekstre.pdf');
+                
+                // Geçici içeriği kaldır
+                document.body.removeChild(content);
+            });
+        }
+    </script>
+} 

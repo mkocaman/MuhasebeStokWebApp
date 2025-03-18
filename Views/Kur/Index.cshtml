@@ -1,0 +1,155 @@
+@model MuhasebeStokWebApp.ViewModels.Kur.KurIndexViewModel
+
+@{
+    ViewData["Title"] = "Kur Yönetimi";
+}
+
+<div class="container-fluid">
+    <div class="row">
+        <div class="col-12">
+            <div class="card">
+                <div class="card-header">
+                    <h3 class="card-title">Kur Yönetimi</h3>
+                    <div class="card-tools">
+                        <div class="btn-group">
+                            <a asp-action="KurDegeriEkle" class="btn btn-sm btn-primary">
+                                <i class="fas fa-plus"></i> Yeni Kur Değeri
+                            </a>
+                            <a asp-action="ParaBirimleri" class="btn btn-sm btn-info">
+                                <i class="fas fa-money-bill"></i> Para Birimleri
+                            </a>
+                            <a asp-action="Ayarlar" class="btn btn-sm btn-secondary">
+                                <i class="fas fa-cog"></i> Ayarlar
+                            </a>
+                            <a asp-action="Cevirici" class="btn btn-sm btn-warning">
+                                <i class="fas fa-exchange-alt"></i> Kur Çevirici
+                            </a>
+                            <button type="button" class="btn btn-sm btn-success" data-toggle="modal" data-target="#kurGuncelleModal">
+                                <i class="fas fa-sync"></i> Kurları Güncelle
+                            </button>
+                        </div>
+                    </div>
+                </div>
+                <div class="card-body">
+                    <div class="row mb-3">
+                        <div class="col-md-12">
+                            <div class="alert alert-info">
+                                <div class="row">
+                                    <div class="col-md-4">
+                                        <strong>Baz Para Birimi:</strong> @Model.BazParaBirimiKodu
+                                    </div>
+                                    <div class="col-md-4">
+                                        <strong>İkinci Para Birimi:</strong> @Model.IkinciParaBirimiKodu
+                                    </div>
+                                    <div class="col-md-4">
+                                        <strong>Üçüncü Para Birimi:</strong> @Model.UcuncuParaBirimiKodu
+                                    </div>
+                                </div>
+                                <div class="row mt-2">
+                                    <div class="col-md-4">
+                                        <strong>Son Güncelleme:</strong> @Model.SonGuncellemeTarihi.ToString("dd.MM.yyyy HH:mm")
+                                    </div>
+                                    <div class="col-md-4">
+                                        <strong>Otomatik Güncelleme:</strong> @(Model.OtomatikGuncelleme ? "Aktif" : "Pasif")
+                                    </div>
+                                    <div class="col-md-4">
+                                        <strong>Güncelleme Sıklığı:</strong> @Model.GuncellemeSikligi saat
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+
+                    <table class="table table-bordered table-striped table-hover datatable">
+                        <thead>
+                            <tr>
+                                <th>Para Birimi</th>
+                                <th>Alış</th>
+                                <th>Satış</th>
+                                <th>Ortalama</th>
+                                <th>Tarih</th>
+                                <th>Kaynak</th>
+                                <th>İşlemler</th>
+                            </tr>
+                        </thead>
+                        <tbody>
+                            @foreach (var item in Model.KurDegerleri)
+                            {
+                                <tr>
+                                    <td>@item.ParaBirimiKodu</td>
+                                    <td class="text-right">@item.AlisDegeri.ToString("N6")</td>
+                                    <td class="text-right">@item.SatisDegeri.ToString("N6")</td>
+                                    <td class="text-right">@(((item.AlisDegeri + item.SatisDegeri) / 2).ToString("N6"))</td>
+                                    <td>@item.Tarih.ToString("dd.MM.yyyy")</td>
+                                    <td>@item.Kaynak</td>
+                                    <td>
+                                        <div class="btn-group">
+                                            <a asp-action="KurDegeriDuzenle" asp-route-id="@item.KurDegeriID" class="btn btn-sm btn-info">
+                                                <i class="fas fa-edit"></i>
+                                            </a>
+                                            <a asp-action="KurDegeriSil" asp-route-id="@item.KurDegeriID" class="btn btn-sm btn-danger">
+                                                <i class="fas fa-trash"></i>
+                                            </a>
+                                        </div>
+                                    </td>
+                                </tr>
+                            }
+                        </tbody>
+                    </table>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+
+<!-- Kur Güncelleme Modal -->
+<div class="modal fade" id="kurGuncelleModal" tabindex="-1" role="dialog" aria-labelledby="kurGuncelleModalLabel" aria-hidden="true">
+    <div class="modal-dialog" role="document">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h5 class="modal-title" id="kurGuncelleModalLabel">Kurları Güncelle</h5>
+                <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+                    <span aria-hidden="true">&times;</span>
+                </button>
+            </div>
+            <div class="modal-body">
+                <p>Hangi kaynaktan kurları güncellemek istiyorsunuz?</p>
+                <form asp-action="KurlariGuncelle" method="post">
+                    <div class="form-group">
+                        <div class="custom-control custom-radio">
+                            <input type="radio" id="tcmb" name="source" value="tcmb" class="custom-control-input" checked>
+                            <label class="custom-control-label" for="tcmb">Türkiye Cumhuriyet Merkez Bankası (TCMB)</label>
+                        </div>
+                        <div class="custom-control custom-radio mt-2">
+                            <input type="radio" id="uzbekistan" name="source" value="uzbekistan" class="custom-control-input">
+                            <label class="custom-control-label" for="uzbekistan">Özbekistan Merkez Bankası</label>
+                        </div>
+                        <div class="custom-control custom-radio mt-2">
+                            <input type="radio" id="all" name="source" value="all" class="custom-control-input">
+                            <label class="custom-control-label" for="all">Tüm Kaynaklar</label>
+                        </div>
+                    </div>
+                    <div class="text-right">
+                        <button type="button" class="btn btn-secondary" data-dismiss="modal">İptal</button>
+                        <button type="submit" class="btn btn-success">Güncelle</button>
+                    </div>
+                </form>
+            </div>
+        </div>
+    </div>
+</div>
+
+@section Scripts {
+    <script>
+        $(document).ready(function () {
+            $('.datatable').DataTable({
+                "responsive": true,
+                "autoWidth": false,
+                "language": {
+                    "url": "//cdn.datatables.net/plug-ins/1.10.25/i18n/Turkish.json"
+                },
+                "order": [[4, "desc"]]
+            });
+        });
+    </script>
+} 

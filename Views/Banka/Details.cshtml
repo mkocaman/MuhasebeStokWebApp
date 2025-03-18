@@ -1,0 +1,140 @@
+@model MuhasebeStokWebApp.ViewModels.Banka.BankaViewModel
+@{
+    ViewData["Title"] = "Banka Detayları";
+}
+
+<div class="container-fluid">
+    <div class="row">
+        <!-- Banka Bilgileri -->
+        <div class="col-xl-6 col-md-12 box-col-12">
+            <div class="card">
+                <div class="card-header bg-primary text-white">
+                    <div class="d-flex justify-content-between align-items-center">
+                        <h5 class="mb-0">Banka Bilgileri</h5>
+                        <div>
+                            <a asp-action="Edit" asp-route-id="@Model.BankaID" class="btn btn-warning btn-sm">
+                                <i class="fas fa-edit"></i> Düzenle
+                            </a>
+                            <a asp-action="Hareketler" asp-route-id="@Model.BankaID" class="btn btn-info btn-sm">
+                                <i class="fas fa-exchange-alt"></i> Hareketler
+                            </a>
+                        </div>
+                    </div>
+                </div>
+                <div class="card-body">
+                    <div class="row">
+                        <div class="col-sm-6 col-md-12 col-lg-6">
+                            <div class="info-group">
+                                <h6 class="f-w-600">Banka Adı</h6>
+                                <p>@Model.BankaAdi</p>
+                            </div>
+                        </div>
+                        <div class="col-sm-6 col-md-12 col-lg-6">
+                            <div class="info-group">
+                                <h6 class="f-w-600">Şube Adı</h6>
+                                <p>@Model.SubeAdi</p>
+                            </div>
+                        </div>
+                        <div class="col-sm-6 col-md-12 col-lg-6">
+                            <div class="info-group">
+                                <h6 class="f-w-600">Şube Kodu</h6>
+                                <p>@Model.SubeKodu</p>
+                            </div>
+                        </div>
+                        <div class="col-sm-6 col-md-12 col-lg-6">
+                            <div class="info-group">
+                                <h6 class="f-w-600">Hesap No</h6>
+                                <p>@Model.HesapNo</p>
+                            </div>
+                        </div>
+                        <div class="col-sm-6 col-md-12 col-lg-6">
+                            <div class="info-group">
+                                <h6 class="f-w-600">IBAN</h6>
+                                <p>@Model.IBAN</p>
+                            </div>
+                        </div>
+                        <div class="col-sm-6 col-md-12 col-lg-6">
+                            <div class="info-group">
+                                <h6 class="f-w-600">Para Birimi</h6>
+                                <p>@Model.ParaBirimi</p>
+                            </div>
+                        </div>
+                        <div class="col-sm-6 col-md-12 col-lg-6">
+                            <div class="info-group">
+                                <h6 class="f-w-600">Açılış Bakiyesi</h6>
+                                <p>@Model.AcilisBakiye.ToString("N2") @Model.ParaBirimi</p>
+                            </div>
+                        </div>
+                        <div class="col-sm-6 col-md-12 col-lg-6">
+                            <div class="info-group">
+                                <h6 class="f-w-600">Güncel Bakiye</h6>
+                                <p class="@(Model.GuncelBakiye >= 0 ? "text-success" : "text-danger") fw-bold">
+                                    @Model.GuncelBakiye.ToString("N2") @Model.ParaBirimi
+                                </p>
+                            </div>
+                        </div>
+                        <div class="col-sm-6 col-md-12 col-lg-6">
+                            <div class="info-group">
+                                <h6 class="f-w-600">Durum</h6>
+                                <p>
+                                    @if (Model.Aktif)
+                                    {
+                                        <span class="badge bg-success">Aktif</span>
+                                    }
+                                    else
+                                    {
+                                        <span class="badge bg-danger">Pasif</span>
+                                    }
+                                </p>
+                            </div>
+                        </div>
+                        <div class="col-sm-6 col-md-12 col-lg-6">
+                            <div class="info-group">
+                                <h6 class="f-w-600">Oluşturma Tarihi</h6>
+                                <p>@Model.OlusturmaTarihi.ToString("dd.MM.yyyy HH:mm")</p>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <!-- Banka Açıklaması ve Son Hareketler -->
+        <div class="col-xl-6 col-md-12 box-col-12">
+            <div class="card">
+                <div class="card-header bg-primary text-white">
+                    <h5 class="mb-0">Açıklama</h5>
+                </div>
+                <div class="card-body">
+                    @if (string.IsNullOrEmpty(Model.Aciklama))
+                    {
+                        <p class="text-muted">Açıklama bulunmamaktadır.</p>
+                    }
+                    else
+                    {
+                        <p>@Model.Aciklama</p>
+                    }
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+
+<div class="container-fluid mt-4">
+    <div class="row">
+        <div class="col-12 text-end">
+            <a asp-action="Index" class="btn btn-secondary">
+                <i class="fas fa-arrow-left"></i> Listeye Dön
+            </a>
+            <a asp-action="Edit" asp-route-id="@Model.BankaID" class="btn btn-primary">
+                <i class="fas fa-edit"></i> Düzenle
+            </a>
+            <a asp-action="Hareketler" asp-route-id="@Model.BankaID" class="btn btn-success">
+                <i class="fas fa-exchange-alt"></i> Hareketler
+            </a>
+            <a asp-action="Delete" asp-route-id="@Model.BankaID" class="btn btn-danger">
+                <i class="fas fa-trash"></i> Sil
+            </a>
+        </div>
+    </div>
+</div> 

@@ -1,0 +1,62 @@
+@{
+    ViewData["Title"] = "Giriş";
+    Layout = "_LoginLayout";
+}
+
+<section>
+    <div class="container-fluid p-0">
+        <div class="row">
+            <div class="col-xl-7"><img class="bg-img-cover bg-center" src="~/assets/images/login/2.jpg" alt="login page"></div>
+            <div class="col-xl-5 p-0">
+                <div class="login-card">
+                    <form class="theme-form login-form" asp-controller="Account" asp-action="Login" method="post">
+                        <h4>Giriş</h4>
+                        <h6>Hoş geldiniz! Hesabınıza giriş yapın.</h6>
+                        
+                        @if (!ViewData.ModelState.IsValid)
+                        {
+                            <div class="alert alert-danger">
+                                <div asp-validation-summary="All" class="text-danger"></div>
+                            </div>
+                        }
+                        
+                        <input type="hidden" name="returnUrl" value="@ViewBag.ReturnUrl" />
+                        
+                        <div class="form-group">
+                            <label>Kullanıcı Adı</label>
+                            <div class="input-group">
+                                <span class="input-group-text"><i class="icon-user"></i></span>
+                                <input class="form-control" type="text" id="username" name="username" required placeholder="Kullanıcı adınızı girin">
+                            </div>
+                        </div>
+                        
+                        <div class="form-group">
+                            <label>Şifre</label>
+                            <div class="input-group">
+                                <span class="input-group-text"><i class="icon-lock"></i></span>
+                                <input class="form-control" type="password" id="password" name="password" required placeholder="Şifrenizi girin">
+                                <div class="show-hide"><span class="show"></span></div>
+                            </div>
+                        </div>
+                        
+                        <div class="form-group">
+                            <div class="checkbox">
+                                <input id="rememberMe" name="rememberMe" type="checkbox">
+                                <label class="text-muted" for="rememberMe">Beni hatırla</label>
+                            </div>
+                        </div>
+                        
+                        <div class="form-group">
+                            <button class="btn btn-primary btn-block" type="submit">Giriş Yap</button>
+                        </div>
+                        
+                        <div class="mt-4 text-center">
+                            <p class="mb-0 text-muted">Muhasebe Stok Web App</p>
+                            <p class="mb-0 text-muted small">Kullanıcı adı: admin, Şifre: admin123</p>
+                        </div>
+                    </form>
+                </div>
+            </div>
+        </div>
+    </div>
+</section> 

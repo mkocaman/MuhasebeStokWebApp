@@ -1,0 +1,33 @@
+@model MuhasebeStokWebApp.ViewModels.Depo.DepoEditViewModel
+
+<form asp-action="Edit" method="post">
+    <div class="modal-body">
+        <input type="hidden" asp-for="DepoID" />
+        
+        <div class="mb-3">
+            <label asp-for="DepoAdi" class="form-label">Depo Adı</label>
+            <input asp-for="DepoAdi" class="form-control" required />
+            <span asp-validation-for="DepoAdi" class="text-danger"></span>
+        </div>
+        
+        <div class="mb-3">
+            <label asp-for="Adres" class="form-label">Adres</label>
+            <textarea asp-for="Adres" class="form-control" rows="3"></textarea>
+            <span asp-validation-for="Adres" class="text-danger"></span>
+        </div>
+        
+        <div class="form-check mb-3">
+            <input asp-for="Aktif" class="form-check-input" />
+            <label asp-for="Aktif" class="form-check-label">Aktif</label>
+        </div>
+    </div>
+    
+    <div class="modal-footer">
+        <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">İptal</button>
+        <button type="submit" class="btn btn-primary">Kaydet</button>
+    </div>
+</form>
+
+@section Scripts {
+    @{await Html.RenderPartialAsync("_ValidationScriptsPartial");}
+} 

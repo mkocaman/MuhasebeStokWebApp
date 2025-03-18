@@ -1,0 +1,149 @@
+@model MuhasebeStokWebApp.ViewModels.Stok.StokGirisViewModel
+@{
+    ViewData["Title"] = "Stok Girişi";
+    Layout = "~/Views/Shared/_Layout.cshtml";
+}
+
+<div class="container-fluid">
+    <div class="card">
+        <div class="card-header bg-primary text-white">
+            <div class="d-flex justify-content-between align-items-center">
+                <h4 class="mb-0">Stok Girişi</h4>
+                <a asp-action="Index" class="btn btn-light">
+                    <i class="fas fa-arrow-left"></i> Listeye Dön
+                </a>
+            </div>
+        </div>
+        <div class="card-body">
+            @if (ViewData.ModelState.ErrorCount > 0)
+            {
+                <div class="alert alert-danger alert-dismissible fade show" role="alert">
+                    <h5 class="alert-heading">Hata!</h5>
+                    <p>Lütfen aşağıdaki hataları düzeltin:</p>
+                    <div asp-validation-summary="ModelOnly" class="text-danger"></div>
+                    <button type="button" class="btn-close" data-bs-dismiss="alert" aria-label="Close"></button>
+                </div>
+            }
+
+            <form asp-action="StokGiris" method="post">
+                <div class="row mb-4">
+                    <div class="col-md-6">
+                        <div class="form-group">
+                            <label asp-for="UrunID" class="form-label">Ürün</label>
+                            <select asp-for="UrunID" class="form-select" asp-items="ViewBag.Urunler">
+                                <option value="">Ürün Seçiniz</option>
+                            </select>
+                            <span asp-validation-for="UrunID" class="text-danger"></span>
+                        </div>
+                    </div>
+                    <div class="col-md-6">
+                        <div class="form-group">
+                            <label asp-for="DepoID" class="form-label">Depo</label>
+                            <select asp-for="DepoID" class="form-select" asp-items="ViewBag.Depolar">
+                                <option value="">Depo Seçiniz</option>
+                            </select>
+                            <span asp-validation-for="DepoID" class="text-danger"></span>
+                        </div>
+                    </div>
+                </div>
+                
+                <div class="row mb-4">
+                    <div class="col-md-4">
+                        <div class="form-group">
+                            <label asp-for="Miktar" class="form-label">Miktar</label>
+                            <input asp-for="Miktar" class="form-control" />
+                            <span asp-validation-for="Miktar" class="text-danger"></span>
+                        </div>
+                    </div>
+                    <div class="col-md-4">
+                        <div class="form-group">
+                            <label asp-for="Birim" class="form-label">Birim</label>
+                            <select asp-for="Birim" class="form-select" asp-items="ViewBag.Birimler">
+                                <option value="">Birim Seçiniz</option>
+                            </select>
+                            <span asp-validation-for="Birim" class="text-danger"></span>
+                        </div>
+                    </div>
+                    <div class="col-md-4">
+                        <div class="form-group">
+                            <label asp-for="BirimFiyat" class="form-label">Birim Fiyat</label>
+                            <div class="input-group">
+                                <input asp-for="BirimFiyat" class="form-control" />
+                                <span class="input-group-text">₺</span>
+                            </div>
+                            <span asp-validation-for="BirimFiyat" class="text-danger"></span>
+                        </div>
+                    </div>
+                </div>
+                
+                <div class="row mb-4">
+                    <div class="col-md-6">
+                        <div class="form-group">
+                            <label asp-for="Tarih" class="form-label">Tarih</label>
+                            <input asp-for="Tarih" class="form-control" type="date" />
+                            <span asp-validation-for="Tarih" class="text-danger"></span>
+                        </div>
+                    </div>
+                    <div class="col-md-6">
+                        <div class="form-group">
+                            <label asp-for="ReferansNo" class="form-label">Referans No</label>
+                            <input asp-for="ReferansNo" class="form-control" placeholder="Manuel Giriş" />
+                            <span asp-validation-for="ReferansNo" class="text-danger"></span>
+                        </div>
+                    </div>
+                </div>
+                
+                <div class="row mb-4">
+                    <div class="col-md-6">
+                        <div class="form-group">
+                            <label asp-for="ReferansTuru" class="form-label">Referans Türü</label>
+                            <input asp-for="ReferansTuru" class="form-control" placeholder="Manuel" />
+                            <span asp-validation-for="ReferansTuru" class="text-danger"></span>
+                        </div>
+                    </div>
+                    <div class="col-md-6">
+                        <div class="form-group">
+                            <label asp-for="Aciklama" class="form-label">Açıklama</label>
+                            <textarea asp-for="Aciklama" class="form-control" rows="3" placeholder="Manuel stok girişi"></textarea>
+                            <span asp-validation-for="Aciklama" class="text-danger"></span>
+                        </div>
+                    </div>
+                </div>
+                
+                <div class="card-footer bg-light text-end">
+                    <a asp-action="Index" class="btn btn-secondary">
+                        <i class="fas fa-times"></i> İptal
+                    </a>
+                    <button type="submit" class="btn btn-success">
+                        <i class="fas fa-save"></i> Kaydet
+                    </button>
+                </div>
+            </form>
+        </div>
+    </div>
+</div>
+
+@section Scripts {
+    @{await Html.RenderPartialAsync("_ValidationScriptsPartial");}
+    
+    <script>
+        $(document).ready(function () {
+            // Ürün değiştiğinde otomatik olarak birim getir
+            $('#UrunID').change(function () {
+                var urunID = $(this).val();
+                if (urunID) {
+                    $.ajax({
+                        url: '@Url.Action("GetUrunBirim", "Stok")',
+                        type: 'GET',
+                        data: { urunID: urunID },
+                        success: function (result) {
+                            if (result && result.birim) {
+                                $('#Birim').val(result.birim);
+                            }
+                        }
+                    });
+                }
+            });
+        });
+    </script>
+} 

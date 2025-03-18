@@ -1,0 +1,134 @@
+@model MuhasebeStokWebApp.ViewModels.Rapor.StokRaporViewModel
+@{
+    ViewData["Title"] = "Stok Hareket Raporu";
+    Layout = "~/Views/Shared/_RaporLayout.cshtml";
+}
+
+<div class="container-fluid py-4">
+    <div class="row">
+        <div class="col-12">
+            <div class="card my-4">
+                <div class="card-header p-0 position-relative mt-n4 mx-3 z-index-2">
+                    <div class="bg-gradient-primary shadow-primary border-radius-lg pt-4 pb-3">
+                        <h6 class="text-white text-capitalize ps-3">@Model.RaporAdi</h6>
+                    </div>
+                </div>
+                <div class="card-body px-0 pb-2">
+                    <div class="container">
+                        <div class="row mb-4">
+                            <div class="col-md-6">
+                                <p><strong>Rapor Tarihi:</strong> @Model.RaporTarihi.ToString("dd.MM.yyyy HH:mm")</p>
+                                <p><strong>Kullanıcı:</strong> @Model.KullaniciAdi</p>
+                            </div>
+                            <div class="col-md-6">
+                                <p><strong>Açıklama:</strong> @Model.Aciklama</p>
+                            </div>
+                        </div>
+                        
+                        <div class="row mb-4">
+                            <div class="col-md-4">
+                                <div class="card">
+                                    <div class="card-header p-3 pt-2">
+                                        <div class="icon icon-lg icon-shape bg-gradient-success shadow-success text-center border-radius-xl mt-n4 position-absolute">
+                                            <i class="material-icons opacity-10">inventory</i>
+                                        </div>
+                                        <div class="text-end pt-1">
+                                            <p class="text-sm mb-0 text-capitalize">Toplam Giriş</p>
+                                            <h4 class="mb-0">@Model.ToplamGiris.ToString("N2") Adet</h4>
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+                            <div class="col-md-4">
+                                <div class="card">
+                                    <div class="card-header p-3 pt-2">
+                                        <div class="icon icon-lg icon-shape bg-gradient-danger shadow-danger text-center border-radius-xl mt-n4 position-absolute">
+                                            <i class="material-icons opacity-10">shopping_cart</i>
+                                        </div>
+                                        <div class="text-end pt-1">
+                                            <p class="text-sm mb-0 text-capitalize">Toplam Çıkış</p>
+                                            <h4 class="mb-0">@Model.ToplamCikis.ToString("N2") Adet</h4>
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+                            <div class="col-md-4">
+                                <div class="card">
+                                    <div class="card-header p-3 pt-2">
+                                        <div class="icon icon-lg icon-shape bg-gradient-info shadow-info text-center border-radius-xl mt-n4 position-absolute">
+                                            <i class="material-icons opacity-10">inventory_2</i>
+                                        </div>
+                                        <div class="text-end pt-1">
+                                            <p class="text-sm mb-0 text-capitalize">Bakiye</p>
+                                            <h4 class="mb-0 @(Model.MevcutStok >= 0 ? "text-success" : "text-danger")">@Model.MevcutStok.ToString("N2") Adet</h4>
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                        
+                        <div class="table-responsive p-0">
+                            <table class="table align-items-center mb-0">
+                                <thead>
+                                    <tr>
+                                        <th class="text-uppercase text-secondary text-xxs font-weight-bolder opacity-7">Tarih</th>
+                                        <th class="text-uppercase text-secondary text-xxs font-weight-bolder opacity-7 ps-2">Ürün</th>
+                                        <th class="text-uppercase text-secondary text-xxs font-weight-bolder opacity-7 ps-2">Hareket Türü</th>
+                                        <th class="text-uppercase text-secondary text-xxs font-weight-bolder opacity-7 ps-2">Referans</th>
+                                        <th class="text-uppercase text-secondary text-xxs font-weight-bolder opacity-7 ps-2">Açıklama</th>
+                                        <th class="text-center text-uppercase text-secondary text-xxs font-weight-bolder opacity-7">Miktar</th>
+                                        <th class="text-center text-uppercase text-secondary text-xxs font-weight-bolder opacity-7">Birim Fiyat</th>
+                                        <th class="text-center text-uppercase text-secondary text-xxs font-weight-bolder opacity-7">Toplam Tutar</th>
+                                    </tr>
+                                </thead>
+                                <tbody>
+                                    @foreach (var item in Model.StokHareketleri)
+                                    {
+                                        <tr>
+                                            <td>
+                                                <div class="d-flex px-2 py-1">
+                                                    <div class="d-flex flex-column justify-content-center">
+                                                        <h6 class="mb-0 text-sm">@item.Tarih.ToString("dd.MM.yyyy")</h6>
+                                                        <p class="text-xs text-secondary mb-0">@item.Tarih.ToString("HH:mm")</p>
+                                                    </div>
+                                                </div>
+                                            </td>
+                                            <td>
+                                                <p class="text-xs font-weight-bold mb-0">@item.UrunAdi</p>
+                                            </td>
+                                            <td>
+                                                <p class="text-xs font-weight-bold mb-0">@item.HareketTuru</p>
+                                            </td>
+                                            <td>
+                                                <p class="text-xs font-weight-bold mb-0">@item.ReferansNo</p>
+                                                <p class="text-xs text-secondary mb-0">@item.ReferansTuru</p>
+                                            </td>
+                                            <td>
+                                                <p class="text-xs font-weight-bold mb-0">@item.Aciklama</p>
+                                            </td>
+                                            <td class="align-middle text-center">
+                                                <span class="text-sm font-weight-bold @(item.HareketTuru == "Giriş" ? "text-success" : "text-danger")">
+                                                    @item.Miktar.ToString("N2") @item.Birim
+                                                </span>
+                                            </td>
+                                            <td class="align-middle text-center">
+                                                <span class="text-sm font-weight-bold">
+                                                    @item.BirimFiyat.ToString("N2") TL
+                                                </span>
+                                            </td>
+                                            <td class="align-middle text-center">
+                                                <span class="text-sm font-weight-bold">
+                                                    @item.ToplamTutar.ToString("N2") TL
+                                                </span>
+                                            </td>
+                                        </tr>
+                                    }
+                                </tbody>
+                            </table>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</div> 

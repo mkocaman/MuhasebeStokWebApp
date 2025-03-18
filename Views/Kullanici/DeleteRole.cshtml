@@ -1,0 +1,42 @@
+@model MuhasebeStokWebApp.ViewModels.Kullanici.RoleViewModel
+
+@{
+    ViewData["Title"] = "Rol Sil";
+    Layout = "~/Views/Shared/_Layout.cshtml";
+}
+
+<div class="container-fluid">
+    <div class="card shadow mb-4">
+        <div class="card-header py-3">
+            <h6 class="m-0 font-weight-bold text-primary">Rol Silme Onayı</h6>
+        </div>
+        <div class="card-body">
+            <div class="alert alert-danger">
+                <h5><i class="fas fa-exclamation-triangle"></i> Uyarı!</h5>
+                <p>Bu rolü silmek istediğinizden emin misiniz?</p>
+                <p>Bu rol silindiğinde, bu role sahip kullanıcılar bu rolün yetkilerini kaybedecektir.</p>
+            </div>
+            
+            <div class="row">
+                <div class="col-md-6">
+                    <dl class="row">
+                        <dt class="col-sm-4">@Html.DisplayNameFor(model => model.RolAdi)</dt>
+                        <dd class="col-sm-8">@Html.DisplayFor(model => model.RolAdi)</dd>
+                    </dl>
+                </div>
+            </div>
+            
+            <form asp-action="DeleteRole" method="post">
+                <input type="hidden" asp-for="Id" />
+                <div class="form-group mt-3">
+                    <button type="submit" class="btn btn-danger">
+                        <i class="fas fa-trash"></i> Sil
+                    </button>
+                    <a asp-action="Roller" class="btn btn-secondary">
+                        <i class="fas fa-arrow-left"></i> Listeye Dön
+                    </a>
+                </div>
+            </form>
+        </div>
+    </div>
+</div>

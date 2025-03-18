@@ -1,0 +1,77 @@
+@model MuhasebeStokWebApp.ViewModels.Rapor.RaporFiltreViewModel
+@{
+    ViewData["Title"] = "Cari Raporu";
+}
+
+<div class="container-fluid py-4">
+    <div class="row">
+        <div class="col-12">
+            <div class="card my-4">
+                <div class="card-header p-0 position-relative mt-n4 mx-3 z-index-2">
+                    <div class="bg-gradient-primary shadow-primary border-radius-lg pt-4 pb-3">
+                        <h6 class="text-white text-capitalize ps-3">Cari Raporu</h6>
+                    </div>
+                </div>
+                <div class="card-body px-0 pb-2">
+                    <div class="container">
+                        <form asp-action="CariRaporu" method="post" target="_blank">
+                            <div class="row">
+                                <div class="col-md-4">
+                                    <div class="input-group input-group-static my-3">
+                                        <label asp-for="BaslangicTarihi" class="ms-0"></label>
+                                        <input asp-for="BaslangicTarihi" class="form-control" type="date" />
+                                    </div>
+                                    <span asp-validation-for="BaslangicTarihi" class="text-danger"></span>
+                                </div>
+                                <div class="col-md-4">
+                                    <div class="input-group input-group-static my-3">
+                                        <label asp-for="BitisTarihi" class="ms-0"></label>
+                                        <input asp-for="BitisTarihi" class="form-control" type="date" />
+                                    </div>
+                                    <span asp-validation-for="BitisTarihi" class="text-danger"></span>
+                                </div>
+                                <div class="col-md-4">
+                                    <div class="input-group input-group-static my-3">
+                                        <label asp-for="CariID" class="ms-0"></label>
+                                        <select asp-for="CariID" class="form-control" asp-items="ViewBag.Cariler">
+                                            <option value="">Tüm Cariler</option>
+                                        </select>
+                                    </div>
+                                </div>
+                            </div>
+                            
+                            <div class="row">
+                                <div class="col-md-4">
+                                    <div class="input-group input-group-static my-3">
+                                        <label asp-for="HareketTuru" class="ms-0"></label>
+                                        <select asp-for="HareketTuru" class="form-control">
+                                            <option value="">Tüm Hareketler</option>
+                                            <option value="Borç">Borç</option>
+                                            <option value="Alacak">Alacak</option>
+                                        </select>
+                                    </div>
+                                </div>
+                                <div class="col-md-4">
+                                    <div class="form-check form-switch mt-4">
+                                        <input asp-for="DetayGoster" class="form-check-input" type="checkbox" checked>
+                                        <label asp-for="DetayGoster" class="form-check-label"></label>
+                                    </div>
+                                </div>
+                            </div>
+                            
+                            <div class="row">
+                                <div class="col-md-12 text-end">
+                                    <button type="submit" class="btn btn-primary">Raporu Görüntüle</button>
+                                </div>
+                            </div>
+                        </form>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+
+@section Scripts {
+    @{await Html.RenderPartialAsync("_ValidationScriptsPartial");}
+} 

@@ -1,0 +1,60 @@
+@model MuhasebeStokWebApp.ViewModels.Kur.ParaBirimiViewModel
+
+@{
+    ViewData["Title"] = "Para Birimi Sil";
+}
+
+<div class="container-fluid">
+    <div class="row">
+        <div class="col-md-6 offset-md-3">
+            <div class="card">
+                <div class="card-header bg-danger">
+                    <h3 class="card-title">Para Birimi Sil</h3>
+                    <div class="card-tools">
+                        <a asp-action="ParaBirimleri" class="btn btn-sm btn-secondary">
+                            <i class="fas fa-arrow-left"></i> Para Birimlerine Dön
+                        </a>
+                    </div>
+                </div>
+                <div class="card-body">
+                    <div class="alert alert-warning">
+                        <h5><i class="icon fas fa-exclamation-triangle"></i> Uyarı!</h5>
+                        <p>Bu para birimini silmek istediğinizden emin misiniz? Bu işlem geri alınamaz.</p>
+                    </div>
+                    
+                    <dl class="row">
+                        <dt class="col-sm-4">@Html.DisplayNameFor(model => model.Kod)</dt>
+                        <dd class="col-sm-8">@Html.DisplayFor(model => model.Kod)</dd>
+                        
+                        <dt class="col-sm-4">@Html.DisplayNameFor(model => model.Ad)</dt>
+                        <dd class="col-sm-8">@Html.DisplayFor(model => model.Ad)</dd>
+                        
+                        <dt class="col-sm-4">@Html.DisplayNameFor(model => model.Sembol)</dt>
+                        <dd class="col-sm-8">@Html.DisplayFor(model => model.Sembol)</dd>
+                        
+                        <dt class="col-sm-4">@Html.DisplayNameFor(model => model.Aktif)</dt>
+                        <dd class="col-sm-8">
+                            @if (Model.Aktif)
+                            {
+                                <span class="badge badge-success">Aktif</span>
+                            }
+                            else
+                            {
+                                <span class="badge badge-danger">Pasif</span>
+                            }
+                        </dd>
+                    </dl>
+                </div>
+                <div class="card-footer">
+                    <form asp-action="ParaBirimiSil" method="post">
+                        <input type="hidden" asp-for="ParaBirimiID" />
+                        <div class="text-right">
+                            <a asp-action="ParaBirimleri" class="btn btn-secondary">İptal</a>
+                            <button type="submit" class="btn btn-danger">Sil</button>
+                        </div>
+                    </form>
+                </div>
+            </div>
+        </div>
+    </div>
+</div> 

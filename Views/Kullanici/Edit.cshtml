@@ -1,0 +1,74 @@
+@model MuhasebeStokWebApp.ViewModels.Kullanici.KullaniciEditViewModel
+
+@{
+    ViewData["Title"] = "Kullanıcı Düzenle";
+    Layout = "~/Views/Shared/_Layout.cshtml";
+}
+
+<div class="container-fluid">
+    <div class="card shadow mb-4">
+        <div class="card-header py-3">
+            <h6 class="m-0 font-weight-bold text-primary">Kullanıcı Düzenle</h6>
+        </div>
+        <div class="card-body">
+            <form asp-action="Edit" method="post">
+                <div asp-validation-summary="ModelOnly" class="text-danger"></div>
+                <input type="hidden" asp-for="Id" />
+                
+                <div class="form-group">
+                    <label asp-for="KullaniciAdi" class="control-label"></label>
+                    <input asp-for="KullaniciAdi" class="form-control" />
+                    <span asp-validation-for="KullaniciAdi" class="text-danger"></span>
+                </div>
+                
+                <div class="form-group">
+                    <label asp-for="Email" class="control-label"></label>
+                    <input asp-for="Email" class="form-control" />
+                    <span asp-validation-for="Email" class="text-danger"></span>
+                </div>
+                
+                <div class="form-group">
+                    <label asp-for="Sifre" class="control-label"></label>
+                    <input asp-for="Sifre" class="form-control" placeholder="Şifreyi değiştirmek için yeni şifre girin" />
+                    <span asp-validation-for="Sifre" class="text-danger"></span>
+                    <small class="form-text text-muted">Şifreyi değiştirmek istemiyorsanız boş bırakın.</small>
+                </div>
+                
+                <div class="form-group">
+                    <label asp-for="SifreTekrar" class="control-label"></label>
+                    <input asp-for="SifreTekrar" class="form-control" placeholder="Şifreyi değiştirmek için tekrar girin" />
+                    <span asp-validation-for="SifreTekrar" class="text-danger"></span>
+                </div>
+                
+                <div class="form-group">
+                    <label asp-for="SecilenRoller" class="control-label"></label>
+                    <select asp-for="SecilenRoller" class="form-control selectpicker" multiple data-live-search="true">
+                        @foreach (var rol in ViewBag.Roller)
+                        {
+                            <option value="@rol">@rol</option>
+                        }
+                    </select>
+                </div>
+                
+                <div class="form-group">
+                    <button type="submit" class="btn btn-primary">
+                        <i class="fas fa-save"></i> Kaydet
+                    </button>
+                    <a asp-action="Index" class="btn btn-secondary">
+                        <i class="fas fa-arrow-left"></i> Listeye Dön
+                    </a>
+                </div>
+            </form>
+        </div>
+    </div>
+</div>
+
+@section Scripts {
+    @{await Html.RenderPartialAsync("_ValidationScriptsPartial");}
+    
+    <script>
+        $(document).ready(function() {
+            $('.selectpicker').selectpicker();
+        });
+    </script>
+} 

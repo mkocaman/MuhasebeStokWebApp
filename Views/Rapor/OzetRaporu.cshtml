@@ -1,0 +1,234 @@
+@model MuhasebeStokWebApp.ViewModels.Rapor.OzetRaporViewModel
+@{
+    ViewData["Title"] = "Özet Rapor";
+    Layout = "~/Views/Shared/_RaporLayout.cshtml";
+}
+
+<div class="container-fluid">
+    <div class="row mb-4">
+        <div class="col-md-12">
+            <div class="card">
+                <div class="card-header bg-secondary text-white">
+                    <h5 class="mb-0">@Model.RaporAdi</h5>
+                </div>
+                <div class="card-body">
+                    <div class="row">
+                        <div class="col-md-6">
+                            <dl class="row">
+                                <dt class="col-sm-4">Rapor Tarihi:</dt>
+                                <dd class="col-sm-8">@Model.RaporTarihi.ToString("dd.MM.yyyy HH:mm")</dd>
+                                
+                                <dt class="col-sm-4">Kullanıcı:</dt>
+                                <dd class="col-sm-8">@Model.KullaniciAdi</dd>
+                            </dl>
+                        </div>
+                        <div class="col-md-6">
+                            <dl class="row">
+                                <dt class="col-sm-4">Açıklama:</dt>
+                                <dd class="col-sm-8">@Model.Aciklama</dd>
+                            </dl>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <div class="row mb-4">
+        <div class="col-md-12">
+            <div class="card">
+                <div class="card-header">
+                    <h5 class="mb-0">Genel Durum</h5>
+                </div>
+                <div class="card-body">
+                    <div class="row">
+                        <div class="col-md-4">
+                            <div class="card h-100">
+                                <div class="card-header bg-primary text-white">
+                                    <h5 class="mb-0">Satış / Alış Durumu</h5>
+                                </div>
+                                <div class="card-body">
+                                    <div class="row mb-3">
+                                        <div class="col-md-6">
+                                            <h6>Toplam Satış</h6>
+                                            <h4 class="text-success">@Model.ToplamSatis.ToString("N2") ₺</h4>
+                                        </div>
+                                        <div class="col-md-6">
+                                            <h6>Toplam Alış</h6>
+                                            <h4 class="text-danger">@Model.ToplamAlis.ToString("N2") ₺</h4>
+                                        </div>
+                                    </div>
+                                    <div class="row">
+                                        <div class="col-md-12">
+                                            <h6>Kar / Zarar</h6>
+                                            <h3 class="@(Model.KarZarar >= 0 ? "text-success" : "text-danger")">
+                                                @Model.KarZarar.ToString("N2") ₺
+                                            </h3>
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                        <div class="col-md-4">
+                            <div class="card h-100">
+                                <div class="card-header bg-success text-white">
+                                    <h5 class="mb-0">Nakit Durumu</h5>
+                                </div>
+                                <div class="card-body">
+                                    <div class="row mb-3">
+                                        <div class="col-md-6">
+                                            <h6>Toplam Tahsilat</h6>
+                                            <h4 class="text-success">@Model.ToplamTahsilat.ToString("N2") ₺</h4>
+                                        </div>
+                                        <div class="col-md-6">
+                                            <h6>Toplam Ödeme</h6>
+                                            <h4 class="text-danger">@Model.ToplamOdeme.ToString("N2") ₺</h4>
+                                        </div>
+                                    </div>
+                                    <div class="row">
+                                        <div class="col-md-12">
+                                            <h6>Net Nakit</h6>
+                                            <h3 class="@(Model.NakitDurumu >= 0 ? "text-success" : "text-danger")">
+                                                @Model.NakitDurumu.ToString("N2") ₺
+                                            </h3>
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                        <div class="col-md-4">
+                            <div class="card h-100">
+                                <div class="card-header bg-info text-white">
+                                    <h5 class="mb-0">Cari Durum</h5>
+                                </div>
+                                <div class="card-body">
+                                    <div class="row mb-3">
+                                        <div class="col-md-6">
+                                            <h6>Toplam Alacak</h6>
+                                            <h4 class="text-success">@Model.ToplamCariAlacak.ToString("N2") ₺</h4>
+                                        </div>
+                                        <div class="col-md-6">
+                                            <h6>Toplam Borç</h6>
+                                            <h4 class="text-danger">@Model.ToplamCariBorclar.ToString("N2") ₺</h4>
+                                        </div>
+                                    </div>
+                                    <div class="row">
+                                        <div class="col-md-12">
+                                            <h6>Net Cari Durum</h6>
+                                            <h3 class="@(Model.CariDurum >= 0 ? "text-success" : "text-danger")">
+                                                @Model.CariDurum.ToString("N2") ₺
+                                            </h3>
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <div class="row">
+        <div class="col-md-12">
+            <div class="card">
+                <div class="card-header">
+                    <h5 class="mb-0">Aylık Özet</h5>
+                </div>
+                <div class="card-body">
+                    <div class="table-responsive">
+                        <table class="table table-bordered table-striped">
+                            <thead class="table-light">
+                                <tr>
+                                    <th>Ay</th>
+                                    <th class="text-right">Satış</th>
+                                    <th class="text-right">Alış</th>
+                                    <th class="text-right">Kar/Zarar</th>
+                                    <th class="text-right">Tahsilat</th>
+                                    <th class="text-right">Ödeme</th>
+                                    <th class="text-right">Nakit Durumu</th>
+                                </tr>
+                            </thead>
+                            <tbody>
+                                @if (Model.AylikOzetler.Count == 0)
+                                {
+                                    <tr>
+                                        <td colspan="7" class="text-center">Kayıt bulunamadı.</td>
+                                    </tr>
+                                }
+                                else
+                                {
+                                    @foreach (var ozet in Model.AylikOzetler)
+                                    {
+                                        <tr>
+                                            <td>@ozet.Ay</td>
+                                            <td class="text-right text-success">@ozet.Satis.ToString("N2") ₺</td>
+                                            <td class="text-right text-danger">@ozet.Alis.ToString("N2") ₺</td>
+                                            <td class="text-right @(ozet.KarZarar >= 0 ? "text-success" : "text-danger")">
+                                                @ozet.KarZarar.ToString("N2") ₺
+                                            </td>
+                                            <td class="text-right text-success">@ozet.Tahsilat.ToString("N2") ₺</td>
+                                            <td class="text-right text-danger">@ozet.Odeme.ToString("N2") ₺</td>
+                                            <td class="text-right @(ozet.NakitDurumu >= 0 ? "text-success" : "text-danger")">
+                                                @ozet.NakitDurumu.ToString("N2") ₺
+                                            </td>
+                                        </tr>
+                                    }
+                                }
+                            </tbody>
+                            <tfoot>
+                                <tr class="table-primary">
+                                    <th>Toplam</th>
+                                    <th class="text-right text-success">@Model.ToplamSatis.ToString("N2") ₺</th>
+                                    <th class="text-right text-danger">@Model.ToplamAlis.ToString("N2") ₺</th>
+                                    <th class="text-right @(Model.KarZarar >= 0 ? "text-success" : "text-danger")">
+                                        @Model.KarZarar.ToString("N2") ₺
+                                    </th>
+                                    <th class="text-right text-success">@Model.ToplamTahsilat.ToString("N2") ₺</th>
+                                    <th class="text-right text-danger">@Model.ToplamOdeme.ToString("N2") ₺</th>
+                                    <th class="text-right @(Model.NakitDurumu >= 0 ? "text-success" : "text-danger")">
+                                        @Model.NakitDurumu.ToString("N2") ₺
+                                    </th>
+                                </tr>
+                            </tfoot>
+                        </table>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+
+@section Scripts {
+    <script>
+        $(document).ready(function () {
+            // DataTable uyarılarını gizle
+            $.fn.dataTable.ext.errMode = 'none';
+            
+            // Yazdırma işlemi için
+            $('.btn-print').click(function () {
+                window.print();
+            });
+
+            // Tablonun sıralanabilir olmasını sağlar
+            if ($.fn.DataTable) {
+                try {
+                    $('.table').DataTable({
+                        "order": [[0, "asc"]], // Aya göre sıralama
+                        "language": {
+                            "url": "//cdn.datatables.net/plug-ins/1.10.25/i18n/Turkish.json",
+                            "info": "" // Bilgilendirme yazısını kaldır (çift görünme sorununu çözmek için)
+                        },
+                        "dom": 'Bfrtip',
+                        "buttons": [
+                            'copy', 'excel', 'pdf', 'print'
+                        ],
+                        "retrieve": true
+                    });
+                } catch (e) {
+                    console.log("DataTable başlatılırken bir hata oluştu, ancak işlem devam ediyor.");
+                }
+            }
+        });
+    </script>
+} 

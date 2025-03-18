@@ -1,0 +1,33 @@
+@model MuhasebeStokWebApp.ViewModels.UrunKategori.UrunKategoriCreateViewModel
+
+<div class="modal-header">
+    <h5 class="modal-title">Yeni Kategori Ekle</h5>
+    <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+</div>
+
+<form asp-action="Create" method="post" id="createKategoriForm">
+    <div class="modal-body">
+        <div class="mb-3">
+            <label asp-for="KategoriAdi" class="form-label"></label>
+            <input asp-for="KategoriAdi" class="form-control" />
+            <span asp-validation-for="KategoriAdi" class="text-danger"></span>
+        </div>
+        <div class="mb-3">
+            <label asp-for="Aciklama" class="form-label"></label>
+            <textarea asp-for="Aciklama" class="form-control" rows="3"></textarea>
+            <span asp-validation-for="Aciklama" class="text-danger"></span>
+        </div>
+        <div class="form-check mb-3">
+            <input asp-for="Aktif" class="form-check-input" />
+            <label asp-for="Aktif" class="form-check-label"></label>
+        </div>
+    </div>
+    <div class="modal-footer">
+        <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">İptal</button>
+        <button type="submit" class="btn btn-primary">Kaydet</button>
+    </div>
+</form>
+
+@section Scripts {
+    @{await Html.RenderPartialAsync("_ValidationScriptsPartial");}
+} 

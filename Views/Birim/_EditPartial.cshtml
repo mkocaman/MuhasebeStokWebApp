@@ -1,0 +1,33 @@
+@model MuhasebeStokWebApp.ViewModels.Birim.BirimEditViewModel
+
+<form asp-action="Edit" method="post">
+    <div class="modal-body">
+        <input type="hidden" asp-for="BirimID" />
+        
+        <div class="mb-3">
+            <label asp-for="BirimAdi" class="form-label">Birim Adı</label>
+            <input asp-for="BirimAdi" class="form-control" required />
+            <span asp-validation-for="BirimAdi" class="text-danger"></span>
+        </div>
+        
+        <div class="mb-3">
+            <label asp-for="Aciklama" class="form-label">Açıklama</label>
+            <textarea asp-for="Aciklama" class="form-control" rows="3"></textarea>
+            <span asp-validation-for="Aciklama" class="text-danger"></span>
+        </div>
+        
+        <div class="form-check mb-3">
+            <input asp-for="Aktif" class="form-check-input" />
+            <label asp-for="Aktif" class="form-check-label">Aktif</label>
+        </div>
+    </div>
+    
+    <div class="modal-footer">
+        <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">İptal</button>
+        <button type="submit" class="btn btn-primary">Kaydet</button>
+    </div>
+</form>
+
+@section Scripts {
+    @{await Html.RenderPartialAsync("_ValidationScriptsPartial");}
+} 

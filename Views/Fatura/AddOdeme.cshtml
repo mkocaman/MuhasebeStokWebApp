@@ -1,0 +1,149 @@
+@model MuhasebeStokWebApp.ViewModels.Fatura.FaturaOdemeViewModel
+
+@{
+    ViewData["Title"] = "Fatura Ödeme Ekle";
+}
+
+<div class="container-fluid py-4">
+    <div class="row">
+        <div class="col-12">
+            <div class="card my-4">
+                <div class="card-header p-0 position-relative mt-n4 mx-3 z-index-2">
+                    <div class="bg-gradient-primary shadow-primary border-radius-lg pt-4 pb-3">
+                        <h6 class="text-white text-capitalize ps-3">Fatura Ödeme Ekle</h6>
+                    </div>
+                </div>
+                <div class="card-body px-0 pb-2">
+                    <div class="container">
+                        <div class="row">
+                            <div class="col-md-12">
+                                <div class="card">
+                                    <div class="card-body">
+                                        <div class="row mb-4">
+                                            <div class="col-md-6">
+                                                <h5>Fatura Bilgileri</h5>
+                                                <p><strong>Fatura No:</strong> @Model.FaturaNumarasi</p>
+                                                <p><strong>Cari:</strong> @Model.CariAdi</p>
+                                            </div>
+                                            <div class="col-md-6 text-end">
+                                                <h5>Ödeme Bilgileri</h5>
+                                                <p><strong>Genel Toplam:</strong> @Model.GenelToplam.ToString("N2") ₺</p>
+                                                <p><strong>Ödenen Tutar:</strong> @Model.OdenenTutar.ToString("N2") ₺</p>
+                                                <p><strong>Kalan Tutar:</strong> @Model.KalanTutar.ToString("N2") ₺</p>
+                                            </div>
+                                        </div>
+                                        <hr />
+                                        <form asp-action="AddOdeme" method="post">
+                                            <div asp-validation-summary="ModelOnly" class="text-danger"></div>
+                                            <input type="hidden" asp-for="FaturaID" />
+                                            <input type="hidden" asp-for="FaturaNumarasi" value="@Model.FaturaNumarasi" />
+                                            <input type="hidden" asp-for="CariAdi" value="@Model.CariAdi" />
+                                            <input type="hidden" asp-for="GenelToplam" value="@Model.GenelToplam" />
+                                            <input type="hidden" asp-for="OdenenTutar" value="@Model.OdenenTutar" />
+                                            <input type="hidden" asp-for="KalanTutar" value="@Model.KalanTutar" />
+
+                                            <div class="row">
+                                                <div class="col-md-6">
+                                                    <div class="input-group input-group-outline my-3">
+                                                        <label asp-for="OdemeTuruID" class="form-label"></label>
+                                                        <select asp-for="OdemeTuruID" asp-items="ViewBag.OdemeTurleri" class="form-control">
+                                                            <option value="">-- Ödeme Türü Seçin --</option>
+                                                        </select>
+                                                        <span asp-validation-for="OdemeTuruID" class="text-danger"></span>
+                                                    </div>
+                                                </div>
+                                                <div class="col-md-6">
+                                                    <div class="input-group input-group-outline my-3">
+                                                        <label asp-for="Tutar" class="form-label"></label>
+                                                        <input asp-for="Tutar" class="form-control" />
+                                                        <span asp-validation-for="Tutar" class="text-danger"></span>
+                                                    </div>
+                                                </div>
+                                            </div>
+                                            <div class="row">
+                                                <div class="col-md-6">
+                                                    <div class="input-group input-group-outline my-3">
+                                                        <label asp-for="OdemeTarihi" class="form-label"></label>
+                                                        <input asp-for="OdemeTarihi" class="form-control" type="date" />
+                                                        <span asp-validation-for="OdemeTarihi" class="text-danger"></span>
+                                                    </div>
+                                                </div>
+                                                <div class="col-md-6">
+                                                    <div class="input-group input-group-outline my-3">
+                                                        <label asp-for="Aciklama" class="form-label"></label>
+                                                        <textarea asp-for="Aciklama" class="form-control" rows="3"></textarea>
+                                                        <span asp-validation-for="Aciklama" class="text-danger"></span>
+                                                    </div>
+                                                </div>
+                                            </div>
+                                            <div class="row">
+                                                <div class="col-md-12 text-end">
+                                                    <a asp-action="Details" asp-route-id="@Model.FaturaID" class="btn btn-secondary">İptal</a>
+                                                    <button type="submit" class="btn btn-primary">Ödeme Ekle</button>
+                                                </div>
+                                            </div>
+                                        </form>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+
+@section Scripts {
+    @{await Html.RenderPartialAsync("_ValidationScriptsPartial");}
+    
+    <script>
+        $(document).ready(function() {
+            // Form submit işlemi
+            $('form').submit(function(e) {
+                // Form validasyonu
+                var cariAdi = $('#CariAdi').val() || $('input[name="CariAdi"]').val();
+                var faturaNumarasi = $('#FaturaNumarasi').val() || $('input[name="FaturaNumarasi"]').val();
+                var odemeTuruID = $('#OdemeTuruID').val();
+                var tutar = $('#Tutar').val();
+                var odemeTarihi = $('#OdemeTarihi').val();
+                
+                var hataMesajlari = [];
+                
+                if (!cariAdi) {
+                    hataMesajlari.push('Cari Adı alanı gereklidir.');
+                }
+                
+                if (!faturaNumarasi) {
+                    hataMesajlari.push('Fatura No alanı gereklidir.');
+                }
+                
+                if (!odemeTuruID) {
+                    hataMesajlari.push('Lütfen ödeme türü seçiniz.');
+                }
+                
+                if (!tutar || parseFloat(tutar) <= 0) {
+                    hataMesajlari.push('Lütfen geçerli bir tutar giriniz.');
+                }
+                
+                if (!odemeTarihi) {
+                    hataMesajlari.push('Lütfen ödeme tarihi seçiniz.');
+                }
+                
+                if (hataMesajlari.length > 0) {
+                    e.preventDefault();
+                    Swal.fire({
+                        title: 'Hata!',
+                        html: hataMesajlari.join('<br>'),
+                        icon: 'error',
+                        confirmButtonText: 'Tamam'
+                    });
+                    return false;
+                }
+                
+                // Form geçerli, işleme devam et
+                return true;
+            });
+        });
+    </script>
+} 

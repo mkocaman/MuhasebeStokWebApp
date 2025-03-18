@@ -1,0 +1,82 @@
+@model MuhasebeStokWebApp.ViewModels.Kur.KurDegeriViewModel
+
+@{
+    ViewData["Title"] = "Kur Değeri Ekle";
+}
+
+<div class="container-fluid">
+    <div class="row">
+        <div class="col-md-6 offset-md-3">
+            <div class="card">
+                <div class="card-header">
+                    <h3 class="card-title">Kur Değeri Ekle</h3>
+                    <div class="card-tools">
+                        <a asp-action="Index" class="btn btn-sm btn-secondary">
+                            <i class="fas fa-arrow-left"></i> Kur Yönetimine Dön
+                        </a>
+                    </div>
+                </div>
+                <form asp-action="KurDegeriEkle" method="post">
+                    <div class="card-body">
+                        <div asp-validation-summary="ModelOnly" class="text-danger"></div>
+                        
+                        <div class="form-group">
+                            <label asp-for="ParaBirimiID" class="control-label"></label>
+                            <select asp-for="ParaBirimiID" asp-items="Model.ParaBirimleri" class="form-control select2">
+                                <option value="">-- Seçiniz --</option>
+                            </select>
+                            <span asp-validation-for="ParaBirimiID" class="text-danger"></span>
+                        </div>
+                        
+                        <div class="form-group">
+                            <label asp-for="AlisDegeri" class="control-label"></label>
+                            <input asp-for="AlisDegeri" class="form-control" />
+                            <span asp-validation-for="AlisDegeri" class="text-danger"></span>
+                            <small class="form-text text-muted">Örnek: 1 USD = 30.3 TRY için 30.3 giriniz</small>
+                        </div>
+                        
+                        <div class="form-group">
+                            <label asp-for="SatisDegeri" class="control-label"></label>
+                            <input asp-for="SatisDegeri" class="form-control" />
+                            <span asp-validation-for="SatisDegeri" class="text-danger"></span>
+                            <small class="form-text text-muted">Örnek: 1 USD = 30.7 TRY için 30.7 giriniz</small>
+                        </div>
+                        
+                        <div class="form-group">
+                            <label asp-for="Tarih" class="control-label"></label>
+                            <input asp-for="Tarih" class="form-control" type="date" />
+                            <span asp-validation-for="Tarih" class="text-danger"></span>
+                        </div>
+                        
+                        <div class="form-group">
+                            <label asp-for="Kaynak" class="control-label"></label>
+                            <input asp-for="Kaynak" class="form-control" />
+                            <span asp-validation-for="Kaynak" class="text-danger"></span>
+                            <small class="form-text text-muted">Örnek: Manuel, TCMB, Özbekistan MB</small>
+                        </div>
+                        
+                        <div class="form-group form-check">
+                            <input asp-for="Aktif" class="form-check-input" />
+                            <label asp-for="Aktif" class="form-check-label"></label>
+                        </div>
+                    </div>
+                    <div class="card-footer">
+                        <div class="text-right">
+                            <a asp-action="Index" class="btn btn-secondary">İptal</a>
+                            <button type="submit" class="btn btn-primary">Kaydet</button>
+                        </div>
+                    </div>
+                </form>
+            </div>
+        </div>
+    </div>
+</div>
+
+@section Scripts {
+    @{await Html.RenderPartialAsync("_ValidationScriptsPartial");}
+    <script>
+        $(document).ready(function() {
+            $('.select2').select2();
+        });
+    </script>
+} 

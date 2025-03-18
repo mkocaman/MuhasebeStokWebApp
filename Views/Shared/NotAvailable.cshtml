@@ -1,0 +1,24 @@
+@{
+    ViewData["Title"] = "Özellik Kullanılamıyor";
+}
+
+<div class="container-fluid">
+    <div class="row">
+        <div class="col-sm-12">
+            <div class="card">
+                <div class="card-header">
+                    <h5>Özellik Kullanılamıyor</h5>
+                </div>
+                <div class="card-body">
+                    <div class="alert alert-warning" role="alert">
+                        <h4 class="alert-heading">Bu özellik şu anda kullanılamıyor!</h4>
+                        <p>Üzgünüz, bu özellik şu anda bakım nedeniyle kullanılamıyor. Lütfen daha sonra tekrar deneyin.</p>
+                        <hr>
+                        <p class="mb-0">Sorun devam ederse, lütfen sistem yöneticinizle iletişime geçin.</p>
+                    </div>
+                    <a asp-controller="Home" asp-action="Index" class="btn btn-primary">Ana Sayfaya Dön</a>
+                </div>
+            </div>
+        </div>
+    </div>
+</div> 

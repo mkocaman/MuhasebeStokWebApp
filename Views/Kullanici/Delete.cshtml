@@ -1,0 +1,47 @@
+@model MuhasebeStokWebApp.ViewModels.Kullanici.KullaniciViewModel
+
+@{
+    ViewData["Title"] = "Kullanıcı Sil";
+    Layout = "~/Views/Shared/_Layout.cshtml";
+}
+
+<div class="container-fluid">
+    <div class="card shadow mb-4">
+        <div class="card-header py-3">
+            <h6 class="m-0 font-weight-bold text-primary">Kullanıcı Silme Onayı</h6>
+        </div>
+        <div class="card-body">
+            <div class="alert alert-danger">
+                <h5><i class="fas fa-exclamation-triangle"></i> Uyarı!</h5>
+                <p>Bu kullanıcıyı silmek istediğinizden emin misiniz?</p>
+            </div>
+            
+            <div class="row">
+                <div class="col-md-6">
+                    <dl class="row">
+                        <dt class="col-sm-4">@Html.DisplayNameFor(model => model.KullaniciAdi)</dt>
+                        <dd class="col-sm-8">@Html.DisplayFor(model => model.KullaniciAdi)</dd>
+                        
+                        <dt class="col-sm-4">@Html.DisplayNameFor(model => model.Email)</dt>
+                        <dd class="col-sm-8">@Html.DisplayFor(model => model.Email)</dd>
+                        
+                        <dt class="col-sm-4">@Html.DisplayNameFor(model => model.Roller)</dt>
+                        <dd class="col-sm-8">@Html.DisplayFor(model => model.Roller)</dd>
+                    </dl>
+                </div>
+            </div>
+            
+            <form asp-action="Delete" method="post">
+                <input type="hidden" asp-for="Id" />
+                <div class="form-group mt-3">
+                    <button type="submit" class="btn btn-danger">
+                        <i class="fas fa-trash"></i> Sil
+                    </button>
+                    <a asp-action="Index" class="btn btn-secondary">
+                        <i class="fas fa-arrow-left"></i> Listeye Dön
+                    </a>
+                </div>
+            </form>
+        </div>
+    </div>
+</div> 

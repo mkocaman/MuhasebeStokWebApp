@@ -1,0 +1,240 @@
+@model IEnumerable<MuhasebeStokWebApp.ViewModels.Birim.BirimViewModel>
+@{
+    ViewData["Title"] = "Birimler";
+    Layout = "~/Views/Shared/_Layout.cshtml";
+}
+
+<div class="container-fluid">
+    <div class="card">
+        <div class="card-header bg-primary text-white">
+            <div class="d-flex justify-content-between align-items-center">
+                <h4 class="mb-0">Birim Listesi</h4>
+                <button type="button" class="btn btn-success" data-bs-toggle="modal" data-bs-target="#createBirimModal">
+                    <i class="fas fa-plus"></i> Yeni Birim Ekle
+                </button>
+            </div>
+        </div>
+        <div class="card-body">
+            @if (TempData["SuccessMessage"] != null)
+            {
+                <div class="alert alert-success alert-dismissible fade show" role="alert">
+                    @TempData["SuccessMessage"]
+                    <button type="button" class="btn-close" data-bs-dismiss="alert" aria-label="Close"></button>
+                </div>
+            }
+            
+            @if (TempData["ErrorMessage"] != null)
+            {
+                <div class="alert alert-danger alert-dismissible fade show" role="alert">
+                    @TempData["ErrorMessage"]
+                    <button type="button" class="btn-close" data-bs-dismiss="alert" aria-label="Close"></button>
+                </div>
+            }
+            
+            <!-- Sekme Başlıkları -->
+            <ul class="nav nav-tabs mb-3" id="birimTabs" role="tablist">
+                <li class="nav-item" role="presentation">
+                    <button class="nav-link active" id="aktif-tab" data-bs-toggle="tab" data-bs-target="#aktif" type="button" role="tab" aria-controls="aktif" aria-selected="true">
+                        <i class="fas fa-check-circle text-success"></i> Aktif Birimler
+                    </button>
+                </li>
+                <li class="nav-item" role="presentation">
+                    <button class="nav-link" id="pasif-tab" data-bs-toggle="tab" data-bs-target="#pasif" type="button" role="tab" aria-controls="pasif" aria-selected="false">
+                        <i class="fas fa-times-circle text-danger"></i> Pasif Birimler
+                    </button>
+                </li>
+            </ul>
+            
+            <!-- Sekme İçerikleri -->
+            <div class="tab-content" id="birimTabsContent">
+                <!-- Aktif Birimler Sekmesi -->
+                <div class="tab-pane fade show active" id="aktif" role="tabpanel" aria-labelledby="aktif-tab">
+                    <div class="table-responsive">
+                        <table class="table table-bordered table-hover" id="aktifBirimTable">
+                            <thead class="table-light">
+                                <tr>
+                                    <th>Birim Adı</th>
+                                    <th>Açıklama</th>
+                                    <th>İşlemler</th>
+                                </tr>
+                            </thead>
+                            <tbody>
+                                @foreach (var item in Model.Where(b => b.Aktif))
+                                {
+                                    <tr>
+                                        <td>@item.BirimAdi</td>
+                                        <td>@item.Aciklama</td>
+                                        <td class="text-center">
+                                            <div class="btn-group" role="group">
+                                                <button type="button" class="btn btn-sm btn-info btn-edit-birim" data-id="@item.BirimID">
+                                                    <i class="fas fa-edit"></i>
+                                                </button>
+                                                <a asp-action="Details" asp-route-id="@item.BirimID" class="btn btn-sm btn-primary">
+                                                    <i class="fas fa-info-circle"></i>
+                                                </a>
+                                                <a asp-action="Delete" asp-route-id="@item.BirimID" class="btn btn-sm btn-danger">
+                                                    <i class="fas fa-trash"></i>
+                                                </a>
+                                            </div>
+                                        </td>
+                                    </tr>
+                                }
+                            </tbody>
+                        </table>
+                    </div>
+                </div>
+                
+                <!-- Pasif Birimler Sekmesi -->
+                <div class="tab-pane fade" id="pasif" role="tabpanel" aria-labelledby="pasif-tab">
+                    <div class="table-responsive">
+                        <table class="table table-bordered table-hover" id="pasifBirimTable">
+                            <thead class="table-light">
+                                <tr>
+                                    <th>Birim Adı</th>
+                                    <th>Açıklama</th>
+                                    <th>İşlemler</th>
+                                </tr>
+                            </thead>
+                            <tbody>
+                                @foreach (var item in Model.Where(b => !b.Aktif))
+                                {
+                                    <tr>
+                                        <td>@item.BirimAdi</td>
+                                        <td>@item.Aciklama</td>
+                                        <td class="text-center">
+                                            <div class="btn-group" role="group">
+                                                <button type="button" class="btn btn-sm btn-info btn-edit-birim" data-id="@item.BirimID">
+                                                    <i class="fas fa-edit"></i>
+                                                </button>
+                                                <a asp-action="Details" asp-route-id="@item.BirimID" class="btn btn-sm btn-primary">
+                                                    <i class="fas fa-info-circle"></i>
+                                                </a>
+                                                <a asp-action="Delete" asp-route-id="@item.BirimID" class="btn btn-sm btn-danger">
+                                                    <i class="fas fa-trash"></i>
+                                                </a>
+                                            </div>
+                                        </td>
+                                    </tr>
+                                }
+                            </tbody>
+                        </table>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+
+<!-- Yeni Birim Ekleme Modal -->
+<div class="modal fade" id="createBirimModal" tabindex="-1" aria-labelledby="createBirimModalLabel" aria-hidden="true">
+    <div class="modal-dialog">
+        <div class="modal-content">
+            <div class="modal-header bg-primary text-white">
+                <h5 class="modal-title" id="createBirimModalLabel">Yeni Birim Ekle</h5>
+                <button type="button" class="btn-close btn-close-white" data-bs-dismiss="modal" aria-label="Close"></button>
+            </div>
+            <form asp-action="Create" method="post">
+                <div class="modal-body">
+                    <div class="mb-3">
+                        <label for="BirimAdi" class="form-label">Birim Adı</label>
+                        <input type="text" class="form-control" id="BirimAdi" name="BirimAdi" required>
+                    </div>
+                    <div class="mb-3">
+                        <label for="Aciklama" class="form-label">Açıklama</label>
+                        <textarea class="form-control" id="Aciklama" name="Aciklama" rows="3"></textarea>
+                    </div>
+                    <div class="form-check mb-3">
+                        <input type="checkbox" class="form-check-input" id="Aktif" name="Aktif" checked>
+                        <label class="form-check-label" for="Aktif">Aktif</label>
+                    </div>
+                </div>
+                <div class="modal-footer">
+                    <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">İptal</button>
+                    <button type="submit" class="btn btn-primary">Kaydet</button>
+                </div>
+            </form>
+        </div>
+    </div>
+</div>
+
+<!-- Birim Düzenleme Modal -->
+<div class="modal fade" id="editBirimModal" tabindex="-1" aria-labelledby="editBirimModalLabel" aria-hidden="true">
+    <div class="modal-dialog">
+        <div class="modal-content">
+            <div class="modal-header bg-primary text-white">
+                <h5 class="modal-title" id="editBirimModalLabel">Birim Düzenle</h5>
+                <button type="button" class="btn-close btn-close-white" data-bs-dismiss="modal" aria-label="Close"></button>
+            </div>
+            <div id="editBirimModalContent">
+                <!-- İçerik AJAX ile yüklenecek -->
+                <div class="modal-body text-center">
+                    <div class="spinner-border text-primary" role="status">
+                        <span class="visually-hidden">Yükleniyor...</span>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+
+@section Scripts {
+    <script>
+        $(document).ready(function() {
+            // DataTable uyarılarını gizle
+            $.fn.dataTable.ext.errMode = 'none';
+            
+            // Aktif Birimler DataTable başlatma
+            try {
+                $('#aktifBirimTable').DataTable({
+                    language: {
+                        url: '/js/dataTables.turkish.json',
+                        info: "" // Bilgilendirme yazısını kaldır (çift görünme sorununu çözmek için)
+                    },
+                    responsive: true,
+                    retrieve: true
+                });
+            } catch (e) {
+                console.log("DataTable başlatılırken bir hata oluştu, ancak işlem devam ediyor.");
+            }
+            
+            // Pasif Birimler DataTable başlatma
+            try {
+                $('#pasifBirimTable').DataTable({
+                    language: {
+                        url: '/js/dataTables.turkish.json',
+                        info: "" // Bilgilendirme yazısını kaldır (çift görünme sorununu çözmek için)
+                    },
+                    responsive: true,
+                    retrieve: true
+                });
+            } catch (e) {
+                console.log("DataTable başlatılırken bir hata oluştu, ancak işlem devam ediyor.");
+            }
+            
+            // Otomatik kapanan alertler
+            window.setTimeout(function() {
+                $(".alert").fadeTo(500, 0).slideUp(500, function() {
+                    $(this).remove();
+                });
+            }, 4000);
+            
+            // Birim düzenleme modal
+            $(document).on('click', '.btn-edit-birim', function () {
+                var birimId = $(this).data('id');
+                $('#editBirimModalContent').html('<div class="text-center my-3"><div class="spinner-border text-primary" role="status"><span class="visually-hidden">Yükleniyor...</span></div></div>');
+                $('#editBirimModal').modal('show');
+                
+                $.ajax({
+                    url: '@Url.Action("Edit", "Birim")/' + birimId,
+                    type: 'GET',
+                    success: function (data) {
+                        $('#editBirimModalContent').html(data);
+                    },
+                    error: function () {
+                        $('#editBirimModalContent').html('<div class="alert alert-danger">Birim bilgileri yüklenirken bir hata oluştu.</div>');
+                    }
+                });
+            });
+        });
+    </script>
+} 

@@ -1,0 +1,460 @@
+﻿<!DOCTYPE html>
+<html lang="tr">
+<head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1, shrink-to-fit=no">
+    <title>@ViewData["Title"] - Muhasebe Stok Web App</title>
+    
+    <!-- Favicon -->
+    <link rel="apple-touch-icon" sizes="76x76" href="~/assets/images/apple-icon.png">
+    <link rel="icon" type="image/png" href="~/assets/images/favicon.png">
+    
+    <!-- Fonts and icons -->
+    <link rel="stylesheet" type="text/css" href="https://fonts.googleapis.com/css?family=Roboto:300,400,500,700,900|Roboto+Slab:400,700" />
+    
+    <!-- Material Icons -->
+    <link href="https://fonts.googleapis.com/icon?family=Material+Icons" rel="stylesheet">
+    
+    <!-- CSS Files -->
+    <link href="~/lib/bootstrap/dist/css/bootstrap.min.css" rel="stylesheet" />
+    <link href="~/assets/css/style.css" rel="stylesheet" />
+    <link href="~/css/site.css" asp-append-version="true" rel="stylesheet" />
+    
+    <!-- Font Awesome -->
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.2/css/all.min.css" integrity="sha512-z3gLpd7yknf1YoNbCzqRKc4qyor8gaKU1qmn+CShxbuBusANI9QpRohGBreCFkKxLhei6S9CQXFEbbKuqLg0DA==" crossorigin="anonymous" referrerpolicy="no-referrer" />
+    
+    <!-- DataTables CSS -->
+    <link rel="stylesheet" href="https://cdn.datatables.net/1.13.7/css/dataTables.bootstrap5.min.css">
+    
+    <!-- SweetAlert2 -->
+    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/sweetalert2@11.7.32/dist/sweetalert2.min.css">
+    
+    @await RenderSectionAsync("Styles", required: false)
+    <style>
+        /* Menü CSS'i */
+        .nav-submenu {
+            display: none;
+        }
+        
+        .dropdown > a.active + .nav-submenu {
+            display: block;
+        }
+    </style>
+</head>
+
+<body>
+    <!-- Loader starts-->
+    <div class="loader-wrapper">
+        <div class="theme-loader">
+            <div class="loader-p"></div>
+        </div>
+    </div>
+    <!-- Loader ends-->
+    
+    <!-- Page wrapper starts -->
+    <div class="page-wrapper compact-wrapper" id="pageWrapper">
+        <!-- Page header starts -->
+        <div class="page-main-header">
+            <div class="main-header-right row m-0">
+                <div class="main-header-left">
+                    <div class="logo-wrapper">
+                        <a href="/">
+                            <img class="img-fluid" src="~/assets/images/logo/logo.png" alt="Logo">
+                        </a>
+                    </div>
+                    <div class="toggle-sidebar">
+                        <i class="material-icons" id="sidebar-toggle">menu</i>
+                    </div>
+                </div>
+                <div class="nav-right col pull-right right-menu p-0">
+                    <ul class="nav-menus">
+                        <li>
+                            <a class="text-dark" href="#!" onclick="javascript:toggleFullScreen()">
+                                <i class="material-icons">fullscreen</i>
+                            </a>
+                        </li>
+                        <li class="onhover-dropdown">
+                            <div class="notification-box">
+                                <i class="material-icons">notifications</i>
+                                <span class="dot-animated"></span>
+                            </div>
+                            <ul class="notification-dropdown onhover-show-div">
+                                <li>
+                                    <p class="f-w-700 mb-0">Bildirimler <span class="pull-right badge badge-primary badge-pill">4</span></p>
+                                </li>
+                                <li class="noti-primary">
+                                    <div class="media">
+                                        <span class="notification-bg bg-light-primary">
+                                            <i class="material-icons">trending_up</i>
+                                        </span>
+                                        <div class="media-body">
+                                            <p>Ödeme Alındı</p>
+                                            <span>10 dakika önce</span>
+                                        </div>
+                                    </div>
+                                </li>
+                                <li class="noti-secondary">
+                                    <div class="media">
+                                        <span class="notification-bg bg-light-secondary">
+                                            <i class="material-icons">check_circle</i>
+                                        </span>
+                                        <div class="media-body">
+                                            <p>Sipariş Tamamlandı</p>
+                                            <span>1 saat önce</span>
+                                        </div>
+                                    </div>
+                                </li>
+                            </ul>
+                        </li>
+                        <li class="onhover-dropdown p-0">
+                            <a asp-controller="Account" asp-action="Logout" class="btn btn-primary-light">
+                                <i class="material-icons">exit_to_app</i>Çıkış
+                            </a>
+                        </li>
+                    </ul>
+                </div>
+                <div class="d-lg-none mobile-toggle pull-right w-auto">
+                    <i class="fa fa-ellipsis-h"></i>
+                </div>
+            </div>
+        </div>
+        <!-- Page header ends -->
+        
+        <!-- Page body starts -->
+        <div class="page-body-wrapper sidebar-icon">
+            <!-- Page sidebar starts -->
+            <header class="main-nav">
+                <div class="sidebar-user text-center">
+                    <a class="setting-primary" href="javascript:void(0)">
+                        <i class="material-icons">settings</i>
+                    </a>
+                    <img class="img-90 rounded-circle" src="~/assets/images/dashboard/1.png" alt="Kullanıcı">
+                    <div class="badge-bottom">
+                        <span class="badge badge-primary">@(User.IsInRole("Admin") ? "Yönetici" : "Kullanıcı")</span>
+                    </div>
+                    <a href="javascript:void(0)">
+                        <h6 class="mt-3 f-14 f-w-600">@User.Identity.Name</h6>
+                    </a>
+                    <p class="mb-0 font-roboto">Muhasebe Departmanı</p>
+                </div>
+                <nav>
+                    <div class="main-navbar">
+                        <div class="left-arrow" id="left-arrow">
+                            <i class="fa fa-arrow-left"></i>
+                        </div>
+                        <div id="mainnav">
+                            <ul class="nav-menu custom-scrollbar">
+                                <li class="back-btn">
+                                    <div class="mobile-back text-end">
+                                        <span>Geri</span>
+                                        <i class="fa fa-angle-right ps-2" aria-hidden="true"></i>
+                                    </div>
+                                </li>
+                                <li class="sidebar-main-title">
+                                    <div>
+                                        <h6>Genel</h6>
+                                    </div>
+                                </li>
+                                <li class="dropdown">
+                                    <a class="nav-link menu-title" asp-controller="Home" asp-action="Index">
+                                        <i class="material-icons">dashboard</i>
+                                        <span>Dashboard</span>
+                                    </a>
+                                </li>
+                                <li class="dropdown">
+                                    <a class="nav-link menu-title" asp-controller="Cari" asp-action="Index">
+                                        <i class="material-icons">people</i>
+                                        <span>Cariler</span>
+                                    </a>
+                                </li>
+                                <li class="dropdown">
+                                    <a class="nav-link menu-title" href="#">
+                                        <i class="material-icons">inventory_2</i>
+                                        <span>Ürünler</span>
+                                    </a>
+                                    <ul class="nav-submenu menu-content">
+                                        <li><a asp-controller="Urun" asp-action="Index">Ürün Listesi</a></li>
+                                        <li><a asp-controller="UrunKategori" asp-action="Index">Kategoriler</a></li>
+                                        <li><a asp-controller="Birim" asp-action="Index">Birimler</a></li>
+                                        <li><a asp-controller="Depo" asp-action="Index">Depolar</a></li>
+                                    </ul>
+                                </li>
+                                <li class="dropdown">
+                                    <a class="nav-link menu-title" asp-controller="Fatura" asp-action="Index">
+                                        <i class="material-icons">receipt</i>
+                                        <span>Faturalar</span>
+                                    </a>
+                                </li>
+                                <li class="dropdown">
+                                    <a class="nav-link menu-title" asp-controller="Irsaliye" asp-action="Index">
+                                        <i class="material-icons">description</i>
+                                        <span>İrsaliyeler</span>
+                                    </a>
+                                </li>
+                                <li class="dropdown">
+                                    <a class="nav-link menu-title" asp-controller="Stok" asp-action="Index">
+                                        <i class="material-icons">inventory_2</i>
+                                        <span>Stok Yönetimi</span>
+                                    </a>
+                                </li>
+                                <li class="sidebar-main-title">
+                                    <div>
+                                        <h6>Finans</h6>
+                                    </div>
+                                </li>
+                                <li class="dropdown">
+                                    <a href="#" class="nav-link dropdown-toggle" data-bs-toggle="dropdown"><i class="fa fa-money-bill-1-wave me-2"></i>Finans</a>
+                                    <div class="dropdown-menu bg-transparent border-0">
+                                        <a href="@Url.Action("Index", "Kasa")" class="dropdown-item">Kasa</a>
+                                        <a href="@Url.Action("Index", "Banka")" class="dropdown-item">Banka</a>
+                                    </div>
+                                </li>
+                                <li class="dropdown">
+                                    <a class="nav-link menu-title" href="#">
+                                        <i class="material-icons">currency_exchange</i>
+                                        <span>Kur Yönetimi</span>
+                                    </a>
+                                    <ul class="nav-submenu menu-content">
+                                        <li><a asp-controller="Kur" asp-action="Index">Kur Değerleri</a></li>
+                                        <li><a asp-controller="Kur" asp-action="ParaBirimIliskileri">Para Birimi İlişkileri</a></li>
+                                    </ul>
+                                </li>
+                                <li class="sidebar-main-title">
+                                    <div>
+                                        <h6>Raporlar</h6>
+                                    </div>
+                                </li>
+                                <li class="dropdown">
+                                    <a class="nav-link menu-title" asp-controller="Rapor" asp-action="Index">
+                                        <i class="material-icons">bar_chart</i>
+                                        <span>Raporlar</span>
+                                    </a>
+                                </li>
+                                <li class="dropdown">
+                                    <a class="nav-link menu-title"  asp-controller="SistemLog" asp-action="Index">
+                                        <i class="material-icons">event_note</i>
+                                        <span>Sistem Logları</span>
+
+                                    </a>
+                                </li>
+                                <li class="sidebar-main-title">
+                                    <div>
+                                        <h6>Sistem</h6>
+                                    </div>
+                                </li>
+                                <li class="dropdown">
+                                    <a class="nav-link menu-title" asp-controller="Kullanici" asp-action="Index">
+                                        <i class="material-icons">manage_accounts</i>
+                                        <span>Kullanıcı Yönetimi</span>
+                                    </a>
+                                </li>
+                            </ul>
+                        </div>
+                        <div class="right-arrow" id="right-arrow">
+                            <i class="fa fa-arrow-right"></i>
+                        </div>
+                    </div>
+                </nav>
+            </header>
+            <!-- Page sidebar ends -->
+            
+            <!-- Page content starts -->
+            <div class="page-body">
+                <!-- Container-fluid starts -->
+                <div class="container-fluid">
+                    <div class="page-header">
+                        <div class="row">
+                            <div class="col-sm-6">
+                                <h3>@ViewData["Title"]</h3>
+                                <ol class="breadcrumb">
+                                    <li class="breadcrumb-item">
+                                        <a asp-controller="Home" asp-action="Index">
+                                            <i class="fa fa-home"></i>
+                                        </a>
+                                    </li>
+                                </ol>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+                <!-- Container-fluid ends -->
+                
+                <!-- Bildirim mesajları başlangıç -->
+                <div class="container-fluid">
+                    @if (TempData["SuccessMessage"] != null)
+                    {
+                        <div class="alert alert-success alert-dismissible fade show" role="alert">
+                            <i class="fa fa-check-circle me-2"></i> @TempData["SuccessMessage"]
+                            <button type="button" class="btn-close" data-bs-dismiss="alert" aria-label="Close"></button>
+                        </div>
+                    }
+                    
+                    @if (TempData["ErrorMessage"] != null)
+                    {
+                        <div class="alert alert-danger alert-dismissible fade show" role="alert">
+                            <i class="fa fa-exclamation-circle me-2"></i> @TempData["ErrorMessage"]
+                            <button type="button" class="btn-close" data-bs-dismiss="alert" aria-label="Close"></button>
+                        </div>
+                    }
+                    
+                    @if (TempData["WarningMessage"] != null)
+                    {
+                        <div class="alert alert-warning alert-dismissible fade show" role="alert">
+                            <i class="fa fa-exclamation-triangle me-2"></i> @TempData["WarningMessage"]
+                            <button type="button" class="btn-close" data-bs-dismiss="alert" aria-label="Close"></button>
+                        </div>
+                    }
+                    
+                    @if (TempData["InfoMessage"] != null)
+                    {
+                        <div class="alert alert-info alert-dismissible fade show" role="alert">
+                            <i class="fa fa-info-circle me-2"></i> @TempData["InfoMessage"]
+                            <button type="button" class="btn-close" data-bs-dismiss="alert" aria-label="Close"></button>
+                        </div>
+                    }
+                </div>
+                <!-- Bildirim mesajları bitiş -->
+                
+                @RenderBody()
+            </div>
+            <!-- Page content ends -->
+            
+            <!-- Footer starts -->
+            <footer class="footer">
+                <div class="container-fluid">
+                    <div class="row">
+                        <div class="col-md-6 footer-copyright">
+                            <p class="mb-0">Copyright &copy; @DateTime.Now.Year Muhasebe Stok Web App</p>
+                        </div>
+                        <div class="col-md-6">
+                            <p class="pull-right mb-0">
+                                <i class="fa fa-heart"></i> ile geliştirildi, uykusuz gecelerin mahsülü.
+                            </p>
+                        </div>
+                    </div>
+                </div>
+            </footer>
+            <!-- Footer ends -->
+        </div>
+        <!-- Page body ends -->
+    </div>
+    <!-- Page wrapper ends -->
+    
+    <!-- JavaScript files -->
+    <script src="~/lib/jquery/dist/jquery.min.js"></script>
+    <script src="~/lib/bootstrap/dist/js/bootstrap.bundle.min.js"></script>
+    
+    <!-- DataTables JS -->
+    <script src="https://cdn.datatables.net/1.13.7/js/jquery.dataTables.min.js"></script>
+    <script src="https://cdn.datatables.net/1.13.7/js/dataTables.bootstrap5.min.js"></script>
+    
+    <script src="~/assets/js/config.js"></script>
+    <script src="~/assets/js/script.js"></script>
+    <script src="~/js/site.js" asp-append-version="true"></script>
+    
+    <!-- SweetAlert2 -->
+    <script src="https://cdn.jsdelivr.net/npm/sweetalert2@11.7.32/dist/sweetalert2.all.min.js"></script>
+    
+    <script>
+        $(document).ready(function() {
+            // Sidebar toggle
+            $('#sidebar-toggle').click(function() {
+                $('.page-body-wrapper').toggleClass('sidebar-close');
+            });
+            
+            // Tam ekran
+            function toggleFullScreen() {
+                if ((document.fullScreenElement && document.fullScreenElement !== null) || (!document.mozFullScreen && !document.webkitIsFullScreen)) {
+                    if (document.documentElement.requestFullScreen) {
+                        document.documentElement.requestFullScreen();
+                    } else if (document.documentElement.mozRequestFullScreen) {
+                        document.documentElement.mozRequestFullScreen();
+                    } else if (document.documentElement.webkitRequestFullScreen) {
+                        document.documentElement.webkitRequestFullScreen(Element.ALLOW_KEYBOARD_INPUT);
+                    }
+                } else {
+                    if (document.cancelFullScreen) {
+                        document.cancelFullScreen();
+                    } else if (document.mozCancelFullScreen) {
+                        document.mozCancelFullScreen();
+                    } else if (document.webkitCancelFullScreen) {
+                        document.webkitCancelFullScreen();
+                    }
+                }
+            }
+            
+            // Tam ekran butonu için
+            $('[onclick="javascript:toggleFullScreen()"]').on('click', function() {
+                toggleFullScreen();
+            });
+            
+            // Menü tıklama olayı
+            $('.dropdown > a').on('click', function(e) {
+                // Alt menüsü olan menüler için
+                if ($(this).siblings('.nav-submenu').length) {
+                    e.preventDefault();
+                    e.stopPropagation();
+                    
+                    // Eğer bu menü zaten açıksa, kapat
+                    if ($(this).hasClass('active')) {
+                        $(this).removeClass('active');
+                    } else {
+                        // Diğer tüm menüleri kapat
+                        $('.dropdown > a').removeClass('active');
+                        
+                        // Bu menüyü aç
+                        $(this).addClass('active');
+                    }
+                }
+            });
+            
+            // Alt menü elemanlarına tıklandığında yayılımı durdur
+            $('.nav-submenu a').on('click', function(e) {
+                e.stopPropagation();
+            });
+            
+            // Sayfa dışına tıklandığında menüleri kapat
+            $(document).on('click', function(e) {
+                if (!$(e.target).closest('.dropdown').length) {
+                    $('.dropdown > a').removeClass('active');
+                }
+            });
+            
+            // Aktif menü öğesini işaretle
+            var currentUrl = window.location.pathname;
+            
+            // Tam eşleşme için
+            $('.nav-menu a[href="' + currentUrl + '"]').addClass('active');
+            
+            // Kısmi eşleşme için
+            $('.nav-menu a').each(function() {
+                var menuUrl = $(this).attr('href');
+                if (menuUrl && currentUrl.startsWith(menuUrl) && menuUrl !== '/') {
+                    $(this).addClass('active');
+                }
+            });
+            
+            // Eğer alt menü elemanı aktifse, üst menüyü de aktif yap
+            var $activeSubmenuItem = $('.nav-submenu a').filter(function() {
+                var href = $(this).attr('href');
+                return href === currentUrl || (href && currentUrl.startsWith(href) && href !== '/');
+            });
+            
+            if ($activeSubmenuItem.length) {
+                $activeSubmenuItem.addClass('active');
+                $activeSubmenuItem.closest('.dropdown').find('> a').addClass('active');
+            }
+
+            // Mobil menü için geri butonu
+            $('.mobile-back').click(function() {
+                $('.dropdown > a').removeClass('active');
+            });
+
+            // Sayfa yüklendiğinde loader'ı kaldır
+            $('.loader-wrapper').fadeOut('slow');
+        });
+    </script>
+    
+    @await RenderSectionAsync("Scripts", required: false)
+</body>
+</html>

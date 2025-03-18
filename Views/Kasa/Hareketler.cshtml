@@ -1,0 +1,247 @@
+@model MuhasebeStokWebApp.ViewModels.Kasa.KasaHareketlerViewModel
+@{
+    ViewData["Title"] = "Kasa Hareketleri";
+}
+
+<div class="container-fluid">
+    <div class="card shadow mb-4">
+        <div class="card-header py-3 d-flex justify-content-between align-items-center">
+            <h6 class="m-0 font-weight-bold text-primary">@Model.KasaAdi - Kasa Hareketleri</h6>
+            <div>
+                <a asp-action="YeniHareket" asp-route-id="@Model.KasaID" class="btn btn-primary btn-sm">
+                    <i class="fas fa-plus"></i> Yeni Hareket
+                </a>
+                <a asp-action="Index" class="btn btn-outline-secondary btn-sm">
+                    <i class="fas fa-arrow-left"></i> Listeye Dön
+                </a>
+            </div>
+        </div>
+        <div class="card-body">
+            <!-- Kasa Bilgileri -->
+            <div class="row mb-4">
+                <div class="col-xl-3 col-md-6 mb-4">
+                    <div class="card border-left-primary shadow h-100 py-2">
+                        <div class="card-body">
+                            <div class="row no-gutters align-items-center">
+                                <div class="col mr-2">
+                                    <div class="text-xs font-weight-bold text-primary text-uppercase mb-1">
+                                        Güncel Bakiye
+                                    </div>
+                                    <div class="h5 mb-0 font-weight-bold text-gray-800">
+                                        @Model.GuncelBakiye.ToString("N2") @Model.ParaBirimi
+                                    </div>
+                                </div>
+                                <div class="col-auto">
+                                    <i class="fas fa-money-bill-wave fa-2x text-gray-300"></i>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+                
+                <div class="col-xl-3 col-md-6 mb-4">
+                    <div class="card border-left-success shadow h-100 py-2">
+                        <div class="card-body">
+                            <div class="row no-gutters align-items-center">
+                                <div class="col mr-2">
+                                    <div class="text-xs font-weight-bold text-success text-uppercase mb-1">
+                                        Toplam Tahsilat
+                                    </div>
+                                    <div class="h5 mb-0 font-weight-bold text-gray-800">
+                                        @Model.ToplamGiris.ToString("N2") @Model.ParaBirimi
+                                    </div>
+                                </div>
+                                <div class="col-auto">
+                                    <i class="fas fa-arrow-up fa-2x text-gray-300"></i>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+                
+                <div class="col-xl-3 col-md-6 mb-4">
+                    <div class="card border-left-danger shadow h-100 py-2">
+                        <div class="card-body">
+                            <div class="row no-gutters align-items-center">
+                                <div class="col mr-2">
+                                    <div class="text-xs font-weight-bold text-danger text-uppercase mb-1">
+                                        Toplam Ödeme
+                                    </div>
+                                    <div class="h5 mb-0 font-weight-bold text-gray-800">
+                                        @Model.ToplamCikis.ToString("N2") @Model.ParaBirimi
+                                    </div>
+                                </div>
+                                <div class="col-auto">
+                                    <i class="fas fa-arrow-down fa-2x text-gray-300"></i>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+                
+                <div class="col-xl-3 col-md-6 mb-4">
+                    <div class="card border-left-info shadow h-100 py-2">
+                        <div class="card-body">
+                            <div class="row no-gutters align-items-center">
+                                <div class="col mr-2">
+                                    <div class="text-xs font-weight-bold text-info text-uppercase mb-1">
+                                        Açılış Bakiye
+                                    </div>
+                                    <div class="h5 mb-0 font-weight-bold text-gray-800">
+                                        @Model.AcilisBakiye.ToString("N2") @Model.ParaBirimi
+                                    </div>
+                                </div>
+                                <div class="col-auto">
+                                    <i class="fas fa-calendar fa-2x text-gray-300"></i>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+            
+            <!-- Filtre Bölümü -->
+            <div class="card mb-4">
+                <div class="card-header py-3">
+                    <h6 class="m-0 font-weight-bold text-primary">Filtrele</h6>
+                </div>
+                <div class="card-body">
+                    <form asp-action="Hareketler" method="get" class="form-inline">
+                        <input type="hidden" name="id" value="@Model.KasaID" />
+                        
+                        <div class="form-group mb-2 mr-2">
+                            <label for="baslangicTarihi" class="mr-2">Başlangıç Tarihi:</label>
+                            <input type="date" id="baslangicTarihi" name="baslangicTarihi" class="form-control" 
+                                   value="@(Model.BaslangicTarihi.ToString("yyyy-MM-dd"))" />
+                        </div>
+                        
+                        <div class="form-group mb-2 mr-2">
+                            <label for="bitisTarihi" class="mr-2">Bitiş Tarihi:</label>
+                            <input type="date" id="bitisTarihi" name="bitisTarihi" class="form-control" 
+                                   value="@(Model.BitisTarihi.ToString("yyyy-MM-dd"))" />
+                        </div>
+                        
+                        <div class="form-group mb-2 mr-2">
+                            <label for="hareketTuru" class="mr-2">Hareket Türü:</label>
+                            <select id="hareketTuru" name="hareketTuru" class="form-control">
+                                @if (string.IsNullOrEmpty(Model.HareketTuru))
+                                {
+                                    <option value="" selected>Tümü</option>
+                                }
+                                else
+                                {
+                                    <option value="">Tümü</option>
+                                }
+                                
+                                @if (Model.HareketTuru == "Tahsilat")
+                                {
+                                    <option value="Tahsilat" selected>Tahsilat</option>
+                                }
+                                else
+                                {
+                                    <option value="Tahsilat">Tahsilat</option>
+                                }
+                                
+                                @if (Model.HareketTuru == "Ödeme")
+                                {
+                                    <option value="Ödeme" selected>Ödeme</option>
+                                }
+                                else
+                                {
+                                    <option value="Ödeme">Ödeme</option>
+                                }
+                            </select>
+                        </div>
+                        
+                        <button type="submit" class="btn btn-primary mb-2">
+                            <i class="fas fa-filter"></i> Filtrele
+                        </button>
+                    </form>
+                </div>
+            </div>
+            
+            <!-- Hareketler Tablosu -->
+            <div class="table-responsive">
+                <table class="table table-bordered table-striped" id="hareketlerTable" width="100%" cellspacing="0">
+                    <thead>
+                        <tr>
+                            <th>Tarih</th>
+                            <th>Tür</th>
+                            <th>Tutar</th>
+                            <th>Hareket No</th>
+                            <th>Referans Türü</th>
+                            <th>Belge No</th>
+                            <th>Cari</th>
+                            <th>Açıklama</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        @foreach (var hareket in Model.Hareketler)
+                        {
+                            <tr>
+                                <td>@hareket.Tarih.ToString("dd.MM.yyyy HH:mm")</td>
+                                <td>
+                                    @if (hareket.HareketTuru == "Tahsilat" || hareket.HareketTuru == "Giriş")
+                                    {
+                                        <span class="badge badge-success">Tahsilat</span>
+                                    }
+                                    else if (hareket.HareketTuru == "Ödeme" || hareket.HareketTuru == "Çıkış")
+                                    {
+                                        <span class="badge badge-danger">Ödeme</span>
+                                    }
+                                    else
+                                    {
+                                        <span class="badge badge-info">@hareket.HareketTuru</span>
+                                    }
+                                </td>
+                                <td>
+                                    @if (hareket.HareketTuru == "Tahsilat" || hareket.HareketTuru == "Giriş")
+                                    {
+                                        <span class="text-success">+@hareket.Tutar.ToString("N2") @Model.ParaBirimi</span>
+                                    }
+                                    else if (hareket.HareketTuru == "Ödeme" || hareket.HareketTuru == "Çıkış")
+                                    {
+                                        <span class="text-danger">-@hareket.Tutar.ToString("N2") @Model.ParaBirimi</span>
+                                    }
+                                    else
+                                    {
+                                        @hareket.Tutar.ToString("N2") @Model.ParaBirimi
+                                    }
+                                </td>
+                                <td>@hareket.ReferansNo</td>
+                                <td>@hareket.ReferansTuru</td>
+                                <td>@hareket.ReferansNo</td>
+                                <td>@(hareket.CariAdi ?? "-")</td>
+                                <td>@(hareket.Aciklama ?? "-")</td>
+                            </tr>
+                        }
+                    </tbody>
+                </table>
+            </div>
+        </div>
+        <div class="card-footer">
+            <div class="d-flex justify-content-between">
+                <a asp-action="Index" class="btn btn-secondary">
+                    <i class="fas fa-arrow-left"></i> Kasalara Dön
+                </a>
+                <a asp-action="YeniHareket" asp-route-id="@Model.KasaID" class="btn btn-primary">
+                    <i class="fas fa-plus"></i> Yeni Hareket Ekle
+                </a>
+            </div>
+        </div>
+    </div>
+</div>
+
+@section Scripts {
+    <script>
+        $(document).ready(function() {
+            $('#hareketlerTable').DataTable({
+                language: {
+                    url: '//cdn.datatables.net/plug-ins/1.10.25/i18n/Turkish.json'
+                },
+                responsive: true,
+                order: [[0, 'desc']] // Tarihe göre tersten sıralama
+            });
+        });
+    </script>
+} 

@@ -1,0 +1,80 @@
+@model MuhasebeStokWebApp.ViewModels.Rapor.RaporFiltreViewModel
+@{
+    ViewData["Title"] = "Stok Raporu";
+}
+
+<div class="container-fluid py-4">
+    <div class="row">
+        <div class="col-12">
+            <div class="card my-4">
+                <div class="card-header p-0 position-relative mt-n4 mx-3 z-index-2">
+                    <div class="bg-gradient-primary shadow-primary border-radius-lg pt-4 pb-3">
+                        <h6 class="text-white text-capitalize ps-3">Stok Raporu</h6>
+                    </div>
+                </div>
+                <div class="card-body px-0 pb-2">
+                    <div class="container">
+                        <form asp-action="StokRaporu" method="post">
+                            <div class="row">
+                                <div class="col-md-6">
+                                    <div class="input-group input-group-outline my-3">
+                                        <label class="form-label">Başlangıç Tarihi</label>
+                                        <input type="date" asp-for="BaslangicTarihi" class="form-control" required />
+                                    </div>
+                                </div>
+                                <div class="col-md-6">
+                                    <div class="input-group input-group-outline my-3">
+                                        <label class="form-label">Bitiş Tarihi</label>
+                                        <input type="date" asp-for="BitisTarihi" class="form-control" required />
+                                    </div>
+                                </div>
+                            </div>
+                            <div class="row">
+                                <div class="col-md-6">
+                                    <div class="input-group input-group-outline my-3">
+                                        <select asp-for="UrunID" class="form-control">
+                                            <option value="">Tüm Ürünler</option>
+                                            @if (ViewBag.Urunler != null)
+                                            {
+                                                @foreach (var urun in ViewBag.Urunler)
+                                                {
+                                                    <option value="@urun.Value">@urun.Text</option>
+                                                }
+                                            }
+                                        </select>
+                                    </div>
+                                </div>
+                                <div class="col-md-6">
+                                    <div class="input-group input-group-outline my-3">
+                                        <select asp-for="HareketTuru" class="form-control">
+                                            <option value="">Tüm Hareketler</option>
+                                            <option value="Giriş">Giriş</option>
+                                            <option value="Çıkış">Çıkış</option>
+                                        </select>
+                                    </div>
+                                </div>
+                            </div>
+                            <div class="row">
+                                <div class="col-md-6">
+                                    <div class="form-check">
+                                        <input class="form-check-input" type="checkbox" asp-for="DetayGoster" id="detayGoster">
+                                        <label class="form-check-label" for="detayGoster">
+                                            Detayları Göster
+                                        </label>
+                                    </div>
+                                </div>
+                                <div class="col-md-6 text-end">
+                                    <button type="submit" class="btn btn-primary">Raporu Görüntüle</button>
+                                </div>
+                            </div>
+                        </form>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+
+@section Scripts {
+    @{await Html.RenderPartialAsync("_ValidationScriptsPartial");}
+} 

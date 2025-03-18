@@ -1,0 +1,69 @@
+@model MuhasebeStokWebApp.ViewModels.Birim.BirimViewModel
+@{
+    ViewData["Title"] = "Birim Sil";
+}
+
+<div class="container-fluid py-4">
+    <div class="row">
+        <div class="col-12">
+            <div class="card my-4">
+                <div class="card-header p-0 position-relative mt-n4 mx-3 z-index-2">
+                    <div class="bg-gradient-primary shadow-primary border-radius-lg pt-4 pb-3">
+                        <h6 class="text-white text-capitalize ps-3">Birim Sil</h6>
+                    </div>
+                </div>
+                <div class="card-body px-0 pb-2">
+                    <div class="container">
+                        <div class="alert alert-danger mx-4" role="alert">
+                            <h4 class="alert-heading">Dikkat!</h4>
+                            <p>Bu birimi silmek istediğinizden emin misiniz? Bu işlem geri alınamaz.</p>
+                        </div>
+                        
+                        <div class="row">
+                            <div class="col-md-6">
+                                <div class="form-group">
+                                    <label class="form-label">Birim Adı</label>
+                                    <p class="form-control-static">@Model.BirimAdi</p>
+                                </div>
+                            </div>
+                            <div class="col-md-6">
+                                <div class="form-group">
+                                    <label class="form-label">Durum</label>
+                                    <p class="form-control-static">
+                                        @if (Model.Aktif)
+                                        {
+                                            <span class="badge badge-sm bg-gradient-success">Aktif</span>
+                                        }
+                                        else
+                                        {
+                                            <span class="badge badge-sm bg-gradient-secondary">Pasif</span>
+                                        }
+                                    </p>
+                                </div>
+                            </div>
+                        </div>
+                        
+                        <div class="row mt-3">
+                            <div class="col-md-12">
+                                <div class="form-group">
+                                    <label class="form-label">Açıklama</label>
+                                    <p class="form-control-static">@Model.Aciklama</p>
+                                </div>
+                            </div>
+                        </div>
+                        
+                        <div class="row mt-4">
+                            <div class="col-md-12 text-end">
+                                <form asp-action="Delete" method="post">
+                                    <input type="hidden" asp-for="BirimID" />
+                                    <a asp-action="Index" class="btn btn-outline-secondary">İptal</a>
+                                    <button type="submit" class="btn btn-danger">Sil</button>
+                                </form>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</div> 

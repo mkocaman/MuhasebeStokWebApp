@@ -1,0 +1,442 @@
+@model MuhasebeStokWebApp.ViewModels.Fatura.FaturaDetailViewModel
+@{
+    ViewData["Title"] = "Fatura Detayı";
+    Layout = "~/Views/Shared/_Layout.cshtml";
+}
+
+<div class="container-fluid">
+    <div class="row">
+        <!-- Fatura Bilgileri -->
+        <div class="col-xl-6 col-md-12 box-col-12">
+            <div class="card">
+                <div class="card-header bg-primary text-white">
+                    <div class="d-flex justify-content-between align-items-center">
+                        <h5 class="mb-0">Fatura Bilgileri</h5>
+                        <div>
+                            <a asp-action="Edit" asp-route-id="@Model.FaturaID" class="btn btn-warning btn-sm">
+                                <i class="fas fa-edit"></i> Düzenle
+                            </a>
+                            <a asp-action="Print" asp-route-id="@Model.FaturaID" class="btn btn-light btn-sm" target="_blank">
+                                <i class="fas fa-print"></i> Yazdır
+                            </a>
+                            @if (Model.IrsaliyeID == null || Model.IrsaliyeID == Guid.Empty)
+                            {
+                                <a asp-action="CreateIrsaliye" asp-route-id="@Model.FaturaID" class="btn btn-info btn-sm">
+                                    <i class="fas fa-file-alt"></i> İrsaliye Oluştur
+                                </a>
+                            }
+                        </div>
+                    </div>
+                </div>
+                <div class="card-body">
+                    <div class="row">
+                        <div class="col-sm-6 col-md-12 col-lg-6">
+                            <div class="info-group">
+                                <h6 class="f-w-600">Fatura No</h6>
+                                <p>@Model.FaturaNumarasi</p>
+                            </div>
+                        </div>
+                        <div class="col-sm-6 col-md-12 col-lg-6">
+                            <div class="info-group">
+                                <h6 class="f-w-600">Fatura Türü</h6>
+                                <p>
+                                    @if (Model.FaturaTuru == "Satış")
+                                    {
+                                        <span class="badge bg-success">Satış</span>
+                                    }
+                                    else
+                                    {
+                                        <span class="badge bg-info">Alış</span>
+                                    }
+                                </p>
+                            </div>
+                        </div>
+                        <div class="col-sm-6 col-md-12 col-lg-6">
+                            <div class="info-group">
+                                <h6 class="f-w-600">Fatura Tarihi</h6>
+                                <p>@(Model.FaturaTarihi.HasValue ? Model.FaturaTarihi.Value.ToString("dd.MM.yyyy") : "-")</p>
+                            </div>
+                        </div>
+                        <div class="col-sm-6 col-md-12 col-lg-6">
+                            <div class="info-group">
+                                <h6 class="f-w-600">Vade Tarihi</h6>
+                                <p>@(Model.VadeTarihi.HasValue ? Model.VadeTarihi.Value.ToString("dd.MM.yyyy") : "-")</p>
+                            </div>
+                        </div>
+                        <div class="col-12">
+                            <div class="info-group">
+                                <h6 class="f-w-600">Cari</h6>
+                                <p><a asp-controller="Cari" asp-action="Details" asp-route-id="@Model.CariID">@Model.CariAdi</a></p>
+                            </div>
+                        </div>
+                        <div class="col-sm-6 col-md-12 col-lg-6">
+                            <div class="info-group">
+                                <h6 class="f-w-600">Vergi No</h6>
+                                <p>@(string.IsNullOrEmpty(Model.CariVergiNo) ? "-" : Model.CariVergiNo)</p>
+                            </div>
+                        </div>
+                        <div class="col-sm-6 col-md-12 col-lg-6">
+                            <div class="info-group">
+                                <h6 class="f-w-600">Telefon</h6>
+                                <p>@(string.IsNullOrEmpty(Model.CariTelefon) ? "-" : Model.CariTelefon)</p>
+                            </div>
+                        </div>
+                        <div class="col-12">
+                            <div class="info-group">
+                                <h6 class="f-w-600">Adres</h6>
+                                <p>@(string.IsNullOrEmpty(Model.CariAdres) ? "-" : Model.CariAdres)</p>
+                            </div>
+                        </div>
+                        <div class="col-sm-6 col-md-12 col-lg-6">
+                            <div class="info-group">
+                                <h6 class="f-w-600">Ödeme Durumu</h6>
+                                <p>
+                                    @switch (Model.OdemeDurumu)
+                                    {
+                                        case "Ödendi":
+                                            <span class="badge bg-success">Ödendi</span>
+                                            break;
+                                        case "Bekliyor":
+                                            <span class="badge bg-warning">Bekliyor</span>
+                                            break;
+                                        case "Kısmi Ödendi":
+                                            <span class="badge bg-primary">Kısmi Ödendi</span>
+                                            break;
+                                        default:
+                                            <span class="badge bg-secondary">@Model.OdemeDurumu</span>
+                                            break;
+                                    }
+                                </p>
+                            </div>
+                        </div>
+                        <div class="col-sm-6 col-md-12 col-lg-6">
+                            <div class="info-group">
+                                <h6 class="f-w-600">Döviz Türü</h6>
+                                <p>@Model.DovizTuru</p>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+        
+        <!-- Fatura Toplamları ve Açıklama -->
+        <div class="col-xl-6 col-md-12 box-col-12">
+            <div class="card">
+                <div class="card-header bg-primary text-white">
+                    <h5 class="mb-0">Fatura Toplamları</h5>
+                </div>
+                <div class="card-body">
+                    <div class="row">
+                        <div class="col-sm-6 col-md-12 col-lg-6">
+                            <div class="info-group">
+                                <h6 class="f-w-600">Ara Toplam</h6>
+                                <p>@Model.AraToplam.ToString("N2") ₺</p>
+                            </div>
+                        </div>
+                        <div class="col-sm-6 col-md-12 col-lg-6">
+                            <div class="info-group">
+                                <h6 class="f-w-600">KDV Tutarı</h6>
+                                <p>@Model.KdvTutari.ToString("N2") ₺</p>
+                            </div>
+                        </div>
+                        <div class="col-sm-6 col-md-12 col-lg-6">
+                            <div class="info-group">
+                                <h6 class="f-w-600">İndirim Tutarı</h6>
+                                <p>@Model.IndirimTutari.ToString("N2") ₺</p>
+                            </div>
+                        </div>
+                        <div class="col-sm-6 col-md-12 col-lg-6">
+                            <div class="info-group">
+                                <h6 class="f-w-600">Genel Toplam</h6>
+                                <p class="f-w-600 text-primary">@Model.GenelToplam.ToString("N2") ₺</p>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+            
+            <!-- Açıklama -->
+            <div class="card mt-4">
+                <div class="card-header bg-primary text-white">
+                    <h5 class="mb-0">Açıklama</h5>
+                </div>
+                <div class="card-body">
+                    <p>@(string.IsNullOrEmpty(Model.Aciklama) ? "Açıklama bulunmamaktadır." : Model.Aciklama)</p>
+                </div>
+            </div>
+        </div>
+    </div>
+    
+    <!-- Fatura Kalemleri -->
+    <div class="row mt-4">
+        <div class="col-12">
+            <div class="card">
+                <div class="card-header bg-primary text-white">
+                    <h5 class="mb-0">Fatura Kalemleri</h5>
+                </div>
+                <div class="card-body">
+                    <div class="table-responsive">
+                        <table class="table table-hover table-striped">
+                            <thead class="table-light">
+                                <tr>
+                                    <th>Ürün Kodu</th>
+                                    <th>Ürün Adı</th>
+                                    <th>Miktar</th>
+                                    <th>Birim</th>
+                                    <th>Birim Fiyat</th>
+                                    <th>KDV %</th>
+                                    <th>İndirim %</th>
+                                    <th>Tutar</th>
+                                    <th>Net Tutar</th>
+                                </tr>
+                            </thead>
+                            <tbody>
+                                @if (Model.FaturaKalemleri != null && Model.FaturaKalemleri.Any())
+                                {
+                                    foreach (var kalem in Model.FaturaKalemleri)
+                                    {
+                                        <tr>
+                                            <td>@kalem.UrunKodu</td>
+                                            <td>
+                                                <a asp-controller="Urun" asp-action="Details" asp-route-id="@kalem.UrunID">
+                                                    @kalem.UrunAdi
+                                                </a>
+                                            </td>
+                                            <td>@kalem.Miktar.ToString("N2")</td>
+                                            <td>@kalem.Birim</td>
+                                            <td>@kalem.BirimFiyat.ToString("N2") ₺</td>
+                                            <td>%@kalem.KdvOrani</td>
+                                            <td>%@kalem.IndirimOrani</td>
+                                            <td>@kalem.Tutar.ToString("N2") ₺</td>
+                                            <td>@kalem.NetTutar.ToString("N2") ₺</td>
+                                        </tr>
+                                    }
+                                }
+                                else
+                                {
+                                    <tr>
+                                        <td colspan="9" class="text-center">Fatura kalemi bulunamadı.</td>
+                                    </tr>
+                                }
+                            </tbody>
+                        </table>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+    
+    <!-- Ödemeler -->
+    <div class="row mt-4">
+        <div class="col-12">
+            <div class="card">
+                <div class="card-header bg-primary text-white">
+                    <div class="d-flex justify-content-between align-items-center">
+                        <h5 class="mb-0">Ödemeler</h5>
+                        <button type="button" class="btn btn-light btn-sm" onclick="showAddOdemeModal('@Model.FaturaID')">
+                            <i class="fas fa-plus"></i> Yeni Ödeme
+                        </button>
+                    </div>
+                </div>
+                <div class="card-body">
+                    <div class="table-responsive">
+                        <table class="table table-hover table-striped">
+                            <thead class="table-light">
+                                <tr>
+                                    <th>Ödeme Tarihi</th>
+                                    <th>Ödeme Türü</th>
+                                    <th>Tutar</th>
+                                    <th>Açıklama</th>
+                                    <th>İşlemler</th>
+                                </tr>
+                            </thead>
+                            <tbody>
+                                @if (Model.Odemeler != null && Model.Odemeler.Any())
+                                {
+                                    foreach (var odeme in Model.Odemeler)
+                                    {
+                                        <tr>
+                                            <td>@odeme.OdemeTarihi.Value.ToString("dd.MM.yyyy")</td>
+                                            <td>@odeme.OdemeTuru</td>
+                                            <td>@odeme.OdemeTutari.ToString("N2") ₺</td>
+                                            <td>@(string.IsNullOrEmpty(odeme.Aciklama) ? "-" : odeme.Aciklama)</td>
+                                            <td>
+                                                <button type="button" class="btn btn-danger btn-sm" onclick="confirmDeleteOdeme('@odeme.OdemeID')">
+                                                    <i class="fas fa-trash"></i>
+                                                </button>
+                                            </td>
+                                        </tr>
+                                    }
+                                }
+                                else
+                                {
+                                    <tr>
+                                        <td colspan="5" class="text-center">Ödeme bulunamadı.</td>
+                                    </tr>
+                                }
+                            </tbody>
+                        </table>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+
+<div class="container-fluid mt-4">
+    <div class="row">
+        <div class="col-12 text-end">
+            <a asp-action="Index" class="btn btn-secondary">
+                <i class="fas fa-arrow-left"></i> Listeye Dön
+            </a>
+            <a asp-action="Edit" asp-route-id="@Model.FaturaID" class="btn btn-primary">
+                <i class="fas fa-edit"></i> Düzenle
+            </a>
+            <a asp-action="Print" asp-route-id="@Model.FaturaID" class="btn btn-info" target="_blank">
+                <i class="fas fa-print"></i> Yazdır
+            </a>
+            <a asp-action="AddOdeme" asp-route-id="@Model.FaturaID" class="btn btn-success">
+                <i class="fas fa-money-bill"></i> Ödeme Ekle
+            </a>
+            @if (Model.IrsaliyeID == null || Model.IrsaliyeID == Guid.Empty)
+            {
+                <a asp-action="CreateIrsaliye" asp-route-id="@Model.FaturaID" class="btn btn-warning">
+                    <i class="fas fa-truck"></i> İrsaliye Oluştur
+                </a>
+            }
+            <a asp-action="Delete" asp-route-id="@Model.FaturaID" class="btn btn-danger">
+                <i class="fas fa-trash"></i> Sil
+            </a>
+        </div>
+    </div>
+</div>
+
+<!-- Ödeme Ekle Modal -->
+<div class="modal fade" id="addOdemeModal" tabindex="-1" role="dialog" aria-labelledby="addOdemeModalLabel" aria-hidden="true">
+    <div class="modal-dialog" role="document">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h5 class="modal-title" id="addOdemeModalLabel">Yeni Ödeme Ekle</h5>
+                <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+                    <span aria-hidden="true">&times;</span>
+                </button>
+            </div>
+            <div class="modal-body">
+                <form id="odemeForm" asp-action="AddOdeme" asp-route-id="@Model.FaturaID" method="post">
+                    <div asp-validation-summary="ModelOnly" class="text-danger"></div>
+                    <input type="hidden" name="FaturaID" value="@Model.FaturaID" />
+                    
+                    <div class="form-group mb-3">
+                        <label for="OdemeTarihi">Ödeme Tarihi</label>
+                        <input type="date" id="OdemeTarihi" name="OdemeTarihi" class="form-control" value="@DateTime.Now.ToString("yyyy-MM-dd")" required />
+                    </div>
+                    
+                    <div class="form-group mb-3">
+                        <label for="OdemeTutari">Ödeme Tutarı</label>
+                        <input type="number" id="OdemeTutari" name="OdemeTutari" class="form-control" step="0.01" min="0.01" value="@Model.OdenecekTutar.ToString("0.00")" required />
+                    </div>
+                    
+                    <div class="form-group mb-3">
+                        <label for="OdemeTuru">Ödeme Türü</label>
+                        <select id="OdemeTuru" name="OdemeTuru" class="form-control" required>
+                            <option value="Nakit">Nakit</option>
+                            <option value="Kredi Kartı">Kredi Kartı</option>
+                            <option value="Havale/EFT">Havale/EFT</option>
+                            <option value="Çek">Çek</option>
+                            <option value="Senet">Senet</option>
+                        </select>
+                    </div>
+                    
+                    <div class="form-group mb-3">
+                        <label for="Aciklama">Açıklama</label>
+                        <textarea id="Aciklama" name="Aciklama" class="form-control" rows="3"></textarea>
+                    </div>
+                    
+                    <div class="form-group text-end">
+                        <button type="button" class="btn btn-secondary" data-dismiss="modal">İptal</button>
+                        <button type="submit" class="btn btn-primary">Kaydet</button>
+                    </div>
+                </form>
+            </div>
+        </div>
+    </div>
+</div>
+
+<!-- Ödeme Sil Modal -->
+<div class="modal fade" id="deleteOdemeModal" tabindex="-1" role="dialog" aria-labelledby="deleteOdemeModalLabel" aria-hidden="true">
+    <div class="modal-dialog" role="document">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h5 class="modal-title" id="deleteOdemeModalLabel">Ödeme Sil</h5>
+                <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+                    <span aria-hidden="true">&times;</span>
+                </button>
+            </div>
+            <div class="modal-body">
+                <p>Bu ödemeyi silmek istediğinize emin misiniz?</p>
+                <form id="deleteOdemeForm" asp-action="DeleteOdeme" method="post">
+                    @Html.AntiForgeryToken()
+                    <input type="hidden" id="deleteOdemeId" name="id" />
+                    <div class="form-group text-end">
+                        <button type="button" class="btn btn-secondary" data-dismiss="modal">İptal</button>
+                        <button type="submit" class="btn btn-danger">Sil</button>
+                    </div>
+                </form>
+            </div>
+        </div>
+    </div>
+</div>
+
+@section Scripts {
+    <script>
+        function showAddOdemeModal(faturaId) {
+            $('#addOdemeModal').modal('show');
+        }
+        
+        function confirmDeleteOdeme(id) {
+            $('#deleteOdemeId').val(id);
+            $('#deleteOdemeModal').modal('show');
+        }
+
+        $(document).ready(function() {
+            $('#odemeForm').submit(function(e) {
+                e.preventDefault();
+                
+                var formData = $(this).serialize();
+                
+                $.ajax({
+                    url: '@Url.Action("AddOdeme", "Fatura")',
+                    type: 'POST',
+                    data: formData,
+                    success: function(result) {
+                        $('#addOdemeModal').modal('hide');
+                        window.location.reload();
+                    },
+                    error: function(xhr, status, error) {
+                        alert('Ödeme eklenirken bir hata oluştu: ' + error);
+                    }
+                });
+            });
+            
+            $('#deleteOdemeForm').submit(function(e) {
+                e.preventDefault();
+                
+                var formData = $(this).serialize();
+                
+                $.ajax({
+                    url: '@Url.Action("DeleteOdeme", "Fatura")',
+                    type: 'POST',
+                    data: formData,
+                    success: function(result) {
+                        $('#deleteOdemeModal').modal('hide');
+                        window.location.reload();
+                    },
+                    error: function(xhr, status, error) {
+                        alert('Ödeme silinirken bir hata oluştu: ' + error);
+                    }
+                });
+            });
+        });
+    </script>
+} 

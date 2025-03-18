@@ -1,0 +1,233 @@
+@model MuhasebeStokWebApp.ViewModels.Fatura.FaturaDetailViewModel
+@{
+    Layout = null;
+}
+
+<!DOCTYPE html>
+<html lang="tr">
+<head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>Fatura - @Model.FaturaNumarasi</title>
+    <link rel="stylesheet" href="~/lib/bootstrap/dist/css/bootstrap.min.css" />
+    <style>
+        body {
+            font-family: Arial, sans-serif;
+            font-size: 12px;
+            line-height: 1.4;
+            color: #333;
+        }
+        .invoice-header {
+            margin-bottom: 30px;
+        }
+        .invoice-title {
+            font-size: 24px;
+            font-weight: bold;
+            margin-bottom: 20px;
+            color: #2c3e50;
+        }
+        .company-details, .customer-details {
+            margin-bottom: 20px;
+        }
+        .invoice-meta {
+            margin-bottom: 20px;
+        }
+        .invoice-meta table {
+            width: 100%;
+        }
+        .invoice-items {
+            margin-bottom: 30px;
+        }
+        .invoice-items table {
+            width: 100%;
+            border-collapse: collapse;
+        }
+        .invoice-items th, .invoice-items td {
+            padding: 8px;
+            border: 1px solid #ddd;
+        }
+        .invoice-items th {
+            background-color: #f5f5f5;
+            font-weight: bold;
+            text-align: left;
+        }
+        .invoice-totals {
+            margin-bottom: 30px;
+            text-align: right;
+        }
+        .invoice-totals table {
+            width: 300px;
+            margin-left: auto;
+        }
+        .invoice-totals th, .invoice-totals td {
+            padding: 8px;
+            border: 1px solid #ddd;
+        }
+        .invoice-totals th {
+            background-color: #f5f5f5;
+            font-weight: bold;
+            text-align: left;
+        }
+        .invoice-notes {
+            margin-bottom: 30px;
+            padding: 15px;
+            border: 1px solid #ddd;
+            background-color: #f9f9f9;
+        }
+        .text-right {
+            text-align: right;
+        }
+        .text-center {
+            text-align: center;
+        }
+        .footer {
+            margin-top: 50px;
+            text-align: center;
+            font-size: 10px;
+            color: #777;
+        }
+        
+        @* CSS medya sorgusu için Razor sözdiziminden kaçınmak için @@ kullanıyoruz *@
+        @@media print {
+            body {
+                margin: 0;
+                padding: 15px;
+            }
+            .no-print {
+                display: none;
+            }
+        }
+    </style>
+</head>
+<body>
+    <div class="container-fluid">
+        <div class="no-print text-center mb-4">
+            <button class="btn btn-primary" onclick="window.print()">Yazdır</button>
+            <button class="btn btn-secondary" onclick="window.close()">Kapat</button>
+        </div>
+        
+        <div class="invoice-header">
+            <div class="row">
+                <div class="col-6">
+                    <div class="invoice-title">FATURA</div>
+                </div>
+                <div class="col-6 text-right">
+                    <img src="~/img/logo.png" alt="Şirket Logo" style="max-height: 80px;" />
+                </div>
+            </div>
+        </div>
+        
+        <div class="row">
+            <div class="col-6">
+                <div class="company-details">
+                    <h5>Şirket Bilgileri</h5>
+                    <p><strong>Şirket Adı</strong><br />
+                    Adres Satırı 1<br />
+                    Adres Satırı 2<br />
+                    Telefon: (123) 456-7890<br />
+                    E-posta: info@sirket.com<br />
+                    Vergi Dairesi: Vergi Dairesi<br />
+                    Vergi No: 1234567890</p>
+                </div>
+            </div>
+            <div class="col-6">
+                <div class="customer-details">
+                    <h5>Müşteri Bilgileri</h5>
+                    <p><strong>@Model.CariAdi</strong><br />
+                    @Model.CariAdres<br />
+                    Telefon: @Model.CariTelefon<br />
+                    Vergi No: @Model.CariVergiNo</p>
+                </div>
+            </div>
+        </div>
+        
+        <div class="invoice-meta">
+            <table>
+                <tr>
+                    <td><strong>Fatura No:</strong> @Model.FaturaNumarasi</td>
+                    <td><strong>Fatura Türü:</strong> @Model.FaturaTuru</td>
+                </tr>
+                <tr>
+                    <td><strong>Fatura Tarihi:</strong> @(Model.FaturaTarihi.HasValue ? Model.FaturaTarihi.Value.ToString("dd.MM.yyyy") : "-")</td>
+                    <td><strong>Vade Tarihi:</strong> @(Model.VadeTarihi.HasValue ? Model.VadeTarihi.Value.ToString("dd.MM.yyyy") : "-")</td>
+                </tr>
+            </table>
+        </div>
+        
+        <div class="invoice-items">
+            <table>
+                <thead>
+                    <tr>
+                        <th>#</th>
+                        <th>Ürün</th>
+                        <th>Miktar</th>
+                        <th>Birim</th>
+                        <th>Birim Fiyat</th>
+                        <th>KDV %</th>
+                        <th>İndirim %</th>
+                        <th>Tutar</th>
+                        <th>KDV Tutarı</th>
+                        <th>Net Tutar</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    @for (int i = 0; i < Model.FaturaKalemleri.Count; i++)
+                    {
+                        var kalem = Model.FaturaKalemleri[i];
+                        <tr>
+                            <td>@(i + 1)</td>
+                            <td>@kalem.UrunAdi</td>
+                            <td>@kalem.Miktar</td>
+                            <td>@kalem.Birim</td>
+                            <td class="text-right">@kalem.BirimFiyat.ToString("N2") ₺</td>
+                            <td class="text-center">%@kalem.KdvOrani</td>
+                            <td class="text-center">%@kalem.IndirimOrani</td>
+                            <td class="text-right">@kalem.Tutar.ToString("N2") ₺</td>
+                            <td class="text-right">@kalem.KdvTutari.ToString("N2") ₺</td>
+                            <td class="text-right">@kalem.NetTutar.ToString("N2") ₺</td>
+                        </tr>
+                    }
+                </tbody>
+            </table>
+        </div>
+        
+        <div class="invoice-totals">
+            <table>
+                <tr>
+                    <th>Ara Toplam:</th>
+                    <td class="text-right">@Model.AraToplam.ToString("N2") ₺</td>
+                </tr>
+                <tr>
+                    <th>KDV Tutarı:</th>
+                    <td class="text-right">@Model.KdvTutari.ToString("N2") ₺</td>
+                </tr>
+                <tr>
+                    <th>Genel Toplam:</th>
+                    <td class="text-right">@Model.GenelToplam.ToString("N2") ₺</td>
+                </tr>
+                <tr>
+                    <th>Ödenen Tutar:</th>
+                    <td class="text-right">@((Model.GenelToplam - Model.OdenecekTutar).ToString("N2")) ₺</td>
+                </tr>
+                <tr>
+                    <th>Kalan Tutar:</th>
+                    <td class="text-right">@Model.OdenecekTutar.ToString("N2") ₺</td>
+                </tr>
+            </table>
+        </div>
+        
+        @if (!string.IsNullOrEmpty(Model.Aciklama))
+        {
+            <div class="invoice-notes">
+                <h5>Açıklama</h5>
+                <p>@Model.Aciklama</p>
+            </div>
+        }
+        
+        <div class="footer">
+            <p>Bu fatura elektronik olarak oluşturulmuştur ve imza gerektirmez.</p>
+            <p>Oluşturma Tarihi: @(Model.OlusturmaTarihi.HasValue ? Model.OlusturmaTarihi.Value.ToString("dd.MM.yyyy HH:mm") : DateTime.Now.ToString("dd.MM.yyyy HH:mm"))</p>
+        </div>
+    </div>
+</body>
+</html> 

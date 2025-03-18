@@ -1,0 +1,62 @@
+@model MuhasebeStokWebApp.ViewModels.Depo.DepoCreateViewModel
+@{
+    ViewData["Title"] = "Yeni Depo Ekle";
+}
+
+<div class="container-fluid py-4">
+    <div class="row">
+        <div class="col-12">
+            <div class="card my-4">
+                <div class="card-header p-0 position-relative mt-n4 mx-3 z-index-2">
+                    <div class="bg-gradient-primary shadow-primary border-radius-lg pt-4 pb-3">
+                        <h6 class="text-white text-capitalize ps-3">Yeni Depo Ekle</h6>
+                    </div>
+                </div>
+                <div class="card-body px-0 pb-2">
+                    <div class="container">
+                        <form asp-action="Create" method="post">
+                            <div asp-validation-summary="ModelOnly" class="text-danger"></div>
+                            
+                            <div class="row">
+                                <div class="col-md-6">
+                                    <div class="input-group input-group-outline my-3">
+                                        <label asp-for="DepoAdi" class="form-label"></label>
+                                        <input asp-for="DepoAdi" class="form-control" />
+                                    </div>
+                                    <span asp-validation-for="DepoAdi" class="text-danger"></span>
+                                </div>
+                                <div class="col-md-6">
+                                    <div class="form-check form-switch mt-4">
+                                        <input asp-for="Aktif" class="form-check-input" type="checkbox" checked>
+                                        <label asp-for="Aktif" class="form-check-label"></label>
+                                    </div>
+                                </div>
+                            </div>
+                            
+                            <div class="row">
+                                <div class="col-md-12">
+                                    <div class="input-group input-group-outline my-3">
+                                        <label asp-for="Adres" class="form-label"></label>
+                                        <textarea asp-for="Adres" class="form-control" rows="3"></textarea>
+                                    </div>
+                                    <span asp-validation-for="Adres" class="text-danger"></span>
+                                </div>
+                            </div>
+                            
+                            <div class="row">
+                                <div class="col-md-12 text-end">
+                                    <a asp-action="Index" class="btn btn-outline-secondary">İptal</a>
+                                    <button type="submit" class="btn btn-primary">Kaydet</button>
+                                </div>
+                            </div>
+                        </form>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+
+@section Scripts {
+    @{await Html.RenderPartialAsync("_ValidationScriptsPartial");}
+} 

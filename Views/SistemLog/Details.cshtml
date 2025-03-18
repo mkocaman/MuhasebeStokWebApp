@@ -1,0 +1,85 @@
+@model MuhasebeStokWebApp.Models.SistemLog
+@{
+    ViewData["Title"] = "Log Detayı";
+    Layout = "~/Views/Shared/_Layout.cshtml";
+}
+
+<div class="container-fluid">
+    <div class="card">
+        <div class="card-header bg-primary text-white">
+            <div class="d-flex justify-content-between align-items-center">
+                <h4 class="mb-0">Log Detayı</h4>
+                <a asp-action="Index" class="btn btn-light">
+                    <i class="fas fa-arrow-left"></i> Listeye Dön
+                </a>
+            </div>
+        </div>
+        <div class="card-body">
+            <div class="row mb-4">
+                <div class="col-md-6">
+                    <div class="card h-100">
+                        <div class="card-header bg-light">
+                            <h5 class="mb-0">İşlem Bilgileri</h5>
+                        </div>
+                        <div class="card-body">
+                            <div class="mb-3 row">
+                                <label class="col-sm-4 col-form-label fw-bold">İşlem Türü:</label>
+                                <div class="col-sm-8">
+                                    <p class="form-control-plaintext">@Model.IslemTuru</p>
+                                </div>
+                            </div>
+                            <div class="mb-3 row">
+                                <label class="col-sm-4 col-form-label fw-bold">İşlem Tarihi:</label>
+                                <div class="col-sm-8">
+                                    <p class="form-control-plaintext">@Model.IslemTarihi.ToString("dd.MM.yyyy HH:mm:ss")</p>
+                                </div>
+                            </div>
+                            <div class="mb-3 row">
+                                <label class="col-sm-4 col-form-label fw-bold">Açıklama:</label>
+                                <div class="col-sm-8">
+                                    <p class="form-control-plaintext">@Model.Aciklama</p>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+                <div class="col-md-6">
+                    <div class="card h-100">
+                        <div class="card-header bg-light">
+                            <h5 class="mb-0">Kullanıcı Bilgileri</h5>
+                        </div>
+                        <div class="card-body">
+                            <div class="mb-3 row">
+                                <label class="col-sm-4 col-form-label fw-bold">Kullanıcı Adı:</label>
+                                <div class="col-sm-8">
+                                    <p class="form-control-plaintext">@Model.KullaniciAdi</p>
+                                </div>
+                            </div>
+                            <div class="mb-3 row">
+                                <label class="col-sm-4 col-form-label fw-bold">IP Adresi:</label>
+                                <div class="col-sm-8">
+                                    <p class="form-control-plaintext">@Model.IPAdresi</p>
+                                </div>
+                            </div>
+                            @if (!string.IsNullOrEmpty(Model.Tarayici))
+                            {
+                                <div class="mb-3 row">
+                                    <label class="col-sm-4 col-form-label fw-bold">Tarayıcı:</label>
+                                    <div class="col-sm-8">
+                                        <p class="form-control-plaintext">@Model.Tarayici</p>
+                                    </div>
+                                </div>
+                            }
+                        </div>
+                    </div>
+                </div>
+            </div>
+            
+            <div class="d-flex justify-content-between mt-4">
+                <a asp-action="Index" class="btn btn-secondary">Listeye Dön</a>
+                <a asp-action="Delete" asp-route-id="@Model.SistemLogID" class="btn btn-danger">Sil</a>
+            </div>
+        </div>
+    </div>
+</div> 
+</div> 

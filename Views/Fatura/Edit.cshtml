@@ -1,0 +1,659 @@
+@model MuhasebeStokWebApp.ViewModels.Fatura.FaturaEditViewModel
+@{
+    ViewData["Title"] = "Fatura Düzenle";
+}
+
+<div class="container-fluid">
+    <div class="page-title">
+        <div class="row">
+            <div class="col-12">
+                <h3>Fatura Düzenle</h3>
+            </div>
+        </div>
+    </div>
+</div>
+
+<div class="container-fluid">
+    <div class="row">
+        <div class="col-sm-12">
+            <div class="card">
+                <div class="card-header">
+                    <h5>Fatura Bilgileri</h5>
+                </div>
+                <div class="card-body">
+                    <form asp-action="Edit" id="faturaForm">
+                        <div asp-validation-summary="ModelOnly" class="text-danger"></div>
+                        <input type="hidden" asp-for="FaturaID" />
+                        
+                        <!-- Fatura Üst Bilgileri -->
+                        <div class="row">
+                            <div class="col-md-4">
+                                <div class="form-group mb-3">
+                                    <label asp-for="FaturaNumarasi" class="control-label"></label>
+                                    <input asp-for="FaturaNumarasi" class="form-control" />
+                                    <span asp-validation-for="FaturaNumarasi" class="text-danger"></span>
+                                </div>
+                            </div>
+                            <div class="col-md-4">
+                                <div class="form-group mb-3">
+                                    <label asp-for="SiparisNumarasi" class="control-label"></label>
+                                    <input asp-for="SiparisNumarasi" class="form-control" />
+                                    <span asp-validation-for="SiparisNumarasi" class="text-danger"></span>
+                                </div>
+                            </div>
+                            <div class="col-md-4">
+                                <div class="form-group mb-3">
+                                    <label asp-for="FaturaTarihi" class="control-label"></label>
+                                    <input asp-for="FaturaTarihi" class="form-control" type="date" />
+                                    <span asp-validation-for="FaturaTarihi" class="text-danger"></span>
+                                </div>
+                            </div>
+                        </div>
+                        
+                        <div class="row">
+                            <div class="col-md-6">
+                                <div class="form-group mb-3">
+                                    <label asp-for="VadeTarihi" class="control-label"></label>
+                                    <input asp-for="VadeTarihi" class="form-control" type="date" />
+                                    <span asp-validation-for="VadeTarihi" class="text-danger"></span>
+                                </div>
+                            </div>
+                            <div class="col-md-6">
+                                <div class="form-group mb-3">
+                                    <label asp-for="CariID" class="control-label"></label>
+                                    <select asp-for="CariID" class="form-control select2" asp-items="ViewBag.Cariler">
+                                        <option value="">-- Cari Seçiniz --</option>
+                                    </select>
+                                    <span asp-validation-for="CariID" class="text-danger"></span>
+                                </div>
+                            </div>
+                        </div>
+                        
+                        <div class="row">
+                            <div class="col-md-6">
+                                <div class="form-group mb-3">
+                                    <label asp-for="FaturaTuruID" class="control-label"></label>
+                                    <select asp-for="FaturaTuruID" class="form-control select2" asp-items="ViewBag.FaturaTurleri">
+                                        <option value="">-- Fatura Türü Seçiniz --</option>
+                                    </select>
+                                    <span asp-validation-for="FaturaTuruID" class="text-danger"></span>
+                                </div>
+                            </div>
+                            <div class="col-md-6">
+                                <div class="form-group mb-3">
+                                    <label asp-for="Aciklama" class="control-label"></label>
+                                    <textarea asp-for="Aciklama" class="form-control" rows="3"></textarea>
+                                    <span asp-validation-for="Aciklama" class="text-danger"></span>
+                                </div>
+                            </div>
+                        </div>
+                        
+                        <div class="row">
+                            <div class="col-md-6">
+                                <div class="form-group mb-3">
+                                    <label asp-for="DovizTuru" class="control-label"></label>
+                                    <select asp-for="DovizTuru" class="form-control" id="DovizTuru">
+                                        <option value="TRY">TRY - Türk Lirası</option>
+                                        <option value="USD">USD - Amerikan Doları</option>
+                                        <option value="EUR">EUR - Euro</option>
+                                        <option value="GBP">GBP - İngiliz Sterlini</option>
+                                    </select>
+                                    <span asp-validation-for="DovizTuru" class="text-danger"></span>
+                                </div>
+                            </div>
+                            <div class="col-md-6">
+                                <div class="form-group mb-3">
+                                    <label asp-for="DovizKuru" class="control-label"></label>
+                                    <input asp-for="DovizKuru" class="form-control" type="number" step="0.0001" min="0.0001" id="DovizKuru" />
+                                    <span asp-validation-for="DovizKuru" class="text-danger"></span>
+                                </div>
+                            </div>
+                        </div>
+                    
+                        <!-- Fatura Kalemleri -->
+                        <div class="card mt-4">
+                            <div class="card-header d-flex justify-content-between align-items-center">
+                                <h5 class="mb-0">Fatura Kalemleri</h5>
+                                <button type="button" class="btn btn-primary btn-sm" id="btnAddKalem">
+                                    <i class="fa fa-plus"></i> Kalem Ekle
+                                </button>
+                            </div>
+                            <div class="card-body p-0">
+                                <div class="table-responsive">
+                                    <table class="table table-bordered table-striped" id="kalemlerTable">
+                                        <thead class="bg-primary text-white">
+                                            <tr>
+                                                <th>Ürün</th>
+                                                <th style="width: 100px;">Miktar</th>
+                                                <th style="width: 100px;">Birim</th>
+                                                <th style="width: 120px;">Birim Fiyat</th>
+                                                <th style="width: 80px;">KDV %</th>
+                                                <th style="width: 80px;">İndirim %</th>
+                                                <th style="width: 120px;">Tutar</th>
+                                                <th style="width: 120px;">KDV Tutarı</th>
+                                                <th style="width: 120px;">Net Tutar</th>
+                                                <th style="width: 80px;">İşlemler</th>
+                                            </tr>
+                                        </thead>
+                                        <tbody id="kalemlerBody">
+                                            @if (Model.FaturaKalemleri != null && Model.FaturaKalemleri.Count > 0)
+                                            {
+                                                @for (int i = 0; i < Model.FaturaKalemleri.Count; i++)
+                                                {
+                                                    <tr class="kalem-row">
+                                                        <td>
+                                                            <input type="hidden" name="FaturaKalemleri[@i].KalemID" value="@Model.FaturaKalemleri[i].KalemID" />
+                                                            <select name="FaturaKalemleri[@i].UrunID" class="form-control urun-select" required>
+                                                                <option value="">-- Ürün Seçiniz --</option>
+                                                                @foreach (var item in ViewBag.Urunler)
+                                                                {
+                                                                    @if (Model.FaturaKalemleri[i].UrunID.ToString() == item.Value)
+                                                                    {
+                                                                        <option value="@item.Value" selected>@item.Text</option>
+                                                                    }
+                                                                    else
+                                                                    {
+                                                                        <option value="@item.Value">@item.Text</option>
+                                                                    }
+                                                                }
+                                                            </select>
+                                                            <input type="hidden" name="FaturaKalemleri[@i].UrunAdi" class="urun-adi" value="@Model.FaturaKalemleri[i].UrunAdi" />
+                                                        </td>
+                                                        <td>
+                                                            <input type="number" name="FaturaKalemleri[@i].Miktar" class="form-control miktar" value="@Model.FaturaKalemleri[i].Miktar" min="0.01" step="0.01" required />
+                                                        </td>
+                                                        <td>
+                                                            <input type="text" name="FaturaKalemleri[@i].Birim" class="form-control birim" value="@Model.FaturaKalemleri[i].Birim" readonly />
+                                                        </td>
+                                                        <td>
+                                                            <input type="number" name="FaturaKalemleri[@i].BirimFiyat" class="form-control birim-fiyat" value="@Model.FaturaKalemleri[i].BirimFiyat" min="0.01" step="0.01" required />
+                                                        </td>
+                                                        <td>
+                                                            <input type="number" name="FaturaKalemleri[@i].KdvOrani" class="form-control kdv-orani" value="@Model.FaturaKalemleri[i].KdvOrani" min="0" max="100" />
+                                                        </td>
+                                                        <td>
+                                                            <input type="number" name="FaturaKalemleri[@i].IndirimOrani" class="form-control indirim-orani" value="@Model.FaturaKalemleri[i].IndirimOrani" min="0" max="100" />
+                                                        </td>
+                                                        <td>
+                                                            <input type="number" name="FaturaKalemleri[@i].Tutar" class="form-control tutar" value="@Model.FaturaKalemleri[i].Tutar" readonly />
+                                                        </td>
+                                                        <td>
+                                                            <input type="number" name="FaturaKalemleri[@i].KdvTutari" class="form-control kdv-tutari" value="@Model.FaturaKalemleri[i].KdvTutari" readonly />
+                                                        </td>
+                                                        <td>
+                                                            <input type="number" name="FaturaKalemleri[@i].NetTutar" class="form-control net-tutar" value="@Model.FaturaKalemleri[i].NetTutar" readonly />
+                                                        </td>
+                                                        <td class="text-center">
+                                                            <button type="button" class="btn btn-danger btn-sm btn-remove-kalem">
+                                                                <i class="fa fa-trash"></i>
+                                                            </button>
+                                                        </td>
+                                                    </tr>
+                                                }
+                                            }
+                                        </tbody>
+                                    </table>
+                                </div>
+                            </div>
+                        </div>
+
+                        <!-- Fatura Toplamları -->
+                        <div class="row mt-4">
+                            <div class="col-md-6 offset-md-6">
+                                <div class="table-responsive">
+                                    <table class="table table-bordered">
+                                        <tbody>
+                                            <tr>
+                                                <th style="width: 200px;">Ara Toplam</th>
+                                                <td class="text-right">
+                                                    <input id="AraToplam" class="form-control text-right" readonly />
+                                                </td>
+                                            </tr>
+                                            <tr>
+                                                <th>KDV Tutarı</th>
+                                                <td class="text-right">
+                                                    <input id="KdvTutari" class="form-control text-right" readonly />
+                                                </td>
+                                            </tr>
+                                            <tr>
+                                                <th>İndirim Tutarı</th>
+                                                <td class="text-right">
+                                                    <input id="IndirimTutari" class="form-control text-right" readonly />
+                                                </td>
+                                            </tr>
+                                            <tr class="table-primary">
+                                                <th>Genel Toplam</th>
+                                                <td class="text-right">
+                                                    <input id="GenelToplam" class="form-control text-right font-weight-bold" readonly />
+                                                </td>
+                                            </tr>
+                                        </tbody>
+                                    </table>
+                                </div>
+                            </div>
+                        </div>
+
+                        <div class="form-group mt-4 text-right">
+                            <a asp-action="Index" class="btn btn-secondary">İptal</a>
+                            <button type="submit" class="btn btn-primary">Kaydet</button>
+                        </div>
+                    </form>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+
+<!-- Kalem Template (Gizli) -->
+<script type="text/template" id="kalemTemplate">
+    <tr class="kalem-row">
+        <td>
+            <select name="FaturaKalemleri[{index}].UrunID" class="form-control urun-select" required>
+                <option value="">-- Ürün Seçiniz --</option>
+                @foreach (var item in ViewBag.Urunler)
+                {
+                    <option value="@item.Value">@item.Text</option>
+                }
+            </select>
+            <input type="hidden" name="FaturaKalemleri[{index}].UrunAdi" class="urun-adi" />
+        </td>
+        <td>
+            <input type="number" name="FaturaKalemleri[{index}].Miktar" class="form-control miktar" value="1" min="0.01" step="0.01" required />
+        </td>
+        <td>
+            <input type="text" name="FaturaKalemleri[{index}].Birim" class="form-control birim" readonly />
+        </td>
+        <td>
+            <input type="number" name="FaturaKalemleri[{index}].BirimFiyat" class="form-control birim-fiyat" value="0" min="0.01" step="0.01" required />
+        </td>
+        <td>
+            <input type="number" name="FaturaKalemleri[{index}].KdvOrani" class="form-control kdv-orani" value="18" min="0" max="100" />
+        </td>
+        <td>
+            <input type="number" name="FaturaKalemleri[{index}].IndirimOrani" class="form-control indirim-orani" value="0" min="0" max="100" />
+        </td>
+        <td>
+            <input type="number" name="FaturaKalemleri[{index}].Tutar" class="form-control tutar" value="0" readonly />
+        </td>
+        <td>
+            <input type="number" name="FaturaKalemleri[{index}].KdvTutari" class="form-control kdv-tutari" value="0" readonly />
+        </td>
+        <td>
+            <input type="number" name="FaturaKalemleri[{index}].NetTutar" class="form-control net-tutar" value="0" readonly />
+        </td>
+        <td class="text-center">
+            <button type="button" class="btn btn-danger btn-sm btn-remove-kalem">
+                <i class="fa fa-trash"></i>
+            </button>
+        </td>
+    </tr>
+</script>
+
+@section Scripts {
+    <script src="~/lib/jquery-validation/dist/jquery.validate.min.js"></script>
+    <script src="~/lib/jquery-validation-unobtrusive/jquery.validate.unobtrusive.min.js"></script>
+    <script>
+        $(document).ready(function () {
+            var kalemIndex = @Model.FaturaKalemleri.Count;
+            
+            // Döviz türü değiştiğinde döviz kurunu otomatik doldur
+            $("#DovizTuru").change(function() {
+                var dovizTuru = $(this).val();
+                var dovizKuru = 1; // Varsayılan değer TRY için
+                
+                // Döviz türüne göre kur değerini belirle
+                switch(dovizTuru) {
+                    case "USD":
+                        dovizKuru = 32.50; // Örnek USD kuru
+                        break;
+                    case "EUR":
+                        dovizKuru = 35.20; // Örnek EUR kuru
+                        break;
+                    case "GBP":
+                        dovizKuru = 41.80; // Örnek GBP kuru
+                        break;
+                    default:
+                        dovizKuru = 1; // TRY için
+                }
+                
+                // Döviz kurunu güncelle
+                $("#DovizKuru").val(dovizKuru);
+            });
+            
+            // Fatura numarası düzenleme
+            $("#btnEditFaturaNo").click(function() {
+                var faturaNoInput = $("#FaturaNumarasi");
+                if (faturaNoInput.attr("readonly")) {
+                    faturaNoInput.removeAttr("readonly");
+                    $(this).html('<i class="fa fa-check"></i>');
+                    faturaNoInput.focus();
+                } else {
+                    faturaNoInput.attr("readonly", "readonly");
+                    $(this).html('<i class="fa fa-edit"></i>');
+                }
+            });
+            
+            // Select2 entegrasyonu
+            if ($.fn.select2) {
+                $('.select2').select2();
+                $('.urun-select').each(function() {
+                    $(this).select2({
+                        dropdownParent: $('#kalemlerBody')
+                    });
+                });
+            }
+
+            // Kalem Ekle
+            $("#btnAddKalem").click(function () {
+                addKalemRow();
+            });
+            
+            // Mevcut kalemlerin olaylarını bağla
+            $(".kalem-row").each(function() {
+                bindEventsToRow($(this));
+            });
+            
+            // Satır toplamlarını başlangıçta hesapla
+            calculateFaturaTotals();
+
+            // Kalem satırı ekleme fonksiyonu
+            function addKalemRow() {
+                var template = $("#kalemTemplate").html();
+                template = template.replace(/{index}/g, kalemIndex);
+                $("#kalemlerBody").append(template);
+                
+                // Yeni eklenen satırın olaylarını bağla
+                bindEventsToRow($(".kalem-row").last());
+                
+                kalemIndex++;
+            }
+
+            // Herhangi bir satıra olay bağlama (yeni veya mevcut)
+            function bindEventsToRow(row) {
+                // Select2 entegrasyonu
+                if ($.fn.select2) {
+                    row.find('.urun-select').select2({
+                        dropdownParent: $('#kalemlerBody')
+                    });
+                }
+                
+                // Ürün seçildiğinde
+                row.find(".urun-select").change(function () {
+                    var urunID = $(this).val();
+                    var currentRow = $(this).closest("tr");
+                    
+                    if (urunID) {
+                        // AJAX ile ürün bilgilerini getir
+                        $.ajax({
+                            url: "/Fatura/GetUrunBilgileri/" + urunID,
+                            type: "GET",
+                            success: function (data) {
+                                currentRow.find(".urun-adi").val(data.urunAdi);
+                                currentRow.find(".birim").val(data.birim);
+                                currentRow.find(".birim-fiyat").val(data.birimFiyat);
+                                currentRow.find(".kdv-orani").val(data.kdvOrani);
+                                
+                                // Tutarları hesapla
+                                calculateRowTotals(currentRow);
+                            },
+                            error: function() {
+                                console.error("Ürün bilgileri alınamadı");
+                            }
+                        });
+                    } else {
+                        currentRow.find(".urun-adi").val("");
+                        currentRow.find(".birim").val("");
+                        currentRow.find(".birim-fiyat").val(0);
+                        currentRow.find(".kdv-orani").val(18);
+                        
+                        // Tutarları hesapla
+                        calculateRowTotals(currentRow);
+                    }
+                });
+
+                // Miktar, birim fiyat, KDV oranı veya indirim oranı değiştiğinde
+                row.find(".miktar, .birim-fiyat, .kdv-orani, .indirim-orani").on('input', function () {
+                    calculateRowTotals($(this).closest("tr"));
+                });
+
+                // Kalem silme
+                row.find(".btn-remove-kalem").click(function () {
+                    if ($("#kalemlerBody tr").length > 1) {
+                        $(this).closest("tr").remove();
+                        calculateFaturaTotals();
+                    } else {
+                        Swal.fire({
+                            title: 'Hata!',
+                            text: "En az bir kalem olmalıdır!",
+                            icon: 'error',
+                            confirmButtonText: 'Tamam'
+                        });
+                    }
+                });
+            }
+
+            // Resmi fatura değiştiğinde KDV hesaplamalarını güncelle
+            $("#Resmi").change(function() {
+                $(".kalem-row").each(function() {
+                    calculateRowTotals($(this));
+                });
+            });
+
+            // Satır toplamlarını hesaplama
+            function calculateRowTotals(row) {
+                var miktar = parseFloat(row.find(".miktar").val()) || 0;
+                var birimFiyat = parseFloat(row.find(".birim-fiyat").val()) || 0;
+                var kdvOrani = parseFloat(row.find(".kdv-orani").val()) || 0;
+                var indirimOrani = parseFloat(row.find(".indirim-orani").val()) || 0;
+                var resmi = $("#Resmi").is(":checked");
+                
+                // 0 değerlerini kontrol et
+                if (miktar <= 0) {
+                    row.find(".miktar").addClass("is-invalid");
+                } else {
+                    row.find(".miktar").removeClass("is-invalid");
+                }
+                
+                if (birimFiyat <= 0) {
+                    row.find(".birim-fiyat").addClass("is-invalid");
+                } else {
+                    row.find(".birim-fiyat").removeClass("is-invalid");
+                }
+                
+                var tutar = miktar * birimFiyat;
+                var indirimTutari = tutar * (indirimOrani / 100);
+                var netTutar = tutar - indirimTutari;
+                
+                // Resmi fatura değilse KDV hesaplanmaz
+                var kdvTutari = resmi ? netTutar * (kdvOrani / 100) : 0;
+                var toplamTutar = netTutar + kdvTutari;
+                
+                row.find(".tutar").val(tutar.toFixed(2));
+                row.find(".kdv-tutari").val(kdvTutari.toFixed(2));
+                row.find(".net-tutar").val(toplamTutar.toFixed(2));
+                
+                // Fatura toplamlarını güncelle
+                calculateFaturaTotals();
+            }
+
+            // Fatura toplamlarını hesaplama
+            function calculateFaturaTotals() {
+                var araToplam = 0;
+                var kdvToplam = 0;
+                var indirimToplam = 0;
+                var genelToplam = 0;
+                
+                $(".kalem-row").each(function () {
+                    var tutar = parseFloat($(this).find(".tutar").val()) || 0;
+                    var kdvTutari = parseFloat($(this).find(".kdv-tutari").val()) || 0;
+                    var indirimOrani = parseFloat($(this).find(".indirim-orani").val()) || 0;
+                    var indirimTutari = tutar * (indirimOrani / 100);
+                    
+                    araToplam += tutar;
+                    kdvToplam += kdvTutari;
+                    indirimToplam += indirimTutari;
+                    genelToplam += parseFloat($(this).find(".net-tutar").val()) || 0;
+                });
+                
+                $("#AraToplam").val(araToplam.toFixed(2));
+                $("#KdvTutari").val(kdvToplam.toFixed(2));
+                $("#IndirimTutari").val(indirimToplam.toFixed(2));
+                $("#GenelToplam").val(genelToplam.toFixed(2));
+            }
+
+            // Form doğrulama fonksiyonu
+            function validateForm() {
+                var isValid = true;
+                var errorMessages = [];
+                
+                // Cari seçimi kontrol et
+                if (!$("#CariID").val()) {
+                    $("#CariID").addClass("is-invalid");
+                    errorMessages.push("Lütfen bir cari seçiniz.");
+                    isValid = false;
+                } else {
+                    $("#CariID").removeClass("is-invalid");
+                }
+                
+                // Fatura türü seçimi kontrol et
+                if (!$("#FaturaTuruID").val()) {
+                    $("#FaturaTuruID").addClass("is-invalid");
+                    errorMessages.push("Lütfen bir fatura türü seçiniz.");
+                    isValid = false;
+                } else {
+                    $("#FaturaTuruID").removeClass("is-invalid");
+                }
+                
+                // Fatura numarası kontrolü
+                if (!$("#FaturaNumarasi").val()) {
+                    $("#FaturaNumarasi").addClass("is-invalid");
+                    errorMessages.push("Fatura numarası alanı boş olamaz.");
+                    isValid = false;
+                } else {
+                    $("#FaturaNumarasi").removeClass("is-invalid");
+                }
+                
+                // Fatura kalemleri kontrolü
+                if ($("#kalemlerBody tr").length === 0) {
+                    errorMessages.push("En az bir fatura kalemi eklemelisiniz.");
+                    isValid = false;
+                }
+                
+                // Her kalem için doğrulama
+                $("#kalemlerBody tr").each(function(index) {
+                    var row = $(this);
+                    var urunID = row.find(".urun-select").val();
+                    var miktar = parseFloat(row.find(".miktar").val()) || 0;
+                    var birimFiyat = parseFloat(row.find(".birim-fiyat").val()) || 0;
+                    
+                    // Ürün seçimi kontrolü
+                    if (!urunID) {
+                        row.find(".urun-select").addClass("is-invalid");
+                        errorMessages.push((index + 1) + ". satırda ürün seçilmedi.");
+                        isValid = false;
+                    } else {
+                        row.find(".urun-select").removeClass("is-invalid");
+                    }
+                    
+                    // Miktar kontrolü
+                    if (miktar <= 0) {
+                        row.find(".miktar").addClass("is-invalid");
+                        errorMessages.push((index + 1) + ". satırda miktar sıfırdan büyük olmalıdır.");
+                        isValid = false;
+                    } else {
+                        row.find(".miktar").removeClass("is-invalid");
+                    }
+                    
+                    // Birim fiyat kontrolü
+                    if (birimFiyat <= 0) {
+                        row.find(".birim-fiyat").addClass("is-invalid");
+                        errorMessages.push((index + 1) + ". satırda birim fiyat sıfırdan büyük olmalıdır.");
+                        isValid = false;
+                    } else {
+                        row.find(".birim-fiyat").removeClass("is-invalid");
+                    }
+                });
+                
+                return {
+                    isValid: isValid,
+                    errorMessages: errorMessages
+                };
+            }
+
+            // Form gönderilmeden önce kontrol
+            $("#faturaForm").submit(function (e) {
+                e.preventDefault();
+                
+                // Form doğrulama
+                var validation = validateForm();
+                if (!validation.isValid) {
+                    var errorMessage = "Aşağıdaki hatalar oluştu:<br/><ul>";
+                    validation.errorMessages.forEach(function(message) {
+                        errorMessage += "<li>" + message + "</li>";
+                    });
+                    errorMessage += "</ul>";
+                    
+                    Swal.fire({
+                        title: 'Doğrulama Hatası!',
+                        html: errorMessage,
+                        icon: 'error',
+                        confirmButtonText: 'Tamam'
+                    });
+                    return false;
+                }
+                
+                // Form verilerini topla
+                var formData = $(this).serialize();
+                
+                // Form verilerini sunucuya gönder
+                $.ajax({
+                    url: $(this).attr('action'),
+                    type: 'POST',
+                    data: formData,
+                    contentType: 'application/x-www-form-urlencoded',
+                    dataType: 'json',
+                    success: function(response) {
+                        if (response && response.success) {
+                            Swal.fire({
+                                title: 'Başarılı!',
+                                text: response.message || 'Fatura başarıyla kaydedildi.',
+                                icon: 'success',
+                                confirmButtonText: 'Tamam'
+                            }).then((result) => {
+                                // Faturaların listesine yönlendir
+                                window.location.href = '/Fatura/Index';
+                            });
+                        } else {
+                            var errorMessage = 'Fatura kaydedilirken bir hata oluştu.';
+                            if (response && response.message) {
+                                errorMessage = response.message;
+                            }
+                            
+                            Swal.fire({
+                                title: 'Hata!',
+                                text: errorMessage,
+                                icon: 'error',
+                                confirmButtonText: 'Tamam'
+                            });
+                        }
+                    },
+                    error: function(xhr, status, error) {
+                        console.error("AJAX hatası:", xhr, status, error);
+                        
+                        var errorMsg = 'Fatura kaydedilirken bir hata oluştu.';
+                        if (xhr.responseJSON && xhr.responseJSON.message) {
+                            errorMsg = xhr.responseJSON.message;
+                        }
+                        
+                        Swal.fire({
+                            title: 'Hata!',
+                            text: errorMsg,
+                            icon: 'error',
+                            confirmButtonText: 'Tamam'
+                        });
+                    }
+                });
+            });
+        });
+    </script>
+} 

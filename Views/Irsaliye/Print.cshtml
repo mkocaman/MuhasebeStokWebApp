@@ -1,0 +1,201 @@
+@model MuhasebeStokWebApp.ViewModels.Irsaliye.IrsaliyeDetailViewModel
+@{
+    Layout = "_PrintLayout";
+    ViewData["Title"] = "İrsaliye Yazdır";
+}
+
+<style>
+    body {
+        font-family: 'Arial', sans-serif;
+        margin: 0;
+        padding: 20px;
+        color: #333;
+    }
+    
+    .print-container {
+        width: 100%;
+        margin: 0 auto;
+    }
+    
+    .header {
+        text-align: center;
+        margin-bottom: 20px;
+    }
+    
+    .logo {
+        max-width: 200px;
+        margin-bottom: 10px;
+    }
+    
+    .doc-title {
+        font-size: 24px;
+        font-weight: bold;
+        margin-bottom: 5px;
+    }
+    
+    .doc-number {
+        font-size: 18px;
+        margin-bottom: 20px;
+    }
+    
+    .info-section {
+        display: flex;
+        justify-content: space-between;
+        margin-bottom: 30px;
+    }
+    
+    .company-info, .client-info, .document-info {
+        width: 30%;
+    }
+    
+    .section-title {
+        font-weight: bold;
+        border-bottom: 1px solid #ddd;
+        padding-bottom: 5px;
+        margin-bottom: 10px;
+    }
+    
+    .items-table {
+        width: 100%;
+        border-collapse: collapse;
+        margin-bottom: 30px;
+    }
+    
+    .items-table th {
+        background-color: #f2f2f2;
+        text-align: left;
+        padding: 10px;
+        border: 1px solid #ddd;
+    }
+    
+    .items-table td {
+        padding: 10px;
+        border: 1px solid #ddd;
+    }
+    
+    .summary-section {
+        display: flex;
+        justify-content: space-between;
+    }
+    
+    .notes {
+        width: 60%;
+    }
+    
+    .signatures {
+        margin-top: 50px;
+        display: flex;
+        justify-content: space-between;
+    }
+    
+    .signature-box {
+        width: 40%;
+        text-align: center;
+    }
+    
+    .signature-line {
+        border-top: 1px solid #333;
+        margin-top: 50px;
+        padding-top: 10px;
+    }
+    
+    @@media print {
+        body {
+            padding: 0;
+        }
+        
+        .no-print {
+            display: none;
+        }
+    }
+</style>
+
+<div class="print-container">
+    <div class="header">
+        <h1 class="doc-title">SEVKİYAT İRSALİYESİ</h1>
+        <p class="doc-number">İrsaliye No: @Model.IrsaliyeNumarasi</p>
+    </div>
+    
+    <div class="info-section">
+        <div class="company-info">
+            <h3 class="section-title">Gönderen</h3>
+            <p><strong>Firma Adı:</strong> VIHO Muhasebe ve Stok Yönetimi</p>
+            <p><strong>Adres:</strong> Atatürk Mah. Ataşehir Bulvarı No:15 Kat:3 D:5</p>
+            <p><strong>Şehir:</strong> İstanbul</p>
+            <p><strong>Vergi Dairesi:</strong> Ataşehir</p>
+            <p><strong>Vergi No:</strong> 1234567890</p>
+            <p><strong>Telefon:</strong> (0216) 123 45 67</p>
+        </div>
+        
+        <div class="client-info">
+            <h3 class="section-title">Alıcı</h3>
+            <p><strong>Firma Adı:</strong> @Model.CariAdi</p>
+            <p><strong>Vergi No:</strong> @Model.CariVergiNo</p>
+            <p><strong>Adres:</strong> @Model.CariAdres</p>
+            <p><strong>Telefon:</strong> @Model.CariTelefon</p>
+        </div>
+        
+        <div class="document-info">
+            <h3 class="section-title">İrsaliye Bilgileri</h3>
+            <p><strong>İrsaliye Tarihi:</strong> @(Model.IrsaliyeTarihi.HasValue ? Model.IrsaliyeTarihi.Value.ToString("dd.MM.yyyy") : "-")</p>
+            <p><strong>Sevk Tarihi:</strong> @(Model.SevkTarihi.HasValue ? Model.SevkTarihi.Value.ToString("dd.MM.yyyy") : "-")</p>
+            <p><strong>İrsaliye Türü:</strong> @Model.IrsaliyeTuru</p>
+            @if (!string.IsNullOrEmpty(Model.FaturaNumarasi))
+            {
+                <p><strong>İlgili Fatura:</strong> @Model.FaturaNumarasi</p>
+            }
+            <p><strong>Durum:</strong> @Model.Durum</p>
+        </div>
+    </div>
+    
+    <table class="items-table">
+        <thead>
+            <tr>
+                <th>#</th>
+                <th>Ürün Kodu</th>
+                <th>Ürün Adı</th>
+                <th>Miktar</th>
+                <th>Birim</th>
+                <th>Açıklama</th>
+            </tr>
+        </thead>
+        <tbody>
+            @foreach (var kalem in Model.IrsaliyeKalemleri)
+            {
+                <tr>
+                    <td>@(Model.IrsaliyeKalemleri.IndexOf(kalem) + 1)</td>
+                    <td>@kalem.UrunKodu</td>
+                    <td>@kalem.UrunAdi</td>
+                    <td>@kalem.Miktar.ToString("N2")</td>
+                    <td>@kalem.Birim</td>
+                    <td>@kalem.Aciklama</td>
+                </tr>
+            }
+        </tbody>
+    </table>
+    
+    <div class="summary-section">
+        <div class="notes">
+            <h3 class="section-title">Notlar</h3>
+            <p>@Model.Aciklama</p>
+        </div>
+    </div>
+    
+    <div class="signatures">
+        <div class="signature-box">
+            <p class="signature-line">Teslim Eden</p>
+        </div>
+        <div class="signature-box">
+            <p class="signature-line">Teslim Alan</p>
+        </div>
+    </div>
+</div>
+
+<div class="no-print text-center mt-4">
+    <button class="btn btn-primary" onclick="window.print()">
+        <i class="fas fa-print"></i> Yazdır
+    </button>
+    <a asp-action="Details" asp-route-id="@Model.IrsaliyeID" class="btn btn-secondary ml-2">
+        <i class="fas fa-arrow-left"></i> Detay Sayfasına Dön
+    </a>
+</div> 

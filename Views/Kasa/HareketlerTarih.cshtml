@@ -1,0 +1,110 @@
+@model IEnumerable<MuhasebeStokWebApp.Data.Entities.KasaHareket>
+@{
+    ViewData["Title"] = "Kasa Hareketleri";
+    Layout = "~/Views/Shared/_Layout.cshtml";
+    var kasa = ViewBag.Kasa;
+    var startDate = ViewBag.StartDate as DateTime?;
+    var endDate = ViewBag.EndDate as DateTime?;
+}
+
+<div class="container-fluid">
+    <div class="card">
+        <div class="card-header bg-primary text-white">
+            <div class="d-flex justify-content-between align-items-center">
+                <h5 class="mb-0">Kasa Hareketleri - @kasa.KasaAdi</h5>
+                <div>
+                    <a asp-action="Index" class="btn btn-light">
+                        <i class="fas fa-arrow-left"></i> Kasalara Dön
+                    </a>
+                    <a asp-action="YeniHareket" class="btn btn-success">
+                        <i class="fas fa-plus"></i> Yeni Hareket
+                    </a>
+                    <a asp-action="Transfer" class="btn btn-warning">
+                        <i class="fas fa-exchange-alt"></i> Transfer
+                    </a>
+                </div>
+            </div>
+        </div>
+        <div class="card-body">
+            <div class="row mb-3">
+                <div class="col-md-6">
+                    <div class="form-group">
+                        <label>Kasa Adı:</label>
+                        <span class="form-control-plaintext">@kasa.KasaAdi</span>
+                    </div>
+                </div>
+                <div class="col-md-6">
+                    <div class="form-group">
+                        <label>Güncel Bakiye:</label>
+                        <span class="form-control-plaintext font-weight-bold">@kasa.GuncelBakiye.ToString("N2") @kasa.ParaBirimi</span>
+                    </div>
+                </div>
+            </div>
+
+            <div class="row mb-4">
+                <div class="col-md-12">
+                    <form asp-action="HareketlerTarih" method="get" class="form-inline">
+                        <input type="hidden" name="id" value="@kasa.KasaID" />
+                        <div class="form-group mx-sm-3 mb-2">
+                            <label for="startDate" class="mr-2">Başlangıç:</label>
+                            <input type="date" id="startDate" name="startDate" class="form-control" value="@(startDate?.ToString("yyyy-MM-dd"))" />
+                        </div>
+                        <div class="form-group mx-sm-3 mb-2">
+                            <label for="endDate" class="mr-2">Bitiş:</label>
+                            <input type="date" id="endDate" name="endDate" class="form-control" value="@(endDate?.ToString("yyyy-MM-dd"))" />
+                        </div>
+                        <button type="submit" class="btn btn-primary mb-2">Filtrele</button>
+                        <a asp-action="HareketlerTarih" asp-route-id="@kasa.KasaID" class="btn btn-secondary mb-2 ml-2">Filtreyi Temizle</a>
+                    </form>
+                </div>
+            </div>
+
+            <div class="table-responsive">
+                <table class="table table-bordered table-striped">
+                    <thead class="thead-dark">
+                        <tr>
+                            <th>Tarih</th>
+                            <th>Tür</th>
+                            <th>Referans</th>
+                            <th>Açıklama</th>
+                            <th>Giriş</th>
+                            <th>Çıkış</th>
+                            <th>İşlemler</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        @foreach (var item in Model)
+                        {
+                            var girisTutar = item.HareketTuru == "Giriş" ? item.Tutar : 0;
+                            var cikisTutar = item.HareketTuru == "Çıkış" ? item.Tutar : 0;
+
+                            <tr>
+                                <td>@item.Tarih.ToString("dd.MM.yyyy HH:mm")</td>
+                                <td>@item.HareketTuru</td>
+                                <td>@item.ReferansTuru - @item.ReferansNo</td>
+                                <td>@item.Aciklama</td>
+                                <td class="text-success text-right">
+                                    @(girisTutar > 0 ? girisTutar.ToString("N2") + " " + kasa.ParaBirimi : "")
+                                </td>
+                                <td class="text-danger text-right">
+                                    @(cikisTutar > 0 ? cikisTutar.ToString("N2") + " " + kasa.ParaBirimi : "")
+                                </td>
+                                <td>
+                                    @if (item.IslemTuru == "Transfer")
+                                    {
+                                        <a asp-action="EditTransfer" asp-route-id="@item.TransferID" class="btn btn-sm btn-warning">
+                                            <i class="fas fa-edit"></i>
+                                        </a>
+                                        <a asp-action="DeleteTransfer" asp-route-id="@item.TransferID" class="btn btn-sm btn-danger">
+                                            <i class="fas fa-trash"></i>
+                                        </a>
+                                    }
+                                </td>
+                            </tr>
+                        }
+                    </tbody>
+                </table>
+            </div>
+        </div>
+    </div>
+</div> 

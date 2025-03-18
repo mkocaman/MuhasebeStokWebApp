@@ -1,0 +1,338 @@
+using System;
+using System.Linq;
+using System.Threading.Tasks;
+using Microsoft.AspNetCore.Mvc;
+using Microsoft.AspNetCore.Mvc.Rendering;
+using Microsoft.EntityFrameworkCore;
+using MuhasebeStokWebApp.Data;
+using MuhasebeStokWebApp.Models;
+using MuhasebeStokWebApp.ViewModels;
+
+namespace MuhasebeStokWebApp.Controllers
+{
+    public class DovizKuruController : Controller
+    {
+        private readonly ApplicationDbContext _context;
+
+        public DovizKuruController(ApplicationDbContext context)
+        {
+            _context = context;
+        }
+
+        // GET: DovizKuru/Liste
+        public async Task<IActionResult> Liste()
+        {
+            var dovizKurlari = await _context.DovizKurlari
+                .Include(d => d.KaynakParaBirimi)
+                .Include(d => d.HedefParaBirimi)
+                .Where(d => d.Aktif)
+                .OrderByDescending(d => d.Tarih)
+                .ToListAsync();
+
+            return View(dovizKurlari);
+        }
+
+        // GET: DovizKuru/Detay/5
+        public async Task<IActionResult> Detay(Guid? id)
+        {
+            if (id == null)
+            {
+                return NotFound();
+            }
+
+            var dovizKuru = await _context.DovizKurlari
+                .Include(d => d.KaynakParaBirimi)
+                .Include(d => d.HedefParaBirimi)
+                .FirstOrDefaultAsync(m => m.DovizKuruID == id);
+
+            if (dovizKuru == null)
+            {
+                return NotFound();
+            }
+
+            return View(dovizKuru);
+        }
+
+        // GET: DovizKuru/Ekle
+        public IActionResult Ekle()
+        {
+            // Para birimleri listesini getir
+            var paraBirimleri = _context.Dovizler
+                .Where(d => d.Aktif)
+                .OrderBy(d => d.DovizKodu)
+                .ToList();
+
+            // Dropdown için ViewBag'e ekle
+            ViewBag.ParaBirimleri = paraBirimleri.Select(p => new SelectListItem
+            {
+                Value = p.DovizID.ToString(),
+                Text = $"{p.DovizKodu} - {p.DovizAdi}"
+            }).ToList();
+
+            return View();
+        }
+
+        // POST: DovizKuru/Ekle
+        [HttpPost]
+        [ValidateAntiForgeryToken]
+        public async Task<IActionResult> Ekle(DovizKuruEkleViewModel model)
+        {
+            if (ModelState.IsValid)
+            {
+                try
+                {
+                    // Yeni GUID oluştur
+                    var dovizKuruId = Guid.NewGuid();
+
+                    // Kaynak ve hedef para birimlerini getir
+                    var kaynakParaBirimi = await _context.Dovizler.FindAsync(model.KaynakParaBirimiID);
+                    var hedefParaBirimi = await _context.Dovizler.FindAsync(model.HedefParaBirimiID);
+
+                    if (kaynakParaBirimi == null || hedefParaBirimi == null)
+                    {
+                        ModelState.AddModelError("", "Seçilen para birimleri bulunamadı.");
+                        return View(model);
+                    }
+
+                    // DovizKuru nesnesini oluştur
+                    var dovizKuru = new DovizKuru
+                    {
+                        DovizKuruID = dovizKuruId,
+                        KaynakParaBirimiID = model.KaynakParaBirimiID,
+                        KaynakParaBirimi = kaynakParaBirimi.DovizKodu,
+                        HedefParaBirimiID = model.HedefParaBirimiID,
+                        HedefParaBirimi = hedefParaBirimi.DovizKodu,
+                        KurDegeri = model.KurDegeri,
+                        AlisFiyati = model.AlisFiyati,
+                        SatisFiyati = model.SatisFiyati,
+                        Tarih = model.Tarih,
+                        Kaynak = model.Kaynak,
+                        Aciklama = model.Aciklama,
+                        Aktif = true,
+                        SoftDelete = false,
+                        OlusturmaTarihi = DateTime.Now
+                    };
+
+                    // Veritabanına ekle
+                    _context.Add(dovizKuru);
+                    await _context.SaveChangesAsync();
+
+                    TempData["SuccessMessage"] = "Döviz kuru başarıyla eklendi.";
+                    return RedirectToAction(nameof(Liste));
+                }
+                catch (Exception ex)
+                {
+                    ModelState.AddModelError("", $"Bir hata oluştu: {ex.Message}");
+                }
+            }
+
+            // Para birimleri listesini yeniden getir
+            var paraBirimleri = _context.Dovizler
+                .Where(d => d.Aktif)
+                .OrderBy(d => d.DovizKodu)
+                .ToList();
+
+            ViewBag.ParaBirimleri = paraBirimleri.Select(p => new SelectListItem
+            {
+                Value = p.DovizID.ToString(),
+                Text = $"{p.DovizKodu} - {p.DovizAdi}"
+            }).ToList();
+
+            return View(model);
+        }
+
+        // GET: DovizKuru/Duzenle/5
+        public async Task<IActionResult> Duzenle(Guid? id)
+        {
+            if (id == null)
+            {
+                return NotFound();
+            }
+
+            var dovizKuru = await _context.DovizKurlari
+                .Include(d => d.KaynakParaBirimi)
+                .Include(d => d.HedefParaBirimi)
+                .FirstOrDefaultAsync(m => m.DovizKuruID == id);
+
+            if (dovizKuru == null)
+            {
+                return NotFound();
+            }
+
+            // Para birimleri listesini getir
+            var paraBirimleri = _context.Dovizler
+                .Where(d => d.Aktif)
+                .OrderBy(d => d.DovizKodu)
+                .ToList();
+
+            ViewBag.ParaBirimleri = paraBirimleri.Select(p => new SelectListItem
+            {
+                Value = p.DovizID.ToString(),
+                Text = $"{p.DovizKodu} - {p.DovizAdi}"
+            }).ToList();
+
+            // View model oluştur
+            var viewModel = new DovizKuruEkleViewModel
+            {
+                KaynakParaBirimiID = dovizKuru.KaynakParaBirimiID,
+                HedefParaBirimiID = dovizKuru.HedefParaBirimiID,
+                KurDegeri = dovizKuru.KurDegeri,
+                AlisFiyati = dovizKuru.AlisFiyati,
+                SatisFiyati = dovizKuru.SatisFiyati,
+                Tarih = dovizKuru.Tarih,
+                Kaynak = dovizKuru.Kaynak,
+                Aciklama = dovizKuru.Aciklama,
+                Aktif = dovizKuru.Aktif,
+                SoftDelete = dovizKuru.SoftDelete
+            };
+
+            return View(viewModel);
+        }
+
+        // POST: DovizKuru/Duzenle/5
+        [HttpPost]
+        [ValidateAntiForgeryToken]
+        public async Task<IActionResult> Duzenle(Guid id, DovizKuruEkleViewModel model)
+        {
+            if (id == Guid.Empty)
+            {
+                return NotFound();
+            }
+
+            if (ModelState.IsValid)
+            {
+                try
+                {
+                    var dovizKuru = await _context.DovizKurlari.FindAsync(id);
+                    
+                    if (dovizKuru == null)
+                    {
+                        return NotFound();
+                    }
+
+                    // Kaynak ve hedef para birimlerini getir
+                    var kaynakParaBirimi = await _context.Dovizler.FindAsync(model.KaynakParaBirimiID);
+                    var hedefParaBirimi = await _context.Dovizler.FindAsync(model.HedefParaBirimiID);
+
+                    if (kaynakParaBirimi == null || hedefParaBirimi == null)
+                    {
+                        ModelState.AddModelError("", "Seçilen para birimleri bulunamadı.");
+                        return View(model);
+                    }
+
+                    // DovizKuru güncelle
+                    dovizKuru.KaynakParaBirimiID = model.KaynakParaBirimiID;
+                    dovizKuru.KaynakParaBirimi = kaynakParaBirimi.DovizKodu;
+                    dovizKuru.HedefParaBirimiID = model.HedefParaBirimiID;
+                    dovizKuru.HedefParaBirimi = hedefParaBirimi.DovizKodu;
+                    dovizKuru.KurDegeri = model.KurDegeri;
+                    dovizKuru.AlisFiyati = model.AlisFiyati;
+                    dovizKuru.SatisFiyati = model.SatisFiyati;
+                    dovizKuru.Tarih = model.Tarih;
+                    dovizKuru.Kaynak = model.Kaynak;
+                    dovizKuru.Aciklama = model.Aciklama;
+                    dovizKuru.GuncellemeTarihi = DateTime.Now;
+
+                    _context.Update(dovizKuru);
+                    await _context.SaveChangesAsync();
+
+                    TempData["SuccessMessage"] = "Döviz kuru başarıyla güncellendi.";
+                    return RedirectToAction(nameof(Liste));
+                }
+                catch (DbUpdateConcurrencyException)
+                {
+                    if (!DovizKuruExists(id))
+                    {
+                        return NotFound();
+                    }
+                    else
+                    {
+                        throw;
+                    }
+                }
+            }
+
+            // Para birimleri listesini yeniden getir
+            var paraBirimleri = _context.Dovizler
+                .Where(d => d.Aktif)
+                .OrderBy(d => d.DovizKodu)
+                .ToList();
+
+            ViewBag.ParaBirimleri = paraBirimleri.Select(p => new SelectListItem
+            {
+                Value = p.DovizID.ToString(),
+                Text = $"{p.DovizKodu} - {p.DovizAdi}"
+            }).ToList();
+
+            return View(model);
+        }
+
+        // GET: DovizKuru/Sil/5
+        public async Task<IActionResult> Sil(Guid? id)
+        {
+            if (id == null)
+            {
+                return NotFound();
+            }
+
+            var dovizKuru = await _context.DovizKurlari
+                .Include(d => d.KaynakParaBirimi)
+                .Include(d => d.HedefParaBirimi)
+                .FirstOrDefaultAsync(m => m.DovizKuruID == id);
+
+            if (dovizKuru == null)
+            {
+                return NotFound();
+            }
+
+            return View(dovizKuru);
+        }
+
+        // POST: DovizKuru/Sil/5
+        [HttpPost, ActionName("Sil")]
+        [ValidateAntiForgeryToken]
+        public async Task<IActionResult> SilOnay(Guid id)
+        {
+            var dovizKuru = await _context.DovizKurlari.FindAsync(id);
+            
+            if (dovizKuru == null)
+            {
+                return NotFound();
+            }
+
+            // Soft delete
+            dovizKuru.Aktif = false;
+            dovizKuru.SoftDelete = true;
+            dovizKuru.GuncellemeTarihi = DateTime.Now;
+            
+            _context.Update(dovizKuru);
+            await _context.SaveChangesAsync();
+            
+            TempData["SuccessMessage"] = "Döviz kuru başarıyla silindi.";
+            return RedirectToAction(nameof(Liste));
+        }
+
+        private bool DovizKuruExists(Guid id)
+        {
+            return _context.DovizKurlari.Any(e => e.DovizKuruID == id);
+        }
+    }
+}
+
+// View Model sınıfı için namespace
+namespace MuhasebeStokWebApp.ViewModels
+{
+    public class DovizKuruEkleViewModel
+    {
+        public Guid KaynakParaBirimiID { get; set; }
+        public Guid HedefParaBirimiID { get; set; }
+        public decimal KurDegeri { get; set; }
+        public decimal? AlisFiyati { get; set; }
+        public decimal? SatisFiyati { get; set; }
+        public DateTime Tarih { get; set; } = DateTime.Now;
+        public string Kaynak { get; set; } = "Manuel";
+        public string Aciklama { get; set; } = "Manuel olarak eklendi";
+        public bool Aktif { get; set; } = true;
+        public bool SoftDelete { get; set; } = false;
+    }
+} 

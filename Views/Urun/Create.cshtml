@@ -1,0 +1,222 @@
+@model MuhasebeStokWebApp.ViewModels.Urun.UrunCreateViewModel
+
+@{
+    ViewData["Title"] = "Yeni Ürün";
+    Layout = "~/Views/Shared/_Layout.cshtml";
+}
+
+<div class="container-fluid">
+    <div class="card">
+        <div class="card-header bg-primary text-white">
+            <div class="d-flex justify-content-between align-items-center">
+                <h4 class="mb-0">Yeni Ürün Ekle</h4>
+                <a asp-controller="Stok" asp-action="Index" class="btn btn-light">
+                    <i class="fas fa-arrow-left"></i> Listeye Dön
+                </a>
+            </div>
+        </div>
+        <div class="card-body">
+            @if (ViewData.ModelState.ErrorCount > 0)
+            {
+                <div class="alert alert-danger alert-dismissible fade show" role="alert">
+                    <h5 class="alert-heading">Hata!</h5>
+                    <p>Lütfen aşağıdaki hataları düzeltin:</p>
+                    <div asp-validation-summary="ModelOnly" class="text-danger"></div>
+                    <button type="button" class="btn-close" data-bs-dismiss="alert" aria-label="Close"></button>
+                </div>
+            }
+
+            <form asp-action="Create" method="post">
+                <div class="row mb-4">
+                    <div class="col-md-6">
+                        <div class="form-group">
+                            <label asp-for="UrunKodu" class="form-label">Ürün Kodu</label>
+                            <input asp-for="UrunKodu" class="form-control" />
+                            <span asp-validation-for="UrunKodu" class="text-danger"></span>
+                        </div>
+                    </div>
+                    <div class="col-md-6">
+                        <div class="form-group">
+                            <label asp-for="UrunAdi" class="form-label">Ürün Adı</label>
+                            <input asp-for="UrunAdi" class="form-control" />
+                            <span asp-validation-for="UrunAdi" class="text-danger"></span>
+                        </div>
+                    </div>
+                </div>
+                
+                <div class="row mb-4">
+                    <div class="col-md-6">
+                        <div class="form-group">
+                            <label asp-for="KategoriID" class="form-label">Kategori</label>
+                            <div class="input-group">
+                                <select asp-for="KategoriID" asp-items="ViewBag.Kategoriler" class="form-select">
+                                    <option value="">-- Kategori Seçin --</option>
+                                </select>
+                                <button type="button" class="btn btn-outline-secondary" data-bs-toggle="modal" data-bs-target="#yeniKategoriModal">
+                                    <i class="fas fa-plus"></i>
+                                </button>
+                            </div>
+                            <span asp-validation-for="KategoriID" class="text-danger"></span>
+                        </div>
+                    </div>
+                    <div class="col-md-6">
+                        <div class="form-group">
+                            <label asp-for="BirimID" class="form-label">Birim</label>
+                            <select asp-for="BirimID" asp-items="ViewBag.Birimler" class="form-select" required>
+                                <option value="">-- Birim Seçin --</option>
+                            </select>
+                            <span asp-validation-for="BirimID" class="text-danger"></span>
+                        </div>
+                    </div>
+                </div>
+                
+                <div class="row mb-4">
+                    <div class="col-md-4">
+                        <div class="form-group">
+                            <label asp-for="ListeFiyati" class="form-label">Liste Fiyatı</label>
+                            <div class="input-group">
+                                <input asp-for="ListeFiyati" class="form-control" />
+                                <span class="input-group-text">₺</span>
+                            </div>
+                            <span asp-validation-for="ListeFiyati" class="text-danger"></span>
+                        </div>
+                    </div>
+                    <div class="col-md-4">
+                        <div class="form-group">
+                            <label asp-for="MaliyetFiyati" class="form-label">Maliyet Fiyatı</label>
+                            <div class="input-group">
+                                <input asp-for="MaliyetFiyati" class="form-control" />
+                                <span class="input-group-text">₺</span>
+                            </div>
+                            <span asp-validation-for="MaliyetFiyati" class="text-danger"></span>
+                        </div>
+                    </div>
+                    <div class="col-md-4">
+                        <div class="form-group">
+                            <label asp-for="SatisFiyati" class="form-label">Satış Fiyatı</label>
+                            <div class="input-group">
+                                <input asp-for="SatisFiyati" class="form-control" />
+                                <span class="input-group-text">₺</span>
+                            </div>
+                            <span asp-validation-for="SatisFiyati" class="text-danger"></span>
+                        </div>
+                    </div>
+                </div>
+                
+                <div class="form-group form-check mb-4">
+                    <input class="form-check-input" asp-for="Aktif" />
+                    <label class="form-check-label" asp-for="Aktif">Aktif</label>
+                </div>
+                
+                <div class="card-footer bg-light text-end">
+                    <a asp-controller="Stok" asp-action="Index" class="btn btn-secondary">
+                        <i class="fas fa-times"></i> İptal
+                    </a>
+                    <button type="submit" class="btn btn-success">
+                        <i class="fas fa-save"></i> Kaydet
+                    </button>
+                </div>
+            </form>
+        </div>
+    </div>
+</div>
+
+<!-- Yeni Kategori Modal -->
+<div class="modal fade" id="yeniKategoriModal" tabindex="-1" aria-labelledby="yeniKategoriModalLabel" aria-hidden="true">
+    <div class="modal-dialog">
+        <div class="modal-content">
+            <div class="modal-header bg-primary text-white">
+                <h5 class="modal-title" id="yeniKategoriModalLabel">Yeni Kategori Ekle</h5>
+                <button type="button" class="btn-close btn-close-white" data-bs-dismiss="modal" aria-label="Close"></button>
+            </div>
+            <div class="modal-body">
+                <div class="form-group mb-3">
+                    <label for="kategoriAdi" class="form-label">Kategori Adı</label>
+                    <input type="text" class="form-control" id="kategoriAdi" name="kategoriAdi" required>
+                </div>
+                <div class="form-group mb-3">
+                    <label for="kategoriAciklama" class="form-label">Açıklama</label>
+                    <textarea class="form-control" id="kategoriAciklama" name="kategoriAciklama" rows="3"></textarea>
+                </div>
+            </div>
+            <div class="modal-footer">
+                <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">İptal</button>
+                <button type="button" class="btn btn-success" id="btnKategoriKaydet">Kaydet</button>
+            </div>
+        </div>
+    </div>
+</div>
+
+@section Scripts {
+    @{await Html.RenderPartialAsync("_ValidationScriptsPartial");}
+    
+    <script>
+        $(document).ready(function() {
+            // Yeni kategori ekleme
+            $("#btnKategoriKaydet").click(function() {
+                var kategoriAdi = $("#kategoriAdi").val();
+                var kategoriAciklama = $("#kategoriAciklama").val();
+                
+                if (kategoriAdi) {
+                    $.ajax({
+                        url: '@Url.Action("YeniKategoriEkle", "Urun")',
+                        type: 'POST',
+                        data: { 
+                            kategoriAdi: kategoriAdi,
+                            aciklama: kategoriAciklama
+                        },
+                        success: function(result) {
+                            if (result.success) {
+                                // Kategori listesini güncelle
+                                $('#KategoriID').append($('<option>', {
+                                    value: result.kategoriID,
+                                    text: kategoriAdi
+                                }));
+                                
+                                // Yeni eklenen kategoriyi seç
+                                $('#KategoriID').val(result.kategoriID);
+                                
+                                // Modalı kapat
+                                $('#yeniKategoriModal').modal('hide');
+                                
+                                // Başarı mesajı göster
+                                Swal.fire({
+                                    title: 'Başarılı!',
+                                    text: 'Kategori başarıyla eklendi.',
+                                    icon: 'success',
+                                    confirmButtonText: 'Tamam'
+                                });
+                                
+                                // Form alanlarını temizle
+                                $("#kategoriAdi").val('');
+                                $("#kategoriAciklama").val('');
+                            } else {
+                                Swal.fire({
+                                    title: 'Hata!',
+                                    text: result.message || 'Kategori eklenirken bir hata oluştu.',
+                                    icon: 'error',
+                                    confirmButtonText: 'Tamam'
+                                });
+                            }
+                        },
+                        error: function() {
+                            Swal.fire({
+                                title: 'Hata!',
+                                text: 'Sunucu ile iletişim kurulamadı.',
+                                icon: 'error',
+                                confirmButtonText: 'Tamam'
+                            });
+                        }
+                    });
+                } else {
+                    Swal.fire({
+                        title: 'Uyarı!',
+                        text: 'Kategori adı boş olamaz.',
+                        icon: 'warning',
+                        confirmButtonText: 'Tamam'
+                    });
+                }
+            });
+        });
+    </script>
+} 

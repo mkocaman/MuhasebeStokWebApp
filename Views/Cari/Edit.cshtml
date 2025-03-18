@@ -1,0 +1,43 @@
+@model MuhasebeStokWebApp.ViewModels.Cari.CariEditViewModel
+@{
+    ViewData["Title"] = "Cari Düzenle";
+    Layout = "~/Views/Shared/_Layout.cshtml";
+}
+
+<div class="container-fluid">
+    <div class="page-header">
+        <div class="row">
+            <div class="col-sm-6">
+                <h3>Cari Düzenle</h3>
+                <ol class="breadcrumb">
+                    <li class="breadcrumb-item"><a href="/">Anasayfa</a></li>
+                    <li class="breadcrumb-item"><a asp-action="Index">Cariler</a></li>
+                    <li class="breadcrumb-item active">Düzenle</li>
+                </ol>
+            </div>
+        </div>
+    </div>
+</div>
+
+<div class="container-fluid">
+    <div class="row">
+        <div class="col-sm-12">
+            <div class="card">
+                <div class="card-header">
+                    <h5>Cari Bilgileri</h5>
+                </div>
+                <div class="card-body">
+                    <form asp-action="Edit" method="post">
+                        <partial name="_EditPartial" model="Model" />
+                        <div class="form-group row mt-3">
+                            <div class="col-sm-10 offset-sm-2">
+                                <a asp-action="Details" asp-route-id="@Model.CariID" class="btn btn-secondary">İptal</a>
+                                <button type="submit" class="btn btn-primary">Kaydet</button>
+                            </div>
+                        </div>
+                    </form>
+                </div>
+            </div>
+        </div>
+    </div>
+</div> 

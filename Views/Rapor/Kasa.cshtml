@@ -1,0 +1,105 @@
+@model MuhasebeStokWebApp.ViewModels.Rapor.RaporFiltreViewModel
+@{
+    ViewData["Title"] = "Kasa Raporu";
+}
+
+<div class="container-fluid">
+    <div class="page-title">
+        <div class="row">
+            <div class="col-6">
+                <h3>Kasa Raporu</h3>
+            </div>
+            <div class="col-6">
+                <ol class="breadcrumb">
+                    <li class="breadcrumb-item"><a href="/"><i data-feather="home"></i></a></li>
+                    <li class="breadcrumb-item"><a asp-controller="Rapor" asp-action="Index">Raporlar</a></li>
+                    <li class="breadcrumb-item active">Kasa Raporu</li>
+                </ol>
+            </div>
+        </div>
+    </div>
+</div>
+
+<div class="container-fluid">
+    <div class="row">
+        <div class="col-md-12">
+            <div class="card">
+                <div class="card-header">
+                    <h5 class="mb-0">Rapor Parametreleri</h5>
+                </div>
+                <div class="card-body">
+                    <form asp-action="KasaRaporu" method="post" target="_blank">
+                        <div class="row">
+                            <div class="col-md-4">
+                                <div class="form-group mb-3">
+                                    <label asp-for="BaslangicTarihi" class="control-label"></label>
+                                    <input asp-for="BaslangicTarihi" class="form-control" type="date" />
+                                    <span asp-validation-for="BaslangicTarihi" class="text-danger"></span>
+                                </div>
+                            </div>
+                            <div class="col-md-4">
+                                <div class="form-group mb-3">
+                                    <label asp-for="BitisTarihi" class="control-label"></label>
+                                    <input asp-for="BitisTarihi" class="form-control" type="date" />
+                                    <span asp-validation-for="BitisTarihi" class="text-danger"></span>
+                                </div>
+                            </div>
+                            <div class="col-md-4">
+                                <div class="form-group mb-3">
+                                    <label asp-for="KasaID" class="control-label"></label>
+                                    <select asp-for="KasaID" class="form-control" asp-items="ViewBag.Kasalar">
+                                        <option value="">-- Tüm Kasalar --</option>
+                                    </select>
+                                </div>
+                            </div>
+                        </div>
+                        <div class="row">
+                            <div class="col-md-4">
+                                <div class="form-group mb-3">
+                                    <label asp-for="HareketTuru" class="control-label"></label>
+                                    <select asp-for="HareketTuru" class="form-control">
+                                        <option value="">-- Tüm Hareketler --</option>
+                                        <option value="Giriş">Giriş</option>
+                                        <option value="Çıkış">Çıkış</option>
+                                        <option value="Açılış Bakiyesi">Açılış Bakiyesi</option>
+                                        <option value="Bakiye Artışı">Bakiye Artışı</option>
+                                        <option value="Bakiye Azalışı">Bakiye Azalışı</option>
+                                    </select>
+                                </div>
+                            </div>
+                            <div class="col-md-4">
+                                <div class="form-group mb-3">
+                                    <label asp-for="DetayGoster" class="control-label"></label>
+                                    <div class="form-check mt-2">
+                                        <input asp-for="DetayGoster" class="form-check-input" />
+                                        <label class="form-check-label" for="DetayGoster">Hareket detaylarını göster</label>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                        <div class="form-group mt-4">
+                            <button type="submit" class="btn btn-primary">
+                                <i class="fa fa-file-alt"></i> Raporu Oluştur
+                            </button>
+                            <a asp-action="Index" class="btn btn-secondary">
+                                <i class="fa fa-arrow-left"></i> Geri Dön
+                            </a>
+                        </div>
+                    </form>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+
+@section Scripts {
+    @{await Html.RenderPartialAsync("_ValidationScriptsPartial");}
+    <script>
+        $(document).ready(function () {
+            // Select2 entegrasyonu
+            if ($.fn.select2) {
+                $('select').select2();
+            }
+        });
+    </script>
+} 

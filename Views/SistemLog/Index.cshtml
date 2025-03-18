@@ -1,0 +1,123 @@
+@model IEnumerable<MuhasebeStokWebApp.Models.SistemLog>
+@{
+    ViewData["Title"] = "Sistem Logları";
+    Layout = "~/Views/Shared/_Layout.cshtml";
+}
+
+<div class="container-fluid">
+    <div class="card">
+        <div class="card-header bg-primary text-white">
+            <h4 class="mb-0">Sistem Logları</h4>
+        </div>
+        <div class="card-body">
+            <!-- Filtre Formu -->
+            <form method="get" class="mb-4">
+                <div class="row g-3">
+                    <div class="col-md-3">
+                        <label for="searchString" class="form-label">Arama</label>
+                        <input type="text" class="form-control" id="searchString" name="searchString" value="@ViewData["CurrentFilter"]" placeholder="Açıklama, kullanıcı...">
+                    </div>
+                    <div class="col-md-3">
+                        <label for="islemTuru" class="form-label">İşlem Türü</label>
+                        <select class="form-select" id="islemTuru" name="islemTuru">
+                            <option value="">Tümü</option>
+                            @foreach (var islemTuru in Enum.GetNames(typeof(MuhasebeStokWebApp.Models.LogTuru)))
+                            {
+                                <option value="@islemTuru" selected="@(ViewData["CurrentIslemTuru"]?.ToString() == islemTuru)">@islemTuru</option>
+                            }
+                        </select>
+                    </div>
+                    <div class="col-md-2">
+                        <label for="baslangicTarihi" class="form-label">Başlangıç Tarihi</label>
+                        <input type="date" class="form-control" id="baslangicTarihi" name="baslangicTarihi" value="@ViewData["CurrentBaslangicTarihi"]">
+                    </div>
+                    <div class="col-md-2">
+                        <label for="bitisTarihi" class="form-label">Bitiş Tarihi</label>
+                        <input type="date" class="form-control" id="bitisTarihi" name="bitisTarihi" value="@ViewData["CurrentBitisTarihi"]">
+                    </div>
+                    <div class="col-md-2 d-flex align-items-end">
+                        <button type="submit" class="btn btn-primary w-100">Filtrele</button>
+                    </div>
+                </div>
+            </form>
+
+            <!-- Tüm Logları Temizle Butonu -->
+            <div class="mb-3">
+                <form asp-action="ClearLogs" method="post" onsubmit="return confirm('Tüm log kayıtlarını silmek istediğinize emin misiniz?');">
+                    <button type="submit" class="btn btn-danger">Tüm Logları Temizle</button>
+                </form>
+            </div>
+
+            <!-- Log Tablosu -->
+            <div class="table-responsive">
+                <table class="table table-bordered table-hover">
+                    <thead class="table-light">
+                        <tr>
+                            <th>İşlem Tarihi</th>
+                            <th>İşlem Türü</th>
+                            <th>Açıklama</th>
+                            <th>Kullanıcı</th>
+                            <th>IP Adresi</th>
+                            <th>İşlemler</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        @foreach (var log in Model)
+                        {
+                            <tr>
+                                <td>@log.IslemTarihi.ToString("dd.MM.yyyy HH:mm:ss")</td>
+                                <td>@log.IslemTuru</td>
+                                <td>@log.Aciklama</td>
+                                <td>@log.KullaniciAdi</td>
+                                <td>@log.IPAdresi</td>
+                                <td>
+                                    <a asp-action="Details" asp-route-id="@log.SistemLogID" class="btn btn-sm btn-info">Detay</a>
+                                    <a asp-action="Delete" asp-route-id="@log.SistemLogID" class="btn btn-sm btn-danger">Sil</a>
+                                </td>
+                            </tr>
+                        }
+                    </tbody>
+                </table>
+            </div>
+
+            <!-- Sayfalama -->
+            @{
+                int totalPages = (int)ViewData["TotalPages"];
+                int currentPage = (int)ViewData["CurrentPage"];
+            }
+
+            @if (totalPages > 1)
+            {
+                <nav aria-label="Page navigation">
+                    <ul class="pagination justify-content-center">
+                        @for (int i = 1; i <= totalPages; i++)
+                        {
+                            <li class="page-item @(i == currentPage ? "active" : "")">
+                                <a class="page-link" href="@Url.Action("Index", new { 
+                                    page = i, 
+                                    searchString = ViewData["CurrentFilter"], 
+                                    islemTuru = ViewData["CurrentIslemTuru"],
+                                    baslangicTarihi = ViewData["CurrentBaslangicTarihi"],
+                                    bitisTarihi = ViewData["CurrentBitisTarihi"]
+                                })">@i</a>
+                            </li>
+                        }
+                    </ul>
+                </nav>
+            }
+        </div>
+    </div>
+</div>
+
+@section Scripts {
+    <script>
+        $(document).ready(function() {
+            // Tarih alanları için datepicker
+            $('#baslangicTarihi, #bitisTarihi').datepicker({
+                format: 'yyyy-mm-dd',
+                autoclose: true,
+                language: 'tr'
+            });
+        });
+    </script>
+} 

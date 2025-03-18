@@ -1,0 +1,77 @@
+@model MuhasebeStokWebApp.Data.Entities.Cari
+
+@{
+    ViewData["Title"] = "Cari Sil";
+    Layout = "~/Views/Shared/_Layout.cshtml";
+}
+
+<div class="container-fluid">
+    <div class="card">
+        <div class="card-header bg-danger text-white">
+            <h4 class="mb-0">Cari Kaydını Sil / Pasife Al</h4>
+        </div>
+        <div class="card-body">
+            <div class="alert alert-warning">
+                <h5 class="alert-heading">Dikkat!</h5>
+                <p>
+                    <strong>@Model.CariAdi</strong> adlı cari kaydını silmek/pasife almak üzeresiniz.
+                </p>
+                <p>
+                    <strong>Not:</strong> Eğer bu cari ile ilgili hareket veya fatura kaydı varsa, cari tamamen silinmeyecek, 
+                    sadece pasife alınacaktır. Pasife alınan cariler "Pasif Cariler" sekmesinden görüntülenebilir ve 
+                    gerektiğinde tekrar aktifleştirilebilir.
+                </p>
+            </div>
+            
+            <div class="row mt-4">
+                <div class="col-md-6">
+                    <dl class="row">
+                        <dt class="col-sm-4">Cari Adı:</dt>
+                        <dd class="col-sm-8">@Model.CariAdi</dd>
+                        
+                        <dt class="col-sm-4">Vergi No:</dt>
+                        <dd class="col-sm-8">@(string.IsNullOrEmpty(Model.VergiNo) ? "-" : Model.VergiNo)</dd>
+                        
+                        <dt class="col-sm-4">Telefon:</dt>
+                        <dd class="col-sm-8">@(string.IsNullOrEmpty(Model.Telefon) ? "-" : Model.Telefon)</dd>
+                        
+                        <dt class="col-sm-4">E-posta:</dt>
+                        <dd class="col-sm-8">@(string.IsNullOrEmpty(Model.Email) ? "-" : Model.Email)</dd>
+                    </dl>
+                </div>
+                <div class="col-md-6">
+                    <dl class="row">
+                        <dt class="col-sm-4">Yetkili:</dt>
+                        <dd class="col-sm-8">@(string.IsNullOrEmpty(Model.Yetkili) ? "-" : Model.Yetkili)</dd>
+                        
+                        <dt class="col-sm-4">Adres:</dt>
+                        <dd class="col-sm-8">@(string.IsNullOrEmpty(Model.Adres) ? "-" : Model.Adres)</dd>
+                        
+                        <dt class="col-sm-4">Durum:</dt>
+                        <dd class="col-sm-8">
+                            @if (Model.Aktif)
+                            {
+                                <span class="badge bg-success">Aktif</span>
+                            }
+                            else
+                            {
+                                <span class="badge bg-danger">Pasif</span>
+                            }
+                        </dd>
+                        
+                        <dt class="col-sm-4">Oluşturma Tarihi:</dt>
+                        <dd class="col-sm-8">@(Model.OlusturmaTarihi.HasValue ? Model.OlusturmaTarihi.Value.ToString("dd.MM.yyyy HH:mm") : "-")</dd>
+                    </dl>
+                </div>
+            </div>
+            
+            <form asp-action="Delete" method="post" class="mt-4">
+                <input type="hidden" asp-for="CariID" />
+                <div class="d-flex justify-content-between">
+                    <a asp-action="Index" class="btn btn-secondary">İptal</a>
+                    <button type="submit" class="btn btn-danger">Sil / Pasife Al</button>
+                </div>
+            </form>
+        </div>
+    </div>
+</div> 

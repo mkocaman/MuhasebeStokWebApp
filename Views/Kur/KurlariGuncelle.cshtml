@@ -1,0 +1,53 @@
+@{
+    ViewData["Title"] = "Kurları Güncelle";
+}
+
+<div class="container-fluid">
+    <div class="row">
+        <div class="col-md-6 offset-md-3">
+            <div class="card">
+                <div class="card-header">
+                    <h3 class="card-title">Kurları Güncelle</h3>
+                    <div class="card-tools">
+                        <a asp-action="Index" class="btn btn-sm btn-secondary">
+                            <i class="fas fa-arrow-left"></i> Kur Yönetimine Dön
+                        </a>
+                    </div>
+                </div>
+                <div class="card-body">
+                    <div class="alert alert-info">
+                        <h5><i class="icon fas fa-info"></i> Bilgi</h5>
+                        <p>Kurları güncellemek için aşağıdaki kaynaklardan birini seçin.</p>
+                    </div>
+                    
+                    <form asp-action="KurlariGuncelle" method="post">
+                        <div class="form-group">
+                            <div class="custom-control custom-radio">
+                                <input type="radio" id="tcmb" name="source" value="tcmb" class="custom-control-input" checked>
+                                <label class="custom-control-label" for="tcmb">Türkiye Cumhuriyet Merkez Bankası (TCMB)</label>
+                                <small class="form-text text-muted">TCMB'den güncel kurları alır.</small>
+                            </div>
+                            <div class="custom-control custom-radio mt-3">
+                                <input type="radio" id="uzbekistan" name="source" value="uzbekistan" class="custom-control-input">
+                                <label class="custom-control-label" for="uzbekistan">Özbekistan Merkez Bankası</label>
+                                <small class="form-text text-muted">Özbekistan Merkez Bankası'ndan güncel kurları alır.</small>
+                            </div>
+                            <div class="custom-control custom-radio mt-3">
+                                <input type="radio" id="all" name="source" value="all" class="custom-control-input">
+                                <label class="custom-control-label" for="all">Tüm Kaynaklar</label>
+                                <small class="form-text text-muted">Tüm kaynaklardan güncel kurları alır.</small>
+                            </div>
+                        </div>
+                        
+                        <div class="text-right mt-4">
+                            <a asp-action="Index" class="btn btn-secondary">İptal</a>
+                            <button type="submit" class="btn btn-success">
+                                <i class="fas fa-sync"></i> Kurları Güncelle
+                            </button>
+                        </div>
+                    </form>
+                </div>
+            </div>
+        </div>
+    </div>
+</div> 
