@@ -7,50 +7,40 @@ namespace MuhasebeStokWebApp.Data.Entities
     /// <summary>
     /// Kur değeri entity'si - Merkez Bankasından çekilen kurları saklar
     /// </summary>
-    [Table("DovizKurlari")]
+    [Table("KurDegeri")]
     public class KurDegeri
     {
         [Key]
-        public int KurDegeriID { get; set; }
+        public Guid KurDegeriID { get; set; }
         
         [Required]
-        [Display(Name = "Döviz İlişkisi")]
-        public int DovizIliskiID { get; set; }
-        
-        [ForeignKey("DovizIliskiID")]
-        public virtual DovizIliski DovizIliski { get; set; }
+        public Guid ParaBirimiID { get; set; }
         
         [Required]
-        [Column(TypeName = "decimal(18,6)")]
-        [Display(Name = "Kur Değeri")]
-        public decimal Deger { get; set; }
-        
-        [Column(TypeName = "decimal(18,6)")]
-        [Display(Name = "Alış Fiyatı")]
-        public decimal? AlisFiyati { get; set; }
-        
-        [Column(TypeName = "decimal(18,6)")]
-        [Display(Name = "Satış Fiyatı")]
-        public decimal? SatisFiyati { get; set; }
+        [Range(0.00001, 1000000)]
+        public decimal AlisDegeri { get; set; }
         
         [Required]
-        [Display(Name = "Tarih")]
+        [Range(0.00001, 1000000)]
+        public decimal SatisDegeri { get; set; }
+        
+        [Required]
         public DateTime Tarih { get; set; } = DateTime.Now;
         
+        [Required]
         [StringLength(50)]
-        [Display(Name = "Kaynak")]
-        public string Kaynak { get; set; }
+        public string Kaynak { get; set; } = "Manuel";
         
-        [Display(Name = "Aktif")]
         public bool Aktif { get; set; } = true;
         
-        [Display(Name = "Silinmiş")]
-        public bool SoftDelete { get; set; } = false;
+        public DateTime OlusturmaTarihi { get; set; }
         
-        [Display(Name = "Oluşturma Tarihi")]
-        public DateTime OlusturmaTarihi { get; set; } = DateTime.Now;
+        public DateTime GuncellemeTarihi { get; set; }
         
-        [Display(Name = "Güncelleme Tarihi")]
-        public DateTime? GuncellemeTarihi { get; set; }
+        public bool Silindi { get; set; } = false;
+        
+        // İlişkiler
+        [ForeignKey("ParaBirimiID")]
+        public virtual ParaBirimi ParaBirimi { get; set; }
     }
 } 

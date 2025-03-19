@@ -1773,3 +1773,4 @@
 /Users/muhammetkocaman/MuhasebeStokWebApp/obj/Debug/net9.0/MuhasebeStokWebApp.pdb
 /Users/muhammetkocaman/MuhasebeStokWebApp/obj/Debug/net9.0/MuhasebeStokWebApp.genruntimeconfig.cache
 /Users/muhammetkocaman/MuhasebeStokWebApp/obj/Debug/net9.0/ref/MuhasebeStokWebApp.dll
+/Users/muhammetkocaman/MuhasebeStokWebApp/obj/Debug/net9.0/MuhasebeStokWebApp.sourcelink.json

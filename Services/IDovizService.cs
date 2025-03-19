@@ -28,24 +28,24 @@ namespace MuhasebeStokWebApp.Services
         /// </summary>
         Task<bool> SetAnaDovizKoduAsync(string dovizKodu);
 
-        // Döviz İşlemleri
-        Task<List<DovizViewModel>> GetAllDovizlerAsync();
-        Task<List<DovizViewModel>> GetActiveDovizsAsync();
-        Task<DovizViewModel> GetDovizByIdAsync(int id);
-        Task<Doviz> GetDovizEntityByIdAsync(int id);
-        Task<Doviz> GetDovizByKodAsync(string kod);
-        Task<DovizViewModel> AddDovizAsync(DovizViewModel model);
-        Task<DovizViewModel> UpdateDovizAsync(DovizViewModel model);
-        Task DeleteDovizAsync(int id);
+        // Para Birimi İşlemleri
+        Task<List<ParaBirimiViewModel>> GetAllDovizlerAsync();
+        Task<List<ParaBirimiViewModel>> GetActiveDovizsAsync();
+        Task<ParaBirimiViewModel> GetDovizByIdAsync(Guid id);
+        Task<ParaBirimi> GetDovizEntityByIdAsync(Guid id);
+        Task<ParaBirimi> GetDovizByKodAsync(string kod);
+        Task<ParaBirimiViewModel> AddDovizAsync(ParaBirimiViewModel model);
+        Task<ParaBirimiViewModel> UpdateDovizAsync(ParaBirimiViewModel model);
+        Task DeleteDovizAsync(Guid id);
         
         // Döviz İlişki İşlemleri
         Task<List<DovizIliskiViewModel>> GetAllDovizIliskileriAsync();
         Task<List<DovizIliskiViewModel>> GetActiveDovizIliskileriAsync();
-        Task<DovizIliskiViewModel> GetDovizIliskiByIdAsync(int id);
-        Task<DovizIliski> GetDovizIliskiEntityByIdAsync(int id);
-        Task<DovizIliski> GetDovizIliskiByParaBirimleriAsync(int kaynakId, int hedefId);
+        Task<DovizIliskiViewModel> GetDovizIliskiByIdAsync(Guid id);
+        Task<DovizIliski> GetDovizIliskiEntityByIdAsync(Guid id);
+        Task<DovizIliski> GetDovizIliskiByParaBirimleriAsync(Guid kaynakId, Guid hedefId);
         Task<DovizIliskiViewModel> AddDovizIliskiAsync(DovizIliskiViewModel model);
         Task<DovizIliskiViewModel> UpdateDovizIliskiAsync(DovizIliskiViewModel model);
-        Task DeleteDovizIliskiAsync(int id);
+        Task DeleteDovizIliskiAsync(Guid id);
     }
 } 

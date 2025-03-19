@@ -8,18 +8,18 @@ namespace MuhasebeStokWebApp.ViewModels.Kur
 {
     public class DovizIliskiViewModel
     {
-        public int DovizIliskiID { get; set; }
+        public Guid DovizIliskiID { get; set; }
         
         [Required(ErrorMessage = "Kaynak para birimi zorunludur.")]
         [Display(Name = "Kaynak Para Birimi")]
-        public int KaynakParaBirimiID { get; set; }
+        public Guid KaynakParaBirimiID { get; set; }
         
         [Display(Name = "Kaynak Para Birimi Kodu")]
         public string KaynakParaBirimiKodu { get; set; }
         
         [Required(ErrorMessage = "Hedef para birimi zorunludur.")]
         [Display(Name = "Hedef Para Birimi")]
-        public int HedefParaBirimiID { get; set; }
+        public Guid HedefParaBirimiID { get; set; }
         
         [Display(Name = "Hedef Para Birimi Kodu")]
         public string HedefParaBirimiKodu { get; set; }
@@ -43,12 +43,12 @@ namespace MuhasebeStokWebApp.ViewModels.Kur
             
             if (entity.KaynakParaBirimi != null)
             {
-                viewModel.KaynakParaBirimiKodu = entity.KaynakParaBirimi.DovizKodu;
+                viewModel.KaynakParaBirimiKodu = entity.KaynakParaBirimi.Kod;
             }
             
             if (entity.HedefParaBirimi != null)
             {
-                viewModel.HedefParaBirimiKodu = entity.HedefParaBirimi.DovizKodu;
+                viewModel.HedefParaBirimiKodu = entity.HedefParaBirimi.Kod;
             }
             
             return viewModel;
@@ -64,7 +64,8 @@ namespace MuhasebeStokWebApp.ViewModels.Kur
                 HedefParaBirimiID = this.HedefParaBirimiID,
                 Aktif = this.Aktif,
                 SoftDelete = false,
-                GuncellemeTarihi = this.DovizIliskiID > 0 ? (DateTime?)DateTime.Now : null
+                OlusturmaTarihi = this.DovizIliskiID != Guid.Empty ? DateTime.Now : DateTime.Now,
+                GuncellemeTarihi = DateTime.Now
             };
         }
     }

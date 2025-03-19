@@ -7,23 +7,23 @@ namespace MuhasebeStokWebApp.ViewModels.Kur
 {
     public class KurCeviriciViewModel
     {
-        [Required(ErrorMessage = "Kaynak para birimi zorunludur.")]
         [Display(Name = "Kaynak Para Birimi")]
-        public int KaynakParaBirimiID { get; set; }
+        [Required(ErrorMessage = "Kaynak para birimi seçiniz")]
+        public Guid KaynakParaBirimiID { get; set; }
         
-        [Display(Name = "Kaynak Para Birimi")]
+        [Display(Name = "Kaynak Para Birimi Kodu")]
         public string KaynakParaBirimiKodu { get; set; }
         
-        [Required(ErrorMessage = "Hedef para birimi zorunludur.")]
         [Display(Name = "Hedef Para Birimi")]
-        public int HedefParaBirimiID { get; set; }
+        [Required(ErrorMessage = "Hedef para birimi seçiniz")]
+        public Guid HedefParaBirimiID { get; set; }
         
-        [Display(Name = "Hedef Para Birimi")]
+        [Display(Name = "Hedef Para Birimi Kodu")]
         public string HedefParaBirimiKodu { get; set; }
         
-        [Required(ErrorMessage = "Miktar zorunludur.")]
-        [Range(0.01, double.MaxValue, ErrorMessage = "Miktar 0'dan büyük olmalıdır.")]
         [Display(Name = "Miktar")]
+        [Required(ErrorMessage = "Miktar giriniz")]
+        [Range(0.01, double.MaxValue, ErrorMessage = "Miktar 0'dan büyük olmalıdır")]
         public decimal Miktar { get; set; } = 1;
         
         [Display(Name = "Sonuç")]
@@ -35,9 +35,10 @@ namespace MuhasebeStokWebApp.ViewModels.Kur
         [Display(Name = "Tarih")]
         public DateTime Tarih { get; set; } = DateTime.Now;
         
-        public bool SonucGoster { get; set; } = false;
+        [Display(Name = "Sonuç Göster")]
+        public bool SonucGoster { get; set; }
         
-        // Dropdown listeler için
+        // Para birimleri listesi
         public List<SelectListItem> ParaBirimleri { get; set; }
     }
 } 

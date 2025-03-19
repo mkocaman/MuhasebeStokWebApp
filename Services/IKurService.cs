@@ -134,5 +134,30 @@ namespace MuhasebeStokWebApp.Services
         /// </summary>
         Task<decimal> GetGuncelKur(string kaynakParaBirimi, string hedefParaBirimi);
         #endregion
+
+        #region Kur Dönüşüm İşlemleri
+        Task<List<KurDegeriViewModel>> GetAllKurDegerleriAsync();
+        Task<List<KurDegeriViewModel>> GetActiveKurDegerleriAsync();
+        Task<List<KurDegeriViewModel>> GetKurDegerleriByParaBirimiIdAsync(Guid paraBirimiId);
+        Task<KurDegeriViewModel> GetKurDegeriByIdAsync(Guid id);
+        Task<KurDegeri> GetKurDegeriEntityByIdAsync(Guid id);
+        Task<KurDegeriViewModel> GetSonKurDegeriByParaBirimiIdAsync(Guid paraBirimiId);
+        Task<bool> AddKurDegeriAsync(KurDegeriViewModel model);
+        Task<bool> UpdateKurDegeriAsync(KurDegeriViewModel model);
+        Task<bool> DeleteKurDegeriAsync(Guid id);
+        
+        Task<decimal> DonusturKurAsync(Guid kaynakParaBirimiId, Guid hedefParaBirimiId, decimal miktar);
+        Task<decimal> DonusturKurByKodAsync(string kaynakKod, string hedefKod, decimal miktar);
+        #endregion
+
+        #region Kur Ayarları İşlemleri
+        Task<KurAyarlariViewModel> GetKurAyarlariAsync();
+        Task<bool> UpdateKurAyarlariAsync(KurAyarlariViewModel model);
+        #endregion
+
+        #region Kur Güncelleme İşlemleri
+        Task<bool> KurlariGuncelleAsync();
+        Task<bool> KurlariOtomatikGuncelleAsync();
+        #endregion
     }
 } 

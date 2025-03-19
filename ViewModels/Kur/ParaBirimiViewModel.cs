@@ -8,20 +8,19 @@ namespace MuhasebeStokWebApp.ViewModels.Kur
     {
         public Guid ParaBirimiID { get; set; }
         
-        [Required(ErrorMessage = "Para birimi kodu zorunludur.")]
-        [StringLength(10, ErrorMessage = "Para birimi kodu en fazla 10 karakter olabilir.")]
+        [Required(ErrorMessage = "Para birimi kodu zorunludur")]
+        [StringLength(5, MinimumLength = 2, ErrorMessage = "Para birimi kodu 2-5 karakter arasında olmalıdır")]
         [Display(Name = "Para Birimi Kodu")]
-        public required string Kod { get; set; }
+        public string Kod { get; set; }
         
-        [Required(ErrorMessage = "Para birimi adı zorunludur.")]
-        [StringLength(50, ErrorMessage = "Para birimi adı en fazla 50 karakter olabilir.")]
+        [Required(ErrorMessage = "Para birimi adı zorunludur")]
+        [StringLength(50, MinimumLength = 2, ErrorMessage = "Para birimi adı 2-50 karakter arasında olmalıdır")]
         [Display(Name = "Para Birimi Adı")]
-        public required string Ad { get; set; }
+        public string Ad { get; set; }
         
-        [Required(ErrorMessage = "Para birimi sembolü zorunludur.")]
-        [StringLength(10, ErrorMessage = "Para birimi sembolü en fazla 10 karakter olabilir.")]
+        [StringLength(10, ErrorMessage = "Sembol en fazla 10 karakter olabilir")]
         [Display(Name = "Sembol")]
-        public required string Sembol { get; set; }
+        public string Sembol { get; set; }
         
         [Display(Name = "Aktif")]
         public bool Aktif { get; set; } = true;
@@ -39,7 +38,7 @@ namespace MuhasebeStokWebApp.ViewModels.Kur
             };
         }
         
-        // ViewModel'den Entity'e dönüşüm
+        // ViewModel'den yeni Entity oluşturma
         public ParaBirimi ToEntity()
         {
             return new ParaBirimi
@@ -49,8 +48,20 @@ namespace MuhasebeStokWebApp.ViewModels.Kur
                 Ad = this.Ad,
                 Sembol = this.Sembol,
                 Aktif = this.Aktif,
-                SoftDelete = false
+                OlusturmaTarihi = DateTime.Now,
+                GuncellemeTarihi = DateTime.Now,
+                Silindi = false
             };
+        }
+        
+        // ViewModel'den mevcut Entity güncelleme
+        public void UpdateEntity(ParaBirimi entity)
+        {
+            entity.Kod = this.Kod;
+            entity.Ad = this.Ad;
+            entity.Sembol = this.Sembol;
+            entity.Aktif = this.Aktif;
+            entity.GuncellemeTarihi = DateTime.Now;
         }
     }
 } 

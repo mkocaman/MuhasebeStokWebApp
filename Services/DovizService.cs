@@ -25,7 +25,7 @@ namespace MuhasebeStokWebApp.Services
         private readonly IRepository<SistemAyarlari> _sistemAyariRepository;
         private readonly IRepository<DovizIliski> _dovizIliskiRepository;
         private readonly ILogService _logService;
-        private readonly IRepository<Doviz> _dovizRepository;
+        private readonly IRepository<ParaBirimi> _paraBirimiRepository;
 
         public DovizService(
             ApplicationDbContext context,
@@ -35,7 +35,7 @@ namespace MuhasebeStokWebApp.Services
             IRepository<SistemAyarlari> sistemAyariRepository,
             IRepository<DovizIliski> dovizIliskiRepository,
             ILogService logService,
-            IRepository<Doviz> dovizRepository)
+            IRepository<ParaBirimi> paraBirimiRepository)
         {
             _context = context;
             _logger = logger;
@@ -44,7 +44,7 @@ namespace MuhasebeStokWebApp.Services
             _sistemAyariRepository = sistemAyariRepository;
             _dovizIliskiRepository = dovizIliskiRepository;
             _logService = logService;
-            _dovizRepository = dovizRepository;
+            _paraBirimiRepository = paraBirimiRepository;
         }
 
         public async Task<bool> GuncelleKurlariAsync()
@@ -285,12 +285,12 @@ namespace MuhasebeStokWebApp.Services
         {
             try
             {
-                var sistemAyari = await _sistemAyariRepository.GetFirstAsync();
-                return sistemAyari?.AnaDovizKodu ?? "USD";
+                var sistemAyarlari = await _sistemAyariRepository.GetFirstOrDefaultAsync();
+                return sistemAyarlari?.AnaDovizKodu ?? "USD";
             }
             catch (Exception ex)
             {
-                _logger.LogError(ex, "Ana döviz kodu alınırken hata oluştu: {Message}", ex.Message);
+                _logger.LogError(ex, "Ana döviz kodu getirilirken hata oluştu: {Message}", ex.Message);
                 return "USD";
             }
         }
@@ -299,152 +299,186 @@ namespace MuhasebeStokWebApp.Services
         {
             try
             {
-                var sistemAyari = await _sistemAyariRepository.GetFirstAsync();
-                if (sistemAyari == null)
+                var sistemAyarlari = await _sistemAyariRepository.GetFirstOrDefaultAsync();
+                if (sistemAyarlari == null)
                 {
-                    sistemAyari = new SistemAyarlari
+                    sistemAyarlari = new SistemAyarlari
                     {
-                        AnaDovizKodu = dovizKodu
+                        AnaDovizKodu = dovizKodu,
+                        OlusturmaTarihi = DateTime.Now
                     };
-                    await _sistemAyariRepository.AddAsync(sistemAyari);
+                    await _sistemAyariRepository.AddAsync(sistemAyarlari);
                 }
                 else
                 {
-                    sistemAyari.AnaDovizKodu = dovizKodu;
-                    await _sistemAyariRepository.UpdateAsync(sistemAyari);
+                    sistemAyarlari.AnaDovizKodu = dovizKodu;
+                    sistemAyarlari.GuncellemeTarihi = DateTime.Now;
+                    await _sistemAyariRepository.UpdateAsync(sistemAyarlari);
                 }
-
-                await _logService.LogEkleAsync($"Ana döviz kodu {dovizKodu} olarak güncellendi.", Models.LogTuru.Bilgi);
                 return true;
             }
             catch (Exception ex)
             {
-                _logger.LogError(ex, "Ana döviz kodu güncellenirken hata oluştu: {Message}", ex.Message);
-                await _logService.LogEkleAsync($"Ana döviz kodu güncellenirken hata oluştu: {ex.Message}", Models.LogTuru.Hata);
+                _logger.LogError(ex, "Ana döviz kodu ayarlanırken hata oluştu: {Message}", ex.Message);
                 return false;
             }
         }
 
         #region Döviz İşlemleri
         
-        public async Task<List<DovizViewModel>> GetAllDovizlerAsync()
+        public async Task<List<ParaBirimiViewModel>> GetAllDovizlerAsync()
         {
-            var dovizler = await _context.Dovizler
-                .Where(d => !d.SoftDelete)
-                .OrderBy(d => d.DovizKodu)
-                .ToListAsync();
-                
-            return dovizler.Select(d => DovizViewModel.FromEntity(d)).ToList();
-        }
-        
-        public async Task<List<DovizViewModel>> GetActiveDovizsAsync()
-        {
-            var dovizler = await _context.Dovizler
-                .Where(d => d.Aktif && !d.SoftDelete)
-                .OrderBy(d => d.DovizKodu)
-                .ToListAsync();
-                
-            return dovizler.Select(d => DovizViewModel.FromEntity(d)).ToList();
-        }
-        
-        public async Task<DovizViewModel> GetDovizByIdAsync(int id)
-        {
-            var doviz = await _context.Dovizler.FindAsync(id);
-            if (doviz == null || doviz.SoftDelete)
+            try
             {
+                var dovizler = await _paraBirimiRepository.GetAllAsync();
+                return dovizler.Select(ParaBirimiViewModel.FromEntity).ToList();
+            }
+            catch (Exception ex)
+            {
+                _logger.LogError(ex, "Tüm dövizler getirilirken hata oluştu: {Message}", ex.Message);
+                return new List<ParaBirimiViewModel>();
+            }
+        }
+        
+        public async Task<List<ParaBirimiViewModel>> GetActiveDovizsAsync()
+        {
+            try
+            {
+                var dovizler = await _paraBirimiRepository.GetAllAsync(d => d.Aktif && !d.SoftDelete);
+                return dovizler.Select(ParaBirimiViewModel.FromEntity).ToList();
+            }
+            catch (Exception ex)
+            {
+                _logger.LogError(ex, "Aktif dövizler getirilirken hata oluştu: {Message}", ex.Message);
+                return new List<ParaBirimiViewModel>();
+            }
+        }
+        
+        public async Task<ParaBirimiViewModel> GetDovizByIdAsync(Guid id)
+        {
+            try
+            {
+                var doviz = await _paraBirimiRepository.GetByIdAsync(id);
+                return doviz != null ? ParaBirimiViewModel.FromEntity(doviz) : null;
+            }
+            catch (Exception ex)
+            {
+                _logger.LogError(ex, "ID ile döviz getirilirken hata oluştu: {Message}", ex.Message);
                 return null;
             }
-            
-            return DovizViewModel.FromEntity(doviz);
         }
         
-        public async Task<Doviz> GetDovizEntityByIdAsync(int id)
+        public async Task<ParaBirimi> GetDovizEntityByIdAsync(Guid id)
         {
-            return await _context.Dovizler.FindAsync(id);
+            return await _paraBirimiRepository.GetByIdAsync(id);
         }
         
-        public async Task<Doviz> GetDovizByKodAsync(string kod)
+        public async Task<ParaBirimi> GetDovizByKodAsync(string kod)
         {
-            return await _context.Dovizler
-                .Where(d => d.DovizKodu == kod && !d.SoftDelete)
-                .FirstOrDefaultAsync();
+            return await _paraBirimiRepository.GetFirstOrDefaultAsync(d => d.Kod == kod && !d.SoftDelete);
         }
         
-        public async Task<DovizViewModel> AddDovizAsync(DovizViewModel model)
+        public async Task<ParaBirimiViewModel> AddDovizAsync(ParaBirimiViewModel model)
         {
-            // Döviz kodu kontrolü
-            var existingDoviz = await _context.Dovizler
-                .FirstOrDefaultAsync(d => d.DovizKodu == model.DovizKodu && !d.SoftDelete);
-                
-            if (existingDoviz != null)
+            try
             {
-                throw new Exception($"{model.DovizKodu} kodlu döviz zaten mevcut.");
-            }
-            
-            var entity = model.ToEntity();
-            entity.OlusturmaTarihi = DateTime.Now;
-            
-            await _dovizRepository.AddAsync(entity);
-            
-            model.DovizID = entity.DovizID;
-            return model;
-        }
-        
-        public async Task<DovizViewModel> UpdateDovizAsync(DovizViewModel model)
-        {
-            var entity = await _context.Dovizler.FindAsync(model.DovizID);
-            if (entity == null || entity.SoftDelete)
-            {
-                throw new Exception("Döviz bulunamadı.");
-            }
-            
-            // Döviz kodu değiştirilmişse, kod kontrolü yap
-            if (entity.DovizKodu != model.DovizKodu)
-            {
-                var existingDoviz = await _context.Dovizler
-                    .FirstOrDefaultAsync(d => d.DovizKodu == model.DovizKodu && d.DovizID != model.DovizID && !d.SoftDelete);
-                    
-                if (existingDoviz != null)
+                // Kod kontrolü yap
+                var existing = await _paraBirimiRepository.GetFirstOrDefaultAsync(d => d.Kod == model.Kod && !d.SoftDelete);
+                if (existing != null)
                 {
-                    throw new Exception($"{model.DovizKodu} kodlu döviz zaten mevcut.");
+                    throw new Exception($"{model.Kod} kodlu para birimi zaten mevcut.");
                 }
+
+                var entity = model.ToEntity();
+                entity.ParaBirimiID = Guid.NewGuid();
+                entity.OlusturmaTarihi = DateTime.Now;
+                entity.GuncellemeTarihi = DateTime.Now;
+
+                await _paraBirimiRepository.AddAsync(entity);
+                await _logService.LogEkleAsync($"{model.Kod} kodlu para birimi eklendi.", Models.LogTuru.Bilgi);
+
+                return ParaBirimiViewModel.FromEntity(entity);
             }
-            
-            entity.DovizKodu = model.DovizKodu;
-            entity.DovizAdi = model.DovizAdi;
-            entity.Sembol = model.Sembol;
-            entity.Aktif = model.Aktif;
-            entity.GuncellemeTarihi = DateTime.Now;
-            
-            await _dovizRepository.UpdateAsync(entity);
-            
-            return model;
+            catch (Exception ex)
+            {
+                _logger.LogError(ex, "Para birimi eklenirken hata oluştu: {Message}", ex.Message);
+                throw;
+            }
         }
         
-        public async Task DeleteDovizAsync(int id)
+        public async Task<ParaBirimiViewModel> UpdateDovizAsync(ParaBirimiViewModel model)
         {
-            var entity = await _context.Dovizler.FindAsync(id);
-            if (entity == null)
+            try
             {
-                throw new Exception("Döviz bulunamadı.");
+                var entity = await _paraBirimiRepository.GetByIdAsync(model.ParaBirimiID);
+                if (entity == null)
+                {
+                    throw new Exception($"Güncellenecek para birimi bulunamadı. ID: {model.ParaBirimiID}");
+                }
+
+                // Aynı kod başka bir para biriminde kullanılıyor mu kontrol et
+                var duplicate = await _paraBirimiRepository.GetFirstOrDefaultAsync(
+                    d => d.Kod == model.Kod && d.ParaBirimiID != model.ParaBirimiID && !d.SoftDelete);
+
+                if (duplicate != null)
+                {
+                    throw new Exception($"{model.Kod} kodlu başka bir para birimi zaten mevcut.");
+                }
+
+                entity.Kod = model.Kod;
+                entity.Ad = model.Ad;
+                entity.Sembol = model.Sembol;
+                entity.Aktif = model.Aktif;
+                entity.GuncellemeTarihi = DateTime.Now;
+
+                await _paraBirimiRepository.UpdateAsync(entity);
+                await _logService.LogEkleAsync($"{model.Kod} kodlu para birimi güncellendi.", Models.LogTuru.Bilgi);
+
+                return ParaBirimiViewModel.FromEntity(entity);
             }
-            
-            // İlişkili kullanım kontrolü
-            var iliskiKayitlari = await _context.DovizIliskileri
-                .Where(di => di.KaynakParaBirimiID == id || di.HedefParaBirimiID == id)
-                .AnyAsync();
-                
-            if (iliskiKayitlari)
+            catch (Exception ex)
             {
-                throw new Exception("Bu döviz, döviz ilişkilerinde kullanılmaktadır. Önce ilişkili kayıtları silmelisiniz.");
+                _logger.LogError(ex, "Para birimi güncellenirken hata oluştu: {Message}", ex.Message);
+                throw;
             }
-            
-            // Soft delete
-            entity.SoftDelete = true;
-            entity.Aktif = false;
-            entity.GuncellemeTarihi = DateTime.Now;
-            
-            await _dovizRepository.UpdateAsync(entity);
+        }
+        
+        public async Task DeleteDovizAsync(Guid id)
+        {
+            try
+            {
+                var entity = await _paraBirimiRepository.GetByIdAsync(id);
+                if (entity == null)
+                {
+                    throw new Exception($"Silinecek para birimi bulunamadı. ID: {id}");
+                }
+
+                // İlişkiler kontrol edilmeli
+                var kurDegerleri = await _kurDegeriRepository.GetAllAsync(k => k.ParaBirimiID == id && !k.SoftDelete);
+                var dovizIliskileri = await _dovizIliskiRepository.GetAllAsync(
+                    di => (di.KaynakParaBirimiID == id || di.HedefParaBirimiID == id) && !di.SoftDelete);
+
+                if (kurDegerleri.Any())
+                {
+                    throw new Exception($"Bu para birimine ait kur değerleri bulunmaktadır. Önce ilişkili kur değerlerini siliniz.");
+                }
+
+                if (dovizIliskileri.Any())
+                {
+                    throw new Exception($"Bu para birimine ait döviz ilişkileri bulunmaktadır. Önce ilişkili döviz ilişkilerini siliniz.");
+                }
+
+                entity.SoftDelete = true;
+                entity.GuncellemeTarihi = DateTime.Now;
+
+                await _paraBirimiRepository.UpdateAsync(entity);
+                await _logService.LogEkleAsync($"{entity.Kod} kodlu para birimi silindi.", Models.LogTuru.Bilgi);
+            }
+            catch (Exception ex)
+            {
+                _logger.LogError(ex, "Para birimi silinirken hata oluştu: {Message}", ex.Message);
+                throw;
+            }
         }
         
         #endregion
@@ -453,191 +487,188 @@ namespace MuhasebeStokWebApp.Services
         
         public async Task<List<DovizIliskiViewModel>> GetAllDovizIliskileriAsync()
         {
-            var iliskiler = await _context.DovizIliskileri
-                .Include(di => di.KaynakParaBirimi)
-                .Include(di => di.HedefParaBirimi)
-                .Where(di => !di.SoftDelete)
-                .OrderBy(di => di.KaynakParaBirimi.DovizKodu)
-                .ThenBy(di => di.HedefParaBirimi.DovizKodu)
-                .ToListAsync();
-                
-            return iliskiler.Select(di => DovizIliskiViewModel.FromEntity(di)).ToList();
+            try
+            {
+                var iliskiler = await _dovizIliskiRepository.GetAllAsync();
+                return iliskiler.Select(DovizIliskiViewModel.FromEntity).ToList();
+            }
+            catch (Exception ex)
+            {
+                _logger.LogError(ex, "Tüm döviz ilişkileri getirilirken hata oluştu: {Message}", ex.Message);
+                return new List<DovizIliskiViewModel>();
+            }
         }
         
         public async Task<List<DovizIliskiViewModel>> GetActiveDovizIliskileriAsync()
         {
-            var iliskiler = await _context.DovizIliskileri
-                .Include(di => di.KaynakParaBirimi)
-                .Include(di => di.HedefParaBirimi)
-                .Where(di => di.Aktif && !di.SoftDelete)
-                .OrderBy(di => di.KaynakParaBirimi.DovizKodu)
-                .ThenBy(di => di.HedefParaBirimi.DovizKodu)
-                .ToListAsync();
-                
-            return iliskiler.Select(di => DovizIliskiViewModel.FromEntity(di)).ToList();
+            try
+            {
+                var iliskiler = await _dovizIliskiRepository.GetAllAsync(di => di.Aktif && !di.SoftDelete);
+                return iliskiler.Select(DovizIliskiViewModel.FromEntity).ToList();
+            }
+            catch (Exception ex)
+            {
+                _logger.LogError(ex, "Aktif döviz ilişkileri getirilirken hata oluştu: {Message}", ex.Message);
+                return new List<DovizIliskiViewModel>();
+            }
         }
         
-        public async Task<DovizIliskiViewModel> GetDovizIliskiByIdAsync(int id)
+        public async Task<DovizIliskiViewModel> GetDovizIliskiByIdAsync(Guid id)
         {
-            var iliski = await _context.DovizIliskileri
-                .Include(di => di.KaynakParaBirimi)
-                .Include(di => di.HedefParaBirimi)
-                .FirstOrDefaultAsync(di => di.DovizIliskiID == id && !di.SoftDelete);
-                
-            if (iliski == null)
+            try
             {
+                var iliski = await _dovizIliskiRepository.GetByIdAsync(id);
+                return iliski != null ? DovizIliskiViewModel.FromEntity(iliski) : null;
+            }
+            catch (Exception ex)
+            {
+                _logger.LogError(ex, "ID ile döviz ilişkisi getirilirken hata oluştu: {Message}", ex.Message);
                 return null;
             }
-            
-            return DovizIliskiViewModel.FromEntity(iliski);
         }
         
-        public async Task<DovizIliski> GetDovizIliskiEntityByIdAsync(int id)
+        public async Task<DovizIliski> GetDovizIliskiEntityByIdAsync(Guid id)
         {
-            return await _context.DovizIliskileri
-                .Include(di => di.KaynakParaBirimi)
-                .Include(di => di.HedefParaBirimi)
-                .FirstOrDefaultAsync(di => di.DovizIliskiID == id);
+            return await _dovizIliskiRepository.GetByIdAsync(id);
         }
         
-        public async Task<DovizIliski> GetDovizIliskiByParaBirimleriAsync(int kaynakId, int hedefId)
+        public async Task<DovizIliski> GetDovizIliskiByParaBirimleriAsync(Guid kaynakId, Guid hedefId)
         {
-            return await _context.DovizIliskileri
-                .Include(di => di.KaynakParaBirimi)
-                .Include(di => di.HedefParaBirimi)
-                .FirstOrDefaultAsync(di => 
-                    di.KaynakParaBirimiID == kaynakId && 
-                    di.HedefParaBirimiID == hedefId && 
-                    !di.SoftDelete);
+            return await _dovizIliskiRepository.GetFirstOrDefaultAsync(
+                di => di.KaynakParaBirimiID == kaynakId && di.HedefParaBirimiID == hedefId && !di.SoftDelete);
         }
         
         public async Task<DovizIliskiViewModel> AddDovizIliskiAsync(DovizIliskiViewModel model)
         {
-            // Para birimleri kontrolü
-            if (model.KaynakParaBirimiID == model.HedefParaBirimiID)
+            try
             {
-                throw new Exception("Kaynak ve hedef para birimi aynı olamaz.");
+                // Kaynak ve hedef para birimleri var mı kontrol et
+                var kaynakParaBirimi = await _paraBirimiRepository.GetByIdAsync(model.KaynakParaBirimiID);
+                var hedefParaBirimi = await _paraBirimiRepository.GetByIdAsync(model.HedefParaBirimiID);
+
+                if (kaynakParaBirimi == null || hedefParaBirimi == null)
+                {
+                    throw new Exception("Geçerli para birimleri seçilmelidir.");
+                }
+
+                // Aynı ilişki var mı kontrol et
+                var existingIliski = await _dovizIliskiRepository.GetFirstOrDefaultAsync(
+                    di => di.KaynakParaBirimiID == model.KaynakParaBirimiID && 
+                          di.HedefParaBirimiID == model.HedefParaBirimiID && 
+                          !di.SoftDelete);
+
+                if (existingIliski != null)
+                {
+                    throw new Exception($"Bu para birimleri arasında zaten bir ilişki tanımlanmış.");
+                }
+
+                var entity = model.ToEntity();
+                entity.DovizIliskiID = Guid.NewGuid();
+                entity.OlusturmaTarihi = DateTime.Now;
+                entity.GuncellemeTarihi = DateTime.Now;
+
+                await _dovizIliskiRepository.AddAsync(entity);
+                await _logService.LogEkleAsync(
+                    $"{kaynakParaBirimi.Kod} -> {hedefParaBirimi.Kod} para birimi ilişkisi eklendi.", 
+                    Models.LogTuru.Bilgi);
+
+                return DovizIliskiViewModel.FromEntity(entity);
             }
-            
-            // Para birimleri gerçekten var mı?
-            var kaynakParaBirimi = await _context.Dovizler.FindAsync(model.KaynakParaBirimiID);
-            var hedefParaBirimi = await _context.Dovizler.FindAsync(model.HedefParaBirimiID);
-            
-            if (kaynakParaBirimi == null || kaynakParaBirimi.SoftDelete)
+            catch (Exception ex)
             {
-                throw new Exception("Kaynak para birimi bulunamadı.");
+                _logger.LogError(ex, "Döviz ilişkisi eklenirken hata oluştu: {Message}", ex.Message);
+                throw;
             }
-            
-            if (hedefParaBirimi == null || hedefParaBirimi.SoftDelete)
-            {
-                throw new Exception("Hedef para birimi bulunamadı.");
-            }
-            
-            // Aynı ilişki var mı?
-            var existingIliski = await _context.DovizIliskileri
-                .FirstOrDefaultAsync(di => 
-                    di.KaynakParaBirimiID == model.KaynakParaBirimiID && 
-                    di.HedefParaBirimiID == model.HedefParaBirimiID && 
-                    !di.SoftDelete);
-                    
-            if (existingIliski != null)
-            {
-                throw new Exception($"{kaynakParaBirimi.DovizKodu}-{hedefParaBirimi.DovizKodu} ilişkisi zaten tanımlı.");
-            }
-            
-            var entity = model.ToEntity();
-            entity.OlusturmaTarihi = DateTime.Now;
-            
-            await _dovizIliskiRepository.AddAsync(entity);
-            
-            model.DovizIliskiID = entity.DovizIliskiID;
-            model.KaynakParaBirimiKodu = kaynakParaBirimi.DovizKodu;
-            model.HedefParaBirimiKodu = hedefParaBirimi.DovizKodu;
-            
-            return model;
         }
         
         public async Task<DovizIliskiViewModel> UpdateDovizIliskiAsync(DovizIliskiViewModel model)
         {
-            var entity = await _context.DovizIliskileri.FindAsync(model.DovizIliskiID);
-            if (entity == null || entity.SoftDelete)
+            try
             {
-                throw new Exception("Döviz ilişkisi bulunamadı.");
-            }
-            
-            // Para birimleri kontrolü
-            if (model.KaynakParaBirimiID == model.HedefParaBirimiID)
-            {
-                throw new Exception("Kaynak ve hedef para birimi aynı olamaz.");
-            }
-            
-            // Para birimleri gerçekten var mı?
-            var kaynakParaBirimi = await _context.Dovizler.FindAsync(model.KaynakParaBirimiID);
-            var hedefParaBirimi = await _context.Dovizler.FindAsync(model.HedefParaBirimiID);
-            
-            if (kaynakParaBirimi == null || kaynakParaBirimi.SoftDelete)
-            {
-                throw new Exception("Kaynak para birimi bulunamadı.");
-            }
-            
-            if (hedefParaBirimi == null || hedefParaBirimi.SoftDelete)
-            {
-                throw new Exception("Hedef para birimi bulunamadı.");
-            }
-            
-            // Kaynak veya hedef değişmişse, ilişki kontrolü yap
-            if (entity.KaynakParaBirimiID != model.KaynakParaBirimiID || entity.HedefParaBirimiID != model.HedefParaBirimiID)
-            {
-                var existingIliski = await _context.DovizIliskileri
-                    .FirstOrDefaultAsync(di => 
-                        di.KaynakParaBirimiID == model.KaynakParaBirimiID && 
-                        di.HedefParaBirimiID == model.HedefParaBirimiID && 
-                        di.DovizIliskiID != model.DovizIliskiID && 
-                        !di.SoftDelete);
-                        
+                var entity = await _dovizIliskiRepository.GetByIdAsync(model.DovizIliskiID);
+                if (entity == null)
+                {
+                    throw new Exception($"Güncellenecek döviz ilişkisi bulunamadı. ID: {model.DovizIliskiID}");
+                }
+
+                // Kaynak ve hedef para birimleri var mı kontrol et
+                var kaynakParaBirimi = await _paraBirimiRepository.GetByIdAsync(model.KaynakParaBirimiID);
+                var hedefParaBirimi = await _paraBirimiRepository.GetByIdAsync(model.HedefParaBirimiID);
+
+                if (kaynakParaBirimi == null || hedefParaBirimi == null)
+                {
+                    throw new Exception("Geçerli para birimleri seçilmelidir.");
+                }
+
+                // Aynı ilişki başka bir kayıtta var mı kontrol et
+                var existingIliski = await _dovizIliskiRepository.GetFirstOrDefaultAsync(
+                    di => di.DovizIliskiID != model.DovizIliskiID && 
+                          di.KaynakParaBirimiID == model.KaynakParaBirimiID && 
+                          di.HedefParaBirimiID == model.HedefParaBirimiID && 
+                          !di.SoftDelete);
+
                 if (existingIliski != null)
                 {
-                    throw new Exception($"{kaynakParaBirimi.DovizKodu}-{hedefParaBirimi.DovizKodu} ilişkisi zaten tanımlı.");
+                    throw new Exception($"Bu para birimleri arasında zaten başka bir ilişki tanımlanmış.");
                 }
+
+                entity.KaynakParaBirimiID = model.KaynakParaBirimiID;
+                entity.HedefParaBirimiID = model.HedefParaBirimiID;
+                entity.Aktif = model.Aktif;
+                entity.GuncellemeTarihi = DateTime.Now;
+
+                await _dovizIliskiRepository.UpdateAsync(entity);
+                await _logService.LogEkleAsync(
+                    $"{kaynakParaBirimi.Kod} -> {hedefParaBirimi.Kod} para birimi ilişkisi güncellendi.", 
+                    Models.LogTuru.Bilgi);
+
+                return DovizIliskiViewModel.FromEntity(entity);
             }
-            
-            entity.KaynakParaBirimiID = model.KaynakParaBirimiID;
-            entity.HedefParaBirimiID = model.HedefParaBirimiID;
-            entity.Aktif = model.Aktif;
-            entity.GuncellemeTarihi = DateTime.Now;
-            
-            await _dovizIliskiRepository.UpdateAsync(entity);
-            
-            model.KaynakParaBirimiKodu = kaynakParaBirimi.DovizKodu;
-            model.HedefParaBirimiKodu = hedefParaBirimi.DovizKodu;
-            
-            return model;
+            catch (Exception ex)
+            {
+                _logger.LogError(ex, "Döviz ilişkisi güncellenirken hata oluştu: {Message}", ex.Message);
+                throw;
+            }
         }
         
-        public async Task DeleteDovizIliskiAsync(int id)
+        public async Task DeleteDovizIliskiAsync(Guid id)
         {
-            var entity = await _context.DovizIliskileri.FindAsync(id);
-            if (entity == null)
+            try
             {
-                throw new Exception("Döviz ilişkisi bulunamadı.");
+                var entity = await _dovizIliskiRepository.GetByIdAsync(id);
+                if (entity == null)
+                {
+                    throw new Exception($"Silinecek döviz ilişkisi bulunamadı. ID: {id}");
+                }
+
+                // İlişkiyi kullanan kur değerleri var mı kontrol et
+                var kurDegerleri = await _kurDegeriRepository.GetAllAsync(
+                    k => (k.ParaBirimiID == entity.KaynakParaBirimiID || k.ParaBirimiID == entity.HedefParaBirimiID) && 
+                         !k.SoftDelete);
+
+                if (kurDegerleri.Any())
+                {
+                    throw new Exception($"Bu ilişkiye ait kur değerleri bulunmaktadır. Önce ilişkili kur değerlerini siliniz.");
+                }
+
+                entity.SoftDelete = true;
+                entity.GuncellemeTarihi = DateTime.Now;
+
+                await _dovizIliskiRepository.UpdateAsync(entity);
+
+                // İlişkili para birimlerini al
+                var kaynakParaBirimi = await _paraBirimiRepository.GetByIdAsync(entity.KaynakParaBirimiID);
+                var hedefParaBirimi = await _paraBirimiRepository.GetByIdAsync(entity.HedefParaBirimiID);
+
+                await _logService.LogEkleAsync(
+                    $"{kaynakParaBirimi?.Kod} -> {hedefParaBirimi?.Kod} para birimi ilişkisi silindi.", 
+                    Models.LogTuru.Bilgi);
             }
-            
-            // İlişkili kur değerleri kontrolü
-            var kurDegerleri = await _context.KurDegerleri
-                .Where(kd => kd.DovizIliskiID == id && !kd.SoftDelete)
-                .AnyAsync();
-                
-            if (kurDegerleri)
+            catch (Exception ex)
             {
-                throw new Exception("Bu döviz ilişkisine ait kur değerleri bulunmaktadır. Önce kur değerlerini silmelisiniz.");
+                _logger.LogError(ex, "Döviz ilişkisi silinirken hata oluştu: {Message}", ex.Message);
+                throw;
             }
-            
-            // Soft delete
-            entity.SoftDelete = true;
-            entity.Aktif = false;
-            entity.GuncellemeTarihi = DateTime.Now;
-            
-            await _dovizIliskiRepository.UpdateAsync(entity);
         }
         
         #endregion
