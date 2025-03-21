@@ -1,0 +1,59 @@
+@{
+    ViewData["Title"] = "Döviz Kurlarını Güncelle";
+}
+
+<div class="container-fluid py-4">
+    <div class="row justify-content-center">
+        <div class="col-12 col-md-8 col-lg-6">
+            <div class="card">
+                <div class="card-header bg-gradient-primary text-white p-3">
+                    <div class="row align-items-center">
+                        <div class="col-md-8">
+                            <h4 class="mb-0 text-white">Güncel Döviz Kurlarını Güncelle</h4>
+                        </div>
+                    </div>
+                </div>
+                <div class="card-body p-4">
+                    <div class="alert alert-info mb-4" role="alert">
+                        <h5 class="alert-heading"><i class="fa fa-info-circle me-2"></i>Bilgi</h5>
+                        <p class="mb-0">
+                            Bu işlem ExchangeRate API'den güncel döviz kurlarını çekecek ve veritabanınıza kaydedecektir.
+                            İşlem tamamlandığında kurlar otomatik olarak güncellenecektir.
+                        </p>
+                    </div>
+                    
+                    <form asp-action="UpdateRates" method="post">
+                        <input type="hidden" name="confirm" value="true" />
+                        
+                        <div class="text-center">
+                            <button type="submit" class="btn btn-primary">
+                                <i class="fa fa-sync-alt me-2"></i>Kurları Güncelle
+                            </button>
+                            <a href="@Url.Action("Index", "DovizKuru")" class="btn btn-outline-secondary ms-2">
+                                <i class="fa fa-arrow-left me-2"></i>Geri Dön
+                            </a>
+                        </div>
+                    </form>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+
+@section Scripts {
+    <script>
+        $(document).ready(function() {
+            // Sayfadaki formun submit edilmesi durumunda bir yükleniyor göstergesi göster
+            $('form').on('submit', function() {
+                Swal.fire({
+                    title: 'Kurlar Güncelleniyor',
+                    text: 'Lütfen bekleyin...',
+                    allowOutsideClick: false,
+                    didOpen: () => {
+                        Swal.showLoading();
+                    }
+                });
+            });
+        });
+    </script>
+} 

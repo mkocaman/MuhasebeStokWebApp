@@ -107,5 +107,34 @@ namespace MuhasebeStokWebApp.Data.Repositories
             dbSet.Update(entity);
             await _context.SaveChangesAsync();
         }
+
+        public async Task<IEnumerable<T>> FindAsync(Expression<Func<T, bool>> predicate)
+        {
+            return await dbSet.Where(predicate).ToListAsync();
+        }
+
+        public async Task AddOrUpdateAsync(T entity)
+        {
+            // Entity'nin primary key değerini al
+            var keyName = _context.Model.FindEntityType(typeof(T)).FindPrimaryKey().Properties
+                .Select(x => x.Name).Single();
+            var keyProperty = entity.GetType().GetProperty(keyName);
+            var keyValue = keyProperty.GetValue(entity);
+            var defaultValue = keyProperty.PropertyType.IsValueType ? Activator.CreateInstance(keyProperty.PropertyType) : null;
+            
+            // Key değeri varsayılan değer ise (Guid.Empty, 0, null, vb.) veya
+            // veritabanında bu key ile kayıt yoksa, entity'yi ekle
+            if (keyValue == null || keyValue.Equals(defaultValue) || await dbSet.FindAsync(keyValue) == null)
+            {
+                await dbSet.AddAsync(entity);
+            }
+            else
+            {
+                // Aksi halde entity'yi güncelle
+                _context.Entry(entity).State = EntityState.Modified;
+            }
+            
+            await _context.SaveChangesAsync();
+        }
     }
 } 

@@ -30,7 +30,9 @@ namespace MuhasebeStokWebApp.Data.Entities
         
         public DateTime? GuncellemeTarihi { get; set; }
         
-        public bool SoftDelete { get; set; }
+        public bool Aktif { get; set; } = true;
+        
+        public bool SoftDelete { get; set; } = false;
         
         [Required]
         public decimal SatirToplam { get; set; }

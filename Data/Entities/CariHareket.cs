@@ -32,10 +32,6 @@ namespace MuhasebeStokWebApp.Data.Entities
         [StringLength(500)]
         public string? Aciklama { get; set; }
         
-        public Guid? IslemYapanKullaniciID { get; set; }
-        
-        public Guid? SonGuncelleyenKullaniciID { get; set; }
-        
         public DateTime OlusturmaTarihi { get; set; } = DateTime.Now;
         
         public DateTime? GuncellemeTarihi { get; set; }

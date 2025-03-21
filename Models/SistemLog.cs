@@ -1,59 +1,77 @@
 using System;
 using System.ComponentModel.DataAnnotations;
+using System.ComponentModel.DataAnnotations.Schema;
+using MuhasebeStokWebApp.Enums;
 
 namespace MuhasebeStokWebApp.Models
 {
     public class SistemLog
     {
         [Key]
-        public int SistemLogID { get; set; }  // Bu alanı int olarak bırakıyoruz çünkü GetHashCode() int dönüyor
-
+        public Guid LogID { get; set; }
+        
+        public int SistemLogID { get; set; } // Bu property GetHashCode için kullanılıyor
+        
         [Required]
         [StringLength(50)]
-        [Display(Name = "İşlem Türü")]
-        public string IslemTuru { get; set; }
-
-        [Display(Name = "İşlem Tarihi")]
-        public DateTime IslemTarihi { get; set; }
-
-        [Required]
-        [StringLength(500)]
-        [Display(Name = "Açıklama")]
-        public string Aciklama { get; set; }
-
-        [StringLength(50)]
-        [Display(Name = "Kullanıcı ID")]
-        public string? KullaniciID { get; set; }
-
-        [Required]
-        [StringLength(50)]
-        [Display(Name = "Kullanıcı Adı")]
-        public string KullaniciAdi { get; set; }
-
-        [Required]
-        [StringLength(50)]
-        [Display(Name = "IP Adresi")]
-        public string IPAdresi { get; set; }
-
-        [StringLength(500)]
-        [Display(Name = "Tarayıcı")]
-        public string Tarayici { get; set; }
-
+        public string IslemTuru { get; set; } = string.Empty; // Bilgi, Uyarı, Hata, vb.
+        
+        public Guid? KayitID { get; set; } // İlgili kaydın ID'si (CariID, FaturaID, vb.)
+        
         [StringLength(100)]
-        [Display(Name = "İlgili ID")]
-        public string? IlgiliID { get; set; }
-
-        [Display(Name = "Başarılı")]
-        public bool Basarili { get; set; } = true;
-
+        public string TabloAdi { get; set; } = string.Empty; // Cariler, Faturalar, vb.
+        
+        [StringLength(200)]
+        public string KayitAdi { get; set; } = string.Empty; // Cari Adı, Fatura No, vb.
+        
+        [Required]
+        public DateTime IslemTarihi { get; set; } = DateTime.Now;
+        
         [StringLength(500)]
-        [Display(Name = "Hata Mesajı")]
+        public string? Aciklama { get; set; }
+        
+        public string KullaniciID { get; set; } = string.Empty;
+        
+        [StringLength(100)]
+        public string KullaniciAdi { get; set; } = string.Empty;
+        
+        [StringLength(50)]
+        public string IPAdresi { get; set; } = string.Empty;
+        
+        public Guid? IlgiliID { get; set; }
+        
+        public bool Basarili { get; set; } = true;
+        
+        [StringLength(500)]
         public string? HataMesaji { get; set; }
-
-        [Display(Name = "Tablo Adı")]
-        public string? TabloAdi { get; set; }
-
-        [Display(Name = "Kayıt Adı")]
-        public string? KayitAdi { get; set; }
+        
+        public string Tarayici { get; set; } = string.Empty;
+        
+        // Eski model ile uyumluluk için property'ler
+        public LogTuru LogTuru
+        {
+            get
+            {
+                if (Enum.TryParse<LogTuru>(IslemTuru, out var logTuru))
+                    return logTuru;
+                return LogTuru.Bilgi;
+            }
+        }
+        
+        public string Mesaj { get => Aciklama ?? ""; set => Aciklama = value; }
+        
+        public string Detay { get => HataMesaji ?? ""; set => HataMesaji = value; }
+        
+        public DateTime Tarih { get => IslemTarihi; set => IslemTarihi = value; }
+        
+        public string IsletimSistemi { get; set; } = string.Empty;
+        
+        public bool Aktif { get; set; } = true;
+        
+        public DateTime OlusturmaTarihi { get => IslemTarihi; }
+        
+        public DateTime? GuncellemeTarihi { get; set; }
+        
+        public bool SoftDelete { get; set; } = false;
     }
 } 

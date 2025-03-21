@@ -5,7 +5,13 @@ namespace MuhasebeStokWebApp.Enums
         Bilgi,
         Uyari,
         Hata,
+        Kritik,
         Basarili,
-        Detay
+        Giris,
+        Cikis,
+        Detay,
+        Silme,
+        Ekleme,
+        Guncelleme
     }
-} 
+}

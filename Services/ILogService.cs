@@ -8,76 +8,77 @@ namespace MuhasebeStokWebApp.Services
     public interface ILogService
     {
         /// <summary>
-        /// Sisteme log ekler.
+        /// Sisteme yeni bir log kaydı ekler.
         /// </summary>
-        Task LogEkleAsync(string mesaj, LogTuru logTuru, string detay = null);
+        Task<bool> LogEkleAsync(string mesaj, MuhasebeStokWebApp.Enums.LogTuru logTuru, string detay = null);
         
         /// <summary>
-        /// Belirlenen tarih aralığındaki logları getirir.
+        /// Kısa adlandırma için LogEkleAsync metodunun farklı bir isimle kullanımı
         /// </summary>
-        Task<IEnumerable<SistemLog>> GetLogsAsync(DateTime? baslangicTarihi = null, DateTime? bitisTarihi = null);
+        Task<bool> Log(string mesaj, MuhasebeStokWebApp.Enums.LogTuru logTuru, string detay = null);
         
         /// <summary>
-        /// Belirli bir kullanıcının loglarını getirir.
+        /// Tüm log kayıtlarını getirir.
         /// </summary>
-        Task<IEnumerable<SistemLog>> GetLogsByKullaniciAsync(string kullaniciAdi, DateTime? baslangicTarihi = null, DateTime? bitisTarihi = null);
+        Task<List<MuhasebeStokWebApp.Data.Entities.SistemLog>> GetLogsAsync(
+            DateTime? startDate = null,
+            DateTime? endDate = null,
+            string searchTerm = null,
+            string logTuru = null,
+            int page = 1,
+            int pageSize = 20);
         
         /// <summary>
-        /// Belirli tipteki logları getirir.
+        /// Belirli bir kullanıcıya ait log kayıtlarını getirir.
         /// </summary>
-        Task<IEnumerable<SistemLog>> GetLogsByTurAsync(LogTuru logTuru, DateTime? baslangicTarihi = null, DateTime? bitisTarihi = null);
+        Task<List<SistemLog>> GetLogsByKullaniciAsync(string kullaniciAdi, DateTime? baslangicTarihi = null, DateTime? bitisTarihi = null);
         
         /// <summary>
-        /// Tüm logları temizler.
+        /// Belirli bir log türüne ait kayıtları getirir.
         /// </summary>
+        Task<List<SistemLog>> GetLogsByTurAsync(MuhasebeStokWebApp.Enums.LogTuru logTuru, DateTime? baslangicTarihi = null, DateTime? bitisTarihi = null);
+        
+        Task<List<SistemLog>> GetAllLogsAsync();
+        Task<List<SistemLog>> GetCariLogsAsync(Guid cariId);
         Task ClearLogsAsync();
-        
-        /// <summary>
-        /// Belirli bir log kaydını siler.
-        /// </summary>
-        Task DeleteLogAsync(int logId);
-        
-        /// <summary>
-        /// Belirli bir cari için logları getirir.
-        /// </summary>
-        Task<IEnumerable<SistemLog>> GetCariLogsAsync(Guid cariId);
-        
-        /// <summary>
-        /// Cari işlemleri için log oluşturur.
-        /// </summary>
+        Task<bool> LogSilAsync(int id);
         Task CariOlusturmaLogOlustur(Guid cariID, string cariAdi, string aciklama);
         Task CariGuncellemeLogOlustur(Guid cariID, string cariAdi, string aciklama);
         Task CariSilmeLogOlustur(Guid cariID, string cariAdi, string aciklama);
         Task CariPasifleştirmeLogOlustur(Guid cariID, string cariAdi, string aciklama);
         Task CariAktifleştirmeLogOlustur(Guid cariID, string cariAdi, string aciklama);
         Task CariHareketEklemeLogOlustur(Guid cariID, string cariAdi, string hareketTuru, decimal tutar, string aciklama);
-        
-        /// <summary>
-        /// Ürün işlemleri için log oluşturur.
-        /// </summary>
         Task UrunOlusturmaLogOlustur(Guid urunID, string urunAdi, string aciklama);
         Task UrunGuncellemeLogOlustur(Guid urunID, string urunAdi, string aciklama);
         Task UrunSilmeLogOlustur(Guid urunID, string urunAdi, string aciklama);
-        
-        /// <summary>
-        /// Stok işlemleri için log oluşturur.
-        /// </summary>
         Task StokGirisLogOlustur(Guid stokHareketID, Guid urunID, string urunAdi, decimal miktar, string aciklama);
         Task StokCikisLogOlustur(Guid stokHareketID, Guid urunID, string urunAdi, decimal miktar, string aciklama);
+        Task<bool> LogInfoAsync(string message, string detail = null);
+        Task<bool> LogWarningAsync(string message, string detail = null);
+        Task<bool> LogErrorAsync(string message, string detail = null);
+        Task<bool> LogErrorAsync(string message, Exception ex);
+        Task FaturaOlusturmaLogOlustur(Guid faturaID, string faturaNo, string aciklama);
+        Task<List<SistemLog>> GetLogsByTarihAsync(DateTime baslangicTarihi, DateTime bitisTarihi);
+        Task<List<SistemLog>> GetLogsByIslemTuruAsync(string islemTuru);
+        Task<List<SistemLog>> GetLogsByIslemTuruVeTarihAsync(string islemTuru, DateTime baslangicTarihi, DateTime bitisTarihi);
+        Task<List<SistemLog>> GetLogsByKullaniciVeTarihAsync(string kullaniciAdi, DateTime baslangicTarihi, DateTime bitisTarihi);
+        Task<bool> DeleteLogAsync(int logId);
+        Task FaturaGuncellemeLogOlustur(Guid faturaID, string faturaNo, string aciklama);
+        Task FaturaSilmeLogOlustur(Guid faturaID, string faturaNo, string aciklama);
         
         /// <summary>
-        /// Hata logları oluşturur
+        /// Genel log ekle metodu. Çeşitli işlemler için log kaydı ekler.
         /// </summary>
-        Task LogErrorAsync(string category, Exception ex);
+        /// <param name="tableName">İşlem yapılan tablo adı</param>
+        /// <param name="operation">Yapılan işlem (Ekleme, Güncelleme, Silme vb.)</param>
+        /// <param name="details">İşlem detayları</param>
+        /// <param name="entityId">İşlem yapılan varlık ID'si (opsiyonel)</param>
+        /// <returns>İşlem başarılı ise true, değilse false</returns>
+        Task<bool> AddLogAsync(string tableName, string operation, string details, string entityId = null);
         
-        /// <summary>
-        /// Bilgi logları oluşturur
-        /// </summary>
-        Task LogInfoAsync(string category, string message);
-        
-        /// <summary>
-        /// Uyarı logları oluşturur
-        /// </summary>
-        Task LogWarningAsync(string category, string message);
+        string GetBrowserInfo(string userAgent);
+        string GetOSInfo(string userAgent);
+
+        Task LogErrorAsync(string operation, string stackTrace, Exception ex);
     }
 } 

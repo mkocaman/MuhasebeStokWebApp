@@ -25,6 +25,12 @@ namespace MuhasebeStokWebApp.Data.Repositories
         private IRepository<FaturaTuru>? _faturaTuruRepository;
         private IRepository<IrsaliyeTuru>? _irsaliyeTuruRepository;
         private IRepository<OdemeTuru>? _odemeTuruRepository;
+        private IRepository<UrunFiyat>? _urunFiyatRepository;
+        private IRepository<FiyatTipi>? _fiyatTipiRepository;
+        private IRepository<Menu>? _menuRepository;
+        private IRepository<MenuRol>? _menuRolRepository;
+        private IIrsaliyeRepository? _customIrsaliyeRepository;
+        private IIrsaliyeDetayRepository? _customIrsaliyeDetayRepository;
 
         public UnitOfWork(ApplicationDbContext context)
         {
@@ -58,8 +64,20 @@ namespace MuhasebeStokWebApp.Data.Repositories
         public IRepository<FaturaTuru> FaturaTuruRepository => _faturaTuruRepository ??= Repository<FaturaTuru>();
         public IRepository<IrsaliyeTuru> IrsaliyeTuruRepository => _irsaliyeTuruRepository ??= Repository<IrsaliyeTuru>();
         public IRepository<OdemeTuru> OdemeTuruRepository => _odemeTuruRepository ??= Repository<OdemeTuru>();
+        public IRepository<UrunFiyat> UrunFiyatRepository => _urunFiyatRepository ??= Repository<UrunFiyat>();
+        public IRepository<FiyatTipi> FiyatTipiRepository => _fiyatTipiRepository ??= Repository<FiyatTipi>();
+        public IRepository<Menu> MenuRepository => _menuRepository ??= Repository<Menu>();
+        public IRepository<MenuRol> MenuRolRepository => _menuRolRepository ??= Repository<MenuRol>();
+        public IIrsaliyeRepository IrsaliyeCustomRepository => _customIrsaliyeRepository ??= new IrsaliyeRepository(_context);
+        public IIrsaliyeDetayRepository IrsaliyeDetayCustomRepository => _customIrsaliyeDetayRepository ??= new IrsaliyeDetayRepository(_context);
 
         public async Task SaveAsync()
+        {
+            await _context.SaveChangesAsync();
+        }
+
+        // CompleteAsync metodu ekledik
+        public async Task CompleteAsync()
         {
             await _context.SaveChangesAsync();
         }

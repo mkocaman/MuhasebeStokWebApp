@@ -1,90 +1,97 @@
 @model MuhasebeStokWebApp.ViewModels.Kasa.KasaCreateViewModel
 @{
-    ViewData["Title"] = "Yeni Kasa";
-    var paraBirimleri = ViewBag.ParaBirimleri as List<string> ?? new List<string>();
+    ViewData["Title"] = "Kasa Ekle";
+    var kurlar = ViewBag.Kurlar as List<MuhasebeStokWebApp.ViewModels.DovizKuru.DovizKuruViewModel> ?? new List<MuhasebeStokWebApp.ViewModels.DovizKuru.DovizKuruViewModel>();
 }
 
 <div class="container-fluid">
-    <div class="card shadow mb-4">
-        <div class="card-header py-3 d-flex justify-content-between align-items-center">
-            <h6 class="m-0 font-weight-bold text-primary">Yeni Kasa</h6>
-            <a asp-action="Index" class="btn btn-outline-secondary btn-sm">
-                <i class="fas fa-arrow-left"></i> Listeye Dön
-            </a>
+    <div class="page-title">
+        <div class="row">
+            <div class="col-6">
+                <h3>Yeni Kasa</h3>
+            </div>
+            <div class="col-6">
+                <ol class="breadcrumb">
+                    <li class="breadcrumb-item"><a href="/"><i data-feather="home"></i></a></li>
+                    <li class="breadcrumb-item"><a asp-controller="Kasa" asp-action="Index">Kasalar</a></li>
+                    <li class="breadcrumb-item active">Yeni Kasa</li>
+                </ol>
+            </div>
         </div>
-        <div class="card-body">
-            <form asp-action="Create" method="post">
-                <div asp-validation-summary="ModelOnly" class="text-danger"></div>
-                
-                <div class="row">
-                    <div class="col-md-6">
-                        <div class="form-group">
-                            <label asp-for="KasaAdi" class="control-label">Kasa Adı</label>
-                            <input asp-for="KasaAdi" class="form-control" />
-                            <span asp-validation-for="KasaAdi" class="text-danger"></span>
-                        </div>
-                    </div>
-                    <div class="col-md-6">
-                        <div class="form-group">
-                            <label asp-for="KasaTuru" class="control-label">Kasa Türü</label>
-                            <select asp-for="KasaTuru" class="form-control">
-                                <option value="">Kasa Türü Seçiniz</option>
-                                <option value="Nakit">Nakit</option>
-                                <option value="Kredi Kartı">Kredi Kartı</option>
-                                <option value="Çek">Çek</option>
-                                <option value="Senet">Senet</option>
-                                <option value="Diğer">Diğer</option>
-                            </select>
-                            <span asp-validation-for="KasaTuru" class="text-danger"></span>
-                        </div>
-                    </div>
+    </div>
+</div>
+
+<div class="container-fluid">
+    <div class="row">
+        <div class="col-md-12">
+            <div class="card">
+                <div class="card-header">
+                    <h5 class="mb-0">Kasa Bilgileri</h5>
                 </div>
-                
-                <div class="row">
-                    <div class="col-md-6">
-                        <div class="form-group">
-                            <label asp-for="ParaBirimi" class="control-label">Para Birimi</label>
-                            <select asp-for="ParaBirimi" class="form-control">
-                                <option value="">Para Birimi Seçiniz</option>
-                                @foreach (var paraBirimi in paraBirimleri)
-                                {
-                                    <option value="@paraBirimi">@paraBirimi</option>
-                                }
-                            </select>
-                            <span asp-validation-for="ParaBirimi" class="text-danger"></span>
-                        </div>
-                    </div>
-                    <div class="col-md-6">
-                        <div class="form-group">
-                            <label asp-for="Aktif" class="control-label"></label>
-                            <div class="form-check mt-2">
-                                <input asp-for="Aktif" class="form-check-input" />
-                                <label class="form-check-label" for="Aktif">Aktif</label>
+                <div class="card-body">
+                    <form asp-action="Create">
+                        <div asp-validation-summary="ModelOnly" class="text-danger"></div>
+                        
+                        <div class="row">
+                            <div class="col-md-6">
+                                <div class="form-group mb-3">
+                                    <label asp-for="KasaAdi" class="control-label"></label>
+                                    <input asp-for="KasaAdi" class="form-control" />
+                                    <span asp-validation-for="KasaAdi" class="text-danger"></span>
+                                </div>
                             </div>
-                            <span asp-validation-for="Aktif" class="text-danger"></span>
+                            <div class="col-md-6">
+                                <div class="form-group mb-3">
+                                    <label asp-for="ParaBirimi" class="control-label">Para Birimi</label>
+                                    <select asp-for="ParaBirimi" class="form-control">
+                                        <option value="TRY">Türk Lirası (TRY)</option>
+                                        @foreach (var doviz in kurlar.Select(d => d.ParaBirimiKodu).Distinct())
+                                        {
+                                            <option value="@doviz">@doviz</option>
+                                        }
+                                    </select>
+                                    <span asp-validation-for="ParaBirimi" class="text-danger"></span>
+                                </div>
+                            </div>
                         </div>
-                    </div>
+                        
+                        <div class="row">
+                            <div class="col-md-6">
+                                <div class="form-group mb-3">
+                                    <label asp-for="AcilisBakiye" class="control-label"></label>
+                                    <input asp-for="AcilisBakiye" class="form-control" />
+                                    <span asp-validation-for="AcilisBakiye" class="text-danger"></span>
+                                </div>
+                            </div>
+                            <div class="col-md-6">
+                                <div class="form-group mb-3">
+                                    <label asp-for="Aktif" class="control-label"></label>
+                                    <div class="form-check mt-2">
+                                        <input asp-for="Aktif" class="form-check-input" />
+                                        <label class="form-check-label" for="Aktif">Aktif</label>
+                                    </div>
+                                    <span asp-validation-for="Aktif" class="text-danger"></span>
+                                </div>
+                            </div>
+                        </div>
+                        
+                        <div class="form-group mb-3">
+                            <label asp-for="Aciklama" class="control-label"></label>
+                            <textarea asp-for="Aciklama" class="form-control" rows="3"></textarea>
+                            <span asp-validation-for="Aciklama" class="text-danger"></span>
+                        </div>
+                        
+                        <div class="form-group text-end mt-4">
+                            <a asp-action="Index" class="btn btn-secondary">İptal</a>
+                            <input type="submit" value="Kaydet" class="btn btn-primary" />
+                        </div>
+                    </form>
                 </div>
-                
-                <div class="form-group">
-                    <label asp-for="Aciklama" class="control-label">Açıklama</label>
-                    <textarea asp-for="Aciklama" class="form-control" rows="3"></textarea>
-                    <span asp-validation-for="Aciklama" class="text-danger"></span>
-                </div>
-                
-                <div class="form-group">
-                    <button type="submit" class="btn btn-primary">
-                        <i class="fas fa-save"></i> Kaydet
-                    </button>
-                    <a asp-action="Index" class="btn btn-secondary">
-                        <i class="fas fa-arrow-left"></i> İptal
-                    </a>
-                </div>
-            </form>
+            </div>
         </div>
     </div>
 </div>
 
 @section Scripts {
-    <partial name="_ValidationScriptsPartial" />
+    @{await Html.RenderPartialAsync("_ValidationScriptsPartial");}
 } 

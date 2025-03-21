@@ -14,19 +14,39 @@ using Microsoft.AspNetCore.Authentication;
 using Microsoft.AspNetCore.Authentication.Cookies;
 using Newtonsoft.Json;
 using Microsoft.AspNetCore.Authorization;
+using MuhasebeStokWebApp.Services;
+using MuhasebeStokWebApp.Data;
+using Microsoft.AspNetCore.Identity;
+using Microsoft.AspNetCore.Identity.EntityFrameworkCore;
 
 namespace MuhasebeStokWebApp.Controllers
 {
-    // [Authorize]
-    public class HomeController : Controller
+    [Authorize]  // Bu controller'a erişim için kimlik doğrulama gerektirir
+    public class HomeController : BaseController
     {
         private readonly ILogger<HomeController> _logger;
         private readonly IUnitOfWork _unitOfWork;
+        private readonly UserManager<IdentityUser> _userManager;
+        private readonly IDovizKuruService _dovizKuruService;
+        private readonly ApplicationDbContext _context;
+        private readonly RoleManager<IdentityRole> _roleManager;
 
-        public HomeController(ILogger<HomeController> logger, IUnitOfWork unitOfWork)
+        public HomeController(
+            ILogger<HomeController> logger, 
+            IUnitOfWork unitOfWork,
+            UserManager<IdentityUser> userManager,
+            RoleManager<IdentityRole> roleManager,
+            IMenuService menuService,
+            IDovizKuruService dovizKuruService,
+            ApplicationDbContext context,
+            ILogService logService) : base(menuService, userManager, roleManager, logService)
         {
             _logger = logger;
             _unitOfWork = unitOfWork;
+            _userManager = userManager;
+            _dovizKuruService = dovizKuruService;
+            _context = context;
+            _roleManager = roleManager;
         }
 
         public async Task<IActionResult> Index()
@@ -55,6 +75,9 @@ namespace MuhasebeStokWebApp.Controllers
                 var satisFaturalari = faturalar.Where(f => f.FaturaTuru?.FaturaTuruAdi == "Satış").ToList();
                 decimal toplamCiro = satisFaturalari.Sum(f => f.GenelToplam ?? 0);
                 ViewBag.ToplamCiro = toplamCiro;
+                
+                // Son döviz kurlarını al
+                ViewBag.SonKurlar = await _dovizKuruService.GetLatestRatesAsync(5);
                 
                 // Aylık satış ve gider verileri
                 var aylikSatisVerileri = new decimal[12];
@@ -175,7 +198,7 @@ namespace MuhasebeStokWebApp.Controllers
         }
 
         [AllowAnonymous]
-        public new IActionResult StatusCode(int code)
+        public IActionResult StatusCode(int code)
         {
             switch (code)
             {

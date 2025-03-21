@@ -1,4 +1,4 @@
-@model MuhasebeStokWebApp.Models.SistemLog
+@model MuhasebeStokWebApp.Data.Entities.SistemLog
 @{
     ViewData["Title"] = "Log Detayı";
     Layout = "~/Views/Shared/_Layout.cshtml";
@@ -35,38 +35,81 @@
                                 </div>
                             </div>
                             <div class="mb-3 row">
-                                <label class="col-sm-4 col-form-label fw-bold">Açıklama:</label>
+                                <label class="col-sm-4 col-form-label fw-bold">Durum:</label>
                                 <div class="col-sm-8">
-                                    <p class="form-control-plaintext">@Model.Aciklama</p>
+                                    @if (Model.Basarili)
+                                    {
+                                        <span class="badge bg-success">Başarılı</span>
+                                    }
+                                    else
+                                    {
+                                        <span class="badge bg-danger">Başarısız</span>
+                                    }
                                 </div>
                             </div>
+                            @if (!Model.Basarili && !string.IsNullOrEmpty(Model.HataMesaji))
+                            {
+                                <div class="mb-3 row">
+                                    <label class="col-sm-4 col-form-label fw-bold">Hata Mesajı:</label>
+                                    <div class="col-sm-8">
+                                        <p class="form-control-plaintext text-danger">@Model.HataMesaji</p>
+                                    </div>
+                                </div>
+                            }
                         </div>
                     </div>
                 </div>
                 <div class="col-md-6">
                     <div class="card h-100">
                         <div class="card-header bg-light">
-                            <h5 class="mb-0">Kullanıcı Bilgileri</h5>
+                            <h5 class="mb-0">Kayıt Bilgileri</h5>
                         </div>
                         <div class="card-body">
                             <div class="mb-3 row">
-                                <label class="col-sm-4 col-form-label fw-bold">Kullanıcı Adı:</label>
+                                <label class="col-sm-4 col-form-label fw-bold">Tablo Adı:</label>
                                 <div class="col-sm-8">
-                                    <p class="form-control-plaintext">@Model.KullaniciAdi</p>
+                                    <p class="form-control-plaintext">@Model.TabloAdi</p>
                                 </div>
                             </div>
                             <div class="mb-3 row">
-                                <label class="col-sm-4 col-form-label fw-bold">IP Adresi:</label>
+                                <label class="col-sm-4 col-form-label fw-bold">Kayıt Adı:</label>
                                 <div class="col-sm-8">
-                                    <p class="form-control-plaintext">@Model.IPAdresi</p>
+                                    <p class="form-control-plaintext">@Model.KayitAdi</p>
                                 </div>
                             </div>
-                            @if (!string.IsNullOrEmpty(Model.Tarayici))
+                            <div class="mb-3 row">
+                                <label class="col-sm-4 col-form-label fw-bold">Kayıt ID:</label>
+                                <div class="col-sm-8">
+                                    <p class="form-control-plaintext">@(Model.KayitID?.ToString() ?? "-")</p>
+                                </div>
+                            </div>
+                            @if (Model.KayitID.HasValue && !string.IsNullOrEmpty(Model.TabloAdi))
                             {
                                 <div class="mb-3 row">
-                                    <label class="col-sm-4 col-form-label fw-bold">Tarayıcı:</label>
+                                    <label class="col-sm-4 col-form-label fw-bold">Kayıt Bağlantısı:</label>
                                     <div class="col-sm-8">
-                                        <p class="form-control-plaintext">@Model.Tarayici</p>
+                                        @if (Model.TabloAdi == "Cariler")
+                                        {
+                                            <a asp-controller="Cari" asp-action="Details" asp-route-id="@Model.KayitID" class="btn btn-sm btn-outline-primary">
+                                                <i class="fas fa-external-link-alt"></i> Cari Detayına Git
+                                            </a>
+                                        }
+                                        else if (Model.TabloAdi == "Faturalar")
+                                        {
+                                            <a asp-controller="Fatura" asp-action="Details" asp-route-id="@Model.KayitID" class="btn btn-sm btn-outline-primary">
+                                                <i class="fas fa-external-link-alt"></i> Fatura Detayına Git
+                                            </a>
+                                        }
+                                        else if (Model.TabloAdi == "Urunler")
+                                        {
+                                            <a asp-controller="Urun" asp-action="Details" asp-route-id="@Model.KayitID" class="btn btn-sm btn-outline-primary">
+                                                <i class="fas fa-external-link-alt"></i> Ürün Detayına Git
+                                            </a>
+                                        }
+                                        else
+                                        {
+                                            <p class="form-control-plaintext">-</p>
+                                        }
                                     </div>
                                 </div>
                             }
@@ -75,11 +118,53 @@
                 </div>
             </div>
             
-            <div class="d-flex justify-content-between mt-4">
-                <a asp-action="Index" class="btn btn-secondary">Listeye Dön</a>
-                <a asp-action="Delete" asp-route-id="@Model.SistemLogID" class="btn btn-danger">Sil</a>
+            <div class="card mb-4">
+                <div class="card-header bg-light">
+                    <h5 class="mb-0">Kullanıcı Bilgileri</h5>
+                </div>
+                <div class="card-body">
+                    <div class="row">
+                        <div class="col-md-6">
+                            <div class="mb-3 row">
+                                <label class="col-sm-4 col-form-label fw-bold">Kullanıcı Adı:</label>
+                                <div class="col-sm-8">
+                                    <p class="form-control-plaintext">@(string.IsNullOrEmpty(Model.KullaniciAdi) ? "-" : Model.KullaniciAdi)</p>
+                                </div>
+                            </div>
+                        </div>
+                        <div class="col-md-6">
+                            <div class="mb-3 row">
+                                <label class="col-sm-4 col-form-label fw-bold">IP Adresi:</label>
+                                <div class="col-sm-8">
+                                    <p class="form-control-plaintext">@(string.IsNullOrEmpty(Model.IPAdresi) ? "-" : Model.IPAdresi)</p>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+            
+            <div class="card">
+                <div class="card-header bg-light">
+                    <h5 class="mb-0">Açıklama</h5>
+                </div>
+                <div class="card-body">
+                    <p>@(string.IsNullOrEmpty(Model.Aciklama) ? "Açıklama bulunmuyor." : Model.Aciklama)</p>
+                </div>
+            </div>
+        </div>
+        <div class="card-footer">
+            <div class="d-flex justify-content-between">
+                <a asp-action="Index" class="btn btn-secondary">
+                    <i class="fas fa-arrow-left"></i> Listeye Dön
+                </a>
+                @if (Model.TabloAdi == "Cariler" && Model.KayitID.HasValue)
+                {
+                    <a asp-action="CariLogs" asp-route-cariId="@Model.KayitID" class="btn btn-primary">
+                        <i class="fas fa-history"></i> Bu Carinin Tüm Logları
+                    </a>
+                }
             </div>
         </div>
     </div>
-</div> 
 </div> 

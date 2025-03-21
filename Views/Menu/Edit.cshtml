@@ -1,0 +1,164 @@
+@model MuhasebeStokWebApp.ViewModels.Menu.MenuEditViewModel
+@{
+    ViewData["Title"] = "Menü Düzenle";
+}
+
+<div class="page-title">
+    <div class="row">
+        <div class="col-6">
+            <h3>Menü Düzenle</h3>
+        </div>
+        <div class="col-6 text-end">
+            <a asp-action="Index" class="btn btn-outline-primary">
+                <i class="fa fa-arrow-left me-1"></i> Menü Listesine Dön
+            </a>
+        </div>
+    </div>
+</div>
+
+<div class="row">
+    <div class="col-12">
+        <div class="card">
+            <div class="card-header">
+                <h5>@Model.Ad Menüsünü Düzenle</h5>
+            </div>
+            <div class="card-body">
+                <form asp-action="Edit" method="post">
+                    <div asp-validation-summary="ModelOnly" class="text-danger"></div>
+                    <input type="hidden" asp-for="MenuID" />
+                    
+                    @if (Model.ParentId.HasValue)
+                    {
+                        <div class="row mb-3">
+                            <label class="col-sm-3 col-form-label">Üst Menü</label>
+                            <div class="col-sm-9">
+                                <input type="text" class="form-control" value="@Model.ParentMenu?.Ad" disabled />
+                                <input type="hidden" asp-for="ParentId" />
+                            </div>
+                        </div>
+                    }
+                    
+                    <div class="row mb-3">
+                        <label asp-for="Ad" class="col-sm-3 col-form-label"></label>
+                        <div class="col-sm-9">
+                            <input asp-for="Ad" class="form-control" />
+                            <span asp-validation-for="Ad" class="text-danger"></span>
+                        </div>
+                    </div>
+                    
+                    <div class="row mb-3">
+                        <label asp-for="Icon" class="col-sm-3 col-form-label"></label>
+                        <div class="col-sm-9">
+                            <input asp-for="Icon" class="form-control" placeholder="Örn: fas fa-home veya material-icons:home" />
+                            <span asp-validation-for="Icon" class="text-danger"></span>
+                            <small class="form-text text-muted">
+                                Font Awesome veya Material Icons sınıf adını girin. Örneğin: "fas fa-home" veya "material-icons"
+                            </small>
+                        </div>
+                    </div>
+                    
+                    <div class="row mb-3">
+                        <label class="col-sm-3 col-form-label">Menü Tipi</label>
+                        <div class="col-sm-9">
+                            <select id="menuType" class="form-select">
+                                <option value="controller" selected="@(!string.IsNullOrEmpty(Model.Controller) || !string.IsNullOrEmpty(Model.Action))">Controller/Action</option>
+                                <option value="url" selected="@(!string.IsNullOrEmpty(Model.Url))">Harici URL</option>
+                            </select>
+                        </div>
+                    </div>
+                    
+                    <div id="controllerActionGroup" style="@(string.IsNullOrEmpty(Model.Url) ? "" : "display: none;")">
+                        <div class="row mb-3">
+                            <label asp-for="Controller" class="col-sm-3 col-form-label"></label>
+                            <div class="col-sm-9">
+                                <input asp-for="Controller" class="form-control" />
+                                <span asp-validation-for="Controller" class="text-danger"></span>
+                            </div>
+                        </div>
+                        
+                        <div class="row mb-3">
+                            <label asp-for="Action" class="col-sm-3 col-form-label"></label>
+                            <div class="col-sm-9">
+                                <input asp-for="Action" class="form-control" />
+                                <span asp-validation-for="Action" class="text-danger"></span>
+                            </div>
+                        </div>
+                    </div>
+                    
+                    <div id="urlGroup" style="@(string.IsNullOrEmpty(Model.Url) ? "display: none;" : "")">
+                        <div class="row mb-3">
+                            <label asp-for="Url" class="col-sm-3 col-form-label"></label>
+                            <div class="col-sm-9">
+                                <input asp-for="Url" class="form-control" placeholder="Örn: https://example.com" />
+                                <span asp-validation-for="Url" class="text-danger"></span>
+                            </div>
+                        </div>
+                    </div>
+                    
+                    <div class="row mb-3">
+                        <label asp-for="Sira" class="col-sm-3 col-form-label"></label>
+                        <div class="col-sm-9">
+                            <input asp-for="Sira" class="form-control" />
+                            <span asp-validation-for="Sira" class="text-danger"></span>
+                        </div>
+                    </div>
+                    
+                    <div class="row mb-3">
+                        <label asp-for="Aktif" class="col-sm-3 col-form-label"></label>
+                        <div class="col-sm-9">
+                            <div class="form-check form-switch">
+                                <input asp-for="Aktif" class="form-check-input" />
+                            </div>
+                        </div>
+                    </div>
+                    
+                    <div class="row mb-3">
+                        <label asp-for="SelectedRoleIds" class="col-sm-3 col-form-label"></label>
+                        <div class="col-sm-9">
+                            <select asp-for="SelectedRoleIds" class="form-select" multiple>
+                                @foreach (var role in Model.Roles)
+                                {
+                                    <option value="@role.Id">@role.Name</option>
+                                }
+                            </select>
+                            <span asp-validation-for="SelectedRoleIds" class="text-danger"></span>
+                            <small class="form-text text-muted">Birden fazla rol seçmek için CTRL tuşuna basarak seçim yapabilirsiniz.</small>
+                        </div>
+                    </div>
+                    
+                    <div class="row">
+                        <div class="col-sm-9 offset-sm-3">
+                            <button type="submit" class="btn btn-primary">
+                                <i class="fa fa-save me-1"></i> Kaydet
+                            </button>
+                            <a asp-action="Index" class="btn btn-light">
+                                <i class="fa fa-times me-1"></i> İptal
+                            </a>
+                        </div>
+                    </div>
+                </form>
+            </div>
+        </div>
+    </div>
+</div>
+
+@section Scripts {
+    @{await Html.RenderPartialAsync("_ValidationScriptsPartial");}
+    
+    <script>
+        $(document).ready(function () {
+            // Menü tipi değiştiğinde ilgili alanları göster/gizle
+            $('#menuType').change(function () {
+                var selectedType = $(this).val();
+                
+                if (selectedType === 'controller') {
+                    $('#controllerActionGroup').show();
+                    $('#urlGroup').hide();
+                } else {
+                    $('#controllerActionGroup').hide();
+                    $('#urlGroup').show();
+                }
+            });
+        });
+    </script>
+} 

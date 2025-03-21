@@ -155,99 +155,147 @@
                                         <h6>Genel</h6>
                                     </div>
                                 </li>
-                                <li class="dropdown">
-                                    <a class="nav-link menu-title" asp-controller="Home" asp-action="Index">
-                                        <i class="material-icons">dashboard</i>
-                                        <span>Dashboard</span>
-                                    </a>
-                                </li>
-                                <li class="dropdown">
-                                    <a class="nav-link menu-title" asp-controller="Cari" asp-action="Index">
-                                        <i class="material-icons">people</i>
-                                        <span>Cariler</span>
-                                    </a>
-                                </li>
-                                <li class="dropdown">
-                                    <a class="nav-link menu-title" href="#">
-                                        <i class="material-icons">inventory_2</i>
-                                        <span>Ürünler</span>
-                                    </a>
-                                    <ul class="nav-submenu menu-content">
-                                        <li><a asp-controller="Urun" asp-action="Index">Ürün Listesi</a></li>
-                                        <li><a asp-controller="UrunKategori" asp-action="Index">Kategoriler</a></li>
-                                        <li><a asp-controller="Birim" asp-action="Index">Birimler</a></li>
-                                        <li><a asp-controller="Depo" asp-action="Index">Depolar</a></li>
-                                    </ul>
-                                </li>
-                                <li class="dropdown">
-                                    <a class="nav-link menu-title" asp-controller="Fatura" asp-action="Index">
-                                        <i class="material-icons">receipt</i>
-                                        <span>Faturalar</span>
-                                    </a>
-                                </li>
-                                <li class="dropdown">
-                                    <a class="nav-link menu-title" asp-controller="Irsaliye" asp-action="Index">
-                                        <i class="material-icons">description</i>
-                                        <span>İrsaliyeler</span>
-                                    </a>
-                                </li>
-                                <li class="dropdown">
-                                    <a class="nav-link menu-title" asp-controller="Stok" asp-action="Index">
-                                        <i class="material-icons">inventory_2</i>
-                                        <span>Stok Yönetimi</span>
-                                    </a>
-                                </li>
-                                <li class="sidebar-main-title">
-                                    <div>
-                                        <h6>Finans</h6>
-                                    </div>
-                                </li>
-                                <li class="dropdown">
-                                    <a href="#" class="nav-link dropdown-toggle" data-bs-toggle="dropdown"><i class="fa fa-money-bill-1-wave me-2"></i>Finans</a>
-                                    <div class="dropdown-menu bg-transparent border-0">
-                                        <a href="@Url.Action("Index", "Kasa")" class="dropdown-item">Kasa</a>
-                                        <a href="@Url.Action("Index", "Banka")" class="dropdown-item">Banka</a>
-                                    </div>
-                                </li>
-                                <li class="dropdown">
-                                    <a class="nav-link menu-title" href="#">
-                                        <i class="material-icons">currency_exchange</i>
-                                        <span>Kur Yönetimi</span>
-                                    </a>
-                                    <ul class="nav-submenu menu-content">
-                                        <li><a asp-controller="Kur" asp-action="Index">Kur Değerleri</a></li>
-                                        <li><a asp-controller="Kur" asp-action="ParaBirimIliskileri">Para Birimi İlişkileri</a></li>
-                                    </ul>
-                                </li>
-                                <li class="sidebar-main-title">
-                                    <div>
-                                        <h6>Raporlar</h6>
-                                    </div>
-                                </li>
-                                <li class="dropdown">
-                                    <a class="nav-link menu-title" asp-controller="Rapor" asp-action="Index">
-                                        <i class="material-icons">bar_chart</i>
-                                        <span>Raporlar</span>
-                                    </a>
-                                </li>
-                                <li class="dropdown">
-                                    <a class="nav-link menu-title"  asp-controller="SistemLog" asp-action="Index">
-                                        <i class="material-icons">event_note</i>
-                                        <span>Sistem Logları</span>
-
-                                    </a>
-                                </li>
-                                <li class="sidebar-main-title">
-                                    <div>
-                                        <h6>Sistem</h6>
-                                    </div>
-                                </li>
-                                <li class="dropdown">
-                                    <a class="nav-link menu-title" asp-controller="Kullanici" asp-action="Index">
-                                        <i class="material-icons">manage_accounts</i>
-                                        <span>Kullanıcı Yönetimi</span>
-                                    </a>
-                                </li>
+                                
+                                @if (ViewBag.MenuItems != null && ViewBag.MenuItems.Count > 0)
+                                {
+                                    foreach (var menuItem in ViewBag.MenuItems)
+                                    {
+                                        if (menuItem.HasChildren)
+                                        {
+                                            <li class="dropdown">
+                                                <a class="nav-link menu-title" href="#">
+                                                    @if (!string.IsNullOrEmpty(menuItem.Icon))
+                                                    {
+                                                        <i class="@menuItem.Icon"></i>
+                                                    }
+                                                    else
+                                                    {
+                                                        <i class="material-icons">menu</i>
+                                                    }
+                                                    <span>@menuItem.Ad</span>
+                                                </a>
+                                                <ul class="nav-submenu menu-content">
+                                                    @foreach (var subItem in menuItem.AltMenuler)
+                                                    {
+                                                        <li>
+                                                            <a asp-controller="@subItem.Controller" asp-action="@subItem.Action">
+                                                                @if (!string.IsNullOrEmpty(subItem.Icon))
+                                                                {
+                                                                    <i class="@subItem.Icon"></i>
+                                                                }
+                                                                @subItem.Ad
+                                                            </a>
+                                                        </li>
+                                                    }
+                                                </ul>
+                                            </li>
+                                        }
+                                        else
+                                        {
+                                            <li class="dropdown">
+                                                <a class="nav-link menu-title" asp-controller="@menuItem.Controller" asp-action="@menuItem.Action">
+                                                    @if (!string.IsNullOrEmpty(menuItem.Icon))
+                                                    {
+                                                        <i class="@menuItem.Icon"></i>
+                                                    }
+                                                    else
+                                                    {
+                                                        <i class="material-icons">menu</i>
+                                                    }
+                                                    <span>@menuItem.Ad</span>
+                                                </a>
+                                            </li>
+                                        }
+                                    }
+                                }
+                                else
+                                {
+                                    <!-- Varsayılan menü öğeleri -->
+                                    <li class="dropdown">
+                                        <a class="nav-link menu-title" asp-controller="Home" asp-action="Index">
+                                            <i class="material-icons">dashboard</i>
+                                            <span>Dashboard</span>
+                                        </a>
+                                    </li>
+                                    <li class="dropdown">
+                                        <a class="nav-link menu-title" asp-controller="Cari" asp-action="Index">
+                                            <i class="material-icons">people</i>
+                                            <span>Cariler</span>
+                                        </a>
+                                    </li>
+                                    <li class="dropdown">
+                                        <a class="nav-link menu-title" href="#">
+                                            <i class="material-icons">inventory</i>
+                                            <span>Stok Yönetimi</span>
+                                        </a>
+                                        <ul class="nav-submenu menu-content">
+                                            <li><a asp-controller="Urun" asp-action="Index">Ürünler</a></li>
+                                            <li><a asp-controller="UrunKategori" asp-action="Index">Kategoriler</a></li>
+                                            <li><a asp-controller="UrunFiyat" asp-action="Index">Ürün Fiyatları</a></li>
+                                            <li><a asp-controller="Stok" asp-action="StokGiris">Stok Girişi</a></li>
+                                            <li><a asp-controller="Stok" asp-action="StokCikis">Stok Çıkışı</a></li>
+                                            <li><a asp-controller="Stok" asp-action="StokDurumu">Stok Durumu</a></li>
+                                            <li><a asp-controller="Stok" asp-action="Index">Stok Hareketleri</a></li>
+                                            <li><a asp-controller="Birim" asp-action="Index">Birimler</a></li>
+                                        </ul>
+                                    </li>
+                                    <li class="dropdown">
+                                        <a class="nav-link menu-title" asp-controller="Fatura" asp-action="Index">
+                                            <i class="material-icons">receipt</i>
+                                            <span>Faturalar</span>
+                                        </a>
+                                    </li>
+                                    <li class="dropdown">
+                                        <a class="nav-link menu-title" asp-controller="Irsaliye" asp-action="Index">
+                                            <i class="material-icons">description</i>
+                                            <span>İrsaliyeler</span>
+                                        </a>
+                                    </li>
+                                    <li class="dropdown">
+                                        <a class="nav-link menu-title" href="#">
+                                            <i class="material-icons">payments</i>
+                                            <span>Finans</span>
+                                        </a>
+                                        <ul class="nav-submenu menu-content">
+                                            <li><a asp-controller="Kasa" asp-action="Index">Kasa İşlemleri</a></li>
+                                            <li><a asp-controller="Banka" asp-action="Index">Banka İşlemleri</a></li>
+                                            <li><a asp-controller="DovizKuru" asp-action="Index">Döviz Kurları</a></li>
+                                            <li><a asp-controller="ParaBirimi" asp-action="Index">Para Birimleri</a></li>
+                                            <li><a asp-controller="ParaBirimiIliski" asp-action="Index">Para Birimi İlişkileri</a></li>
+                                        </ul>
+                                    </li>
+                                    
+                                    <li class="sidebar-main-title">
+                                        <div>
+                                            <h6>Ayarlar</h6>
+                                        </div>
+                                    </li>
+                                    
+                                    <li class="dropdown">
+                                        <a class="nav-link menu-title" href="#">
+                                            <i class="material-icons">settings</i>
+                                            <span>Sistem Ayarları</span>
+                                        </a>
+                                        <ul class="nav-submenu menu-content">
+                                            <li><a asp-controller="Depo" asp-action="Index">Depolar</a></li>
+                                            <li><a asp-controller="SistemLog" asp-action="Index">Sistem Logları</a></li>
+                                            @if (User.IsInRole("Admin"))
+                                            {
+                                                <li><a asp-controller="Menu" asp-action="Index">Menü Yönetimi</a></li>
+                                                <li><a asp-controller="DbInit" asp-action="Index">Veritabanı İşlemleri</a></li>
+                                            }
+                                        </ul>
+                                    </li>
+                                    @if (ViewBag.IsAdmin == true)
+                                    {
+                                        <li class="sidebar-item">
+                                            <a asp-controller="Account" asp-action="UserManagement" class="sidebar-link">
+                                                <i class="fas fa-users"></i>
+                                                <span class="sidebar-text">Kullanıcı Yönetimi</span>
+                                            </a>
+                                        </li>
+                                    }
+                                }
                             </ul>
                         </div>
                         <div class="right-arrow" id="right-arrow">
@@ -454,6 +502,16 @@
             $('.loader-wrapper').fadeOut('slow');
         });
     </script>
+    
+    @if (ViewBag.RequiresLogin == true)
+    {
+        <script>
+            // Giriş gerekli olan sayfalar için login sayfasına yönlendir
+            window.onload = function() {
+                window.location.href = '@Url.Action("Login", "Account", new { returnUrl = Context.Request.Path })';
+            };
+        </script>
+    }
     
     @await RenderSectionAsync("Scripts", required: false)
 </body>

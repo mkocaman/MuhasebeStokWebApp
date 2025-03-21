@@ -28,10 +28,10 @@ namespace MuhasebeStokWebApp.Data.Entities
         
         [Required]
         [StringLength(20)]
-        public string Birim { get; set; }
+        public required string Birim { get; set; }
         
         [StringLength(3)]
-        public string ParaBirimi { get; set; } = "TRY";
+        public required string ParaBirimi { get; set; } = "TRY";
         
         // USD'ye çevirmek için kullanılan kur
         public decimal DovizKuru { get; set; } = 1;
@@ -53,18 +53,18 @@ namespace MuhasebeStokWebApp.Data.Entities
         
         [Required]
         [StringLength(50)]
-        public string ReferansNo { get; set; }
+        public required string ReferansNo { get; set; }
         
         [Required]
         [StringLength(20)]
-        public string ReferansTuru { get; set; }
+        public required string ReferansTuru { get; set; }
         
         [Required]
         public Guid ReferansID { get; set; }
         
         [Required]
         [StringLength(500)]
-        public string Aciklama { get; set; }
+        public string? Aciklama { get; set; }
         
         public bool Aktif { get; set; } = true;
         
@@ -87,6 +87,6 @@ namespace MuhasebeStokWebApp.Data.Entities
         
         // Navigation properties
         [ForeignKey("UrunID")]
-        public virtual Urun Urun { get; set; }
+        public virtual Urun? Urun { get; set; }
     }
 } 

@@ -1,0 +1,152 @@
+@model MuhasebeStokWebApp.Data.Entities.Menu
+@{
+    ViewData["Title"] = "Menü Sil";
+}
+
+<div class="page-title">
+    <div class="row">
+        <div class="col-6">
+            <h3>Menü Sil</h3>
+        </div>
+        <div class="col-6 text-end">
+            <a asp-action="Index" class="btn btn-outline-primary">
+                <i class="fa fa-arrow-left me-1"></i> Menü Listesine Dön
+            </a>
+        </div>
+    </div>
+</div>
+
+<div class="row">
+    <div class="col-12">
+        <div class="card">
+            <div class="card-header">
+                <h5>@Model.Ad Menüsünü Silmek İstediğinize Emin Misiniz?</h5>
+            </div>
+            <div class="card-body">
+                <div class="alert alert-danger">
+                    <h6>Uyarı!</h6>
+                    <p>
+                        Bu işlem geri alınamaz. Bu menüyü sildiğinizde, bu menüye ait tüm rol ilişkileri de silinecektir.
+                        @if (Model.AltMenuler != null && Model.AltMenuler.Any())
+                        {
+                            <strong>Bu menünün @Model.AltMenuler.Count alt menüsü bulunmaktadır. Alt menüleri silmeden bu menüyü silemezsiniz.</strong>
+                        }
+                    </p>
+                </div>
+                
+                <div class="row mb-3">
+                    <strong class="col-sm-3 text-muted">Menü ID</strong>
+                    <div class="col-sm-9">
+                        @Model.MenuID
+                    </div>
+                </div>
+                
+                <div class="row mb-3">
+                    <strong class="col-sm-3 text-muted">Menü Adı</strong>
+                    <div class="col-sm-9">
+                        @Model.Ad
+                    </div>
+                </div>
+                
+                <div class="row mb-3">
+                    <strong class="col-sm-3 text-muted">İkon</strong>
+                    <div class="col-sm-9">
+                        @if (!string.IsNullOrEmpty(Model.Icon))
+                        {
+                            <i class="@Model.Icon me-2"></i>
+                            <code>@Model.Icon</code>
+                        }
+                        else
+                        {
+                            <span class="text-muted">İkon belirtilmemiş</span>
+                        }
+                    </div>
+                </div>
+                
+                <div class="row mb-3">
+                    <strong class="col-sm-3 text-muted">Controller/Action</strong>
+                    <div class="col-sm-9">
+                        @if (!string.IsNullOrEmpty(Model.Controller) || !string.IsNullOrEmpty(Model.Action))
+                        {
+                            <code>@Model.Controller / @Model.Action</code>
+                        }
+                        else
+                        {
+                            <span class="text-muted">Controller/Action belirtilmemiş</span>
+                        }
+                    </div>
+                </div>
+                
+                <div class="row mb-3">
+                    <strong class="col-sm-3 text-muted">URL</strong>
+                    <div class="col-sm-9">
+                        @if (!string.IsNullOrEmpty(Model.Url))
+                        {
+                            <a href="@Model.Url" target="_blank">@Model.Url</a>
+                        }
+                        else
+                        {
+                            <span class="text-muted">URL belirtilmemiş</span>
+                        }
+                    </div>
+                </div>
+                
+                <div class="row mb-3">
+                    <strong class="col-sm-3 text-muted">Üst Menü</strong>
+                    <div class="col-sm-9">
+                        @if (Model.UstMenu != null)
+                        {
+                            <a asp-action="Details" asp-route-id="@Model.UstMenuID">@Model.UstMenu.Ad</a>
+                        }
+                        else
+                        {
+                            <span class="text-muted">Ana menü</span>
+                        }
+                    </div>
+                </div>
+                
+                <div class="row mb-3">
+                    <strong class="col-sm-3 text-muted">Alt Menüler</strong>
+                    <div class="col-sm-9">
+                        @if (Model.AltMenuler != null && Model.AltMenuler.Any())
+                        {
+                            <ul class="list-group">
+                                @foreach (var altMenu in Model.AltMenuler)
+                                {
+                                    <li class="list-group-item">@altMenu.Ad</li>
+                                }
+                            </ul>
+                        }
+                        else
+                        {
+                            <span class="text-muted">Alt menü bulunmuyor</span>
+                        }
+                    </div>
+                </div>
+                
+                <div class="row mt-4">
+                    <div class="col-12">
+                        @if (Model.AltMenuler != null && Model.AltMenuler.Any())
+                        {
+                            <a asp-action="Index" class="btn btn-light">
+                                <i class="fa fa-arrow-left me-1"></i> Listeye Dön
+                            </a>
+                        }
+                        else
+                        {
+                            <form asp-action="Delete" method="post">
+                                <input type="hidden" name="id" value="@Model.MenuID" />
+                                <button type="submit" class="btn btn-danger">
+                                    <i class="fa fa-trash me-1"></i> Sil
+                                </button>
+                                <a asp-action="Index" class="btn btn-light">
+                                    <i class="fa fa-times me-1"></i> İptal
+                                </a>
+                            </form>
+                        }
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</div> 

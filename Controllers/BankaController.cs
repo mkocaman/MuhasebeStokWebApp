@@ -220,7 +220,6 @@ namespace MuhasebeStokWebApp.Controllers
                     banka.AcilisBakiye = model.AcilisBakiye;
                     banka.Aciklama = model.Aciklama;
                     banka.Aktif = model.Aktif;
-                    banka.SonGuncelleyenKullaniciID = GetCurrentUserId();
                     banka.GuncellemeTarihi = DateTime.Now;
 
                     _context.Update(banka);
@@ -314,106 +313,71 @@ namespace MuhasebeStokWebApp.Controllers
                 return NotFound();
             }
 
-            // Silme işlemi yerine pasife alma işlemi
-            banka.Aktif = false;
+            // Soft delete işlemi
+            banka.SoftDelete = true;
             banka.SonGuncelleyenKullaniciID = GetCurrentUserId();
             banka.GuncellemeTarihi = DateTime.Now;
             
             _context.Update(banka);
             await _context.SaveChangesAsync();
 
-            TempData["SuccessMessage"] = "Banka hesabı başarıyla pasife alındı.";
+            TempData["SuccessMessage"] = "Banka hesabı başarıyla silindi.";
             return RedirectToAction(nameof(Index));
         }
 
         // GET: Banka/Hareketler/5
-        public async Task<IActionResult> Hareketler(Guid id, DateTime? baslangicTarihi = null, DateTime? bitisTarihi = null, string? hareketTuru = null)
+        public async Task<IActionResult> Hareketler(Guid? id)
         {
+            if (id == null)
+            {
+                return NotFound();
+            }
+
             var banka = await _context.Bankalar
                 .FirstOrDefaultAsync(b => b.BankaID == id && !b.SoftDelete);
+
             if (banka == null)
             {
                 return NotFound();
             }
 
-            var viewModel = new BankaHareketlerViewModel
+            var hareketler = await _context.BankaHareketleri
+                .Where(h => h.BankaID == id && !h.SoftDelete)
+                .OrderByDescending(h => h.Tarih)
+                .Include(h => h.Cari)
+                .Select(h => new BankaHareketViewModel
+                {
+                    BankaHareketID = h.BankaHareketID,
+                    BankaID = h.BankaID,
+                    BankaAdi = banka.BankaAdi,
+                    Tutar = h.Tutar,
+                    HareketTuru = h.HareketTuru,
+                    Tarih = h.Tarih,
+                    ReferansNo = h.ReferansNo,
+                    ReferansTuru = h.ReferansTuru,
+                    DekontNo = h.DekontNo,
+                    Aciklama = h.Aciklama,
+                    KarsiUnvan = h.KarsiUnvan,
+                    KarsiBankaAdi = h.KarsiBankaAdi,
+                    KarsiIBAN = h.KarsiIBAN,
+                    CariID = h.CariID,
+                    CariAdi = h.Cari != null ? h.Cari.CariAdi : null
+                })
+                .ToListAsync();
+
+            ViewBag.Banka = new BankaViewModel
             {
                 BankaID = banka.BankaID,
                 BankaAdi = banka.BankaAdi,
                 SubeAdi = banka.SubeAdi,
-                SubeKodu = banka.SubeKodu,
                 HesapNo = banka.HesapNo,
                 IBAN = banka.IBAN,
                 ParaBirimi = banka.ParaBirimi,
                 AcilisBakiye = banka.AcilisBakiye,
-                GuncelBakiye = banka.GuncelBakiye,
-                BaslangicTarihi = baslangicTarihi ?? DateTime.Now.AddMonths(-1),
-                BitisTarihi = bitisTarihi ?? DateTime.Now,
-                Hareketler = new List<BankaHareketViewModel>()
+                GuncelBakiye = banka.GuncelBakiye
             };
 
-            var query = _context.BankaHareketleri
-                .Include(h => h.Cari)
-                .Where(h => h.BankaID == id && !h.SoftDelete);
-
-            if (baslangicTarihi.HasValue)
-            {
-                query = query.Where(h => h.Tarih >= baslangicTarihi.Value);
-            }
-
-            if (bitisTarihi.HasValue)
-            {
-                query = query.Where(h => h.Tarih <= bitisTarihi.Value.AddDays(1).AddSeconds(-1));
-            }
-
-            if (!string.IsNullOrEmpty(hareketTuru))
-            {
-                query = query.Where(h => h.HareketTuru == hareketTuru);
-            }
-
-            var hareketler = await query.OrderByDescending(h => h.Tarih).ToListAsync();
-
-            decimal toplamGiris = 0;
-            decimal toplamCikis = 0;
-
-            foreach (var hareket in hareketler)
-            {
-                var hareketViewModel = new BankaHareketViewModel
-                {
-                    BankaHareketID = hareket.BankaHareketID,
-                    BankaID = hareket.BankaID,
-                    BankaAdi = banka.BankaAdi,
-                    Tutar = hareket.Tutar,
-                    HareketTuru = hareket.HareketTuru,
-                    Tarih = hareket.Tarih,
-                    ReferansNo = hareket.ReferansNo,
-                    ReferansTuru = hareket.ReferansTuru,
-                    DekontNo = hareket.DekontNo,
-                    Aciklama = hareket.Aciklama,
-                    KarsiUnvan = hareket.KarsiUnvan,
-                    KarsiBankaAdi = hareket.KarsiBankaAdi,
-                    KarsiIBAN = hareket.KarsiIBAN,
-                    CariID = hareket.CariID,
-                    CariAdi = hareket.Cari?.CariAdi,
-                    ParaBirimi = banka.ParaBirimi
-                };
-
-                viewModel.Hareketler.Add(hareketViewModel);
-
-                if (hareket.HareketTuru == "Giriş")
-                {
-                    toplamGiris += hareket.Tutar;
-                }
-                else if (hareket.HareketTuru == "Çıkış")
-                {
-                    toplamCikis += hareket.Tutar;
-                }
-            }
-
-            viewModel.ToplamGiris = toplamGiris;
-            viewModel.ToplamCikis = toplamCikis;
-
-            return View(viewModel);
+            return View(hareketler);
         }
 
         // GET: Banka/YeniHareket

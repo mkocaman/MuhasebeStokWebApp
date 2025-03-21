@@ -4,71 +4,49 @@ using System.ComponentModel.DataAnnotations.Schema;
 
 namespace MuhasebeStokWebApp.Data.Entities
 {
-    /// <summary>
-    /// Sistem ayarları entity'si
-    /// </summary>
-    [Table("SistemAyarlari")]
     public class SistemAyarlari
     {
         [Key]
-        public Guid SistemAyarlariID { get; set; }
+        public int SistemAyarlariID { get; set; }
         
-        // Para birimi ayarları
-        public Guid AnaDovizID { get; set; }
+        [Required]
+        [StringLength(10)]
+        public required string AnaDovizKodu { get; set; } = "TRY";
         
-        [StringLength(5)]
-        public string AnaDovizKodu { get; set; }
+        [Required]
+        [StringLength(50)]
+        public required string SirketAdi { get; set; }
         
-        public Guid? IkinciDovizID { get; set; }
-        
-        [StringLength(5)]
-        public string IkinciDovizKodu { get; set; }
-        
-        public Guid? UcuncuDovizID { get; set; }
-        
-        [StringLength(5)]
-        public string UcuncuDovizKodu { get; set; }
-        
-        // Şirket bilgileri
         [StringLength(100)]
-        public string SirketAdi { get; set; } = "Şirket Adı";
-        
-        [StringLength(250)]
-        public string SirketAdresi { get; set; } = "Şirket Adresi";
+        public required string SirketAdresi { get; set; }
         
         [StringLength(20)]
-        public string SirketTelefon { get; set; } = "+90";
+        public required string SirketTelefon { get; set; }
         
         [StringLength(100)]
-        public string SirketEmail { get; set; } = "info@sirket.com";
+        public required string SirketEmail { get; set; }
         
         [StringLength(20)]
-        public string SirketVergiNo { get; set; } = "1234567890";
+        public required string SirketVergiNo { get; set; }
         
-        [StringLength(100)]
-        public string SirketVergiDairesi { get; set; } = "Vergi Dairesi";
+        [StringLength(20)]
+        public required string SirketVergiDairesi { get; set; }
         
-        // Kur güncelleme ayarları
         public bool OtomatikDovizGuncelleme { get; set; } = true;
         
-        public int DovizGuncellemeSikligi { get; set; } = 24;  // saat cinsinden
+        public int DovizGuncellemeSikligi { get; set; } = 24; // Saat cinsinden
         
-        public DateTime SonDovizGuncellemeTarihi { get; set; } = DateTime.Now;
+        public DateTime SonDovizGuncellemeTarihi { get; set; }
+        
+        [StringLength(500)]
+        public string? AktifParaBirimleri { get; set; }
         
         public bool Aktif { get; set; } = true;
         
+        public bool SoftDelete { get; set; } = false;
+        
         public DateTime OlusturmaTarihi { get; set; } = DateTime.Now;
         
-        public DateTime GuncellemeTarihi { get; set; } = DateTime.Now;
-        
-        // İlişkiler
-        [ForeignKey("AnaDovizID")]
-        public virtual ParaBirimi AnaDoviz { get; set; }
-        
-        [ForeignKey("IkinciDovizID")]
-        public virtual ParaBirimi IkinciDoviz { get; set; }
-        
-        [ForeignKey("UcuncuDovizID")]
-        public virtual ParaBirimi UcuncuDoviz { get; set; }
+        public DateTime? GuncellemeTarihi { get; set; }
     }
 } 

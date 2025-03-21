@@ -2,127 +2,80 @@
 
 @{
     ViewData["Title"] = "Ürün Detayları";
-    Layout = "~/Views/Shared/_Layout.cshtml";
 }
 
 <div class="container-fluid">
-    <div class="card">
-        <div class="card-header bg-primary text-white">
-            <div class="d-flex justify-content-between align-items-center">
-                <h4 class="mb-0">Ürün Detayları</h4>
-                <a asp-controller="Stok" asp-action="Index" class="btn btn-light">
-                    <i class="fas fa-arrow-left"></i> Listeye Dön
-                </a>
+    <div class="page-header">
+        <div class="row">
+            <div class="col-sm-6">
+                <h3>Ürün Detayları</h3>
+                <ol class="breadcrumb">
+                    <li class="breadcrumb-item"><a href="/">Ana Sayfa</a></li>
+                    <li class="breadcrumb-item"><a asp-action="Index">Ürünler</a></li>
+                    <li class="breadcrumb-item active">Ürün Detayları</li>
+                </ol>
             </div>
         </div>
-        <div class="card-body">
-            <div class="row mb-4">
-                <div class="col-md-6">
-                    <div class="card">
-                        <div class="card-header bg-info text-white">
-                            <h5 class="mb-0">Ürün Bilgileri</h5>
+    </div>
+</div>
+
+<div class="container-fluid">
+    <div class="row">
+        <div class="col-sm-12">
+            <div class="card">
+                <div class="card-header">
+                    <h5>@Model.UrunAdi</h5>
+                </div>
+                <div class="card-body">
+                    <div class="row">
+                        <div class="col-md-6">
+                            <dl class="row">
+                                <dt class="col-sm-4">@Html.DisplayNameFor(model => model.UrunAdi)</dt>
+                                <dd class="col-sm-8">@Model.UrunAdi</dd>
+                                
+                                <dt class="col-sm-4">@Html.DisplayNameFor(model => model.KategoriAdi)</dt>
+                                <dd class="col-sm-8">@Model.KategoriAdi</dd>
+                                
+                                <dt class="col-sm-4">@Html.DisplayNameFor(model => model.StokMiktar)</dt>
+                                <dd class="col-sm-8">@Model.StokMiktar</dd>
+                                
+                                <dt class="col-sm-4">@Html.DisplayNameFor(model => model.Aktif)</dt>
+                                <dd class="col-sm-8">
+                                    @if (Model.Aktif)
+                                    {
+                                        <span class="badge badge-success">Aktif</span>
+                                    }
+                                    else
+                                    {
+                                        <span class="badge badge-danger">Pasif</span>
+                                    }
+                                </dd>
+                            </dl>
                         </div>
-                        <div class="card-body">
-                            <table class="table table-bordered">
-                                <tr>
-                                    <th style="width: 40%">Ürün Kodu:</th>
-                                    <td>@Model.UrunKodu</td>
-                                </tr>
-                                <tr>
-                                    <th>Ürün Adı:</th>
-                                    <td>@Model.UrunAdi</td>
-                                </tr>
-                                <tr>
-                                    <th>Kategori:</th>
-                                    <td>@Model.KategoriAdi</td>
-                                </tr>
-                                <tr>
-                                    <th>Birim:</th>
-                                    <td>@Model.Birim</td>
-                                </tr>
-                                <tr>
-                                    <th>Stok Miktarı:</th>
-                                    <td>@Model.StokMiktar.ToString("N2") @Model.Birim</td>
-                                </tr>
-                                <tr>
-                                    <th>Durum:</th>
-                                    <td>
-                                        @if (Model.Aktif)
-                                        {
-                                            <span class="badge bg-success">Aktif</span>
-                                        }
-                                        else
-                                        {
-                                            <span class="badge bg-danger">Pasif</span>
-                                        }
-                                    </td>
-                                </tr>
-                            </table>
+                        <div class="col-md-6">
+                            <dl class="row">
+                                <dt class="col-sm-4">@Html.DisplayNameFor(model => model.ListeFiyati)</dt>
+                                <dd class="col-sm-8">@Model.ListeFiyati.ToString("N2") ₺</dd>
+                                
+                                <dt class="col-sm-4">@Html.DisplayNameFor(model => model.MaliyetFiyati)</dt>
+                                <dd class="col-sm-8">@Model.MaliyetFiyati.ToString("N2") ₺</dd>
+                                
+                                <dt class="col-sm-4">@Html.DisplayNameFor(model => model.SatisFiyati)</dt>
+                                <dd class="col-sm-8">@Model.SatisFiyati.ToString("N2") ₺</dd>
+                                
+                                <dt class="col-sm-4">@Html.DisplayNameFor(model => model.OlusturmaTarihi)</dt>
+                                <dd class="col-sm-8">@(Model.OlusturmaTarihi.HasValue ? Model.OlusturmaTarihi.Value.ToString("dd.MM.yyyy HH:mm") : "-")</dd>
+                                
+                                <dt class="col-sm-4">@Html.DisplayNameFor(model => model.GuncellemeTarihi)</dt>
+                                <dd class="col-sm-8">@(Model.GuncellemeTarihi.HasValue ? Model.GuncellemeTarihi.Value.ToString("dd.MM.yyyy HH:mm") : "-")</dd>
+                            </dl>
                         </div>
+                    </div>
+                    <div class="form-group mt-3">
+                        <a asp-action="Edit" asp-route-id="@Model.UrunID" class="btn btn-primary">Düzenle</a>
+                        <a asp-action="Index" class="btn btn-secondary">Listeye Dön</a>
                     </div>
                 </div>
-                <div class="col-md-6">
-                    <div class="card">
-                        <div class="card-header bg-success text-white">
-                            <h5 class="mb-0">Fiyat Bilgileri</h5>
-                        </div>
-                        <div class="card-body">
-                            <table class="table table-bordered">
-                                <tr>
-                                    <th style="width: 40%">Liste Fiyatı:</th>
-                                    <td class="text-end">@Model.ListeFiyati.ToString("N2") ₺</td>
-                                </tr>
-                                <tr>
-                                    <th>Maliyet Fiyatı:</th>
-                                    <td class="text-end">@Model.MaliyetFiyati.ToString("N2") ₺</td>
-                                </tr>
-                                <tr>
-                                    <th>Satış Fiyatı:</th>
-                                    <td class="text-end">@Model.SatisFiyati.ToString("N2") ₺</td>
-                                </tr>
-                                <tr>
-                                    <th>Kâr Marjı:</th>
-                                    <td class="text-end">
-                                        @{
-                                            var karMarji = Model.MaliyetFiyati > 0 ? ((Model.SatisFiyati - Model.MaliyetFiyati) / Model.MaliyetFiyati) * 100 : 0;
-                                        }
-                                        %@karMarji.ToString("N2")
-                                    </td>
-                                </tr>
-                            </table>
-                        </div>
-                    </div>
-                    
-                    <div class="card mt-3">
-                        <div class="card-header bg-secondary text-white">
-                            <h5 class="mb-0">Sistem Bilgileri</h5>
-                        </div>
-                        <div class="card-body">
-                            <table class="table table-bordered">
-                                <tr>
-                                    <th style="width: 40%">Oluşturma Tarihi:</th>
-                                    <td>@(Model.OlusturmaTarihi.HasValue ? Model.OlusturmaTarihi.Value.ToString("dd.MM.yyyy HH:mm") : "-")</td>
-                                </tr>
-                                <tr>
-                                    <th>Güncelleme Tarihi:</th>
-                                    <td>@(Model.GuncellemeTarihi.HasValue ? Model.GuncellemeTarihi.Value.ToString("dd.MM.yyyy HH:mm") : "-")</td>
-                                </tr>
-                            </table>
-                        </div>
-                    </div>
-                </div>
-            </div>
-            
-            <div class="card-footer bg-light text-end">
-                <a asp-controller="Stok" asp-action="Index" class="btn btn-secondary">
-                    <i class="fas fa-arrow-left"></i> Listeye Dön
-                </a>
-                <a asp-controller="Stok" asp-action="Hareketler" asp-route-id="@Model.UrunID" class="btn btn-info">
-                    <i class="fas fa-history"></i> Stok Hareketleri
-                </a>
-                <a asp-action="Edit" asp-route-id="@Model.UrunID" class="btn btn-warning">
-                    <i class="fas fa-edit"></i> Düzenle
-                </a>
             </div>
         </div>
     </div>

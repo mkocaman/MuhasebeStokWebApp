@@ -1,0 +1,83 @@
+@model MuhasebeStokWebApp.ViewModels.DovizKuru.DovizKuruEkleViewModel
+
+@{
+    ViewData["Title"] = "Manuel Döviz Kuru Ekleme";
+    Layout = "~/Views/Shared/_Layout.cshtml";
+}
+
+<div class="card">
+    <div class="card-header">
+        <h5 class="card-title">Manuel Döviz Kuru Ekleme</h5>
+    </div>
+    <div class="card-body">
+        @if (TempData["SuccessMessage"] != null)
+        {
+            <div class="alert alert-success">
+                @TempData["SuccessMessage"]
+            </div>
+        }
+        
+        <form asp-action="ManuelEkle" method="post">
+            <div asp-validation-summary="ModelOnly" class="text-danger"></div>
+            
+            <div class="row mb-3">
+                <div class="col-md-6">
+                    <div class="form-group">
+                        <label asp-for="ParaBirimiKodu" class="control-label"></label>
+                        <select asp-for="ParaBirimiKodu" class="form-select">
+                            <option value="">-- Para Birimi Seçiniz --</option>
+                            @foreach (var paraBirimi in ViewBag.ParaBirimleri)
+                            {
+                                <option value="@paraBirimi.Kod">@paraBirimi.Kod - @paraBirimi.Ad</option>
+                            }
+                        </select>
+                        <span asp-validation-for="ParaBirimiKodu" class="text-danger"></span>
+                    </div>
+                </div>
+                <div class="col-md-6">
+                    <div class="form-group">
+                        <label asp-for="Tarih" class="control-label"></label>
+                        <input asp-for="Tarih" class="form-control" type="date" />
+                        <span asp-validation-for="Tarih" class="text-danger"></span>
+                    </div>
+                </div>
+            </div>
+            
+            <div class="row mb-3">
+                <div class="col-md-6">
+                    <div class="form-group">
+                        <label asp-for="AlisDegeri" class="control-label"></label>
+                        <input asp-for="AlisDegeri" class="form-control" />
+                        <span asp-validation-for="AlisDegeri" class="text-danger"></span>
+                    </div>
+                </div>
+                <div class="col-md-6">
+                    <div class="form-group">
+                        <label asp-for="SatisDegeri" class="control-label"></label>
+                        <input asp-for="SatisDegeri" class="form-control" />
+                        <span asp-validation-for="SatisDegeri" class="text-danger"></span>
+                    </div>
+                </div>
+            </div>
+            
+            <div class="form-group mb-3">
+                <label asp-for="Aciklama" class="control-label"></label>
+                <textarea asp-for="Aciklama" class="form-control"></textarea>
+                <span asp-validation-for="Aciklama" class="text-danger"></span>
+            </div>
+            
+            <div class="form-group">
+                <button type="submit" class="btn btn-primary">
+                    <i class="fas fa-save"></i> Kaydet
+                </button>
+                <a asp-controller="DovizKuru" asp-action="Index" class="btn btn-secondary">
+                    <i class="fas fa-arrow-left"></i> Geri Dön
+                </a>
+            </div>
+        </form>
+    </div>
+</div>
+
+@section Scripts {
+    @{await Html.RenderPartialAsync("_ValidationScriptsPartial");}
+} 

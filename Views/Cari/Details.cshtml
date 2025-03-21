@@ -111,14 +111,13 @@
                     <div class="d-flex justify-content-between align-items-center">
                         <h5 class="mb-0">Cari Hareketleri</h5>
                         <div class="dropdown">
-                            <button class="btn btn-success btn-sm dropdown-toggle" type="button" id="dropdownMenuButton" data-bs-toggle="dropdown" aria-expanded="false">
-                                <i class="fas fa-plus"></i> Yeni Hareket Ekle
+                            <button type="button" class="btn btn-success btn-sm dropdown-toggle" id="btnAddHareket" data-bs-toggle="dropdown" aria-expanded="false">
+                                <i class="fas fa-plus"></i> Yeni Hareket
                             </button>
-                            <ul class="dropdown-menu" aria-labelledby="dropdownMenuButton">
-                                <li><a class="dropdown-item" href="@Url.Action("YeniHareket", "Kasa", new { cariId = Model.CariID })">Kasa Hareketi Ekle</a></li>
-                                <li><a class="dropdown-item" href="@Url.Action("YeniHareket", "Banka", new { cariId = Model.CariID })">Banka Hareketi Ekle</a></li>
-                                <li><hr class="dropdown-divider"></li>
-                                <li><a class="dropdown-item" id="btnAddHareket" href="#">Cari Hareketi Ekle</a></li>
+                            <ul class="dropdown-menu dropdown-menu-end" aria-labelledby="btnAddHareket">
+                                <li><a class="dropdown-item" href="javascript:void(0);" id="btnCariHareketEkle"><i class="fas fa-exchange-alt"></i> Cari Hareket Ekle</a></li>
+                                <li><a class="dropdown-item" href="@Url.Action("Create", "KasaHareket", new { cariId = Model.CariID })"><i class="fas fa-money-bill-wave"></i> Kasa Hareketi Ekle</a></li>
+                                <li><a class="dropdown-item" href="@Url.Action("Create", "BankaHareket", new { cariId = Model.CariID })"><i class="fas fa-university"></i> Banka Hareketi Ekle</a></li>
                             </ul>
                         </div>
                     </div>
@@ -326,7 +325,7 @@
             });
             
             // Yeni Hareket Ekleme
-            $('#btnAddHareket').click(function() {
+            $('#btnCariHareketEkle').click(function() {
                 $.ajax({
                     url: '@Url.Action("HareketEkle", "Cari", new { id = Model.CariID })',
                     type: 'GET',

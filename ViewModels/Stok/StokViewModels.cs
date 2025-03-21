@@ -111,11 +111,50 @@ namespace MuhasebeStokWebApp.ViewModels.Stok
         [DisplayFormat(DataFormatString = "{0:N2} $", ApplyFormatInEditMode = false)]
         public decimal OrtalamaMaliyetUSD { get; set; }
         
+        [Display(Name = "Ortalama Satış Fiyatı (TL)")]
+        [DisplayFormat(DataFormatString = "{0:N2} ₺", ApplyFormatInEditMode = false)]
+        public decimal OrtalamaSatisFiyatiTL { get; set; }
+        
+        [Display(Name = "Ortalama Satış Fiyatı (USD)")]
+        [DisplayFormat(DataFormatString = "{0:N2} $", ApplyFormatInEditMode = false)]
+        public decimal OrtalamaSatisFiyatiUSD { get; set; }
+        
         // Stok hareketleri
-        public List<StokHareketDetayViewModel> StokHareketleri { get; set; } = new List<StokHareketDetayViewModel>();
+        public List<StokHareketListItemViewModel> StokHareketleri { get; set; } = new List<StokHareketListItemViewModel>();
         
         // FIFO kayıtları
-        public List<FifoKayitViewModel> FifoKayitlari { get; set; } = new List<FifoKayitViewModel>();
+        public List<StokFifoListItemViewModel> FifoKayitlari { get; set; } = new List<StokFifoListItemViewModel>();
+    }
+
+    // Stok Hareket Liste Öğesi ViewModel
+    public class StokHareketListItemViewModel
+    {
+        public Guid StokHareketID { get; set; }
+        public DateTime Tarih { get; set; }
+        public string HareketTuru { get; set; }
+        public string DepoAdi { get; set; }
+        public decimal Miktar { get; set; }
+        public decimal BirimFiyat { get; set; }
+        public string Birim { get; set; }
+        public string ReferansNo { get; set; }
+        public string ReferansTuru { get; set; }
+        public string Aciklama { get; set; }
+    }
+
+    // Stok FIFO Liste Öğesi ViewModel
+    public class StokFifoListItemViewModel
+    {
+        public Guid StokFifoID { get; set; }
+        public DateTime GirisTarihi { get; set; }
+        public DateTime? SonCikisTarihi { get; set; }
+        public decimal Miktar { get; set; }
+        public decimal KalanMiktar { get; set; }
+        public decimal BirimFiyat { get; set; }
+        public decimal BirimFiyatUSD { get; set; }
+        public decimal DovizKuru { get; set; }
+        public string ParaBirimi { get; set; }
+        public string ReferansNo { get; set; }
+        public string ReferansTuru { get; set; }
     }
 
     // Stok Hareket Detay ViewModel

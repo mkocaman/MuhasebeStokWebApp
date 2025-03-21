@@ -72,6 +72,43 @@
                 </div>
             </div>
 
+            <!-- Yeni Satış Bilgileri Bölümü -->
+            <div class="row mb-4">
+                <div class="col-md-6 offset-md-6">
+                    <div class="card">
+                        <div class="card-header bg-primary text-white">
+                            <h5 class="mb-0">Satış Bilgileri</h5>
+                        </div>
+                        <div class="card-body">
+                            <table class="table table-bordered">
+                                <tr>
+                                    <th style="width: 40%">Ortalama Satış Fiyatı (TL):</th>
+                                    <td class="text-end">@(Model.OrtalamaSatisFiyatiTL > 0 ? Model.OrtalamaSatisFiyatiTL.ToString("N2") + " ₺" : "-")</td>
+                                </tr>
+                                <tr>
+                                    <th>Ortalama Satış Fiyatı (USD):</th>
+                                    <td class="text-end">@(Model.OrtalamaSatisFiyatiUSD > 0 ? Model.OrtalamaSatisFiyatiUSD.ToString("N2") + " $" : "-")</td>
+                                </tr>
+                                <tr>
+                                    <th>Ortalama Kâr Marjı:</th>
+                                    <td class="text-end">
+                                        @if (Model.OrtalamaSatisFiyatiTL > 0 && Model.OrtalamaMaliyetTL > 0)
+                                        {
+                                            decimal karMarji = ((Model.OrtalamaSatisFiyatiTL - Model.OrtalamaMaliyetTL) / Model.OrtalamaMaliyetTL) * 100;
+                                            @karMarji.ToString("N2")@:%
+                                        }
+                                        else
+                                        {
+                                            @:-
+                                        }
+                                    </td>
+                                </tr>
+                            </table>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
             <ul class="nav nav-tabs" id="myTab" role="tablist">
                 <li class="nav-item" role="presentation">
                     <button class="nav-link active" id="hareketler-tab" data-bs-toggle="tab" data-bs-target="#hareketler" type="button" role="tab" aria-controls="hareketler" aria-selected="true">Stok Hareketleri</button>

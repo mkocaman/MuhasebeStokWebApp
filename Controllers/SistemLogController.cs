@@ -6,141 +6,122 @@ using Microsoft.AspNetCore.Mvc;
 using Microsoft.EntityFrameworkCore;
 using MuhasebeStokWebApp.Data;
 using MuhasebeStokWebApp.Data.Entities;
-using MuhasebeStokWebApp.Models;
-using MuhasebeStokWebApp.Services;
+using MuhasebeStokWebApp.ViewModels.SistemLog;
 
 namespace MuhasebeStokWebApp.Controllers
 {
     public class SistemLogController : Controller
     {
-        private readonly ILogService _logService;
+        private readonly ApplicationDbContext _context;
 
-        public SistemLogController(ILogService logService)
+        public SistemLogController(ApplicationDbContext context)
         {
-            _logService = logService;
+            _context = context;
         }
 
         // GET: SistemLog
         public async Task<IActionResult> Index(string searchString, string islemTuru, DateTime? baslangicTarihi, DateTime? bitisTarihi, int page = 1, int pageSize = 20)
         {
-            ViewData["CurrentFilter"] = searchString;
-            ViewData["CurrentIslemTuru"] = islemTuru;
-            ViewData["CurrentBaslangicTarihi"] = baslangicTarihi?.ToString("yyyy-MM-dd");
-            ViewData["CurrentBitisTarihi"] = bitisTarihi?.ToString("yyyy-MM-dd");
-
-            // LogService üzerinden logları al
-            IEnumerable<Models.SistemLog> logs;
+            ViewBag.SearchString = searchString;
+            ViewBag.IslemTuru = islemTuru;
+            ViewBag.BaslangicTarihi = baslangicTarihi;
+            ViewBag.BitisTarihi = bitisTarihi;
+            
+            // İşlem türlerini ViewBag'e ekle
+            var islemTurleri = await _context.SistemLoglar
+                .Select(l => l.IslemTuru)
+                .Distinct()
+                .OrderBy(t => t)
+                .ToListAsync();
+            
+            ViewBag.IslemTurleri = islemTurleri;
+            
+            // Filtreleme
+            var query = _context.SistemLoglar.AsQueryable();
+            
+            if (!string.IsNullOrEmpty(searchString))
+            {
+                query = query.Where(l => 
+                    l.KayitAdi.Contains(searchString) || 
+                    l.Aciklama.Contains(searchString) || 
+                    l.KullaniciAdi.Contains(searchString) ||
+                    l.TabloAdi.Contains(searchString));
+            }
             
             if (!string.IsNullOrEmpty(islemTuru))
             {
-                Models.LogTuru logTuru = (Models.LogTuru)Enum.Parse(typeof(Models.LogTuru), islemTuru);
-                logs = await _logService.GetLogsByTurAsync(logTuru, baslangicTarihi, bitisTarihi);
-            }
-            else
-            {
-                logs = await _logService.GetLogsAsync(baslangicTarihi, bitisTarihi);
+                query = query.Where(l => l.IslemTuru == islemTuru);
             }
             
-            // Arama filtresi uygula
-            if (!string.IsNullOrEmpty(searchString))
+            if (baslangicTarihi.HasValue)
             {
-                logs = logs.Where(l => 
-                    (l.Aciklama != null && l.Aciklama.Contains(searchString)) || 
-                    (l.KullaniciAdi != null && l.KullaniciAdi.Contains(searchString)));
+                query = query.Where(l => l.IslemTarihi >= baslangicTarihi.Value);
             }
+            
+            if (bitisTarihi.HasValue)
+            {
+                // Bitiş tarihini günün sonuna ayarla
+                var bitisTarihiSonu = bitisTarihi.Value.Date.AddDays(1).AddSeconds(-1);
+                query = query.Where(l => l.IslemTarihi <= bitisTarihiSonu);
+            }
+            
+            // Sıralama
+            query = query.OrderByDescending(l => l.IslemTarihi);
+            
+            // Toplam kayıt sayısı
+            var totalItems = await query.CountAsync();
             
             // Sayfalama
-            int totalItems = logs.Count();
-            int totalPages = (int)Math.Ceiling(totalItems / (double)pageSize);
+            var logs = await query
+                .Skip((page - 1) * pageSize)
+                .Take(pageSize)
+                .ToListAsync();
             
-            logs = logs.Skip((page - 1) * pageSize).Take(pageSize);
-            
-            ViewData["TotalPages"] = totalPages;
-            ViewData["CurrentPage"] = page;
-            
-            return View(logs);
-        }
-
-        // GET: SistemLog/CariLogs
-        public async Task<IActionResult> CariLogs(Guid cariId)
-        {
-            if (cariId == Guid.Empty)
+            // ViewModel oluştur
+            var viewModel = new SistemLogListViewModel
             {
-                return NotFound();
-            }
-
-            // İlgili cariye ait logları getir
-            var logs = await _logService.GetCariLogsAsync(cariId);
+                Logs = logs,
+                CurrentPage = page,
+                PageSize = pageSize,
+                TotalItems = totalItems,
+                TotalPages = (int)Math.Ceiling(totalItems / (double)pageSize)
+            };
             
-            if (logs == null)
-            {
-                logs = new List<Models.SistemLog>();
-            }
-            
-            ViewData["CariID"] = cariId;
-            
-            return View(logs);
+            return View(viewModel);
         }
 
         // GET: SistemLog/Details/5
-        public async Task<IActionResult> Details(int? id)
+        public async Task<IActionResult> Details(Guid id)
         {
-            if (id == null)
-            {
-                return NotFound();
-            }
-
-            var logs = await _logService.GetLogsAsync();
-            var log = logs.FirstOrDefault(l => l.SistemLogID == id);
+            var log = await _context.SistemLoglar.FindAsync(id);
             
             if (log == null)
             {
                 return NotFound();
             }
-
+            
             return View(log);
         }
-
-        // GET: SistemLog/Delete/5
-        public async Task<IActionResult> Delete(int? id)
+        
+        // GET: SistemLog/CariLogs
+        public async Task<IActionResult> CariLogs(Guid cariId)
         {
-            if (id == null)
+            var cari = await _context.Cariler.FindAsync(cariId);
+            
+            if (cari == null)
             {
                 return NotFound();
             }
-
-            var logs = await _logService.GetLogsAsync();
-            var log = logs.FirstOrDefault(l => l.SistemLogID == id);
             
-            if (log == null)
-            {
-                return NotFound();
-            }
-
-            return View(log);
-        }
-
-        // POST: SistemLog/Delete/5
-        [HttpPost, ActionName("Delete")]
-        [ValidateAntiForgeryToken]
-        public async Task<IActionResult> DeleteConfirmed(int id)
-        {
-            // LogService üzerinden silme işlemini gerçekleştir
-            await _logService.DeleteLogAsync(id);
+            var logs = await _context.SistemLoglar
+                .Where(l => l.KayitID == cariId && l.TabloAdi == "Cariler")
+                .OrderByDescending(l => l.IslemTarihi)
+                .ToListAsync();
             
-            // Log silme işlemini kaydet
-            await _logService.LogEkleAsync($"Log kaydı silindi: ID={id}", Models.LogTuru.Bilgi);
+            ViewBag.CariAdi = cari.CariAdi;
+            ViewBag.CariID = cari.CariID;
             
-            return RedirectToAction(nameof(Index));
-        }
-
-        // POST: SistemLog/ClearLogs
-        [HttpPost]
-        [ValidateAntiForgeryToken]
-        public async Task<IActionResult> ClearLogs()
-        {
-            await _logService.ClearLogsAsync();
-            return RedirectToAction(nameof(Index));
+            return View(logs);
         }
     }
 } 

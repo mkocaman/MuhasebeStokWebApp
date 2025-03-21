@@ -1,0 +1,107 @@
+@model MuhasebeStokWebApp.ViewModels.UrunFiyat.UrunFiyatViewModel
+
+@{
+    ViewData["Title"] = "Ürün Fiyatı Düzenle";
+}
+
+<div class="container">
+    <div class="row mb-3">
+        <div class="col">
+            <h2>@ViewData["Title"]</h2>
+        </div>
+        <div class="col-auto">
+            @if (Model.UrunID.HasValue)
+            {
+                <a asp-action="Index" asp-route-urunId="@Model.UrunID" class="btn btn-secondary">
+                    <i class="bi bi-arrow-left"></i> Listeye Dön
+                </a>
+            }
+            else
+            {
+                <a asp-action="Index" class="btn btn-secondary">
+                    <i class="bi bi-arrow-left"></i> Listeye Dön
+                </a>
+            }
+        </div>
+    </div>
+    
+    <div class="card">
+        <div class="card-body">
+            <form asp-action="Edit" method="post">
+                <div asp-validation-summary="ModelOnly" class="text-danger"></div>
+                <input type="hidden" asp-for="FiyatID" />
+                
+                <div class="row mb-3">
+                    <div class="col-md-6">
+                        <div class="form-group">
+                            <label asp-for="UrunID" class="control-label"></label>
+                            <select asp-for="UrunID" asp-items="ViewBag.Urunler" class="form-select" required>
+                                <option value="">-- Ürün Seçin --</option>
+                            </select>
+                            <span asp-validation-for="UrunID" class="text-danger"></span>
+                        </div>
+                    </div>
+                    <div class="col-md-6">
+                        <div class="form-group">
+                            <label asp-for="FiyatTipiID" class="control-label"></label>
+                            <select asp-for="FiyatTipiID" asp-items="ViewBag.FiyatTipleri" class="form-select" required>
+                                <option value="">-- Fiyat Tipi Seçin --</option>
+                            </select>
+                            <span asp-validation-for="FiyatTipiID" class="text-danger"></span>
+                        </div>
+                    </div>
+                </div>
+                
+                <div class="row mb-3">
+                    <div class="col-md-6">
+                        <div class="form-group">
+                            <label asp-for="Fiyat" class="control-label"></label>
+                            <input asp-for="Fiyat" class="form-control" type="number" step="0.01" min="0.01" required />
+                            <span asp-validation-for="Fiyat" class="text-danger"></span>
+                        </div>
+                    </div>
+                    <div class="col-md-6">
+                        <div class="form-group">
+                            <label asp-for="GecerliTarih" class="control-label"></label>
+                            <input asp-for="GecerliTarih" class="form-control" type="date" required />
+                            <span asp-validation-for="GecerliTarih" class="text-danger"></span>
+                        </div>
+                    </div>
+                </div>
+                
+                <div class="form-check mb-3">
+                    <input asp-for="Aktif" class="form-check-input" />
+                    <label asp-for="Aktif" class="form-check-label"></label>
+                </div>
+                
+                <div class="form-group">
+                    <button type="submit" class="btn btn-primary">Kaydet</button>
+                    @if (Model.UrunID.HasValue)
+                    {
+                        <a asp-action="Index" asp-route-urunId="@Model.UrunID" class="btn btn-secondary">İptal</a>
+                    }
+                    else
+                    {
+                        <a asp-action="Index" class="btn btn-secondary">İptal</a>
+                    }
+                </div>
+            </form>
+        </div>
+    </div>
+</div>
+
+@section Scripts {
+    @{await Html.RenderPartialAsync("_ValidationScriptsPartial");}
+    
+    <script>
+        $(document).ready(function() {
+            // Tarih seçici için
+            $('input[type=date]').datepicker({
+                format: 'yyyy-mm-dd',
+                autoclose: true,
+                todayHighlight: true,
+                language: 'tr'
+            });
+        });
+    </script>
+} 

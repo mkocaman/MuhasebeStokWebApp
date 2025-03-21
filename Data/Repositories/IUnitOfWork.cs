@@ -21,7 +21,14 @@ namespace MuhasebeStokWebApp.Data.Repositories
         IRepository<FaturaTuru> FaturaTuruRepository { get; }
         IRepository<IrsaliyeTuru> IrsaliyeTuruRepository { get; }
         IRepository<OdemeTuru> OdemeTuruRepository { get; }
+        IRepository<UrunFiyat> UrunFiyatRepository { get; }
+        IRepository<FiyatTipi> FiyatTipiRepository { get; }
+        IRepository<Menu> MenuRepository { get; }
+        IRepository<MenuRol> MenuRolRepository { get; }
+        IIrsaliyeRepository IrsaliyeCustomRepository { get; }
+        IIrsaliyeDetayRepository IrsaliyeDetayCustomRepository { get; }
         
         Task SaveAsync();
+        Task CompleteAsync();
     }
 } 

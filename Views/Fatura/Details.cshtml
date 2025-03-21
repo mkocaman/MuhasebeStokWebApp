@@ -323,23 +323,23 @@
                 </button>
             </div>
             <div class="modal-body">
-                <form id="odemeForm" asp-action="AddOdeme" asp-route-id="@Model.FaturaID" method="post">
+                <form id="odemeForm" method="post">
                     <div asp-validation-summary="ModelOnly" class="text-danger"></div>
-                    <input type="hidden" name="FaturaID" value="@Model.FaturaID" />
+                    <input type="hidden" name="faturaId" value="@Model.FaturaID" />
                     
                     <div class="form-group mb-3">
-                        <label for="OdemeTarihi">Ödeme Tarihi</label>
-                        <input type="date" id="OdemeTarihi" name="OdemeTarihi" class="form-control" value="@DateTime.Now.ToString("yyyy-MM-dd")" required />
+                        <label for="odemeTarihi">Ödeme Tarihi</label>
+                        <input type="date" id="odemeTarihi" name="odemeTarihi" class="form-control" value="@DateTime.Now.ToString("yyyy-MM-dd")" required />
                     </div>
                     
                     <div class="form-group mb-3">
-                        <label for="OdemeTutari">Ödeme Tutarı</label>
-                        <input type="number" id="OdemeTutari" name="OdemeTutari" class="form-control" step="0.01" min="0.01" value="@Model.OdenecekTutar.ToString("0.00")" required />
+                        <label for="odemeAmount">Ödeme Tutarı</label>
+                        <input type="number" id="odemeAmount" name="odemeAmount" class="form-control" step="0.01" min="0.01" value="@(Model.GenelToplam - (Model.OdenenTutar ?? 0)).ToString("0.00")" required />
                     </div>
                     
                     <div class="form-group mb-3">
-                        <label for="OdemeTuru">Ödeme Türü</label>
-                        <select id="OdemeTuru" name="OdemeTuru" class="form-control" required>
+                        <label for="odemeTuru">Ödeme Türü</label>
+                        <select id="odemeTuru" name="odemeTuru" class="form-control" required>
                             <option value="Nakit">Nakit</option>
                             <option value="Kredi Kartı">Kredi Kartı</option>
                             <option value="Havale/EFT">Havale/EFT</option>
@@ -349,8 +349,8 @@
                     </div>
                     
                     <div class="form-group mb-3">
-                        <label for="Aciklama">Açıklama</label>
-                        <textarea id="Aciklama" name="Aciklama" class="form-control" rows="3"></textarea>
+                        <label for="aciklama">Açıklama</label>
+                        <textarea id="aciklama" name="aciklama" class="form-control" rows="3"></textarea>
                     </div>
                     
                     <div class="form-group text-end">
@@ -403,18 +403,45 @@
             $('#odemeForm').submit(function(e) {
                 e.preventDefault();
                 
-                var formData = $(this).serialize();
+                var formData = {
+                    faturaId: $('input[name="faturaId"]').val(),
+                    odemeAmount: $('#odemeAmount').val(),
+                    odemeTuru: $('#odemeTuru').val(),
+                    odemeTarihi: $('#odemeTarihi').val(),
+                    aciklama: $('#aciklama').val()
+                };
                 
                 $.ajax({
                     url: '@Url.Action("AddOdeme", "Fatura")',
                     type: 'POST',
                     data: formData,
                     success: function(result) {
-                        $('#addOdemeModal').modal('hide');
-                        window.location.reload();
+                        if (result.success) {
+                            $('#addOdemeModal').modal('hide');
+                            Swal.fire({
+                                title: 'Başarılı!',
+                                text: result.message,
+                                icon: 'success',
+                                confirmButtonText: 'Tamam'
+                            }).then((result) => {
+                                window.location.reload();
+                            });
+                        } else {
+                            Swal.fire({
+                                title: 'Hata!',
+                                text: result.message,
+                                icon: 'error',
+                                confirmButtonText: 'Tamam'
+                            });
+                        }
                     },
                     error: function(xhr, status, error) {
-                        alert('Ödeme eklenirken bir hata oluştu: ' + error);
+                        Swal.fire({
+                            title: 'Hata!',
+                            text: 'Ödeme eklenirken bir hata oluştu: ' + error,
+                            icon: 'error',
+                            confirmButtonText: 'Tamam'
+                        });
                     }
                 });
             });

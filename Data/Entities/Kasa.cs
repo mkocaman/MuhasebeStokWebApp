@@ -1,7 +1,6 @@
 using System;
 using System.Collections.Generic;
 using System.ComponentModel.DataAnnotations;
-using System.ComponentModel.DataAnnotations.Schema;
 
 namespace MuhasebeStokWebApp.Data.Entities
 {
@@ -22,11 +21,9 @@ namespace MuhasebeStokWebApp.Data.Entities
         public string ParaBirimi { get; set; } = "TRY"; // Varsayılan TL
         
         [Required]
-        [Column(TypeName = "decimal(18,2)")]
         public decimal AcilisBakiye { get; set; } = 0;
         
         [Required]
-        [Column(TypeName = "decimal(18,2)")]
         public decimal GuncelBakiye { get; set; } = 0;
         
         [StringLength(500)]

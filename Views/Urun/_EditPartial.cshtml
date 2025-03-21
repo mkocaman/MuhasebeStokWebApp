@@ -49,30 +49,6 @@
         </div>
         
         <div class="row mb-3">
-            <div class="col-md-4">
-                <div class="form-group">
-                    <label asp-for="ListeFiyati" class="control-label">Liste Fiyatı</label>
-                    <input asp-for="ListeFiyati" class="form-control" type="number" step="0.01" min="0" />
-                    <span asp-validation-for="ListeFiyati" class="text-danger"></span>
-                </div>
-            </div>
-            <div class="col-md-4">
-                <div class="form-group">
-                    <label asp-for="MaliyetFiyati" class="control-label">Maliyet Fiyatı</label>
-                    <input asp-for="MaliyetFiyati" class="form-control" type="number" step="0.01" min="0" />
-                    <span asp-validation-for="MaliyetFiyati" class="text-danger"></span>
-                </div>
-            </div>
-            <div class="col-md-4">
-                <div class="form-group">
-                    <label asp-for="SatisFiyati" class="control-label">Satış Fiyatı</label>
-                    <input asp-for="SatisFiyati" class="form-control" type="number" step="0.01" min="0" />
-                    <span asp-validation-for="SatisFiyati" class="text-danger"></span>
-                </div>
-            </div>
-        </div>
-        
-        <div class="row mb-3">
             <div class="col-md-6">
                 <div class="form-group">
                     <label asp-for="StokMiktar" class="control-label">Stok Miktarı</label>
@@ -81,7 +57,17 @@
                 </div>
             </div>
             <div class="col-md-6">
-                <div class="form-check mt-4">
+                <div class="form-group">
+                    <label asp-for="KDVOrani" class="control-label">KDV Oranı (%)</label>
+                    <input asp-for="KDVOrani" class="form-control" type="number" min="0" max="100" />
+                    <span asp-validation-for="KDVOrani" class="text-danger"></span>
+                </div>
+            </div>
+        </div>
+        
+        <div class="row mb-3">
+            <div class="col-md-6">
+                <div class="form-check mt-2">
                     <input asp-for="Aktif" class="form-check-input" />
                     <label asp-for="Aktif" class="form-check-label">Aktif</label>
                 </div>

@@ -1,4 +1,4 @@
-@model List<MuhasebeStokWebApp.Models.SistemLog>
+@model List<MuhasebeStokWebApp.Data.Entities.SistemLog>
 @{
     ViewData["Title"] = "Cari Logları";
     Layout = "~/Views/Shared/_Layout.cshtml";
@@ -36,6 +36,7 @@
                                 <th>İşlem Türü</th>
                                 <th>Kullanıcı</th>
                                 <th>Açıklama</th>
+                                <th>Durum</th>
                                 <th>İşlemler</th>
                             </tr>
                         </thead>
@@ -48,7 +49,17 @@
                                     <td>@(string.IsNullOrEmpty(log.KullaniciAdi) ? "-" : log.KullaniciAdi)</td>
                                     <td>@log.Aciklama</td>
                                     <td>
-                                        <a asp-action="Details" asp-route-id="@log.SistemLogID" class="btn btn-sm btn-info">
+                                        @if (log.Basarili)
+                                        {
+                                            <span class="badge bg-success">Başarılı</span>
+                                        }
+                                        else
+                                        {
+                                            <span class="badge bg-danger">Başarısız</span>
+                                        }
+                                    </td>
+                                    <td>
+                                        <a asp-action="Details" asp-route-id="@log.LogID" class="btn btn-sm btn-info">
                                             <i class="fas fa-info-circle"></i>
                                         </a>
                                     </td>

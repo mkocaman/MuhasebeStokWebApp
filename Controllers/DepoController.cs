@@ -3,10 +3,12 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Threading.Tasks;
 using Microsoft.AspNetCore.Mvc;
+using Microsoft.AspNetCore.Mvc.Rendering;
 using Microsoft.EntityFrameworkCore;
 using MuhasebeStokWebApp.Data;
 using MuhasebeStokWebApp.Data.Entities;
 using MuhasebeStokWebApp.ViewModels.Depo;
+using System.Security.Claims;
 
 namespace MuhasebeStokWebApp.Controllers
 {
@@ -31,7 +33,7 @@ namespace MuhasebeStokWebApp.Controllers
                     DepoAdi = d.DepoAdi,
                     Adres = d.Adres,
                     Aktif = d.Aktif,
-                    OlusturmaTarihi = d.OlusturmaTarihi
+                    OlusturmaTarihi = d.OlusturmaTarihi ?? DateTime.MinValue
                 })
                 .ToListAsync();
 
@@ -47,33 +49,32 @@ namespace MuhasebeStokWebApp.Controllers
             }
 
             var depo = await _context.Depolar
-                .FirstOrDefaultAsync(d => d.DepoID == id && !d.SoftDelete);
-
+                .FirstOrDefaultAsync(m => m.DepoID == id && !m.SoftDelete);
             if (depo == null)
             {
                 return NotFound();
             }
 
-            var viewModel = new DepoViewModel
+            var model = new DepoViewModel
             {
                 DepoID = depo.DepoID,
                 DepoAdi = depo.DepoAdi,
                 Adres = depo.Adres,
                 Aktif = depo.Aktif,
-                OlusturmaTarihi = depo.OlusturmaTarihi
+                OlusturmaTarihi = depo.OlusturmaTarihi ?? DateTime.MinValue
             };
 
-            return View(viewModel);
+            return View(model);
         }
 
         // GET: Depo/Create
         public IActionResult Create()
         {
-            if (Request.Headers["X-Requested-With"] == "XMLHttpRequest")
+            var model = new DepoCreateViewModel
             {
-                return PartialView("_CreatePartial", new DepoCreateViewModel());
-            }
-            return View();
+                Aktif = true
+            };
+            return View(model);
         }
 
         // POST: Depo/Create
@@ -81,29 +82,53 @@ namespace MuhasebeStokWebApp.Controllers
         [ValidateAntiForgeryToken]
         public async Task<IActionResult> Create(DepoCreateViewModel model)
         {
-            if (ModelState.IsValid)
+            try
             {
-                var depo = new Depo
+                // Aktif değeri için manuol kontrol ekle
+                if (!ModelState.IsValid)
                 {
-                    DepoID = Guid.NewGuid(),
-                    DepoAdi = model.DepoAdi,
-                    Adres = model.Adres,
-                    Aktif = model.Aktif,
-                    OlusturanKullaniciID = GetCurrentUserId(),
-                    OlusturmaTarihi = DateTime.Now,
-                    SoftDelete = false
-                };
+                    // Hataları yazdır
+                    foreach (var state in ModelState)
+                    {
+                        if (state.Key == "Aktif" && state.Value.Errors.Count > 0)
+                        {
+                            // Aktif alanı için varsayılan değeri true olarak ayarla
+                            model.Aktif = true;
+                            ModelState.Remove("Aktif");
+                        }
+                        else
+                        {
+                            foreach (var error in state.Value.Errors)
+                            {
+                                Console.WriteLine($"Hata - {state.Key}: {error.ErrorMessage}");
+                            }
+                        }
+                    }
+                }
 
-                _context.Add(depo);
-                await _context.SaveChangesAsync();
-                
-                TempData["SuccessMessage"] = "Depo başarıyla oluşturuldu.";
-                return RedirectToAction(nameof(Index));
+                if (ModelState.IsValid)
+                {
+                    var depo = new Depo
+                    {
+                        DepoID = Guid.NewGuid(),
+                        DepoAdi = model.DepoAdi,
+                        Adres = model.Adres,
+                        Aktif = model.Aktif,
+                        OlusturanKullaniciID = GetCurrentUserId(),
+                        OlusturmaTarihi = DateTime.Now,
+                        SoftDelete = false,
+                        GuncellemeTarihi = DateTime.Now,
+                        SonGuncelleyenKullaniciID = GetCurrentUserId()
+                    };
+
+                    _context.Add(depo);
+                    await _context.SaveChangesAsync();
+                    return RedirectToAction(nameof(Index));
+                }
             }
-            
-            if (Request.Headers["X-Requested-With"] == "XMLHttpRequest")
+            catch (Exception ex)
             {
-                return PartialView("_CreatePartial", model);
+                ModelState.AddModelError("", $"Bir hata oluştu: {ex.Message}");
             }
             return View(model);
         }
@@ -118,13 +143,12 @@ namespace MuhasebeStokWebApp.Controllers
 
             var depo = await _context.Depolar
                 .FirstOrDefaultAsync(d => d.DepoID == id && !d.SoftDelete);
-
             if (depo == null)
             {
                 return NotFound();
             }
 
-            var viewModel = new DepoEditViewModel
+            var model = new DepoEditViewModel
             {
                 DepoID = depo.DepoID,
                 DepoAdi = depo.DepoAdi,
@@ -132,11 +156,7 @@ namespace MuhasebeStokWebApp.Controllers
                 Aktif = depo.Aktif
             };
 
-            if (Request.Headers["X-Requested-With"] == "XMLHttpRequest")
-            {
-                return PartialView("_EditPartial", viewModel);
-            }
-            return View(viewModel);
+            return View(model);
         }
 
         // POST: Depo/Edit/5
@@ -153,9 +173,7 @@ namespace MuhasebeStokWebApp.Controllers
             {
                 try
                 {
-                    var depo = await _context.Depolar
-                        .FirstOrDefaultAsync(d => d.DepoID == id && !d.SoftDelete);
-
+                    var depo = await _context.Depolar.FindAsync(id);
                     if (depo == null)
                     {
                         return NotFound();
@@ -164,17 +182,17 @@ namespace MuhasebeStokWebApp.Controllers
                     depo.DepoAdi = model.DepoAdi;
                     depo.Adres = model.Adres;
                     depo.Aktif = model.Aktif;
-                    depo.SonGuncelleyenKullaniciID = GetCurrentUserId();
                     depo.GuncellemeTarihi = DateTime.Now;
+                    depo.SonGuncelleyenKullaniciID = GetCurrentUserId();
 
                     _context.Update(depo);
                     await _context.SaveChangesAsync();
-                    
-                    TempData["SuccessMessage"] = "Depo başarıyla güncellendi.";
+
+                    return RedirectToAction(nameof(Index));
                 }
                 catch (DbUpdateConcurrencyException)
                 {
-                    if (!DepoExists(model.DepoID))
+                    if (!await DepoExists(id))
                     {
                         return NotFound();
                     }
@@ -183,12 +201,6 @@ namespace MuhasebeStokWebApp.Controllers
                         throw;
                     }
                 }
-                return RedirectToAction(nameof(Index));
-            }
-            
-            if (Request.Headers["X-Requested-With"] == "XMLHttpRequest")
-            {
-                return PartialView("_EditPartial", model);
             }
             return View(model);
         }
@@ -209,16 +221,16 @@ namespace MuhasebeStokWebApp.Controllers
                 return NotFound();
             }
 
-            var viewModel = new DepoViewModel
+            var model = new DepoViewModel
             {
                 DepoID = depo.DepoID,
                 DepoAdi = depo.DepoAdi,
                 Adres = depo.Adres,
                 Aktif = depo.Aktif,
-                OlusturmaTarihi = depo.OlusturmaTarihi
+                OlusturmaTarihi = depo.OlusturmaTarihi ?? DateTime.MinValue
             };
 
-            return View(viewModel);
+            return View(model);
         }
 
         // POST: Depo/Delete/5
@@ -226,63 +238,58 @@ namespace MuhasebeStokWebApp.Controllers
         [ValidateAntiForgeryToken]
         public async Task<IActionResult> DeleteConfirmed(Guid id)
         {
-            var depo = await _context.Depolar
-                .Include(d => d.StokHareketleri)
-                .FirstOrDefaultAsync(d => d.DepoID == id && !d.SoftDelete);
-
+            var depo = await _context.Depolar.FindAsync(id);
+            
             if (depo == null)
             {
                 return NotFound();
             }
 
-            try
+            // İlişkili kayıt var mı kontrol et
+            var iliskiliKayitVar = await _context.StokHareketleri.AnyAsync(s => s.DepoID == id && !s.SoftDelete);
+            if (iliskiliKayitVar)
             {
-                // Depoya bağlı stok hareketlerini soft delete yap
-                if (depo.StokHareketleri != null && depo.StokHareketleri.Any())
-                {
-                    foreach (var hareket in depo.StokHareketleri.ToList())
-                    {
-                        hareket.SoftDelete = true;
-                        _context.Update(hareket);
-                    }
-                    
-                    // Depoyu soft delete yap
-                    depo.SoftDelete = true;
-                    depo.Aktif = false;
-                    _context.Update(depo);
-                    await _context.SaveChangesAsync();
-                    
-                    TempData["Warning"] = $"'{depo.DepoAdi}' deposu ve ilişkili stok hareketleri başarıyla silindi.";
-                }
-                else
-                {
-                    // Depoyu soft delete yap
-                    depo.SoftDelete = true;
-                    depo.Aktif = false;
-                    _context.Update(depo);
-                    await _context.SaveChangesAsync();
-                    
-                    TempData["SuccessMessage"] = $"'{depo.DepoAdi}' deposu başarıyla silindi.";
-                }
+                // Eğer ilişkili kayıt varsa, hata mesajı göster
+                TempData["ErrorMessage"] = "Bu depo, stok hareketlerinde kullanıldığı için silinemez.";
+                return RedirectToAction(nameof(Index));
             }
-            catch (Exception ex)
-            {
-                TempData["ErrorMessage"] = $"Depo silinirken bir hata oluştu: {ex.Message}";
-            }
+
+            // Soft delete işlemi
+            depo.SoftDelete = true;
+            depo.GuncellemeTarihi = DateTime.Now;
+            depo.SonGuncelleyenKullaniciID = GetCurrentUserId();
             
+            _context.Update(depo);
+            await _context.SaveChangesAsync();
+            
+            TempData["SuccessMessage"] = "Depo başarıyla silindi.";
             return RedirectToAction(nameof(Index));
         }
 
-        private bool DepoExists(Guid id)
+        // Depo var mı kontrolü
+        [NonAction]
+        private async Task<bool> DepoExists(Guid id)
         {
-            return _context.Depolar.Any(e => e.DepoID == id && !e.SoftDelete);
+            return await _context.Depolar.AnyAsync(e => e.DepoID == id && !e.SoftDelete);
         }
-        
-        private Guid? GetCurrentUserId()
+
+        // Kullanıcı ID'sini al
+        private Guid GetCurrentUserId()
         {
-            // Eğer kimlik doğrulama sistemi varsa, mevcut kullanıcının ID'sini alın
-            // Şimdilik null dönelim
-            return null;
+            try
+            {
+                var userIdClaim = User.Claims.FirstOrDefault(c => c.Type == ClaimTypes.NameIdentifier);
+                if (userIdClaim != null && !string.IsNullOrEmpty(userIdClaim.Value))
+                {
+                    return Guid.Parse(userIdClaim.Value);
+                }
+            }
+            catch (FormatException)
+            {
+                // Geçersiz GUID formatı hatası durumunda loglama yapılabilir
+                // Şimdilik sadece Guid.Empty dönüyoruz
+            }
+            return Guid.Empty;
         }
     }
 } 

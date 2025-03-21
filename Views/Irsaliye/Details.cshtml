@@ -54,13 +54,7 @@
                         <div class="col-sm-6 col-md-12 col-lg-6">
                             <div class="info-group">
                                 <h6 class="f-w-600">İrsaliye Tarihi</h6>
-                                <p>@(Model.IrsaliyeTarihi.HasValue ? Model.IrsaliyeTarihi.Value.ToString("dd.MM.yyyy") : "-")</p>
-                            </div>
-                        </div>
-                        <div class="col-sm-6 col-md-12 col-lg-6">
-                            <div class="info-group">
-                                <h6 class="f-w-600">Sevk Tarihi</h6>
-                                <p>@(Model.SevkTarihi.HasValue ? Model.SevkTarihi.Value.ToString("dd.MM.yyyy") : "-")</p>
+                                <p>@(Model.IrsaliyeTarihi.HasValue ? Model.IrsaliyeTarihi.Value.ToString("dd.MM.yyyy") : "")</p>
                             </div>
                         </div>
                         <div class="col-12">
@@ -142,12 +136,12 @@
         </div>
     </div>
     
-    <!-- İrsaliye Kalemleri -->
+    <!-- İrsaliye Detayları -->
     <div class="row mt-4">
         <div class="col-12">
             <div class="card">
                 <div class="card-header bg-primary text-white">
-                    <h5 class="mb-0">İrsaliye Kalemleri</h5>
+                    <h5 class="mb-0">İrsaliye Detayları</h5>
                 </div>
                 <div class="card-body">
                     <div class="table-responsive">
@@ -162,18 +156,18 @@
                                 </tr>
                             </thead>
                             <tbody>
-                                @foreach (var kalem in Model.IrsaliyeKalemleri)
+                                @foreach (var detay in Model.Detaylar)
                                 {
                                     <tr>
-                                        <td>@kalem.UrunKodu</td>
+                                        <td>@detay.UrunKodu</td>
                                         <td>
-                                            <a asp-controller="Urun" asp-action="Details" asp-route-id="@kalem.UrunID">
-                                                @kalem.UrunAdi
+                                            <a asp-controller="Urun" asp-action="Details" asp-route-id="@detay.UrunID">
+                                                @detay.UrunAdi
                                             </a>
                                         </td>
-                                        <td>@kalem.Miktar</td>
-                                        <td>@kalem.Birim</td>
-                                        <td>@(string.IsNullOrEmpty(kalem.Aciklama) ? "-" : kalem.Aciklama)</td>
+                                        <td>@detay.Miktar</td>
+                                        <td>@detay.Birim</td>
+                                        <td>@(string.IsNullOrEmpty(detay.Aciklama) ? "-" : detay.Aciklama)</td>
                                     </tr>
                                 }
                             </tbody>

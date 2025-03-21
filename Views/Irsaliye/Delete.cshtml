@@ -41,14 +41,8 @@
                         </div>
                         <div class="col-md-6">
                             <div class="form-group">
-                                <label>İrsaliye Tarihi</label>
-                                <p class="form-control-static">@(Model.IrsaliyeTarihi.HasValue ? Model.IrsaliyeTarihi.Value.ToString("dd.MM.yyyy") : "-")</p>
-                            </div>
-                        </div>
-                        <div class="col-md-6">
-                            <div class="form-group">
-                                <label>Sevk Tarihi</label>
-                                <p class="form-control-static">@(Model.SevkTarihi.HasValue ? Model.SevkTarihi.Value.ToString("dd.MM.yyyy") : "-")</p>
+                                <label class="control-label">İrsaliye Tarihi</label>
+                                <p class="form-control-static">@(Model.IrsaliyeTarihi.HasValue ? Model.IrsaliyeTarihi.Value.ToString("dd.MM.yyyy") : "")</p>
                             </div>
                         </div>
                         <div class="col-md-6">

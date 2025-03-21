@@ -1,6 +1,8 @@
 using System;
 using System.Collections.Generic;
 using System.ComponentModel.DataAnnotations;
+using System.ComponentModel;
+using MuhasebeStokWebApp.ViewModels.Shared;
 using Microsoft.AspNetCore.Mvc.Rendering;
 
 namespace MuhasebeStokWebApp.ViewModels.Irsaliye
@@ -9,55 +11,41 @@ namespace MuhasebeStokWebApp.ViewModels.Irsaliye
     {
         public Guid IrsaliyeID { get; set; }
 
-        [Required(ErrorMessage = "İrsaliye numarası zorunludur.")]
-        [StringLength(20, ErrorMessage = "İrsaliye numarası en fazla 20 karakter olabilir.")]
-        [Display(Name = "İrsaliye No")]
+        [Required(ErrorMessage = "İrsaliye numarası gereklidir.")]
+        [StringLength(50, ErrorMessage = "İrsaliye numarası 50 karakterden uzun olamaz.")]
+        [DisplayName("İrsaliye Numarası")]
         public string IrsaliyeNumarasi { get; set; }
 
-        [Required(ErrorMessage = "İrsaliye tarihi zorunludur.")]
-        [Display(Name = "İrsaliye Tarihi")]
+        [Required(ErrorMessage = "İrsaliye tarihi gereklidir.")]
+        [DisplayName("İrsaliye Tarihi")]
         [DataType(DataType.Date)]
-        [DisplayFormat(DataFormatString = "{0:yyyy-MM-dd}", ApplyFormatInEditMode = true)]
-        public DateTime? IrsaliyeTarihi { get; set; }
+        public DateTime IrsaliyeTarihi { get; set; }
 
-        [Required(ErrorMessage = "Sevk tarihi zorunludur.")]
-        [Display(Name = "Sevk Tarihi")]
-        [DataType(DataType.Date)]
-        [DisplayFormat(DataFormatString = "{0:yyyy-MM-dd}", ApplyFormatInEditMode = true)]
-        public DateTime? SevkTarihi { get; set; }
-
-        [Required(ErrorMessage = "Cari seçimi zorunludur.")]
-        [Display(Name = "Cari")]
+        [Required(ErrorMessage = "Cari seçimi gereklidir.")]
+        [DisplayName("Cari")]
         public Guid CariID { get; set; }
-        
-        [Display(Name = "Cari Adı")]
-        public string CariAdi { get; set; }
 
-        [Required(ErrorMessage = "İrsaliye türü zorunludur.")]
-        [Display(Name = "İrsaliye Türü")]
-        public string IrsaliyeTuru { get; set; }
-
-        [Display(Name = "Fatura")]
+        [DisplayName("Fatura")]
         public Guid? FaturaID { get; set; }
-        
-        [Display(Name = "Fatura No")]
-        public string FaturaNumarasi { get; set; }
 
-        [StringLength(500, ErrorMessage = "Açıklama en fazla 500 karakter olabilir.")]
-        [Display(Name = "Açıklama")]
+        [DisplayName("Açıklama")]
+        [StringLength(200, ErrorMessage = "Açıklama 200 karakterden uzun olamaz.")]
         public string Aciklama { get; set; }
 
-        [Display(Name = "Durum")]
+        [DisplayName("Resmi")]
+        public bool? Resmi { get; set; }
+        
+        [DisplayName("İrsaliye Türü")]
+        public string IrsaliyeTuru { get; set; }
+        
+        [DisplayName("Durum")]
         public string Durum { get; set; }
-        
-        [Display(Name = "Aktif")]
-        public bool Aktif { get; set; } = true;
 
-        public List<IrsaliyeKalemViewModel> IrsaliyeKalemleri { get; set; } = new List<IrsaliyeKalemViewModel>();
+        [DisplayName("İrsaliye Detayları")]
+        public List<IrsaliyeDetayViewModel> Detaylar { get; set; } = new List<IrsaliyeDetayViewModel>();
         
-        // Dropdown listeler için
-        public List<SelectListItem> CariListesi { get; set; }
-        public List<SelectListItem> IrsaliyeTuruListesi { get; set; }
-        public List<SelectListItem> FaturaListesi { get; set; }
+        // Dropdown listeler
+        public SelectList CariListesi { get; set; }
+        public SelectList UrunListesi { get; set; }
     }
 } 

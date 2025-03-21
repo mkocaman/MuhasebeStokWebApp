@@ -11,10 +11,10 @@ namespace MuhasebeStokWebApp.Data.Entities
         
         [Required]
         [StringLength(100)]
-        public string KategoriAdi { get; set; }
+        public required string KategoriAdi { get; set; }
         
         [StringLength(500)]
-        public string Aciklama { get; set; }
+        public string? Aciklama { get; set; }
         
         public bool Aktif { get; set; } = true;
         

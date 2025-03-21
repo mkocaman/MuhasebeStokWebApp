@@ -4,191 +4,110 @@
 }
 
 <div class="container-fluid">
-    <!-- Başlık ve Butonlar -->
-    <div class="d-sm-flex align-items-center justify-content-between mb-4">
-        <h1 class="h3 mb-0 text-gray-800">Kasalar</h1>
-        <a asp-action="Create" class="d-none d-sm-inline-block btn btn-sm btn-primary shadow-sm">
-            <i class="fas fa-plus fa-sm text-white-50"></i> Yeni Kasa
-        </a>
+    <div class="page-title">
+        <div class="row">
+            <div class="col-6">
+                <h3>Kasalar</h3>
+            </div>
+            <div class="col-6">
+                <ol class="breadcrumb">
+                    <li class="breadcrumb-item"><a href="/"><i data-feather="home"></i></a></li>
+                    <li class="breadcrumb-item active">Kasalar</li>
+                </ol>
+            </div>
+        </div>
     </div>
+</div>
 
-    <!-- Başarı Mesajı -->
+<div class="container-fluid">
     @if (TempData["SuccessMessage"] != null)
     {
         <div class="alert alert-success alert-dismissible fade show" role="alert">
             @TempData["SuccessMessage"]
-            <button type="button" class="close" data-dismiss="alert" aria-label="Close">
-                <span aria-hidden="true">&times;</span>
-            </button>
+            <button type="button" class="btn-close" data-bs-dismiss="alert" aria-label="Close"></button>
         </div>
     }
 
-    <!-- Hata Mesajı -->
-    @if (TempData["ErrorMessage"] != null)
-    {
-        <div class="alert alert-danger alert-dismissible fade show" role="alert">
-            @TempData["ErrorMessage"]
-            <button type="button" class="close" data-dismiss="alert" aria-label="Close">
-                <span aria-hidden="true">&times;</span>
-            </button>
-        </div>
-    }
-
-    <!-- Toplam Bakiye Kartı -->
-    <div class="row mb-4">
-        <div class="col-xl-3 col-md-6 mb-4">
-            <div class="card border-left-primary shadow h-100 py-2">
+    <div class="row">
+        <div class="col-md-12">
+            <div class="card">
+                <div class="card-header d-flex justify-content-between align-items-center">
+                    <h5 class="mb-0">Kasa Listesi</h5>
+                    <div>
+                        <a asp-action="YeniHareket" class="btn btn-success btn-sm">
+                            <i class="fa fa-plus"></i> Yeni Hareket
+                        </a>
+                        <a asp-action="Create" class="btn btn-primary btn-sm">
+                            <i class="fa fa-plus"></i> Yeni Kasa
+                        </a>
+                    </div>
+                </div>
                 <div class="card-body">
-                    <div class="row no-gutters align-items-center">
-                        <div class="col mr-2">
-                            <div class="text-xs font-weight-bold text-primary text-uppercase mb-1">
-                                Toplam Bakiye (TL)
-                            </div>
-                            <div class="h5 mb-0 font-weight-bold text-gray-800">
-                                @Model.ToplamBakiye.ToString("N2") TL
-                            </div>
-                        </div>
-                        <div class="col-auto">
-                            <i class="fas fa-money-bill-wave fa-2x text-gray-300"></i>
-                        </div>
-                    </div>
-                </div>
-            </div>
-        </div>
-        
-        @foreach (var item in Model.ParaBirimiToplamlari)
-        {
-            if (item.Key != "TRY")
-            {
-                <div class="col-xl-3 col-md-6 mb-4">
-                    <div class="card border-left-info shadow h-100 py-2">
-                        <div class="card-body">
-                            <div class="row no-gutters align-items-center">
-                                <div class="col mr-2">
-                                    <div class="text-xs font-weight-bold text-info text-uppercase mb-1">
-                                        Toplam Bakiye (@item.Key)
-                                    </div>
-                                    <div class="h5 mb-0 font-weight-bold text-gray-800">
-                                        @item.Value.ToString("N2") @item.Key
-                                    </div>
-                                </div>
-                                <div class="col-auto">
-                                    <i class="fas fa-money-bill-wave fa-2x text-gray-300"></i>
-                                </div>
-                            </div>
-                        </div>
-                    </div>
-                </div>
-            }
-        }
-    </div>
-
-    <!-- Kasa Tablosu -->
-    <div class="card shadow mb-4">
-        <div class="card-header py-3">
-            <ul class="nav nav-tabs card-header-tabs" id="kasaTabs" role="tablist">
-                <li class="nav-item">
-                    <a class="nav-link active" id="aktif-tab" data-toggle="tab" href="#aktif" role="tab" aria-controls="aktif" aria-selected="true">
-                        <i class="fas fa-check-circle text-success"></i> Aktif Kasalar
-                    </a>
-                </li>
-                <li class="nav-item">
-                    <a class="nav-link" id="pasif-tab" data-toggle="tab" href="#pasif" role="tab" aria-controls="pasif" aria-selected="false">
-                        <i class="fas fa-times-circle text-danger"></i> Pasif Kasalar
-                    </a>
-                </li>
-            </ul>
-        </div>
-        <div class="card-body">
-            <div class="tab-content" id="kasaTabsContent">
-                <!-- Aktif Kasalar -->
-                <div class="tab-pane fade show active" id="aktif" role="tabpanel" aria-labelledby="aktif-tab">
                     <div class="table-responsive">
-                        <table class="table table-bordered" id="aktifKasalarTable" width="100%" cellspacing="0">
+                        <table class="table table-hover">
                             <thead>
                                 <tr>
                                     <th>Kasa Adı</th>
                                     <th>Kasa Türü</th>
-                                    <th>Para Birimi</th>
-                                    <th>Açılış Bakiye</th>
+                                    <th>Açılış Bakiyesi</th>
                                     <th>Güncel Bakiye</th>
+                                    <th>Durum</th>
                                     <th>İşlemler</th>
                                 </tr>
                             </thead>
                             <tbody>
-                                @foreach (var kasa in Model.Kasalar)
+                                @if (Model.Kasalar.Count == 0)
                                 {
                                     <tr>
-                                        <td>@kasa.KasaAdi</td>
-                                        <td>@kasa.KasaTuru</td>
-                                        <td>@kasa.ParaBirimi</td>
-                                        <td>@kasa.AcilisBakiye.ToString("N2")</td>
-                                        <td>@kasa.GuncelBakiye.ToString("N2")</td>
-                                        <td>
-                                            <div class="btn-group">
-                                                <a asp-action="Edit" asp-route-id="@kasa.KasaID" class="btn btn-primary btn-sm">
-                                                    <i class="fas fa-edit"></i>
-                                                </a>
-                                                <a asp-action="Details" asp-route-id="@kasa.KasaID" class="btn btn-info btn-sm">
-                                                    <i class="fas fa-info-circle"></i>
-                                                </a>
-                                                <a asp-action="Hareketler" asp-route-id="@kasa.KasaID" class="btn btn-success btn-sm">
-                                                    <i class="fas fa-exchange-alt"></i>
-                                                </a>
-                                                <a asp-action="YeniHareket" asp-route-id="@kasa.KasaID" class="btn btn-warning btn-sm">
-                                                    <i class="fas fa-plus"></i>
-                                                </a>
-                                                <a asp-action="Delete" asp-route-id="@kasa.KasaID" class="btn btn-danger btn-sm">
-                                                    <i class="fas fa-trash"></i>
-                                                </a>
-                                            </div>
-                                        </td>
+                                        <td colspan="6" class="text-center">Kayıt bulunamadı.</td>
                                     </tr>
                                 }
+                                else
+                                {
+                                    @foreach (var kasa in Model.Kasalar)
+                                    {
+                                        <tr>
+                                            <td>@kasa.KasaAdi</td>
+                                            <td>@kasa.KasaTuru</td>
+                                            <td class="text-right">@kasa.AcilisBakiye.ToString("N2") ₺</td>
+                                            <td class="text-right font-weight-bold">@kasa.GuncelBakiye.ToString("N2") ₺</td>
+                                            <td>
+                                                @if (kasa.Aktif)
+                                                {
+                                                    <span class="badge badge-success">Aktif</span>
+                                                }
+                                                else
+                                                {
+                                                    <span class="badge badge-danger">Pasif</span>
+                                                }
+                                            </td>
+                                            <td>
+                                                <div class="btn-group btn-group-sm" role="group">
+                                                    <a asp-action="Hareketler" asp-route-id="@kasa.KasaID" class="btn btn-info" title="Kasa Hareketleri">
+                                                        <i class="fa fa-list"></i>
+                                                    </a>
+                                                    <a asp-action="Edit" asp-route-id="@kasa.KasaID" class="btn btn-primary" title="Düzenle">
+                                                        <i class="fa fa-edit"></i>
+                                                    </a>
+                                                    <a asp-action="Details" asp-route-id="@kasa.KasaID" class="btn btn-secondary" title="Detay">
+                                                        <i class="fa fa-eye"></i>
+                                                    </a>
+                                                    <a asp-action="Delete" asp-route-id="@kasa.KasaID" class="btn btn-danger" title="Sil">
+                                                        <i class="fa fa-trash"></i>
+                                                    </a>
+                                                </div>
+                                            </td>
+                                        </tr>
+                                    }
+                                }
                             </tbody>
-                        </table>
-                    </div>
-                </div>
-                
-                <!-- Pasif Kasalar -->
-                <div class="tab-pane fade" id="pasif" role="tabpanel" aria-labelledby="pasif-tab">
-                    <div class="table-responsive">
-                        <table class="table table-bordered" id="pasifKasalarTable" width="100%" cellspacing="0">
-                            <thead>
-                                <tr>
-                                    <th>Kasa Adı</th>
-                                    <th>Kasa Türü</th>
-                                    <th>Para Birimi</th>
-                                    <th>Açılış Bakiye</th>
-                                    <th>Güncel Bakiye</th>
-                                    <th>İşlemler</th>
+                            <tfoot>
+                                <tr class="table-primary">
+                                    <th colspan="3" class="text-right">Toplam Bakiye:</th>
+                                    <th class="text-right">@Model.ToplamBakiye.ToString("N2") ₺</th>
+                                    <th colspan="2"></th>
                                 </tr>
-                            </thead>
-                            <tbody>
-                                @foreach (var kasa in Model.PasifKasalar)
-                                {
-                                    <tr>
-                                        <td>@kasa.KasaAdi</td>
-                                        <td>@kasa.KasaTuru</td>
-                                        <td>@kasa.ParaBirimi</td>
-                                        <td>@kasa.AcilisBakiye.ToString("N2")</td>
-                                        <td>@kasa.GuncelBakiye.ToString("N2")</td>
-                                        <td>
-                                            <div class="btn-group">
-                                                <a asp-action="Edit" asp-route-id="@kasa.KasaID" class="btn btn-primary btn-sm">
-                                                    <i class="fas fa-edit"></i>
-                                                </a>
-                                                <a asp-action="Details" asp-route-id="@kasa.KasaID" class="btn btn-info btn-sm">
-                                                    <i class="fas fa-info-circle"></i>
-                                                </a>
-                                                <a asp-action="Hareketler" asp-route-id="@kasa.KasaID" class="btn btn-success btn-sm">
-                                                    <i class="fas fa-exchange-alt"></i>
-                                                </a>
-                                            </div>
-                                        </td>
-                                    </tr>
-                                }
-                            </tbody>
+                            </tfoot>
                         </table>
                     </div>
                 </div>
@@ -199,20 +118,31 @@
 
 @section Scripts {
     <script>
-        $(document).ready(function() {
-            $('#aktifKasalarTable').DataTable({
-                language: {
-                    url: '//cdn.datatables.net/plug-ins/1.10.25/i18n/Turkish.json'
-                },
-                responsive: true
-            });
+        $(document).ready(function () {
+            // DataTable uyarılarını gizle
+            $.fn.dataTable.ext.errMode = 'none';
             
-            $('#pasifKasalarTable').DataTable({
-                language: {
-                    url: '//cdn.datatables.net/plug-ins/1.10.25/i18n/Turkish.json'
-                },
-                responsive: true
-            });
+            // Tablonun sıralanabilir olmasını sağlar
+            if ($.fn.DataTable) {
+                try {
+                    $('.table').DataTable({
+                        "language": {
+                            "url": "//cdn.datatables.net/plug-ins/1.10.25/i18n/Turkish.json",
+                            "info": "" // Bilgilendirme yazısını kaldır (çift görünme sorununu çözmek için)
+                        },
+                        "retrieve": true
+                    });
+                } catch (e) {
+                    console.log("DataTable başlatılırken bir hata oluştu, ancak işlem devam ediyor.");
+                }
+            }
+            
+            // Otomatik kapanan alertler
+            window.setTimeout(function() {
+                $(".alert").fadeTo(500, 0).slideUp(500, function() {
+                    $(this).remove();
+                });
+            }, 4000);
         });
     </script>
 } 

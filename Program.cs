@@ -4,30 +4,61 @@ using MuhasebeStokWebApp.Data;
 using MuhasebeStokWebApp.Data.Repositories;
 using Microsoft.AspNetCore.Authentication.Cookies;
 using MuhasebeStokWebApp.Services;
-using System.Globalization;
-using Microsoft.Extensions.Options;
+using MuhasebeStokWebApp.Services.Menu;
 
 var builder = WebApplication.CreateBuilder(args);
 
-// Tarih formatı için kültür ayarları
-var cultureInfo = new CultureInfo("tr-TR");
-cultureInfo.DateTimeFormat.ShortDatePattern = "dd.MM.yyyy";
-cultureInfo.DateTimeFormat.DateSeparator = ".";
-CultureInfo.DefaultThreadCurrentCulture = cultureInfo;
-CultureInfo.DefaultThreadCurrentUICulture = cultureInfo;
-
 // Add services to the container.
 var connectionString = builder.Configuration.GetConnectionString("DefaultConnection");
+
+// SQL Server kullanımı (tüm ortamlarda)
 builder.Services.AddDbContext<ApplicationDbContext>(options =>
     options.UseSqlServer(connectionString));
 
 // Identity servislerini ekliyoruz
-builder.Services.AddIdentity<IdentityUser, IdentityRole>()
+builder.Services.AddIdentity<IdentityUser, IdentityRole>(options => 
+{
+    // Şifre politikaları
+    options.Password.RequireDigit = true;
+    options.Password.RequireLowercase = true;
+    options.Password.RequireUppercase = true;
+    options.Password.RequireNonAlphanumeric = true;
+    options.Password.RequiredLength = 8;
+    
+    // Kullanıcı politikaları
+    options.User.RequireUniqueEmail = true;
+    
+    // Lockout ayarları
+    options.Lockout.DefaultLockoutTimeSpan = TimeSpan.FromMinutes(30);
+    options.Lockout.MaxFailedAccessAttempts = 5;
+})
     .AddEntityFrameworkStores<ApplicationDbContext>()
-    .AddDefaultTokenProviders();
+    .AddDefaultTokenProviders()
+    .AddSignInManager<SignInManager<IdentityUser>>();
 
-// Cookie Authentication ayarları
-builder.Services.AddAuthentication(CookieAuthenticationDefaults.AuthenticationScheme)
+// Role bazlı yetkilendirme ekliyoruz
+builder.Services.AddAuthorization(options =>
+{
+    // Admin rolüne sahip kullanıcılar için politika
+    options.AddPolicy("RequireAdminRole", policy => policy.RequireRole("Admin"));
+    
+    // Manager rolüne sahip kullanıcılar için politika
+    options.AddPolicy("RequireManagerRole", policy => policy.RequireRole("Manager"));
+    
+    // Accountant rolüne sahip kullanıcılar için politika
+    options.AddPolicy("RequireAccountantRole", policy => policy.RequireRole("Accountant"));
+    
+    // Herhangi bir role sahip kullanıcılar için politika
+    options.AddPolicy("AuthenticatedUser", policy => policy.RequireAuthenticatedUser());
+});
+
+// Cookie Authentication
+builder.Services.AddAuthentication(options => 
+{
+    options.DefaultAuthenticateScheme = CookieAuthenticationDefaults.AuthenticationScheme;
+    options.DefaultChallengeScheme = CookieAuthenticationDefaults.AuthenticationScheme;
+    options.DefaultSignInScheme = CookieAuthenticationDefaults.AuthenticationScheme;
+})
     .AddCookie(options =>
     {
         options.Cookie.Name = "MuhasebeStokAuth";
@@ -47,43 +78,59 @@ builder.Services.AddScoped<IUnitOfWork, UnitOfWork>();
 // HttpClient servisini ekliyoruz
 builder.Services.AddHttpClient();
 
+// LogService bağımlılığını ekliyoruz
+builder.Services.AddScoped<ILogService, LogService>();
+
 // SistemLogService'i ekliyoruz
-builder.Services.AddScoped<SistemLogService>();
-builder.Services.AddScoped<ILogService, SistemLogService>();
-
-// DovizService'i ekliyoruz
-builder.Services.AddScoped<IDovizService, DovizService>();
-
-// KurService'i ekliyoruz
-builder.Services.AddScoped<IKurService, KurService>();
-
-// HttpContextAccessor ekliyoruz
+builder.Services.AddScoped<MuhasebeStokWebApp.Services.SistemLogService>();
 builder.Services.AddHttpContextAccessor();
+
+// UserManager'ı ekliyoruz
+builder.Services.AddScoped<UserManager>();
 
 // StokFifoService'i ekliyoruz
 builder.Services.AddScoped<StokFifoService>();
 
-// Tarih formatı işlemleri için MVC servisi ekleme
-builder.Services.AddMvc()
-    .AddJsonOptions(options =>
-    {
-        options.JsonSerializerOptions.PropertyNamingPolicy = null;
-    })
-    .AddViewOptions(options =>
-    {
-        options.HtmlHelperOptions.Html5DateRenderingMode = Microsoft.AspNetCore.Mvc.Rendering.Html5DateRenderingMode.Rfc3339;
-    });
+// Para birimi ve döviz kuru servislerini ekliyoruz
+builder.Services.AddScoped<IParaBirimiService, ParaBirimiService>();
+builder.Services.AddScoped<IDovizKuruService, DovizKuruService>();
+
+// DropdownService'i ekliyoruz
+builder.Services.AddScoped<IDropdownService, DropdownService>();
+
+// MenuService'i ekliyoruz
+builder.Services.AddScoped<IMenuService, MenuService>();
 
 builder.Services.AddControllersWithViews();
 
 var app = builder.Build();
 
 // Configure the HTTP request pipeline.
-if (!app.Environment.IsDevelopment())
+if (app.Environment.IsDevelopment())
+{
+    app.UseDeveloperExceptionPage();
+}
+else
 {
     app.UseExceptionHandler("/Home/Error");
     // The default HSTS value is 30 days. You may want to change this for production scenarios, see https://aka.ms/aspnetcore-hsts.
     app.UseHsts();
+}
+
+// Veritabanı başlangıç verilerini ekle
+using (var scope = app.Services.CreateScope())
+{
+    var services = scope.ServiceProvider;
+    try
+    {
+        var context = services.GetRequiredService<ApplicationDbContext>();
+        await AppDbInitializer.SeedData(services, context);
+    }
+    catch (Exception ex)
+    {
+        var logger = services.GetRequiredService<ILogger<Program>>();
+        logger.LogError(ex, "Veritabanı başlatma hatası.");
+    }
 }
 
 // Özel hata sayfaları için durum kodu sayfalarını ayarlıyoruz
@@ -97,13 +144,6 @@ app.UseRouting();
 // Yetkilendirmeyi etkinleştiriyoruz
 app.UseAuthentication();
 app.UseAuthorization();
-
-// RequestLocalization middleware ekle
-var locOptions = app.Services.GetService<IOptions<RequestLocalizationOptions>>();
-if (locOptions != null)
-{
-    app.UseRequestLocalization(locOptions.Value);
-}
 
 app.MapControllerRoute(
     name: "default",

@@ -1,0 +1,99 @@
+@model MuhasebeStokWebApp.ViewModels.ParaBirimi.ParaBirimiIliskiViewModel
+
+@{
+    ViewData["Title"] = "Para Birimi İlişkisi Ekle";
+}
+
+<div class="container-fluid">
+    <div class="row mb-3">
+        <div class="col-md-12">
+            <div class="card">
+                <div class="card-header">
+                    <h3 class="card-title">Para Birimi İlişkisi Ekle</h3>
+                </div>
+                <div class="card-body">
+                    <form asp-action="IliskiEkle" method="post">
+                        <div asp-validation-summary="ModelOnly" class="text-danger"></div>
+
+                        <div class="row mb-3">
+                            <div class="col-md-6">
+                                <div class="form-group">
+                                    <label asp-for="KaynakParaBirimiID" class="control-label">Kaynak Para Birimi</label>
+                                    <select asp-for="KaynakParaBirimiID" asp-items="ViewBag.KaynakParaBirimleri" class="form-control select2">
+                                        <option value="">-- Para Birimi Seçin --</option>
+                                    </select>
+                                    <span asp-validation-for="KaynakParaBirimiID" class="text-danger"></span>
+                                </div>
+                            </div>
+                            <div class="col-md-6">
+                                <div class="form-group">
+                                    <label asp-for="HedefParaBirimiID" class="control-label">Hedef Para Birimi</label>
+                                    <select asp-for="HedefParaBirimiID" asp-items="ViewBag.HedefParaBirimleri" class="form-control select2">
+                                        <option value="">-- Para Birimi Seçin --</option>
+                                    </select>
+                                    <span asp-validation-for="HedefParaBirimiID" class="text-danger"></span>
+                                </div>
+                            </div>
+                        </div>
+
+                        <div class="row mb-3">
+                            <div class="col-md-6">
+                                <div class="form-group">
+                                    <label asp-for="Carpan" class="control-label">Çevrim Katsayısı</label>
+                                    <input asp-for="Carpan" class="form-control" />
+                                    <span asp-validation-for="Carpan" class="text-danger"></span>
+                                    <small class="form-text text-muted">1 birim kaynak para biriminin kaç birim hedef para birimine eşit olduğunu belirtin.</small>
+                                </div>
+                            </div>
+                            <div class="col-md-6">
+                                <div class="form-group form-check mt-4">
+                                    <input asp-for="Aktif" class="form-check-input" />
+                                    <label asp-for="Aktif" class="form-check-label">Aktif</label>
+                                </div>
+                            </div>
+                        </div>
+
+                        <div class="form-group">
+                            <label asp-for="Aciklama" class="control-label">Açıklama</label>
+                            <textarea asp-for="Aciklama" class="form-control" rows="3"></textarea>
+                            <span asp-validation-for="Aciklama" class="text-danger"></span>
+                        </div>
+
+                        <div class="form-group mt-4">
+                            <button type="submit" class="btn btn-primary">
+                                <i class="fas fa-save"></i> Kaydet
+                            </button>
+                            <a asp-action="ParaBirimiIliskileri" class="btn btn-secondary">
+                                <i class="fas fa-arrow-left"></i> Listeye Dön
+                            </a>
+                        </div>
+                    </form>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+
+@section Scripts {
+    @{await Html.RenderPartialAsync("_ValidationScriptsPartial");}
+    <script>
+        $(document).ready(function () {
+            // Select2 için ayarlar
+            $('.select2').select2();
+
+            // Kaynak ve hedef para birimi aynı olamaz kontrolü
+            $('form').submit(function (e) {
+                var kaynakId = $('#KaynakParaBirimiID').val();
+                var hedefId = $('#HedefParaBirimiID').val();
+                
+                if (kaynakId === hedefId && kaynakId !== '' && hedefId !== '') {
+                    alert('Kaynak ve hedef para birimi aynı olamaz!');
+                    e.preventDefault();
+                    return false;
+                }
+                
+                return true;
+            });
+        });
+    </script>
+} 

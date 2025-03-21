@@ -30,23 +30,12 @@ namespace MuhasebeStokWebApp.ViewModels.Urun
         [Range(0, double.MaxValue, ErrorMessage = "Stok miktarı 0'dan küçük olamaz.")]
         public decimal StokMiktar { get; set; }
         
-        [Required(ErrorMessage = "Liste fiyatı zorunludur.")]
-        [Range(0, double.MaxValue, ErrorMessage = "Liste fiyatı 0'dan küçük olamaz.")]
-        [Display(Name = "Liste Fiyatı")]
-        public decimal ListeFiyati { get; set; }
-        
-        [Required(ErrorMessage = "Maliyet fiyatı zorunludur.")]
-        [Range(0, double.MaxValue, ErrorMessage = "Maliyet fiyatı 0'dan küçük olamaz.")]
-        [Display(Name = "Maliyet Fiyatı")]
-        public decimal MaliyetFiyati { get; set; }
-        
-        [Required(ErrorMessage = "Satış fiyatı zorunludur.")]
-        [Range(0, double.MaxValue, ErrorMessage = "Satış fiyatı 0'dan küçük olamaz.")]
-        [Display(Name = "Satış Fiyatı")]
-        public decimal SatisFiyati { get; set; }
-        
         [Display(Name = "Aktif")]
         public bool Aktif { get; set; }
+        
+        [Display(Name = "KDV Oranı (%)")]
+        [Range(0, 100, ErrorMessage = "KDV oranı 0-100 arasında olmalıdır.")]
+        public int KDVOrani { get; set; } = 18;
         
         [Display(Name = "Kategori")]
         public Guid? KategoriID { get; set; }

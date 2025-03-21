@@ -4,157 +4,93 @@
 }
 
 <div class="container-fluid">
-    <div class="row">
-        <!-- Kasa Bilgileri -->
-        <div class="col-xl-6 col-md-12 box-col-12">
-            <div class="card">
-                <div class="card-header bg-primary text-white">
-                    <div class="d-flex justify-content-between align-items-center">
-                        <h5 class="mb-0">Kasa Bilgileri</h5>
-                        <div>
-                            <a asp-action="Edit" asp-route-id="@Model.KasaID" class="btn btn-warning btn-sm">
-                                <i class="fas fa-edit"></i> Düzenle
-                            </a>
-                            <a asp-action="Hareketler" asp-route-id="@Model.KasaID" class="btn btn-info btn-sm">
-                                <i class="fas fa-exchange-alt"></i> Hareketler
-                            </a>
-                        </div>
-                    </div>
-                </div>
-                <div class="card-body">
-                    <div class="row">
-                        <div class="col-sm-6 col-md-12 col-lg-6">
-                            <div class="info-group">
-                                <h6 class="f-w-600">Kasa Adı</h6>
-                                <p>@Model.KasaAdi</p>
-                            </div>
-                        </div>
-                        <div class="col-sm-6 col-md-12 col-lg-6">
-                            <div class="info-group">
-                                <h6 class="f-w-600">Kasa Türü</h6>
-                                <p>@Model.KasaTuru</p>
-                            </div>
-                        </div>
-                        <div class="col-sm-6 col-md-12 col-lg-6">
-                            <div class="info-group">
-                                <h6 class="f-w-600">Açılış Bakiyesi</h6>
-                                <p>@Model.AcilisBakiye.ToString("N2") ₺</p>
-                            </div>
-                        </div>
-                        <div class="col-sm-6 col-md-12 col-lg-6">
-                            <div class="info-group">
-                                <h6 class="f-w-600">Güncel Bakiye</h6>
-                                <p class="@(Model.GuncelBakiye >= 0 ? "text-success" : "text-danger") fw-bold">
-                                    @Model.GuncelBakiye.ToString("N2") ₺
-                                </p>
-                            </div>
-                        </div>
-                        <div class="col-sm-6 col-md-12 col-lg-6">
-                            <div class="info-group">
-                                <h6 class="f-w-600">Durum</h6>
-                                <p>
-                                    @if (Model.Aktif)
-                                    {
-                                        <span class="badge bg-success">Aktif</span>
-                                    }
-                                    else
-                                    {
-                                        <span class="badge bg-danger">Pasif</span>
-                                    }
-                                </p>
-                            </div>
-                        </div>
-                        <div class="col-sm-6 col-md-12 col-lg-6">
-                            <div class="info-group">
-                                <h6 class="f-w-600">Oluşturma Tarihi</h6>
-                                <p>@Model.OlusturmaTarihi.ToString("dd.MM.yyyy HH:mm")</p>
-                            </div>
-                        </div>
-                    </div>
-                </div>
+    <div class="page-title">
+        <div class="row">
+            <div class="col-6">
+                <h3>Kasa Detayları</h3>
             </div>
-        </div>
-
-        <!-- Kasa Açıklaması -->
-        <div class="col-xl-6 col-md-12 box-col-12">
-            <div class="card">
-                <div class="card-header bg-primary text-white">
-                    <h5 class="mb-0">Açıklama</h5>
-                </div>
-                <div class="card-body">
-                    @if (string.IsNullOrEmpty(Model.Aciklama))
-                    {
-                        <p class="text-muted">Açıklama bulunmamaktadır.</p>
-                    }
-                    else
-                    {
-                        <p>@Model.Aciklama</p>
-                    }
-                </div>
-            </div>
-            
-            <!-- Son Hareketler -->
-            <div class="card mt-4">
-                <div class="card-header bg-primary text-white">
-                    <div class="d-flex justify-content-between align-items-center">
-                        <h5 class="mb-0">Son Hareketler</h5>
-                        <a asp-action="Hareketler" asp-route-id="@Model.KasaID" class="btn btn-light btn-sm">
-                            <i class="fas fa-list"></i> Tüm Hareketler
-                        </a>
-                    </div>
-                </div>
-                <div class="card-body">
-                    @if (Model.SonHareketler != null && Model.SonHareketler.Any())
-                    {
-                        <div class="table-responsive">
-                            <table class="table table-hover">
-                                <thead>
-                                    <tr>
-                                        <th>Tarih</th>
-                                        <th>İşlem Türü</th>
-                                        <th class="text-end">Tutar</th>
-                                    </tr>
-                                </thead>
-                                <tbody>
-                                    @foreach (var hareket in Model.SonHareketler)
-                                    {
-                                        <tr>
-                                            <td>@hareket.Tarih.ToString("dd.MM.yyyy HH:mm")</td>
-                                            <td>@hareket.HareketTuru</td>
-                                            <td class="text-end @(hareket.HareketTuru == "Giriş" ? "text-success" : "text-danger")">
-                                                @(hareket.HareketTuru == "Giriş" ? "+" : "-")@hareket.Tutar.ToString("N2") ₺
-                                            </td>
-                                        </tr>
-                                    }
-                                </tbody>
-                            </table>
-                        </div>
-                    }
-                    else
-                    {
-                        <p class="text-muted">Henüz hareket kaydı bulunmamaktadır.</p>
-                    }
-                </div>
+            <div class="col-6">
+                <ol class="breadcrumb">
+                    <li class="breadcrumb-item"><a href="/"><i data-feather="home"></i></a></li>
+                    <li class="breadcrumb-item"><a asp-controller="Kasa" asp-action="Index">Kasalar</a></li>
+                    <li class="breadcrumb-item active">Kasa Detayları</li>
+                </ol>
             </div>
         </div>
     </div>
 </div>
 
-<div class="container-fluid mt-4">
+<div class="container-fluid">
     <div class="row">
-        <div class="col-12 text-end">
-            <a asp-action="Index" class="btn btn-secondary">
-                <i class="fas fa-arrow-left"></i> Listeye Dön
-            </a>
-            <a asp-action="Edit" asp-route-id="@Model.KasaID" class="btn btn-primary">
-                <i class="fas fa-edit"></i> Düzenle
-            </a>
-            <a asp-action="Hareketler" asp-route-id="@Model.KasaID" class="btn btn-success">
-                <i class="fas fa-exchange-alt"></i> Hareketler
-            </a>
-            <a asp-action="Delete" asp-route-id="@Model.KasaID" class="btn btn-danger">
-                <i class="fas fa-trash"></i> Sil
-            </a>
+        <div class="col-md-12">
+            <div class="card">
+                <div class="card-header">
+                    <h5 class="mb-0">@Model.KasaAdi</h5>
+                </div>
+                <div class="card-body">
+                    <div class="row">
+                        <div class="col-md-6">
+                            <dl class="row">
+                                <dt class="col-sm-4">@Html.DisplayNameFor(model => model.KasaAdi)</dt>
+                                <dd class="col-sm-8">@Html.DisplayFor(model => model.KasaAdi)</dd>
+                                
+                                <dt class="col-sm-4">@Html.DisplayNameFor(model => model.KasaTuru)</dt>
+                                <dd class="col-sm-8">@Html.DisplayFor(model => model.KasaTuru)</dd>
+                                
+                                <dt class="col-sm-4">@Html.DisplayNameFor(model => model.Aciklama)</dt>
+                                <dd class="col-sm-8">@Html.DisplayFor(model => model.Aciklama)</dd>
+                            </dl>
+                        </div>
+                        <div class="col-md-6">
+                            <dl class="row">
+                                <dt class="col-sm-4">@Html.DisplayNameFor(model => model.AcilisBakiye)</dt>
+                                <dd class="col-sm-8">@Model.AcilisBakiye.ToString("N2") ₺</dd>
+                                
+                                <dt class="col-sm-4">@Html.DisplayNameFor(model => model.GuncelBakiye)</dt>
+                                <dd class="col-sm-8">
+                                    <span class="badge @(Model.GuncelBakiye >= 0 ? "badge-success" : "badge-danger")">
+                                        @Model.GuncelBakiye.ToString("N2") ₺
+                                    </span>
+                                </dd>
+                                
+                                <dt class="col-sm-4">@Html.DisplayNameFor(model => model.Aktif)</dt>
+                                <dd class="col-sm-8">
+                                    @if (Model.Aktif)
+                                    {
+                                        <span class="badge badge-success">Aktif</span>
+                                    }
+                                    else
+                                    {
+                                        <span class="badge badge-danger">Pasif</span>
+                                    }
+                                </dd>
+                                
+                                <dt class="col-sm-4">@Html.DisplayNameFor(model => model.OlusturmaTarihi)</dt>
+                                <dd class="col-sm-8">@Html.DisplayFor(model => model.OlusturmaTarihi)</dd>
+                            </dl>
+                        </div>
+                    </div>
+                    
+                    <div class="row mt-3">
+                        <div class="col-md-12">
+                            <div class="btn-group" role="group">
+                                <a asp-action="Hareketler" asp-route-id="@Model.KasaID" class="btn btn-info">
+                                    <i class="fa fa-list"></i> Kasa Hareketleri
+                                </a>
+                                <a asp-action="Edit" asp-route-id="@Model.KasaID" class="btn btn-primary">
+                                    <i class="fa fa-edit"></i> Düzenle
+                                </a>
+                                <a asp-action="YeniHareket" class="btn btn-success">
+                                    <i class="fa fa-plus"></i> Yeni Hareket
+                                </a>
+                                <a asp-action="Index" class="btn btn-secondary">
+                                    <i class="fa fa-arrow-left"></i> Listeye Dön
+                                </a>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
         </div>
     </div>
 </div> 

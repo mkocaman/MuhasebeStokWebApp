@@ -1,0 +1,221 @@
+@model List<MuhasebeStokWebApp.ViewModels.Menu.MenuViewModel>
+@using MuhasebeStokWebApp.Enums
+
+@{
+    ViewData["Title"] = "Menü Yönetimi";
+}
+
+<div class="container-fluid">
+    <div class="row">
+        <div class="col-12">
+            <div class="card">
+                <div class="card-header">
+                    <div class="d-flex justify-content-between align-items-center">
+                        <h3 class="card-title">Menü Listesi</h3>
+                        <a href="@Url.Action("Create", "Menu")" class="btn btn-primary">
+                            <i class="fas fa-plus"></i> Yeni Menü
+                        </a>
+                    </div>
+                </div>
+                <div class="card-body">
+                    <div class="table-responsive">
+                        <table id="menuTable" class="table table-bordered table-striped">
+                            <thead>
+                                <tr>
+                                    <th>ID</th>
+                                    <th>Menü Adı</th>
+                                    <th>Menü Tipi</th>
+                                    <th>Üst Menü</th>
+                                    <th>URL</th>
+                                    <th>Controller</th>
+                                    <th>Action</th>
+                                    <th>Sıra</th>
+                                    <th>Aktif</th>
+                                    <th>İşlemler</th>
+                                </tr>
+                            </thead>
+                            <tbody>
+                                @foreach (var menu in Model)
+                                {
+                                    <tr>
+                                        <td>@menu.MenuID</td>
+                                        <td>@menu.MenuAdi</td>
+                                        <td>
+                                            @if (menu.MenuTipi == 0)
+                                            {
+                                                <span class="badge badge-primary">Ana Menü</span>
+                                            }
+                                            else if (menu.MenuTipi == 1)
+                                            {
+                                                <span class="badge badge-info">Alt Menü</span>
+                                            }
+                                            else
+                                            {
+                                                <span class="badge badge-secondary">Sayfa</span>
+                                            }
+                                        </td>
+                                        <td>@(menu.UstMenuID.HasValue ? menu.UstMenuAdi : "-")</td>
+                                        <td>@menu.URL</td>
+                                        <td>@menu.Controller</td>
+                                        <td>@menu.Action</td>
+                                        <td>@menu.Sira</td>
+                                        <td>
+                                            @if (menu.Aktif)
+                                            {
+                                                <span class="badge badge-success">Aktif</span>
+                                            }
+                                            else
+                                            {
+                                                <span class="badge badge-danger">Pasif</span>
+                                            }
+                                        </td>
+                                        <td>
+                                            <div class="btn-group btn-group-sm">
+                                                <a href="@Url.Action("Details", "Menu", new { id = menu.MenuID })" class="btn btn-info">
+                                                    <i class="fas fa-eye"></i>
+                                                </a>
+                                                <a href="@Url.Action("Edit", "Menu", new { id = menu.MenuID })" class="btn btn-warning">
+                                                    <i class="fas fa-edit"></i>
+                                                </a>
+                                                <a href="@Url.Action("Delete", "Menu", new { id = menu.MenuID })" class="btn btn-danger"
+                                                   onclick="return confirm('Bu menüyü silmek istediğinizden emin misiniz?')">
+                                                    <i class="fas fa-trash"></i>
+                                                </a>
+                                            </div>
+                                        </td>
+                                    </tr>
+                                }
+                            </tbody>
+                        </table>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <div class="modal fade" id="menuModal" tabindex="-1" role="dialog" aria-labelledby="menuModalLabel" aria-hidden="true">
+        <div class="modal-dialog modal-lg" role="document">
+            <div class="modal-content">
+                <div class="modal-header">
+                    <h5 class="modal-title" id="menuModalLabel">Menü Detayları</h5>
+                    <button type="button" class="close" data-dismiss="modal" aria-label="Kapat">
+                        <span aria-hidden="true">&times;</span>
+                    </button>
+                </div>
+                <div class="modal-body">
+                    <div class="row">
+                        <div class="col-md-6">
+                            <div class="form-group">
+                                <label>Menü Adı:</label>
+                                <p id="menuAdi"></p>
+                            </div>
+                        </div>
+                        <div class="col-md-6">
+                            <div class="form-group">
+                                <label>Menü Tipi:</label>
+                                <p id="menuTipi"></p>
+                            </div>
+                        </div>
+                    </div>
+                    <div class="row">
+                        <div class="col-md-6">
+                            <div class="form-group">
+                                <label>Üst Menü:</label>
+                                <p id="ustMenu"></p>
+                            </div>
+                        </div>
+                        <div class="col-md-6">
+                            <div class="form-group">
+                                <label>URL:</label>
+                                <p id="url"></p>
+                            </div>
+                        </div>
+                    </div>
+                    <div class="row">
+                        <div class="col-md-6">
+                            <div class="form-group">
+                                <label>Controller:</label>
+                                <p id="controller"></p>
+                            </div>
+                        </div>
+                        <div class="col-md-6">
+                            <div class="form-group">
+                                <label>Action:</label>
+                                <p id="action"></p>
+                            </div>
+                        </div>
+                    </div>
+                    <div class="row">
+                        <div class="col-md-6">
+                            <div class="form-group">
+                                <label>Icon:</label>
+                                <p id="icon"></p>
+                            </div>
+                        </div>
+                        <div class="col-md-6">
+                            <div class="form-group">
+                                <label>Sıra:</label>
+                                <p id="sira"></p>
+                            </div>
+                        </div>
+                    </div>
+                    <div class="row">
+                        <div class="col-md-6">
+                            <div class="form-group">
+                                <label>Aktif:</label>
+                                <p id="aktif"></p>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+                <div class="modal-footer">
+                    <button type="button" class="btn btn-secondary" data-dismiss="modal">Kapat</button>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+
+@section Scripts {
+    <script>
+        $(document).ready(function () {
+            $('#menuTable').DataTable({
+                "responsive": true,
+                "lengthChange": false,
+                "autoWidth": false,
+                "language": {
+                    "url": "//cdn.datatables.net/plug-ins/1.10.25/i18n/Turkish.json"
+                }
+            });
+
+            $('.btn-detail').click(function () {
+                var menuId = $(this).data('id');
+                $.ajax({
+                    url: '@Url.Action("GetMenuDetails", "Menu")/' + menuId,
+                    type: 'GET',
+                    success: function (data) {
+                        $('#menuAdi').text(data.ad);
+                        $('#menuTipi').text(GetMenuTipiText(data.menuTipi));
+                        $('#ustMenu').text(data.ustMenuAdi || '-');
+                        $('#url').text(data.url || '-');
+                        $('#controller').text(data.controller || '-');
+                        $('#action').text(data.action || '-');
+                        $('#icon').text(data.icon || '-');
+                        $('#sira').text(data.sira);
+                        $('#aktif').text(data.aktifMi ? 'Aktif' : 'Pasif');
+                        $('#menuModal').modal('show');
+                    }
+                });
+            });
+
+            function GetMenuTipiText(menuTipi) {
+                switch (menuTipi) {
+                    case 0: return 'Ana Menü';
+                    case 1: return 'Alt Menü';
+                    case 2: return 'Sayfa';
+                    default: return 'Diğer';
+                }
+            }
+        });
+    </script>
+} 

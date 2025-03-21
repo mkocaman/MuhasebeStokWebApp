@@ -1,0 +1,67 @@
+@model MuhasebeStokWebApp.Models.EditUserViewModel
+@{
+    ViewData["Title"] = "Kullanıcı Düzenle";
+}
+
+<div class="container-fluid p-0">
+    <div class="row">
+        <div class="col-12">
+            <div class="card">
+                <div class="card-header">
+                    <h5 class="card-title">Kullanıcı Düzenle</h5>
+                    <h6 class="card-subtitle text-muted">Kullanıcı bilgilerini ve rollerini güncelleyin</h6>
+                </div>
+                <div class="card-body">
+                    <form asp-action="EditUser" method="post">
+                        <input type="hidden" asp-for="Id" />
+                        
+                        <div asp-validation-summary="All" class="text-danger"></div>
+                        
+                        <div class="mb-3">
+                            <label asp-for="UserName" class="form-label">Kullanıcı Adı</label>
+                            <input asp-for="UserName" class="form-control" />
+                            <span asp-validation-for="UserName" class="text-danger"></span>
+                        </div>
+                        
+                        <div class="mb-3">
+                            <label asp-for="Email" class="form-label">E-posta</label>
+                            <input asp-for="Email" class="form-control" />
+                            <span asp-validation-for="Email" class="text-danger"></span>
+                        </div>
+                        
+                        <div class="mb-4">
+                            <label class="form-label">Roller</label>
+                            <div class="row">
+                                @foreach (var role in Model.AllRoles)
+                                {
+                                    <div class="col-md-4 mb-2">
+                                        <div class="form-check">
+                                            <input type="checkbox" name="selectedRoles" value="@role.Name" 
+                                                   class="form-check-input" 
+                                                   @(Model.UserRoles.Contains(role.Name) ? "checked" : "") 
+                                                   @(role.Name == "Admin" && Model.UserName == "admin" ? "disabled" : "") />
+                                            <label class="form-check-label">@role.Name</label>
+                                        </div>
+                                    </div>
+                                }
+                            </div>
+                        </div>
+                        
+                        <div class="d-flex gap-2">
+                            <button type="submit" class="btn btn-primary">
+                                <i class="fas fa-save me-1"></i> Kaydet
+                            </button>
+                            <a asp-action="UserManagement" class="btn btn-secondary">
+                                <i class="fas fa-arrow-left me-1"></i> Geri Dön
+                            </a>
+                        </div>
+                    </form>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+
+@section Scripts {
+    <partial name="_ValidationScriptsPartial" />
+} 

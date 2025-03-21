@@ -28,6 +28,9 @@ namespace MuhasebeStokWebApp.Data.Entities
         
         public bool Aktif { get; set; }
         
+        // KDV Oranı
+        public int KDVOrani { get; set; } = 18; // Varsayılan %18
+        
         public Guid? OlusturanKullaniciID { get; set; }
         
         public Guid? SonGuncelleyenKullaniciID { get; set; }

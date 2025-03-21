@@ -1,7 +1,6 @@
 using System;
 using System.Threading.Tasks;
 using MuhasebeStokWebApp.Services;
-using MuhasebeStokWebApp.Models;
 
 namespace MuhasebeStokWebApp.Extensions
 {
@@ -30,7 +29,7 @@ namespace MuhasebeStokWebApp.Extensions
         /// </summary>
         public static async Task SafeLogEkleAsync(this ILogService logService, 
             string mesaj, 
-            LogTuru logTuru, 
+            MuhasebeStokWebApp.Enums.LogTuru logTuru, 
             Guid? kayitID = null, 
             string tabloAdi = null, 
             string kayitAdi = null)

@@ -23,7 +23,7 @@ namespace MuhasebeStokWebApp.Controllers
         public async Task<IActionResult> Index()
         {
             var birimler = await _context.Birimler
-                .Where(b => !b.SoftDelete)
+                .Where(b => b.Aktif)
                 .OrderBy(b => b.BirimAdi)
                 .Select(b => new BirimViewModel
                 {
@@ -46,7 +46,7 @@ namespace MuhasebeStokWebApp.Controllers
             }
 
             var birim = await _context.Birimler
-                .FirstOrDefaultAsync(b => b.BirimID == id && !b.SoftDelete);
+                .FirstOrDefaultAsync(b => b.BirimID == id && b.Aktif);
 
             if (birim == null)
             {
@@ -79,22 +79,50 @@ namespace MuhasebeStokWebApp.Controllers
         [ValidateAntiForgeryToken]
         public async Task<IActionResult> Create(BirimCreateViewModel model)
         {
-            if (ModelState.IsValid)
+            try 
             {
-                var birim = new Birim
+                // Aktif değeri için manuol kontrol ekle
+                if (!ModelState.IsValid)
                 {
-                    BirimID = Guid.NewGuid(),
-                    BirimAdi = model.BirimAdi,
-                    Aciklama = model.Aciklama,
-                    Aktif = model.Aktif,
-                    SoftDelete = false
-                };
+                    // Hataları yazdır
+                    foreach (var state in ModelState)
+                    {
+                        if (state.Key == "Aktif" && state.Value.Errors.Count > 0)
+                        {
+                            // Aktif alanı için varsayılan değeri true olarak ayarla
+                            model.Aktif = true;
+                            ModelState.Remove("Aktif");
+                        }
+                        else
+                        {
+                            foreach (var error in state.Value.Errors)
+                            {
+                                Console.WriteLine($"Hata - {state.Key}: {error.ErrorMessage}");
+                            }
+                        }
+                    }
+                }
 
-                _context.Add(birim);
-                await _context.SaveChangesAsync();
-                
-                TempData["SuccessMessage"] = "Birim başarıyla oluşturuldu.";
-                return RedirectToAction(nameof(Index));
+                if (ModelState.IsValid)
+                {
+                    var birim = new Birim
+                    {
+                        BirimID = Guid.NewGuid(),
+                        BirimAdi = model.BirimAdi,
+                        Aciklama = model.Aciklama,
+                        Aktif = model.Aktif
+                    };
+
+                    _context.Add(birim);
+                    await _context.SaveChangesAsync();
+                    
+                    TempData["SuccessMessage"] = "Birim başarıyla oluşturuldu.";
+                    return RedirectToAction(nameof(Index));
+                }
+            }
+            catch (Exception ex)
+            {
+                ModelState.AddModelError("", $"Bir hata oluştu: {ex.Message}");
             }
             
             if (Request.Headers["X-Requested-With"] == "XMLHttpRequest")
@@ -113,7 +141,7 @@ namespace MuhasebeStokWebApp.Controllers
             }
 
             var birim = await _context.Birimler
-                .FirstOrDefaultAsync(b => b.BirimID == id && !b.SoftDelete);
+                .FirstOrDefaultAsync(b => b.BirimID == id && b.Aktif);
 
             if (birim == null)
             {
@@ -150,7 +178,7 @@ namespace MuhasebeStokWebApp.Controllers
                 try
                 {
                     var birim = await _context.Birimler
-                        .FirstOrDefaultAsync(b => b.BirimID == id && !b.SoftDelete);
+                        .FirstOrDefaultAsync(b => b.BirimID == id && b.Aktif);
 
                     if (birim == null)
                     {
@@ -196,7 +224,7 @@ namespace MuhasebeStokWebApp.Controllers
             }
 
             var birim = await _context.Birimler
-                .FirstOrDefaultAsync(b => b.BirimID == id && !b.SoftDelete);
+                .FirstOrDefaultAsync(b => b.BirimID == id && b.Aktif);
 
             if (birim == null)
             {
@@ -221,7 +249,7 @@ namespace MuhasebeStokWebApp.Controllers
         {
             var birim = await _context.Birimler
                 .Include(b => b.Urunler)
-                .FirstOrDefaultAsync(b => b.BirimID == id && !b.SoftDelete);
+                .FirstOrDefaultAsync(b => b.BirimID == id && b.Aktif);
 
             if (birim == null)
             {
@@ -246,13 +274,13 @@ namespace MuhasebeStokWebApp.Controllers
                     return RedirectToAction(nameof(Index));
                 }
                 
-                // İlişkili kayıt yoksa soft delete yap
-                birim.SoftDelete = true;
+                // İlişkili kayıt yoksa pasife al (soft delete yerine)
                 birim.Aktif = false;
                 _context.Update(birim);
                 await _context.SaveChangesAsync();
                 
                 TempData["SuccessMessage"] = $"'{birim.BirimAdi}' birimi başarıyla silindi.";
+                return RedirectToAction(nameof(Index));
             }
             catch (Exception ex)
             {
@@ -264,7 +292,7 @@ namespace MuhasebeStokWebApp.Controllers
 
         private bool BirimExists(Guid id)
         {
-            return _context.Birimler.Any(e => e.BirimID == id && !e.SoftDelete);
+            return _context.Birimler.Any(e => e.BirimID == id && e.Aktif);
         }
     }
 } 

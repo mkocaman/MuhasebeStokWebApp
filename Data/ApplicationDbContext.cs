@@ -1,5 +1,8 @@
+using System;
+using System.Collections.Generic;
 using Microsoft.AspNetCore.Identity.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore;
+using Microsoft.EntityFrameworkCore.Metadata;
 using MuhasebeStokWebApp.Data.Entities;
 using MuhasebeStokWebApp.Models;
 
@@ -12,260 +15,218 @@ namespace MuhasebeStokWebApp.Data
         {
         }
 
-        public DbSet<Urun> Urunler { get; set; }
-        public DbSet<UrunFiyat> UrunFiyatlari { get; set; }
-        public DbSet<FiyatTipi> FiyatTipleri { get; set; }
-        public DbSet<UrunKategori> UrunKategorileri { get; set; }
-        public DbSet<StokHareket> StokHareketleri { get; set; }
-        public DbSet<StokFifo> StokFifo { get; set; }
-        public DbSet<Depo> Depolar { get; set; }
-        public DbSet<Cari> Cariler { get; set; }
-        public DbSet<CariHareket> CariHareketler { get; set; }
-        public DbSet<Fatura> Faturalar { get; set; }
-        public DbSet<FaturaDetay> FaturaDetaylari { get; set; }
-        public DbSet<FaturaOdeme> FaturaOdemeleri { get; set; }
-        public DbSet<Birim> Birimler { get; set; }
-        public DbSet<OdemeTuru> OdemeTurleri { get; set; }
-        public DbSet<FaturaTuru> FaturaTurleri { get; set; }
-        public DbSet<Irsaliye> Irsaliyeler { get; set; }
-        public DbSet<IrsaliyeDetay> IrsaliyeDetaylari { get; set; }
-        public DbSet<IrsaliyeTuru> IrsaliyeTurleri { get; set; }
-        public DbSet<Kasa> Kasalar { get; set; }
-        public DbSet<KasaHareket> KasaHareketleri { get; set; }
-        public DbSet<Banka> Bankalar { get; set; }
-        public DbSet<BankaHareket> BankaHareketleri { get; set; }
-        public DbSet<MuhasebeStokWebApp.Data.Entities.SistemAyarlari> SistemAyarlari { get; set; }
-        public DbSet<MuhasebeStokWebApp.Data.Entities.SistemLog> SistemLoglar { get; set; }
-        public DbSet<ParaBirimi> ParaBirimleri { get; set; }
-        public DbSet<KurDegeri> KurDegerleri { get; set; }
-        public DbSet<DovizIliski> DovizIliskileri { get; set; }
-
+        // Entities namespace'inden gelen modeller
+        public virtual DbSet<Entities.Banka> Bankalar { get; set; }
+        public virtual DbSet<Entities.BankaHareket> BankaHareketleri { get; set; }
+        public virtual DbSet<Entities.Cari> Cariler { get; set; }
+        public virtual DbSet<Entities.Fatura> Faturalar { get; set; }
+        public virtual DbSet<Entities.FaturaDetay> FaturaDetaylari { get; set; }
+        public virtual DbSet<Entities.FaturaTuru> FaturaTurleri { get; set; }
+        public virtual DbSet<Entities.Menu> Menuler { get; set; }
+        public virtual DbSet<Entities.MenuRol> MenuRoller { get; set; }
+        public virtual DbSet<Entities.OdemeTuru> OdemeTurleri { get; set; }
+        public virtual DbSet<Entities.StokHareket> StokHareketleri { get; set; }
+        public virtual DbSet<Entities.ParaBirimi> ParaBirimleri { get; set; }
+        public virtual DbSet<Entities.ParaBirimiIliski> ParaBirimiIliskileri { get; set; }
+        public virtual DbSet<Entities.KurDegeri> KurDegerleri { get; set; }
+        public virtual DbSet<Entities.SistemAyarlari> SistemAyarlari { get; set; }
+        public virtual DbSet<Entities.SistemLog> SistemLoglar { get; set; }
+        public virtual DbSet<Entities.Urun> Urunler { get; set; }
+        public virtual DbSet<Entities.FiyatTipi> FiyatTipleri { get; set; }
+        public virtual DbSet<Entities.UrunFiyat> UrunFiyatlari { get; set; }
+        public virtual DbSet<Entities.UrunKategori> UrunKategorileri { get; set; }
+        public virtual DbSet<Entities.StokFifo> StokFifo { get; set; }
+        public virtual DbSet<Entities.Depo> Depolar { get; set; }
+        public virtual DbSet<Entities.CariHareket> CariHareketler { get; set; }
+        public virtual DbSet<Entities.FaturaOdeme> FaturaOdemeleri { get; set; }
+        public virtual DbSet<Entities.Birim> Birimler { get; set; }
+        public virtual DbSet<Entities.Kasa> Kasalar { get; set; }
+        public virtual DbSet<Entities.KasaHareket> KasaHareketleri { get; set; }
+        public virtual DbSet<Entities.DovizKuru> DovizKurlari { get; set; }
+        public virtual DbSet<Entities.Irsaliye> Irsaliyeler { get; set; }
+        public virtual DbSet<Entities.IrsaliyeDetay> IrsaliyeDetaylari { get; set; }
+        public virtual DbSet<Entities.IrsaliyeTuru> IrsaliyeTurleri { get; set; }
+        
         protected override void OnModelCreating(ModelBuilder modelBuilder)
         {
             base.OnModelCreating(modelBuilder);
 
-            // Entity - Tablo eşleştirmeleri
-            modelBuilder.Entity<ParaBirimi>(entity =>
-            {
-                entity.ToTable("Dovizler");
-                entity.Property(p => p.ParaBirimiID).HasColumnName("DovizID");
-                entity.Property(p => p.Kod).HasColumnName("DovizKodu");
-                entity.Property(p => p.Ad).HasColumnName("DovizAdi");
-                
-                // Varsayılan değerler
-                entity.Property(p => p.Aktif).HasDefaultValue(true);
-                entity.Property(p => p.SoftDelete).HasDefaultValue(false);
-            });
-            
-            modelBuilder.Entity<KurDegeri>(entity =>
-            {
-                entity.ToTable("DovizKurlari");
-                entity.Property(k => k.KurDegeriID).HasColumnName("DovizKuruID");
-                entity.Property(k => k.AlisDegeri).HasColumnName("AlisFiyati").HasColumnType("decimal(18,6)");
-                entity.Property(k => k.SatisDegeri).HasColumnName("SatisFiyati").HasColumnType("decimal(18,6)");
-                
-                // Varsayılan değerler
-                entity.Property(k => k.Aktif).HasDefaultValue(true);
-                entity.Property(k => k.SoftDelete).HasDefaultValue(false);
-                entity.Property(k => k.Kaynak).HasDefaultValue("Manuel").IsRequired();
-                
-                // İlişkiler
-                entity.HasOne(k => k.ParaBirimi)
-                    .WithMany()
-                    .HasForeignKey(k => k.ParaBirimiID)
-                    .OnDelete(DeleteBehavior.Restrict);
-            });
-            
-            // Döviz İlişkileri konfigürasyonu
-            modelBuilder.Entity<DovizIliski>()
-                .ToTable("DovizIliskileri")
-                .HasOne(di => di.KaynakParaBirimi)
-                .WithMany()
-                .HasForeignKey(di => di.KaynakParaBirimiID)
-                .OnDelete(DeleteBehavior.Restrict);
-            
-            modelBuilder.Entity<DovizIliski>()
-                .HasOne(di => di.HedefParaBirimi)
-                .WithMany()
-                .HasForeignKey(di => di.HedefParaBirimiID)
-                .OnDelete(DeleteBehavior.Restrict);
-            
-            // KurAyarlari için SistemAyarlari tablosunu kullanıyoruz
-            // Ama SistemAyarlari ayrı bir entity olduğu için burada eşleştirme yapmıyoruz
+            // Burada Entity Framework ile ilgili özel konfigürasyonlar yapılabilir
+            // Örneğin, cascade delete davranışlarını değiştirmek veya unique indeksler eklemek gibi
             
             // Urun
-            modelBuilder.Entity<Urun>()
+            modelBuilder.Entity<Entities.Urun>()
                 .Property(u => u.StokMiktar)
                 .HasDefaultValue(0);
 
-            modelBuilder.Entity<Urun>()
+            modelBuilder.Entity<Entities.Urun>()
                 .Property(u => u.Aktif)
                 .HasDefaultValue(true);
 
-            modelBuilder.Entity<Urun>()
+            modelBuilder.Entity<Entities.Urun>()
                 .Property(u => u.SoftDelete)
                 .HasDefaultValue(false);
                 
+            // UrunFiyat
+            modelBuilder.Entity<Entities.UrunFiyat>()
+                .ToTable("UrunFiyatlari");
+                
             // StokFifo indeksleri
-            modelBuilder.Entity<StokFifo>()
+            modelBuilder.Entity<Entities.StokFifo>()
                 .HasIndex(f => f.UrunID)
                 .HasDatabaseName("IX_StokFifo_UrunID");
                 
-            modelBuilder.Entity<StokFifo>()
+            modelBuilder.Entity<Entities.StokFifo>()
                 .HasIndex(f => f.GirisTarihi)
                 .HasDatabaseName("IX_StokFifo_GirisTarihi");
                 
-            modelBuilder.Entity<StokFifo>()
+            modelBuilder.Entity<Entities.StokFifo>()
                 .HasIndex(f => new { f.UrunID, f.KalanMiktar, f.Aktif, f.SoftDelete, f.Iptal })
                 .HasDatabaseName("IX_StokFifo_StokSorgu");
                 
-            modelBuilder.Entity<StokFifo>()
+            modelBuilder.Entity<Entities.StokFifo>()
                 .HasIndex(f => new { f.ReferansID, f.ReferansTuru })
                 .HasDatabaseName("IX_StokFifo_Referans");
-                
+
             // UrunKategori
-            modelBuilder.Entity<UrunKategori>()
+            modelBuilder.Entity<Entities.UrunKategori>()
                 .Property(k => k.Aktif)
                 .HasDefaultValue(true);
 
-            modelBuilder.Entity<UrunKategori>()
+            modelBuilder.Entity<Entities.UrunKategori>()
                 .Property(k => k.SoftDelete)
                 .HasDefaultValue(false);
 
             // Depo
-            modelBuilder.Entity<Depo>()
+            modelBuilder.Entity<Entities.Depo>()
                 .Property(d => d.Aktif)
                 .HasDefaultValue(true);
 
-            modelBuilder.Entity<Depo>()
+            modelBuilder.Entity<Entities.Depo>()
                 .Property(d => d.SoftDelete)
                 .HasDefaultValue(false);
 
             // Cari
-            modelBuilder.Entity<Cari>()
+            modelBuilder.Entity<Entities.Cari>()
                 .Property(c => c.Aktif)
                 .HasDefaultValue(true);
 
-            modelBuilder.Entity<Cari>()
+            modelBuilder.Entity<Entities.Cari>()
                 .Property(c => c.SoftDelete)
                 .HasDefaultValue(false);
 
             // Fatura
-            modelBuilder.Entity<Fatura>()
+            modelBuilder.Entity<Entities.Fatura>()
                 .Property(f => f.Aktif)
                 .HasDefaultValue(true);
 
-            modelBuilder.Entity<Fatura>()
+            modelBuilder.Entity<Entities.Fatura>()
                 .Property(f => f.SoftDelete)
                 .HasDefaultValue(false);
 
-            modelBuilder.Entity<Fatura>()
+            modelBuilder.Entity<Entities.Fatura>()
                 .Property(f => f.Resmi)
                 .HasDefaultValue(true);
 
             // Irsaliye
-            modelBuilder.Entity<Irsaliye>()
-                .Property(i => i.SoftDelete)
-                .HasDefaultValue(false);
+            modelBuilder.Entity<Entities.Irsaliye>()
+                .Property(i => i.Aktif)
+                .HasDefaultValue(true);
 
-            modelBuilder.Entity<Irsaliye>()
+            modelBuilder.Entity<Entities.Irsaliye>()
                 .Property(i => i.Resmi)
                 .HasDefaultValue(true);
                 
             // Kasa
-            modelBuilder.Entity<Kasa>()
+            modelBuilder.Entity<Entities.Kasa>()
                 .Property(k => k.Aktif)
                 .HasDefaultValue(true);
 
-            modelBuilder.Entity<Kasa>()
+            modelBuilder.Entity<Entities.Kasa>()
                 .Property(k => k.SoftDelete)
                 .HasDefaultValue(false);
 
-            modelBuilder.Entity<Kasa>()
+            modelBuilder.Entity<Entities.Kasa>()
                 .Property(k => k.AcilisBakiye)
                 .HasDefaultValue(0);
 
-            modelBuilder.Entity<Kasa>()
+            modelBuilder.Entity<Entities.Kasa>()
                 .Property(k => k.GuncelBakiye)
                 .HasDefaultValue(0);
                 
             // Kasa ile KasaHareket arasındaki ilişkiler
-            modelBuilder.Entity<Kasa>()
+            modelBuilder.Entity<Entities.Kasa>()
                 .HasMany(k => k.KasaHareketleri)
                 .WithOne(h => h.Kasa)
                 .HasForeignKey(h => h.KasaID)
                 .OnDelete(DeleteBehavior.NoAction);
             
             // Kasa'nın HedefKasa ilişkisi
-            modelBuilder.Entity<KasaHareket>()
+            modelBuilder.Entity<Entities.KasaHareket>()
                 .HasOne(h => h.HedefKasa)
                 .WithMany()
                 .HasForeignKey(h => h.HedefKasaID)
                 .OnDelete(DeleteBehavior.NoAction);
                 
             // KasaHareket
-            modelBuilder.Entity<KasaHareket>()
+            modelBuilder.Entity<Entities.KasaHareket>()
                 .Property(k => k.SoftDelete)
                 .HasDefaultValue(false);
                 
             // Banka
-            modelBuilder.Entity<Banka>()
+            modelBuilder.Entity<Entities.Banka>()
                 .Property(b => b.Aktif)
                 .HasDefaultValue(true);
 
-            modelBuilder.Entity<Banka>()
+            modelBuilder.Entity<Entities.Banka>()
                 .Property(b => b.SoftDelete)
                 .HasDefaultValue(false);
 
-            modelBuilder.Entity<Banka>()
+            modelBuilder.Entity<Entities.Banka>()
                 .Property(b => b.AcilisBakiye)
                 .HasDefaultValue(0);
 
-            modelBuilder.Entity<Banka>()
+            modelBuilder.Entity<Entities.Banka>()
                 .Property(b => b.GuncelBakiye)
                 .HasDefaultValue(0);
                 
-            modelBuilder.Entity<Banka>()
+            modelBuilder.Entity<Entities.Banka>()
                 .Property(b => b.ParaBirimi)
                 .HasDefaultValue("TRY");
                 
             // BankaHareket
-            modelBuilder.Entity<BankaHareket>()
+            modelBuilder.Entity<Entities.BankaHareket>()
                 .Property(b => b.SoftDelete)
                 .HasDefaultValue(false);
+                
+            // DovizKuru
+            modelBuilder.Entity<Entities.DovizKuru>()
+                .Property(d => d.Aktif)
+                .HasDefaultValue(true);
+                
+            modelBuilder.Entity<Entities.DovizKuru>()
+                .Property(d => d.SoftDelete)
+                .HasDefaultValue(false);
 
-            // SistemAyarlari
-            modelBuilder.Entity<MuhasebeStokWebApp.Data.Entities.SistemAyarlari>(entity => 
-            {
-                entity.Property(s => s.AnaDovizKodu).IsRequired().HasDefaultValue("USD");
-                entity.Property(s => s.IkinciDovizKodu).HasDefaultValue("UZS");
-                entity.Property(s => s.UcuncuDovizKodu).HasDefaultValue("TRY");
-                entity.Property(s => s.SirketAdi).IsRequired().HasDefaultValue("Şirket");
-                entity.Property(s => s.SirketAdresi).HasDefaultValue(string.Empty);
-                entity.Property(s => s.SirketTelefon).HasDefaultValue(string.Empty);
-                entity.Property(s => s.SirketEmail).HasDefaultValue(string.Empty);
-                entity.Property(s => s.SirketVergiNo).HasDefaultValue(string.Empty);
-                entity.Property(s => s.SirketVergiDairesi).HasDefaultValue(string.Empty);
-                entity.Property(s => s.AktifParaBirimleri).HasDefaultValue("USD,EUR,TRY,UZS,GBP");
-                entity.Property(s => s.Aktif).HasDefaultValue(true);
-                entity.Property(s => s.SoftDelete).HasDefaultValue(false);
+            // İrsaliye için global sorgu filtresi ekle
+            modelBuilder.Entity<Entities.Irsaliye>().HasQueryFilter(i => i.Aktif);
+                
+            modelBuilder.Entity<Entities.Irsaliye>()
+                .Property(i => i.Aktif)
+                .HasDefaultValue(true);
 
-                // İlişkiler
-                entity.HasOne(s => s.AnaParaBirimi)
-                    .WithMany()
-                    .HasForeignKey(s => s.AnaParaBirimiID)
-                    .OnDelete(DeleteBehavior.NoAction);
+            // ParaBirimiIliski ilişkilerini ayarla
+            modelBuilder.Entity<Entities.ParaBirimiIliski>()
+                .HasOne(p => p.KaynakParaBirimi)
+                .WithMany()
+                .HasForeignKey(p => p.KaynakParaBirimiID)
+                .OnDelete(DeleteBehavior.NoAction);
 
-                entity.HasOne(s => s.IkinciParaBirimi)
-                    .WithMany()
-                    .HasForeignKey(s => s.IkinciParaBirimiID)
-                    .OnDelete(DeleteBehavior.NoAction);
-
-                entity.HasOne(s => s.UcuncuParaBirimi)
-                    .WithMany()
-                    .HasForeignKey(s => s.UcuncuParaBirimiID)
-                    .OnDelete(DeleteBehavior.NoAction);
-            });
+            modelBuilder.Entity<Entities.ParaBirimiIliski>()
+                .HasOne(p => p.HedefParaBirimi)
+                .WithMany()
+                .HasForeignKey(p => p.HedefParaBirimiID)
+                .OnDelete(DeleteBehavior.NoAction);
         }
     }
 } 

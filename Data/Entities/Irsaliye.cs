@@ -15,9 +15,6 @@ namespace MuhasebeStokWebApp.Data.Entities
         [Required]
         public DateTime IrsaliyeTarihi { get; set; }
         
-        [Required]
-        public DateTime SevkTarihi { get; set; }
-        
         [StringLength(200)]
         public string Aciklama { get; set; }
         
@@ -29,7 +26,7 @@ namespace MuhasebeStokWebApp.Data.Entities
         
         public DateTime? GuncellemeTarihi { get; set; }
         
-        public bool SoftDelete { get; set; }
+        public bool Aktif { get; set; } = true;
         
         public bool? Resmi { get; set; }
         
@@ -39,12 +36,12 @@ namespace MuhasebeStokWebApp.Data.Entities
         public Guid CariID { get; set; }
         
         [StringLength(50)]
-        public string IrsaliyeTuru { get; set; }
+        public string IrsaliyeTuru { get; set; } = "Standart";
         
         [StringLength(50)]
         public string Durum { get; set; } = "Açık";
         
-        public decimal? GenelToplam { get; set; }
+        public bool SoftDelete { get; set; } = false;
         
         // Navigation properties
         [ForeignKey("FaturaID")]
@@ -59,6 +56,8 @@ namespace MuhasebeStokWebApp.Data.Entities
         {
             IrsaliyeDetaylari = new HashSet<IrsaliyeDetay>();
             OlusturmaTarihi = DateTime.Now;
+            Aktif = true;
+            SoftDelete = false;
         }
     }
 } 

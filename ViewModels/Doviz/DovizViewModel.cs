@@ -9,10 +9,10 @@ namespace MuhasebeStokWebApp.ViewModels.Doviz
         public Guid DovizKuruID { get; set; }
         
         [Display(Name = "Döviz Kodu")]
-        public required string DovizKodu { get; set; }
+        public string DovizKodu { get; set; }
         
         [Display(Name = "Döviz Adı")]
-        public required string DovizAdi { get; set; }
+        public string DovizAdi { get; set; }
         
         [Display(Name = "Alış Fiyatı")]
         [DisplayFormat(DataFormatString = "{0:N6}", ApplyFormatInEditMode = false)]
@@ -48,27 +48,27 @@ namespace MuhasebeStokWebApp.ViewModels.Doviz
         
         [Required(ErrorMessage = "Ana döviz kodu zorunludur.")]
         [Display(Name = "Ana Döviz Kodu")]
-        public required string AnaDovizKodu { get; set; }
+        public string AnaDovizKodu { get; set; }
         
         [Required(ErrorMessage = "Şirket adı zorunludur.")]
         [Display(Name = "Şirket Adı")]
-        public required string SirketAdi { get; set; }
+        public string SirketAdi { get; set; }
         
         [Display(Name = "Şirket Adresi")]
-        public string? SirketAdresi { get; set; }
+        public string SirketAdresi { get; set; }
         
         [Display(Name = "Şirket Telefon")]
-        public string? SirketTelefon { get; set; }
+        public string SirketTelefon { get; set; }
         
         [Display(Name = "Şirket E-posta")]
         [EmailAddress(ErrorMessage = "Geçerli bir e-posta adresi giriniz.")]
-        public string? SirketEmail { get; set; }
+        public string SirketEmail { get; set; }
         
         [Display(Name = "Vergi No")]
-        public string? SirketVergiNo { get; set; }
+        public string SirketVergiNo { get; set; }
         
         [Display(Name = "Vergi Dairesi")]
-        public string? SirketVergiDairesi { get; set; }
+        public string SirketVergiDairesi { get; set; }
         
         [Display(Name = "Otomatik Döviz Güncelleme")]
         public bool OtomatikDovizGuncelleme { get; set; }
@@ -86,11 +86,11 @@ namespace MuhasebeStokWebApp.ViewModels.Doviz
     {
         [Required(ErrorMessage = "Kaynak döviz kodu zorunludur.")]
         [Display(Name = "Kaynak Döviz")]
-        public required string KaynakDovizKodu { get; set; }
+        public string KaynakDovizKodu { get; set; }
         
         [Required(ErrorMessage = "Hedef döviz kodu zorunludur.")]
         [Display(Name = "Hedef Döviz")]
-        public required string HedefDovizKodu { get; set; }
+        public string HedefDovizKodu { get; set; }
         
         [Required(ErrorMessage = "Tutar zorunludur.")]
         [Display(Name = "Tutar")]

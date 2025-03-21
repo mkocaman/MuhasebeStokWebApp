@@ -137,8 +137,7 @@
         
         <div class="document-info">
             <h3 class="section-title">İrsaliye Bilgileri</h3>
-            <p><strong>İrsaliye Tarihi:</strong> @(Model.IrsaliyeTarihi.HasValue ? Model.IrsaliyeTarihi.Value.ToString("dd.MM.yyyy") : "-")</p>
-            <p><strong>Sevk Tarihi:</strong> @(Model.SevkTarihi.HasValue ? Model.SevkTarihi.Value.ToString("dd.MM.yyyy") : "-")</p>
+            <p><strong>İrsaliye Tarihi:</strong> @(Model.IrsaliyeTarihi.HasValue ? Model.IrsaliyeTarihi.Value.ToString("dd.MM.yyyy") : "")</p>
             <p><strong>İrsaliye Türü:</strong> @Model.IrsaliyeTuru</p>
             @if (!string.IsNullOrEmpty(Model.FaturaNumarasi))
             {
@@ -160,15 +159,15 @@
             </tr>
         </thead>
         <tbody>
-            @foreach (var kalem in Model.IrsaliyeKalemleri)
+            @foreach (var detay in Model.Detaylar)
             {
                 <tr>
-                    <td>@(Model.IrsaliyeKalemleri.IndexOf(kalem) + 1)</td>
-                    <td>@kalem.UrunKodu</td>
-                    <td>@kalem.UrunAdi</td>
-                    <td>@kalem.Miktar.ToString("N2")</td>
-                    <td>@kalem.Birim</td>
-                    <td>@kalem.Aciklama</td>
+                    <td>@(Model.Detaylar.IndexOf(detay) + 1)</td>
+                    <td>@detay.UrunKodu</td>
+                    <td>@detay.UrunAdi</td>
+                    <td>@detay.Miktar.ToString("N2")</td>
+                    <td>@detay.Birim</td>
+                    <td>@detay.Aciklama</td>
                 </tr>
             }
         </tbody>

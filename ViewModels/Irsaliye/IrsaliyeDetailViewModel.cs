@@ -15,10 +15,6 @@ namespace MuhasebeStokWebApp.ViewModels.Irsaliye
         [DisplayFormat(DataFormatString = "{0:dd.MM.yyyy}", ApplyFormatInEditMode = true)]
         public DateTime? IrsaliyeTarihi { get; set; }
 
-        [Display(Name = "Sevk Tarihi")]
-        [DisplayFormat(DataFormatString = "{0:dd.MM.yyyy}", ApplyFormatInEditMode = true)]
-        public DateTime? SevkTarihi { get; set; }
-
         [Display(Name = "Cari")]
         public Guid CariID { get; set; }
 
@@ -59,13 +55,18 @@ namespace MuhasebeStokWebApp.ViewModels.Irsaliye
         [Display(Name = "Güncelleme Tarihi")]
         [DisplayFormat(DataFormatString = "{0:dd.MM.yyyy HH:mm}", ApplyFormatInEditMode = false)]
         public DateTime? GuncellemeTarihi { get; set; }
+        
+        [Display(Name = "Resmi")]
+        public bool? Resmi { get; set; }
 
-        public List<IrsaliyeKalemDetailViewModel> IrsaliyeKalemleri { get; set; } = new List<IrsaliyeKalemDetailViewModel>();
+        public List<IrsaliyeDetayViewModel> Detaylar { get; set; } = new List<IrsaliyeDetayViewModel>();
+        
+        public List<IrsaliyeKalemViewModel> IrsaliyeKalemleri { get; set; } = new List<IrsaliyeKalemViewModel>();
     }
 
-    public class IrsaliyeKalemDetailViewModel
+    public class IrsaliyeDetayViewModel
     {
-        public Guid KalemID { get; set; }
+        public Guid IrsaliyeDetayID { get; set; }
 
         [Display(Name = "Ürün")]
         public Guid UrunID { get; set; }

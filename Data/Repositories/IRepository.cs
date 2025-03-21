@@ -20,5 +20,7 @@ namespace MuhasebeStokWebApp.Data.Repositories
         Task RemoveAsync(object id);
         Task RemoveAsync(T entity);
         Task RemoveRangeAsync(IEnumerable<T> entities);
+        Task<IEnumerable<T>> FindAsync(Expression<Func<T, bool>> predicate);
+        Task AddOrUpdateAsync(T entity);
     }
 } 

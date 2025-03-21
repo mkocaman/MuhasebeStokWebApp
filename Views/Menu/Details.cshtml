@@ -1,0 +1,181 @@
+@model MuhasebeStokWebApp.Data.Entities.Menu
+@{
+    ViewData["Title"] = "Menü Detayları";
+}
+
+<div class="page-title">
+    <div class="row">
+        <div class="col-6">
+            <h3>Menü Detayları</h3>
+        </div>
+        <div class="col-6 text-end">
+            <a asp-action="Index" class="btn btn-outline-primary">
+                <i class="fa fa-arrow-left me-1"></i> Menü Listesine Dön
+            </a>
+        </div>
+    </div>
+</div>
+
+<div class="row">
+    <div class="col-12">
+        <div class="card">
+            <div class="card-header">
+                <h5>@Model.Ad Menüsü</h5>
+            </div>
+            <div class="card-body">
+                <div class="row mb-3">
+                    <strong class="col-sm-3 text-muted">Menü ID</strong>
+                    <div class="col-sm-9">
+                        @Model.MenuID
+                    </div>
+                </div>
+                
+                <div class="row mb-3">
+                    <strong class="col-sm-3 text-muted">Menü Adı</strong>
+                    <div class="col-sm-9">
+                        @Model.Ad
+                    </div>
+                </div>
+                
+                <div class="row mb-3">
+                    <strong class="col-sm-3 text-muted">İkon</strong>
+                    <div class="col-sm-9">
+                        @if (!string.IsNullOrEmpty(Model.Icon))
+                        {
+                            <i class="@Model.Icon me-2"></i>
+                            <code>@Model.Icon</code>
+                        }
+                        else
+                        {
+                            <span class="text-muted">İkon belirtilmemiş</span>
+                        }
+                    </div>
+                </div>
+                
+                <div class="row mb-3">
+                    <strong class="col-sm-3 text-muted">Controller/Action</strong>
+                    <div class="col-sm-9">
+                        @if (!string.IsNullOrEmpty(Model.Controller) || !string.IsNullOrEmpty(Model.Action))
+                        {
+                            <code>@Model.Controller / @Model.Action</code>
+                        }
+                        else
+                        {
+                            <span class="text-muted">Controller/Action belirtilmemiş</span>
+                        }
+                    </div>
+                </div>
+                
+                <div class="row mb-3">
+                    <strong class="col-sm-3 text-muted">URL</strong>
+                    <div class="col-sm-9">
+                        @if (!string.IsNullOrEmpty(Model.Url))
+                        {
+                            <a href="@Model.Url" target="_blank">@Model.Url</a>
+                        }
+                        else
+                        {
+                            <span class="text-muted">URL belirtilmemiş</span>
+                        }
+                    </div>
+                </div>
+                
+                <div class="row mb-3">
+                    <strong class="col-sm-3 text-muted">Üst Menü</strong>
+                    <div class="col-sm-9">
+                        @if (Model.UstMenu != null)
+                        {
+                            <a asp-action="Details" asp-route-id="@Model.UstMenuID">@Model.UstMenu.Ad</a>
+                        }
+                        else
+                        {
+                            <span class="text-muted">Ana menü</span>
+                        }
+                    </div>
+                </div>
+                
+                <div class="row mb-3">
+                    <strong class="col-sm-3 text-muted">Durum</strong>
+                    <div class="col-sm-9">
+                        @if (Model.AktifMi)
+                        {
+                            <span class="badge bg-success">Aktif</span>
+                        }
+                        else
+                        {
+                            <span class="badge bg-danger">Pasif</span>
+                        }
+                    </div>
+                </div>
+                
+                <div class="row mb-3">
+                    <strong class="col-sm-3 text-muted">Sıra</strong>
+                    <div class="col-sm-9">
+                        @Model.Sira
+                    </div>
+                </div>
+                
+                <div class="row mb-3">
+                    <strong class="col-sm-3 text-muted">Oluşturma Tarihi</strong>
+                    <div class="col-sm-9">
+                        @Model.OlusturmaTarihi.ToString("dd.MM.yyyy HH:mm")
+                    </div>
+                </div>
+                
+                <div class="row mb-3">
+                    <strong class="col-sm-3 text-muted">Roller</strong>
+                    <div class="col-sm-9">
+                        @if (Model.MenuRoller != null && Model.MenuRoller.Any())
+                        {
+                            <div class="d-flex flex-wrap gap-1">
+                                @foreach (var menuRol in Model.MenuRoller)
+                                {
+                                    <span class="badge bg-info">@menuRol.RolID</span>
+                                }
+                            </div>
+                        }
+                        else
+                        {
+                            <span class="text-muted">Hiçbir rol ile ilişkilendirilmemiş</span>
+                        }
+                    </div>
+                </div>
+                
+                <div class="row mb-3">
+                    <strong class="col-sm-3 text-muted">Alt Menüler</strong>
+                    <div class="col-sm-9">
+                        @if (Model.AltMenuler != null && Model.AltMenuler.Any())
+                        {
+                            <ul class="list-group">
+                                @foreach (var altMenu in Model.AltMenuler)
+                                {
+                                    <li class="list-group-item d-flex justify-content-between align-items-center">
+                                        @altMenu.Ad
+                                        <a asp-action="Details" asp-route-id="@altMenu.MenuID" class="btn btn-sm btn-outline-primary">
+                                            <i class="fa fa-eye"></i>
+                                        </a>
+                                    </li>
+                                }
+                            </ul>
+                        }
+                        else
+                        {
+                            <span class="text-muted">Alt menü bulunmuyor</span>
+                        }
+                    </div>
+                </div>
+                
+                <div class="row mt-4">
+                    <div class="col-12">
+                        <a asp-action="Edit" asp-route-id="@Model.MenuID" class="btn btn-primary">
+                            <i class="fa fa-edit me-1"></i> Düzenle
+                        </a>
+                        <a asp-action="Index" class="btn btn-light">
+                            <i class="fa fa-arrow-left me-1"></i> Listeye Dön
+                        </a>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</div> 

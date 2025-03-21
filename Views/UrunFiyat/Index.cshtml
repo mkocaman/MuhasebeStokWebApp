@@ -1,0 +1,126 @@
+@model MuhasebeStokWebApp.ViewModels.UrunFiyat.UrunFiyatListViewModel
+
+@{
+    ViewData["Title"] = Model.SelectedUrunID.HasValue ? $"{Model.UrunAdi} Fiyat Listesi" : "Ürün Fiyatları";
+}
+
+<div class="container">
+    <div class="row mb-3">
+        <div class="col">
+            <h2>@ViewData["Title"]</h2>
+        </div>
+        <div class="col-auto">
+            @if (Model.SelectedUrunID.HasValue)
+            {
+                <a asp-action="Create" asp-route-urunId="@Model.SelectedUrunID" class="btn btn-primary">
+                    <i class="bi bi-plus-circle"></i> Yeni Fiyat Ekle
+                </a>
+                <a asp-controller="Urun" asp-action="Index" class="btn btn-secondary">
+                    <i class="bi bi-arrow-left"></i> Ürün Listesine Dön
+                </a>
+            }
+            else
+            {
+                <a asp-action="Create" class="btn btn-primary">
+                    <i class="bi bi-plus-circle"></i> Yeni Fiyat Ekle
+                </a>
+            }
+        </div>
+    </div>
+    
+    @if (TempData["SuccessMessage"] != null)
+    {
+        <div class="alert alert-success alert-dismissible fade show" role="alert">
+            @TempData["SuccessMessage"]
+            <button type="button" class="btn-close" data-bs-dismiss="alert" aria-label="Close"></button>
+        </div>
+    }
+    
+    @if (Model.UrunFiyatlari.Count == 0)
+    {
+        <div class="alert alert-info">
+            @if (Model.SelectedUrunID.HasValue)
+            {
+                <p>Bu ürüne ait kayıtlı fiyat bulunamadı.</p>
+            }
+            else
+            {
+                <p>Sistemde kayıtlı ürün fiyatı bulunamadı.</p>
+            }
+        </div>
+    }
+    else
+    {
+        <div class="card">
+            <div class="card-body">
+                <div class="table-responsive">
+                    <table class="table table-striped table-hover">
+                        <thead>
+                            <tr>
+                                <th>Ürün Kodu</th>
+                                <th>Ürün Adı</th>
+                                <th>Fiyat Tipi</th>
+                                <th>Fiyat</th>
+                                <th>Geçerlilik Tarihi</th>
+                                <th>Durum</th>
+                                <th>İşlemler</th>
+                            </tr>
+                        </thead>
+                        <tbody>
+                            @foreach (var item in Model.UrunFiyatlari)
+                            {
+                                <tr>
+                                    <td>@item.UrunKodu</td>
+                                    <td>@item.UrunAdi</td>
+                                    <td>@item.FiyatTipiAdi</td>
+                                    <td>@item.Fiyat.ToString("N2") ₺</td>
+                                    <td>@item.GecerliTarih.ToString("dd.MM.yyyy")</td>
+                                    <td>
+                                        @if (item.Aktif)
+                                        {
+                                            <span class="badge bg-success">Aktif</span>
+                                        }
+                                        else
+                                        {
+                                            <span class="badge bg-danger">Pasif</span>
+                                        }
+                                    </td>
+                                    <td>
+                                        <div class="btn-group">
+                                            <a asp-action="Edit" asp-route-id="@item.FiyatID" class="btn btn-sm btn-primary">
+                                                <i class="bi bi-pencil"></i>
+                                            </a>
+                                            <a asp-action="Delete" asp-route-id="@item.FiyatID" class="btn btn-sm btn-danger">
+                                                <i class="bi bi-trash"></i>
+                                            </a>
+                                        </div>
+                                    </td>
+                                </tr>
+                            }
+                        </tbody>
+                    </table>
+                </div>
+            </div>
+        </div>
+    }
+</div>
+
+@section Scripts {
+    <script>
+        $(document).ready(function() {
+            $('.table').DataTable({
+                language: {
+                    url: '/lib/datatables/tr.json'
+                },
+                ordering: true,
+                paging: true,
+                responsive: true,
+                columnDefs: [
+                    { responsivePriority: 1, targets: 0 },
+                    { responsivePriority: 2, targets: 1 },
+                    { responsivePriority: 3, targets: 3 }
+                ]
+            });
+        });
+    </script>
+} 

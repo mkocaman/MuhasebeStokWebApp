@@ -1,0 +1,29 @@
+@{
+    ViewData["Title"] = "Döviz Çevirici";
+    Layout = "~/Views/Shared/_Layout.cshtml";
+}
+
+<div class="container-fluid">
+    <div class="row">
+        <div class="col-md-12">
+            <div class="card">
+                <div class="card-header">
+                    <h3 class="card-title">Döviz Çevirici</h3>
+                </div>
+                <div class="card-body">
+                    <div class="alert alert-info">
+                        <p>Bu özellik yeni para birimi ve kur modülüne taşınmıştır. Lütfen kur dönüşüm işlemleriniz için Para Birimi İlişkileri bölümünü kullanın.</p>
+                    </div>
+                    
+                    <div class="row">
+                        <div class="col-md-12 text-center">
+                            <a href="@Url.Action("Iliskiler", "ParaBirimi")" class="btn btn-primary">
+                                <i class="fa fa-exchange"></i> Para Birimi İlişkilerine Git
+                            </a>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</div> 

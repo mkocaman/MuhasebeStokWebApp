@@ -1,0 +1,61 @@
+@model MuhasebeStokWebApp.Data.Entities.ParaBirimi
+
+@{
+    ViewData["Title"] = "Para Birimi Sil";
+}
+
+<div class="container-fluid">
+    <div class="row">
+        <div class="col-md-12">
+            <div class="card">
+                <div class="card-header">
+                    <h3 class="card-title">Para Birimi Silme Onayı</h3>
+                </div>
+                <div class="card-body">
+                    <div class="alert alert-danger">
+                        <h4><i class="bi bi-exclamation-triangle"></i> Uyarı!</h4>
+                        <p>
+                            <strong>@Model.Ad (@Model.Kod)</strong> para birimini silmek üzeresiniz.
+                            Bu işlem geri alınamaz. Devam etmek istiyor musunuz?
+                        </p>
+                    </div>
+                    
+                    <dl class="row">
+                        <dt class="col-sm-3">Döviz Kodu</dt>
+                        <dd class="col-sm-9">@Model.Kod</dd>
+                        
+                        <dt class="col-sm-3">Para Birimi Adı</dt>
+                        <dd class="col-sm-9">@Model.Ad</dd>
+                        
+                        <dt class="col-sm-3">Sembol</dt>
+                        <dd class="col-sm-9">@Model.Sembol</dd>
+                        
+                        <dt class="col-sm-3">Durum</dt>
+                        <dd class="col-sm-9">
+                            @if (Model.Aktif)
+                            {
+                                <span class="badge bg-success">Aktif</span>
+                            }
+                            else
+                            {
+                                <span class="badge bg-danger">Pasif</span>
+                            }
+                        </dd>
+                    </dl>
+                    
+                    <form asp-action="Delete" method="post" class="mt-3">
+                        <input type="hidden" asp-for="ParaBirimiID" />
+                        <div class="form-group">
+                            <a asp-action="Index" class="btn btn-secondary">
+                                <i class="bi bi-arrow-left"></i> Vazgeç
+                            </a>
+                            <button type="submit" class="btn btn-danger">
+                                <i class="bi bi-trash"></i> Sil
+                            </button>
+                        </div>
+                    </form>
+                </div>
+            </div>
+        </div>
+    </div>
+</div> 

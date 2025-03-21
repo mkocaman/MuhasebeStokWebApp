@@ -76,15 +76,18 @@
                                         <td class="text-end">@item.MaliyetFiyati.ToString("N2") ₺</td>
                                         <td class="text-end">@item.SatisFiyati.ToString("N2") ₺</td>
                                         <td class="text-center">
-                                            <div class="btn-group" role="group">
-                                                <button type="button" class="btn btn-sm btn-info btn-edit-urun" data-id="@item.UrunID">
-                                                    <i class="fas fa-edit"></i>
-                                                </button>
-                                                <a asp-action="Details" asp-route-id="@item.UrunID" class="btn btn-sm btn-primary">
-                                                    <i class="fas fa-info-circle"></i>
+                                            <div class="btn-group">
+                                                <a href="#" data-id="@item.UrunID" class="btn btn-sm btn-primary btn-edit-urun">
+                                                    <i class="bi bi-pencil"></i>
                                                 </a>
                                                 <a asp-action="Delete" asp-route-id="@item.UrunID" class="btn btn-sm btn-danger">
-                                                    <i class="fas fa-trash"></i>
+                                                    <i class="bi bi-trash"></i>
+                                                </a>
+                                                <a asp-controller="UrunFiyat" asp-action="Index" asp-route-urunId="@item.UrunID" class="btn btn-sm btn-info">
+                                                    <i class="bi bi-tag"></i> Fiyatlar
+                                                </a>
+                                                <a asp-controller="Stok" asp-action="Hareketler" asp-route-id="@item.UrunID" class="btn btn-sm btn-success">
+                                                    <i class="bi bi-graph-up"></i> Detay
                                                 </a>
                                             </div>
                                         </td>
@@ -123,15 +126,18 @@
                                         <td class="text-end">@item.MaliyetFiyati.ToString("N2") ₺</td>
                                         <td class="text-end">@item.SatisFiyati.ToString("N2") ₺</td>
                                         <td class="text-center">
-                                            <div class="btn-group" role="group">
-                                                <button type="button" class="btn btn-sm btn-info btn-edit-urun" data-id="@item.UrunID">
-                                                    <i class="fas fa-edit"></i>
-                                                </button>
-                                                <a asp-action="Details" asp-route-id="@item.UrunID" class="btn btn-sm btn-primary">
-                                                    <i class="fas fa-info-circle"></i>
+                                            <div class="btn-group">
+                                                <a href="#" data-id="@item.UrunID" class="btn btn-sm btn-primary btn-edit-urun">
+                                                    <i class="bi bi-pencil"></i>
                                                 </a>
-                                                <a asp-action="Activate" asp-route-id="@item.UrunID" class="btn btn-sm btn-success">
-                                                    <i class="fas fa-check"></i>
+                                                <a asp-action="Delete" asp-route-id="@item.UrunID" class="btn btn-sm btn-danger">
+                                                    <i class="bi bi-trash"></i>
+                                                </a>
+                                                <a asp-controller="UrunFiyat" asp-action="Index" asp-route-urunId="@item.UrunID" class="btn btn-sm btn-info">
+                                                    <i class="bi bi-tag"></i> Fiyatlar
+                                                </a>
+                                                <a asp-controller="Stok" asp-action="Hareketler" asp-route-id="@item.UrunID" class="btn btn-sm btn-success">
+                                                    <i class="bi bi-graph-up"></i> Detay
                                                 </a>
                                             </div>
                                         </td>

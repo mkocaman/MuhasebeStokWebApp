@@ -17,25 +17,25 @@ namespace MuhasebeStokWebApp.Data.Entities
         public decimal Miktar { get; set; }
         
         [StringLength(50)]
-        public string Birim { get; set; }
+        public string Birim { get; set; } = string.Empty;
         
         [Required]
-        public DateTime Tarih { get; set; }
+        public DateTime Tarih { get; set; } = DateTime.Now;
         
         [Required]
         [StringLength(50)]
-        public string HareketTuru { get; set; }
+        public string HareketTuru { get; set; } = string.Empty;
         
         [StringLength(50)]
-        public string ReferansNo { get; set; }
+        public string ReferansNo { get; set; } = string.Empty;
         
         [StringLength(50)]
-        public string ReferansTuru { get; set; }
+        public string ReferansTuru { get; set; } = string.Empty;
         
         public Guid? ReferansID { get; set; }
         
         [StringLength(500)]
-        public string Aciklama { get; set; }
+        public string? Aciklama { get; set; }
         
         public decimal? BirimFiyat { get; set; }
         
@@ -55,9 +55,9 @@ namespace MuhasebeStokWebApp.Data.Entities
         
         // Navigation properties
         [ForeignKey("UrunID")]
-        public virtual Urun Urun { get; set; }
+        public virtual Urun? Urun { get; set; }
         
         [ForeignKey("DepoID")]
-        public virtual Depo Depo { get; set; }
+        public virtual Depo? Depo { get; set; }
     }
 } 

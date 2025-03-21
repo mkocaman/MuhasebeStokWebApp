@@ -31,9 +31,9 @@ namespace MuhasebeStokWebApp.Data.Entities
         
         // Navigation properties
         [ForeignKey("UrunID")]
-        public virtual Urun Urun { get; set; }
+        public virtual Urun? Urun { get; set; }
         
         [ForeignKey("FiyatTipiID")]
-        public virtual FiyatTipi FiyatTipi { get; set; }
+        public virtual FiyatTipi? FiyatTipi { get; set; }
     }
 } 

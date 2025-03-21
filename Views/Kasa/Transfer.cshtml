@@ -1,8 +1,8 @@
 @model MuhasebeStokWebApp.ViewModels.Kasa.KasaTransferViewModel
 @{
-    ViewData["Title"] = "Kasa Transferi";
+    ViewData["Title"] = "Kasa Transfer";
     var kasalar = ViewBag.Kasalar as List<MuhasebeStokWebApp.Data.Entities.Kasa> ?? new List<MuhasebeStokWebApp.Data.Entities.Kasa>();
-    var kurlar = ViewBag.Kurlar as List<MuhasebeStokWebApp.Data.Entities.DovizKuru> ?? new List<MuhasebeStokWebApp.Data.Entities.DovizKuru>();
+    var kurlar = ViewBag.Kurlar as List<MuhasebeStokWebApp.ViewModels.DovizKuru.DovizKuruViewModel> ?? new List<MuhasebeStokWebApp.ViewModels.DovizKuru.DovizKuruViewModel>();
     var bankalar = ViewBag.Bankalar as List<MuhasebeStokWebApp.Data.Entities.Banka> ?? new List<MuhasebeStokWebApp.Data.Entities.Banka>();
 }
 

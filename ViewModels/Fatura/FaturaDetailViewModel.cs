@@ -9,13 +9,7 @@ namespace MuhasebeStokWebApp.ViewModels.Fatura
         public Guid FaturaID { get; set; }
 
         [Display(Name = "Fatura No")]
-        public string FaturaNumarasi { get; set; }
-
-        [Display(Name = "Sipariş No")]
-        public string SiparisNumarasi { get; set; }
-
-        [Display(Name = "İrsaliye No")]
-        public Guid? IrsaliyeID { get; set; }
+        public required string FaturaNumarasi { get; set; }
 
         [Display(Name = "Fatura Tarihi")]
         [DisplayFormat(DataFormatString = "{0:dd.MM.yyyy}", ApplyFormatInEditMode = false)]
@@ -28,20 +22,23 @@ namespace MuhasebeStokWebApp.ViewModels.Fatura
         [Display(Name = "Cari ID")]
         public Guid CariID { get; set; }
 
+        [Display(Name = "İrsaliye ID")]
+        public Guid? IrsaliyeID { get; set; }
+
         [Display(Name = "Cari Adı")]
-        public string CariAdi { get; set; }
+        public required string CariAdi { get; set; }
 
         [Display(Name = "Vergi No")]
-        public string CariVergiNo { get; set; }
+        public required string CariVergiNo { get; set; }
 
         [Display(Name = "Adres")]
-        public string CariAdres { get; set; }
+        public required string CariAdres { get; set; }
 
         [Display(Name = "Telefon")]
-        public string CariTelefon { get; set; }
+        public required string CariTelefon { get; set; }
 
         [Display(Name = "Fatura Türü")]
-        public string FaturaTuru { get; set; }
+        public required string FaturaTuru { get; set; }
 
         [Display(Name = "Ara Toplam")]
         [DisplayFormat(DataFormatString = "{0:N2}", ApplyFormatInEditMode = false)]
@@ -50,10 +47,6 @@ namespace MuhasebeStokWebApp.ViewModels.Fatura
         [Display(Name = "KDV Tutarı")]
         [DisplayFormat(DataFormatString = "{0:N2}", ApplyFormatInEditMode = false)]
         public decimal KdvTutari { get; set; }
-
-        [Display(Name = "KDV Toplam")]
-        [DisplayFormat(DataFormatString = "{0:N2}", ApplyFormatInEditMode = false)]
-        public decimal KdvToplam { get; set; }
 
         [Display(Name = "İndirim Tutarı")]
         [DisplayFormat(DataFormatString = "{0:N2}", ApplyFormatInEditMode = false)]
@@ -69,24 +62,16 @@ namespace MuhasebeStokWebApp.ViewModels.Fatura
 
         [Display(Name = "Ödenen Tutar")]
         [DisplayFormat(DataFormatString = "{0:N2}", ApplyFormatInEditMode = false)]
-        public decimal OdenenTutar { get; set; }
-
-        [Display(Name = "Kalan Tutar")]
-        [DisplayFormat(DataFormatString = "{0:N2}", ApplyFormatInEditMode = false)]
-        public decimal KalanTutar { get; set; }
+        public decimal? OdenenTutar { get; set; }
 
         [Display(Name = "Açıklama")]
-        public string Aciklama { get; set; }
+        public string? Aciklama { get; set; }
 
         [Display(Name = "Ödeme Durumu")]
-        public string OdemeDurumu { get; set; }
+        public required string OdemeDurumu { get; set; }
         
         [Display(Name = "Döviz Türü")]
         public string DovizTuru { get; set; } = "TRY";
-
-        [Display(Name = "Döviz Kuru")]
-        [DisplayFormat(DataFormatString = "{0:N4}", ApplyFormatInEditMode = false)]
-        public decimal DovizKuru { get; set; } = 1;
         
         [Display(Name = "Aktif")]
         public bool Aktif { get; set; }
@@ -112,16 +97,16 @@ namespace MuhasebeStokWebApp.ViewModels.Fatura
         public Guid UrunID { get; set; }
 
         [Display(Name = "Ürün Kodu")]
-        public string UrunKodu { get; set; }
+        public string UrunKodu { get; set; } = string.Empty;
 
         [Display(Name = "Ürün Adı")]
-        public string UrunAdi { get; set; }
+        public string UrunAdi { get; set; } = string.Empty;
 
         [Display(Name = "Miktar")]
         public decimal Miktar { get; set; }
 
         [Display(Name = "Birim")]
-        public string Birim { get; set; }
+        public string Birim { get; set; } = string.Empty;
 
         [Display(Name = "Birim Fiyat")]
         [DisplayFormat(DataFormatString = "{0:N2}", ApplyFormatInEditMode = false)]
@@ -163,9 +148,9 @@ namespace MuhasebeStokWebApp.ViewModels.Fatura
         public decimal OdemeTutari { get; set; }
 
         [Display(Name = "Ödeme Türü")]
-        public string OdemeTuru { get; set; }
+        public required string OdemeTuru { get; set; }
 
         [Display(Name = "Açıklama")]
-        public string Aciklama { get; set; }
+        public string? Aciklama { get; set; }
     }
 } 

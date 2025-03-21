@@ -20,7 +20,6 @@ namespace MuhasebeStokWebApp.Data.Entities
         public Guid? CariID { get; set; }
         
         [Required]
-        [Column(TypeName = "decimal(18,2)")]
         public decimal Tutar { get; set; }
         
         [Required]

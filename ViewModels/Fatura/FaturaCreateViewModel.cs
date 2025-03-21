@@ -7,14 +7,13 @@ namespace MuhasebeStokWebApp.ViewModels.Fatura
 {
     public class FaturaCreateViewModel
     {
-        [Required(ErrorMessage = "Fatura numarası zorunludur.")]
         [StringLength(20, ErrorMessage = "Fatura numarası en fazla 20 karakter olabilir.")]
         [Display(Name = "Fatura No")]
-        public string FaturaNumarasi { get; set; }
+        public string? FaturaNumarasi { get; set; }
 
         [StringLength(20, ErrorMessage = "Sipariş numarası en fazla 20 karakter olabilir.")]
         [Display(Name = "Sipariş Numarası")]
-        public string SiparisNumarasi { get; set; }
+        public string? SiparisNumarasi { get; set; }
 
         [Required(ErrorMessage = "Fatura tarihi zorunludur.")]
         [Display(Name = "Fatura Tarihi")]
@@ -35,20 +34,20 @@ namespace MuhasebeStokWebApp.ViewModels.Fatura
         public int? FaturaTuruID { get; set; }
 
         [Display(Name = "Fatura Türü")]
-        public string FaturaTuru { get; set; }
+        public string? FaturaTuru { get; set; }
 
         [Display(Name = "Resmi")]
         public bool Resmi { get; set; } = true;
 
         [StringLength(500, ErrorMessage = "Açıklama en fazla 500 karakter olabilir.")]
         [Display(Name = "Açıklama")]
-        public string Aciklama { get; set; }
+        public string? Aciklama { get; set; }
 
         [Display(Name = "Ödeme Durumu")]
-        public string OdemeDurumu { get; set; } = "Bekliyor";
+        public string? OdemeDurumu { get; set; } = "Beklemede";
 
         [Display(Name = "Döviz Türü")]
-        public string DovizTuru { get; set; } = "TRY";
+        public string? DovizTuru { get; set; } = "TRY";
 
         [Display(Name = "Döviz Kuru")]
         [DisplayFormat(DataFormatString = "{0:N4}", ApplyFormatInEditMode = false)]
@@ -64,13 +63,13 @@ namespace MuhasebeStokWebApp.ViewModels.Fatura
         
         // Dropdown listeler için - sadece UI'da kullanılır
         [Display(Name = "Cari Listesi")]
-        public List<SelectListItem> CariListesi { get; set; }
+        public List<SelectListItem> CariListesi { get; set; } = new List<SelectListItem>();
         
         [Display(Name = "Fatura Türü Listesi")]
-        public List<SelectListItem> FaturaTuruListesi { get; set; }
+        public List<SelectListItem> FaturaTuruListesi { get; set; } = new List<SelectListItem>();
         
         [Display(Name = "Döviz Listesi")]
-        public List<SelectListItem> DovizListesi { get; set; }
+        public List<SelectListItem> DovizListesi { get; set; } = new List<SelectListItem>();
     }
 
     public class FaturaKalemViewModel
@@ -82,7 +81,10 @@ namespace MuhasebeStokWebApp.ViewModels.Fatura
         public Guid UrunID { get; set; }
 
         [Display(Name = "Ürün Adı")]
-        public string UrunAdi { get; set; }
+        public string UrunAdi { get; set; } = string.Empty;
+        
+        [Display(Name = "Ürün Kodu")]
+        public string UrunKodu { get; set; } = string.Empty;
 
         [Required(ErrorMessage = "Miktar zorunludur.")]
         [Range(0.01, 9999999, ErrorMessage = "Miktar 0'dan büyük olmalıdır.")]
@@ -90,13 +92,16 @@ namespace MuhasebeStokWebApp.ViewModels.Fatura
         public decimal Miktar { get; set; }
 
         [Display(Name = "Birim")]
-        public string Birim { get; set; }
+        public string Birim { get; set; } = string.Empty;
 
         [Required(ErrorMessage = "Birim fiyat zorunludur.")]
         [Range(0.01, 9999999, ErrorMessage = "Birim fiyat 0'dan büyük olmalıdır.")]
         [Display(Name = "Birim Fiyat")]
         [DisplayFormat(DataFormatString = "{0:N2}", ApplyFormatInEditMode = false)]
         public decimal BirimFiyat { get; set; }
+        
+        [Display(Name = "Açıklama")]
+        public string Aciklama { get; set; } = string.Empty;
 
         [Display(Name = "KDV Oranı (%)")]
         [Range(0, 100, ErrorMessage = "KDV oranı 0-100 arasında olmalıdır.")]

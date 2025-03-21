@@ -222,7 +222,6 @@ namespace MuhasebeStokWebApp.Controllers
                         ReferansTuru = "Cari",
                         ReferansID = cari.CariID,
                         Aciklama = "Yeni cari kaydı oluşturuldu",
-                        IslemYapanKullaniciID = Guid.Parse("00000000-0000-0000-0000-000000000000"), // Kullanıcı ID'si
                         OlusturmaTarihi = DateTime.Now,
                         SoftDelete = false
                     };
@@ -374,7 +373,6 @@ namespace MuhasebeStokWebApp.Controllers
                             ReferansTuru = "Cari",
                             ReferansID = cari.CariID,
                             Aciklama = "Bakiye düzeltme işlemi yapıldı",
-                            IslemYapanKullaniciID = Guid.Parse("00000000-0000-0000-0000-000000000000"), // Kullanıcı ID'si
                             OlusturmaTarihi = DateTime.Now,
                             SoftDelete = false
                         };
@@ -621,7 +619,6 @@ namespace MuhasebeStokWebApp.Controllers
                     ReferansTuru = model.ReferansTuru,
                     ReferansID = model.ReferansID,
                     Aciklama = model.Aciklama,
-                    IslemYapanKullaniciID = Guid.Parse("00000000-0000-0000-0000-000000000000"), // Kullanıcı ID'si
                     OlusturmaTarihi = DateTime.Now,
                     SoftDelete = false
                 };

@@ -4,63 +4,43 @@ using System.ComponentModel.DataAnnotations.Schema;
 
 namespace MuhasebeStokWebApp.Data.Entities
 {
-    /// <summary>
-    /// Döviz Kuru entity'si
-    /// </summary>
     public class DovizKuru
     {
-        public DovizKuru()
-        {
-            // Default yapıcı metot ile varsayılan değerleri ayarla
-            DovizKuruID = Guid.NewGuid();
-            Aktif = true;
-            SoftDelete = false;
-            OlusturmaTarihi = DateTime.Now;
-        }
-        
         [Key]
-        public Guid DovizKuruID { get; set; }
+        public int ID { get; set; }
         
-        [Required, StringLength(10)]
-        public required string ParaBirimi { get; set; } = string.Empty;
-        
-        [Required, StringLength(10)]
-        public required string BazParaBirimi { get; set; } = string.Empty;
-        
+        [Required]
         [StringLength(10)]
-        public string? DovizKodu { get; set; } = string.Empty;
-        
-        [Required, StringLength(100)]
-        public required string DovizAdi { get; set; } = string.Empty;
+        public string ParaBirimi { get; set; }
         
         [Required]
-        [Column(TypeName = "decimal(18,6)")]
-        public decimal Kur { get; set; }
+        [StringLength(10)]
+        public string BazParaBirimi { get; set; }
         
         [Column(TypeName = "decimal(18,6)")]
-        public decimal? AlisFiyati { get; set; }
+        public decimal Alis { get; set; }
         
         [Column(TypeName = "decimal(18,6)")]
-        public decimal? SatisFiyati { get; set; }
+        public decimal Satis { get; set; }
+        
+        [Column(TypeName = "decimal(18,6)")]
+        public decimal EfektifAlis { get; set; }
+        
+        [Column(TypeName = "decimal(18,6)")]
+        public decimal EfektifSatis { get; set; }
+        
+        public DateTime Tarih { get; set; }
         
         [Required]
-        public DateTime Tarih { get; set; } = DateTime.Now;
-        
         [StringLength(100)]
-        public string? Kaynak { get; set; } = string.Empty;
+        public string Kaynak { get; set; }
         
         [StringLength(500)]
-        public string? Aciklama { get; set; } = string.Empty;
+        public string Aciklama { get; set; }
         
-        [Required]
         public bool Aktif { get; set; } = true;
-        
-        [Required]
         public bool SoftDelete { get; set; } = false;
-        
-        [Required]
         public DateTime OlusturmaTarihi { get; set; } = DateTime.Now;
-        
         public DateTime? GuncellemeTarihi { get; set; }
     }
 } 

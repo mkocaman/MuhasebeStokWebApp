@@ -34,11 +34,21 @@
                         <div class="row">
                             <div class="col-md-6">
                                 <div class="form-group">
+                                    <label asp-for="UrunKodu" class="control-label"></label>
+                                    <input asp-for="UrunKodu" class="form-control" />
+                                    <span asp-validation-for="UrunKodu" class="text-danger"></span>
+                                </div>
+                            </div>
+                            <div class="col-md-6">
+                                <div class="form-group">
                                     <label asp-for="UrunAdi" class="control-label"></label>
                                     <input asp-for="UrunAdi" class="form-control" />
                                     <span asp-validation-for="UrunAdi" class="text-danger"></span>
                                 </div>
                             </div>
+                        </div>
+                        
+                        <div class="row">
                             <div class="col-md-6">
                                 <div class="form-group">
                                     <label asp-for="KategoriID" class="control-label"></label>
@@ -47,39 +57,45 @@
                                     </select>
                                 </div>
                             </div>
+                            <div class="col-md-6">
+                                <div class="form-group">
+                                    <label asp-for="BirimID" class="control-label"></label>
+                                    <select asp-for="BirimID" asp-items="ViewBag.Birimler" class="form-control" required>
+                                        <option value="">-- Birim Seçin --</option>
+                                    </select>
+                                    <span asp-validation-for="BirimID" class="text-danger"></span>
+                                </div>
+                            </div>
                         </div>
                         
                         <div class="row">
-                            <div class="col-md-4">
+                            <div class="col-md-6">
                                 <div class="form-group">
-                                    <label asp-for="ListeFiyati" class="control-label"></label>
-                                    <input asp-for="ListeFiyati" class="form-control" />
-                                    <span asp-validation-for="ListeFiyati" class="text-danger"></span>
+                                    <label asp-for="StokMiktar" class="control-label"></label>
+                                    <input asp-for="StokMiktar" class="form-control" />
+                                    <span asp-validation-for="StokMiktar" class="text-danger"></span>
                                 </div>
                             </div>
-                            <div class="col-md-4">
+                            <div class="col-md-6">
                                 <div class="form-group">
-                                    <label asp-for="MaliyetFiyati" class="control-label"></label>
-                                    <input asp-for="MaliyetFiyati" class="form-control" />
-                                    <span asp-validation-for="MaliyetFiyati" class="text-danger"></span>
-                                </div>
-                            </div>
-                            <div class="col-md-4">
-                                <div class="form-group">
-                                    <label asp-for="SatisFiyati" class="control-label"></label>
-                                    <input asp-for="SatisFiyati" class="form-control" />
-                                    <span asp-validation-for="SatisFiyati" class="text-danger"></span>
+                                    <label asp-for="KDVOrani" class="control-label"></label>
+                                    <input asp-for="KDVOrani" class="form-control" type="number" min="0" max="100" />
+                                    <span asp-validation-for="KDVOrani" class="text-danger"></span>
                                 </div>
                             </div>
                         </div>
                         
-                        <div class="form-group form-check">
-                            <label class="form-check-label">
-                                <input class="form-check-input" asp-for="Aktif" /> @Html.DisplayNameFor(model => model.Aktif)
-                            </label>
+                        <div class="row">
+                            <div class="col-md-6">
+                                <div class="form-group form-check mt-2">
+                                    <label class="form-check-label">
+                                        <input class="form-check-input" asp-for="Aktif" /> @Html.DisplayNameFor(model => model.Aktif)
+                                    </label>
+                                </div>
+                            </div>
                         </div>
                         
-                        <div class="form-group">
+                        <div class="form-group mt-3">
                             <button type="submit" class="btn btn-primary">Kaydet</button>
                             <a asp-action="Index" class="btn btn-secondary">İptal</a>
                         </div>

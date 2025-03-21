@@ -1,4 +1,4 @@
-@model IEnumerable<MuhasebeStokWebApp.Models.SistemLog>
+@model MuhasebeStokWebApp.ViewModels.SistemLog.SistemLogListViewModel
 @{
     ViewData["Title"] = "Sistem Logları";
     Layout = "~/Views/Shared/_Layout.cshtml";
@@ -15,38 +15,31 @@
                 <div class="row g-3">
                     <div class="col-md-3">
                         <label for="searchString" class="form-label">Arama</label>
-                        <input type="text" class="form-control" id="searchString" name="searchString" value="@ViewData["CurrentFilter"]" placeholder="Açıklama, kullanıcı...">
+                        <input type="text" class="form-control" id="searchString" name="searchString" value="@ViewBag.SearchString" placeholder="Kayıt adı, açıklama, kullanıcı...">
                     </div>
                     <div class="col-md-3">
                         <label for="islemTuru" class="form-label">İşlem Türü</label>
                         <select class="form-select" id="islemTuru" name="islemTuru">
                             <option value="">Tümü</option>
-                            @foreach (var islemTuru in Enum.GetNames(typeof(MuhasebeStokWebApp.Models.LogTuru)))
+                            @foreach (var islemTuru in ViewBag.IslemTurleri)
                             {
-                                <option value="@islemTuru" selected="@(ViewData["CurrentIslemTuru"]?.ToString() == islemTuru)">@islemTuru</option>
+                                <option value="@islemTuru" selected="@(ViewBag.IslemTuru == islemTuru)">@islemTuru</option>
                             }
                         </select>
                     </div>
                     <div class="col-md-2">
                         <label for="baslangicTarihi" class="form-label">Başlangıç Tarihi</label>
-                        <input type="date" class="form-control" id="baslangicTarihi" name="baslangicTarihi" value="@ViewData["CurrentBaslangicTarihi"]">
+                        <input type="date" class="form-control" id="baslangicTarihi" name="baslangicTarihi" value="@(ViewBag.BaslangicTarihi?.ToString("yyyy-MM-dd"))">
                     </div>
                     <div class="col-md-2">
                         <label for="bitisTarihi" class="form-label">Bitiş Tarihi</label>
-                        <input type="date" class="form-control" id="bitisTarihi" name="bitisTarihi" value="@ViewData["CurrentBitisTarihi"]">
+                        <input type="date" class="form-control" id="bitisTarihi" name="bitisTarihi" value="@(ViewBag.BitisTarihi?.ToString("yyyy-MM-dd"))">
                     </div>
                     <div class="col-md-2 d-flex align-items-end">
                         <button type="submit" class="btn btn-primary w-100">Filtrele</button>
                     </div>
                 </div>
             </form>
-
-            <!-- Tüm Logları Temizle Butonu -->
-            <div class="mb-3">
-                <form asp-action="ClearLogs" method="post" onsubmit="return confirm('Tüm log kayıtlarını silmek istediğinize emin misiniz?');">
-                    <button type="submit" class="btn btn-danger">Tüm Logları Temizle</button>
-                </form>
-            </div>
 
             <!-- Log Tablosu -->
             <div class="table-responsive">
@@ -55,24 +48,38 @@
                         <tr>
                             <th>İşlem Tarihi</th>
                             <th>İşlem Türü</th>
-                            <th>Açıklama</th>
+                            <th>Tablo</th>
+                            <th>Kayıt Adı</th>
                             <th>Kullanıcı</th>
-                            <th>IP Adresi</th>
+                            <th>Açıklama</th>
+                            <th>Durum</th>
                             <th>İşlemler</th>
                         </tr>
                     </thead>
                     <tbody>
-                        @foreach (var log in Model)
+                        @foreach (var log in Model.Logs)
                         {
                             <tr>
                                 <td>@log.IslemTarihi.ToString("dd.MM.yyyy HH:mm:ss")</td>
                                 <td>@log.IslemTuru</td>
+                                <td>@log.TabloAdi</td>
+                                <td>@log.KayitAdi</td>
+                                <td>@(string.IsNullOrEmpty(log.KullaniciAdi) ? "-" : log.KullaniciAdi)</td>
                                 <td>@log.Aciklama</td>
-                                <td>@log.KullaniciAdi</td>
-                                <td>@log.IPAdresi</td>
                                 <td>
-                                    <a asp-action="Details" asp-route-id="@log.SistemLogID" class="btn btn-sm btn-info">Detay</a>
-                                    <a asp-action="Delete" asp-route-id="@log.SistemLogID" class="btn btn-sm btn-danger">Sil</a>
+                                    @if (log.Basarili)
+                                    {
+                                        <span class="badge bg-success">Başarılı</span>
+                                    }
+                                    else
+                                    {
+                                        <span class="badge bg-danger">Başarısız</span>
+                                    }
+                                </td>
+                                <td>
+                                    <a asp-action="Details" asp-route-id="@log.LogID" class="btn btn-sm btn-info">
+                                        <i class="fas fa-info-circle"></i>
+                                    </a>
                                 </td>
                             </tr>
                         }
@@ -81,30 +88,47 @@
             </div>
 
             <!-- Sayfalama -->
-            @{
-                int totalPages = (int)ViewData["TotalPages"];
-                int currentPage = (int)ViewData["CurrentPage"];
-            }
-
-            @if (totalPages > 1)
+            @if (Model.TotalPages > 1)
             {
-                <nav aria-label="Page navigation">
+                <nav aria-label="Sayfalama">
                     <ul class="pagination justify-content-center">
-                        @for (int i = 1; i <= totalPages; i++)
+                        <li class="page-item @(!Model.HasPreviousPage ? "disabled" : "")">
+                            <a class="page-link" asp-action="Index" asp-route-page="1" asp-route-searchString="@ViewBag.SearchString" asp-route-islemTuru="@ViewBag.IslemTuru" asp-route-baslangicTarihi="@ViewBag.BaslangicTarihi" asp-route-bitisTarihi="@ViewBag.BitisTarihi">İlk</a>
+                        </li>
+                        <li class="page-item @(!Model.HasPreviousPage ? "disabled" : "")">
+                            <a class="page-link" asp-action="Index" asp-route-page="@(Model.CurrentPage - 1)" asp-route-searchString="@ViewBag.SearchString" asp-route-islemTuru="@ViewBag.IslemTuru" asp-route-baslangicTarihi="@ViewBag.BaslangicTarihi" asp-route-bitisTarihi="@ViewBag.BitisTarihi">Önceki</a>
+                        </li>
+                        
+                        @{
+                            int startPage = Math.Max(1, Model.CurrentPage - 2);
+                            int endPage = Math.Min(Model.TotalPages, startPage + 4);
+                            
+                            if (endPage - startPage < 4 && startPage > 1)
+                            {
+                                startPage = Math.Max(1, endPage - 4);
+                            }
+                        }
+                        
+                        @for (int i = startPage; i <= endPage; i++)
                         {
-                            <li class="page-item @(i == currentPage ? "active" : "")">
-                                <a class="page-link" href="@Url.Action("Index", new { 
-                                    page = i, 
-                                    searchString = ViewData["CurrentFilter"], 
-                                    islemTuru = ViewData["CurrentIslemTuru"],
-                                    baslangicTarihi = ViewData["CurrentBaslangicTarihi"],
-                                    bitisTarihi = ViewData["CurrentBitisTarihi"]
-                                })">@i</a>
+                            <li class="page-item @(i == Model.CurrentPage ? "active" : "")">
+                                <a class="page-link" asp-action="Index" asp-route-page="@i" asp-route-searchString="@ViewBag.SearchString" asp-route-islemTuru="@ViewBag.IslemTuru" asp-route-baslangicTarihi="@ViewBag.BaslangicTarihi" asp-route-bitisTarihi="@ViewBag.BitisTarihi">@i</a>
                             </li>
                         }
+                        
+                        <li class="page-item @(!Model.HasNextPage ? "disabled" : "")">
+                            <a class="page-link" asp-action="Index" asp-route-page="@(Model.CurrentPage + 1)" asp-route-searchString="@ViewBag.SearchString" asp-route-islemTuru="@ViewBag.IslemTuru" asp-route-baslangicTarihi="@ViewBag.BaslangicTarihi" asp-route-bitisTarihi="@ViewBag.BitisTarihi">Sonraki</a>
+                        </li>
+                        <li class="page-item @(!Model.HasNextPage ? "disabled" : "")">
+                            <a class="page-link" asp-action="Index" asp-route-page="@Model.TotalPages" asp-route-searchString="@ViewBag.SearchString" asp-route-islemTuru="@ViewBag.IslemTuru" asp-route-baslangicTarihi="@ViewBag.BaslangicTarihi" asp-route-bitisTarihi="@ViewBag.BitisTarihi">Son</a>
+                        </li>
                     </ul>
                 </nav>
             }
+            
+            <div class="text-center mt-3">
+                <p>Toplam @Model.TotalItems kayıt, @Model.TotalPages sayfa</p>
+            </div>
         </div>
     </div>
 </div>

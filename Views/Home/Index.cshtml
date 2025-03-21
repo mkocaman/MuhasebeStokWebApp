@@ -80,6 +80,57 @@
         </div>
     </div>
     
+    <!-- Döviz Kurları Bölümü -->
+    <div class="row mt-4">
+        <div class="col-12">
+            <div class="card">
+                <div class="card-header">
+                    <h5>Güncel Döviz Kurları</h5>
+                    <span class="pull-right">
+                        <a href="@Url.Action("Index", "DovizKuru")" class="btn btn-sm btn-primary">
+                            <i class="fa fa-exchange-alt"></i> Tüm Kurları Görüntüle
+                        </a>
+                    </span>
+                </div>
+                <div class="card-body">
+                    @if (ViewBag.SonKurlar != null && ViewBag.SonKurlar.Count > 0)
+                    {
+                        <div class="table-responsive">
+                            <table class="table table-bordered table-hover">
+                                <thead>
+                                    <tr>
+                                        <th>Para Birimi</th>
+                                        <th>Tarih</th>
+                                        <th class="text-end">Alış</th>
+                                        <th class="text-end">Satış</th>
+                                    </tr>
+                                </thead>
+                                <tbody>
+                                    @foreach (var kur in ViewBag.SonKurlar)
+                                    {
+                                        <tr>
+                                            <td>@kur.ParaBirimi?.Kod (@kur.ParaBirimi?.Ad)</td>
+                                            <td>@kur.Tarih.ToString("dd.MM.yyyy")</td>
+                                            <td class="text-end">@kur.AlisDegeri.ToString("N4")</td>
+                                            <td class="text-end">@kur.SatisDegeri.ToString("N4")</td>
+                                        </tr>
+                                    }
+                                </tbody>
+                            </table>
+                        </div>
+                    }
+                    else
+                    {
+                        <div class="alert alert-info">
+                            Henüz döviz kuru bilgisi bulunmamaktadır. 
+                            <a href="@Url.Action("Sync", "DovizKuru")" class="alert-link">Kurları güncellemek için tıklayın</a>.
+                        </div>
+                    }
+                </div>
+            </div>
+        </div>
+    </div>
+    
     <div class="row mt-4">
         <div class="col-12">
             <div class="card">

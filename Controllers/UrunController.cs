@@ -180,8 +180,7 @@ namespace MuhasebeStokWebApp.Controllers
                 if (ModelState.IsValid)
                 {
                     var urunRepository = _unitOfWork.Repository<Urun>();
-                    var urunFiyatRepository = _unitOfWork.Repository<UrunFiyat>();
-
+            
                     var urun = new Urun
                     {
                         UrunID = Guid.NewGuid(),
@@ -192,47 +191,14 @@ namespace MuhasebeStokWebApp.Controllers
                         KategoriID = model.KategoriID,
                         OlusturmaTarihi = DateTime.Now,
                         SoftDelete = false,
-                        StokMiktar = model.StokMiktar
+                        StokMiktar = 0,
+                        KDVOrani = model.KDVOrani
                     };
 
                     await urunRepository.AddAsync(urun);
-
-                    // Liste Fiyatı Ekle
-                    await urunFiyatRepository.AddAsync(new UrunFiyat
-                    {
-                        UrunID = urun.UrunID,
-                        Fiyat = model.ListeFiyati,
-                        FiyatTipiID = 1, // Liste Fiyatı
-                        GecerliTarih = DateTime.Now,
-                        OlusturmaTarihi = DateTime.Now,
-                        SoftDelete = false
-                    });
-
-                    // Maliyet Fiyatı Ekle
-                    await urunFiyatRepository.AddAsync(new UrunFiyat
-                    {
-                        UrunID = urun.UrunID,
-                        Fiyat = model.MaliyetFiyati,
-                        FiyatTipiID = 2, // Maliyet Fiyatı
-                        GecerliTarih = DateTime.Now,
-                        OlusturmaTarihi = DateTime.Now,
-                        SoftDelete = false
-                    });
-
-                    // Satış Fiyatı Ekle
-                    await urunFiyatRepository.AddAsync(new UrunFiyat
-                    {
-                        UrunID = urun.UrunID,
-                        Fiyat = model.SatisFiyati,
-                        FiyatTipiID = 3, // Satış Fiyatı
-                        GecerliTarih = DateTime.Now,
-                        OlusturmaTarihi = DateTime.Now,
-                        SoftDelete = false
-                    });
-
                     await _unitOfWork.SaveAsync();
-                    
-                    TempData["SuccessMessage"] = $"{model.UrunAdi} ürünü başarıyla eklendi.";
+            
+                    TempData["SuccessMessage"] = $"{model.UrunAdi} ürünü başarıyla eklendi. Stok girişini 'Stok Yönetimi > Stok Girişi' menüsünden yapabilirsiniz.";
 
                     // AJAX isteği için başarılı sonuç döndür
                     if (Request.Headers["X-Requested-With"] == "XMLHttpRequest")
@@ -242,15 +208,8 @@ namespace MuhasebeStokWebApp.Controllers
 
                     return RedirectToAction(nameof(Index));
                 }
-                else
-                {
-                    // ModelState hatalarını logla
-                    foreach (var error in ModelState.Values.SelectMany(v => v.Errors))
-                    {
-                        Console.WriteLine($"Model Error: {error.ErrorMessage}");
-                    }
-                }
                 
+                // ModelState geçersizse
                 var kategoriRepository = _unitOfWork.Repository<UrunKategori>();
                 var kategoriler = await kategoriRepository.GetAsync(
                     filter: k => k.SoftDelete == false && k.Aktif,
@@ -266,26 +225,31 @@ namespace MuhasebeStokWebApp.Controllers
                 ViewBag.Kategoriler = new SelectList(kategoriler, "KategoriID", "KategoriAdi", model.KategoriID);
                 ViewBag.Birimler = new SelectList(birimler, "BirimID", "BirimAdi", model.BirimID);
                 
-                // AJAX isteği için başarısız sonuç döndür
+                // AJAX isteği için hata mesajları döndür
                 if (Request.Headers["X-Requested-With"] == "XMLHttpRequest")
                 {
-                    return Json(new { success = false, errors = ModelState.Values.SelectMany(v => v.Errors).Select(e => e.ErrorMessage) });
+                    return Json(new 
+                    { 
+                        success = false, 
+                        message = "Ürün eklenirken hatalar oluştu.", 
+                        errors = ModelState.Values.SelectMany(v => v.Errors).Select(e => e.ErrorMessage).ToList() 
+                    });
                 }
                 
                 return View(model);
             }
             catch (Exception ex)
             {
-                // Hata durumunda
-                Console.WriteLine($"Exception: {ex.Message}");
-                Console.WriteLine($"StackTrace: {ex.StackTrace}");
+                // Hata log
+                Console.WriteLine($"Ürün ekleme hatası: {ex.Message}");
+                TempData["ErrorMessage"] = $"Ürün eklenirken bir hata oluştu: {ex.Message}";
                 
+                // AJAX isteği için hata mesajı döndür
                 if (Request.Headers["X-Requested-With"] == "XMLHttpRequest")
                 {
-                    return Json(new { success = false, message = $"Hata: {ex.Message}" });
+                    return Json(new { success = false, message = $"Ürün eklenirken bir hata oluştu: {ex.Message}" });
                 }
                 
-                TempData["ErrorMessage"] = $"Ürün eklenirken bir hata oluştu: {ex.Message}";
                 return RedirectToAction(nameof(Index));
             }
         }
@@ -295,7 +259,6 @@ namespace MuhasebeStokWebApp.Controllers
         public async Task<IActionResult> Edit(Guid id)
         {
             var urunRepository = _unitOfWork.Repository<Urun>();
-            var urunFiyatRepository = _unitOfWork.Repository<UrunFiyat>();
             var kategoriRepository = _unitOfWork.Repository<UrunKategori>();
 
             var urun = await urunRepository.GetFirstOrDefaultAsync(u => u.UrunID == id && u.SoftDelete == false);
@@ -311,18 +274,6 @@ namespace MuhasebeStokWebApp.Controllers
                 UrunAdi = urun.UrunAdi,
                 BirimID = urun.BirimID,
                 StokMiktar = urun.StokMiktar,
-                ListeFiyati = urunFiyatRepository.GetAllAsync().Result
-                    .Where(uf => uf.UrunID == urun.UrunID && uf.FiyatTipiID == 1 && uf.SoftDelete == false)
-                    .OrderByDescending(uf => uf.GecerliTarih)
-                    .FirstOrDefault()?.Fiyat ?? 0m,
-                MaliyetFiyati = urunFiyatRepository.GetAllAsync().Result
-                    .Where(uf => uf.UrunID == urun.UrunID && uf.FiyatTipiID == 2 && uf.SoftDelete == false)
-                    .OrderByDescending(uf => uf.GecerliTarih)
-                    .FirstOrDefault()?.Fiyat ?? 0m,
-                SatisFiyati = urunFiyatRepository.GetAllAsync().Result
-                    .Where(uf => uf.UrunID == urun.UrunID && uf.FiyatTipiID == 3 && uf.SoftDelete == false)
-                    .OrderByDescending(uf => uf.GecerliTarih)
-                    .FirstOrDefault()?.Fiyat ?? 0m,
                 Aktif = urun.Aktif,
                 KategoriID = urun.KategoriID
             };
@@ -384,7 +335,6 @@ namespace MuhasebeStokWebApp.Controllers
             if (ModelState.IsValid)
             {
                 var urunRepository = _unitOfWork.Repository<Urun>();
-                var urunFiyatRepository = _unitOfWork.Repository<UrunFiyat>();
 
                 var urun = await urunRepository.GetFirstOrDefaultAsync(u => u.UrunID == id && u.SoftDelete == false);
                 if (urun == null)
@@ -398,45 +348,12 @@ namespace MuhasebeStokWebApp.Controllers
                 urun.StokMiktar = model.StokMiktar;
                 urun.Aktif = model.Aktif;
                 urun.KategoriID = model.KategoriID;
+                urun.KDVOrani = model.KDVOrani;
                 urun.GuncellemeTarihi = DateTime.Now;
 
                 await urunRepository.UpdateAsync(urun);
-
-                // Liste Fiyatı Ekle
-                await urunFiyatRepository.AddAsync(new UrunFiyat
-                {
-                    UrunID = urun.UrunID,
-                    Fiyat = model.ListeFiyati,
-                    FiyatTipiID = 1, // Liste Fiyatı
-                    GecerliTarih = DateTime.Now,
-                    OlusturmaTarihi = DateTime.Now,
-                    SoftDelete = false
-                });
-
-                // Maliyet Fiyatı Ekle
-                await urunFiyatRepository.AddAsync(new UrunFiyat
-                {
-                    UrunID = urun.UrunID,
-                    Fiyat = model.MaliyetFiyati,
-                    FiyatTipiID = 2, // Maliyet Fiyatı
-                    GecerliTarih = DateTime.Now,
-                    OlusturmaTarihi = DateTime.Now,
-                    SoftDelete = false
-                });
-
-                // Satış Fiyatı Ekle
-                await urunFiyatRepository.AddAsync(new UrunFiyat
-                {
-                    UrunID = urun.UrunID,
-                    Fiyat = model.SatisFiyati,
-                    FiyatTipiID = 3, // Satış Fiyatı
-                    GecerliTarih = DateTime.Now,
-                    OlusturmaTarihi = DateTime.Now,
-                    SoftDelete = false
-                });
-
                 await _unitOfWork.SaveAsync();
-                
+
                 TempData["SuccessMessage"] = $"{model.UrunAdi} ürünü başarıyla güncellendi.";
 
                 // AJAX isteği için başarılı sonuç döndür
@@ -454,7 +371,14 @@ namespace MuhasebeStokWebApp.Controllers
                 orderBy: q => q.OrderBy(k => k.KategoriAdi)
             );
             
+            var birimRepository = _unitOfWork.Repository<Birim>();
+            var birimler = await birimRepository.GetAsync(
+                filter: b => b.SoftDelete == false && b.Aktif,
+                orderBy: q => q.OrderBy(b => b.BirimAdi)
+            );
+            
             ViewBag.Kategoriler = new SelectList(kategoriler, "KategoriID", "KategoriAdi", model.KategoriID);
+            ViewBag.Birimler = new SelectList(birimler, "BirimID", "BirimAdi", model.BirimID);
             
             // AJAX isteği için başarısız sonuç döndür
             if (Request.Headers["X-Requested-With"] == "XMLHttpRequest")
