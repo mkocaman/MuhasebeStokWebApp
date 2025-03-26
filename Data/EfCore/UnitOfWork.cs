@@ -3,6 +3,8 @@ using System.Collections.Generic;
 using System.Threading.Tasks;
 using MuhasebeStokWebApp.Data.Entities;
 using MuhasebeStokWebApp.Data.Repositories;
+using Microsoft.EntityFrameworkCore.Storage;
+using System.Data;
 
 namespace MuhasebeStokWebApp.Data.EfCore
 {
@@ -11,6 +13,7 @@ namespace MuhasebeStokWebApp.Data.EfCore
         private readonly ApplicationDbContext _context;
         private Dictionary<Type, object> _repositories;
         private bool disposed = false;
+        private IDbContextTransaction? _transaction;
 
         // Özel repository'ler
         private IRepository<Urun>? _urunRepository;
@@ -71,6 +74,42 @@ namespace MuhasebeStokWebApp.Data.EfCore
         public IRepository<MenuRol> MenuRolRepository => _menuRolRepository ??= Repository<MenuRol>();
         public IIrsaliyeRepository IrsaliyeCustomRepository => _customIrsaliyeRepository ??= new IrsaliyeRepository(_context);
         public IIrsaliyeDetayRepository IrsaliyeDetayCustomRepository => _customIrsaliyeDetayRepository ??= new IrsaliyeDetayRepository(_context);
+
+        public async Task<IDbContextTransaction> BeginTransactionAsync()
+        {
+            _transaction = await _context.Database.BeginTransactionAsync();
+            return _transaction;
+        }
+
+        public async Task CommitTransactionAsync()
+        {
+            try
+            {
+                await SaveAsync();
+                
+                if (_transaction != null)
+                {
+                    await _transaction.CommitAsync();
+                    await _transaction.DisposeAsync();
+                    _transaction = null;
+                }
+            }
+            catch
+            {
+                await RollbackTransactionAsync();
+                throw;
+            }
+        }
+
+        public async Task RollbackTransactionAsync()
+        {
+            if (_transaction != null)
+            {
+                await _transaction.RollbackAsync();
+                await _transaction.DisposeAsync();
+                _transaction = null;
+            }
+        }
 
         public async Task SaveAsync()
         {

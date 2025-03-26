@@ -9,7 +9,8 @@ namespace MuhasebeStokWebApp.ViewModels.Fatura
         public Guid FaturaID { get; set; }
 
         [Display(Name = "Fatura No")]
-        public string FaturaNumarasi { get; set; }
+        [Required(ErrorMessage = "Fatura numarası zorunludur.")]
+        public required string FaturaNumarasi { get; set; }
 
         [Display(Name = "Fatura Tarihi")]
         [DisplayFormat(DataFormatString = "{0:dd.MM.yyyy}", ApplyFormatInEditMode = true)]
@@ -23,10 +24,12 @@ namespace MuhasebeStokWebApp.ViewModels.Fatura
         public Guid CariID { get; set; }
 
         [Display(Name = "Cari Adı")]
-        public string CariAdi { get; set; }
+        [Required(ErrorMessage = "Cari adı zorunludur.")]
+        public required string CariAdi { get; set; }
 
         [Display(Name = "Fatura Türü")]
-        public string FaturaTuru { get; set; }
+        [Required(ErrorMessage = "Fatura türü zorunludur.")]
+        public required string FaturaTuru { get; set; }
 
         [Display(Name = "Ara Toplam")]
         [DisplayFormat(DataFormatString = "{0:N2}", ApplyFormatInEditMode = false)]
@@ -49,10 +52,12 @@ namespace MuhasebeStokWebApp.ViewModels.Fatura
         public decimal OdenecekTutar { get; set; }
 
         [Display(Name = "Açıklama")]
-        public string Aciklama { get; set; }
+        [Required(ErrorMessage = "Açıklama zorunludur.")]
+        public required string Aciklama { get; set; }
 
         [Display(Name = "Ödeme Durumu")]
-        public string OdemeDurumu { get; set; }
+        [Required(ErrorMessage = "Ödeme durumu zorunludur.")]
+        public required string OdemeDurumu { get; set; }
 
         [Display(Name = "Aktif")]
         public bool Aktif { get; set; } = true;

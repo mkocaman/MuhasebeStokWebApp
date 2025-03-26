@@ -31,7 +31,7 @@
     <div class="row">
         <div class="col-md-12">
             <div class="card">
-                <div class="card-header d-flex justify-content-between align-items-center">
+                <div class="card-header bg-primary text-white d-flex justify-content-between align-items-center">
                     <h5 class="mb-0">Kasa Listesi</h5>
                     <div>
                         <a asp-action="YeniHareket" class="btn btn-success btn-sm">
@@ -44,14 +44,13 @@
                 </div>
                 <div class="card-body">
                     <div class="table-responsive">
-                        <table class="table table-hover">
-                            <thead>
+                        <table class="table table-bordered table-hover" id="kasaTable">
+                            <thead class="table-light">
                                 <tr>
-                                    <th>Kasa Adı</th>
-                                    <th>Kasa Türü</th>
-                                    <th>Açılış Bakiyesi</th>
-                                    <th>Güncel Bakiye</th>
-                                    <th>Durum</th>
+                                    <th>@Html.DisplayNameFor(model => model.Kasalar.FirstOrDefault().KasaAdi)</th>
+                                    <th>@Html.DisplayNameFor(model => model.Kasalar.FirstOrDefault().KasaTuru)</th>
+                                    <th>@Html.DisplayNameFor(model => model.Kasalar.FirstOrDefault().AcilisBakiye)</th>
+                                    <th>@Html.DisplayNameFor(model => model.Kasalar.FirstOrDefault().GuncelBakiye)</th>
                                     <th>İşlemler</th>
                                 </tr>
                             </thead>
@@ -67,33 +66,25 @@
                                     @foreach (var kasa in Model.Kasalar)
                                     {
                                         <tr>
-                                            <td>@kasa.KasaAdi</td>
-                                            <td>@kasa.KasaTuru</td>
-                                            <td class="text-right">@kasa.AcilisBakiye.ToString("N2") ₺</td>
-                                            <td class="text-right font-weight-bold">@kasa.GuncelBakiye.ToString("N2") ₺</td>
-                                            <td>
-                                                @if (kasa.Aktif)
-                                                {
-                                                    <span class="badge badge-success">Aktif</span>
-                                                }
-                                                else
-                                                {
-                                                    <span class="badge badge-danger">Pasif</span>
-                                                }
+                                            <td>@Html.DisplayFor(model => kasa.KasaAdi)</td>
+                                            <td>@Html.DisplayFor(model => kasa.KasaTuru)</td>
+                                            <td class="text-end">@kasa.AcilisBakiye.ToString("N2") ₺</td>
+                                            <td class="text-end @(kasa.GuncelBakiye >= 0 ? "text-success" : "text-danger")">
+                                                @kasa.GuncelBakiye.ToString("N2") ₺
                                             </td>
                                             <td>
-                                                <div class="btn-group btn-group-sm" role="group">
-                                                    <a asp-action="Hareketler" asp-route-id="@kasa.KasaID" class="btn btn-info" title="Kasa Hareketleri">
-                                                        <i class="fa fa-list"></i>
+                                                <div class="btn-group" role="group">
+                                                    <a asp-action="Hareketler" asp-route-id="@kasa.KasaID" class="btn btn-sm btn-secondary">
+                                                        <i class="fas fa-exchange-alt"></i>
                                                     </a>
-                                                    <a asp-action="Edit" asp-route-id="@kasa.KasaID" class="btn btn-primary" title="Düzenle">
-                                                        <i class="fa fa-edit"></i>
+                                                    <a asp-action="Edit" asp-route-id="@kasa.KasaID" class="btn btn-sm btn-warning">
+                                                        <i class="fas fa-edit"></i>
                                                     </a>
-                                                    <a asp-action="Details" asp-route-id="@kasa.KasaID" class="btn btn-secondary" title="Detay">
-                                                        <i class="fa fa-eye"></i>
+                                                    <a asp-action="Details" asp-route-id="@kasa.KasaID" class="btn btn-sm btn-info">
+                                                        <i class="fas fa-eye"></i>
                                                     </a>
-                                                    <a asp-action="Delete" asp-route-id="@kasa.KasaID" class="btn btn-danger" title="Sil">
-                                                        <i class="fa fa-trash"></i>
+                                                    <a asp-action="Delete" asp-route-id="@kasa.KasaID" class="btn btn-sm btn-danger">
+                                                        <i class="fas fa-trash"></i>
                                                     </a>
                                                 </div>
                                             </td>
@@ -119,30 +110,54 @@
 @section Scripts {
     <script>
         $(document).ready(function () {
-            // DataTable uyarılarını gizle
-            $.fn.dataTable.ext.errMode = 'none';
-            
-            // Tablonun sıralanabilir olmasını sağlar
-            if ($.fn.DataTable) {
-                try {
-                    $('.table').DataTable({
-                        "language": {
-                            "url": "//cdn.datatables.net/plug-ins/1.10.25/i18n/Turkish.json",
-                            "info": "" // Bilgilendirme yazısını kaldır (çift görünme sorununu çözmek için)
-                        },
-                        "retrieve": true
-                    });
-                } catch (e) {
-                    console.log("DataTable başlatılırken bir hata oluştu, ancak işlem devam ediyor.");
-                }
+            // DataTable başlatma
+            try {
+                $('#kasaTable').DataTable({
+                    language: {
+                        "emptyTable": "Tabloda herhangi bir veri mevcut değil",
+                        "info": "_TOTAL_ kayıttan _START_ - _END_ arasındaki kayıtlar gösteriliyor",
+                        "infoEmpty": "Kayıt yok",
+                        "infoFiltered": "(_MAX_ kayıt içerisinden bulunan)",
+                        "infoPostFix": "",
+                        "thousands": ".",
+                        "lengthMenu": "Sayfada _MENU_ kayıt göster",
+                        "loadingRecords": "Yükleniyor...",
+                        "processing": "İşleniyor...",
+                        "search": "Ara:",
+                        "zeroRecords": "Eşleşen kayıt bulunamadı",
+                        "paginate": {
+                            "first": "İlk",
+                            "last": "Son",
+                            "next": "Sonraki",
+                            "previous": "Önceki"
+                        }
+                    },
+                    responsive: true,
+                    retrieve: true
+                });
+            } catch (e) {
+                console.log("DataTable başlatılırken bir hata oluştu, ancak işlem devam ediyor.");
             }
-            
+
             // Otomatik kapanan alertler
             window.setTimeout(function() {
                 $(".alert").fadeTo(500, 0).slideUp(500, function() {
                     $(this).remove();
                 });
             }, 4000);
+
+            // SweetAlert ile başarı mesajı göster
+            @if (TempData["SuccessMessage"] != null)
+            {
+                <text>
+                Swal.fire({
+                    title: 'Başarılı!',
+                    text: '@TempData["SuccessMessage"]',
+                    icon: 'success',
+                    confirmButtonText: 'Tamam'
+                });
+                </text>
+            }
         });
     </script>
 } 

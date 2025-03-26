@@ -1,18 +1,33 @@
 using System;
 using System.Collections.Generic;
 using System.ComponentModel.DataAnnotations;
+using MuhasebeStokWebApp.Data.Entities;
 
 namespace MuhasebeStokWebApp.ViewModels.Cari
 {
     public class CariDetailViewModel
     {
+        public Data.Entities.Cari Cari { get; set; }
+        public List<Data.Entities.CariHareket> CariHareketler { get; set; }
+        public List<Data.Entities.Fatura> Faturalar { get; set; }
+        public decimal ToplamBakiye { get; set; }
+
         public Guid CariID { get; set; }
         
         [Display(Name = "Cari Adı")]
         public string CariAdi { get; set; }
+
+        [Display(Name = "Cari Kodu")]
+        public string CariKodu { get; set; }
+        
+        [Display(Name = "Cari Tipi")]
+        public string CariTipi { get; set; }
         
         [Display(Name = "Vergi No")]
         public string VergiNo { get; set; }
+
+        [Display(Name = "Vergi Dairesi")]
+        public string VergiDairesi { get; set; }
         
         [Display(Name = "Telefon")]
         public string Telefon { get; set; }
@@ -22,15 +37,36 @@ namespace MuhasebeStokWebApp.ViewModels.Cari
         
         [Display(Name = "Adres")]
         public string Adres { get; set; }
+
+        [Display(Name = "İl")]
+        public string Il { get; set; }
+
+        [Display(Name = "İlçe")]
+        public string Ilce { get; set; }
+
+        [Display(Name = "Posta Kodu")]
+        public string PostaKodu { get; set; }
+
+        [Display(Name = "Ülke")]
+        public string Ulke { get; set; }
+
+        [Display(Name = "Web Sitesi")]
+        public string WebSitesi { get; set; }
         
         [Display(Name = "Yetkili")]
         public string Yetkili { get; set; }
         
         [Display(Name = "Açıklama")]
         public string Aciklama { get; set; }
+
+        [Display(Name = "Notlar")]
+        public string Notlar { get; set; }
         
         [Display(Name = "Aktif")]
         public bool Aktif { get; set; }
+
+        [Display(Name = "Aktif Mi")]
+        public bool AktifMi { get; set; }
         
         [Display(Name = "Oluşturma Tarihi")]
         public DateTime? OlusturmaTarihi { get; set; }
@@ -52,6 +88,8 @@ namespace MuhasebeStokWebApp.ViewModels.Cari
         {
             CariHareketleri = new List<CariHareketViewModel>();
             SonFaturalar = new List<FaturaViewModel>();
+            CariHareketler = new List<Data.Entities.CariHareket>();
+            Faturalar = new List<Data.Entities.Fatura>();
         }
     }
     

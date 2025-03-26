@@ -1,6 +1,5 @@
 using System;
 using System.ComponentModel.DataAnnotations;
-using System.ComponentModel.DataAnnotations.Schema;
 
 namespace MuhasebeStokWebApp.Data.Entities
 {
@@ -9,16 +8,14 @@ namespace MuhasebeStokWebApp.Data.Entities
         [Key]
         public Guid MenuRolID { get; set; }
         
-        public Guid MenuID { get; set; }
+        public Guid MenuId { get; set; }
         
-        [ForeignKey("MenuID")]
+        public string RolId { get; set; }
+        
         public virtual Menu Menu { get; set; }
         
-        [Required, StringLength(450)]
-        public string RolID { get; set; }
+        public virtual Microsoft.AspNetCore.Identity.IdentityRole Rol { get; set; }
         
         public DateTime OlusturmaTarihi { get; set; } = DateTime.Now;
-        
-        public Guid? OlusturanKullaniciID { get; set; }
     }
 } 

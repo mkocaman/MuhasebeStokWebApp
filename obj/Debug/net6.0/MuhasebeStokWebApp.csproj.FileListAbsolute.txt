@@ -1,9 +1,0 @@
-/Users/muhammetkocaman/MuhasebeStokWebApp/obj/Debug/net6.0/MuhasebeStokWebApp.csproj.AssemblyReference.cache
-/Users/muhammetkocaman/MuhasebeStokWebApp/obj/Debug/net6.0/MuhasebeStokWebApp.GeneratedMSBuildEditorConfig.editorconfig
-/Users/muhammetkocaman/MuhasebeStokWebApp/obj/Debug/net6.0/MuhasebeStokWebApp.AssemblyInfoInputs.cache
-/Users/muhammetkocaman/MuhasebeStokWebApp/obj/Debug/net6.0/MuhasebeStokWebApp.AssemblyInfo.cs
-/Users/muhammetkocaman/MuhasebeStokWebApp/obj/Debug/net6.0/MuhasebeStokWebApp.csproj.CoreCompileInputs.cache
-/Users/muhammetkocaman/MuhasebeStokWebApp/obj/Debug/net6.0/MuhasebeStokWebApp.MvcApplicationPartsAssemblyInfo.cache
-/Users/muhammetkocaman/MuhasebeStokWebApp/obj/Debug/net6.0/MuhasebeStokWebApp.RazorAssemblyInfo.cache
-/Users/muhammetkocaman/MuhasebeStokWebApp/obj/Debug/net6.0/MuhasebeStokWebApp.RazorAssemblyInfo.cs
-/Users/muhammetkocaman/MuhasebeStokWebApp/obj/Debug/net6.0/MuhasebeStokWebApp.sourcelink.json

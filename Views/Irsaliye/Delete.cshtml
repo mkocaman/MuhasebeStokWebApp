@@ -42,7 +42,7 @@
                         <div class="col-md-6">
                             <div class="form-group">
                                 <label class="control-label">İrsaliye Tarihi</label>
-                                <p class="form-control-static">@(Model.IrsaliyeTarihi.HasValue ? Model.IrsaliyeTarihi.Value.ToString("dd.MM.yyyy") : "")</p>
+                                <p class="form-control-static">@Model.IrsaliyeTarihi.ToString("dd.MM.yyyy")</p>
                             </div>
                         </div>
                         <div class="col-md-6">
@@ -65,8 +65,8 @@
                             <div class="form-group">
                                 <label>Durum</label>
                                 <p class="form-control-static">
-                                    <span class="badge badge-@(Model.Durum == "Kapalı" ? "success" : (Model.Durum == "Açık" ? "warning" : "danger"))">
-                                        @Model.Durum
+                                    <span class="badge badge-@(Model.Aktif ? "success" : "danger")">
+                                        @(Model.Aktif ? "Aktif" : "Pasif")
                                     </span>
                                 </p>
                             </div>

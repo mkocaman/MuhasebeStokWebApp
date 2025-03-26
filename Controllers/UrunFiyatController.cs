@@ -9,15 +9,24 @@ using MuhasebeStokWebApp.Data.Entities;
 using MuhasebeStokWebApp.Data.Repositories;
 using MuhasebeStokWebApp.Services;
 using MuhasebeStokWebApp.ViewModels.UrunFiyat;
+using Microsoft.AspNetCore.Identity;
+using MuhasebeStokWebApp.Services.Interfaces;
 
 namespace MuhasebeStokWebApp.Controllers
 {
-    public class UrunFiyatController : Controller
+    public class UrunFiyatController : BaseController
     {
         private readonly IUnitOfWork _unitOfWork;
         private readonly UserManager _userManager;
 
-        public UrunFiyatController(IUnitOfWork unitOfWork, UserManager userManager)
+        public UrunFiyatController(
+            IUnitOfWork unitOfWork, 
+            UserManager userManager,
+            IMenuService menuService,
+            UserManager<ApplicationUser> identityUserManager,
+            RoleManager<IdentityRole> roleManager,
+            ILogService logService)
+            : base(menuService, identityUserManager, roleManager, logService)
         {
             _unitOfWork = unitOfWork;
             _userManager = userManager;
@@ -35,7 +44,7 @@ namespace MuhasebeStokWebApp.Controllers
             if (urunId.HasValue)
             {
                 // Belirli bir ürün için fiyatlar listeleniyor
-                var urun = await urunRepository.GetFirstOrDefaultAsync(u => u.UrunID == urunId && u.SoftDelete == false);
+                var urun = await urunRepository.GetFirstOrDefaultAsync(u => u.UrunID.Equals(urunId) && u.Silindi == false);
                 if (urun == null)
                 {
                     return NotFound();
@@ -46,7 +55,7 @@ namespace MuhasebeStokWebApp.Controllers
                 
                 // Ürüne ait tüm fiyatları getir
                 var fiyatlar = await urunFiyatRepository.GetAsync(
-                    filter: f => f.UrunID == urunId && f.SoftDelete == false,
+                    filter: f => f.UrunID == urunId && f.Silindi == false,
                     includeProperties: "Urun,FiyatTipi",
                     orderBy: q => q.OrderByDescending(f => f.GecerliTarih)
                 );
@@ -62,14 +71,14 @@ namespace MuhasebeStokWebApp.Controllers
                     FiyatTipiID = f.FiyatTipiID,
                     FiyatTipiAdi = f.FiyatTipi?.TipAdi,
                     OlusturmaTarihi = f.OlusturmaTarihi,
-                    Aktif = !f.SoftDelete
+                    Aktif = !f.Silindi
                 }).ToList();
             }
             else
             {
                 // Tüm fiyatlar listeleniyor
                 var fiyatlar = await urunFiyatRepository.GetAsync(
-                    filter: f => f.SoftDelete == false,
+                    filter: f => f.Silindi == false,
                     includeProperties: "Urun,FiyatTipi",
                     orderBy: q => q.OrderByDescending(f => f.GecerliTarih)
                 );
@@ -85,7 +94,7 @@ namespace MuhasebeStokWebApp.Controllers
                     FiyatTipiID = f.FiyatTipiID,
                     FiyatTipiAdi = f.FiyatTipi?.TipAdi,
                     OlusturmaTarihi = f.OlusturmaTarihi,
-                    Aktif = !f.SoftDelete
+                    Aktif = !f.Silindi
                 }).ToList();
             }
             
@@ -131,7 +140,7 @@ namespace MuhasebeStokWebApp.Controllers
                     FiyatTipiID = model.FiyatTipiID,
                     OlusturanKullaniciID = kullaniciID,
                     OlusturmaTarihi = DateTime.Now,
-                    SoftDelete = false
+                    Silindi = false
                 };
                 
                 await urunFiyatRepository.AddAsync(yeniFiyat);
@@ -167,12 +176,12 @@ namespace MuhasebeStokWebApp.Controllers
         }
         
         // Düzenleme için GET metodu
-        public async Task<IActionResult> Edit(int id)
+        public async Task<IActionResult> Edit(Guid id)
         {
             var urunFiyatRepository = _unitOfWork.Repository<UrunFiyat>();
             
             var fiyat = await urunFiyatRepository.GetFirstOrDefaultAsync(
-                f => f.FiyatID == id && f.SoftDelete == false,
+                f => f.FiyatID.Equals(id) && f.Silindi == false,
                 includeProperties: "Urun,FiyatTipi"
             );
             
@@ -192,7 +201,7 @@ namespace MuhasebeStokWebApp.Controllers
                 FiyatTipiID = fiyat.FiyatTipiID,
                 FiyatTipiAdi = fiyat.FiyatTipi?.TipAdi,
                 OlusturmaTarihi = fiyat.OlusturmaTarihi,
-                Aktif = !fiyat.SoftDelete
+                Aktif = !fiyat.Silindi
             };
             
             await LoadSelectLists(fiyat.UrunID);
@@ -206,9 +215,9 @@ namespace MuhasebeStokWebApp.Controllers
         }
         
         [HttpPost]
-        public async Task<IActionResult> Edit(int id, UrunFiyatViewModel model)
+        public async Task<IActionResult> Edit(Guid id, UrunFiyatViewModel model)
         {
-            if (id != model.FiyatID)
+            if (!id.Equals(model.FiyatID))
             {
                 return NotFound();
             }
@@ -219,7 +228,7 @@ namespace MuhasebeStokWebApp.Controllers
                 var urunFiyatRepository = _unitOfWork.Repository<UrunFiyat>();
                 
                 var fiyat = await urunFiyatRepository.GetFirstOrDefaultAsync(
-                    f => f.FiyatID == id && f.SoftDelete == false
+                    f => f.FiyatID.Equals(id) && f.Silindi == false
                 );
                 
                 if (fiyat == null)
@@ -232,7 +241,7 @@ namespace MuhasebeStokWebApp.Controllers
                 fiyat.FiyatTipiID = model.FiyatTipiID;
                 fiyat.SonGuncelleyenKullaniciID = kullaniciID;
                 fiyat.GuncellemeTarihi = DateTime.Now;
-                fiyat.SoftDelete = !model.Aktif;
+                fiyat.Silindi = !model.Aktif;
                 
                 await urunFiyatRepository.UpdateAsync(fiyat);
                 await _unitOfWork.SaveAsync();
@@ -267,12 +276,12 @@ namespace MuhasebeStokWebApp.Controllers
         }
         
         // Silme işlemi GET (Onay sayfası)
-        public async Task<IActionResult> Delete(int id)
+        public async Task<IActionResult> Delete(Guid id)
         {
             var urunFiyatRepository = _unitOfWork.Repository<UrunFiyat>();
             
             var fiyat = await urunFiyatRepository.GetFirstOrDefaultAsync(
-                f => f.FiyatID == id && f.SoftDelete == false,
+                f => f.FiyatID.Equals(id) && f.Silindi == false,
                 includeProperties: "Urun,FiyatTipi"
             );
             
@@ -292,7 +301,7 @@ namespace MuhasebeStokWebApp.Controllers
                 FiyatTipiID = fiyat.FiyatTipiID,
                 FiyatTipiAdi = fiyat.FiyatTipi?.TipAdi,
                 OlusturmaTarihi = fiyat.OlusturmaTarihi,
-                Aktif = !fiyat.SoftDelete
+                Aktif = !fiyat.Silindi
             };
             
             return View(viewModel);
@@ -300,12 +309,13 @@ namespace MuhasebeStokWebApp.Controllers
         
         // Silme işlemi POST
         [HttpPost, ActionName("Delete")]
-        public async Task<IActionResult> DeleteConfirmed(int id)
+        public async Task<IActionResult> DeleteConfirmed(Guid id)
         {
             var urunFiyatRepository = _unitOfWork.Repository<UrunFiyat>();
             
             var fiyat = await urunFiyatRepository.GetFirstOrDefaultAsync(
-                f => f.FiyatID == id && f.SoftDelete == false
+                f => f.FiyatID.Equals(id) && f.Silindi == false,
+                includeProperties: "Urun"
             );
             
             if (fiyat == null)
@@ -314,7 +324,7 @@ namespace MuhasebeStokWebApp.Controllers
             }
             
             // Soft delete
-            fiyat.SoftDelete = true;
+            fiyat.Silindi = true;
             fiyat.GuncellemeTarihi = DateTime.Now;
             fiyat.SonGuncelleyenKullaniciID = _userManager.GetCurrentUserId();
             
@@ -340,7 +350,7 @@ namespace MuhasebeStokWebApp.Controllers
             
             // Ürün listesi
             var urunler = await urunRepository.GetAsync(
-                filter: u => u.SoftDelete == false && u.Aktif,
+                filter: u => u.Silindi == false && u.Aktif,
                 orderBy: q => q.OrderBy(u => u.UrunKodu)
             );
             

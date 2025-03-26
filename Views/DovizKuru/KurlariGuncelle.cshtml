@@ -1,0 +1,57 @@
+@{
+    ViewData["Title"] = "Döviz Kurlarını Güncelle";
+    Layout = "~/Views/Shared/_Layout.cshtml";
+}
+
+<div class="container-fluid">
+    <div class="card shadow mb-4">
+        <div class="card-header py-3 d-flex flex-row align-items-center justify-content-between">
+            <h5 class="m-0 font-weight-bold text-primary">Döviz Kurlarını Güncelle</h5>
+            <div>
+                <a asp-action="Liste" class="btn btn-sm btn-secondary">
+                    <i class="fas fa-arrow-left"></i> Listeye Dön
+                </a>
+            </div>
+        </div>
+        <div class="card-body">
+            <div class="alert alert-info">
+                <i class="fas fa-info-circle me-2"></i> 
+                ExchangeRate-API'den güncel döviz kurlarını çekmek için aşağıdaki butona tıklayın.
+            </div>
+            
+            <div class="row mb-4">
+                <div class="col-md-12">
+                    <div class="card border-left-primary shadow h-100 py-2">
+                        <div class="card-body">
+                            <div class="row no-gutters align-items-center">
+                                <div class="col mr-2">
+                                    <div class="text-xs font-weight-bold text-primary text-uppercase mb-1">
+                                        API Bilgileri
+                                    </div>
+                                    <div class="h5 mb-0 font-weight-bold text-gray-800">
+                                        ExchangeRate-API
+                                    </div>
+                                    <div class="mt-2">
+                                        <small class="text-muted">API Key: 645b5bebcab7cef56e1b609c</small><br />
+                                        <small class="text-muted">Endpoint: https://v6.exchangerate-api.com/v6/645b5bebcab7cef56e1b609c/latest/USD</small>
+                                    </div>
+                                </div>
+                                <div class="col-auto">
+                                    <i class="fas fa-sync-alt fa-2x text-gray-300"></i>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+            
+            <div class="text-center">
+                <form asp-action="KurlariGuncellePost" method="post">
+                    <button type="submit" class="btn btn-lg btn-primary">
+                        <i class="fas fa-sync-alt me-2"></i> Döviz Kurlarını Güncelle
+                    </button>
+                </form>
+            </div>
+        </div>
+    </div>
+</div> 

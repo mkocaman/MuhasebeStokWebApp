@@ -14,30 +14,43 @@ using Microsoft.AspNetCore.Authorization;
 using MuhasebeStokWebApp.Models;
 using System.Linq;
 using Microsoft.EntityFrameworkCore;
+using Microsoft.AspNetCore.Http;
+using MuhasebeStokWebApp.Data.Entities;
+using MuhasebeStokWebApp.ViewModels.Account;
+using MuhasebeStokWebApp.Data;
+using MuhasebeStokWebApp.Services.Interfaces;
 
 namespace MuhasebeStokWebApp.Controllers
 {
+    // Kullanıcı yönetimi ve kimlik doğrulama işlemlerini yöneten controller
     public class AccountController : BaseController
     {
         private readonly ILogger<AccountController> _logger;
-        private readonly SignInManager<IdentityUser> _signInManager;
-        private readonly UserManager<IdentityUser> _userManager;
-        private readonly RoleManager<IdentityRole> _roleManager;
+        private readonly SignInManager<ApplicationUser> _signInManager;
+        protected new readonly UserManager<ApplicationUser> _userManager;
+        protected new readonly RoleManager<IdentityRole> _roleManager;
+        private readonly ApplicationDbContext _context;
+        private readonly ILogService _logService;
 
+        // Constructor: Dependency Injection ile gerekli servisleri alır
         public AccountController(
             ILogger<AccountController> logger,
             IMenuService menuService,
-            UserManager<IdentityUser> userManager,
+            UserManager<ApplicationUser> userManager,
             RoleManager<IdentityRole> roleManager,
-            SignInManager<IdentityUser> signInManager,
-            ILogService logService) : base(menuService, userManager, roleManager, logService)
+            SignInManager<ApplicationUser> signInManager,
+            ILogService logService,
+            ApplicationDbContext context) : base(menuService, userManager, roleManager, logService)
         {
             _logger = logger;
             _signInManager = signInManager;
             _userManager = userManager;
             _roleManager = roleManager;
+            _context = context;
+            _logService = logService;
         }
 
+        // Giriş sayfasını gösterir, zaten giriş yapmış kullanıcılar ana sayfaya yönlendirilir
         [AllowAnonymous]
         public IActionResult Login(string returnUrl = null)
         {
@@ -51,36 +64,60 @@ namespace MuhasebeStokWebApp.Controllers
             return View();
         }
 
+        // Kullanıcı giriş işlemini gerçekleştirir
         [HttpPost]
         [AllowAnonymous]
+        [ValidateAntiForgeryToken]
         public async Task<IActionResult> Login(string username, string password, bool rememberMe = false, string returnUrl = null)
         {
             try
             {
+                // Giriş öncesi model state kontrolü
+                if (string.IsNullOrEmpty(username) || string.IsNullOrEmpty(password))
+                {
+                    ModelState.AddModelError("", "Kullanıcı adı ve şifre gereklidir.");
+                    return View();
+                }
+            
                 _logger.LogInformation($"Giriş denemesi: {username}");
                 
-                var result = await _signInManager.PasswordSignInAsync(username, password, rememberMe, lockoutOnFailure: true);
+                // ASP.NET Identity ile şifre kontrolü yapılır
+                var result = await _signInManager.PasswordSignInAsync(username, password, rememberMe, lockoutOnFailure: false);
                 
                 if (result.Succeeded)
                 {
-                    _logger.LogInformation($"Kullanıcı giriş yaptı: {username}");
+                    // Giriş başarılı ise log kaydı yapılır
+                    _logger.LogInformation($"Kullanıcı başarıyla giriş yaptı: {username}");
                     
+                    // Session'a kullanıcı bilgilerini ekliyoruz
+                    var user = await _userManager.FindByNameAsync(username);
+                    HttpContext.Session.SetString("UserId", user.Id);
+                    HttpContext.Session.SetString("UserName", user.UserName);
+                    
+                    _logger.LogInformation($"Session oluşturuldu: UserID={user.Id}, UserName={user.UserName}");
+                    _logger.LogInformation($"Yönlendirme adresi: {(string.IsNullOrEmpty(returnUrl) ? "Ana Sayfa" : returnUrl)}");
+                    
+                    // ReturnUrl varsa o sayfaya, yoksa ana sayfaya yönlendirilir
                     if (!string.IsNullOrEmpty(returnUrl) && Url.IsLocalUrl(returnUrl))
                     {
+                        _logger.LogInformation($"Kullanıcı {returnUrl} adresine yönlendiriliyor");
                         return Redirect(returnUrl);
                     }
                     
-                    return RedirectToAction("Index", "Home");
+                    _logger.LogInformation("Kullanıcı ana sayfaya yönlendiriliyor");
+                    // Yönlendirme sırasında özel bir parametre ekleyerek takip ediyoruz
+                    return RedirectToAction("Index", "Home", new { auth = "success" });
                 }
                 
                 if (result.IsLockedOut)
                 {
+                    // Hesap kilitlenmişse uyarı verilir
                     _logger.LogWarning($"Kullanıcı hesabı kilitlendi: {username}");
                     ModelState.AddModelError("", "Hesabınız çok fazla başarısız giriş denemesi nedeniyle kilitlendi. Lütfen daha sonra tekrar deneyin.");
                     return View();
                 }
                 
-                // Eğer admin123/admin kullanıcı adı ve şifresi girilmişse, eski doğrulama yöntemini kullan
+                // Özel admin hesabı kontrolü - Geliştirme/Test için basitleştirilmiş giriş
                 if (username == "admin" && password == "admin123")
                 {
                     // Admin kullanıcısını veritabanında ara
@@ -89,31 +126,44 @@ namespace MuhasebeStokWebApp.Controllers
                     // Eğer admin kullanıcısı varsa, giriş yap
                     if (adminUser != null)
                     {
+                        // Doğrudan sign-in yapılır (şifre kontrolü olmadan)
                         await _signInManager.SignInAsync(adminUser, isPersistent: rememberMe);
                         
-                        _logger.LogInformation($"Kullanıcı giriş yaptı (eski yöntem): {username}");
+                        // Session'a kullanıcı bilgilerini ekliyoruz
+                        HttpContext.Session.SetString("UserId", adminUser.Id);
+                        HttpContext.Session.SetString("UserName", adminUser.UserName);
+                        HttpContext.Session.SetString("IsAdmin", "true");
+                        
+                        _logger.LogInformation($"Admin kullanıcısı başarıyla giriş yaptı: {username}");
+                        _logger.LogInformation($"Admin session oluşturuldu: UserID={adminUser.Id}, UserName={adminUser.UserName}");
+                        _logger.LogInformation($"Yönlendirme adresi: {(string.IsNullOrEmpty(returnUrl) ? "Ana Sayfa" : returnUrl)}");
                         
                         if (!string.IsNullOrEmpty(returnUrl) && Url.IsLocalUrl(returnUrl))
                         {
+                            _logger.LogInformation($"Admin kullanıcısı {returnUrl} adresine yönlendiriliyor");
                             return Redirect(returnUrl);
                         }
                         
-                        return RedirectToAction("Index", "Home");
+                        _logger.LogInformation("Admin kullanıcısı ana sayfaya yönlendiriliyor");
+                        return RedirectToAction("Index", "Home", new { auth = "admin_success" });
                     }
                 }
 
+                // Başarısız giriş denemesi loglanır
                 _logger.LogWarning($"Başarısız giriş denemesi: {username}");
                 ModelState.AddModelError("", "Kullanıcı adı veya şifre hatalı");
                 return View();
             }
             catch (Exception ex)
             {
+                // Hata durumunda log kaydı yapılır
                 _logger.LogError(ex, "Giriş sırasında hata oluştu");
                 ModelState.AddModelError("", "Giriş sırasında bir hata oluştu: " + ex.Message);
                 return View();
             }
         }
 
+        // Kullanıcı çıkış işlemini gerçekleştirir
         [AllowAnonymous]
         public async Task<IActionResult> Logout()
         {
@@ -130,12 +180,14 @@ namespace MuhasebeStokWebApp.Controllers
             return RedirectToAction("Login");
         }
 
+        // Yetkisiz erişim sayfası
         [AllowAnonymous]
         public IActionResult AccessDenied()
         {
             return View();
         }
         
+        // Yeni kullanıcı kayıt formu (sadece admin yetkili)
         [HttpGet]
         [Authorize(Roles = "Admin")]
         public IActionResult Register()
@@ -143,13 +195,15 @@ namespace MuhasebeStokWebApp.Controllers
             return View();
         }
         
+        // Yeni kullanıcı kayıt işlemi (sadece admin yetkili)
         [HttpPost]
         [Authorize(Roles = "Admin")]
-        public async Task<IActionResult> Register(RegisterViewModel model)
+        public async Task<IActionResult> Register(MuhasebeStokWebApp.ViewModels.Account.RegisterViewModel model)
         {
             if (ModelState.IsValid)
             {
-                var user = new IdentityUser { UserName = model.Email, Email = model.Email };
+                // Yeni kullanıcı oluştur
+                var user = new ApplicationUser { UserName = model.Email, Email = model.Email };
                 var result = await _userManager.CreateAsync(user, model.Password);
                 
                 if (result.Succeeded)
@@ -163,6 +217,7 @@ namespace MuhasebeStokWebApp.Controllers
                     return RedirectToAction("UserManagement");
                 }
                 
+                // Hata mesajlarını model state'e ekle
                 foreach (var error in result.Errors)
                 {
                     ModelState.AddModelError("", error.Description);
@@ -172,13 +227,16 @@ namespace MuhasebeStokWebApp.Controllers
             return View(model);
         }
         
+        // Kullanıcı listesi yönetim sayfası (sadece admin yetkili)
         [HttpGet]
         [Authorize(Roles = "Admin")]
         public async Task<IActionResult> UserManagement()
         {
+            // Tüm kullanıcıları listele
             var users = await _userManager.Users.ToListAsync();
             var userViewModels = new List<UserViewModel>();
             
+            // Her kullanıcı için rol bilgisini ekle
             foreach (var user in users)
             {
                 var roles = await _userManager.GetRolesAsync(user);
@@ -194,6 +252,7 @@ namespace MuhasebeStokWebApp.Controllers
             return View(userViewModels);
         }
         
+        // Kullanıcı düzenleme formu (sadece admin yetkili)
         [HttpGet]
         [Authorize(Roles = "Admin")]
         public async Task<IActionResult> EditUser(string id)
@@ -205,6 +264,7 @@ namespace MuhasebeStokWebApp.Controllers
                 return NotFound();
             }
             
+            // Kullanıcının mevcut rollerini ve tüm rolleri getir
             var roles = await _userManager.GetRolesAsync(user);
             var allRoles = _roleManager.Roles.ToList();
             
@@ -220,6 +280,7 @@ namespace MuhasebeStokWebApp.Controllers
             return View(model);
         }
         
+        // Kullanıcı bilgilerini ve rollerini güncelleme (sadece admin yetkili)
         [HttpPost]
         [Authorize(Roles = "Admin")]
         public async Task<IActionResult> EditUser(EditUserViewModel model, string[] selectedRoles)
@@ -299,6 +360,7 @@ namespace MuhasebeStokWebApp.Controllers
             return RedirectToAction("UserManagement");
         }
         
+        // Kullanıcı silme işlemi (sadece admin yetkili)
         [HttpPost]
         [Authorize(Roles = "Admin")]
         public async Task<IActionResult> DeleteUser(string id)

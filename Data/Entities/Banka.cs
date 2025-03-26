@@ -49,7 +49,7 @@ namespace MuhasebeStokWebApp.Data.Entities
         
         public DateTime? GuncellemeTarihi { get; set; }
         
-        public bool SoftDelete { get; set; } = false;
+        public bool Silindi { get; set; } = false;
         
         // Navigation properties
         public virtual ICollection<BankaHareket> BankaHareketleri { get; set; }

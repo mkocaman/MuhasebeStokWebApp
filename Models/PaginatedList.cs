@@ -18,7 +18,7 @@ namespace MuhasebeStokWebApp.Models
             TotalPages = (int)Math.Ceiling(count / (double)pageSize);
             TotalItems = count;
 
-            this.AddRange(items);
+            this.AddRange(items.Skip((pageIndex - 1) * pageSize).Take(pageSize));
         }
 
         public bool HasPreviousPage => PageIndex > 1;
@@ -30,6 +30,12 @@ namespace MuhasebeStokWebApp.Models
             var count = await source.CountAsync();
             var items = await source.Skip((pageIndex - 1) * pageSize).Take(pageSize).ToListAsync();
             return new PaginatedList<T>(items, count, pageIndex, pageSize);
+        }
+
+        public static PaginatedList<T> Create(List<T> source, int pageIndex, int pageSize)
+        {
+            var count = source.Count;
+            return new PaginatedList<T>(source, count, pageIndex, pageSize);
         }
     }
 } 

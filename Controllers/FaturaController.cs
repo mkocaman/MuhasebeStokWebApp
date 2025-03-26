@@ -18,24 +18,42 @@ using System.Text.Json.Serialization;
 using MuhasebeStokWebApp.ViewModels.Irsaliye;
 using MuhasebeStokWebApp.Services;
 using Microsoft.EntityFrameworkCore.Storage;
+using Microsoft.Extensions.Logging;
+using MuhasebeStokWebApp.Services.Interfaces;
+using Microsoft.AspNetCore.Identity;
+using Fatura = MuhasebeStokWebApp.Data.Entities.Fatura;
+using FaturaDetay = MuhasebeStokWebApp.Data.Entities.FaturaDetay;
+using Irsaliye = MuhasebeStokWebApp.Data.Entities.Irsaliye;
+using IrsaliyeDetay = MuhasebeStokWebApp.Data.Entities.IrsaliyeDetay;
 
 namespace MuhasebeStokWebApp.Controllers
 {
     // [Authorize]
-    public class FaturaController : Controller
+    public class FaturaController : BaseController
     {
         private readonly IUnitOfWork _unitOfWork;
         private readonly ApplicationDbContext _context;
         private readonly StokFifoService _stokFifoService;
         private readonly IDovizKuruService _dovizKuruService;
+        private readonly ILogger<FaturaController> _logger;
 
-        public FaturaController(IUnitOfWork unitOfWork, ApplicationDbContext context, 
-            StokFifoService stokFifoService, IDovizKuruService dovizKuruService)
+        public FaturaController(
+            IUnitOfWork unitOfWork,
+            ApplicationDbContext context,
+            StokFifoService stokFifoService,
+            IDovizKuruService dovizKuruService,
+            ILogger<FaturaController> logger,
+            ILogService logService,
+            IMenuService menuService,
+            UserManager<ApplicationUser> userManager,
+            RoleManager<IdentityRole> roleManager)
+            : base(menuService, userManager, roleManager, logService)
         {
             _unitOfWork = unitOfWork;
             _context = context;
             _stokFifoService = stokFifoService;
             _dovizKuruService = dovizKuruService;
+            _logger = logger;
         }
 
         // GET: Fatura
@@ -55,7 +73,7 @@ namespace MuhasebeStokWebApp.Controllers
                 FaturaTarihi = f.FaturaTarihi,
                 VadeTarihi = f.VadeTarihi,
                 CariID = f.CariID ?? Guid.Empty,
-                CariAdi = f.Cari?.CariAdi,
+                CariAdi = f.Cari?.Ad,
                 FaturaTuru = f.FaturaTuru?.FaturaTuruAdi,
                 AraToplam = f.AraToplam ?? 0,
                 KdvTutari = f.KDVToplam ?? 0,
@@ -75,8 +93,8 @@ namespace MuhasebeStokWebApp.Controllers
         {
             try
             {
-                var cariler = _context.Cariler.Where(c => !c.SoftDelete && c.Aktif)
-                    .Select(c => new SelectListItem { Value = c.CariID.ToString(), Text = c.CariAdi })
+                var cariler = _context.Cariler.Where(c => !c.SoftDelete && c.AktifMi)
+                    .Select(c => new SelectListItem { Value = c.CariID.ToString(), Text = c.Ad })
                     .ToList();
                 
                 var faturaTurleri = _context.FaturaTurleri
@@ -129,33 +147,41 @@ namespace MuhasebeStokWebApp.Controllers
         {
             try
             {
-                // Fatura numarası ve sipariş numarası otomatik oluşturma
+                // İrsaliye ile ilişkilendirme
+                Guid? irsaliyeIdValue = null;
+                if (viewModel.IrsaliyeID.HasValue && viewModel.IrsaliyeID != Guid.Empty)
+                {
+                    irsaliyeIdValue = viewModel.IrsaliyeID;
+                }
+
+                // Fatura numarası otomatik olarak oluşturuluyor
                 if (string.IsNullOrEmpty(viewModel.FaturaNumarasi))
                 {
-                    viewModel.FaturaNumarasi = GenerateNewFaturaNumber();
-                    Console.WriteLine($"Fatura numarası otomatik oluşturuldu: {viewModel.FaturaNumarasi}");
+                    viewModel.FaturaNumarasi = GenerateNewFaturaNumarasi();
+                    _logger.LogInformation($"Fatura numarası otomatik oluşturuldu: {viewModel.FaturaNumarasi}");
                 }
-                
+
+                // Sipariş numarası otomatik olarak oluşturuluyor
                 if (string.IsNullOrEmpty(viewModel.SiparisNumarasi))
                 {
                     viewModel.SiparisNumarasi = GenerateSiparisNumarasi();
-                    Console.WriteLine($"Sipariş numarası otomatik oluşturuldu: {viewModel.SiparisNumarasi}");
+                    _logger.LogInformation($"Sipariş numarası otomatik oluşturuldu: {viewModel.SiparisNumarasi}");
                 }
 
                 // ModelState.IsValid kontrolü
                 if (!ModelState.IsValid)
                 {
-                    Console.WriteLine("ModelState geçerli değil, hatalar:");
+                    _logger.LogWarning("ModelState geçerli değil, hatalar:");
                     foreach (var state in ModelState)
                     {
                         if (state.Value.Errors.Count > 0)
                         {
-                            Console.WriteLine($"- {state.Key}: {state.Value.Errors[0].ErrorMessage}");
+                            _logger.LogWarning($"- {state.Key}: {state.Value.Errors[0].ErrorMessage}");
                         }
                     }
                     
                     // Hata durumunda ViewBag'leri yeniden doldur
-                    ViewBag.Cariler = new SelectList(_context.Cariler.Where(c => !c.SoftDelete && c.Aktif), "CariID", "CariAdi", viewModel.CariID);
+                    ViewBag.Cariler = new SelectList(_context.Cariler.Where(c => !c.SoftDelete && c.AktifMi), "CariID", "Ad", viewModel.CariID);
                     ViewBag.FaturaTurleri = new SelectList(_context.FaturaTurleri, "FaturaTuruID", "FaturaTuruAdi", viewModel.FaturaTuruID);
                     ViewBag.OdemeTurleri = new SelectList(_context.OdemeTurleri, "OdemeTuruID", "OdemeTuruAdi");
                     ViewBag.Urunler = new SelectList(_context.Urunler.Where(u => !u.SoftDelete && u.Aktif), "UrunID", "UrunAdi");
@@ -205,11 +231,11 @@ namespace MuhasebeStokWebApp.Controllers
                 };
 
                 _context.Faturalar.Add(fatura);
-                    Console.WriteLine($"Fatura oluşturuldu: ID={fatura.FaturaID}, FaturaNo={fatura.FaturaNumarasi}");
+                    _logger.LogInformation($"Fatura oluşturuldu: ID={fatura.FaturaID}, FaturaNo={fatura.FaturaNumarasi}");
 
                 if (viewModel.FaturaKalemleri != null && viewModel.FaturaKalemleri.Any())
                 {
-                        Console.WriteLine($"Fatura kalemleri işleniyor. Toplam {viewModel.FaturaKalemleri.Count} adet kalem var.");
+                        _logger.LogInformation($"Fatura kalemleri işleniyor. Toplam {viewModel.FaturaKalemleri.Count} adet kalem var.");
                     foreach (var kalem in viewModel.FaturaKalemleri)
                     {
                         // SatirKdvToplam değeri için KdvTutari değerini kullanıyoruz
@@ -236,7 +262,7 @@ namespace MuhasebeStokWebApp.Controllers
                         };
 
                         _context.FaturaDetaylari.Add(faturaDetay);
-                            Console.WriteLine($"Fatura detayı eklendi: ID={faturaDetay.FaturaDetayID}, Ürün={kalem.UrunID}, Miktar={kalem.Miktar}");
+                            _logger.LogInformation($"Fatura detayı eklendi: ID={faturaDetay.FaturaDetayID}, Ürün={kalem.UrunID}, Miktar={kalem.Miktar}");
 
                         // Stok hareketi oluştur
                         var faturaTuru = await _context.FaturaTurleri.FindAsync(viewModel.FaturaTuruID);
@@ -261,7 +287,7 @@ namespace MuhasebeStokWebApp.Controllers
                             };
 
                             _context.StokHareketleri.Add(stokHareket);
-                                Console.WriteLine($"Stok hareketi oluşturuldu: ID={stokHareket.StokHareketID}, Tür={faturaTuru.HareketTuru}, Miktar={stokHareket.Miktar}");
+                                _logger.LogInformation($"Stok hareketi oluşturuldu: ID={stokHareket.StokHareketID}, Tür={faturaTuru.HareketTuru}, Miktar={stokHareket.Miktar}");
 
                                 // Ürün bilgilerini al
                             var urun = await _context.Urunler.FindAsync(kalem.UrunID);
@@ -294,14 +320,14 @@ namespace MuhasebeStokWebApp.Controllers
                                             viewModel.DovizTuru ?? "TRY",
                                             viewModel.DovizKuru
                                         );
-                                        Console.WriteLine($"Stok girişi yapıldı: Ürün={kalem.UrunID}, Miktar={kalem.Miktar}");
+                                        _logger.LogInformation($"Stok girişi yapıldı: Ürün={kalem.UrunID}, Miktar={kalem.Miktar}");
                                         
                                         // Ürün stok miktarını güncelle
                                         if (urun != null)
                                 {
                                     urun.StokMiktar += kalem.Miktar;
-                                            _context.Urunler.Update(urun);
-                                            Console.WriteLine($"Ürün stok miktarı güncellendi: Ürün={urun.UrunID}, Yeni Miktar={urun.StokMiktar}");
+                                            await _unitOfWork.UrunRepository.UpdateAsync(urun);
+                                            _logger.LogInformation($"Ürün stok miktarı güncellendi: Ürün={urun.UrunID}, Yeni Miktar={urun.StokMiktar}");
                                         }
                                     }
                                     else // "Çıkış"
@@ -315,14 +341,14 @@ namespace MuhasebeStokWebApp.Controllers
                                             fatura.FaturaID,
                                             $"{viewModel.FaturaNumarasi} numaralı satış faturası"
                                         );
-                                        Console.WriteLine($"Stok çıkışı yapıldı: Ürün={kalem.UrunID}, Miktar={kalem.Miktar}, Maliyet={toplamMaliyet}");
+                                        _logger.LogInformation($"Stok çıkışı yapıldı: Ürün={kalem.UrunID}, Miktar={kalem.Miktar}, Maliyet={toplamMaliyet}");
                                         
                                         // Ürün stok miktarını güncelle
                                         if (urun != null)
                                 {
                                     urun.StokMiktar -= kalem.Miktar;
-                                _context.Urunler.Update(urun);
-                                            Console.WriteLine($"Ürün stok miktarı güncellendi: Ürün={urun.UrunID}, Yeni Miktar={urun.StokMiktar}");
+                                await _unitOfWork.UrunRepository.UpdateAsync(urun);
+                                            _logger.LogInformation($"Ürün stok miktarı güncellendi: Ürün={urun.UrunID}, Yeni Miktar={urun.StokMiktar}");
                                         }
                                     }
                                     
@@ -333,14 +359,14 @@ namespace MuhasebeStokWebApp.Controllers
                                 {
                                     // Stok yetersiz hatası
                                     TempData["ErrorMessage"] = ex.Message;
-                                    Console.WriteLine($"Stok yetersiz hatası: {ex.Message}");
+                                    _logger.LogError(ex, $"Stok yetersiz hatası: {ex.Message}");
                                     return RedirectToAction(nameof(Create));
                                 }
                                 catch (Exception ex)
                                 {
                                     // Genel hata
                                     TempData["ErrorMessage"] = $"FIFO kaydı oluşturulurken hata oluştu: {ex.Message}";
-                                    Console.WriteLine($"FIFO hatası: {ex.Message}");
+                                    _logger.LogError(ex, $"FIFO hatası: {ex.Message}");
                                     return RedirectToAction(nameof(Create));
                                 }
                             }
@@ -384,7 +410,7 @@ namespace MuhasebeStokWebApp.Controllers
                     };
 
                     _context.CariHareketler.Add(cariHareket);
-                        Console.WriteLine($"Cari hareket oluşturuldu: ID={cariHareket.CariHareketID}, Tür={hareketTuru}, Tutar={genelToplam}");
+                        _logger.LogInformation($"Cari hareket oluşturuldu: ID={cariHareket.CariHareketID}, Tür={hareketTuru}, Tutar={genelToplam}");
                 }
 
                 // İrsaliye ile ilişkilendirme
@@ -399,13 +425,13 @@ namespace MuhasebeStokWebApp.Controllers
                             irsaliye.FaturaID = fatura.FaturaID;
                             irsaliye.Durum = "Kapalı"; // İrsaliye durumunu kapalı olarak güncelle
                             _context.Irsaliyeler.Update(irsaliye);
-                                Console.WriteLine($"İrsaliye fatura ile ilişkilendirildi: İrsaliye={irsaliye.IrsaliyeID}, Fatura={fatura.FaturaID}");
+                                _logger.LogInformation($"İrsaliye fatura ile ilişkilendirildi: İrsaliye={irsaliye.IrsaliyeID}, Fatura={fatura.FaturaID}");
                         }
                     }
                 }
 
                 await _context.SaveChangesAsync();
-                    Console.WriteLine("Değişiklikler veritabanına kaydedildi");
+                    _logger.LogInformation("Değişiklikler veritabanına kaydedildi");
                     
                     // Transaction commit et
                     if (transaction != null)
@@ -470,14 +496,14 @@ namespace MuhasebeStokWebApp.Controllers
                                     await irsaliyeTransaction.CommitAsync();
                                     
                                     TempData["SuccessMessage"] += $" İrsaliye ({irsaliyeNumarasi}) otomatik olarak oluşturuldu.";
-                                    Console.WriteLine($"Otomatik irsaliye oluşturuldu: ID={irsaliye.IrsaliyeID}, İrsaliye No={irsaliye.IrsaliyeNumarasi}");
+                                    _logger.LogInformation($"Otomatik irsaliye oluşturuldu: ID={irsaliye.IrsaliyeID}, İrsaliye No={irsaliye.IrsaliyeNumarasi}");
                                 }
                                 catch (Exception ex)
                                 {
                                     await irsaliyeTransaction.RollbackAsync();
                                     // İrsaliye oluşturma hatası faturayı etkilemeyecek
                                     TempData["WarningMessage"] = $"Fatura kaydedildi ancak otomatik irsaliye oluşturulurken hata oluştu: {ex.Message}";
-                                    Console.WriteLine($"İrsaliye oluşturma hatası: {ex.Message}");
+                                    _logger.LogWarning($"İrsaliye oluşturma hatası: {ex.Message}");
                                 }
                             }
                             else
@@ -490,7 +516,7 @@ namespace MuhasebeStokWebApp.Controllers
                 {
                             // İrsaliye işlemi genel hatası
                             TempData["WarningMessage"] = $"Fatura kaydedildi ancak otomatik irsaliye oluşturulurken bir hata oluştu: {ex.Message}";
-                            Console.WriteLine($"İrsaliye işlemi hatası: {ex.Message}");
+                            _logger.LogWarning($"İrsaliye işlemi hatası: {ex.Message}");
                         }
                     }
                     
@@ -509,14 +535,14 @@ namespace MuhasebeStokWebApp.Controllers
                     }
                     
                     TempData["ErrorMessage"] = $"Fatura kaydedilirken bir hata oluştu: {ex.Message}";
-                    Console.WriteLine($"Fatura kaydedilirken hata: {ex.Message}");
+                    _logger.LogError(ex, $"Fatura kaydedilirken hata: {ex.Message}");
                     return RedirectToAction(nameof(Create));
                 }
             }
             catch (Exception ex)
             {
                 TempData["ErrorMessage"] = $"Fatura kaydedilirken bir hata oluştu: {ex.Message}";
-                Console.WriteLine($"Dış try bloğunda hata: {ex.Message}");
+                _logger.LogError(ex, $"Dış try bloğunda hata: {ex.Message}");
                 return RedirectToAction(nameof(Create));
             }
         }
@@ -543,7 +569,7 @@ namespace MuhasebeStokWebApp.Controllers
 
                 // Fatura detaylarını bul
                 var faturaDetaylari = await _context.FaturaDetaylari
-                    .Where(fd => fd.FaturaID == fatura.FaturaID && !fd.SoftDelete)
+                    .Where(fd => fd.FaturaID.Equals(fatura.FaturaID) && !fd.SoftDelete)
                     .ToListAsync();
 
                 // Fatura türünü bul
@@ -676,7 +702,7 @@ namespace MuhasebeStokWebApp.Controllers
         }
 
         // Gerekli yardımcı metotlar
-        private string GenerateNewFaturaNumber()
+        private string GenerateNewFaturaNumarasi()
         {
             // Tarih formatını hazırla
             string tarihKismi = DateTime.Now.ToString("yyMMdd");
@@ -736,7 +762,7 @@ namespace MuhasebeStokWebApp.Controllers
         [HttpGet]
         public IActionResult GetNewFaturaNumber()
         {
-            string faturaNumarasi = GenerateNewFaturaNumber();
+            string faturaNumarasi = GenerateNewFaturaNumarasi();
             return Json(faturaNumarasi);
         }
 
@@ -789,10 +815,8 @@ namespace MuhasebeStokWebApp.Controllers
                 .Include(f => f.Cari)
                 .Include(f => f.FaturaDetaylari)
                 .ThenInclude(fd => fd.Urun)
-                .Include(f => f.FaturaTuru)
-                .Include(f => f.Irsaliyeler)
                 .Include(f => f.FaturaOdemeleri)
-                .FirstOrDefaultAsync(f => f.FaturaID == id && !f.SoftDelete);
+                .FirstOrDefaultAsync(f => f.FaturaID == id);
 
             if (fatura == null)
             {
@@ -825,7 +849,7 @@ namespace MuhasebeStokWebApp.Controllers
                 FaturaTarihi = fatura.FaturaTarihi,
                 VadeTarihi = fatura.VadeTarihi,
                 CariID = fatura.CariID ?? Guid.Empty,
-                CariAdi = fatura.Cari?.CariAdi ?? "Belirtilmemiş",
+                CariAdi = fatura.Cari?.Ad ?? "Belirtilmemiş",
                 CariVergiNo = fatura.Cari?.VergiNo ?? "Belirtilmemiş",
                 CariAdres = fatura.Cari?.Adres ?? "Belirtilmemiş",
                 CariTelefon = fatura.Cari?.Telefon ?? "Belirtilmemiş",
@@ -896,8 +920,8 @@ namespace MuhasebeStokWebApp.Controllers
             }
 
             // Cariler için SelectList hazırla
-            var cariler = _context.Cariler.Where(c => !c.SoftDelete && c.Aktif)
-                    .Select(c => new SelectListItem { Value = c.CariID.ToString(), Text = c.CariAdi })
+            var cariler = _context.Cariler.Where(c => !c.SoftDelete && c.AktifMi)
+                    .Select(c => new SelectListItem { Value = c.CariID.ToString(), Text = c.Ad })
                     .ToList();
                 
             // Fatura türleri için SelectList hazırla
@@ -922,7 +946,7 @@ namespace MuhasebeStokWebApp.Controllers
                 FaturaTarihi = fatura.FaturaTarihi,
                 VadeTarihi = fatura.VadeTarihi,
                 CariID = fatura.CariID ?? Guid.Empty,
-                CariAdi = fatura.Cari?.CariAdi ?? "Belirtilmemiş",
+                CariAdi = fatura.Cari?.Ad ?? "Belirtilmemiş",
                 FaturaTuruID = fatura.FaturaTuruID,
                 FaturaTuru = fatura.FaturaTuru?.FaturaTuruAdi ?? "Belirtilmemiş",
                 Resmi = fatura.Resmi ?? true,
@@ -951,7 +975,7 @@ namespace MuhasebeStokWebApp.Controllers
             };
 
             // Hata varsa, dropdownları tekrar yükle
-            ViewBag.Cariler = new SelectList(_context.Cariler.Where(c => !c.SoftDelete && c.Aktif), "CariID", "CariAdi", viewModel.CariID);
+            ViewBag.Cariler = new SelectList(_context.Cariler.Where(c => !c.SoftDelete && c.AktifMi), "CariID", "Ad", viewModel.CariID);
             ViewBag.FaturaTurleri = new SelectList(_context.FaturaTurleri, "FaturaTuruID", "FaturaTuruAdi", viewModel.FaturaTuruID);
             ViewBag.OdemeTurleri = new SelectList(_context.OdemeTurleri, "OdemeTuruID", "OdemeTuruAdi");
             ViewBag.Urunler = new SelectList(_context.Urunler.Where(u => !u.SoftDelete && u.Aktif), "UrunID", "UrunAdi");
@@ -983,11 +1007,24 @@ namespace MuhasebeStokWebApp.Controllers
             {
                 try
                 {
-                    // Mevcut faturayı getir
-                    var fatura = await _unitOfWork.Repository<Fatura>().GetByIdAsync(viewModel.FaturaID);
+                    // Faturayı getir
+                    var fatura = await _context.Faturalar.FindAsync(id);
                     if (fatura == null)
                     {
                         return NotFound();
+                    }
+
+                    // İlişkili irsaliye varsa bağlantısını kontrol et
+                    if (viewModel.IrsaliyeID.HasValue && viewModel.IrsaliyeID.Value != Guid.Empty)
+                    {
+                        var irsaliye = await _context.Irsaliyeler.FindAsync(viewModel.IrsaliyeID.Value);
+                        if (irsaliye != null)
+                        {
+                            // İrsaliyenin fatura ile ilişkisini güncelle
+                            irsaliye.FaturaID = id;
+                            irsaliye.Aktif = true;
+                            _context.Irsaliyeler.Update(irsaliye);
+                        }
                     }
 
                     // Fatura bilgilerini güncelle
@@ -1010,7 +1047,7 @@ namespace MuhasebeStokWebApp.Controllers
                     try
                     {
                         // Faturayı güncelle
-                        await _unitOfWork.Repository<Fatura>().UpdateAsync(fatura);
+                        await _context.SaveChangesAsync();
 
                         // Mevcut fatura kalemlerini sil (soft delete)
                         var mevcutKalemler = await _context.FaturaDetaylari
@@ -1052,7 +1089,6 @@ namespace MuhasebeStokWebApp.Controllers
                                     FaturaID = fatura.FaturaID,
                                     UrunID = kalem.UrunID,
                                     Miktar = miktar,
-                                    Birim = kalem.Birim,
                                     BirimFiyat = birimFiyat,
                                     KdvOrani = kalem.KdvOrani,
                                     IndirimOrani = kalem.IndirimOrani,
@@ -1093,7 +1129,7 @@ namespace MuhasebeStokWebApp.Controllers
             }
 
             // Hata varsa, dropdownları tekrar yükle
-            ViewBag.Cariler = new SelectList(_context.Cariler.Where(c => !c.SoftDelete && c.Aktif), "CariID", "CariAdi", viewModel.CariID);
+            ViewBag.Cariler = new SelectList(_context.Cariler.Where(c => !c.SoftDelete && c.AktifMi), "CariID", "Ad", viewModel.CariID);
             ViewBag.FaturaTurleri = new SelectList(_context.FaturaTurleri, "FaturaTuruID", "FaturaTuruAdi", viewModel.FaturaTuruID);
             ViewBag.OdemeTurleri = new SelectList(_context.OdemeTurleri, "OdemeTuruID", "OdemeTuruAdi");
             ViewBag.Urunler = new SelectList(_context.Urunler.Where(u => !u.SoftDelete && u.Aktif), "UrunID", "UrunAdi");
@@ -1138,7 +1174,7 @@ namespace MuhasebeStokWebApp.Controllers
                 FaturaTarihi = fatura.FaturaTarihi,
                 VadeTarihi = fatura.VadeTarihi,
                 CariID = fatura.CariID ?? Guid.Empty,
-                CariAdi = fatura.Cari?.CariAdi ?? "Belirtilmemiş",
+                CariAdi = fatura.Cari?.Ad ?? "Belirtilmemiş",
                 CariVergiNo = fatura.Cari?.VergiNo ?? "Belirtilmemiş",
                 CariAdres = fatura.Cari?.Adres ?? "Belirtilmemiş",
                 CariTelefon = fatura.Cari?.Telefon ?? "Belirtilmemiş",
@@ -1199,9 +1235,10 @@ namespace MuhasebeStokWebApp.Controllers
                     OdemeTarihi = odemeTarihi,
                     OdemeTutari = odemeAmount,
                     OdemeTuru = odemeTuru,
-                    Aciklama = aciklama ?? $"{fatura.FaturaNumarasi} numaralı fatura için ödeme",
+                    Aciklama = aciklama,
                     OlusturmaTarihi = DateTime.Now,
-                    SoftDelete = false
+                    SoftDelete = false,
+                    Aktif = true
                 };
 
                 // Cari hareket kaydı oluştur
@@ -1256,12 +1293,11 @@ namespace MuhasebeStokWebApp.Controllers
                 return NotFound();
             }
             
-            // Fatura bilgilerini kontrol et
-            var fatura = await _context.Faturalar
-                .Include(f => f.Cari)
+            // Faturayı getir
+            var fatura = await _context.Faturalar.Include(f => f.Cari)
                 .Include(f => f.FaturaDetaylari)
                 .ThenInclude(fd => fd.Urun)
-                .FirstOrDefaultAsync(f => f.FaturaID == id && !f.SoftDelete);
+                .FirstOrDefaultAsync(f => f.FaturaID == id);
                 
             if (fatura == null)
             {

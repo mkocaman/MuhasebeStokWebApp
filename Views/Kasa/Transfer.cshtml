@@ -2,7 +2,7 @@
 @{
     ViewData["Title"] = "Kasa Transfer";
     var kasalar = ViewBag.Kasalar as List<MuhasebeStokWebApp.Data.Entities.Kasa> ?? new List<MuhasebeStokWebApp.Data.Entities.Kasa>();
-    var kurlar = ViewBag.Kurlar as List<MuhasebeStokWebApp.ViewModels.DovizKuru.DovizKuruViewModel> ?? new List<MuhasebeStokWebApp.ViewModels.DovizKuru.DovizKuruViewModel>();
+    var kurlar = ViewBag.Kurlar as List<MuhasebeStokWebApp.ViewModels.Doviz.DovizKuruViewModel> ?? new List<MuhasebeStokWebApp.ViewModels.Doviz.DovizKuruViewModel>();
     var bankalar = ViewBag.Bankalar as List<MuhasebeStokWebApp.Data.Entities.Banka> ?? new List<MuhasebeStokWebApp.Data.Entities.Banka>();
 }
 

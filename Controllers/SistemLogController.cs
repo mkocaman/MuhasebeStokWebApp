@@ -1,27 +1,43 @@
 using System;
-using System.Collections.Generic;
 using System.Linq;
 using System.Threading.Tasks;
 using Microsoft.AspNetCore.Mvc;
-using Microsoft.EntityFrameworkCore;
+using Microsoft.AspNetCore.Authorization;
+using Microsoft.AspNetCore.Identity;
 using MuhasebeStokWebApp.Data;
-using MuhasebeStokWebApp.Data.Entities;
+using MuhasebeStokWebApp.Services;
+using Microsoft.EntityFrameworkCore;
+using System.Collections.Generic;
 using MuhasebeStokWebApp.ViewModels.SistemLog;
+using MuhasebeStokWebApp.ViewModels.Menu;
+using MuhasebeStokWebApp.Data.Entities;
+using MuhasebeStokWebApp.Services.Interfaces;
 
 namespace MuhasebeStokWebApp.Controllers
 {
-    public class SistemLogController : Controller
+    [Authorize(Roles = "Admin")]
+    public class SistemLogController : BaseController
     {
         private readonly ApplicationDbContext _context;
+        private readonly ILogService _logService;
 
-        public SistemLogController(ApplicationDbContext context)
+        public SistemLogController(
+            ApplicationDbContext context,
+            ILogService logService,
+            IMenuService menuService,
+            UserManager<ApplicationUser> userManager,
+            RoleManager<IdentityRole> roleManager) : base(menuService, userManager, roleManager, logService)
         {
             _context = context;
+            _logService = logService;
         }
 
         // GET: SistemLog
         public async Task<IActionResult> Index(string searchString, string islemTuru, DateTime? baslangicTarihi, DateTime? bitisTarihi, int page = 1, int pageSize = 20)
         {
+            // SistemLog için özel menü kontrolü
+            await _logService.LogInfoAsync("SistemLogController.Index", "SistemLog sayfası açılıyor");
+            
             ViewBag.SearchString = searchString;
             ViewBag.IslemTuru = islemTuru;
             ViewBag.BaslangicTarihi = baslangicTarihi;
@@ -118,7 +134,7 @@ namespace MuhasebeStokWebApp.Controllers
                 .OrderByDescending(l => l.IslemTarihi)
                 .ToListAsync();
             
-            ViewBag.CariAdi = cari.CariAdi;
+            ViewBag.CariAdi = cari.Ad;
             ViewBag.CariID = cari.CariID;
             
             return View(logs);

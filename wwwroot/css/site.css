@@ -1,3 +1,189 @@
+:root {
+    /* Light mode variables */
+    --primary-color: #007bff;
+    --secondary-color: #6c757d;
+    --background-color: #ffffff;
+    --text-color: #212529;
+    --card-bg: #ffffff;
+    --border-color: #dee2e6;
+    --table-bg: #ffffff;
+    --table-hover-bg: #f8f9fa;
+    --input-bg: #ffffff;
+    --input-border: #ced4da;
+    --input-text: #212529;
+    --nav-bg: #f8f9fa;
+    --nav-text: #212529;
+    --sidebar-bg: #f8f9fa;
+    --sidebar-text: #212529;
+    --footer-bg: #f8f9fa;
+    --footer-text: #212529;
+}
+
+[data-theme="dark"] {
+    /* Dark mode variables */
+    --primary-color: #0d6efd;
+    --secondary-color: #adb5bd;
+    --background-color: #212529;
+    --text-color: #f8f9fa;
+    --card-bg: #343a40;
+    --border-color: #495057;
+    --table-bg: #343a40;
+    --table-hover-bg: #495057;
+    --input-bg: #343a40;
+    --input-border: #495057;
+    --input-text: #f8f9fa;
+    --nav-bg: #343a40;
+    --nav-text: #f8f9fa;
+    --sidebar-bg: #343a40;
+    --sidebar-text: #f8f9fa;
+    --footer-bg: #343a40;
+    --footer-text: #f8f9fa;
+}
+
+/* Genel stiller */
+body {
+    background-color: var(--background-color);
+    color: var(--text-color);
+    transition: background-color 0.3s ease, color 0.3s ease;
+    padding-bottom: 60px; /* Footer yüksekliğini karşılayacak kadar padding */
+}
+
+/* Kart stilleri */
+.card {
+    background-color: var(--card-bg);
+    border-color: var(--border-color);
+}
+
+.card-header {
+    background-color: var(--card-bg);
+    border-bottom-color: var(--border-color);
+}
+
+/* Tablo stilleri */
+.table {
+    color: var(--text-color);
+    background-color: var(--table-bg);
+}
+
+.table-bordered {
+    border-color: var(--border-color);
+}
+
+.table-hover tbody tr:hover {
+    background-color: var(--table-hover-bg);
+}
+
+/* Form elemanları */
+.form-control {
+    background-color: var(--input-bg);
+    border-color: var(--input-border);
+    color: var(--input-text);
+}
+
+.form-control:focus {
+    background-color: var(--input-bg);
+    border-color: var(--primary-color);
+    color: var(--input-text);
+}
+
+/* Navbar stilleri */
+.navbar {
+    background-color: var(--nav-bg);
+}
+
+.navbar-brand, .nav-link {
+    color: var(--nav-text);
+}
+
+/* Sidebar stilleri */
+.sidebar {
+    background-color: var(--sidebar-bg);
+}
+
+.sidebar .nav-link {
+    color: var(--sidebar-text);
+}
+
+/* Footer stilleri */
+footer {
+    background-color: var(--footer-bg);
+    color: var(--footer-text);
+    z-index: 1030; /* Diğer elementlerin üzerinde görünmesi için */
+    border-top: 1px solid #dee2e6;
+}
+
+/* Modal stilleri */
+.modal-content {
+    background-color: var(--card-bg);
+    color: var(--text-color);
+    border-color: var(--border-color);
+}
+
+.modal-header {
+    border-bottom-color: var(--border-color);
+}
+
+.modal-footer {
+    border-top-color: var(--border-color);
+}
+
+/* Dropdown stilleri */
+.dropdown-menu {
+    background-color: var(--card-bg);
+    border-color: var(--border-color);
+}
+
+.dropdown-item {
+    color: var(--text-color);
+}
+
+.dropdown-item:hover {
+    background-color: var(--table-hover-bg);
+}
+
+/* Alert stilleri */
+.alert {
+    background-color: var(--card-bg);
+    border-color: var(--border-color);
+    color: var(--text-color);
+}
+
+/* Badge stilleri */
+.badge {
+    background-color: var(--primary-color);
+    color: var(--text-color);
+}
+
+/* Tema değiştirme butonu */
+.theme-toggle {
+    position: fixed;
+    bottom: 20px;
+    right: 20px;
+    z-index: 1000;
+    padding: 10px;
+    border-radius: 50%;
+    background-color: var(--primary-color);
+    color: var(--text-color);
+    border: none;
+    cursor: pointer;
+    box-shadow: 0 2px 5px rgba(0,0,0,0.2);
+    transition: all 0.3s ease;
+}
+
+.theme-toggle:hover {
+    transform: scale(1.1);
+}
+
+/* Animasyonlar */
+@keyframes fadeIn {
+    from { opacity: 0; }
+    to { opacity: 1; }
+}
+
+.fade-in {
+    animation: fadeIn 0.3s ease-in;
+}
+
 html {
   font-size: 14px;
 }
@@ -655,4 +841,20 @@ body:not(.login-page) {
   width: 100%;
   white-space: nowrap;
   line-height: 60px;
+}
+
+/* DataTable ayarları */
+.dataTables_wrapper {
+    padding-bottom: 60px; /* Datatable altında footer için yer açar */
+}
+
+/* Responsive footer */
+@media (max-width: 767.98px) {
+    .footer {
+        text-align: center;
+    }
+    .footer .text-end {
+        text-align: center !important;
+        margin-top: 5px;
+    }
 }

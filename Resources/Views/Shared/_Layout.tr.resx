@@ -1,0 +1,56 @@
+<?xml version="1.0" encoding="utf-8"?>
+<root>
+  <xsd:schema id="root" xmlns="" xmlns:xsd="http://www.w3.org/2001/XMLSchema" xmlns:msdata="urn:schemas-microsoft-com:xml-msdata">
+    <xsd:element name="root" msdata:IsDataSet="true">
+      <xsd:complexType>
+        <xsd:choice maxOccurs="unbounded">
+          <xsd:element name="data">
+            <xsd:complexType>
+              <xsd:sequence>
+                <xsd:element name="value" type="xsd:string" minOccurs="0" msdata:Ordinal="1" />
+                <xsd:element name="comment" type="xsd:string" minOccurs="0" msdata:Ordinal="2" />
+              </xsd:sequence>
+              <xsd:attribute name="name" type="xsd:string" msdata:Ordinal="1" />
+            </xsd:complexType>
+          </xsd:element>
+        </xsd:choice>
+      </xsd:complexType>
+    </xsd:element>
+  </xsd:schema>
+  <data name="Dashboard" xml:space="preserve">
+    <value>Kontrol Paneli</value>
+  </data>
+  <data name="TotalRevenue" xml:space="preserve">
+    <value>Toplam Gelir</value>
+  </data>
+  <data name="TotalExpense" xml:space="preserve">
+    <value>Toplam Gider</value>
+  </data>
+  <data name="NetProfit" xml:space="preserve">
+    <value>Net Kar</value>
+  </data>
+  <data name="TotalTransactions" xml:space="preserve">
+    <value>Toplam İşlem</value>
+  </data>
+  <data name="MonthlyRevenueExpense" xml:space="preserve">
+    <value>Aylık Gelir-Gider Grafiği</value>
+  </data>
+  <data name="CategoryBasedRevenue" xml:space="preserve">
+    <value>Kategori Bazlı Gelir</value>
+  </data>
+  <data name="Last6MonthsTrend" xml:space="preserve">
+    <value>Son 6 Ay Gelir-Gider Trendi</value>
+  </data>
+  <data name="TopSellingProducts" xml:space="preserve">
+    <value>En Çok Satılan Ürünler</value>
+  </data>
+  <data name="Product" xml:space="preserve">
+    <value>Ürün</value>
+  </data>
+  <data name="Sales" xml:space="preserve">
+    <value>Satış</value>
+  </data>
+  <data name="Quantity" xml:space="preserve">
+    <value>Miktar</value>
+  </data>
+</root> 

@@ -44,7 +44,7 @@ namespace MuhasebeStokWebApp.ViewModels.Menu
         public Data.Entities.Menu ParentMenu { get; set; }
         
         [Display(Name = "Roller")]
-        public List<string> SelectedRoleIds { get; set; }
+        public List<string> SelectedRoleIds { get; set; } = new List<string>();
         
         public IEnumerable<IdentityRole> Roles { get; set; }
     }

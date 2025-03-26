@@ -1,0 +1,88 @@
+@model MuhasebeStokWebApp.Data.Entities.DovizModulu.KurDegeri
+@{
+    ViewData["Title"] = "Döviz Kuru Sil";
+    Layout = "~/Views/Shared/_Layout.cshtml";
+}
+
+<div class="container-fluid">
+    <div class="card">
+        <div class="card-header bg-primary text-white">
+            <div class="d-flex justify-content-between align-items-center">
+                <h4 class="mb-0">Döviz Kuru Silme Onayı</h4>
+                <div>
+                    <a asp-action="Liste" class="btn btn-outline-light">
+                        <i class="fas fa-arrow-left"></i> Listeye Dön
+                    </a>
+                </div>
+            </div>
+        </div>
+        <div class="card-body">
+            <div class="alert alert-danger mb-4">
+                <h5 class="alert-heading">DİKKAT!</h5>
+                <p>Bu döviz kuru kaydını silmek üzeresiniz. Bu işlem geri alınamaz ve ilgili hesaplamaları etkileyebilir.</p>
+                <hr>
+                <p class="mb-0">Devam etmek istediğinizden emin misiniz?</p>
+            </div>
+
+            <div class="row">
+                <div class="col-md-6">
+                    <div class="card mb-4">
+                        <div class="card-header py-3 bg-light">
+                            <h6 class="m-0 font-weight-bold text-primary">Silinecek Döviz Kuru Bilgileri</h6>
+                        </div>
+                        <div class="card-body">
+                            <table class="table table-bordered">
+                                <tbody>
+                                    <tr>
+                                        <th style="width: 30%">Döviz Kodu</th>
+                                        <td>@(Model.ParaBirimi?.Kod ?? "Belirtilmemiş")</td>
+                                    </tr>
+                                    <tr>
+                                        <th>Döviz Adı</th>
+                                        <td>@(Model.ParaBirimi?.Ad ?? "Belirtilmemiş")</td>
+                                    </tr>
+                                    <tr>
+                                        <th>Tarih</th>
+                                        <td>@Model.Tarih.ToString("dd.MM.yyyy")</td>
+                                    </tr>
+                                    <tr>
+                                        <th>Alış</th>
+                                        <td>@Model.Alis.ToString("N6")</td>
+                                    </tr>
+                                    <tr>
+                                        <th>Satış</th>
+                                        <td>@Model.Satis.ToString("N6")</td>
+                                    </tr>
+                                </tbody>
+                            </table>
+                        </div>
+                    </div>
+                </div>
+                <div class="col-md-6">
+                    <div class="card mb-4">
+                        <div class="card-header py-3">
+                            <h6 class="m-0 font-weight-bold text-primary">Silme İşlemi</h6>
+                        </div>
+                        <div class="card-body">
+                            <form asp-action="Sil" method="post">
+                                <input type="hidden" asp-for="KurDegeriID" />
+                                <div class="form-group">
+                                    <label>Silme İşlemi Hakkında Not:</label>
+                                    <p>Bu kur değeri soft-delete olarak işaretlenecektir. Sistem içinde artık görüntülenmeyecek ancak veritabanında kayıtlı kalacaktır.</p>
+                                </div>
+                                <div class="form-group text-center mt-4">
+                                    <a asp-action="Liste" class="btn btn-secondary mr-2">
+                                        <i class="fas fa-times"></i> İptal
+                                    </a>
+                                    <button type="submit" class="btn btn-danger">
+                                        <i class="fas fa-trash"></i> Sil
+                                    </button>
+                                </div>
+                            </form>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</div> 

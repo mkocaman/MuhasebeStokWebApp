@@ -1,0 +1,65 @@
+@{
+    ViewData["Title"] = "Varsayılan Menüleri Oluştur - Onay";
+    Layout = "~/Views/Shared/_Layout.cshtml";
+}
+
+<div class="container-fluid">
+    <div class="row">
+        <div class="col-md-12">
+            <div class="card">
+                <div class="card-header card-header-warning">
+                    <h4 class="card-title">Dikkat: Varsayılan Menüleri Oluştur</h4>
+                </div>
+                <div class="card-body">
+                    <div class="alert alert-danger">
+                        <strong>Uyarı!</strong> @TempData["InitMenuMessage"]
+                    </div>
+                    
+                    <div class="row">
+                        <div class="col-md-12">
+                            <p>Bu işlem geri alınamaz ve şunları yapacaktır:</p>
+                            <ul>
+                                <li>Mevcut tüm menüler <strong>silinecek</strong></li>
+                                <li>Tüm menü-rol ilişkileri <strong>silinecek</strong></li>
+                                <li>Varsayılan menüler yeniden oluşturulacak</li>
+                                <li>Varsayılan menüler için Admin rolüne izinler tanımlanacak</li>
+                            </ul>
+                        </div>
+                    </div>
+                    
+                    <div class="row mt-4">
+                        <div class="col-md-12">
+                            <form asp-controller="Menu" asp-action="InitDefaultsConfirm" method="post">
+                                @Html.AntiForgeryToken()
+                                <div class="form-group">
+                                    <div class="form-check">
+                                        <label class="form-check-label">
+                                            <input class="form-check-input" type="checkbox" name="confirm" value="true" required>
+                                            Bu işlemin geri alınamayacağını anlıyorum ve devam etmek istiyorum.
+                                            <span class="form-check-sign">
+                                                <span class="check"></span>
+                                            </span>
+                                        </label>
+                                    </div>
+                                </div>
+                                
+                                <div class="row">
+                                    <div class="col-md-6">
+                                        <a href="@Url.Action("Index", "Menu")" class="btn btn-default btn-block">
+                                            <i class="material-icons">arrow_back</i> İptal Et
+                                        </a>
+                                    </div>
+                                    <div class="col-md-6">
+                                        <button type="submit" class="btn btn-danger btn-block">
+                                            <i class="material-icons">warning</i> Evet, Varsayılan Menüleri Oluştur
+                                        </button>
+                                    </div>
+                                </div>
+                            </form>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</div> 

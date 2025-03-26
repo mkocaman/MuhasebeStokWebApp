@@ -8,14 +8,16 @@ namespace MuhasebeStokWebApp.ViewModels.Irsaliye
     {
         public Guid IrsaliyeID { get; set; }
 
+        [Required]
+        [StringLength(20)]
         [Display(Name = "İrsaliye No")]
         public string IrsaliyeNumarasi { get; set; }
 
+        [Required]
         [Display(Name = "İrsaliye Tarihi")]
-        [DisplayFormat(DataFormatString = "{0:dd.MM.yyyy}", ApplyFormatInEditMode = true)]
-        public DateTime? IrsaliyeTarihi { get; set; }
+        public DateTime IrsaliyeTarihi { get; set; }
 
-        [Display(Name = "Cari")]
+        [Required]
         public Guid CariID { get; set; }
 
         [Display(Name = "Cari Adı")]
@@ -30,45 +32,38 @@ namespace MuhasebeStokWebApp.ViewModels.Irsaliye
         [Display(Name = "Adres")]
         public string CariAdres { get; set; }
 
+        [Required]
         [Display(Name = "İrsaliye Türü")]
         public string IrsaliyeTuru { get; set; }
 
         [Display(Name = "Fatura No")]
-        public string FaturaNumarasi { get; set; }
+        public string? FaturaNumarasi { get; set; }
 
-        [Display(Name = "Fatura")]
         public Guid? FaturaID { get; set; }
 
+        [StringLength(500)]
         [Display(Name = "Açıklama")]
-        public string Aciklama { get; set; }
+        public string? Aciklama { get; set; }
 
-        [Display(Name = "Durum")]
-        public string Durum { get; set; }
-        
         [Display(Name = "Aktif")]
         public bool Aktif { get; set; }
 
+        [Display(Name = "Toplam Tutar")]
+        public decimal ToplamTutar { get; set; }
+
         [Display(Name = "Oluşturma Tarihi")]
-        [DisplayFormat(DataFormatString = "{0:dd.MM.yyyy HH:mm}", ApplyFormatInEditMode = false)]
-        public DateTime? OlusturmaTarihi { get; set; }
+        public DateTime OlusturmaTarihi { get; set; }
 
         [Display(Name = "Güncelleme Tarihi")]
-        [DisplayFormat(DataFormatString = "{0:dd.MM.yyyy HH:mm}", ApplyFormatInEditMode = false)]
         public DateTime? GuncellemeTarihi { get; set; }
-        
-        [Display(Name = "Resmi")]
-        public bool? Resmi { get; set; }
 
-        public List<IrsaliyeDetayViewModel> Detaylar { get; set; } = new List<IrsaliyeDetayViewModel>();
-        
-        public List<IrsaliyeKalemViewModel> IrsaliyeKalemleri { get; set; } = new List<IrsaliyeKalemViewModel>();
+        public virtual ICollection<IrsaliyeKalemViewModel> IrsaliyeDetaylari { get; set; } = new List<IrsaliyeKalemViewModel>();
     }
 
-    public class IrsaliyeDetayViewModel
+    public class IrsaliyeKalemViewModel
     {
-        public Guid IrsaliyeDetayID { get; set; }
-
-        [Display(Name = "Ürün")]
+        public Guid KalemID { get; set; }
+        public Guid IrsaliyeID { get; set; }
         public Guid UrunID { get; set; }
 
         [Display(Name = "Ürün Adı")]
@@ -77,13 +72,22 @@ namespace MuhasebeStokWebApp.ViewModels.Irsaliye
         [Display(Name = "Ürün Kodu")]
         public string UrunKodu { get; set; }
 
+        [Required]
         [Display(Name = "Miktar")]
         public decimal Miktar { get; set; }
 
         [Display(Name = "Birim")]
         public string Birim { get; set; }
 
+        [Required]
+        [Display(Name = "Birim Fiyat")]
+        public decimal BirimFiyat { get; set; }
+
+        [Display(Name = "Toplam Tutar")]
+        public decimal ToplamTutar { get; set; }
+
+        [StringLength(500)]
         [Display(Name = "Açıklama")]
-        public string Aciklama { get; set; }
+        public string? Aciklama { get; set; }
     }
 } 

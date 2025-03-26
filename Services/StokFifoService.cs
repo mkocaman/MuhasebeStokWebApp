@@ -8,6 +8,8 @@ using MuhasebeStokWebApp.Data;
 using MuhasebeStokWebApp.Data.Entities;
 using MuhasebeStokWebApp.Data.Repositories;
 using MuhasebeStokWebApp.Services;
+using MuhasebeStokWebApp.Services.Interfaces;
+using Microsoft.Extensions.Logging;
 
 namespace MuhasebeStokWebApp.Services
 {
@@ -42,12 +44,14 @@ namespace MuhasebeStokWebApp.Services
         private readonly IUnitOfWork _unitOfWork;
         private readonly ApplicationDbContext _context;
         private readonly IDovizKuruService _dovizKuruService;
+        private readonly ILogger<StokFifoService> _logger;
 
-        public StokFifoService(IUnitOfWork unitOfWork, ApplicationDbContext context, IDovizKuruService dovizKuruService)
+        public StokFifoService(IUnitOfWork unitOfWork, ApplicationDbContext context, IDovizKuruService dovizKuruService, ILogger<StokFifoService> logger)
         {
             _unitOfWork = unitOfWork;
             _context = context;
             _dovizKuruService = dovizKuruService;
+            _logger = logger;
         }
 
         /// <summary>
@@ -95,14 +99,14 @@ namespace MuhasebeStokWebApp.Services
                     if (!dovizKuru.HasValue || dovizKuru.Value <= 0)
                     {
                         // Güncel kuru veritabanından al
-                        var guncelKur = await _context.DovizKurlari
-                            .Where(d => d.ParaBirimi == paraBirimi && d.BazParaBirimi == "USD" && d.Aktif && !d.SoftDelete)
-                            .OrderByDescending(d => d.Tarih)
+                        var kurDegeri = await _context.KurDegerleri
+                            .Where(k => k.ParaBirimiID == Guid.Parse(paraBirimi) && k.Tarih <= DateTime.Now && k.Aktif && !k.Silindi)
+                            .OrderByDescending(k => k.Tarih)
                             .FirstOrDefaultAsync();
                             
-                            if (guncelKur != null)
+                            if (kurDegeri != null)
                             {
-                                kur = guncelKur.Satis;
+                                kur = kurDegeri.Satis;
                             }
                             else
                             {
@@ -131,25 +135,27 @@ namespace MuhasebeStokWebApp.Services
                 decimal uzsBirimFiyat = 0;
                 
                 // TL kurunu al
-                var tlKur = await _context.DovizKurlari
-                    .Where(d => d.ParaBirimi == "TRY" && d.BazParaBirimi == "USD" && d.Aktif && !d.SoftDelete)
-                    .OrderByDescending(d => d.Tarih)
-                    .FirstOrDefaultAsync();
-                    
-                if (tlKur != null)
+                decimal tlKurDegeri = 0;
+                try
                 {
-                    tlBirimFiyat = usdBirimFiyat * tlKur.Satis;
+                    tlKurDegeri = await _dovizKuruService.GetGuncelKurAsync("USD", "TRY");
+                    tlBirimFiyat = usdBirimFiyat * tlKurDegeri;
+                }
+                catch (Exception ex)
+                {
+                    _logger.LogError(ex, "TL kur değeri alınırken hata oluştu.");
                 }
                 
                 // UZS kurunu al
-                var uzsKur = await _context.DovizKurlari
-                    .Where(d => d.ParaBirimi == "UZS" && d.BazParaBirimi == "USD" && d.Aktif && !d.SoftDelete)
-                    .OrderByDescending(d => d.Tarih)
-                    .FirstOrDefaultAsync();
-                    
-                if (uzsKur != null)
+                decimal uzsKurDegeri = 0;
+                try
                 {
-                    uzsBirimFiyat = usdBirimFiyat * uzsKur.Satis;
+                    uzsKurDegeri = await _dovizKuruService.GetGuncelKurAsync("USD", "UZS");
+                    uzsBirimFiyat = usdBirimFiyat * uzsKurDegeri;
+                }
+                catch (Exception ex)
+                {
+                    _logger.LogError(ex, "UZS kur değeri alınırken hata oluştu.");
                 }
 
                 // Yeni FIFO kaydı oluştur
@@ -233,7 +239,7 @@ namespace MuhasebeStokWebApp.Services
 
                 // FIFO prensibine göre en eski girişten başlayarak stok çıkışı yap
                 var fifoKayitlari = await _context.Set<StokFifo>()
-                    .Where(f => f.UrunID == urunID && f.KalanMiktar > 0 && f.Aktif && !f.SoftDelete && !f.Iptal)
+                    .Where(f => f.UrunID == urunID && f.KalanMiktar > 0 && f.Aktif && !f.Silindi && !f.Iptal)
                     .OrderBy(f => f.GirisTarihi)
                     .ToListAsync();
 
@@ -250,45 +256,84 @@ namespace MuhasebeStokWebApp.Services
                         miktar, 
                         mevcutStok);
                 }
-
+                
+                // Her bir FIFO kaydı için işlem yap
                 foreach (var fifoKaydi in fifoKayitlari)
                 {
-                    if (kalanCikisMiktari <= 0)
-                        break;
-
-                    // Bu kayıttan çıkılacak miktar
-                    decimal cikisMiktari = Math.Min(fifoKaydi.KalanMiktar, kalanCikisMiktari);
-                    
-                    // Kalan miktarı güncelle
-                    fifoKaydi.KalanMiktar -= cikisMiktari;
-                    fifoKaydi.SonCikisTarihi = DateTime.Now;
-                    fifoKaydi.GuncellemeTarihi = DateTime.Now;
-                    
-                    // Eğer kalan miktar 0 ise, kaydı pasif yap
-                    if (fifoKaydi.KalanMiktar <= 0)
+                    // Bu kayıttaki tüm miktar kullanılabilir mi?
+                    if (fifoKaydi.KalanMiktar <= kalanCikisMiktari)
                     {
-                        fifoKaydi.Aktif = false;
+                        // Tüm miktarı kullan
+                        decimal kullanilanMiktar = fifoKaydi.KalanMiktar;
+                        kalanCikisMiktari -= kullanilanMiktar;
+                        
+                        // Maliyet hesapla (USD cinsinden)
+                        decimal maliyet = kullanilanMiktar * fifoKaydi.USDBirimFiyat;
+                        toplamMaliyet += maliyet;
+                        
+                        // Kaydı güncelle
+                        fifoKaydi.KalanMiktar = 0; // Artık bu kayıtta kalan stok yok
+                        fifoKaydi.GuncellemeTarihi = DateTime.Now;
+                        
+                        // Kullanılan kayıtları listeye ekle
+                        kullanilanFifoKayitlari.Add(fifoKaydi);
+                        
+                        // Eğer tüm çıkış tamamlandıysa döngüden çık
+                        if (kalanCikisMiktari <= 0)
+                            break;
                     }
-
-                    // Maliyeti hesapla ve toplam maliyete ekle (USD cinsinden)
-                    decimal cikisMaliyeti = cikisMiktari * fifoKaydi.USDBirimFiyat;
-                    toplamMaliyet += cikisMaliyeti;
-
-                    // Kullanılan kayıtları listeye ekle
-                    kullanilanFifoKayitlari.Add(fifoKaydi);
-
-                    // Kalan çıkış miktarını güncelle
-                    kalanCikisMiktari -= cikisMiktari;
-
-                    // FIFO kaydını güncelle
-                    await _unitOfWork.Repository<StokFifo>().UpdateAsync(fifoKaydi);
+                    else
+                    {
+                        // Kısmen kullan
+                        decimal kullanilanMiktar = kalanCikisMiktari;
+                        fifoKaydi.KalanMiktar -= kullanilanMiktar;
+                        kalanCikisMiktari = 0; // Çıkış tamamlandı
+                        
+                        // Maliyet hesapla (USD cinsinden)
+                        decimal maliyet = kullanilanMiktar * fifoKaydi.USDBirimFiyat;
+                        toplamMaliyet += maliyet;
+                        
+                        // Kaydı güncelle
+                        fifoKaydi.GuncellemeTarihi = DateTime.Now;
+                        
+                        // Kullanılan kayıtları listeye ekle
+                        kullanilanFifoKayitlari.Add(fifoKaydi);
+                        
+                        // Çıkış tamamlandı, döngüden çık
+                        break;
+                    }
                 }
-
+                
+                // Kullanılan FIFO kayıtlarını veritabanında güncelle
+                foreach (var kayit in kullanilanFifoKayitlari)
+                {
+                    _context.Entry(kayit).State = EntityState.Modified;
+                }
+                
+                // Çıkış hareketini kaydet
+                var stokHareket = new StokHareket
+                {
+                    StokHareketID = Guid.NewGuid(),
+                    UrunID = urunID,
+                    HareketTuru = "Çıkış",
+                    Miktar = miktar,
+                    Birim = urun.Birim?.BirimAdi ?? "Adet",
+                    Tarih = DateTime.Now,
+                    ReferansNo = referansNo,
+                    ReferansTuru = referansTuru,
+                    ReferansID = referansID,
+                    Aciklama = aciklama,
+                    BirimFiyat = toplamMaliyet / miktar, // USD cinsinden birim maliyet
+                    OlusturmaTarihi = DateTime.Now,
+                    Silindi = false
+                };
+                
+                await _unitOfWork.Repository<StokHareket>().AddAsync(stokHareket);
                 await _unitOfWork.SaveAsync();
                 
                 // Transaction'ı commit et
                 await transaction.CommitAsync();
-
+                
                 return (kullanilanFifoKayitlari, toplamMaliyet);
             }
             catch (Exception)
@@ -320,7 +365,7 @@ namespace MuhasebeStokWebApp.Services
             {
                 // İlgili referansa göre FIFO kayıtlarını al
                 var fifoKayitlari = await _context.StokFifo
-                    .Where(f => f.ReferansID == referansID && f.ReferansTuru == referansTuru && f.Aktif && !f.SoftDelete && !f.Iptal)
+                    .Where(f => f.ReferansID == referansID && f.ReferansTuru == referansTuru && f.Aktif && !f.Silindi && !f.Iptal)
                     .ToListAsync();
                     
                 if (!fifoKayitlari.Any())
@@ -361,7 +406,7 @@ namespace MuhasebeStokWebApp.Services
         public async Task<List<StokFifo>> GetFifoKayitlari(Guid urunID)
         {
             return await _context.Set<StokFifo>()
-                .Where(f => f.UrunID == urunID && !f.SoftDelete)
+                .Where(f => f.UrunID == urunID && !f.Silindi)
                 .OrderBy(f => f.GirisTarihi)
                 .ToListAsync();
         }
@@ -374,7 +419,7 @@ namespace MuhasebeStokWebApp.Services
         public async Task<List<StokFifo>> GetAktifFifoKayitlari(Guid urunID)
         {
             return await _context.Set<StokFifo>()
-                .Where(f => f.UrunID == urunID && f.KalanMiktar > 0 && f.Aktif && !f.SoftDelete && !f.Iptal)
+                .Where(f => f.UrunID == urunID && f.KalanMiktar > 0 && f.Aktif && !f.Silindi && !f.Iptal)
                 .OrderBy(f => f.GirisTarihi)
                 .ToListAsync();
         }
@@ -424,7 +469,7 @@ namespace MuhasebeStokWebApp.Services
         public async Task<List<StokFifo>> GetReferansaGoreFifoKayitlari(Guid referansID, string referansTuru)
         {
             return await _context.Set<StokFifo>()
-                .Where(f => f.ReferansID == referansID && f.ReferansTuru == referansTuru && !f.SoftDelete)
+                .Where(f => f.ReferansID == referansID && f.ReferansTuru == referansTuru && !f.Silindi)
                 .OrderBy(f => f.GirisTarihi)
                 .ToListAsync();
         }
@@ -439,52 +484,37 @@ namespace MuhasebeStokWebApp.Services
         public async Task<decimal> ParaBirimiCevirAsync(decimal deger, string kaynakParaBirimi, string hedefParaBirimi)
         {
             if (kaynakParaBirimi == hedefParaBirimi)
-            {
                 return deger;
-            }
-            
-            try
+
+            // UZS'yi TL'ye çevirme örneği
+            if (kaynakParaBirimi == "2" && hedefParaBirimi == "1") // UZS -> TL
             {
-                // Önce USD'ye çevirelim (eğer kaynakParaBirimi USD değilse)
-                decimal usdDegeri = deger;
-                if (kaynakParaBirimi != "USD")
-                {
-                    var kaynakKuru = await _context.DovizKurlari
-                        .Where(d => d.ParaBirimi == kaynakParaBirimi && d.BazParaBirimi == "USD" && d.Aktif && !d.SoftDelete)
-                        .OrderByDescending(d => d.Tarih)
-                        .FirstOrDefaultAsync();
-                        
-                    if (kaynakKuru == null)
-                    {
-                        throw new ArgumentException($"Kaynak para birimi için kur bulunamadı: {kaynakParaBirimi}");
-                    }
-                    
-                    usdDegeri = deger / kaynakKuru.Satis;
-                }
-                
-                // Şimdi USD'den hedef para birimine çevirelim (eğer hedefParaBirimi USD değilse)
-                if (hedefParaBirimi == "USD")
-                {
-                    return usdDegeri;
-                }
-                else
-                {
-                    var hedefKuru = await _context.DovizKurlari
-                        .Where(d => d.ParaBirimi == hedefParaBirimi && d.BazParaBirimi == "USD" && d.Aktif && !d.SoftDelete)
-                        .OrderByDescending(d => d.Tarih)
-                        .FirstOrDefaultAsync();
-                        
-                    if (hedefKuru == null)
-                    {
-                        throw new ArgumentException($"Hedef para birimi için kur bulunamadı: {hedefParaBirimi}");
-                    }
-                    
-                    return usdDegeri * hedefKuru.Satis;
-                }
+                var uzsKurDegeri = await _context.KurDegerleri
+                    .Where(k => k.ParaBirimiID == Guid.Parse("00000000-0000-0000-0000-000000000002")) // UZS para birimi ID'si
+                    .OrderByDescending(k => k.Tarih)
+                    .FirstOrDefaultAsync();
+
+                if (uzsKurDegeri == null)
+                    throw new Exception("UZS için kur değeri bulunamadı.");
+
+                // Önce UZS'yi USD'ye çevir
+                var usdDegeri = deger / uzsKurDegeri.Satis;
+
+                // Sonra USD'yi TL'ye çevir
+                var tlKurDegeri = await _context.KurDegerleri
+                    .Where(k => k.ParaBirimiID == Guid.Parse(hedefParaBirimi)) // TL para birimi ID'si
+                    .OrderByDescending(k => k.Tarih)
+                    .FirstOrDefaultAsync();
+
+                if (tlKurDegeri == null)
+                    throw new Exception("TL için kur değeri bulunamadı.");
+
+                return usdDegeri * tlKurDegeri.Satis;
             }
-            catch (Exception ex)
+            else
             {
-                throw new Exception($"Para birimi dönüştürme işlemi sırasında hata oluştu: {ex.Message}", ex);
+                // Diğer para birimi çevrimleri için benzer mantık uygulanabilir
+                return deger; // Şimdilik basit bir değer dönüşü
             }
         }
 
@@ -527,6 +557,106 @@ namespace MuhasebeStokWebApp.Services
             {
                 return 0.0025m; // Default değer
             }
+        }
+
+        // Stok maliyeti hesapla metodu içindeki kurDegeri değişkeni tanımlama
+        public async Task<decimal> HesaplaMaliyetAsync(Guid stokId, DateTime tarih)
+        {
+            var stokFifoKayitlari = await _context.StokFifo
+                .Where(s => s.UrunID == stokId && s.GirisTarihi <= tarih && s.KalanMiktar > 0)
+                .OrderBy(s => s.GirisTarihi)
+                .ToListAsync();
+
+            if (stokFifoKayitlari == null || !stokFifoKayitlari.Any())
+            {
+                return 0;
+            }
+
+            decimal toplamMaliyet = 0;
+            decimal toplamMiktar = 0;
+
+            foreach (var kayit in stokFifoKayitlari)
+            {
+                toplamMaliyet += kayit.BirimFiyat * kayit.KalanMiktar;
+                toplamMiktar += kayit.KalanMiktar;
+            }
+
+            if (toplamMiktar > 0)
+            {
+                return toplamMaliyet / toplamMiktar;
+            }
+
+            return 0;
+        }
+
+        public async Task<decimal> HesaplaMaliyetDovizliAsync(Guid stokId, DateTime tarih, Guid? dovizId = null)
+        {
+            decimal maliyet = await HesaplaMaliyetAsync(stokId, tarih);
+            decimal kur = 1;
+
+            if (dovizId.HasValue)
+            {
+                var dovizKuru = await _context.KurDegerleri
+                    .Where(k => k.ParaBirimiID == dovizId.Value && k.Tarih <= tarih && k.Aktif && !k.Silindi)
+                    .OrderByDescending(k => k.Tarih)
+                    .FirstOrDefaultAsync();
+
+                if (dovizKuru != null)
+                {
+                    kur = dovizKuru.Satis;
+                }
+            }
+
+            return Math.Round(maliyet / kur, 2);
+        }
+
+        public async Task<List<StokFifo>> GetStokFifoAsync(Guid stokId)
+        {
+            return await _context.StokFifo
+                .Where(s => s.UrunID == stokId && s.KalanMiktar > 0)
+                .OrderBy(s => s.GirisTarihi)
+                .ToListAsync();
+        }
+
+        public async Task<StokFifo> AddStokFifoAsync(StokFifo stokFifo)
+        {
+            await _context.StokFifo.AddAsync(stokFifo);
+            await _context.SaveChangesAsync();
+            return stokFifo;
+        }
+
+        public async Task UpdateStokFifoAsync(StokFifo stokFifo)
+        {
+            _context.StokFifo.Update(stokFifo);
+            await _context.SaveChangesAsync();
+        }
+
+        public async Task<decimal> DovizliFiyatHesapla(decimal fiyat, string kaynakParaBirimi, string hedefParaBirimi)
+        {
+            if (kaynakParaBirimi == hedefParaBirimi)
+                return fiyat;
+
+            // Kaynak para biriminden USD'ye çevir
+            var kaynakKurDegeri = await _context.KurDegerleri
+                .Where(k => k.ParaBirimiID == Guid.Parse(kaynakParaBirimi))
+                .OrderByDescending(k => k.Tarih)
+                .FirstOrDefaultAsync();
+
+            if (kaynakKurDegeri == null)
+                throw new Exception($"{kaynakParaBirimi} para birimi için kur değeri bulunamadı.");
+
+            decimal usdFiyat = fiyat / kaynakKurDegeri.Satis;
+
+            // USD'den hedef para birimine çevir
+            var hedefKurDegeri = await _context.KurDegerleri
+                .Where(k => k.ParaBirimiID == Guid.Parse(hedefParaBirimi))
+                .OrderByDescending(k => k.Tarih)
+                .FirstOrDefaultAsync();
+
+            if (hedefKurDegeri == null)
+                throw new Exception($"{hedefParaBirimi} para birimi için kur değeri bulunamadı.");
+
+            return usdFiyat * hedefKurDegeri.Satis;
         }
     }
 } 

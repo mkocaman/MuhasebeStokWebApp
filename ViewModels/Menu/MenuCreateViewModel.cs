@@ -30,19 +30,19 @@ namespace MuhasebeStokWebApp.ViewModels.Menu
         public string Action { get; set; }
         
         [Display(Name = "Aktif")]
-        public bool Aktif { get; set; }
+        public bool AktifMi { get; set; } = true;
         
         [Display(Name = "Sıra")]
         public int Sira { get; set; }
         
         [Display(Name = "Üst Menü")]
-        public Guid? ParentId { get; set; }
+        public Guid? UstMenuID { get; set; }
         
-        [Display(Name = "Üst Menü")]
-        public Data.Entities.Menu ParentMenu { get; set; }
+        [Display(Name = "Üst Menü Adı")]
+        public string UstMenuAdi { get; set; }
         
         [Display(Name = "Roller")]
-        public List<string> SelectedRoleIds { get; set; }
+        public List<string> SeciliRoller { get; set; } = new List<string>();
         
         public IEnumerable<IdentityRole> Roles { get; set; }
     }

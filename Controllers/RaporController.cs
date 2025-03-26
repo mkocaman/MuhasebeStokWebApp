@@ -10,17 +10,30 @@ using MuhasebeStokWebApp.Data;
 using MuhasebeStokWebApp.Data.Entities;
 using MuhasebeStokWebApp.ViewModels.Rapor;
 using System.Security.Claims;
+using Microsoft.Extensions.Logging;
+using MuhasebeStokWebApp.Services;
+using Microsoft.AspNetCore.Identity;
+using MuhasebeStokWebApp.Services.Interfaces;
 
 namespace MuhasebeStokWebApp.Controllers
 {
-    // [Authorize]
-    public class RaporController : Controller
+    [Authorize]
+    public class RaporController : BaseController
     {
         private readonly ApplicationDbContext _context;
+        private readonly ILogger<RaporController> _logger;
 
-        public RaporController(ApplicationDbContext context)
+        public RaporController(
+            ApplicationDbContext context, 
+            ILogger<RaporController> logger,
+            IMenuService menuService,
+            UserManager<ApplicationUser> userManager,
+            RoleManager<IdentityRole> roleManager,
+            ILogService logService)
+            : base(menuService, userManager, roleManager, logService)
         {
             _context = context;
+            _logger = logger;
         }
 
         // Ana rapor sayfası
@@ -169,13 +182,30 @@ namespace MuhasebeStokWebApp.Controllers
         // Cari Raporu
         public async Task<IActionResult> Cari()
         {
-            ViewBag.Cariler = await _context.Cariler
-                .Where(c => !c.SoftDelete && c.Aktif)
-                .Select(c => new SelectListItem
-                {
-                    Value = c.CariID.ToString(),
-                    Text = c.CariAdi
-                }).ToListAsync();
+            try
+            {
+                ViewBag.Cariler = await _context.Cariler
+                    .Where(c => !c.SoftDelete && c.AktifMi)
+                    .Select(c => new SelectListItem
+                    {
+                        Value = c.CariID.ToString(),
+                        Text = c.Ad
+                    }).ToListAsync();
+            }
+            catch (Exception ex)
+            {
+                // Hata durumunda boş liste ata
+                ViewBag.Cariler = new List<SelectListItem>();
+                // Hatayı loglayabilirsiniz
+                _logger.LogError(ex, "Cariler yüklenirken hata oluştu: {Message}", ex.Message);
+                ViewBag.Cariler = await _context.Cariler
+                    .Where(c => !c.SoftDelete && c.AktifMi)
+                    .Select(c => new SelectListItem
+                    {
+                        Value = c.CariID.ToString(),
+                        Text = c.Ad
+                    }).ToListAsync();
+            }
 
             var model = new RaporFiltreViewModel();
             return View(model);
@@ -211,7 +241,7 @@ namespace MuhasebeStokWebApp.Controllers
 
             model.CariHareketleri = hareketler.Select(h => new CariHareketRaporViewModel
             {
-                CariAdi = h.Cari?.CariAdi ?? "Bilinmeyen Cari",
+                CariAdi = h.Cari?.Ad ?? "Bilinmeyen Cari",
                 Tarih = h.Tarih,
                 HareketTuru = h.HareketTuru,
                 Tutar = h.Tutar,
@@ -244,7 +274,8 @@ namespace MuhasebeStokWebApp.Controllers
                 // Hata durumunda boş liste ata
                 ViewBag.Urunler = new List<SelectListItem>();
                 // Hatayı loglayabilirsiniz
-                Console.WriteLine($"Ürünler yüklenirken hata oluştu: {ex.Message}");
+                _logger.LogError(ex, "Ürünler yüklenirken hata oluştu: {Message}", ex.Message);
+                TempData["ErrorMessage"] = "Ürün listesi raporu yüklenirken bir hata oluştu: " + ex.Message;
             }
 
             var model = new RaporFiltreViewModel();
@@ -321,11 +352,11 @@ namespace MuhasebeStokWebApp.Controllers
             try
             {
                 ViewBag.Cariler = await _context.Cariler
-                    .Where(c => !c.SoftDelete && c.Aktif)
+                    .Where(c => !c.SoftDelete && c.AktifMi)
                     .Select(c => new SelectListItem
                     {
                         Value = c.CariID.ToString(),
-                        Text = c.CariAdi
+                        Text = c.Ad
                     }).ToListAsync();
             }
             catch (Exception ex)
@@ -333,7 +364,8 @@ namespace MuhasebeStokWebApp.Controllers
                 // Hata durumunda boş liste ata
                 ViewBag.Cariler = new List<SelectListItem>();
                 // Hatayı loglayabilirsiniz
-                Console.WriteLine($"Cariler yüklenirken hata oluştu: {ex.Message}");
+                _logger.LogError(ex, "Cariler yüklenirken hata oluştu: {Message}", ex.Message);
+                TempData["ErrorMessage"] = "Cariler yüklenirken bir hata oluştu: " + ex.Message;
             }
 
             try
@@ -351,7 +383,8 @@ namespace MuhasebeStokWebApp.Controllers
                 // Hata durumunda boş liste ata
                 ViewBag.Urunler = new List<SelectListItem>();
                 // Hatayı loglayabilirsiniz
-                Console.WriteLine($"Ürünler yüklenirken hata oluştu: {ex.Message}");
+                _logger.LogError(ex, "Ürünler yüklenirken hata oluştu: {Message}", ex.Message);
+                TempData["ErrorMessage"] = "Ürün listesi raporu yüklenirken bir hata oluştu: " + ex.Message;
             }
 
             var model = new RaporFiltreViewModel();
@@ -410,7 +443,7 @@ namespace MuhasebeStokWebApp.Controllers
                     {
                         Tarih = fatura.FaturaTarihi.HasValue ? fatura.FaturaTarihi.Value : DateTime.Now,
                         FaturaNo = fatura.FaturaNumarasi,
-                        CariAdi = fatura.Cari?.CariAdi ?? "Bilinmeyen Cari",
+                        CariAdi = fatura.Cari?.Ad ?? "Bilinmeyen Cari",
                         UrunAdi = detay.Urun?.UrunAdi ?? "Bilinmeyen Ürün",
                         Miktar = detay.Miktar,
                         Birim = detay.Birim ?? "Adet",

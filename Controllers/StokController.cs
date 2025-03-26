@@ -10,26 +10,37 @@ using MuhasebeStokWebApp.Data.Entities;
 using MuhasebeStokWebApp.Data.Repositories;
 using MuhasebeStokWebApp.Services;
 using MuhasebeStokWebApp.ViewModels.Stok;
+using Microsoft.Extensions.Logging;
+using MuhasebeStokWebApp.Services.Interfaces;
+using Microsoft.AspNetCore.Identity;
 
 namespace MuhasebeStokWebApp.Controllers
 {
-    public class StokController : Controller
+    public class StokController : BaseController
     {
         private readonly IUnitOfWork _unitOfWork;
         private readonly ApplicationDbContext _context;
         private readonly StokFifoService _stokFifoService;
         private readonly IDovizKuruService _dovizKuruService;
+        private readonly ILogger<StokController> _logger;
 
         public StokController(
             IUnitOfWork unitOfWork, 
             ApplicationDbContext context, 
             StokFifoService stokFifoService,
-            IDovizKuruService dovizKuruService)
+            IDovizKuruService dovizKuruService,
+            ILogger<StokController> logger,
+            IMenuService menuService,
+            UserManager<ApplicationUser> userManager,
+            RoleManager<IdentityRole> roleManager,
+            ILogService logService)
+            : base(menuService, userManager, roleManager, logService)
         {
             _unitOfWork = unitOfWork;
             _context = context;
             _stokFifoService = stokFifoService;
             _dovizKuruService = dovizKuruService;
+            _logger = logger;
         }
 
         // GET: Stok
@@ -39,7 +50,7 @@ namespace MuhasebeStokWebApp.Controllers
             
             // Ürün listesini getir (filtreleme yaparak)
             var urunler = await urunRepository.GetAsync(
-                filter: u => u.SoftDelete == false && 
+                filter: u => u.Silindi == false && 
                     (string.IsNullOrEmpty(searchString) || 
                      u.UrunAdi.Contains(searchString) || 
                      u.UrunKodu.Contains(searchString)),
@@ -75,7 +86,7 @@ namespace MuhasebeStokWebApp.Controllers
 
             // Ürün bilgilerini al
             var urun = await _unitOfWork.Repository<Urun>().GetFirstOrDefaultAsync(
-                filter: u => u.UrunID == id && !u.SoftDelete,
+                filter: u => u.UrunID == id && !u.Silindi,
                 includeProperties: "Kategori,Birim");
 
             if (urun == null)
@@ -85,13 +96,13 @@ namespace MuhasebeStokWebApp.Controllers
 
             // Stok hareketlerini al
             var stokHareketleri = await _unitOfWork.Repository<StokHareket>().GetAsync(
-                filter: sh => sh.UrunID == id && !sh.SoftDelete,
+                filter: sh => sh.UrunID == id && !sh.Silindi,
                 includeProperties: "Depo",
                 orderBy: q => q.OrderByDescending(sh => sh.Tarih));
 
             // FIFO kayıtlarını al
             var fifoKayitlari = await _unitOfWork.Repository<StokFifo>().GetAsync(
-                filter: sf => sf.UrunID == id && sf.Aktif && !sf.SoftDelete,
+                filter: sf => sf.UrunID == id && sf.Aktif && !sf.Silindi,
                 orderBy: q => q.OrderByDescending(sf => sf.GirisTarihi));
 
             // Ortalama maliyeti hesapla - KDV düşme hatası düzeltildi
@@ -121,7 +132,7 @@ namespace MuhasebeStokWebApp.Controllers
                 .Include(fd => fd.Fatura)
                 .Include(fd => fd.Fatura.FaturaTuru)
                 .Where(fd => fd.UrunID == id 
-                        && !fd.SoftDelete 
+                        && !fd.Silindi 
                         && fd.Fatura.FaturaTuru.HareketTuru == "Çıkış" 
                         && fd.Fatura.FaturaTarihi >= sonUcAy)
                 .ToListAsync();
@@ -137,15 +148,18 @@ namespace MuhasebeStokWebApp.Controllers
                     ortalamaSatisFiyatiTL = toplamSatisTutari / toplamSatisMiktari;
                     
                     // USD cinsinden ortalama satış fiyatını hesapla
-                    var guncelDovizKuru = await _context.DovizKurlari
-                        .Where(d => d.ParaBirimi == "USD" && d.BazParaBirimi == "TRY")
-                        .OrderByDescending(d => d.Tarih)
-                        .FirstOrDefaultAsync();
-                        
-                    if (guncelDovizKuru != null && guncelDovizKuru.Alis > 0)
+                    decimal guncelKur = 0;
+                    try 
                     {
-                        ortalamaSatisFiyatiUSD = ortalamaSatisFiyatiTL / guncelDovizKuru.Alis;
+                        guncelKur = await _dovizKuruService.GetGuncelKurAsync("TRY", "USD");
                     }
+                    catch (Exception ex)
+                    {
+                        _logger.LogError(ex, "TRY/USD kur değeri alınırken hata oluştu.");
+                        guncelKur = 1/30.0m; // Default değer: 1 TL = 1/30 USD
+                    }
+                        
+                    ortalamaSatisFiyatiUSD = ortalamaSatisFiyatiTL * guncelKur;
                 }
             }
 
@@ -250,18 +264,25 @@ namespace MuhasebeStokWebApp.Controllers
                     await _unitOfWork.Repository<Urun>().UpdateAsync(urun);
 
                     // FIFO stok girişi yap
-                    // Döviz kuru al (TRY/USD)
-                    decimal dovizKuru = 1;
+                    // Döviz kurunu al
+                    decimal kurDegeri = 1;
                     try
                     {
-                        // 1 TL kaç USD ediyor hesapla
-                        decimal oneTL = await _dovizKuruService.ParaBirimiCevirAsync(1, "TRY", "USD");
-                        dovizKuru = oneTL > 0 ? oneTL : 1/30.0m; // 1 TL = 1/30 USD yaklaşık
+                        // Kaynak para birimi ve dolar kuru ilişkisini belirle
+                        string paraBirimi = "TRY"; // Default para birimi
+                        if (!string.IsNullOrEmpty(viewModel.ParaBirimi))
+                        {
+                            paraBirimi = viewModel.ParaBirimi;
+                        }
+                        
+                        if (paraBirimi != "USD")
+                        {
+                            kurDegeri = await _dovizKuruService.GetGuncelKurAsync(paraBirimi, "USD");
+                        }
                     }
                     catch (Exception ex)
                     {
-                        // Kur bulunamazsa varsayılan değer kullan
-                        Console.WriteLine($"Döviz kuru alınamadı: {ex.Message}");
+                        _logger.LogError(ex, "Kur değeri alınırken hata oluştu.");
                     }
 
                     try
@@ -276,8 +297,8 @@ namespace MuhasebeStokWebApp.Controllers
                             viewModel.ReferansTuru ?? "Manuel",
                             stokHareket.StokHareketID,
                             viewModel.Aciklama ?? "Manuel stok girişi",
-                            "TRY",
-                            dovizKuru
+                            viewModel.ParaBirimi,
+                            kurDegeri
                         );
 
                         await _unitOfWork.SaveAsync();
@@ -559,24 +580,25 @@ namespace MuhasebeStokWebApp.Controllers
                 {
                     // Ürünün son fiyatını al
                     var urunFiyat = await _context.UrunFiyatlari
-                        .Where(uf => uf.UrunID == urunSayim.UrunID && !uf.SoftDelete && uf.FiyatTipiID == 3) // Satış fiyatı
+                        .Where(uf => uf.UrunID == urunSayim.UrunID && !uf.Silindi && uf.FiyatTipiID == 3) // Satış fiyatı
                         .OrderByDescending(uf => uf.GecerliTarih)
                         .FirstOrDefaultAsync();
                             
                     decimal birimFiyat = urunFiyat?.Fiyat ?? 0;
                     
-                    // Döviz kuru al (TRY/USD)
-                    decimal dovizKuru = 1;
+                    // Döviz kurunu al
+                    decimal kurDegeri = 1;
                     try
                     {
-                        // 1 TL kaç USD ediyor hesapla
-                        decimal oneTL = await _dovizKuruService.ParaBirimiCevirAsync(1, "TRY", "USD");
-                        dovizKuru = oneTL > 0 ? oneTL : 1/30.0m; // 1 TL = 1/30 USD yaklaşık
+                        // Kaynak para birimi ve dolar kuru ilişkisini belirle
+                        if (!string.IsNullOrEmpty(viewModel.ParaBirimi) && viewModel.ParaBirimi != "USD")
+                        {
+                            kurDegeri = await _dovizKuruService.GetGuncelKurAsync(viewModel.ParaBirimi, "USD");
+                        }
                     }
                     catch (Exception ex)
                     {
-                        // Kur bulunamazsa varsayılan değer kullan
-                        Console.WriteLine($"Döviz kuru alınamadı: {ex.Message}");
+                        _logger.LogError(ex, "Kur değeri alınırken hata oluştu.");
                     }
                     
                     await _stokFifoService.StokGirisiYap(
@@ -588,8 +610,8 @@ namespace MuhasebeStokWebApp.Controllers
                         "Sayım",
                         stokHareket.StokHareketID,
                         $"Sayım fazlası (Sayım: {urunSayim.SayimMiktari}, Önceki: {urun.StokMiktar})",
-                        "TRY",
-                        dovizKuru
+                        viewModel.ParaBirimi,
+                        kurDegeri
                     );
                 }
                 // Eğer fark negatif ise (stok eksiği), FIFO çıkışı yap

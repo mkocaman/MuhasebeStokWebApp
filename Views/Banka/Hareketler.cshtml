@@ -1,176 +1,163 @@
 @model IEnumerable<MuhasebeStokWebApp.ViewModels.Banka.BankaHareketViewModel>
 @{
     ViewData["Title"] = "Banka Hareketleri";
+    Layout = "~/Views/Shared/_Layout.cshtml";
+    var banka = ViewBag.Banka as MuhasebeStokWebApp.ViewModels.Banka.BankaViewModel;
 }
 
-<div class="container-fluid py-4">
-    <div class="row">
-        <div class="col-12">
-            <div class="card my-4">
-                <div class="card-header p-0 position-relative mt-n4 mx-3 z-index-2">
-                    <div class="bg-gradient-primary shadow-primary border-radius-lg pt-4 pb-3">
-                        <div class="row px-4">
-                            <div class="col-6">
-                                <h6 class="text-white text-capitalize">@ViewBag.Banka.BankaAdi - Banka Hareketleri</h6>
-                            </div>
-                            <div class="col-6 text-end">
-                                <a asp-action="YeniHareket" class="btn bg-gradient-success btn-sm mb-0">
-                                    <i class="material-icons text-sm">add</i> Yeni Hareket Ekle
-                                </a>
-                                <a asp-action="Details" asp-route-id="@ViewBag.Banka.BankaID" class="btn bg-gradient-info btn-sm mb-0 ms-2">
-                                    <i class="material-icons text-sm">visibility</i> Banka Detayı
-                                </a>
-                            </div>
-                        </div>
+<div class="container-fluid">
+    <!-- Banka Bilgileri -->
+    <div class="card mb-4">
+        <div class="card-header bg-primary text-white">
+            <div class="d-flex justify-content-between align-items-center">
+                <h4 class="mb-0">@banka.BankaAdi - Banka Hareketleri</h4>
+                <div>
+                    <a asp-action="YeniHareket" asp-route-id="@banka.BankaID" class="btn btn-success">
+                        <i class="fas fa-plus"></i> Yeni Hareket
+                    </a>
+                    <a asp-action="Details" asp-route-id="@banka.BankaID" class="btn btn-light">
+                        <i class="fas fa-info-circle"></i> Hesap Detayı
+                    </a>
+                </div>
+            </div>
+        </div>
+        <div class="card-body">
+            <div class="row">
+                <div class="col-md-3">
+                    <div class="info-group">
+                        <h6 class="f-w-600">Şube</h6>
+                        <p>@banka.SubeAdi (@banka.SubeKodu)</p>
                     </div>
                 </div>
-                <div class="card-body px-0 pb-2">
-                    <div class="container mb-4">
-                        <div class="row">
-                            <div class="col-md-3">
-                                <div class="card card-stats mb-4 mb-xl-0">
-                                    <div class="card-body">
-                                        <div class="row">
-                                            <div class="col">
-                                                <h5 class="card-title text-uppercase text-muted mb-0">Banka</h5>
-                                                <span class="h2 font-weight-bold mb-0">@ViewBag.Banka.BankaAdi</span>
-                                            </div>
-                                            <div class="col-auto">
-                                                <div class="icon icon-shape bg-danger text-white rounded-circle shadow">
-                                                    <i class="material-icons">account_balance</i>
-                                                </div>
-                                            </div>
-                                        </div>
-                                        <p class="mt-3 mb-0 text-muted text-sm">
-                                            <span>@ViewBag.Banka.IBAN</span>
-                                        </p>
-                                    </div>
-                                </div>
-                            </div>
-                            <div class="col-md-3">
-                                <div class="card card-stats mb-4 mb-xl-0">
-                                    <div class="card-body">
-                                        <div class="row">
-                                            <div class="col">
-                                                <h5 class="card-title text-uppercase text-muted mb-0">Açılış Bakiyesi</h5>
-                                                <span class="h2 font-weight-bold mb-0">@ViewBag.Banka.AcilisBakiye.ToString("N2") @ViewBag.Banka.ParaBirimi</span>
-                                            </div>
-                                            <div class="col-auto">
-                                                <div class="icon icon-shape bg-warning text-white rounded-circle shadow">
-                                                    <i class="material-icons">account_balance_wallet</i>
-                                                </div>
-                                            </div>
-                                        </div>
-                                    </div>
-                                </div>
-                            </div>
-                            <div class="col-md-3">
-                                <div class="card card-stats mb-4 mb-xl-0">
-                                    <div class="card-body">
-                                        <div class="row">
-                                            <div class="col">
-                                                <h5 class="card-title text-uppercase text-muted mb-0">Güncel Bakiye</h5>
-                                                <span class="h2 font-weight-bold mb-0 @(ViewBag.Banka.GuncelBakiye >= 0 ? "text-success" : "text-danger")">
-                                                    @ViewBag.Banka.GuncelBakiye.ToString("N2") @ViewBag.Banka.ParaBirimi
-                                                </span>
-                                            </div>
-                                            <div class="col-auto">
-                                                <div class="icon icon-shape bg-success text-white rounded-circle shadow">
-                                                    <i class="material-icons">attach_money</i>
-                                                </div>
-                                            </div>
-                                        </div>
-                                    </div>
-                                </div>
-                            </div>
-                            <div class="col-md-3">
-                                <div class="card card-stats mb-4 mb-xl-0">
-                                    <div class="card-body">
-                                        <div class="row">
-                                            <div class="col">
-                                                <h5 class="card-title text-uppercase text-muted mb-0">Toplam Hareket</h5>
-                                                <span class="h2 font-weight-bold mb-0">@Model.Count()</span>
-                                            </div>
-                                            <div class="col-auto">
-                                                <div class="icon icon-shape bg-info text-white rounded-circle shadow">
-                                                    <i class="material-icons">swap_horiz</i>
-                                                </div>
-                                            </div>
-                                        </div>
-                                    </div>
-                                </div>
-                            </div>
-                        </div>
+                <div class="col-md-3">
+                    <div class="info-group">
+                        <h6 class="f-w-600">Hesap No</h6>
+                        <p>@banka.HesapNo</p>
                     </div>
-                    
-                    <div class="table-responsive p-0">
-                        <table class="table align-items-center mb-0">
-                            <thead>
-                                <tr>
-                                    <th class="text-uppercase text-secondary text-xxs font-weight-bolder opacity-7">Tarih</th>
-                                    <th class="text-uppercase text-secondary text-xxs font-weight-bolder opacity-7 ps-2">İşlem Türü</th>
-                                    <th class="text-uppercase text-secondary text-xxs font-weight-bolder opacity-7 ps-2">Referans</th>
-                                    <th class="text-uppercase text-secondary text-xxs font-weight-bolder opacity-7 ps-2">Açıklama</th>
-                                    <th class="text-uppercase text-secondary text-xxs font-weight-bolder opacity-7 ps-2">Karşı Taraf</th>
-                                    <th class="text-uppercase text-secondary text-xxs font-weight-bolder opacity-7 ps-2">Cari</th>
-                                    <th class="text-center text-uppercase text-secondary text-xxs font-weight-bolder opacity-7">Tutar</th>
-                                </tr>
-                            </thead>
-                            <tbody>
-                                @foreach (var item in Model)
-                                {
-                                    <tr>
-                                        <td>
-                                            <div class="d-flex px-2 py-1">
-                                                <div class="d-flex flex-column justify-content-center">
-                                                    <h6 class="mb-0 text-sm">@item.Tarih.ToString("dd.MM.yyyy")</h6>
-                                                    <p class="text-xs text-secondary mb-0">@item.Tarih.ToString("HH:mm")</p>
-                                                </div>
-                                            </div>
-                                        </td>
-                                        <td>
-                                            <p class="text-xs font-weight-bold mb-0">@item.HareketTuru</p>
-                                        </td>
-                                        <td>
-                                            <p class="text-xs font-weight-bold mb-0">@item.ReferansNo</p>
-                                            <p class="text-xs text-secondary mb-0">@item.ReferansTuru</p>
-                                        </td>
-                                        <td>
-                                            <p class="text-xs font-weight-bold mb-0">@item.Aciklama</p>
-                                            @if (!string.IsNullOrEmpty(item.DekontNo))
-                                            {
-                                                <p class="text-xs text-secondary mb-0">Dekont: @item.DekontNo</p>
-                                            }
-                                        </td>
-                                        <td>
-                                            <p class="text-xs font-weight-bold mb-0">@item.KarsiUnvan</p>
-                                            @if (!string.IsNullOrEmpty(item.KarsiBankaAdi) || !string.IsNullOrEmpty(item.KarsiIBAN))
-                                            {
-                                                <p class="text-xs text-secondary mb-0">
-                                                    @(!string.IsNullOrEmpty(item.KarsiBankaAdi) ? item.KarsiBankaAdi : "")
-                                                    @(!string.IsNullOrEmpty(item.KarsiIBAN) ? " - " + item.KarsiIBAN : "")
-                                                </p>
-                                            }
-                                        </td>
-                                        <td>
-                                            @if (!string.IsNullOrEmpty(item.CariAdi))
-                                            {
-                                                <p class="text-xs font-weight-bold mb-0">@item.CariAdi</p>
-                                            }
-                                        </td>
-                                        <td class="align-middle text-center">
-                                            <span class="text-sm font-weight-bold @(item.HareketTuru.Contains("Yatırma") || item.HareketTuru.Contains("Alma") ? "text-success" : "text-danger")">
-                                                @(item.HareketTuru.Contains("Yatırma") || item.HareketTuru.Contains("Alma") ? "+" : "-")
-                                                @item.Tutar.ToString("N2") @ViewBag.Banka.ParaBirimi
-                                            </span>
-                                        </td>
-                                    </tr>
-                                }
-                            </tbody>
-                        </table>
+                </div>
+                <div class="col-md-3">
+                    <div class="info-group">
+                        <h6 class="f-w-600">IBAN</h6>
+                        <p>@banka.IBAN</p>
+                    </div>
+                </div>
+                <div class="col-md-3">
+                    <div class="info-group">
+                        <h6 class="f-w-600">Güncel Bakiye</h6>
+                        <p class="@(banka.GuncelBakiye >= 0 ? "text-success" : "text-danger") fw-bold">
+                            @banka.GuncelBakiye.ToString("N2") @banka.ParaBirimi
+                        </p>
                     </div>
                 </div>
             </div>
         </div>
     </div>
-</div> 
+
+    <!-- Hareket Listesi -->
+    <div class="card">
+        <div class="card-header bg-primary text-white">
+            <h5 class="mb-0">Hareket Listesi</h5>
+        </div>
+        <div class="card-body">
+            @if (TempData["SuccessMessage"] != null)
+            {
+                <div class="alert alert-success alert-dismissible fade show" role="alert">
+                    @TempData["SuccessMessage"]
+                    <button type="button" class="btn-close" data-bs-dismiss="alert" aria-label="Close"></button>
+                </div>
+            }
+
+            <div class="table-responsive">
+                <table class="table table-bordered table-hover" id="hareketTable">
+                    <thead class="table-light">
+                        <tr>
+                            <th>Tarih</th>
+                            <th>İşlem Türü</th>
+                            <th>Referans No</th>
+                            <th>Dekont No</th>
+                            <th>Karşı Taraf</th>
+                            <th>Açıklama</th>
+                            <th class="text-end">Tutar</th>
+                            <th>İşlemler</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        @foreach (var item in Model)
+                        {
+                            <tr>
+                                <td>@item.Tarih.ToString("dd.MM.yyyy HH:mm")</td>
+                                <td>@item.HareketTuru</td>
+                                <td>@item.ReferansNo</td>
+                                <td>@item.DekontNo</td>
+                                <td>
+                                    @if (!string.IsNullOrEmpty(item.CariAdi))
+                                    {
+                                        <a asp-controller="Cari" asp-action="Details" asp-route-id="@item.CariID">@item.CariAdi</a>
+                                    }
+                                    else
+                                    {
+                                        @item.KarsiUnvan
+                                    }
+                                </td>
+                                <td>@item.Aciklama</td>
+                                <td class="text-end @(item.Tutar >= 0 ? "text-success" : "text-danger")">
+                                    @item.Tutar.ToString("N2") @banka.ParaBirimi
+                                </td>
+                                <td>
+                                    <div class="btn-group" role="group">
+                                        <a href="javascript:void(0);" onclick="showDeleteModal('@item.BankaHareketID')" class="btn btn-sm btn-danger" title="Sil">
+                                            <i class="fas fa-trash"></i>
+                                        </a>
+                                    </div>
+                                </td>
+                            </tr>
+                        }
+                    </tbody>
+                </table>
+            </div>
+        </div>
+    </div>
+</div>
+
+<!-- Silme Onay Modal -->
+<div class="modal fade" id="deleteModal" tabindex="-1" role="dialog" aria-labelledby="deleteModalLabel" aria-hidden="true">
+    <div class="modal-dialog" role="document">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h5 class="modal-title" id="deleteModalLabel">Hareket Sil</h5>
+                <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+            </div>
+            <div class="modal-body">
+                <p>Bu hareketi silmek istediğinize emin misiniz?</p>
+                <p class="text-danger">Bu işlem geri alınamaz ve hesap bakiyesi otomatik olarak güncellenecektir!</p>
+            </div>
+            <div class="modal-footer">
+                <form id="deleteForm" asp-action="DeleteHareket" method="post">
+                    <input type="hidden" id="deleteId" name="id" />
+                    <input type="hidden" name="bankaId" value="@banka.BankaID" />
+                    @Html.AntiForgeryToken()
+                    <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">İptal</button>
+                    <button type="submit" class="btn btn-danger">Sil</button>
+                </form>
+            </div>
+        </div>
+    </div>
+</div>
+
+@section Scripts {
+    <script>
+        $(document).ready(function () {
+            $('#hareketTable').DataTable({
+                language: {
+                    url: '//cdn.datatables.net/plug-ins/1.13.7/i18n/tr.json'
+                },
+                order: [[0, 'desc']]
+            });
+        });
+
+        function showDeleteModal(id) {
+            $('#deleteId').val(id);
+            $('#deleteModal').modal('show');
+        }
+    </script>
+} 

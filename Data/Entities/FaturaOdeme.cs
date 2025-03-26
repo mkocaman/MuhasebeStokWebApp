@@ -35,6 +35,8 @@ namespace MuhasebeStokWebApp.Data.Entities
         
         public bool SoftDelete { get; set; }
         
+        public bool Aktif { get; set; } = true;
+        
         // Navigation properties
         [ForeignKey("FaturaID")]
         public virtual Fatura Fatura { get; set; }

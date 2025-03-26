@@ -2,6 +2,7 @@ using System;
 using System.Collections.Generic;
 using System.ComponentModel.DataAnnotations;
 using MuhasebeStokWebApp.Data.Entities;
+using System.Linq;
 
 namespace MuhasebeStokWebApp.ViewModels.Kasa
 {
@@ -258,6 +259,8 @@ namespace MuhasebeStokWebApp.ViewModels.Kasa
         
         public List<KasaHareket> Hareketler { get; set; } = new List<KasaHareket>();
         
+        public List<KasaHareketOzetViewModel> Ozet { get; set; } = new List<KasaHareketOzetViewModel>();
+        
         [Display(Name = "Toplam Giriş")]
         [DisplayFormat(DataFormatString = "{0:N2}", ApplyFormatInEditMode = false)]
         public decimal ToplamGiris => Hareketler.Where(h => h.HareketTuru == "Giriş").Sum(h => h.Tutar);
@@ -269,5 +272,29 @@ namespace MuhasebeStokWebApp.ViewModels.Kasa
         [Display(Name = "Net Bakiye Değişimi")]
         [DisplayFormat(DataFormatString = "{0:N2}", ApplyFormatInEditMode = false)]
         public decimal NetDegisim => ToplamGiris - ToplamCikis;
+    }
+    
+    public class KasaHareketOzetViewModel
+    {
+        [Display(Name = "Kasa ID")]
+        public Guid KasaID { get; set; }
+        
+        [Display(Name = "Kasa Adı")]
+        public string KasaAdi { get; set; }
+        
+        [Display(Name = "Para Birimi")]
+        public string ParaBirimi { get; set; }
+        
+        [Display(Name = "Toplam Giriş")]
+        [DisplayFormat(DataFormatString = "{0:N2}", ApplyFormatInEditMode = false)]
+        public decimal ToplamGiris { get; set; }
+        
+        [Display(Name = "Toplam Çıkış")]
+        [DisplayFormat(DataFormatString = "{0:N2}", ApplyFormatInEditMode = false)]
+        public decimal ToplamCikis { get; set; }
+        
+        [Display(Name = "Net Bakiye")]
+        [DisplayFormat(DataFormatString = "{0:N2}", ApplyFormatInEditMode = false)]
+        public decimal NetBakiye { get; set; }
     }
 } 

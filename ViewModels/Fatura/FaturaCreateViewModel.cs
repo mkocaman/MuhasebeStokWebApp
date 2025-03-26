@@ -59,6 +59,9 @@ namespace MuhasebeStokWebApp.ViewModels.Fatura
         [Display(Name = "Otomatik İrsaliye Oluştur")]
         public bool OtomatikIrsaliyeOlustur { get; set; } = false;
 
+        [Display(Name = "İrsaliye")]
+        public Guid? IrsaliyeID { get; set; }
+
         public List<FaturaKalemViewModel> FaturaKalemleri { get; set; } = new List<FaturaKalemViewModel>();
         
         // Dropdown listeler için - sadece UI'da kullanılır

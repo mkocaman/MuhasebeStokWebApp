@@ -3,30 +3,43 @@ using Microsoft.EntityFrameworkCore;
 using MuhasebeStokWebApp.Data;
 using MuhasebeStokWebApp.Data.Entities;
 using MuhasebeStokWebApp.ViewModels.UrunKategori;
+using MuhasebeStokWebApp.Services;
+using Microsoft.AspNetCore.Identity;
 using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Threading.Tasks;
+using MuhasebeStokWebApp.Services.Interfaces;
 
 namespace MuhasebeStokWebApp.Controllers
 {
-    public class UrunKategoriController : Controller
+    // Ürün kategorileri yönetimi için controller sınıfı
+    public class UrunKategoriController : BaseController
     {
         private readonly ApplicationDbContext _context;
 
-        public UrunKategoriController(ApplicationDbContext context)
+        // Constructor: Veritabanı bağlantısını ve base controller servislerini DI ile alır
+        public UrunKategoriController(
+            ApplicationDbContext context,
+            IMenuService menuService,
+            UserManager<ApplicationUser> userManager,
+            RoleManager<IdentityRole> roleManager,
+            ILogService logService) 
+            : base(menuService, userManager, roleManager, logService)
         {
             _context = context;
         }
 
-        // GET: UrunKategori
+        // Kategorilerin listelendiği ana sayfa
         public async Task<IActionResult> Index()
         {
+            // Silinmemiş tüm kategorileri getir
             var kategoriler = await _context.UrunKategorileri
-                .Where(k => !k.SoftDelete)
+                .Where(k => !k.Silindi)
                 .OrderByDescending(k => k.OlusturmaTarihi)
                 .ToListAsync();
 
+            // Kategori listesi görünüm modeli oluştur
             var viewModel = new UrunKategoriListViewModel
             {
                 Kategoriler = kategoriler.Select(k => new UrunKategoriViewModel
@@ -43,7 +56,7 @@ namespace MuhasebeStokWebApp.Controllers
             return View(viewModel);
         }
 
-        // POST: UrunKategori/Create
+        // Yeni kategori oluşturma işlemi
         [HttpPost]
         [ValidateAntiForgeryToken]
         public async Task<IActionResult> Create(UrunKategoriCreateViewModel model)
@@ -55,6 +68,7 @@ namespace MuhasebeStokWebApp.Controllers
             {
                 try
                 {
+                    // Yeni kategori nesnesi oluştur
                     var kategori = new UrunKategori
                     {
                         KategoriID = Guid.NewGuid(),
@@ -62,9 +76,10 @@ namespace MuhasebeStokWebApp.Controllers
                         Aciklama = model.Aciklama ?? "", // Açıklama null ise boş string olarak ayarla
                         Aktif = model.Aktif, // Model'den doğrudan al
                         OlusturmaTarihi = DateTime.Now,
-                        SoftDelete = false
+                        Silindi = false
                     };
 
+                    // Kategoriyi veritabanına ekle ve değişiklikleri kaydet
                     _context.Add(kategori);
                     await _context.SaveChangesAsync();
                     TempData["Success"] = "Kategori başarıyla oluşturuldu.";
@@ -82,18 +97,21 @@ namespace MuhasebeStokWebApp.Controllers
             return RedirectToAction(nameof(Index));
         }
 
-        // GET: UrunKategori/Details/5
+        // Kategori detaylarını getirir
         [HttpGet]
         public async Task<IActionResult> Details(Guid id)
         {
+            // Kategori bilgisini getir
             var kategori = await _context.UrunKategorileri
-                .FirstOrDefaultAsync(k => k.KategoriID == id && !k.SoftDelete);
+                .FirstOrDefaultAsync(k => k.KategoriID == id && !k.Silindi);
                 
             if (kategori == null)
             {
                 return NotFound();
             }
 
+            // Kategori görünüm modeli oluştur
+#pragma warning disable CS8601 // Possible null reference assignment.
             var viewModel = new UrunKategoriViewModel
             {
                 KategoriID = kategori.KategoriID,
@@ -103,22 +121,25 @@ namespace MuhasebeStokWebApp.Controllers
                 OlusturmaTarihi = kategori.OlusturmaTarihi,
                 GuncellemeTarihi = kategori.GuncellemeTarihi
             };
+#pragma warning restore CS8601 // Possible null reference assignment.
 
             return Json(viewModel);
         }
 
-        // GET: UrunKategori/Edit/5
+        // Kategori düzenleme formunu getirir
         [HttpGet]
         public async Task<IActionResult> Edit(Guid id)
         {
+            // Kategori bilgisini getir
             var kategori = await _context.UrunKategorileri
-                .FirstOrDefaultAsync(k => k.KategoriID == id && !k.SoftDelete);
+                .FirstOrDefaultAsync(k => k.KategoriID == id && !k.Silindi);
                 
             if (kategori == null)
             {
                 return NotFound();
             }
 
+            // Düzenleme görünüm modeli oluştur
             var viewModel = new UrunKategoriEditViewModel
             {
                 KategoriID = kategori.KategoriID,
@@ -130,7 +151,7 @@ namespace MuhasebeStokWebApp.Controllers
             return PartialView("_EditPartial", viewModel);
         }
 
-        // POST: UrunKategori/Edit/5
+        // Kategori düzenleme işlemi
         [HttpPost]
         [ValidateAntiForgeryToken]
         public async Task<IActionResult> Edit(UrunKategoriEditViewModel model)
@@ -142,19 +163,22 @@ namespace MuhasebeStokWebApp.Controllers
             {
                 try
                 {
+                    // Mevcut kategoriyi getir
                     var existingKategori = await _context.UrunKategorileri
-                        .FirstOrDefaultAsync(k => k.KategoriID == model.KategoriID && !k.SoftDelete);
+                        .FirstOrDefaultAsync(k => k.KategoriID == model.KategoriID && !k.Silindi);
                         
                     if (existingKategori == null)
                     {
                         return NotFound();
                     }
 
+                    // Kategori bilgilerini güncelle
                     existingKategori.KategoriAdi = model.KategoriAdi;
                     existingKategori.Aciklama = model.Aciklama ?? ""; // Açıklama null ise boş string olarak ayarla
                     existingKategori.Aktif = model.Aktif;
                     existingKategori.GuncellemeTarihi = DateTime.Now;
 
+                    // Değişiklikleri kaydet
                     await _context.SaveChangesAsync();
                     TempData["Success"] = "Kategori başarıyla güncellendi.";
                 }
@@ -177,19 +201,21 @@ namespace MuhasebeStokWebApp.Controllers
                 return RedirectToAction(nameof(Index));
             }
             
+            // Validasyon hataları
             var errors = ModelState.Values.SelectMany(v => v.Errors).Select(e => e.ErrorMessage);
             TempData["Error"] = $"Kategori güncellenirken bir hata oluştu: {string.Join(", ", errors)}";
             return RedirectToAction(nameof(Index));
         }
 
-        // POST: UrunKategori/Delete/5
+        // Kategori silme işlemi (soft delete)
         [HttpPost]
         [ValidateAntiForgeryToken]
         public async Task<IActionResult> Delete(Guid id)
         {
+            // Kategori ve bağlı ürünleri getir
             var kategori = await _context.UrunKategorileri
                 .Include(k => k.Urunler)
-                .FirstOrDefaultAsync(k => k.KategoriID == id && !k.SoftDelete);
+                .FirstOrDefaultAsync(k => k.KategoriID == id && !k.Silindi);
                 
             if (kategori == null)
             {
@@ -211,7 +237,7 @@ namespace MuhasebeStokWebApp.Controllers
                 else
                 {
                     // Eğer kategoriye bağlı ürün yoksa, soft delete yap
-                    kategori.SoftDelete = true;
+                    kategori.Silindi = true;
                     kategori.Aktif = false;
                     _context.Update(kategori);
                     await _context.SaveChangesAsync();
@@ -227,13 +253,14 @@ namespace MuhasebeStokWebApp.Controllers
             return RedirectToAction(nameof(Index));
         }
 
-        // POST: UrunKategori/Activate/5
+        // Pasif kategoriyi aktifleştirme
         [HttpPost]
         [ValidateAntiForgeryToken]
         public async Task<IActionResult> Activate(Guid id)
         {
+            // Kategori bilgisini getir
             var kategori = await _context.UrunKategorileri
-                .FirstOrDefaultAsync(k => k.KategoriID == id && !k.SoftDelete);
+                .FirstOrDefaultAsync(k => k.KategoriID == id && !k.Silindi);
                 
             if (kategori == null)
             {
@@ -242,6 +269,7 @@ namespace MuhasebeStokWebApp.Controllers
 
             try
             {
+                // Kategoriyi aktif yap
                 kategori.Aktif = true;
                 kategori.GuncellemeTarihi = DateTime.Now;
                 
@@ -258,9 +286,10 @@ namespace MuhasebeStokWebApp.Controllers
             return RedirectToAction(nameof(Index));
         }
 
+        // Kategori mevcut mu kontrolü
         private bool KategoriExists(Guid id)
         {
-            return _context.UrunKategorileri.Any(e => e.KategoriID == id && !e.SoftDelete);
+            return _context.UrunKategorileri.Any(e => e.KategoriID == id && !e.Silindi);
         }
     }
 } 

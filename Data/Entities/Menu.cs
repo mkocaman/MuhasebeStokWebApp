@@ -16,33 +16,22 @@ namespace MuhasebeStokWebApp.Data.Entities
         [StringLength(100)]
         public string Icon { get; set; }
         
-        [StringLength(255)]
-        public string Url { get; set; }
-        
-        [StringLength(255)]
+        [StringLength(100)]
         public string Controller { get; set; }
         
-        [StringLength(255)]
+        [StringLength(100)]
         public string Action { get; set; }
-        
-        public bool AktifMi { get; set; }
         
         public int Sira { get; set; }
         
         public Guid? UstMenuID { get; set; }
         
-        [ForeignKey("UstMenuID")]
-        public Menu UstMenu { get; set; }
+        [StringLength(255)]
+        public string Url { get; set; }
         
-        public virtual ICollection<Menu> AltMenuler { get; set; }
+        public bool AktifMi { get; set; } = true;
         
-        public virtual ICollection<MenuRol> MenuRoller { get; set; }
-        
-        public Menu()
-        {
-            AltMenuler = new HashSet<Menu>();
-            MenuRoller = new HashSet<MenuRol>();
-        }
+        public bool Silindi { get; set; } = false;
         
         public DateTime OlusturmaTarihi { get; set; } = DateTime.Now;
         
@@ -52,6 +41,12 @@ namespace MuhasebeStokWebApp.Data.Entities
         
         public Guid? SonGuncelleyenKullaniciID { get; set; }
         
-        public bool Silindi { get; set; } = false;
+        // Navigation properties
+        [ForeignKey("UstMenuID")]
+        public virtual Menu UstMenu { get; set; }
+        
+        public virtual ICollection<Menu> AltMenuler { get; set; } = new HashSet<Menu>();
+        
+        public virtual ICollection<MenuRol> MenuRoller { get; set; } = new HashSet<MenuRol>();
     }
 } 

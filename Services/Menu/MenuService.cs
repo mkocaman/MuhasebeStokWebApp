@@ -9,6 +9,8 @@ using MuhasebeStokWebApp.Data.Entities;
 using MuhasebeStokWebApp.Data.Repositories;
 using MuhasebeStokWebApp.Services;
 using MuhasebeStokWebApp.ViewModels.Menu;
+using MuhasebeStokWebApp.Services.Interfaces;
+using Microsoft.Extensions.Logging;
 
 namespace MuhasebeStokWebApp.Services.Menu
 {
@@ -18,20 +20,23 @@ namespace MuhasebeStokWebApp.Services.Menu
         private readonly ApplicationDbContext _context;
         private readonly RoleManager<IdentityRole> _roleManager;
         private readonly ILogService _logService;
-        private readonly UserManager<IdentityUser> _userManager;
+        private readonly UserManager<ApplicationUser> _userManager;
+        private readonly ILogger<MenuService> _logger;
 
         public MenuService(
             IUnitOfWork unitOfWork,
             ApplicationDbContext context,
             RoleManager<IdentityRole> roleManager,
             ILogService logService,
-            UserManager<IdentityUser> userManager)
+            UserManager<ApplicationUser> userManager,
+            ILogger<MenuService> logger)
         {
             _unitOfWork = unitOfWork;
             _context = context;
             _roleManager = roleManager;
             _logService = logService;
             _userManager = userManager;
+            _logger = logger;
         }
 
         public async Task<List<MenuViewModel>> GetMenuHierarchyAsync()
@@ -39,6 +44,7 @@ namespace MuhasebeStokWebApp.Services.Menu
             // Tüm menüleri getir
             var menuler = await _context.Menuler
                 .Include(m => m.MenuRoller)
+                .Where(m => !m.Silindi)  // Silinmemiş menüleri getir
                 .OrderBy(m => m.Sira)
                 .ToListAsync();
 
@@ -75,8 +81,14 @@ namespace MuhasebeStokWebApp.Services.Menu
                 // Rol bilgilerini getir
                 var roller = await _roleManager.Roles.ToDictionaryAsync(r => r.Id, r => r.Name);
 
+                // Kullanıcı rol IDlerini HashSet olarak alalım
+                var userRoleIds = new HashSet<string>(roller.Keys);
+                
+                // Admin kontrolü
+                bool isAdmin = roller.Values.Any(r => r == "Admin");
+                
                 // Hiyerarşik olarak view model oluştur
-                var result = rootMenuler.Select(m => CreateSidebarMenuViewModel(m, menuler, roller, 0)).ToList();
+                var result = rootMenuler.Select(m => CreateSidebarMenuViewModel(m, menuler, isAdmin, userRoleIds, 0)).ToList();
 
                 return result;
             }
@@ -100,13 +112,56 @@ namespace MuhasebeStokWebApp.Services.Menu
         {
             try
             {
+                // Menu nesnesinin gerekli alanlarının kontrolü
+                if (menu == null)
+                {
+                    await _logService.LogErrorAsync("MenuService.AddMenuAsync", "Menu nesnesi null olamaz");
+                    return false;
+                }
+
+                if (menu.MenuID == Guid.Empty)
+                {
+                    menu.MenuID = Guid.NewGuid();
+                    await _logService.LogInfoAsync("MenuService.AddMenuAsync", $"Yeni MenuID oluşturuldu: {menu.MenuID}");
+                }
+
+                if (string.IsNullOrEmpty(menu.Ad))
+                {
+                    await _logService.LogErrorAsync("MenuService.AddMenuAsync", "Menü adı boş olamaz");
+                    return false;
+                }
+
+                // Oluşturma tarihi kontrolü
+                if (menu.OlusturmaTarihi == default(DateTime))
+                {
+                    menu.OlusturmaTarihi = DateTime.Now;
+                    await _logService.LogInfoAsync("MenuService.AddMenuAsync", $"Oluşturma tarihi ayarlandı: {menu.OlusturmaTarihi}");
+                }
+
+                await _logService.LogInfoAsync("MenuService.AddMenuAsync", $"Menü ekleniyor: {menu.Ad} (ID: {menu.MenuID})");
+                
                 _context.Menuler.Add(menu);
                 await _context.SaveChangesAsync();
+                
+                await _logService.LogInfoAsync("MenuService.AddMenuAsync", $"Menü başarıyla eklendi: {menu.Ad} (ID: {menu.MenuID})");
                 return true;
+            }
+            catch (DbUpdateException dbEx)
+            {
+                var innerException = dbEx.InnerException?.Message ?? "Bilinmeyen veritabanı hatası";
+                await _logService.LogErrorAsync("MenuService.AddMenuAsync", $"Veritabanına kaydederken hata: {innerException}, SQL: {dbEx.ToString()}");
+                
+                // DB hatalarını daha detaylı logla
+                if (dbEx.InnerException != null)
+                {
+                    await _logService.LogErrorAsync("MenuService.AddMenuAsync", $"İç hata detayı: {dbEx.InnerException.StackTrace}");
+                }
+                
+                return false;
             }
             catch (Exception ex)
             {
-                await _logService.LogErrorAsync("MenuService.AddMenuAsync", ex.Message + "\n" + ex.StackTrace);
+                await _logService.LogErrorAsync("MenuService.AddMenuAsync", $"Menü eklenirken hata: {ex.Message}, Stack: {ex.StackTrace}");
                 return false;
             }
         }
@@ -115,13 +170,70 @@ namespace MuhasebeStokWebApp.Services.Menu
         {
             try
             {
-                _context.Menuler.Update(menu);
+                // Menu nesnesinin gerekli alanlarının kontrolü
+                if (menu == null)
+                {
+                    await _logService.LogErrorAsync("MenuService.UpdateMenuAsync", "Menu nesnesi null olamaz");
+                    return false;
+                }
+
+                if (menu.MenuID == Guid.Empty)
+                {
+                    await _logService.LogErrorAsync("MenuService.UpdateMenuAsync", "Menü ID geçerli değil");
+                    return false;
+                }
+
+                if (string.IsNullOrEmpty(menu.Ad))
+                {
+                    await _logService.LogErrorAsync("MenuService.UpdateMenuAsync", "Menü adı boş olamaz");
+                    return false;
+                }
+
+                await _logService.LogInfoAsync("MenuService.UpdateMenuAsync", $"Menü güncelleniyor: {menu.Ad} (ID: {menu.MenuID})");
+
+                // Menünün veritabanında var olup olmadığını kontrol et
+                var existingMenu = await _context.Menuler.FindAsync(menu.MenuID);
+                if (existingMenu == null)
+                {
+                    await _logService.LogErrorAsync("MenuService.UpdateMenuAsync", $"Menü ID: {menu.MenuID} veritabanında bulunamadı");
+                    return false;
+                }
+
+                // Güncelleme tarihi kontrolü
+                menu.GuncellemeTarihi = DateTime.Now;
+                await _logService.LogInfoAsync("MenuService.UpdateMenuAsync", $"Güncelleme tarihi ayarlandı: {menu.GuncellemeTarihi}");
+                
+                // Eğer OlusturmaTarihi boşsa, mevcut değeri koru
+                if (menu.OlusturmaTarihi == default(DateTime))
+                {
+                    menu.OlusturmaTarihi = existingMenu.OlusturmaTarihi;
+                    await _logService.LogInfoAsync("MenuService.UpdateMenuAsync", $"Mevcut oluşturma tarihi korundu: {menu.OlusturmaTarihi}");
+                }
+
+                // Entity state'i güncelleyelim
+                _context.Entry(existingMenu).State = EntityState.Detached;
+                _context.Entry(menu).State = EntityState.Modified;
+
                 await _context.SaveChangesAsync();
+                await _logService.LogInfoAsync("MenuService.UpdateMenuAsync", $"Menü başarıyla güncellendi: {menu.Ad} (ID: {menu.MenuID})");
                 return true;
+            }
+            catch (DbUpdateException dbEx)
+            {
+                var innerException = dbEx.InnerException?.Message ?? "Bilinmeyen veritabanı hatası";
+                await _logService.LogErrorAsync("MenuService.UpdateMenuAsync", $"Veritabanına kaydederken hata: {innerException}, SQL: {dbEx.ToString()}");
+                
+                // DB hatalarını daha detaylı logla
+                if (dbEx.InnerException != null)
+                {
+                    await _logService.LogErrorAsync("MenuService.UpdateMenuAsync", $"İç hata detayı: {dbEx.InnerException.StackTrace}");
+                }
+                
+                return false;
             }
             catch (Exception ex)
             {
-                await _logService.LogErrorAsync("MenuService.UpdateMenuAsync", ex.Message + "\n" + ex.StackTrace);
+                await _logService.LogErrorAsync("MenuService.UpdateMenuAsync", $"Menü güncellenirken hata: {ex.Message}, Stack: {ex.StackTrace}");
                 return false;
             }
         }
@@ -202,141 +314,256 @@ namespace MuhasebeStokWebApp.Services.Menu
         {
             try
             {
-                // Eğer menüler zaten varsa, işlem yapma
-                if (await _context.Menuler.AnyAsync())
+                _logger.LogInformation("Varsayılan menüleri oluşturma işlemi başlatıldı");
+                
+                // Mevcut menüleri temizle
+                try
                 {
-                    return false;
+                    var existingMenus = await _unitOfWork.MenuRepository.GetAllAsync();
+                    if (existingMenus != null && existingMenus.Any())
+                    {
+                        _logger.LogInformation("Mevcut {MenuCount} menü temizleniyor", existingMenus.Count());
+                        foreach (var menu in existingMenus)
+                        {
+                            await _unitOfWork.MenuRepository.RemoveAsync(menu);
+                        }
+                        await _unitOfWork.SaveAsync();
+                        _logger.LogInformation("Mevcut menüler başarıyla temizlendi");
+                    }
+                    else
+                    {
+                        _logger.LogInformation("Temizlenecek mevcut menü bulunamadı");
+                    }
+                }
+                catch (Exception ex)
+                {
+                    _logger.LogWarning(ex, "Mevcut menüleri temizlerken hata oluştu, işleme devam ediliyor: {Message}", ex.Message);
                 }
 
+                await _logService.LogInfoAsync("MenuService.InitDefaultMenusAsync", "Varsayılan menüler oluşturuluyor...");
+                
                 // Admin rolünün ID'sini al
                 var adminRole = await _roleManager.FindByNameAsync("Admin");
                 if (adminRole == null)
                 {
-                    throw new Exception("Admin rolü bulunamadı. Önce Admin rolü oluşturulmalıdır.");
+                    // Admin rolü yoksa oluştur
+                    adminRole = new IdentityRole("Admin");
+                    var roleResult = await _roleManager.CreateAsync(adminRole);
+                    
+                    if (!roleResult.Succeeded)
+                    {
+                        var hata = "Admin rolü bulunamadı ve oluşturulamadı: " + string.Join(", ", roleResult.Errors.Select(e => e.Description));
+                        await _logService.LogErrorAsync("MenuService.InitDefaultMenusAsync", hata);
+                        throw new Exception(hata);
+                    }
+                    
+                    await _logService.LogInfoAsync("MenuService.InitDefaultMenusAsync", $"Admin rolü oluşturuldu. RolID: {adminRole.Id}");
+                }
+                else
+                {
+                    await _logService.LogInfoAsync("MenuService.InitDefaultMenusAsync", $"Admin rolü bulundu. RolID: {adminRole.Id}");
                 }
 
-                // Varsayılan menüleri oluştur
-                var dashboardMenu = new Data.Entities.Menu
+                using (var transaction = await _context.Database.BeginTransactionAsync())
                 {
-                    MenuID = Guid.NewGuid(),
-                    Ad = "Ana Sayfa",
-                    Icon = "fas fa-home",
-                    Controller = "Home",
-                    Action = "Index",
-                    AktifMi = true,
-                    Sira = 1
-                };
+                    try
+                    {
+                        // Mevcut tüm menü rollerini sil
+                        await _logService.LogInfoAsync("MenuService.InitDefaultMenusAsync", "Mevcut tüm menü-rol ilişkileri siliniyor...");
+                        try 
+                        {
+                            await _context.Database.ExecuteSqlRawAsync("DELETE FROM \"MenuRoller\"");
+                        }
+                        catch (Exception ex)
+                        {
+                            await _logService.LogWarningAsync("MenuService.InitDefaultMenusAsync", 
+                                $"MenuRoller tablosundan veri silerken hata oluştu: {ex.Message}. İşleme devam ediliyor.");
+                        }
+                        
+                        // Mevcut tüm menüleri sil
+                        await _logService.LogInfoAsync("MenuService.InitDefaultMenusAsync", "Mevcut tüm menüler siliniyor...");
+                        try 
+                        {
+                            await _context.Database.ExecuteSqlRawAsync("DELETE FROM \"Menuler\"");
+                        }
+                        catch (Exception ex)
+                        {
+                            await _logService.LogWarningAsync("MenuService.InitDefaultMenusAsync", 
+                                $"Menuler tablosundan veri silerken hata oluştu: {ex.Message}. İşleme devam ediliyor.");
+                        }
+                        
+                        await _logService.LogInfoAsync("MenuService.InitDefaultMenusAsync", "Eski menüler başarıyla silindi, yeni menüler oluşturuluyor...");
 
-                var urunlerMenu = new Data.Entities.Menu
-                {
-                    MenuID = Guid.NewGuid(),
-                    Ad = "Ürünler",
-                    Icon = "fas fa-box",
-                    Controller = "Urun",
-                    Action = "Index",
-                    AktifMi = true,
-                    Sira = 2
-                };
+                        // Tüm menüleri önce oluşturalım
 
-                var stokMenu = new Data.Entities.Menu
-                {
-                    MenuID = Guid.NewGuid(),
-                    Ad = "Stok",
-                    Icon = "fas fa-warehouse",
-                    Controller = "Stok",
-                    Action = "Index",
-                    AktifMi = true,
-                    Sira = 3
-                };
+                        // 1. Ana Sayfa Menüsü
+                        var dashboardMenu = CreateMenu(
+                            "Dashboard", 
+                            "fas fa-tachometer-alt", 
+                            "Home", 
+                            "Index", 
+                            1, 
+                            null, 
+                            "/Home/Index"
+                        );
 
-                var carilerMenu = new Data.Entities.Menu
-                {
-                    MenuID = Guid.NewGuid(),
-                    Ad = "Cariler",
-                    Icon = "fas fa-users",
-                    Controller = "Cari",
-                    Action = "Index",
-                    AktifMi = true,
-                    Sira = 4
-                };
+                        // 2. Cariler Menüsü
+                        var carilerMenu = CreateMenu(
+                            "Cariler", 
+                            "fas fa-users", 
+                            "Cari", 
+                            "Index", 
+                            2, 
+                            null, 
+                            "/Cari/Index"
+                        );
 
-                var faturalarMenu = new Data.Entities.Menu
-                {
-                    MenuID = Guid.NewGuid(),
-                    Ad = "Faturalar",
-                    Icon = "fas fa-file-invoice",
-                    Controller = "Fatura",
-                    Action = "Index",
-                    AktifMi = true,
-                    Sira = 5
-                };
+                        // 3. Stok Yönetimi Menüsü (Üst menü)
+                        var stokYonetimiMenu = CreateMenu(
+                            "Stok Yönetimi", 
+                            "fas fa-boxes", 
+                            "", 
+                            "", 
+                            3, 
+                            null, 
+                            "#"
+                        );
 
-                var ayarlarMenu = new Data.Entities.Menu
-                {
-                    MenuID = Guid.NewGuid(),
-                    Ad = "Ayarlar",
-                    Icon = "fas fa-cogs",
-                    AktifMi = true,
-                    Sira = 6
-                };
+                        // Stok Yönetimi Alt Menüleri
+                        var urunlerMenu = CreateMenu(
+                            "Ürünler", 
+                            "fas fa-box", 
+                            "Urun", 
+                            "Index", 
+                            1, 
+                            stokYonetimiMenu.MenuID, 
+                            "/Urun/Index"
+                        );
 
-                var menulerMenu = new Data.Entities.Menu
-                {
-                    MenuID = Guid.NewGuid(),
-                    Ad = "Menü Yönetimi",
-                    Icon = "fas fa-bars",
-                    Controller = "Menu",
-                    Action = "Index",
-                    AktifMi = true,
-                    Sira = 1,
-                    UstMenuID = ayarlarMenu.MenuID
-                };
+                        var stokHareketleriMenu = CreateMenu(
+                            "Stok Hareketleri", 
+                            "fas fa-exchange-alt", 
+                            "StokHareket", 
+                            "Index", 
+                            2, 
+                            stokYonetimiMenu.MenuID, 
+                            "/StokHareket/Index"
+                        );
 
-                var sistemAyarlariMenu = new Data.Entities.Menu
-                {
-                    MenuID = Guid.NewGuid(),
-                    Ad = "Sistem Ayarları",
-                    Icon = "fas fa-sliders-h",
-                    Controller = "SistemAyarlari",
-                    Action = "Index",
-                    AktifMi = true,
-                    Sira = 2,
-                    UstMenuID = ayarlarMenu.MenuID
-                };
+                        // 4. Faturalar Menüsü
+                        var faturalarMenu = CreateMenu(
+                            "Faturalar", 
+                            "fas fa-file-invoice", 
+                            "Fatura", 
+                            "Index", 
+                            4, 
+                            null, 
+                            "/Fatura/Index"
+                        );
 
-                // Menüleri ekle
-                _context.Menuler.AddRange(
-                    dashboardMenu, 
-                    urunlerMenu, 
-                    stokMenu, 
-                    carilerMenu, 
-                    faturalarMenu, 
-                    ayarlarMenu, 
-                    menulerMenu, 
-                    sistemAyarlariMenu
-                );
+                        // 5. Sistem Ayarları Menüsü
+                        var sistemAyarlariMenu = CreateMenu(
+                            "Sistem Ayarları", 
+                            "fas fa-cogs", 
+                            "", 
+                            "", 
+                            5, 
+                            null, 
+                            "#"
+                        );
 
-                // Menü-Rol ilişkilerini ekle (Tüm menüleri Admin rolüne bağla)
-                var menuRoller = new List<MenuRol>
-                {
-                    new MenuRol { MenuRolID = Guid.NewGuid(), MenuID = dashboardMenu.MenuID, RolID = adminRole.Id },
-                    new MenuRol { MenuRolID = Guid.NewGuid(), MenuID = urunlerMenu.MenuID, RolID = adminRole.Id },
-                    new MenuRol { MenuRolID = Guid.NewGuid(), MenuID = stokMenu.MenuID, RolID = adminRole.Id },
-                    new MenuRol { MenuRolID = Guid.NewGuid(), MenuID = carilerMenu.MenuID, RolID = adminRole.Id },
-                    new MenuRol { MenuRolID = Guid.NewGuid(), MenuID = faturalarMenu.MenuID, RolID = adminRole.Id },
-                    new MenuRol { MenuRolID = Guid.NewGuid(), MenuID = ayarlarMenu.MenuID, RolID = adminRole.Id },
-                    new MenuRol { MenuRolID = Guid.NewGuid(), MenuID = menulerMenu.MenuID, RolID = adminRole.Id },
-                    new MenuRol { MenuRolID = Guid.NewGuid(), MenuID = sistemAyarlariMenu.MenuID, RolID = adminRole.Id }
-                };
+                        // Sistem Ayarları Alt Menüleri
+                        var menuYonetimMenu = CreateMenu(
+                            "Menü Yönetimi", 
+                            "fas fa-bars", 
+                            "Menu", 
+                            "Index", 
+                            1, 
+                            sistemAyarlariMenu.MenuID, 
+                            "/Menu/Index"
+                        );
 
-                _context.MenuRoller.AddRange(menuRoller);
+                        // Tüm menüleri veritabanına ekle
+                        var menuler = new List<Data.Entities.Menu>
+                        {
+                            dashboardMenu,
+                            carilerMenu,
+                            stokYonetimiMenu,
+                            urunlerMenu,
+                            stokHareketleriMenu,
+                            faturalarMenu,
+                            sistemAyarlariMenu,
+                            menuYonetimMenu
+                        };
 
-                await _context.SaveChangesAsync();
-                return true;
+                        foreach (var menu in menuler)
+                        {
+                            _context.Menuler.Add(menu);
+                        }
+
+                        // Önce menüleri kaydet
+                        await _context.SaveChangesAsync();
+
+                        // Sonra menü-rol ilişkilerini oluştur
+                        List<MenuRol> menuRoller = new List<MenuRol>();
+
+                        foreach (var menu in menuler)
+                        {
+                            var menuRol = new MenuRol
+                            {
+                                MenuRolID = Guid.NewGuid(),
+                                MenuId = menu.MenuID,
+                                RolId = adminRole.Id,
+                                OlusturmaTarihi = DateTime.Now
+                            };
+                            
+                            menuRoller.Add(menuRol);
+                        }
+
+                        // Menü-rol ilişkilerini kaydet
+                        foreach (var menuRol in menuRoller)
+                        {
+                            _context.MenuRoller.Add(menuRol);
+                        }
+
+                        await _context.SaveChangesAsync();
+                        
+                        // Transaction'ı onaylayarak işlemi tamamla
+                        await transaction.CommitAsync();
+                        
+                        await _logService.LogInfoAsync("MenuService.InitDefaultMenusAsync", "Varsayılan menüler başarıyla oluşturuldu!");
+                        
+                        return true;
+                    }
+                    catch (Exception ex)
+                    {
+                        // Hata durumunda transaction'ı geri al
+                        await transaction.RollbackAsync();
+                        
+                        string errorMessage = $"Menüler kaydedilirken hata: {ex.Message}";
+                        if (ex.InnerException != null)
+                        {
+                            errorMessage += $"\nİç Hata: {ex.InnerException.Message}";
+                        }
+                        
+                        _logger.LogError(ex, "Menüler kaydedilirken hata oluştu: {Message}", errorMessage);
+                        await _logService.LogErrorAsync("MenuService.InitDefaultMenusAsync", errorMessage);
+                        
+                        throw; // Hatayı dışarı fırlat
+                    }
+                }
             }
             catch (Exception ex)
             {
-                await _logService.LogErrorAsync("MenuService.InitDefaultMenusAsync", ex.Message + "\n" + ex.StackTrace);
+                string errorMessage = $"Varsayılan menüleri oluştururken beklenmeyen hata: {ex.Message}";
+                if (ex.InnerException != null)
+                {
+                    errorMessage += $"\nİç Hata: {ex.InnerException.Message}";
+                }
+                
+                _logger.LogError(ex, "Varsayılan menüleri oluştururken beklenmeyen hata: {Message}", errorMessage);
+                await _logService.LogErrorAsync("MenuService.InitDefaultMenusAsync", errorMessage);
+                
                 return false;
             }
         }
@@ -366,16 +593,15 @@ namespace MuhasebeStokWebApp.Services.Menu
                     {
                         // MenuRol zaten var mı kontrol et
                         var menuRolVar = await _context.MenuRoller
-                            .AnyAsync(mr => mr.MenuID == menu.MenuID && mr.RolID == rol.Id);
+                            .AnyAsync(mr => mr.MenuId == menu.MenuID && mr.RolId == rol.Id);
                             
                         // Eğer yoksa, Admin rolüne tüm izinleri ekle, diğer roller için sadece görüntüleme izni ekle
                         if (!menuRolVar)
                         {
                             var menuRol = new MenuRol
                             {
-                                MenuRolID = Guid.NewGuid(),
-                                MenuID = menu.MenuID,
-                                RolID = rol.Id
+                                MenuId = menu.MenuID,
+                                RolId = rol.Id
                             };
                             
                             _context.MenuRoller.Add(menuRol);
@@ -398,46 +624,333 @@ namespace MuhasebeStokWebApp.Services.Menu
             try
             {
                 // Kullanıcının rollerini al
-                var user = await _userManager.FindByIdAsync(userId ?? "");
-                if (user == null)
-                {
-                    return new List<MenuViewModel>();
-                }
-
-                var userRoles = await _userManager.GetRolesAsync(user);
+                List<string> userRoles = new List<string>{"User"}; // Varsayılan olarak User rolü
                 
-                // Tüm menüleri getir
-                var menuler = await _context.Menuler
-                    .Include(m => m.UstMenu)
-                    .Include(m => m.AltMenuler)
-                    .Include(m => m.MenuRoller)
-                    .OrderBy(m => m.Sira)
-                    .ToListAsync();
-                
-                // Roller sözlüğü oluştur
-                var roller = new Dictionary<string, string>();
-                foreach (var role in userRoles)
+                if (!string.IsNullOrEmpty(userId))
                 {
-                    var roleId = (await _roleManager.FindByNameAsync(role))?.Id;
-                    if (roleId != null)
+                    var user = await _userManager.FindByIdAsync(userId);
+                    if (user != null)
                     {
-                        roller.Add(roleId, role);
+                        userRoles = (await _userManager.GetRolesAsync(user)).ToList();
                     }
                 }
                 
-                // Kök menüleri bul
-                var rootMenuler = menuler.Where(m => m.UstMenuID == null && m.AktifMi).ToList();
+                bool isAdmin = userRoles.Contains("Admin");
                 
-                // Hiyerarşik olarak view model oluştur
-                var result = rootMenuler.Select(m => CreateSidebarMenuViewModel(m, menuler, roller, 0)).ToList();
-
-                return result;
+                // Tüm menüleri ve rol ilişkilerini tek seferde getir
+                List<Data.Entities.Menu> allMenus = null;
+                
+                try
+                {
+                    // Önce SoftDelete'in var olup olmadığını kontrol edelim
+                    string query = "SELECT AktifMi FROM Menuler WHERE 1=0";
+                    try
+                    {
+                        // SoftDelete mevcut mu kontrol et
+                        await _context.Database.ExecuteSqlRawAsync("SELECT Silindi FROM Menuler WHERE 1=0");
+                        
+                        // SoftDelete mevcutsa normal sorguyu kullan
+                        allMenus = await _context.Menuler
+                            .Include(m => m.MenuRoller)
+                            .Where(m => m.AktifMi && !m.Silindi)
+                            .OrderBy(m => m.Sira)
+                            .ToListAsync();
+                    }
+                    catch (Exception)
+                    {
+                        // SoftDelete sütunu yoksa onu hariç tut
+                        _logger.LogWarning("Silindi sütunu kullanılıyor");
+                        allMenus = await _context.Menuler
+                            .Include(m => m.MenuRoller)
+                            .Where(m => m.AktifMi && !m.Silindi)
+                            .OrderBy(m => m.Sira)
+                            .ToListAsync();
+                    }
+                }
+                catch (Exception ex)
+                {
+                    _logger.LogError(ex, "Menuler tablosunda sorgulama yapılırken hata: {Message}", ex.Message);
+                    
+                    if (ex.Message.Contains("no such column: m.Silindi"))
+                    {
+                        // Silindi sütunu eksik, migration çalıştırılmalı
+                        _logger.LogWarning("Menüler tablosunda Silindi sütunu eksik, varsayılan menüler kullanılıyor");
+                        return GetDefaultMenuItems();
+                    }
+                    
+                    // Diğer hatalar için de varsayılan menüleri döndür
+                    return GetDefaultMenuItems();
+                }
+                        
+                if (allMenus == null || !allMenus.Any())
+                {
+                    _logger.LogWarning("Veritabanında aktif menü bulunamadı, varsayılan menüler kullanılıyor");
+                    return GetDefaultMenuItems();
+                }
+                
+                // Root menüleri bul
+                var rootMenus = allMenus.Where(m => m.UstMenuID == null).ToList();
+                var result = new List<MenuViewModel>();
+                
+                if (!rootMenus.Any())
+                {
+                    _logger.LogWarning("Veritabanında kök menü bulunamadı, varsayılan menüler kullanılıyor");
+                    return GetDefaultMenuItems();
+                }
+                
+                // Admin için tüm root menüleri ekle
+                if (isAdmin)
+                {
+                    try
+                    {
+                        // Her bir root menü için
+                        foreach (var rootMenu in rootMenus)
+                        {
+                            var menuViewModel = new MenuViewModel
+                            {
+                                MenuID = rootMenu.MenuID,
+                                Ad = rootMenu.Ad,
+                                Icon = rootMenu.Icon ?? "material-icons",
+                                Url = rootMenu.Url ?? "#",
+                                Controller = rootMenu.Controller ?? "",
+                                Action = rootMenu.Action ?? "",
+                                AktifMi = rootMenu.AktifMi,
+                                Sira = rootMenu.Sira,
+                                UstMenuID = null,
+                                Level = 0,
+                                AltMenuler = new List<MenuViewModel>()
+                            };
+                            
+                            // Alt menüleri bul
+                            var childMenus = allMenus.Where(m => m.UstMenuID == rootMenu.MenuID).ToList();
+                            foreach (var childMenu in childMenus)
+                            {
+                                var childViewModel = new MenuViewModel
+                                {
+                                    MenuID = childMenu.MenuID,
+                                    Ad = childMenu.Ad,
+                                    Icon = childMenu.Icon ?? "material-icons",
+                                    Url = childMenu.Url ?? "#",
+                                    Controller = childMenu.Controller ?? "",
+                                    Action = childMenu.Action ?? "",
+                                    AktifMi = childMenu.AktifMi,
+                                    Sira = childMenu.Sira,
+                                    UstMenuID = rootMenu.MenuID,
+                                    Level = 1,
+                                    AltMenuler = new List<MenuViewModel>()
+                                };
+                                
+                                menuViewModel.AltMenuler.Add(childViewModel);
+                            }
+                            
+                            result.Add(menuViewModel);
+                        }
+                    }
+                    catch (Exception ex)
+                    {
+                        _logger.LogError(ex, "Menü hiyerarşisi oluşturulurken hata: {Message}", ex.Message);
+                        return GetDefaultMenuItems();
+                    }
+                }
+                else
+                {
+                    // Normal kullanıcılar için rollerine uygun menüler
+                    try
+                    {
+                        var userRoleIds = new HashSet<string>(userRoles);
+                        
+                        // Kullanıcının rollerine uygun menüleri getir
+                        foreach (var rootMenu in rootMenus)
+                        {
+                            // Menünün rollerini kontrol et
+                            bool menuHasAccess = rootMenu.MenuRoller.Any(mr => userRoleIds.Contains(mr.RolId));
+                            
+                            if (menuHasAccess)
+                            {
+                                var menuViewModel = new MenuViewModel
+                                {
+                                    MenuID = rootMenu.MenuID,
+                                    Ad = rootMenu.Ad,
+                                    Icon = rootMenu.Icon ?? "material-icons",
+                                    Url = rootMenu.Url ?? "#",
+                                    Controller = rootMenu.Controller ?? "",
+                                    Action = rootMenu.Action ?? "",
+                                    AktifMi = rootMenu.AktifMi,
+                                    Sira = rootMenu.Sira,
+                                    UstMenuID = null,
+                                    Level = 0,
+                                    AltMenuler = new List<MenuViewModel>()
+                                };
+                                
+                                // Alt menüleri bul
+                                var childMenus = allMenus.Where(m => m.UstMenuID == rootMenu.MenuID).ToList();
+                                foreach (var childMenu in childMenus)
+                                {
+                                    bool childMenuHasAccess = childMenu.MenuRoller.Any(mr => userRoleIds.Contains(mr.RolId));
+                                    
+                                    if (childMenuHasAccess)
+                                    {
+                                        var childViewModel = new MenuViewModel
+                                        {
+                                            MenuID = childMenu.MenuID,
+                                            Ad = childMenu.Ad,
+                                            Icon = childMenu.Icon ?? "material-icons",
+                                            Url = childMenu.Url ?? "#",
+                                            Controller = childMenu.Controller ?? "",
+                                            Action = childMenu.Action ?? "",
+                                            AktifMi = childMenu.AktifMi,
+                                            Sira = childMenu.Sira,
+                                            UstMenuID = rootMenu.MenuID,
+                                            Level = 1,
+                                            AltMenuler = new List<MenuViewModel>()
+                                        };
+                                        
+                                        menuViewModel.AltMenuler.Add(childViewModel);
+                                    }
+                                }
+                                
+                                // Sadece alt menüleri olan veya doğrudan URL'si olan menüleri ekle
+                                if (menuViewModel.AltMenuler.Any() || !string.IsNullOrEmpty(menuViewModel.Url))
+                                {
+                                    result.Add(menuViewModel);
+                                }
+                            }
+                        }
+                    }
+                    catch (Exception ex)
+                    {
+                        _logger.LogError(ex, "Kullanıcı menüleri oluşturulurken hata: {Message}", ex.Message);
+                        return GetDefaultMenuItems();
+                    }
+                }
+                
+                // Menüleri sırala
+                return result.OrderBy(m => m.Sira).ToList();
             }
             catch (Exception ex)
             {
-                await _logService.LogErrorAsync("MenuService.GetActiveSidebarMenusAsync", ex.Message + "\n" + ex.StackTrace);
-                return new List<MenuViewModel>();
+                _logger.LogError(ex, "GetActiveSidebarMenusAsync metodunda beklenmeyen hata: {Message}", ex.Message);
+                return GetDefaultMenuItems();
             }
+        }
+
+        // Varsayılan menü öğelerini döndüren yardımcı metot
+        private List<MenuViewModel> GetDefaultMenuItems()
+        {
+            var result = new List<MenuViewModel>();
+            
+            // Dashboard menüsü
+            result.Add(new MenuViewModel
+            {
+                MenuID = Guid.NewGuid(),
+                Ad = "Dashboard",
+                Icon = "fas fa-tachometer-alt",
+                Controller = "Home",
+                Action = "Index",
+                AktifMi = true,
+                Sira = 1,
+                Url = "/Home/Index",
+                AltMenuler = new List<MenuViewModel>()
+            });
+            
+            // Cariler menüsü
+            result.Add(new MenuViewModel
+            {
+                MenuID = Guid.NewGuid(),
+                Ad = "Cariler",
+                Icon = "fas fa-users",
+                Controller = "Cari",
+                Action = "Index",
+                AktifMi = true,
+                Sira = 2,
+                Url = "/Cari/Index",
+                AltMenuler = new List<MenuViewModel>()
+            });
+            
+            // Stok Yönetimi menüsü (üst menü)
+            var stokYonetimiMenu = new MenuViewModel
+            {
+                MenuID = Guid.NewGuid(),
+                Ad = "Stok Yönetimi",
+                Icon = "fas fa-boxes",
+                AktifMi = true,
+                Sira = 3,
+                Url = "#",
+                AltMenuler = new List<MenuViewModel>() // Alt menü listesini başlat
+            };
+            
+            // Stok alt menüleri
+            stokYonetimiMenu.AltMenuler.Add(new MenuViewModel
+            {
+                MenuID = Guid.NewGuid(),
+                Ad = "Ürünler",
+                Controller = "Urun",
+                Action = "Index",
+                AktifMi = true,
+                Sira = 1,
+                UstMenuID = stokYonetimiMenu.MenuID,
+                Url = "/Urun/Index",
+                AltMenuler = new List<MenuViewModel>()
+            });
+            
+            stokYonetimiMenu.AltMenuler.Add(new MenuViewModel
+            {
+                MenuID = Guid.NewGuid(),
+                Ad = "Stok Hareketleri",
+                Controller = "StokHareket",
+                Action = "Index",
+                AktifMi = true,
+                Sira = 2,
+                UstMenuID = stokYonetimiMenu.MenuID,
+                Url = "/StokHareket/Index",
+                AltMenuler = new List<MenuViewModel>()
+            });
+            
+            result.Add(stokYonetimiMenu);
+            
+            // Faturalar menüsü
+            result.Add(new MenuViewModel
+            {
+                MenuID = Guid.NewGuid(),
+                Ad = "Faturalar",
+                Icon = "fas fa-file-invoice",
+                Controller = "Fatura",
+                Action = "Index",
+                AktifMi = true,
+                Sira = 4,
+                Url = "/Fatura/Index",
+                AltMenuler = new List<MenuViewModel>()
+            });
+            
+            // Sistem Ayarları menüsü
+            var sistemMenu = new MenuViewModel
+            {
+                MenuID = Guid.NewGuid(),
+                Ad = "Sistem Ayarları",
+                Icon = "fas fa-cogs",
+                AktifMi = true,
+                Sira = 5,
+                Url = "#",
+                AltMenuler = new List<MenuViewModel>()
+            };
+            
+            // Sistem alt menüleri
+            sistemMenu.AltMenuler.Add(new MenuViewModel
+            {
+                MenuID = Guid.NewGuid(),
+                Ad = "Menü Yönetimi",
+                Controller = "Menu",
+                Action = "Index",
+                AktifMi = true,
+                Sira = 1,
+                UstMenuID = sistemMenu.MenuID,
+                Url = "/Menu/Index",
+                AltMenuler = new List<MenuViewModel>()
+            });
+            
+            result.Add(sistemMenu);
+            
+            return result;
         }
 
         // Yardımcı metotlar
@@ -464,7 +977,7 @@ namespace MuhasebeStokWebApp.Services.Menu
             {
                 foreach (var menuRol in menu.MenuRoller)
                 {
-                    if (roles.TryGetValue(menuRol.RolID, out string roleName))
+                    if (roles.TryGetValue(menuRol.RolId, out string roleName))
                     {
                         viewModel.Roller.Add(roleName);
                     }
@@ -481,31 +994,176 @@ namespace MuhasebeStokWebApp.Services.Menu
             return viewModel;
         }
 
-        private MenuViewModel CreateSidebarMenuViewModel(Data.Entities.Menu menu, List<Data.Entities.Menu> allMenus, Dictionary<string, string> roles, int level)
+        private MenuViewModel CreateSidebarMenuViewModel(Data.Entities.Menu menu, List<Data.Entities.Menu> allMenus, 
+            bool isAdmin, HashSet<string> userRoleIds, int level)
         {
-            // Menü view model oluştur
-            var viewModel = new MenuViewModel
+            try
             {
-                MenuID = menu.MenuID,
-                Ad = menu.Ad,
-                Icon = menu.Icon,
-                Url = menu.Url,
-                Controller = menu.Controller,
-                Action = menu.Action,
-                AktifMi = menu.AktifMi,
-                Sira = menu.Sira,
-                UstMenuID = menu.UstMenuID,
-                Level = level
-            };
+                // Menü null kontrolü
+                if (menu == null) 
+                {
+                    _logService.LogWarningAsync("MenuService.CreateSidebarMenuViewModel", "Null menü gönderildi").Wait();
+                    return null;
+                }
+                
+                // Menü view model oluştur
+                var viewModel = new MenuViewModel
+                {
+                    MenuID = menu.MenuID,
+                    Ad = menu.Ad ?? "İsimsiz Menü", // Ad null ise varsayılan değer
+                    Icon = menu.Icon ?? "material-icons", // Icon null ise varsayılan icon kullan
+                    Url = menu.Url ?? "#", // Url null ise varsayılan değer
+                    Controller = menu.Controller ?? "", // Controller null ise boş string
+                    Action = menu.Action ?? "", // Action null ise boş string
+                    AktifMi = menu.AktifMi,
+                    Sira = menu.Sira,
+                    UstMenuID = menu.UstMenuID,
+                    Level = level,
+                    AltMenuler = new List<MenuViewModel>() // Her zaman boş bir liste ile başlat
+                };
 
-            // Alt menüleri ekle (rolü olanlar)
-            var altMenuler = allMenus.Where(m => m.UstMenuID == menu.MenuID && m.AktifMi).OrderBy(m => m.Sira).ToList();
-            if (altMenuler.Any())
-            {
-                viewModel.AltMenuler = altMenuler.Select(m => CreateSidebarMenuViewModel(m, allMenus, roles, level + 1)).ToList();
+                _logService.LogInfoAsync("MenuService.CreateSidebarMenuViewModel", 
+                    $"Menü oluşturuluyor: MenuID: {menu.MenuID}, Ad: {viewModel.Ad}, Controller: {viewModel.Controller}, Action: {viewModel.Action}").Wait();
+
+                // MenuRoller null kontrolü
+                if (menu.MenuRoller == null)
+                {
+                    _logService.LogWarningAsync("MenuService.CreateSidebarMenuViewModel", 
+                        $"MenuID: {menu.MenuID}, Ad: {viewModel.Ad} için MenuRoller null. Boş liste ile başlatılıyor.").Wait();
+                    menu.MenuRoller = new List<MenuRol>();
+                }
+
+                // Alt menüleri ekle (kullanıcının yetkisi olan)
+                // allMenus null kontrolü
+                if (allMenus == null)
+                {
+                    _logService.LogWarningAsync("MenuService.CreateSidebarMenuViewModel", "allMenus listesi null").Wait();
+                    return viewModel;
+                }
+                
+                var altMenuler = allMenus
+                    .Where(m => m.UstMenuID == menu.MenuID && m.AktifMi)
+                    .OrderBy(m => m.Sira)
+                    .ToList();
+                
+                // Alt menüler null kontrolü (Where sorgusu bazen null dönebilir)
+                if (altMenuler == null)
+                {
+                    _logService.LogWarningAsync("MenuService.CreateSidebarMenuViewModel", 
+                        $"MenuID: {menu.MenuID}, Ad: {viewModel.Ad} için alt menüler null. Boş liste kullanılacak.").Wait();
+                    altMenuler = new List<Data.Entities.Menu>();
+                }
+                
+                _logService.LogInfoAsync("MenuService.CreateSidebarMenuViewModel", 
+                    $"MenuID: {menu.MenuID}, Ad: {viewModel.Ad} için {altMenuler.Count} adet alt menü bulundu.").Wait();
+                
+                if (altMenuler.Any())
+                {
+                    foreach (var altMenu in altMenuler)
+                    {
+                        // Alt menü null kontrolü
+                        if (altMenu == null) 
+                        {
+                            _logService.LogWarningAsync("MenuService.CreateSidebarMenuViewModel", "Null alt menü atlanıyor").Wait();
+                            continue;
+                        }
+                        
+                        // Alt menü MenuRoller null kontrolü
+                        if (altMenu.MenuRoller == null)
+                        {
+                            _logService.LogWarningAsync("MenuService.CreateSidebarMenuViewModel", 
+                                $"Alt menü MenuID: {altMenu.MenuID}, Ad: {altMenu.Ad ?? "İsimsiz"} için MenuRoller null. Boş liste ile başlatılıyor.").Wait();
+                            altMenu.MenuRoller = new List<MenuRol>();
+                        }
+                        
+                        // userRoleIds null kontrolü
+                        if (userRoleIds == null)
+                        {
+                            _logService.LogWarningAsync("MenuService.CreateSidebarMenuViewModel", "userRoleIds listesi null").Wait();
+                            userRoleIds = new HashSet<string>();
+                        }
+                        
+                        bool userHasAccess = false;
+                        
+                        // MenuRoller içindeki öğelerin de null kontrolünü yap
+                        if (altMenu.MenuRoller.Any())
+                        {
+                            userHasAccess = altMenu.MenuRoller.Any(mr => mr != null && 
+                                                                         mr.RolId != null && 
+                                                                         userRoleIds.Contains(mr.RolId));
+                        }
+                        
+                        // Admin tüm alt menüleri görebilir veya kullanıcının bu alt menüye rolü varsa ekle
+                        if (isAdmin || userHasAccess)
+                        {
+                            try
+                            {
+                                var altViewModel = CreateSidebarMenuViewModel(altMenu, allMenus, isAdmin, userRoleIds, level + 1);
+                                if (altViewModel != null)
+                                {
+                                    viewModel.AltMenuler.Add(altViewModel);
+                                    _logService.LogInfoAsync("MenuService.CreateSidebarMenuViewModel", 
+                                        $"Alt menü eklendi: MenuID: {altMenu.MenuID}, Ad: {altMenu.Ad ?? "İsimsiz"}").Wait();
+                                }
+                                else
+                                {
+                                    _logService.LogWarningAsync("MenuService.CreateSidebarMenuViewModel", 
+                                        $"Alt menü için oluşturulan viewModel null: MenuID: {altMenu.MenuID}, Ad: {altMenu.Ad ?? "İsimsiz"}").Wait();
+                                }
+                            }
+                            catch (Exception ex)
+                            {
+                                _logService.LogErrorAsync("MenuService.CreateSidebarMenuViewModel", 
+                                    $"Alt menü oluşturulurken hata: {ex.Message}, MenuID: {altMenu.MenuID}, Ad: {altMenu.Ad ?? "İsimsiz"}").Wait();
+                                // Alt menü oluşturmada hata olursa devam et, tüm menüyü iptal etme
+                                continue;
+                            }
+                        }
+                    }
+                }
+
+                return viewModel;
             }
+            catch (Exception ex)
+            {
+                // Hata durumunda hatayı logla ve null döndür
+                _logService.LogErrorAsync("MenuService.CreateSidebarMenuViewModel", 
+                    $"Menü oluşturulurken hata: {ex.Message}, MenuID: {menu?.MenuID}, MenuAd: {menu?.Ad ?? "İsimsiz"}, Stack: {ex.StackTrace}").Wait();
+                
+                // Hata durumunda basit bir menü oluştur ve döndür, böylece tüm menü sistemi çökmez
+                if (menu != null)
+                {
+                    return new MenuViewModel {
+                        MenuID = menu.MenuID,
+                        Ad = menu.Ad ?? "Hata - Menü",
+                        Icon = "error",
+                        Url = "#",
+                        AktifMi = true,
+                        Sira = menu.Sira,
+                        AltMenuler = new List<MenuViewModel>()
+                    };
+                }
+                
+                return null;
+            }
+        }
 
-            return viewModel;
+        // Yardımcı metot - Menu oluşturma işlemini kolaylaştırır ve null kontrollerini otomatikleştirir
+        private Data.Entities.Menu CreateMenu(string ad, string icon, string controller, string action, int sira, Guid? ustMenuId, string url)
+        {
+            return new Data.Entities.Menu
+            {
+                MenuID = Guid.NewGuid(),
+                Ad = ad,
+                Icon = icon,
+                Controller = controller,
+                Action = action,
+                Sira = sira,
+                UstMenuID = ustMenuId,
+                Url = url,
+                AktifMi = true,
+                OlusturmaTarihi = DateTime.Now
+            };
         }
     }
 } 

@@ -56,7 +56,7 @@ namespace MuhasebeStokWebApp.Data.Entities
         
         public DateTime? GuncellemeTarihi { get; set; }
         
-        public bool SoftDelete { get; set; }
+        public bool Silindi { get; set; }
         
         public bool? Aktif { get; set; }
         
@@ -72,13 +72,13 @@ namespace MuhasebeStokWebApp.Data.Entities
         [ForeignKey("FaturaTuruID")]
         public virtual FaturaTuru FaturaTuru { get; set; }
         
-        public virtual ICollection<FaturaDetay> FaturaDetaylari { get; set; }
+        public virtual ICollection<FaturaDetay> FaturaDetaylari { get; set; } = new List<FaturaDetay>();
         public virtual ICollection<Irsaliye> Irsaliyeler { get; set; }
         public virtual ICollection<FaturaOdeme> FaturaOdemeleri { get; set; }
         
         public Fatura()
         {
-            FaturaDetaylari = new HashSet<FaturaDetay>();
+            FaturaID = Guid.NewGuid();
             Irsaliyeler = new HashSet<Irsaliye>();
             FaturaOdemeleri = new HashSet<FaturaOdeme>();
         }

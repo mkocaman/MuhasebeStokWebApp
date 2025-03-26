@@ -1,58 +1,74 @@
 @model MuhasebeStokWebApp.ViewModels.Birim.BirimEditViewModel
 @{
     ViewData["Title"] = "Birim Düzenle";
+    Layout = "~/Views/Shared/_Layout.cshtml";
 }
 
-<div class="container-fluid py-4">
+<div class="container-fluid">
+    <div class="page-title">
+        <div class="row">
+            <div class="col-6">
+                <h3>Birim Düzenle</h3>
+            </div>
+            <div class="col-6">
+                <ol class="breadcrumb">
+                    <li class="breadcrumb-item"><a href="/"><i data-feather="home"></i></a></li>
+                    <li class="breadcrumb-item"><a asp-action="Index">Birimler</a></li>
+                    <li class="breadcrumb-item active">Birim Düzenle</li>
+                </ol>
+            </div>
+        </div>
+    </div>
+</div>
+
+<div class="container-fluid">
     <div class="row">
-        <div class="col-12">
-            <div class="card my-4">
-                <div class="card-header p-0 position-relative mt-n4 mx-3 z-index-2">
-                    <div class="bg-gradient-primary shadow-primary border-radius-lg pt-4 pb-3">
-                        <h6 class="text-white text-capitalize ps-3">Birim Düzenle</h6>
-                    </div>
+        <div class="col-md-12">
+            <div class="card">
+                <div class="card-header">
+                    <h5 class="mb-0">Birim Bilgileri</h5>
                 </div>
-                <div class="card-body px-0 pb-2">
-                    <div class="container">
-                        <form asp-action="Edit" method="post">
-                            <div asp-validation-summary="ModelOnly" class="text-danger"></div>
-                            <input type="hidden" asp-for="BirimID" />
-                            
-                            <div class="row">
-                                <div class="col-md-6">
-                                    <div class="input-group input-group-static my-3">
-                                        <label asp-for="BirimAdi" class="ms-0"></label>
-                                        <input asp-for="BirimAdi" class="form-control" />
-                                    </div>
+                <form asp-action="Edit" method="post">
+                    <div class="card-body">
+                        <div asp-validation-summary="ModelOnly" class="alert alert-danger" role="alert"></div>
+                        <input type="hidden" asp-for="BirimID" />
+                        
+                        <div class="row">
+                            <div class="col-md-6">
+                                <div class="mb-3">
+                                    <label asp-for="BirimAdi" class="form-label"></label>
+                                    <input asp-for="BirimAdi" class="form-control" />
                                     <span asp-validation-for="BirimAdi" class="text-danger"></span>
                                 </div>
-                                <div class="col-md-6">
-                                    <div class="form-check form-switch mt-4">
-                                        <input asp-for="Aktif" class="form-check-input" type="checkbox">
+                            </div>
+                            <div class="col-md-6">
+                                <div class="mb-3">
+                                    <div class="form-check form-switch">
+                                        <input asp-for="Aktif" class="form-check-input" />
                                         <label asp-for="Aktif" class="form-check-label"></label>
                                     </div>
                                 </div>
                             </div>
-                            
-                            <div class="row">
-                                <div class="col-md-12">
-                                    <div class="input-group input-group-static my-3">
-                                        <label asp-for="Aciklama" class="ms-0"></label>
-                                        <textarea asp-for="Aciklama" class="form-control" rows="3"></textarea>
-                                    </div>
-                                    <span asp-validation-for="Aciklama" class="text-danger"></span>
-                                </div>
-                            </div>
-                            
-                            <div class="row">
-                                <div class="col-md-12 text-end">
-                                    <a asp-action="Index" class="btn btn-outline-secondary">İptal</a>
-                                    <button type="submit" class="btn btn-primary">Kaydet</button>
-                                </div>
-                            </div>
-                        </form>
+                        </div>
+                        
+                        <div class="mb-3">
+                            <label asp-for="Aciklama" class="form-label"></label>
+                            <textarea asp-for="Aciklama" class="form-control" rows="3"></textarea>
+                            <span asp-validation-for="Aciklama" class="text-danger"></span>
+                        </div>
                     </div>
-                </div>
+
+                    <div class="card-footer">
+                        <div class="d-flex justify-content-between">
+                            <a asp-action="Index" class="btn btn-secondary">
+                                <i class="fa fa-arrow-left"></i> Geri
+                            </a>
+                            <button type="submit" class="btn btn-primary">
+                                <i class="fa fa-save"></i> Kaydet
+                            </button>
+                        </div>
+                    </div>
+                </form>
             </div>
         </div>
     </div>

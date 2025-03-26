@@ -26,7 +26,7 @@ namespace MuhasebeStokWebApp.Data.Entities
         
         public DateTime? GuncellemeTarihi { get; set; }
         
-        public bool SoftDelete { get; set; }
+        public bool Silindi { get; set; }
         
         // Navigation properties
         public virtual ICollection<Urun> Urunler { get; set; }

@@ -17,7 +17,7 @@ namespace MuhasebeStokWebApp.Migrations
         {
 #pragma warning disable 612, 618
             modelBuilder
-                .HasAnnotation("ProductVersion", "9.0.3")
+                .HasAnnotation("ProductVersion", "8.0.3")
                 .HasAnnotation("Relational:MaxIdentifierLength", 128);
 
             SqlServerModelBuilderExtensions.UseIdentityColumns(modelBuilder);
@@ -25,7 +25,7 @@ namespace MuhasebeStokWebApp.Migrations
             modelBuilder.Entity("Microsoft.AspNetCore.Identity.IdentityRole", b =>
                 {
                     b.Property<string>("Id")
-                        .HasColumnType("nvarchar(450)");
+                        .HasColumnType("varchar(128)");
 
                     b.Property<string>("ConcurrencyStamp")
                         .IsConcurrencyToken()
@@ -65,7 +65,7 @@ namespace MuhasebeStokWebApp.Migrations
 
                     b.Property<string>("RoleId")
                         .IsRequired()
-                        .HasColumnType("nvarchar(450)");
+                        .HasColumnType("varchar(128)");
 
                     b.HasKey("Id");
 
@@ -74,13 +74,100 @@ namespace MuhasebeStokWebApp.Migrations
                     b.ToTable("AspNetRoleClaims", (string)null);
                 });
 
-            modelBuilder.Entity("Microsoft.AspNetCore.Identity.IdentityUser", b =>
+            modelBuilder.Entity("Microsoft.AspNetCore.Identity.IdentityUserClaim<string>", b =>
+                {
+                    b.Property<int>("Id")
+                        .ValueGeneratedOnAdd()
+                        .HasColumnType("int");
+
+                    SqlServerPropertyBuilderExtensions.UseIdentityColumn(b.Property<int>("Id"));
+
+                    b.Property<string>("ClaimType")
+                        .HasColumnType("nvarchar(max)");
+
+                    b.Property<string>("ClaimValue")
+                        .HasColumnType("nvarchar(max)");
+
+                    b.Property<string>("UserId")
+                        .IsRequired()
+                        .HasColumnType("varchar(128)");
+
+                    b.HasKey("Id");
+
+                    b.HasIndex("UserId");
+
+                    b.ToTable("AspNetUserClaims", (string)null);
+                });
+
+            modelBuilder.Entity("Microsoft.AspNetCore.Identity.IdentityUserLogin<string>", b =>
+                {
+                    b.Property<string>("LoginProvider")
+                        .HasColumnType("nvarchar(450)");
+
+                    b.Property<string>("ProviderKey")
+                        .HasColumnType("nvarchar(450)");
+
+                    b.Property<string>("ProviderDisplayName")
+                        .HasColumnType("nvarchar(max)");
+
+                    b.Property<string>("UserId")
+                        .IsRequired()
+                        .HasColumnType("varchar(128)");
+
+                    b.HasKey("LoginProvider", "ProviderKey");
+
+                    b.HasIndex("UserId");
+
+                    b.ToTable("AspNetUserLogins", (string)null);
+                });
+
+            modelBuilder.Entity("Microsoft.AspNetCore.Identity.IdentityUserRole<string>", b =>
+                {
+                    b.Property<string>("UserId")
+                        .HasColumnType("varchar(128)");
+
+                    b.Property<string>("RoleId")
+                        .HasColumnType("varchar(128)");
+
+                    b.HasKey("UserId", "RoleId");
+
+                    b.HasIndex("RoleId");
+
+                    b.ToTable("AspNetUserRoles", (string)null);
+                });
+
+            modelBuilder.Entity("Microsoft.AspNetCore.Identity.IdentityUserToken<string>", b =>
+                {
+                    b.Property<string>("UserId")
+                        .HasColumnType("varchar(128)");
+
+                    b.Property<string>("LoginProvider")
+                        .HasColumnType("nvarchar(450)");
+
+                    b.Property<string>("Name")
+                        .HasColumnType("nvarchar(450)");
+
+                    b.Property<string>("Value")
+                        .HasColumnType("nvarchar(max)");
+
+                    b.HasKey("UserId", "LoginProvider", "Name");
+
+                    b.ToTable("AspNetUserTokens", (string)null);
+                });
+
+            modelBuilder.Entity("MuhasebeStokWebApp.Data.Entities.ApplicationUser", b =>
                 {
                     b.Property<string>("Id")
-                        .HasColumnType("nvarchar(450)");
+                        .HasColumnType("varchar(128)");
 
                     b.Property<int>("AccessFailedCount")
                         .HasColumnType("int");
+
+                    b.Property<string>("Ad")
+                        .HasColumnType("nvarchar(max)");
+
+                    b.Property<bool>("Aktif")
+                        .HasColumnType("bit");
 
                     b.Property<string>("ConcurrencyStamp")
                         .IsConcurrencyToken()
@@ -92,6 +179,9 @@ namespace MuhasebeStokWebApp.Migrations
 
                     b.Property<bool>("EmailConfirmed")
                         .HasColumnType("bit");
+
+                    b.Property<DateTime?>("GuncellemeTarihi")
+                        .HasColumnType("datetime2");
 
                     b.Property<bool>("LockoutEnabled")
                         .HasColumnType("bit");
@@ -107,6 +197,9 @@ namespace MuhasebeStokWebApp.Migrations
                         .HasMaxLength(256)
                         .HasColumnType("nvarchar(256)");
 
+                    b.Property<DateTime>("OlusturmaTarihi")
+                        .HasColumnType("datetime2");
+
                     b.Property<string>("PasswordHash")
                         .HasColumnType("nvarchar(max)");
 
@@ -117,6 +210,12 @@ namespace MuhasebeStokWebApp.Migrations
                         .HasColumnType("bit");
 
                     b.Property<string>("SecurityStamp")
+                        .HasColumnType("nvarchar(max)");
+
+                    b.Property<bool>("SoftDelete")
+                        .HasColumnType("bit");
+
+                    b.Property<string>("Soyad")
                         .HasColumnType("nvarchar(max)");
 
                     b.Property<bool>("TwoFactorEnabled")
@@ -139,87 +238,6 @@ namespace MuhasebeStokWebApp.Migrations
                     b.ToTable("AspNetUsers", (string)null);
                 });
 
-            modelBuilder.Entity("Microsoft.AspNetCore.Identity.IdentityUserClaim<string>", b =>
-                {
-                    b.Property<int>("Id")
-                        .ValueGeneratedOnAdd()
-                        .HasColumnType("int");
-
-                    SqlServerPropertyBuilderExtensions.UseIdentityColumn(b.Property<int>("Id"));
-
-                    b.Property<string>("ClaimType")
-                        .HasColumnType("nvarchar(max)");
-
-                    b.Property<string>("ClaimValue")
-                        .HasColumnType("nvarchar(max)");
-
-                    b.Property<string>("UserId")
-                        .IsRequired()
-                        .HasColumnType("nvarchar(450)");
-
-                    b.HasKey("Id");
-
-                    b.HasIndex("UserId");
-
-                    b.ToTable("AspNetUserClaims", (string)null);
-                });
-
-            modelBuilder.Entity("Microsoft.AspNetCore.Identity.IdentityUserLogin<string>", b =>
-                {
-                    b.Property<string>("LoginProvider")
-                        .HasColumnType("nvarchar(450)");
-
-                    b.Property<string>("ProviderKey")
-                        .HasColumnType("nvarchar(450)");
-
-                    b.Property<string>("ProviderDisplayName")
-                        .HasColumnType("nvarchar(max)");
-
-                    b.Property<string>("UserId")
-                        .IsRequired()
-                        .HasColumnType("nvarchar(450)");
-
-                    b.HasKey("LoginProvider", "ProviderKey");
-
-                    b.HasIndex("UserId");
-
-                    b.ToTable("AspNetUserLogins", (string)null);
-                });
-
-            modelBuilder.Entity("Microsoft.AspNetCore.Identity.IdentityUserRole<string>", b =>
-                {
-                    b.Property<string>("UserId")
-                        .HasColumnType("nvarchar(450)");
-
-                    b.Property<string>("RoleId")
-                        .HasColumnType("nvarchar(450)");
-
-                    b.HasKey("UserId", "RoleId");
-
-                    b.HasIndex("RoleId");
-
-                    b.ToTable("AspNetUserRoles", (string)null);
-                });
-
-            modelBuilder.Entity("Microsoft.AspNetCore.Identity.IdentityUserToken<string>", b =>
-                {
-                    b.Property<string>("UserId")
-                        .HasColumnType("nvarchar(450)");
-
-                    b.Property<string>("LoginProvider")
-                        .HasColumnType("nvarchar(450)");
-
-                    b.Property<string>("Name")
-                        .HasColumnType("nvarchar(450)");
-
-                    b.Property<string>("Value")
-                        .HasColumnType("nvarchar(max)");
-
-                    b.HasKey("UserId", "LoginProvider", "Name");
-
-                    b.ToTable("AspNetUserTokens", (string)null);
-                });
-
             modelBuilder.Entity("MuhasebeStokWebApp.Data.Entities.Banka", b =>
                 {
                     b.Property<Guid>("BankaID")
@@ -227,7 +245,6 @@ namespace MuhasebeStokWebApp.Migrations
                         .HasColumnType("uniqueidentifier");
 
                     b.Property<string>("Aciklama")
-                        .IsRequired()
                         .HasMaxLength(500)
                         .HasColumnType("nvarchar(500)");
 
@@ -255,12 +272,10 @@ namespace MuhasebeStokWebApp.Migrations
                         .HasColumnType("datetime2");
 
                     b.Property<string>("HesapNo")
-                        .IsRequired()
                         .HasMaxLength(50)
                         .HasColumnType("nvarchar(50)");
 
                     b.Property<string>("IBAN")
-                        .IsRequired()
                         .HasMaxLength(50)
                         .HasColumnType("nvarchar(50)");
 
@@ -271,7 +286,6 @@ namespace MuhasebeStokWebApp.Migrations
                         .HasColumnType("datetime2");
 
                     b.Property<string>("ParaBirimi")
-                        .IsRequired()
                         .ValueGeneratedOnAdd()
                         .HasMaxLength(10)
                         .HasColumnType("nvarchar(10)")
@@ -286,12 +300,10 @@ namespace MuhasebeStokWebApp.Migrations
                         .HasColumnType("uniqueidentifier");
 
                     b.Property<string>("SubeAdi")
-                        .IsRequired()
                         .HasMaxLength(100)
                         .HasColumnType("nvarchar(100)");
 
                     b.Property<string>("SubeKodu")
-                        .IsRequired()
                         .HasMaxLength(50)
                         .HasColumnType("nvarchar(50)");
 
@@ -310,7 +322,6 @@ namespace MuhasebeStokWebApp.Migrations
                         .HasColumnType("uniqueidentifier");
 
                     b.Property<string>("Aciklama")
-                        .IsRequired()
                         .HasMaxLength(500)
                         .HasColumnType("nvarchar(500)");
 
@@ -321,7 +332,6 @@ namespace MuhasebeStokWebApp.Migrations
                         .HasColumnType("uniqueidentifier");
 
                     b.Property<string>("DekontNo")
-                        .IsRequired()
                         .HasMaxLength(50)
                         .HasColumnType("nvarchar(50)");
 
@@ -340,17 +350,14 @@ namespace MuhasebeStokWebApp.Migrations
                         .HasColumnType("uniqueidentifier");
 
                     b.Property<string>("KarsiBankaAdi")
-                        .IsRequired()
                         .HasMaxLength(50)
                         .HasColumnType("nvarchar(50)");
 
                     b.Property<string>("KarsiIBAN")
-                        .IsRequired()
                         .HasMaxLength(50)
                         .HasColumnType("nvarchar(50)");
 
                     b.Property<string>("KarsiUnvan")
-                        .IsRequired()
                         .HasMaxLength(200)
                         .HasColumnType("nvarchar(200)");
 
@@ -364,12 +371,10 @@ namespace MuhasebeStokWebApp.Migrations
                         .HasColumnType("uniqueidentifier");
 
                     b.Property<string>("ReferansNo")
-                        .IsRequired()
                         .HasMaxLength(50)
                         .HasColumnType("nvarchar(50)");
 
                     b.Property<string>("ReferansTuru")
-                        .IsRequired()
                         .HasMaxLength(50)
                         .HasColumnType("nvarchar(50)");
 
@@ -410,7 +415,6 @@ namespace MuhasebeStokWebApp.Migrations
                         .HasColumnType("uniqueidentifier");
 
                     b.Property<string>("Aciklama")
-                        .IsRequired()
                         .HasMaxLength(200)
                         .HasColumnType("nvarchar(200)");
 
@@ -437,59 +441,92 @@ namespace MuhasebeStokWebApp.Migrations
                         .HasColumnType("uniqueidentifier");
 
                     b.Property<string>("Aciklama")
-                        .IsRequired()
                         .HasMaxLength(500)
                         .HasColumnType("nvarchar(500)");
 
-                    b.Property<string>("Adres")
+                    b.Property<string>("Ad")
                         .IsRequired()
-                        .HasMaxLength(250)
-                        .HasColumnType("nvarchar(250)");
+                        .HasMaxLength(100)
+                        .HasColumnType("nvarchar(100)");
 
-                    b.Property<bool>("Aktif")
+                    b.Property<string>("Adres")
+                        .HasMaxLength(200)
+                        .HasColumnType("nvarchar(200)");
+
+                    b.Property<bool>("AktifMi")
                         .ValueGeneratedOnAdd()
                         .HasColumnType("bit")
                         .HasDefaultValue(true);
 
-                    b.Property<string>("CariAdi")
-                        .IsRequired()
-                        .HasMaxLength(200)
-                        .HasColumnType("nvarchar(200)");
+                    b.Property<decimal>("BaslangicBakiye")
+                        .HasColumnType("decimal(18,2)");
+
+                    b.Property<string>("CariKodu")
+                        .HasMaxLength(50)
+                        .HasColumnType("nvarchar(50)");
+
+                    b.Property<string>("CariTipi")
+                        .HasMaxLength(50)
+                        .HasColumnType("nvarchar(50)");
 
                     b.Property<string>("Email")
-                        .IsRequired()
                         .HasMaxLength(100)
                         .HasColumnType("nvarchar(100)");
 
                     b.Property<DateTime?>("GuncellemeTarihi")
                         .HasColumnType("datetime2");
 
-                    b.Property<Guid?>("OlusturanKullaniciID")
+                    b.Property<string>("Il")
+                        .HasMaxLength(50)
+                        .HasColumnType("nvarchar(50)");
+
+                    b.Property<string>("Ilce")
+                        .HasMaxLength(50)
+                        .HasColumnType("nvarchar(50)");
+
+                    b.Property<string>("Notlar")
+                        .HasMaxLength(500)
+                        .HasColumnType("nvarchar(500)");
+
+                    b.Property<Guid?>("OlusturanKullaniciId")
                         .HasColumnType("uniqueidentifier");
 
-                    b.Property<DateTime?>("OlusturmaTarihi")
+                    b.Property<DateTime>("OlusturmaTarihi")
                         .HasColumnType("datetime2");
+
+                    b.Property<string>("PostaKodu")
+                        .HasMaxLength(20)
+                        .HasColumnType("nvarchar(20)");
 
                     b.Property<bool>("SoftDelete")
                         .ValueGeneratedOnAdd()
                         .HasColumnType("bit")
                         .HasDefaultValue(false);
 
-                    b.Property<Guid?>("SonGuncelleyenKullaniciID")
+                    b.Property<Guid?>("SonGuncelleyenKullaniciId")
                         .HasColumnType("uniqueidentifier");
 
                     b.Property<string>("Telefon")
-                        .IsRequired()
                         .HasMaxLength(20)
                         .HasColumnType("nvarchar(20)");
 
-                    b.Property<string>("VergiNo")
-                        .IsRequired()
+                    b.Property<string>("Ulke")
                         .HasMaxLength(50)
                         .HasColumnType("nvarchar(50)");
 
+                    b.Property<string>("VergiDairesi")
+                        .HasMaxLength(100)
+                        .HasColumnType("nvarchar(100)");
+
+                    b.Property<string>("VergiNo")
+                        .HasMaxLength(20)
+                        .HasColumnType("nvarchar(20)");
+
+                    b.Property<string>("WebSitesi")
+                        .HasMaxLength(100)
+                        .HasColumnType("nvarchar(100)");
+
                     b.Property<string>("Yetkili")
-                        .IsRequired()
                         .HasMaxLength(50)
                         .HasColumnType("nvarchar(50)");
 
@@ -556,7 +593,6 @@ namespace MuhasebeStokWebApp.Migrations
                         .HasColumnType("uniqueidentifier");
 
                     b.Property<string>("Adres")
-                        .IsRequired()
                         .HasMaxLength(200)
                         .HasColumnType("nvarchar(200)");
 
@@ -592,18 +628,62 @@ namespace MuhasebeStokWebApp.Migrations
                     b.ToTable("Depolar");
                 });
 
-            modelBuilder.Entity("MuhasebeStokWebApp.Data.Entities.DovizKuru", b =>
+            modelBuilder.Entity("MuhasebeStokWebApp.Data.Entities.DovizModulu.DovizIliski", b =>
                 {
-                    b.Property<int>("ID")
+                    b.Property<Guid>("DovizIliskiID")
                         .ValueGeneratedOnAdd()
-                        .HasColumnType("int");
+                        .HasColumnType("uniqueidentifier");
 
-                    SqlServerPropertyBuilderExtensions.UseIdentityColumn(b.Property<int>("ID"));
+                    b.Property<bool>("Aktif")
+                        .ValueGeneratedOnAdd()
+                        .HasColumnType("bit")
+                        .HasDefaultValue(true);
+
+                    b.Property<DateTime?>("GuncellemeTarihi")
+                        .HasColumnType("datetime2");
+
+                    b.Property<Guid>("HedefParaBirimiID")
+                        .HasColumnType("uniqueidentifier");
+
+                    b.Property<Guid>("KaynakParaBirimiID")
+                        .HasColumnType("uniqueidentifier");
+
+                    b.Property<string>("OlusturanKullaniciID")
+                        .HasColumnType("nvarchar(max)");
+
+                    b.Property<DateTime>("OlusturmaTarihi")
+                        .HasColumnType("datetime2");
+
+                    b.Property<bool>("Silindi")
+                        .ValueGeneratedOnAdd()
+                        .HasColumnType("bit")
+                        .HasDefaultValue(false);
+
+                    b.Property<string>("SonGuncelleyenKullaniciID")
+                        .HasColumnType("nvarchar(max)");
+
+                    b.HasKey("DovizIliskiID");
+
+                    b.HasIndex("HedefParaBirimiID");
+
+                    b.HasIndex("KaynakParaBirimiID", "HedefParaBirimiID")
+                        .IsUnique()
+                        .HasDatabaseName("IX_DovizIliski_KaynakParaBirimiID_HedefParaBirimiID");
+
+                    b.ToTable("DovizIliskileri", t =>
+                        {
+                            t.HasCheckConstraint("CK_DovizIliski_DifferentCurrencies", "KaynakParaBirimiID <> HedefParaBirimiID");
+                        });
+                });
+
+            modelBuilder.Entity("MuhasebeStokWebApp.Data.Entities.DovizModulu.KurDegeri", b =>
+                {
+                    b.Property<Guid>("KurDegeriID")
+                        .ValueGeneratedOnAdd()
+                        .HasColumnType("uniqueidentifier");
 
                     b.Property<string>("Aciklama")
-                        .IsRequired()
-                        .HasMaxLength(500)
-                        .HasColumnType("nvarchar(500)");
+                        .HasColumnType("nvarchar(max)");
 
                     b.Property<bool>("Aktif")
                         .ValueGeneratedOnAdd()
@@ -613,47 +693,115 @@ namespace MuhasebeStokWebApp.Migrations
                     b.Property<decimal>("Alis")
                         .HasColumnType("decimal(18,6)");
 
-                    b.Property<string>("BazParaBirimi")
-                        .IsRequired()
-                        .HasMaxLength(10)
-                        .HasColumnType("nvarchar(10)");
-
-                    b.Property<decimal>("EfektifAlis")
+                    b.Property<decimal>("Efektif_Alis")
                         .HasColumnType("decimal(18,6)");
 
-                    b.Property<decimal>("EfektifSatis")
+                    b.Property<decimal>("Efektif_Satis")
                         .HasColumnType("decimal(18,6)");
 
                     b.Property<DateTime?>("GuncellemeTarihi")
                         .HasColumnType("datetime2");
 
-                    b.Property<string>("Kaynak")
-                        .IsRequired()
-                        .HasMaxLength(100)
-                        .HasColumnType("nvarchar(100)");
+                    b.Property<string>("OlusturanKullaniciID")
+                        .HasColumnType("nvarchar(max)");
 
-                    b.Property<DateTime>("OlusturmaTarihi")
+                    b.Property<DateTime?>("OlusturmaTarihi")
                         .HasColumnType("datetime2");
 
-                    b.Property<string>("ParaBirimi")
-                        .IsRequired()
-                        .HasMaxLength(10)
-                        .HasColumnType("nvarchar(10)");
+                    b.Property<Guid>("ParaBirimiID")
+                        .HasColumnType("uniqueidentifier");
 
                     b.Property<decimal>("Satis")
                         .HasColumnType("decimal(18,6)");
 
-                    b.Property<bool>("SoftDelete")
-                        .ValueGeneratedOnAdd()
-                        .HasColumnType("bit")
-                        .HasDefaultValue(false);
+                    b.Property<bool>("Silindi")
+                        .HasColumnType("bit");
+
+                    b.Property<string>("SonGuncelleyenKullaniciID")
+                        .HasColumnType("nvarchar(max)");
 
                     b.Property<DateTime>("Tarih")
                         .HasColumnType("datetime2");
 
-                    b.HasKey("ID");
+                    b.HasKey("KurDegeriID");
 
-                    b.ToTable("DovizKurlari");
+                    b.HasIndex("ParaBirimiID", "Tarih")
+                        .HasDatabaseName("IX_KurDegeri_ParaBirimiID_Tarih");
+
+                    b.ToTable("KurDegerleri");
+                });
+
+            modelBuilder.Entity("MuhasebeStokWebApp.Data.Entities.DovizModulu.ParaBirimi", b =>
+                {
+                    b.Property<Guid>("ParaBirimiID")
+                        .ValueGeneratedOnAdd()
+                        .HasColumnType("uniqueidentifier");
+
+                    b.Property<string>("Aciklama")
+                        .HasMaxLength(500)
+                        .HasColumnType("nvarchar(500)");
+
+                    b.Property<string>("Ad")
+                        .IsRequired()
+                        .HasMaxLength(100)
+                        .HasColumnType("nvarchar(100)");
+
+                    b.Property<bool>("Aktif")
+                        .ValueGeneratedOnAdd()
+                        .HasColumnType("bit")
+                        .HasDefaultValue(true);
+
+                    b.Property<bool>("AnaParaBirimiMi")
+                        .HasColumnType("bit");
+
+                    b.Property<string>("BinlikAyraci")
+                        .HasMaxLength(1)
+                        .HasColumnType("nvarchar(1)");
+
+                    b.Property<DateTime?>("GuncellemeTarihi")
+                        .HasColumnType("datetime2");
+
+                    b.Property<string>("Kod")
+                        .IsRequired()
+                        .HasMaxLength(10)
+                        .HasColumnType("nvarchar(10)");
+
+                    b.Property<string>("OlusturanKullaniciID")
+                        .HasColumnType("nvarchar(max)");
+
+                    b.Property<DateTime>("OlusturmaTarihi")
+                        .HasColumnType("datetime2");
+
+                    b.Property<string>("OndalikAyraci")
+                        .HasMaxLength(1)
+                        .HasColumnType("nvarchar(1)");
+
+                    b.Property<int>("OndalikHassasiyet")
+                        .HasColumnType("int");
+
+                    b.Property<string>("Sembol")
+                        .IsRequired()
+                        .HasMaxLength(10)
+                        .HasColumnType("nvarchar(10)");
+
+                    b.Property<bool>("Silindi")
+                        .ValueGeneratedOnAdd()
+                        .HasColumnType("bit")
+                        .HasDefaultValue(false);
+
+                    b.Property<int>("Sira")
+                        .HasColumnType("int");
+
+                    b.Property<string>("SonGuncelleyenKullaniciID")
+                        .HasColumnType("nvarchar(max)");
+
+                    b.HasKey("ParaBirimiID");
+
+                    b.HasIndex("Kod")
+                        .IsUnique()
+                        .HasDatabaseName("IX_ParaBirimi_Kod");
+
+                    b.ToTable("ParaBirimleri");
                 });
 
             modelBuilder.Entity("MuhasebeStokWebApp.Data.Entities.Fatura", b =>
@@ -677,12 +825,10 @@ namespace MuhasebeStokWebApp.Migrations
                         .HasColumnType("decimal(18,4)");
 
                     b.Property<string>("DovizTuru")
-                        .IsRequired()
                         .HasMaxLength(10)
                         .HasColumnType("nvarchar(10)");
 
                     b.Property<string>("FaturaNotu")
-                        .IsRequired()
                         .HasMaxLength(500)
                         .HasColumnType("nvarchar(500)");
 
@@ -707,7 +853,6 @@ namespace MuhasebeStokWebApp.Migrations
                         .HasColumnType("decimal(18,2)");
 
                     b.Property<string>("OdemeDurumu")
-                        .IsRequired()
                         .HasMaxLength(50)
                         .HasColumnType("nvarchar(50)");
 
@@ -791,7 +936,7 @@ namespace MuhasebeStokWebApp.Migrations
                         .HasColumnType("decimal(18,2)");
 
                     b.Property<decimal>("Miktar")
-                        .HasColumnType("decimal(18,2)");
+                        .HasColumnType("decimal(18,3)");
 
                     b.Property<decimal?>("NetTutar")
                         .HasColumnType("decimal(18,2)");
@@ -802,10 +947,12 @@ namespace MuhasebeStokWebApp.Migrations
                     b.Property<DateTime>("OlusturmaTarihi")
                         .HasColumnType("datetime2");
 
-                    b.Property<decimal>("SatirKdvToplam")
+                    b.Property<decimal?>("SatirKdvToplam")
+                        .IsRequired()
                         .HasColumnType("decimal(18,2)");
 
-                    b.Property<decimal>("SatirToplam")
+                    b.Property<decimal?>("SatirToplam")
+                        .IsRequired()
                         .HasColumnType("decimal(18,2)");
 
                     b.Property<bool>("SoftDelete")
@@ -838,9 +985,11 @@ namespace MuhasebeStokWebApp.Migrations
                         .HasColumnType("uniqueidentifier");
 
                     b.Property<string>("Aciklama")
-                        .IsRequired()
                         .HasMaxLength(500)
                         .HasColumnType("nvarchar(500)");
+
+                    b.Property<bool>("Aktif")
+                        .HasColumnType("bit");
 
                     b.Property<Guid>("FaturaID")
                         .HasColumnType("uniqueidentifier");
@@ -892,7 +1041,6 @@ namespace MuhasebeStokWebApp.Migrations
                         .HasColumnType("nvarchar(50)");
 
                     b.Property<string>("HareketTuru")
-                        .IsRequired()
                         .HasMaxLength(50)
                         .HasColumnType("nvarchar(50)");
 
@@ -926,9 +1074,8 @@ namespace MuhasebeStokWebApp.Migrations
                         .HasColumnType("uniqueidentifier");
 
                     b.Property<string>("Aciklama")
-                        .IsRequired()
-                        .HasMaxLength(200)
-                        .HasColumnType("nvarchar(200)");
+                        .HasMaxLength(500)
+                        .HasColumnType("nvarchar(500)");
 
                     b.Property<bool>("Aktif")
                         .ValueGeneratedOnAdd()
@@ -939,9 +1086,8 @@ namespace MuhasebeStokWebApp.Migrations
                         .HasColumnType("uniqueidentifier");
 
                     b.Property<string>("Durum")
-                        .IsRequired()
-                        .HasMaxLength(50)
-                        .HasColumnType("nvarchar(50)");
+                        .HasMaxLength(20)
+                        .HasColumnType("nvarchar(20)");
 
                     b.Property<Guid?>("FaturaID")
                         .HasColumnType("uniqueidentifier");
@@ -951,35 +1097,29 @@ namespace MuhasebeStokWebApp.Migrations
 
                     b.Property<string>("IrsaliyeNumarasi")
                         .IsRequired()
-                        .HasMaxLength(50)
-                        .HasColumnType("nvarchar(50)");
+                        .HasMaxLength(20)
+                        .HasColumnType("nvarchar(20)");
 
                     b.Property<DateTime>("IrsaliyeTarihi")
                         .HasColumnType("datetime2");
 
                     b.Property<string>("IrsaliyeTuru")
                         .IsRequired()
-                        .HasMaxLength(50)
-                        .HasColumnType("nvarchar(50)");
+                        .HasColumnType("nvarchar(max)");
 
                     b.Property<int?>("IrsaliyeTuruID")
                         .HasColumnType("int");
 
-                    b.Property<Guid?>("OlusturanKullaniciID")
+                    b.Property<Guid>("OlusturanKullaniciId")
                         .HasColumnType("uniqueidentifier");
 
                     b.Property<DateTime>("OlusturmaTarihi")
                         .HasColumnType("datetime2");
 
-                    b.Property<bool?>("Resmi")
-                        .ValueGeneratedOnAdd()
-                        .HasColumnType("bit")
-                        .HasDefaultValue(true);
-
                     b.Property<bool>("SoftDelete")
                         .HasColumnType("bit");
 
-                    b.Property<Guid?>("SonGuncelleyenKullaniciID")
+                    b.Property<Guid?>("SonGuncelleyenKullaniciId")
                         .HasColumnType("uniqueidentifier");
 
                     b.HasKey("IrsaliyeID");
@@ -1000,7 +1140,6 @@ namespace MuhasebeStokWebApp.Migrations
                         .HasColumnType("uniqueidentifier");
 
                     b.Property<string>("Aciklama")
-                        .IsRequired()
                         .HasMaxLength(200)
                         .HasColumnType("nvarchar(200)");
 
@@ -1008,9 +1147,11 @@ namespace MuhasebeStokWebApp.Migrations
                         .HasColumnType("bit");
 
                     b.Property<string>("Birim")
-                        .IsRequired()
                         .HasMaxLength(50)
                         .HasColumnType("nvarchar(50)");
+
+                    b.Property<decimal>("BirimFiyat")
+                        .HasColumnType("decimal(18,2)");
 
                     b.Property<Guid?>("BirimID")
                         .HasColumnType("uniqueidentifier");
@@ -1018,13 +1159,19 @@ namespace MuhasebeStokWebApp.Migrations
                     b.Property<DateTime?>("GuncellemeTarihi")
                         .HasColumnType("datetime2");
 
+                    b.Property<decimal>("IndirimOrani")
+                        .HasColumnType("decimal(18,2)");
+
                     b.Property<Guid>("IrsaliyeID")
                         .HasColumnType("uniqueidentifier");
 
-                    b.Property<decimal>("Miktar")
+                    b.Property<decimal>("KdvOrani")
                         .HasColumnType("decimal(18,2)");
 
-                    b.Property<Guid?>("OlusturanKullaniciID")
+                    b.Property<decimal>("Miktar")
+                        .HasColumnType("decimal(18,3)");
+
+                    b.Property<Guid?>("OlusturanKullaniciId")
                         .HasColumnType("uniqueidentifier");
 
                     b.Property<DateTime?>("OlusturmaTarihi")
@@ -1039,7 +1186,7 @@ namespace MuhasebeStokWebApp.Migrations
                     b.Property<bool>("SoftDelete")
                         .HasColumnType("bit");
 
-                    b.Property<Guid?>("SonGuncelleyenKullaniciID")
+                    b.Property<Guid?>("SonGuncelleyenKullaniciId")
                         .HasColumnType("uniqueidentifier");
 
                     b.Property<Guid>("UrunID")
@@ -1065,7 +1212,6 @@ namespace MuhasebeStokWebApp.Migrations
                     SqlServerPropertyBuilderExtensions.UseIdentityColumn(b.Property<int>("IrsaliyeTuruID"));
 
                     b.Property<string>("HareketTuru")
-                        .IsRequired()
                         .HasMaxLength(50)
                         .HasColumnType("nvarchar(50)");
 
@@ -1086,7 +1232,6 @@ namespace MuhasebeStokWebApp.Migrations
                         .HasColumnType("uniqueidentifier");
 
                     b.Property<string>("Aciklama")
-                        .IsRequired()
                         .HasMaxLength(500)
                         .HasColumnType("nvarchar(500)");
 
@@ -1114,7 +1259,6 @@ namespace MuhasebeStokWebApp.Migrations
                         .HasColumnType("nvarchar(100)");
 
                     b.Property<string>("KasaTuru")
-                        .IsRequired()
                         .HasMaxLength(50)
                         .HasColumnType("nvarchar(50)");
 
@@ -1152,7 +1296,6 @@ namespace MuhasebeStokWebApp.Migrations
                         .HasColumnType("uniqueidentifier");
 
                     b.Property<string>("Aciklama")
-                        .IsRequired()
                         .HasMaxLength(500)
                         .HasColumnType("nvarchar(500)");
 
@@ -1185,7 +1328,6 @@ namespace MuhasebeStokWebApp.Migrations
                         .HasColumnType("uniqueidentifier");
 
                     b.Property<string>("KarsiParaBirimi")
-                        .IsRequired()
                         .HasMaxLength(3)
                         .HasColumnType("nvarchar(3)");
 
@@ -1202,12 +1344,10 @@ namespace MuhasebeStokWebApp.Migrations
                         .HasColumnType("uniqueidentifier");
 
                     b.Property<string>("ReferansNo")
-                        .IsRequired()
                         .HasMaxLength(50)
                         .HasColumnType("nvarchar(50)");
 
                     b.Property<string>("ReferansTuru")
-                        .IsRequired()
                         .HasMaxLength(50)
                         .HasColumnType("nvarchar(50)");
 
@@ -1243,58 +1383,6 @@ namespace MuhasebeStokWebApp.Migrations
                     b.ToTable("KasaHareketleri");
                 });
 
-            modelBuilder.Entity("MuhasebeStokWebApp.Data.Entities.KurDegeri", b =>
-                {
-                    b.Property<Guid>("KurDegeriID")
-                        .ValueGeneratedOnAdd()
-                        .HasColumnType("uniqueidentifier");
-
-                    b.Property<string>("Aciklama")
-                        .IsRequired()
-                        .HasMaxLength(250)
-                        .HasColumnType("nvarchar(250)");
-
-                    b.Property<bool>("Aktif")
-                        .HasColumnType("bit");
-
-                    b.Property<decimal>("AlisDegeri")
-                        .HasColumnType("decimal(18,2)");
-
-                    b.Property<DateTime>("GuncellemeTarihi")
-                        .HasColumnType("datetime2");
-
-                    b.Property<string>("Kaynak")
-                        .IsRequired()
-                        .HasMaxLength(50)
-                        .HasColumnType("nvarchar(50)");
-
-                    b.Property<DateTime>("OlusturmaTarihi")
-                        .HasColumnType("datetime2");
-
-                    b.Property<Guid>("ParaBirimiID")
-                        .HasColumnType("uniqueidentifier");
-
-                    b.Property<decimal>("SatisDegeri")
-                        .HasColumnType("decimal(18,2)");
-
-                    b.Property<bool>("Silindi")
-                        .HasColumnType("bit");
-
-                    b.Property<DateTime>("Tarih")
-                        .HasColumnType("datetime2");
-
-                    b.Property<string>("VeriKaynagi")
-                        .IsRequired()
-                        .HasMaxLength(50)
-                        .HasColumnType("nvarchar(50)");
-
-                    b.HasKey("KurDegeriID");
-
-                    b.HasIndex("ParaBirimiID");
-
-                    b.ToTable("KurDegeri");
-                });
-
             modelBuilder.Entity("MuhasebeStokWebApp.Data.Entities.Menu", b =>
                 {
                     b.Property<Guid>("MenuID")
@@ -1302,9 +1390,8 @@ namespace MuhasebeStokWebApp.Migrations
                         .HasColumnType("uniqueidentifier");
 
                     b.Property<string>("Action")
-                        .IsRequired()
-                        .HasMaxLength(255)
-                        .HasColumnType("nvarchar(255)");
+                        .HasMaxLength(100)
+                        .HasColumnType("nvarchar(100)");
 
                     b.Property<string>("Ad")
                         .IsRequired()
@@ -1312,18 +1399,18 @@ namespace MuhasebeStokWebApp.Migrations
                         .HasColumnType("nvarchar(100)");
 
                     b.Property<bool>("AktifMi")
-                        .HasColumnType("bit");
+                        .ValueGeneratedOnAdd()
+                        .HasColumnType("bit")
+                        .HasDefaultValue(true);
 
                     b.Property<string>("Controller")
-                        .IsRequired()
-                        .HasMaxLength(255)
-                        .HasColumnType("nvarchar(255)");
+                        .HasMaxLength(100)
+                        .HasColumnType("nvarchar(100)");
 
                     b.Property<DateTime?>("GuncellemeTarihi")
                         .HasColumnType("datetime2");
 
                     b.Property<string>("Icon")
-                        .IsRequired()
                         .HasMaxLength(100)
                         .HasColumnType("nvarchar(100)");
 
@@ -1334,16 +1421,22 @@ namespace MuhasebeStokWebApp.Migrations
                         .HasColumnType("datetime2");
 
                     b.Property<bool>("Silindi")
-                        .HasColumnType("bit");
+                        .ValueGeneratedOnAdd()
+                        .HasColumnType("bit")
+                        .HasDefaultValue(false);
 
                     b.Property<int>("Sira")
                         .HasColumnType("int");
+
+                    b.Property<bool>("SoftDelete")
+                        .ValueGeneratedOnAdd()
+                        .HasColumnType("bit")
+                        .HasDefaultValue(false);
 
                     b.Property<Guid?>("SonGuncelleyenKullaniciID")
                         .HasColumnType("uniqueidentifier");
 
                     b.Property<string>("Url")
-                        .IsRequired()
                         .HasMaxLength(255)
                         .HasColumnType("nvarchar(255)");
 
@@ -1359,27 +1452,21 @@ namespace MuhasebeStokWebApp.Migrations
 
             modelBuilder.Entity("MuhasebeStokWebApp.Data.Entities.MenuRol", b =>
                 {
+                    b.Property<Guid>("MenuId")
+                        .HasColumnType("uniqueidentifier");
+
+                    b.Property<string>("RolId")
+                        .HasColumnType("varchar(128)");
+
                     b.Property<Guid>("MenuRolID")
-                        .ValueGeneratedOnAdd()
-                        .HasColumnType("uniqueidentifier");
-
-                    b.Property<Guid>("MenuID")
-                        .HasColumnType("uniqueidentifier");
-
-                    b.Property<Guid?>("OlusturanKullaniciID")
                         .HasColumnType("uniqueidentifier");
 
                     b.Property<DateTime>("OlusturmaTarihi")
                         .HasColumnType("datetime2");
 
-                    b.Property<string>("RolID")
-                        .IsRequired()
-                        .HasMaxLength(450)
-                        .HasColumnType("nvarchar(450)");
+                    b.HasKey("MenuId", "RolId");
 
-                    b.HasKey("MenuRolID");
-
-                    b.HasIndex("MenuID");
+                    b.HasIndex("RolId");
 
                     b.ToTable("MenuRoller");
                 });
@@ -1402,80 +1489,30 @@ namespace MuhasebeStokWebApp.Migrations
                     b.ToTable("OdemeTurleri");
                 });
 
-            modelBuilder.Entity("MuhasebeStokWebApp.Data.Entities.ParaBirimi", b =>
+            modelBuilder.Entity("MuhasebeStokWebApp.Data.Entities.SistemAyar", b =>
                 {
-                    b.Property<Guid>("ParaBirimiID")
+                    b.Property<int>("Id")
                         .ValueGeneratedOnAdd()
-                        .HasColumnType("uniqueidentifier");
+                        .HasColumnType("int");
+
+                    SqlServerPropertyBuilderExtensions.UseIdentityColumn(b.Property<int>("Id"));
 
                     b.Property<string>("Aciklama")
-                        .IsRequired()
                         .HasMaxLength(250)
                         .HasColumnType("nvarchar(250)");
 
-                    b.Property<string>("Ad")
+                    b.Property<string>("Anahtar")
                         .IsRequired()
-                        .HasMaxLength(50)
-                        .HasColumnType("nvarchar(50)")
-                        .HasColumnName("DovizAdi");
+                        .HasMaxLength(100)
+                        .HasColumnType("nvarchar(100)");
 
-                    b.Property<bool>("Aktif")
-                        .HasColumnType("bit");
-
-                    b.Property<string>("Format")
+                    b.Property<string>("Deger")
                         .IsRequired()
-                        .HasMaxLength(50)
-                        .HasColumnType("nvarchar(50)");
+                        .HasMaxLength(500)
+                        .HasColumnType("nvarchar(500)");
 
                     b.Property<DateTime>("GuncellemeTarihi")
                         .HasColumnType("datetime2");
-
-                    b.Property<string>("Kod")
-                        .IsRequired()
-                        .HasMaxLength(5)
-                        .HasColumnType("nvarchar(5)")
-                        .HasColumnName("DovizKodu");
-
-                    b.Property<DateTime>("OlusturmaTarihi")
-                        .HasColumnType("datetime2");
-
-                    b.Property<string>("Sembol")
-                        .IsRequired()
-                        .HasMaxLength(10)
-                        .HasColumnType("nvarchar(10)")
-                        .HasColumnName("Sembol");
-
-                    b.Property<bool>("Silindi")
-                        .HasColumnType("bit");
-
-                    b.Property<int>("Sira")
-                        .HasColumnType("int");
-
-                    b.HasKey("ParaBirimiID");
-
-                    b.ToTable("ParaBirimi");
-                });
-
-            modelBuilder.Entity("MuhasebeStokWebApp.Data.Entities.ParaBirimiIliski", b =>
-                {
-                    b.Property<Guid>("ParaBirimiIliskiID")
-                        .ValueGeneratedOnAdd()
-                        .HasColumnType("uniqueidentifier");
-
-                    b.Property<bool>("Aktif")
-                        .HasColumnType("bit");
-
-                    b.Property<decimal>("Carpan")
-                        .HasColumnType("decimal(18,2)");
-
-                    b.Property<DateTime>("GuncellemeTarihi")
-                        .HasColumnType("datetime2");
-
-                    b.Property<Guid>("HedefParaBirimiID")
-                        .HasColumnType("uniqueidentifier");
-
-                    b.Property<Guid>("KaynakParaBirimiID")
-                        .HasColumnType("uniqueidentifier");
 
                     b.Property<DateTime>("OlusturmaTarihi")
                         .HasColumnType("datetime2");
@@ -1483,13 +1520,9 @@ namespace MuhasebeStokWebApp.Migrations
                     b.Property<bool>("Silindi")
                         .HasColumnType("bit");
 
-                    b.HasKey("ParaBirimiIliskiID");
+                    b.HasKey("Id");
 
-                    b.HasIndex("HedefParaBirimiID");
-
-                    b.HasIndex("KaynakParaBirimiID");
-
-                    b.ToTable("ParaBirimiIliski");
+                    b.ToTable("SistemAyarlari", (string)null);
                 });
 
             modelBuilder.Entity("MuhasebeStokWebApp.Data.Entities.SistemAyarlari", b =>
@@ -1530,27 +1563,22 @@ namespace MuhasebeStokWebApp.Migrations
                         .HasColumnType("nvarchar(50)");
 
                     b.Property<string>("SirketAdresi")
-                        .IsRequired()
                         .HasMaxLength(100)
                         .HasColumnType("nvarchar(100)");
 
                     b.Property<string>("SirketEmail")
-                        .IsRequired()
                         .HasMaxLength(100)
                         .HasColumnType("nvarchar(100)");
 
                     b.Property<string>("SirketTelefon")
-                        .IsRequired()
                         .HasMaxLength(20)
                         .HasColumnType("nvarchar(20)");
 
                     b.Property<string>("SirketVergiDairesi")
-                        .IsRequired()
                         .HasMaxLength(20)
                         .HasColumnType("nvarchar(20)");
 
                     b.Property<string>("SirketVergiNo")
-                        .IsRequired()
                         .HasMaxLength(20)
                         .HasColumnType("nvarchar(20)");
 
@@ -1562,14 +1590,16 @@ namespace MuhasebeStokWebApp.Migrations
 
                     b.HasKey("SistemAyarlariID");
 
-                    b.ToTable("SistemAyarlari");
+                    b.ToTable("GenelSistemAyarlari");
                 });
 
             modelBuilder.Entity("MuhasebeStokWebApp.Data.Entities.SistemLog", b =>
                 {
-                    b.Property<Guid>("LogID")
+                    b.Property<int>("Id")
                         .ValueGeneratedOnAdd()
-                        .HasColumnType("uniqueidentifier");
+                        .HasColumnType("int");
+
+                    SqlServerPropertyBuilderExtensions.UseIdentityColumn(b.Property<int>("Id"));
 
                     b.Property<string>("Aciklama")
                         .HasMaxLength(500)
@@ -1583,7 +1613,6 @@ namespace MuhasebeStokWebApp.Migrations
                         .HasColumnType("nvarchar(500)");
 
                     b.Property<string>("IPAdresi")
-                        .IsRequired()
                         .HasMaxLength(50)
                         .HasColumnType("nvarchar(50)");
 
@@ -1591,37 +1620,53 @@ namespace MuhasebeStokWebApp.Migrations
                         .HasColumnType("datetime2");
 
                     b.Property<string>("IslemTuru")
-                        .IsRequired()
                         .HasMaxLength(50)
                         .HasColumnType("nvarchar(50)");
 
                     b.Property<string>("KayitAdi")
-                        .IsRequired()
-                        .HasMaxLength(200)
-                        .HasColumnType("nvarchar(200)");
+                        .HasMaxLength(100)
+                        .HasColumnType("nvarchar(100)");
 
                     b.Property<Guid?>("KayitID")
                         .HasColumnType("uniqueidentifier");
 
                     b.Property<string>("KullaniciAdi")
-                        .IsRequired()
                         .HasMaxLength(100)
                         .HasColumnType("nvarchar(100)");
 
                     b.Property<Guid?>("KullaniciID")
                         .HasColumnType("uniqueidentifier");
 
-                    b.Property<int>("LogTuru")
+                    b.Property<Guid>("LogID")
+                        .HasColumnType("uniqueidentifier");
+
+                    b.Property<string>("LogTuru")
+                        .IsRequired()
+                        .HasMaxLength(50)
+                        .HasColumnType("nvarchar(50)");
+
+                    b.Property<int?>("LogTuruInt")
                         .HasColumnType("int");
 
-                    b.Property<string>("TabloAdi")
+                    b.Property<string>("Mesaj")
                         .IsRequired()
+                        .HasMaxLength(500)
+                        .HasColumnType("nvarchar(500)");
+
+                    b.Property<DateTime>("OlusturmaTarihi")
+                        .HasColumnType("datetime2");
+
+                    b.Property<string>("Sayfa")
+                        .HasMaxLength(255)
+                        .HasColumnType("nvarchar(255)");
+
+                    b.Property<string>("TabloAdi")
                         .HasMaxLength(100)
                         .HasColumnType("nvarchar(100)");
 
-                    b.HasKey("LogID");
+                    b.HasKey("Id");
 
-                    b.ToTable("SistemLoglar");
+                    b.ToTable("SistemLoglar", (string)null);
                 });
 
             modelBuilder.Entity("MuhasebeStokWebApp.Data.Entities.StokFifo", b =>
@@ -1647,7 +1692,7 @@ namespace MuhasebeStokWebApp.Migrations
                         .HasColumnType("decimal(18,2)");
 
                     b.Property<decimal>("DovizKuru")
-                        .HasColumnType("decimal(18,2)");
+                        .HasColumnType("decimal(18,6)");
 
                     b.Property<DateTime>("GirisTarihi")
                         .HasColumnType("datetime2");
@@ -1669,16 +1714,15 @@ namespace MuhasebeStokWebApp.Migrations
                         .HasColumnType("datetime2");
 
                     b.Property<decimal>("KalanMiktar")
-                        .HasColumnType("decimal(18,2)");
+                        .HasColumnType("decimal(18,3)");
 
                     b.Property<decimal>("Miktar")
-                        .HasColumnType("decimal(18,2)");
+                        .HasColumnType("decimal(18,3)");
 
                     b.Property<DateTime>("OlusturmaTarihi")
                         .HasColumnType("datetime2");
 
                     b.Property<string>("ParaBirimi")
-                        .IsRequired()
                         .HasMaxLength(3)
                         .HasColumnType("nvarchar(3)");
 
@@ -1741,7 +1785,6 @@ namespace MuhasebeStokWebApp.Migrations
                         .HasColumnType("nvarchar(500)");
 
                     b.Property<string>("Birim")
-                        .IsRequired()
                         .HasMaxLength(50)
                         .HasColumnType("nvarchar(50)");
 
@@ -1769,7 +1812,7 @@ namespace MuhasebeStokWebApp.Migrations
                         .HasColumnType("uniqueidentifier");
 
                     b.Property<decimal>("Miktar")
-                        .HasColumnType("decimal(18,2)");
+                        .HasColumnType("decimal(18,3)");
 
                     b.Property<DateTime?>("OlusturmaTarihi")
                         .HasColumnType("datetime2");
@@ -1778,12 +1821,10 @@ namespace MuhasebeStokWebApp.Migrations
                         .HasColumnType("uniqueidentifier");
 
                     b.Property<string>("ReferansNo")
-                        .IsRequired()
                         .HasMaxLength(50)
                         .HasColumnType("nvarchar(50)");
 
                     b.Property<string>("ReferansTuru")
-                        .IsRequired()
                         .HasMaxLength(50)
                         .HasColumnType("nvarchar(50)");
 
@@ -1847,7 +1888,7 @@ namespace MuhasebeStokWebApp.Migrations
 
                     b.Property<decimal>("StokMiktar")
                         .ValueGeneratedOnAdd()
-                        .HasColumnType("decimal(18,2)")
+                        .HasColumnType("decimal(18,3)")
                         .HasDefaultValue(0m);
 
                     b.Property<string>("UrunAdi")
@@ -1871,11 +1912,9 @@ namespace MuhasebeStokWebApp.Migrations
 
             modelBuilder.Entity("MuhasebeStokWebApp.Data.Entities.UrunFiyat", b =>
                 {
-                    b.Property<int>("FiyatID")
+                    b.Property<Guid>("FiyatID")
                         .ValueGeneratedOnAdd()
-                        .HasColumnType("int");
-
-                    SqlServerPropertyBuilderExtensions.UseIdentityColumn(b.Property<int>("FiyatID"));
+                        .HasColumnType("uniqueidentifier");
 
                     b.Property<decimal>("Fiyat")
                         .HasColumnType("decimal(18,2)");
@@ -1966,7 +2005,7 @@ namespace MuhasebeStokWebApp.Migrations
 
             modelBuilder.Entity("Microsoft.AspNetCore.Identity.IdentityUserClaim<string>", b =>
                 {
-                    b.HasOne("Microsoft.AspNetCore.Identity.IdentityUser", null)
+                    b.HasOne("MuhasebeStokWebApp.Data.Entities.ApplicationUser", null)
                         .WithMany()
                         .HasForeignKey("UserId")
                         .OnDelete(DeleteBehavior.Cascade)
@@ -1975,7 +2014,7 @@ namespace MuhasebeStokWebApp.Migrations
 
             modelBuilder.Entity("Microsoft.AspNetCore.Identity.IdentityUserLogin<string>", b =>
                 {
-                    b.HasOne("Microsoft.AspNetCore.Identity.IdentityUser", null)
+                    b.HasOne("MuhasebeStokWebApp.Data.Entities.ApplicationUser", null)
                         .WithMany()
                         .HasForeignKey("UserId")
                         .OnDelete(DeleteBehavior.Cascade)
@@ -1990,7 +2029,7 @@ namespace MuhasebeStokWebApp.Migrations
                         .OnDelete(DeleteBehavior.Cascade)
                         .IsRequired();
 
-                    b.HasOne("Microsoft.AspNetCore.Identity.IdentityUser", null)
+                    b.HasOne("MuhasebeStokWebApp.Data.Entities.ApplicationUser", null)
                         .WithMany()
                         .HasForeignKey("UserId")
                         .OnDelete(DeleteBehavior.Cascade)
@@ -1999,7 +2038,7 @@ namespace MuhasebeStokWebApp.Migrations
 
             modelBuilder.Entity("Microsoft.AspNetCore.Identity.IdentityUserToken<string>", b =>
                 {
-                    b.HasOne("Microsoft.AspNetCore.Identity.IdentityUser", null)
+                    b.HasOne("MuhasebeStokWebApp.Data.Entities.ApplicationUser", null)
                         .WithMany()
                         .HasForeignKey("UserId")
                         .OnDelete(DeleteBehavior.Cascade)
@@ -2038,12 +2077,42 @@ namespace MuhasebeStokWebApp.Migrations
             modelBuilder.Entity("MuhasebeStokWebApp.Data.Entities.CariHareket", b =>
                 {
                     b.HasOne("MuhasebeStokWebApp.Data.Entities.Cari", "Cari")
-                        .WithMany("CariHareketleri")
+                        .WithMany()
                         .HasForeignKey("CariID")
                         .OnDelete(DeleteBehavior.Cascade)
                         .IsRequired();
 
                     b.Navigation("Cari");
+                });
+
+            modelBuilder.Entity("MuhasebeStokWebApp.Data.Entities.DovizModulu.DovizIliski", b =>
+                {
+                    b.HasOne("MuhasebeStokWebApp.Data.Entities.DovizModulu.ParaBirimi", "HedefParaBirimi")
+                        .WithMany("HedefDovizIliskileri")
+                        .HasForeignKey("HedefParaBirimiID")
+                        .OnDelete(DeleteBehavior.Restrict)
+                        .IsRequired();
+
+                    b.HasOne("MuhasebeStokWebApp.Data.Entities.DovizModulu.ParaBirimi", "KaynakParaBirimi")
+                        .WithMany("KaynakDovizIliskileri")
+                        .HasForeignKey("KaynakParaBirimiID")
+                        .OnDelete(DeleteBehavior.Restrict)
+                        .IsRequired();
+
+                    b.Navigation("HedefParaBirimi");
+
+                    b.Navigation("KaynakParaBirimi");
+                });
+
+            modelBuilder.Entity("MuhasebeStokWebApp.Data.Entities.DovizModulu.KurDegeri", b =>
+                {
+                    b.HasOne("MuhasebeStokWebApp.Data.Entities.DovizModulu.ParaBirimi", "ParaBirimi")
+                        .WithMany("KaynakKurDegerleri")
+                        .HasForeignKey("ParaBirimiID")
+                        .OnDelete(DeleteBehavior.Cascade)
+                        .IsRequired();
+
+                    b.Navigation("ParaBirimi");
                 });
 
             modelBuilder.Entity("MuhasebeStokWebApp.Data.Entities.Fatura", b =>
@@ -2104,7 +2173,7 @@ namespace MuhasebeStokWebApp.Migrations
             modelBuilder.Entity("MuhasebeStokWebApp.Data.Entities.Irsaliye", b =>
                 {
                     b.HasOne("MuhasebeStokWebApp.Data.Entities.Cari", "Cari")
-                        .WithMany()
+                        .WithMany("Irsaliyeler")
                         .HasForeignKey("CariID")
                         .OnDelete(DeleteBehavior.Cascade)
                         .IsRequired();
@@ -2181,17 +2250,6 @@ namespace MuhasebeStokWebApp.Migrations
                     b.Navigation("KaynakBanka");
                 });
 
-            modelBuilder.Entity("MuhasebeStokWebApp.Data.Entities.KurDegeri", b =>
-                {
-                    b.HasOne("MuhasebeStokWebApp.Data.Entities.ParaBirimi", "ParaBirimi")
-                        .WithMany("KurDegerleri")
-                        .HasForeignKey("ParaBirimiID")
-                        .OnDelete(DeleteBehavior.Cascade)
-                        .IsRequired();
-
-                    b.Navigation("ParaBirimi");
-                });
-
             modelBuilder.Entity("MuhasebeStokWebApp.Data.Entities.Menu", b =>
                 {
                     b.HasOne("MuhasebeStokWebApp.Data.Entities.Menu", "UstMenu")
@@ -2205,30 +2263,19 @@ namespace MuhasebeStokWebApp.Migrations
                 {
                     b.HasOne("MuhasebeStokWebApp.Data.Entities.Menu", "Menu")
                         .WithMany("MenuRoller")
-                        .HasForeignKey("MenuID")
+                        .HasForeignKey("MenuId")
+                        .OnDelete(DeleteBehavior.Cascade)
+                        .IsRequired();
+
+                    b.HasOne("Microsoft.AspNetCore.Identity.IdentityRole", "Rol")
+                        .WithMany()
+                        .HasForeignKey("RolId")
                         .OnDelete(DeleteBehavior.Cascade)
                         .IsRequired();
 
                     b.Navigation("Menu");
-                });
 
-            modelBuilder.Entity("MuhasebeStokWebApp.Data.Entities.ParaBirimiIliski", b =>
-                {
-                    b.HasOne("MuhasebeStokWebApp.Data.Entities.ParaBirimi", "HedefParaBirimi")
-                        .WithMany()
-                        .HasForeignKey("HedefParaBirimiID")
-                        .OnDelete(DeleteBehavior.NoAction)
-                        .IsRequired();
-
-                    b.HasOne("MuhasebeStokWebApp.Data.Entities.ParaBirimi", "KaynakParaBirimi")
-                        .WithMany()
-                        .HasForeignKey("KaynakParaBirimiID")
-                        .OnDelete(DeleteBehavior.NoAction)
-                        .IsRequired();
-
-                    b.Navigation("HedefParaBirimi");
-
-                    b.Navigation("KaynakParaBirimi");
+                    b.Navigation("Rol");
                 });
 
             modelBuilder.Entity("MuhasebeStokWebApp.Data.Entities.StokFifo", b =>
@@ -2305,14 +2352,23 @@ namespace MuhasebeStokWebApp.Migrations
 
             modelBuilder.Entity("MuhasebeStokWebApp.Data.Entities.Cari", b =>
                 {
-                    b.Navigation("CariHareketleri");
-
                     b.Navigation("Faturalar");
+
+                    b.Navigation("Irsaliyeler");
                 });
 
             modelBuilder.Entity("MuhasebeStokWebApp.Data.Entities.Depo", b =>
                 {
                     b.Navigation("StokHareketleri");
+                });
+
+            modelBuilder.Entity("MuhasebeStokWebApp.Data.Entities.DovizModulu.ParaBirimi", b =>
+                {
+                    b.Navigation("HedefDovizIliskileri");
+
+                    b.Navigation("KaynakDovizIliskileri");
+
+                    b.Navigation("KaynakKurDegerleri");
                 });
 
             modelBuilder.Entity("MuhasebeStokWebApp.Data.Entities.Fatura", b =>
@@ -2359,11 +2415,6 @@ namespace MuhasebeStokWebApp.Migrations
             modelBuilder.Entity("MuhasebeStokWebApp.Data.Entities.OdemeTuru", b =>
                 {
                     b.Navigation("Faturalar");
-                });
-
-            modelBuilder.Entity("MuhasebeStokWebApp.Data.Entities.ParaBirimi", b =>
-                {
-                    b.Navigation("KurDegerleri");
                 });
 
             modelBuilder.Entity("MuhasebeStokWebApp.Data.Entities.Urun", b =>

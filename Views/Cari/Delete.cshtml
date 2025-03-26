@@ -14,7 +14,7 @@
             <div class="alert alert-warning">
                 <h5 class="alert-heading">Dikkat!</h5>
                 <p>
-                    <strong>@Model.CariAdi</strong> adlı cari kaydını silmek/pasife almak üzeresiniz.
+                    <strong>@Model.Ad</strong> adlı cari kaydını silmek/pasife almak üzeresiniz.
                 </p>
                 <p>
                     <strong>Not:</strong> Eğer bu cari ile ilgili hareket veya fatura kaydı varsa, cari tamamen silinmeyecek, 
@@ -27,7 +27,7 @@
                 <div class="col-md-6">
                     <dl class="row">
                         <dt class="col-sm-4">Cari Adı:</dt>
-                        <dd class="col-sm-8">@Model.CariAdi</dd>
+                        <dd class="col-sm-8">@Model.Ad</dd>
                         
                         <dt class="col-sm-4">Vergi No:</dt>
                         <dd class="col-sm-8">@(string.IsNullOrEmpty(Model.VergiNo) ? "-" : Model.VergiNo)</dd>
@@ -49,7 +49,7 @@
                         
                         <dt class="col-sm-4">Durum:</dt>
                         <dd class="col-sm-8">
-                            @if (Model.Aktif)
+                            @if (Model.AktifMi)
                             {
                                 <span class="badge bg-success">Aktif</span>
                             }
@@ -60,12 +60,17 @@
                         </dd>
                         
                         <dt class="col-sm-4">Oluşturma Tarihi:</dt>
-                        <dd class="col-sm-8">@(Model.OlusturmaTarihi.HasValue ? Model.OlusturmaTarihi.Value.ToString("dd.MM.yyyy HH:mm") : "-")</dd>
+                        <dd class="col-sm-8">@Model.OlusturmaTarihi.ToString("dd.MM.yyyy HH:mm")</dd>
+
+                        <dt class="col-sm-4">Son Güncelleme Tarihi:</dt>
+                        <dd class="col-sm-9">
+                            @(Model.GuncellemeTarihi.HasValue ? Model.GuncellemeTarihi.Value.ToString("dd.MM.yyyy HH:mm") : "-")
+                        </dd>
                     </dl>
                 </div>
             </div>
             
-            <form asp-action="Delete" method="post" class="mt-4">
+            <form asp-action="Delete" asp-route-id="@Model.CariID" method="post" class="mt-4">
                 <input type="hidden" asp-for="CariID" />
                 <div class="d-flex justify-content-between">
                     <a asp-action="Index" class="btn btn-secondary">İptal</a>

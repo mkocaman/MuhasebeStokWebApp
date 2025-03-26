@@ -5,59 +5,56 @@ using System.ComponentModel.DataAnnotations.Schema;
 
 namespace MuhasebeStokWebApp.Data.Entities
 {
-    public class Irsaliye
+    public class Irsaliye : BaseEntity, ISoftDelete
     {
+        public Irsaliye()
+        {
+            IrsaliyeDetaylari = new List<IrsaliyeDetay>();
+            IrsaliyeID = Guid.NewGuid();
+            Aktif = true;
+            Silindi = false;
+        }
+
         [Key]
         public Guid IrsaliyeID { get; set; }
         
-        public Guid? FaturaID { get; set; }
-        
         [Required]
-        public DateTime IrsaliyeTarihi { get; set; }
-        
-        [StringLength(200)]
-        public string Aciklama { get; set; }
-        
-        public Guid? OlusturanKullaniciID { get; set; }
-        
-        public Guid? SonGuncelleyenKullaniciID { get; set; }
-        
-        public DateTime OlusturmaTarihi { get; set; }
-        
-        public DateTime? GuncellemeTarihi { get; set; }
-        
-        public bool Aktif { get; set; } = true;
-        
-        public bool? Resmi { get; set; }
-        
-        [StringLength(50)]
+        [StringLength(20)]
         public string IrsaliyeNumarasi { get; set; }
         
+        [Required]
+        [Display(Name = "İrsaliye Tarihi")]
+        public DateTime IrsaliyeTarihi { get; set; }
+        
+        [Required]
         public Guid CariID { get; set; }
         
-        [StringLength(50)]
-        public string IrsaliyeTuru { get; set; } = "Standart";
+        public Guid? FaturaID { get; set; }
         
-        [StringLength(50)]
-        public string Durum { get; set; } = "Açık";
+        [StringLength(500)]
+        public string Aciklama { get; set; }
         
-        public bool SoftDelete { get; set; } = false;
+        [Required]
+        public string IrsaliyeTuru { get; set; }
+        
+        public bool Aktif { get; set; }
+        
+        public Guid OlusturanKullaniciId { get; set; }
+        
+        public Guid? SonGuncelleyenKullaniciId { get; set; }
+        
+        public bool Silindi { get; set; }
+        
+        [StringLength(20)]
+        public string Durum { get; set; } = "Açık"; // Varsayılan durum: Açık
         
         // Navigation properties
-        [ForeignKey("FaturaID")]
-        public virtual Fatura Fatura { get; set; }
-        
         [ForeignKey("CariID")]
         public virtual Cari Cari { get; set; }
         
-        public virtual ICollection<IrsaliyeDetay> IrsaliyeDetaylari { get; set; }
+        [ForeignKey("FaturaID")]
+        public virtual Fatura Fatura { get; set; }
         
-        public Irsaliye()
-        {
-            IrsaliyeDetaylari = new HashSet<IrsaliyeDetay>();
-            OlusturmaTarihi = DateTime.Now;
-            Aktif = true;
-            SoftDelete = false;
-        }
+        public virtual ICollection<IrsaliyeDetay> IrsaliyeDetaylari { get; set; }
     }
 } 

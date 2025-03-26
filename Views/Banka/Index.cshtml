@@ -1,106 +1,105 @@
 @model IEnumerable<MuhasebeStokWebApp.ViewModels.Banka.BankaViewModel>
 @{
     ViewData["Title"] = "Banka Listesi";
+    Layout = "~/Views/Shared/_Layout.cshtml";
 }
 
-<div class="container-fluid py-4">
-    <div class="row">
-        <div class="col-12">
-            <div class="card my-4">
-                <div class="card-header p-0 position-relative mt-n4 mx-3 z-index-2">
-                    <div class="bg-gradient-primary shadow-primary border-radius-lg pt-4 pb-3">
-                        <div class="row px-4">
-                            <div class="col-6">
-                                <h6 class="text-white text-capitalize">Banka Listesi</h6>
-                            </div>
-                            <div class="col-6 text-end">
-                                <a asp-action="Create" class="btn bg-gradient-success btn-sm mb-0">
-                                    <i class="material-icons text-sm">add</i> Yeni Banka Ekle
-                                </a>
-                            </div>
-                        </div>
-                    </div>
+<div class="container-fluid">
+    <div class="card">
+        <div class="card-header bg-primary text-white">
+            <div class="d-flex justify-content-between align-items-center">
+                <h4 class="mb-0">Banka Listesi</h4>
+                <a asp-action="Create" class="btn btn-success">
+                    <i class="fas fa-plus"></i> Yeni Banka Hesabı
+                </a>
+            </div>
+        </div>
+        <div class="card-body">
+            @if (TempData["SuccessMessage"] != null)
+            {
+                <div class="alert alert-success alert-dismissible fade show" role="alert">
+                    @TempData["SuccessMessage"]
+                    <button type="button" class="btn-close" data-bs-dismiss="alert" aria-label="Close"></button>
                 </div>
-                <div class="card-body px-0 pb-2">
-                    <div class="table-responsive p-0">
-                        <div class="px-4 pt-3">
-                            <form asp-action="Index" method="get" class="form-inline">
-                                <div class="input-group input-group-outline mb-3">
-                                    <label class="form-label">Banka Adı, Şube veya IBAN ile ara...</label>
-                                    <input type="text" name="searchString" class="form-control" />
-                                    <button type="submit" class="btn bg-gradient-info ms-2">
-                                        <i class="material-icons text-sm">search</i> Ara
-                                    </button>
-                                </div>
-                            </form>
-                        </div>
-                        <table class="table align-items-center mb-0">
-                            <thead>
-                                <tr>
-                                    <th class="text-uppercase text-secondary text-xxs font-weight-bolder opacity-7">Banka Adı</th>
-                                    <th class="text-uppercase text-secondary text-xxs font-weight-bolder opacity-7 ps-2">Şube Bilgileri</th>
-                                    <th class="text-uppercase text-secondary text-xxs font-weight-bolder opacity-7 ps-2">Hesap Bilgileri</th>
-                                    <th class="text-center text-uppercase text-secondary text-xxs font-weight-bolder opacity-7">Bakiye</th>
-                                    <th class="text-center text-uppercase text-secondary text-xxs font-weight-bolder opacity-7">Durum</th>
-                                    <th class="text-center text-uppercase text-secondary text-xxs font-weight-bolder opacity-7">İşlemler</th>
-                                </tr>
-                            </thead>
-                            <tbody>
-                                @foreach (var item in Model)
-                                {
-                                    <tr>
-                                        <td>
-                                            <div class="d-flex px-2 py-1">
-                                                <div class="d-flex flex-column justify-content-center">
-                                                    <h6 class="mb-0 text-sm">@item.BankaAdi</h6>
-                                                </div>
-                                            </div>
-                                        </td>
-                                        <td>
-                                            <p class="text-xs font-weight-bold mb-0">@item.SubeAdi</p>
-                                            <p class="text-xs text-secondary mb-0">Şube Kodu: @item.SubeKodu</p>
-                                        </td>
-                                        <td>
-                                            <p class="text-xs font-weight-bold mb-0">@item.HesapNo</p>
-                                            <p class="text-xs text-secondary mb-0">@item.IBAN</p>
-                                        </td>
-                                        <td class="align-middle text-center">
-                                            <span class="text-sm font-weight-bold @(item.GuncelBakiye >= 0 ? "text-success" : "text-danger")">
-                                                @item.GuncelBakiye.ToString("N2") @item.ParaBirimi
-                                            </span>
-                                        </td>
-                                        <td class="align-middle text-center text-sm">
-                                            @if (item.Aktif)
-                                            {
-                                                <span class="badge badge-sm bg-gradient-success">Aktif</span>
-                                            }
-                                            else
-                                            {
-                                                <span class="badge badge-sm bg-gradient-danger">Pasif</span>
-                                            }
-                                        </td>
-                                        <td class="align-middle text-center">
-                                            <div class="btn-group" role="group">
-                                                <a asp-action="Details" asp-route-id="@item.BankaID" class="btn btn-info btn-link btn-sm" data-toggle="tooltip" title="Detay">
-                                                    <i class="material-icons">visibility</i>
-                                                </a>
-                                                <a asp-action="Edit" asp-route-id="@item.BankaID" class="btn btn-primary btn-link btn-sm" data-toggle="tooltip" title="Düzenle">
-                                                    <i class="material-icons">edit</i>
-                                                </a>
-                                                <a asp-action="Hareketler" asp-route-id="@item.BankaID" class="btn btn-warning btn-link btn-sm" data-toggle="tooltip" title="Hareketler">
-                                                    <i class="material-icons">account_balance_wallet</i>
-                                                </a>
-                                                <a href="javascript:void(0);" onclick="confirmDelete('@item.BankaID', '@item.BankaAdi')" class="btn btn-danger btn-link btn-sm" data-toggle="tooltip" title="Sil">
-                                                    <i class="material-icons">delete</i>
-                                                </a>
-                                            </div>
-                                        </td>
-                                    </tr>
-                                }
-                            </tbody>
-                        </table>
-                    </div>
-                </div>
+            }
+            
+            <div class="table-responsive">
+                <table class="table table-bordered table-hover" id="bankaTable">
+                    <thead class="table-light">
+                        <tr>
+                            <th>Banka Adı</th>
+                            <th>Şube</th>
+                            <th>Hesap No</th>
+                            <th>IBAN</th>
+                            <th>Para Birimi</th>
+                            <th>Güncel Bakiye</th>
+                            <th>Durum</th>
+                            <th>İşlemler</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        @foreach (var item in Model)
+                        {
+                            <tr>
+                                <td>@item.BankaAdi</td>
+                                <td>@item.SubeAdi (@item.SubeKodu)</td>
+                                <td>@item.HesapNo</td>
+                                <td>@item.IBAN</td>
+                                <td>@item.ParaBirimi</td>
+                                <td class="text-end">@item.GuncelBakiye.ToString("N2")</td>
+                                <td>
+                                    @if (item.Aktif)
+                                    {
+                                        <span class="badge bg-success">Aktif</span>
+                                    }
+                                    else
+                                    {
+                                        <span class="badge bg-danger">Pasif</span>
+                                    }
+                                </td>
+                                <td>
+                                    <div class="btn-group" role="group">
+                                        <a asp-action="Details" asp-route-id="@item.BankaID" class="btn btn-sm btn-info" title="Detay">
+                                            <i class="fas fa-eye"></i>
+                                        </a>
+                                        <a asp-action="Edit" asp-route-id="@item.BankaID" class="btn btn-sm btn-warning" title="Düzenle">
+                                            <i class="fas fa-edit"></i>
+                                        </a>
+                                        <a asp-action="Hareketler" asp-route-id="@item.BankaID" class="btn btn-sm btn-primary" title="Hareketler">
+                                            <i class="fas fa-exchange-alt"></i>
+                                        </a>
+                                        <a href="javascript:void(0);" onclick="showDeleteModal('@item.BankaID')" class="btn btn-sm btn-danger" title="Sil">
+                                            <i class="fas fa-trash"></i>
+                                        </a>
+                                    </div>
+                                </td>
+                            </tr>
+                        }
+                    </tbody>
+                </table>
+            </div>
+        </div>
+    </div>
+</div>
+
+<!-- Silme Onay Modal -->
+<div class="modal fade" id="deleteModal" tabindex="-1" role="dialog" aria-labelledby="deleteModalLabel" aria-hidden="true">
+    <div class="modal-dialog" role="document">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h5 class="modal-title" id="deleteModalLabel">Banka Hesabı Sil</h5>
+                <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+            </div>
+            <div class="modal-body">
+                <p>Bu banka hesabını silmek istediğinize emin misiniz?</p>
+            </div>
+            <div class="modal-footer">
+                <form id="deleteForm" asp-action="Delete" method="post">
+                    <input type="hidden" id="deleteId" name="id" />
+                    @Html.AntiForgeryToken()
+                    <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">İptal</button>
+                    <button type="submit" class="btn btn-danger">Sil</button>
+                </form>
             </div>
         </div>
     </div>
@@ -108,21 +107,17 @@
 
 @section Scripts {
     <script>
-        function confirmDelete(id, name) {
-            if (confirm(`"${name}" isimli banka hesabını silmek istediğinize emin misiniz?`)) {
-                var form = document.createElement("form");
-                form.method = "POST";
-                form.action = "/Banka/Delete/" + id;
-                
-                var antiForgeryToken = document.createElement("input");
-                antiForgeryToken.type = "hidden";
-                antiForgeryToken.name = "__RequestVerificationToken";
-                antiForgeryToken.value = document.querySelector('input[name="__RequestVerificationToken"]').value;
-                
-                form.appendChild(antiForgeryToken);
-                document.body.appendChild(form);
-                form.submit();
-            }
+        $(document).ready(function () {
+            $('#bankaTable').DataTable({
+                language: {
+                    url: '//cdn.datatables.net/plug-ins/1.13.7/i18n/tr.json'
+                }
+            });
+        });
+
+        function showDeleteModal(id) {
+            $('#deleteId').val(id);
+            $('#deleteModal').modal('show');
         }
     </script>
 } 

@@ -16,6 +16,31 @@
     </div>
 </div>
 
+@if (!ViewData.ModelState.IsValid)
+{
+    <div class="alert alert-danger alert-dismissible fade show" role="alert">
+        <h5>Form hatalarını düzeltin:</h5>
+        <ul>
+            @foreach (var modelState in ViewData.ModelState.Values)
+            {
+                foreach (var error in modelState.Errors)
+                {
+                    <li>@error.ErrorMessage</li>
+                }
+            }
+        </ul>
+        <button type="button" class="btn-close" data-bs-dismiss="alert" aria-label="Close"></button>
+    </div>
+}
+
+@if (TempData["ErrorMessage"] != null)
+{
+    <div class="alert alert-danger alert-dismissible fade show" role="alert">
+        <strong>Hata!</strong> @TempData["ErrorMessage"]
+        <button type="button" class="btn-close" data-bs-dismiss="alert" aria-label="Close"></button>
+    </div>
+}
+
 <div class="row">
     <div class="col-12">
         <div class="card">
@@ -23,17 +48,35 @@
                 <h5>@Model.Ad Menüsünü Düzenle</h5>
             </div>
             <div class="card-body">
-                <form asp-action="Edit" method="post">
+                <form asp-action="Edit" method="post" id="editMenuForm">
                     <div asp-validation-summary="ModelOnly" class="text-danger"></div>
                     <input type="hidden" asp-for="MenuID" />
                     
-                    @if (Model.ParentId.HasValue)
+                    @if (Model.ParentMenu != null)
                     {
                         <div class="row mb-3">
                             <label class="col-sm-3 col-form-label">Üst Menü</label>
                             <div class="col-sm-9">
-                                <input type="text" class="form-control" value="@Model.ParentMenu?.Ad" disabled />
+                                <input type="text" class="form-control" value="@Model.ParentMenu.Ad" disabled />
                                 <input type="hidden" asp-for="ParentId" />
+                            </div>
+                        </div>
+                    }
+                    else 
+                    {
+                        <div class="row mb-3">
+                            <label class="col-sm-3 col-form-label">Üst Menü</label>
+                            <div class="col-sm-9">
+                                <select name="ParentId" class="form-select">
+                                    <option value="">Üst Menü Yok (Ana Menü)</option>
+                                    @if (ViewBag.ParentMenuOptions != null)
+                                    {
+                                        @foreach (var item in ViewBag.ParentMenuOptions)
+                                        {
+                                            <option value="@item.Value" selected="@(Model.ParentId?.ToString() == item.Value)">@item.Text</option>
+                                        }
+                                    }
+                                </select>
                             </div>
                         </div>
                     }
@@ -41,7 +84,7 @@
                     <div class="row mb-3">
                         <label asp-for="Ad" class="col-sm-3 col-form-label"></label>
                         <div class="col-sm-9">
-                            <input asp-for="Ad" class="form-control" />
+                            <input asp-for="Ad" class="form-control" required />
                             <span asp-validation-for="Ad" class="text-danger"></span>
                         </div>
                     </div>
@@ -122,7 +165,7 @@
                                 }
                             </select>
                             <span asp-validation-for="SelectedRoleIds" class="text-danger"></span>
-                            <small class="form-text text-muted">Birden fazla rol seçmek için CTRL tuşuna basarak seçim yapabilirsiniz.</small>
+                            <small class="form-text text-muted">Birden fazla rol seçmek için CTRL tuşuna basarak seçim yapabilirsiniz. Rol seçimi zorunlu değildir, seçim yapılmazsa varsayılan olarak Admin rolü eklenecektir.</small>
                         </div>
                     </div>
                     
@@ -158,6 +201,39 @@
                     $('#controllerActionGroup').hide();
                     $('#urlGroup').show();
                 }
+            });
+            
+            // Form submit kontrolü
+            $('#editMenuForm').on('submit', function(e) {
+                var ad = $('#Ad').val().trim();
+                
+                if (!ad) {
+                    e.preventDefault();
+                    alert('Menü Adı alanı boş bırakılamaz!');
+                    $('#Ad').focus();
+                    return false;
+                }
+                
+                var menuType = $('#menuType').val();
+                
+                if (menuType === 'controller') {
+                    var controller = $('#Controller').val().trim();
+                    var action = $('#Action').val().trim();
+                    
+                    if (!controller && !action) {
+                        // Controller/Action boş olabilir, ama bunu log kaydı için bildirelim
+                        console.log('Controller ve Action alanları boş!');
+                    }
+                } else {
+                    var url = $('#Url').val().trim();
+                    
+                    if (!url) {
+                        // URL boş olabilir, varsayılan # değeri kullanılacak
+                        console.log('URL alanı boş, varsayılan # değeri kullanılacak');
+                    }
+                }
+                
+                return true;
             });
         });
     </script>

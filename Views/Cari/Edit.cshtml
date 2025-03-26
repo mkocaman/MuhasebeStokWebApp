@@ -28,14 +28,14 @@
                 </div>
                 <div class="card-body">
                     <form asp-action="Edit" method="post">
-                        <input type="hidden" asp-for="CariID" />
+                        <input type="hidden" asp-for="Id" />
                         
                         <div class="row mb-3">
                             <div class="col-md-6">
                                 <div class="form-group">
-                                    <label asp-for="CariAdi" class="control-label">Cari Adı</label>
-                                    <input asp-for="CariAdi" class="form-control" />
-                                    <span asp-validation-for="CariAdi" class="text-danger"></span>
+                                    <label asp-for="Ad" class="control-label">Cari Adı</label>
+                                    <input asp-for="Ad" class="form-control" />
+                                    <span asp-validation-for="Ad" class="text-danger"></span>
                                 </div>
                             </div>
                             <div class="col-md-6">
@@ -74,9 +74,9 @@
                             </div>
                             <div class="col-md-6">
                                 <div class="form-group">
-                                    <label asp-for="Bakiye" class="control-label">Güncel Bakiye</label>
-                                    <input asp-for="Bakiye" class="form-control" type="number" step="0.01" />
-                                    <span asp-validation-for="Bakiye" class="text-danger"></span>
+                                    <label asp-for="BaslangicBakiye" class="control-label">Başlangıç Bakiye</label>
+                                    <input asp-for="BaslangicBakiye" class="form-control" type="number" step="0.01" />
+                                    <span asp-validation-for="BaslangicBakiye" class="text-danger"></span>
                                 </div>
                             </div>
                         </div>
@@ -100,7 +100,7 @@
                         
                         <div class="form-group row mt-3">
                             <div class="col-sm-12 text-end">
-                                <a asp-action="Details" asp-route-id="@Model.CariID" class="btn btn-secondary">İptal</a>
+                                <a asp-action="Details" asp-route-id="@Model.Id" class="btn btn-secondary">İptal</a>
                                 <button type="submit" class="btn btn-primary">Kaydet</button>
                             </div>
                         </div>

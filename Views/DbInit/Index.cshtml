@@ -1,0 +1,110 @@
+@{
+    ViewData["Title"] = "Veritabanı İşlemleri";
+}
+
+<div class="container-fluid">
+    <div class="row">
+        <div class="col-md-12">
+            <div class="card">
+                <div class="card-header">
+                    <h5>Veritabanı İşlemleri</h5>
+                </div>
+                <div class="card-body">
+                    @if (TempData["Message"] != null)
+                    {
+                        <div class="alert alert-@(TempData["MessageType"] ?? "info") alert-dismissible fade show" role="alert">
+                            @TempData["Message"]
+                            <button type="button" class="btn-close" data-bs-dismiss="alert" aria-label="Close"></button>
+                        </div>
+                    }
+
+                    <div class="row">
+                        <div class="col-md-6">
+                            <div class="card">
+                                <div class="card-header">
+                                    <h6>Mevcut Durum</h6>
+                                </div>
+                                <div class="card-body">
+                                    <table class="table table-bordered">
+                                        <thead>
+                                            <tr>
+                                                <th>Tablo</th>
+                                                <th>Kayıt Sayısı</th>
+                                            </tr>
+                                        </thead>
+                                        <tbody>
+                                            <tr>
+                                                <td>Sistem Ayarları</td>
+                                                <td>@ViewBag.SistemAyarlari</td>
+                                            </tr>
+                                            <tr>
+                                                <td>Para Birimleri</td>
+                                                <td>@ViewBag.ParaBirimleri</td>
+                                            </tr>
+                                            <tr>
+                                                <td>Kur Değerleri</td>
+                                                <td>@ViewBag.KurDegerleri</td>
+                                            </tr>
+                                            <tr>
+                                                <td>Döviz Kurları</td>
+                                                <td>@ViewBag.DovizKurlari</td>
+                                            </tr>
+                                        </tbody>
+                                    </table>
+                                </div>
+                            </div>
+                        </div>
+                        <div class="col-md-6">
+                            <div class="card">
+                                <div class="card-header">
+                                    <h6>İşlemler</h6>
+                                </div>
+                                <div class="card-body">
+                                    <div class="row mb-3">
+                                        <div class="col">
+                                            <a href="@Url.Action("InitParaBirimleri")" class="btn btn-primary btn-block w-100">
+                                                <i class="fa fa-money-bill-wave me-2"></i> Para Birimlerini Oluştur
+                                            </a>
+                                        </div>
+                                    </div>
+                                    <div class="row mb-3">
+                                        <div class="col">
+                                            <a href="@Url.Action("InitSistemAyarlari")" class="btn btn-success btn-block w-100">
+                                                <i class="fa fa-cogs me-2"></i> Sistem Ayarlarını Oluştur
+                                            </a>
+                                        </div>
+                                    </div>
+                                    <div class="row mb-3">
+                                        <div class="col">
+                                            <a href="@Url.Action("InitKurDegerleri")" class="btn btn-info btn-block w-100">
+                                                <i class="fa fa-exchange-alt me-2"></i> Kur Değerlerini Oluştur
+                                            </a>
+                                        </div>
+                                    </div>
+                                    <div class="row">
+                                        <div class="col">
+                                            <a href="@Url.Action("InitAll")" class="btn btn-warning btn-block w-100">
+                                                <i class="fa fa-magic me-2"></i> Tümünü Oluştur
+                                            </a>
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+
+@section Scripts {
+    <script>
+        $(document).ready(function() {
+            // İşlemler bittiğinde 2 saniye sonra bildirim mesajını kapat
+            setTimeout(function() {
+                $('.alert').alert('close');
+            }, 5000);
+        });
+    </script>
+} 

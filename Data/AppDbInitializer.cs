@@ -17,7 +17,7 @@ namespace MuhasebeStokWebApp.Data
             
             // Identity rolleri ve kullanıcılar
             var roleManager = serviceProvider.GetService<RoleManager<IdentityRole>>();
-            var userManager = serviceProvider.GetService<UserManager<IdentityUser>>();
+            var userManager = serviceProvider.GetService<UserManager<ApplicationUser>>();
             
             if (roleManager != null && userManager != null)
             {
@@ -56,19 +56,54 @@ namespace MuhasebeStokWebApp.Data
             }
         }
         
-        private static async Task SeedUsers(UserManager<IdentityUser> userManager)
+        private static async Task SeedUsers(UserManager<ApplicationUser> userManager)
         {
-            // Admin kullanıcısı yoksa ekle
-            if (await userManager.FindByNameAsync("admin") == null)
+            // Mevcut admin kullanıcısını kontrol et
+            var existingAdmin = await userManager.FindByNameAsync("admin");
+            
+            if (existingAdmin != null)
             {
-                var adminUser = new IdentityUser
+                // Kilidi sıfırla
+                await userManager.SetLockoutEndDateAsync(existingAdmin, null);
+                await userManager.ResetAccessFailedCountAsync(existingAdmin);
+                
+                // Şifreyi sıfırla ve basit bir şifre kullan
+                string newPassword = "admin123";
+                
+                // Password validator'ı geçici olarak devre dışı bırak
+                var passwordValidators = userManager.PasswordValidators.ToList();
+                userManager.PasswordValidators.Clear();
+                
+                var token = await userManager.GeneratePasswordResetTokenAsync(existingAdmin);
+                var result = await userManager.ResetPasswordAsync(existingAdmin, token, newPassword);
+                
+                // Password validator'ları geri yükle
+                foreach (var validator in passwordValidators)
+                {
+                    userManager.PasswordValidators.Add(validator);
+                }
+            }
+            else
+            {
+                // Admin kullanıcısı yoksa ekle
+                var adminUser = new ApplicationUser
                 {
                     UserName = "admin",
                     Email = "admin@example.com",
                     EmailConfirmed = true
                 };
                 
+                // Password validator'ı geçici olarak devre dışı bırak
+                var passwordValidators = userManager.PasswordValidators.ToList();
+                userManager.PasswordValidators.Clear();
+                
                 var result = await userManager.CreateAsync(adminUser, "admin123");
+                
+                // Password validator'ları geri yükle
+                foreach (var validator in passwordValidators)
+                {
+                    userManager.PasswordValidators.Add(validator);
+                }
                 
                 if (result.Succeeded)
                 {

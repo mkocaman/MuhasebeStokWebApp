@@ -7,27 +7,48 @@ using Microsoft.AspNetCore.Identity;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.AspNetCore.Mvc.Rendering;
 using Microsoft.EntityFrameworkCore;
+using Microsoft.Extensions.Logging;
 using MuhasebeStokWebApp.Data;
 using MuhasebeStokWebApp.Data.Entities;
+using MuhasebeStokWebApp.Data.Repositories;
+using System.Security.Claims;
 using MuhasebeStokWebApp.ViewModels.Banka;
+using MuhasebeStokWebApp.Services;
+using MuhasebeStokWebApp.Models;
+using MuhasebeStokWebApp.Services.Menu;
+using MuhasebeStokWebApp.Services.Interfaces;
 
 namespace MuhasebeStokWebApp.Controllers
 {
-    // [Authorize] attribute'ü kaldırıldı - geliştirme sürecinde geçici olarak
-    public class BankaController : Controller
+    [Authorize]
+    public class BankaController : BaseController
     {
         private readonly ApplicationDbContext _context;
+        private readonly IUnitOfWork _unitOfWork;
+        private readonly ILogger<BankaController> _logger;
+        private readonly ILogService _logService;
 
-        public BankaController(ApplicationDbContext context)
+        public BankaController(
+            ApplicationDbContext context, 
+            IUnitOfWork unitOfWork,
+            IMenuService menuService,
+            UserManager<ApplicationUser> userManager,
+            RoleManager<IdentityRole> roleManager,
+            ILogService logService,
+            ILogger<BankaController> logger)
+            : base(menuService, userManager, roleManager, logService)
         {
             _context = context;
+            _unitOfWork = unitOfWork;
+            _logger = logger;
+            _logService = logService;
         }
 
         // GET: Banka
         public async Task<IActionResult> Index()
         {
             var bankalar = await _context.Bankalar
-                .Where(b => !b.SoftDelete)
+                .Where(b => !b.Silindi)
                 .OrderByDescending(b => b.OlusturmaTarihi)
                 .Select(b => new BankaViewModel
                 {
@@ -59,7 +80,7 @@ namespace MuhasebeStokWebApp.Controllers
             }
 
             var banka = await _context.Bankalar
-                .FirstOrDefaultAsync(b => b.BankaID == id && !b.SoftDelete);
+                .FirstOrDefaultAsync(b => b.BankaID == id && !b.Silindi);
 
             if (banka == null)
             {
@@ -90,7 +111,13 @@ namespace MuhasebeStokWebApp.Controllers
         {
             return View(new BankaCreateViewModel
             {
-                ParaBirimi = "TRY" // varsayılan olarak TL
+                BankaAdi = string.Empty,
+                SubeAdi = string.Empty,
+                SubeKodu = string.Empty,
+                HesapNo = string.Empty,
+                IBAN = string.Empty,
+                ParaBirimi = "TRY", // varsayılan olarak TL
+                Aciklama = string.Empty
             });
         }
 
@@ -116,7 +143,7 @@ namespace MuhasebeStokWebApp.Controllers
                     Aktif = model.Aktif,
                     OlusturanKullaniciID = GetCurrentUserId(),
                     OlusturmaTarihi = DateTime.Now,
-                    SoftDelete = false
+                    Silindi = false
                 };
 
                 _context.Add(banka);
@@ -137,7 +164,7 @@ namespace MuhasebeStokWebApp.Controllers
                         Aciklama = "Banka hesap açılış bakiyesi",
                         IslemYapanKullaniciID = GetCurrentUserId(),
                         OlusturmaTarihi = DateTime.Now,
-                        SoftDelete = false
+                        Silindi = false
                     };
 
                     _context.Add(bankaHareket);
@@ -160,7 +187,7 @@ namespace MuhasebeStokWebApp.Controllers
             }
 
             var banka = await _context.Bankalar
-                .FirstOrDefaultAsync(b => b.BankaID == id && !b.SoftDelete);
+                .FirstOrDefaultAsync(b => b.BankaID == id && !b.Silindi);
 
             if (banka == null)
             {
@@ -200,7 +227,7 @@ namespace MuhasebeStokWebApp.Controllers
                 try
                 {
                     var banka = await _context.Bankalar
-                        .FirstOrDefaultAsync(b => b.BankaID == id && !b.SoftDelete);
+                        .FirstOrDefaultAsync(b => b.BankaID == id && !b.Silindi);
 
                     if (banka == null)
                     {
@@ -240,7 +267,7 @@ namespace MuhasebeStokWebApp.Controllers
                             Aciklama = "Banka hesap açılış bakiyesi düzeltme",
                             IslemYapanKullaniciID = GetCurrentUserId(),
                             OlusturmaTarihi = DateTime.Now,
-                            SoftDelete = false
+                            Silindi = false
                         };
 
                         _context.Add(bankaHareket);
@@ -274,7 +301,7 @@ namespace MuhasebeStokWebApp.Controllers
             }
 
             var banka = await _context.Bankalar
-                .FirstOrDefaultAsync(b => b.BankaID == id && !b.SoftDelete);
+                .FirstOrDefaultAsync(b => b.BankaID == id && !b.Silindi);
 
             if (banka == null)
             {
@@ -306,7 +333,7 @@ namespace MuhasebeStokWebApp.Controllers
         public async Task<IActionResult> DeleteConfirmed(Guid id)
         {
             var banka = await _context.Bankalar
-                .FirstOrDefaultAsync(b => b.BankaID == id && !b.SoftDelete);
+                .FirstOrDefaultAsync(b => b.BankaID == id && !b.Silindi);
 
             if (banka == null)
             {
@@ -314,7 +341,7 @@ namespace MuhasebeStokWebApp.Controllers
             }
 
             // Soft delete işlemi
-            banka.SoftDelete = true;
+            banka.Silindi = true;
             banka.SonGuncelleyenKullaniciID = GetCurrentUserId();
             banka.GuncellemeTarihi = DateTime.Now;
             
@@ -334,7 +361,7 @@ namespace MuhasebeStokWebApp.Controllers
             }
 
             var banka = await _context.Bankalar
-                .FirstOrDefaultAsync(b => b.BankaID == id && !b.SoftDelete);
+                .FirstOrDefaultAsync(b => b.BankaID == id && !b.Silindi);
 
             if (banka == null)
             {
@@ -342,7 +369,7 @@ namespace MuhasebeStokWebApp.Controllers
             }
 
             var hareketler = await _context.BankaHareketleri
-                .Where(h => h.BankaID == id && !h.SoftDelete)
+                .Where(h => h.BankaID == id && !h.Silindi)
                 .OrderByDescending(h => h.Tarih)
                 .Include(h => h.Cari)
                 .Select(h => new BankaHareketViewModel
@@ -355,13 +382,13 @@ namespace MuhasebeStokWebApp.Controllers
                     Tarih = h.Tarih,
                     ReferansNo = h.ReferansNo,
                     ReferansTuru = h.ReferansTuru,
-                    DekontNo = h.DekontNo,
                     Aciklama = h.Aciklama,
+                    DekontNo = h.DekontNo,
                     KarsiUnvan = h.KarsiUnvan,
                     KarsiBankaAdi = h.KarsiBankaAdi,
                     KarsiIBAN = h.KarsiIBAN,
                     CariID = h.CariID,
-                    CariAdi = h.Cari != null ? h.Cari.CariAdi : null
+                    CariAdi = h.Cari != null ? h.Cari.Ad : null
                 })
                 .ToListAsync();
 
@@ -370,11 +397,13 @@ namespace MuhasebeStokWebApp.Controllers
                 BankaID = banka.BankaID,
                 BankaAdi = banka.BankaAdi,
                 SubeAdi = banka.SubeAdi,
+                SubeKodu = banka.SubeKodu,
                 HesapNo = banka.HesapNo,
                 IBAN = banka.IBAN,
                 ParaBirimi = banka.ParaBirimi,
                 AcilisBakiye = banka.AcilisBakiye,
-                GuncelBakiye = banka.GuncelBakiye
+                GuncelBakiye = banka.GuncelBakiye,
+                Aciklama = banka.Aciklama
             };
 
             return View(hareketler);
@@ -384,13 +413,13 @@ namespace MuhasebeStokWebApp.Controllers
         public async Task<IActionResult> YeniHareket()
         {
             var bankalar = await _context.Bankalar
-                .Where(b => !b.SoftDelete && b.Aktif)
+                .Where(b => !b.Silindi && b.Aktif)
                 .OrderBy(b => b.BankaAdi)
                 .ToListAsync();
             
             var cariler = await _context.Cariler
-                .Where(c => !c.SoftDelete && c.Aktif)
-                .OrderBy(c => c.CariAdi)
+                .Where(c => !c.Silindi && c.AktifMi)
+                .OrderBy(c => c.Ad)
                 .ToListAsync();
 
             ViewBag.Bankalar = bankalar;
@@ -416,7 +445,7 @@ namespace MuhasebeStokWebApp.Controllers
             if (ModelState.IsValid)
             {
                 var banka = await _context.Bankalar
-                    .FirstOrDefaultAsync(b => b.BankaID == hareket.BankaID && !b.SoftDelete);
+                    .FirstOrDefaultAsync(b => b.BankaID == hareket.BankaID && !b.Silindi);
 
                 if (banka == null)
                 {
@@ -427,7 +456,7 @@ namespace MuhasebeStokWebApp.Controllers
                 hareket.Tarih = DateTime.Now;
                 hareket.IslemYapanKullaniciID = GetCurrentUserId();
                 hareket.OlusturmaTarihi = DateTime.Now;
-                hareket.SoftDelete = false;
+                hareket.Silindi = false;
                 
                 // ReferansTuru alanını HareketTuru ile aynı yapalım
                 hareket.ReferansTuru = hareket.HareketTuru;
@@ -457,13 +486,13 @@ namespace MuhasebeStokWebApp.Controllers
             }
 
             var bankalar = await _context.Bankalar
-                .Where(b => !b.SoftDelete && b.Aktif)
+                .Where(b => !b.Silindi && b.Aktif)
                 .OrderBy(b => b.BankaAdi)
                 .ToListAsync();
             
             var cariler = await _context.Cariler
-                .Where(c => !c.SoftDelete && c.Aktif)
-                .OrderBy(c => c.CariAdi)
+                .Where(c => !c.Silindi && c.AktifMi)
+                .OrderBy(c => c.Ad)
                 .ToListAsync();
 
             ViewBag.Bankalar = bankalar;
@@ -483,7 +512,7 @@ namespace MuhasebeStokWebApp.Controllers
 
         private bool BankaExists(Guid id)
         {
-            return _context.Bankalar.Any(e => e.BankaID == id && !e.SoftDelete);
+            return _context.Bankalar.Any(e => e.BankaID == id && !e.Silindi);
         }
 
         private Guid? GetCurrentUserId()

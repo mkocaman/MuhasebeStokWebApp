@@ -137,13 +137,13 @@
         
         <div class="document-info">
             <h3 class="section-title">İrsaliye Bilgileri</h3>
-            <p><strong>İrsaliye Tarihi:</strong> @(Model.IrsaliyeTarihi.HasValue ? Model.IrsaliyeTarihi.Value.ToString("dd.MM.yyyy") : "")</p>
+            <p><strong>İrsaliye Tarihi:</strong> @Model.IrsaliyeTarihi.ToString("dd.MM.yyyy")</p>
             <p><strong>İrsaliye Türü:</strong> @Model.IrsaliyeTuru</p>
             @if (!string.IsNullOrEmpty(Model.FaturaNumarasi))
             {
                 <p><strong>İlgili Fatura:</strong> @Model.FaturaNumarasi</p>
             }
-            <p><strong>Durum:</strong> @Model.Durum</p>
+            <p><strong>Durum:</strong> @(Model.Aktif ? "Aktif" : "Pasif")</p>
         </div>
     </div>
     
@@ -159,10 +159,10 @@
             </tr>
         </thead>
         <tbody>
-            @foreach (var detay in Model.Detaylar)
+            @foreach (var detay in Model.IrsaliyeDetaylari)
             {
                 <tr>
-                    <td>@(Model.Detaylar.IndexOf(detay) + 1)</td>
+                    <td>@(Model.IrsaliyeDetaylari.ToList().IndexOf(detay) + 1)</td>
                     <td>@detay.UrunKodu</td>
                     <td>@detay.UrunAdi</td>
                     <td>@detay.Miktar.ToString("N2")</td>

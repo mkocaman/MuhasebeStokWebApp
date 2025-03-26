@@ -10,6 +10,7 @@ namespace MuhasebeStokWebApp.Services
     {
         Task<List<MenuViewModel>> GetMenuHierarchyAsync();
         Task<List<MenuViewModel>> GetSidebarMenuByRolIdAsync(string rolId);
+        Task<List<MenuViewModel>> GetActiveSidebarMenusAsync(string? userId);
         Task<Data.Entities.Menu> GetMenuByIdAsync(Guid id);
         Task<bool> AddMenuAsync(Data.Entities.Menu menu);
         Task<bool> UpdateMenuAsync(Data.Entities.Menu menu);

@@ -1,0 +1,183 @@
+@model MuhasebeStokWebApp.ViewModels.SistemAyar.BildirimAyarlariViewModel
+
+@{
+    ViewData["Title"] = "Bildirim Ayarları";
+}
+
+<div class="content-header">
+    <div class="container-fluid">
+        <div class="row mb-2">
+            <div class="col-sm-6">
+                <h1 class="m-0">Bildirim Ayarları</h1>
+            </div>
+            <div class="col-sm-6">
+                <ol class="breadcrumb float-sm-right">
+                    <li class="breadcrumb-item"><a href="/">Ana Sayfa</a></li>
+                    <li class="breadcrumb-item"><a asp-controller="SistemAyar" asp-action="Index">Sistem Ayarları</a></li>
+                    <li class="breadcrumb-item active">Bildirim Ayarları</li>
+                </ol>
+            </div>
+        </div>
+    </div>
+</div>
+
+<div class="content">
+    <div class="container-fluid">
+        @if (TempData["Success"] != null)
+        {
+            <div class="alert alert-success alert-dismissible fade show" role="alert">
+                @TempData["Success"]
+                <button type="button" class="close" data-dismiss="alert" aria-label="Close">
+                    <span aria-hidden="true">&times;</span>
+                </button>
+            </div>
+        }
+        
+        <div class="card">
+            <div class="card-header">
+                <h3 class="card-title">Bildirim Ayarları</h3>
+            </div>
+            <div class="card-body">
+                <form asp-action="BildirimAyarlari" method="post">
+                    <div asp-validation-summary="ModelOnly" class="text-danger"></div>
+
+                    <div class="card">
+                        <div class="card-header bg-light">
+                            <h3 class="card-title">Genel Bildirim Ayarları</h3>
+                        </div>
+                        <div class="card-body">
+                            <div class="row">
+                                <div class="col-md-6">
+                                    <div class="form-group">
+                                        <div class="checkbox">
+                                            <label>
+                                                <input asp-for="BildirimAktif" /> @Html.DisplayNameFor(model => model.BildirimAktif)
+                                            </label>
+                                        </div>
+                                    </div>
+                                </div>
+                                <div class="col-md-6">
+                                    <div class="form-group">
+                                        <div class="checkbox">
+                                            <label>
+                                                <input asp-for="OtomatikBildirimler" /> @Html.DisplayNameFor(model => model.OtomatikBildirimler)
+                                            </label>
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+                            <div class="row">
+                                <div class="col-md-6">
+                                    <div class="form-group">
+                                        <label asp-for="BildirimOzetiSikligi" class="control-label"></label>
+                                        <select asp-for="BildirimOzetiSikligi" class="form-control">
+                                            <option value="Günlük">Günlük</option>
+                                            <option value="Haftalık">Haftalık</option>
+                                            <option value="Aylık">Aylık</option>
+                                            <option value="Hiçbir zaman">Hiçbir zaman</option>
+                                        </select>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+
+                    <div class="card mt-4">
+                        <div class="card-header bg-light">
+                            <h3 class="card-title">Bildirim Kanalları</h3>
+                        </div>
+                        <div class="card-body">
+                            <div class="row">
+                                <div class="col-md-6">
+                                    <div class="form-group">
+                                        <div class="checkbox">
+                                            <label>
+                                                <input asp-for="EmailBildirimAktif" /> @Html.DisplayNameFor(model => model.EmailBildirimAktif)
+                                            </label>
+                                        </div>
+                                    </div>
+                                </div>
+                                <div class="col-md-6">
+                                    <div class="form-group">
+                                        <div class="checkbox">
+                                            <label>
+                                                <input asp-for="PushBildirimAktif" /> @Html.DisplayNameFor(model => model.PushBildirimAktif)
+                                            </label>
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+
+                    <div class="card mt-4">
+                        <div class="card-header bg-light">
+                            <h3 class="card-title">Bildirim Türleri</h3>
+                        </div>
+                        <div class="card-body">
+                            <div class="row">
+                                <div class="col-md-6">
+                                    <div class="form-group">
+                                        <div class="checkbox">
+                                            <label>
+                                                <input asp-for="KritikOlayBildirimleri" /> @Html.DisplayNameFor(model => model.KritikOlayBildirimleri)
+                                            </label>
+                                        </div>
+                                    </div>
+                                </div>
+                                <div class="col-md-6">
+                                    <div class="form-group">
+                                        <div class="checkbox">
+                                            <label>
+                                                <input asp-for="StokUyariBildirimleri" /> @Html.DisplayNameFor(model => model.StokUyariBildirimleri)
+                                            </label>
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+                            <div class="row">
+                                <div class="col-md-6">
+                                    <div class="form-group">
+                                        <div class="checkbox">
+                                            <label>
+                                                <input asp-for="TahsilatOdemeBildirimleri" /> @Html.DisplayNameFor(model => model.TahsilatOdemeBildirimleri)
+                                            </label>
+                                        </div>
+                                    </div>
+                                </div>
+                                <div class="col-md-6">
+                                    <div class="form-group">
+                                        <div class="checkbox">
+                                            <label>
+                                                <input asp-for="YeniSiparisBildirimleri" /> @Html.DisplayNameFor(model => model.YeniSiparisBildirimleri)
+                                            </label>
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+
+                    <div class="form-group mt-4">
+                        <button type="submit" class="btn btn-primary">Kaydet</button>
+                        <a asp-action="Index" class="btn btn-secondary">İptal</a>
+                    </div>
+                </form>
+            </div>
+        </div>
+    </div>
+</div>
+
+@section Scripts {
+    @{await Html.RenderPartialAsync("_ValidationScriptsPartial");}
+    <script>
+        $(document).ready(function() {
+            // 4 saniye sonra uyarıları otomatik olarak kapat
+            setTimeout(function() {
+                $('.alert').fadeOut('slow', function() {
+                    $(this).remove();
+                });
+            }, 4000);
+        });
+    </script>
+} 

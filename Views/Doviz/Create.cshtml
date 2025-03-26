@@ -1,0 +1,138 @@
+@model MuhasebeStokWebApp.ViewModels.Doviz.DovizCreateViewModel
+
+@{
+    ViewData["Title"] = "Yeni Para Birimi";
+    Layout = "~/Views/Shared/_Layout.cshtml";
+}
+
+<div class="container-fluid">
+    <div class="page-title">
+        <div class="row">
+            <div class="col-6">
+                <h3>Yeni Para Birimi</h3>
+            </div>
+            <div class="col-6">
+                <ol class="breadcrumb">
+                    <li class="breadcrumb-item"><a href="/"><i data-feather="home"></i></a></li>
+                    <li class="breadcrumb-item"><a asp-action="Index">Para Birimleri</a></li>
+                    <li class="breadcrumb-item active">Yeni Para Birimi</li>
+                </ol>
+            </div>
+        </div>
+    </div>
+</div>
+
+<div class="container-fluid">
+    <div class="row">
+        <div class="col-md-12">
+            <div class="card">
+                <div class="card-header">
+                    <h5 class="mb-0">Para Birimi Bilgileri</h5>
+                </div>
+                <form asp-action="Create" method="post">
+                    <div class="card-body">
+                        <div asp-validation-summary="ModelOnly" class="alert alert-danger" role="alert"></div>
+
+                        <div class="row">
+                            <div class="col-md-6">
+                                <div class="mb-3">
+                                    <label asp-for="Kod" class="form-label"></label>
+                                    <input asp-for="Kod" class="form-control" placeholder="Döviz kodu giriniz (ör: USD)" />
+                                    <span asp-validation-for="Kod" class="text-danger"></span>
+                                </div>
+                            </div>
+                            <div class="col-md-6">
+                                <div class="mb-3">
+                                    <label asp-for="Ad" class="form-label"></label>
+                                    <input asp-for="Ad" class="form-control" placeholder="Döviz adı giriniz (ör: Amerikan Doları)" />
+                                    <span asp-validation-for="Ad" class="text-danger"></span>
+                                </div>
+                            </div>
+                        </div>
+
+                        <div class="row">
+                            <div class="col-md-6">
+                                <div class="mb-3">
+                                    <label asp-for="Sembol" class="form-label"></label>
+                                    <input asp-for="Sembol" class="form-control" placeholder="Döviz sembolü giriniz (ör: $)" />
+                                    <span asp-validation-for="Sembol" class="text-danger"></span>
+                                </div>
+                            </div>
+                            <div class="col-md-6">
+                                <div class="mb-3">
+                                    <label asp-for="Sira" class="form-label"></label>
+                                    <input asp-for="Sira" class="form-control" type="number" min="0" max="1000" />
+                                    <span asp-validation-for="Sira" class="text-danger"></span>
+                                </div>
+                            </div>
+                        </div>
+
+                        <div class="row">
+                            <div class="col-md-4">
+                                <div class="mb-3">
+                                    <label asp-for="OndalikAyraci" class="form-label"></label>
+                                    <input asp-for="OndalikAyraci" class="form-control" placeholder="." />
+                                    <span asp-validation-for="OndalikAyraci" class="text-danger"></span>
+                                </div>
+                            </div>
+                            <div class="col-md-4">
+                                <div class="mb-3">
+                                    <label asp-for="BinlikAyraci" class="form-label"></label>
+                                    <input asp-for="BinlikAyraci" class="form-control" placeholder="," />
+                                    <span asp-validation-for="BinlikAyraci" class="text-danger"></span>
+                                </div>
+                            </div>
+                            <div class="col-md-4">
+                                <div class="mb-3">
+                                    <label asp-for="OndalikHassasiyet" class="form-label"></label>
+                                    <input asp-for="OndalikHassasiyet" class="form-control" type="number" min="0" max="6" />
+                                    <span asp-validation-for="OndalikHassasiyet" class="text-danger"></span>
+                                </div>
+                            </div>
+                        </div>
+
+                        <div class="row">
+                            <div class="col-md-6">
+                                <div class="mb-3">
+                                    <div class="form-check">
+                                        <input asp-for="AnaParaBirimiMi" class="form-check-input" />
+                                        <label asp-for="AnaParaBirimiMi" class="form-check-label"></label>
+                                    </div>
+                                </div>
+                            </div>
+                            <div class="col-md-6">
+                                <div class="mb-3">
+                                    <div class="form-check">
+                                        <input asp-for="Aktif" class="form-check-input" />
+                                        <label asp-for="Aktif" class="form-check-label"></label>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+
+                        <div class="mb-3">
+                            <label asp-for="Aciklama" class="form-label"></label>
+                            <textarea asp-for="Aciklama" class="form-control" rows="3" placeholder="Açıklama giriniz"></textarea>
+                            <span asp-validation-for="Aciklama" class="text-danger"></span>
+                        </div>
+                    </div>
+
+                    <div class="card-footer">
+                        <div class="d-flex justify-content-between">
+                            <a asp-action="Index" class="btn btn-secondary">
+                                <i class="fa fa-arrow-left"></i> Geri
+                            </a>
+                            <button type="submit" class="btn btn-primary">
+                                <i class="fa fa-save"></i> Kaydet
+                            </button>
+                        </div>
+                    </div>
+                </form>
+            </div>
+        </div>
+    </div>
+</div>
+
+@section Scripts {
+    @{await Html.RenderPartialAsync("_ValidationScriptsPartial");}
+} 

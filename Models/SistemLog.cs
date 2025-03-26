@@ -16,6 +16,8 @@ namespace MuhasebeStokWebApp.Models
         [StringLength(50)]
         public string IslemTuru { get; set; } = string.Empty; // Bilgi, Uyarı, Hata, vb.
         
+        public int LogTuruInt { get; set; } // LogTuru enum değerinin sayısal karşılığı
+        
         public Guid? KayitID { get; set; } // İlgili kaydın ID'si (CariID, FaturaID, vb.)
         
         [StringLength(100)]
@@ -55,6 +57,11 @@ namespace MuhasebeStokWebApp.Models
                 if (Enum.TryParse<LogTuru>(IslemTuru, out var logTuru))
                     return logTuru;
                 return LogTuru.Bilgi;
+            }
+            set
+            {
+                IslemTuru = value.ToString();
+                LogTuruInt = (int)value;
             }
         }
         

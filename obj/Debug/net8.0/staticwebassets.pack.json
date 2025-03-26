@@ -10577,6 +10577,10 @@
       "PackagePath": "staticwebassets/lib/bootstrap/js/bootstrap.bundle.min.js.map"
     },
     {
+      "Id": "/Users/muhammetkocaman/MuhasebeStokWebApp/wwwroot/lib/datatables/i18n/Turkish.json",
+      "PackagePath": "staticwebassets/lib/datatables/i18n/Turkish.json"
+    },
+    {
       "Id": "/Users/muhammetkocaman/MuhasebeStokWebApp/wwwroot/lib/jquery-validation-unobtrusive/LICENSE.txt",
       "PackagePath": "staticwebassets/lib/jquery-validation-unobtrusive/LICENSE.txt"
     },
@@ -10671,6 +10675,18 @@
     {
       "Id": "/Users/muhammetkocaman/MuhasebeStokWebApp/wwwroot/lib/jquery/jquery.min.map",
       "PackagePath": "staticwebassets/lib/jquery/jquery.min.map"
+    },
+    {
+      "Id": "/Users/muhammetkocaman/MuhasebeStokWebApp/wwwroot/lib/microsoft/signalr/dist/browser/signalr.min.js",
+      "PackagePath": "staticwebassets/lib/microsoft/signalr/dist/browser/signalr.min.js"
+    },
+    {
+      "Id": "/Users/muhammetkocaman/MuhasebeStokWebApp/wwwroot/lib/toastr/toastr.min.css",
+      "PackagePath": "staticwebassets/lib/toastr/toastr.min.css"
+    },
+    {
+      "Id": "/Users/muhammetkocaman/MuhasebeStokWebApp/wwwroot/lib/toastr/toastr.min.js",
+      "PackagePath": "staticwebassets/lib/toastr/toastr.min.js"
     },
     {
       "Id": "obj/Debug/net8.0/staticwebassets/msbuild.MuhasebeStokWebApp.Microsoft.AspNetCore.StaticWebAssetEndpoints.props",

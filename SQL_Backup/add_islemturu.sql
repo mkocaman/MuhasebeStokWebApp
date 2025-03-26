@@ -1,1 +1,0 @@
-IF NOT EXISTS (SELECT 1 FROM sys.columns WHERE Name = N'IslemTuru' AND Object_ID = Object_ID(N'dbo.SistemLoglar')) BEGIN ALTER TABLE dbo.SistemLoglar ADD IslemTuru NVARCHAR(50) NOT NULL DEFAULT '' END

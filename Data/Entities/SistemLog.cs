@@ -7,39 +7,51 @@ namespace MuhasebeStokWebApp.Data.Entities
     public class SistemLog
     {
         [Key]
-        public Guid LogID { get; set; }
+        [DatabaseGenerated(DatabaseGeneratedOption.Identity)]
+        public int Id { get; set; }
         
-        [Required]
+        public Guid LogID { get; set; } = Guid.NewGuid();
+        
+        [Required, StringLength(50)]
+        public string LogTuru { get; set; }
+        
+        [Required, StringLength(500)]
+        public string Mesaj { get; set; }
+        
+        [StringLength(255)]
+        public string Sayfa { get; set; }
+        
+        public DateTime OlusturmaTarihi { get; set; } = DateTime.Now;
+        
         [StringLength(50)]
-        public string IslemTuru { get; set; } = string.Empty; // Cari Pasife Alma, Cari Aktifleştirme, vb.
+        public string IslemTuru { get; set; }
         
-        public int LogTuru { get; set; } // MuhasebeStokWebApp.Enums.LogTuru karşılığı
-        
-        public Guid? KayitID { get; set; } // İlgili kaydın ID'si (CariID, FaturaID, vb.)
-        
-        [StringLength(100)]
-        public string TabloAdi { get; set; } = string.Empty; // Cariler, Faturalar, vb.
-        
-        [StringLength(200)]
-        public string KayitAdi { get; set; } = string.Empty; // Cari Adı, Fatura No, vb.
-        
-        [Required]
-        public DateTime IslemTarihi { get; set; } = DateTime.Now;
+        public int? LogTuruInt { get; set; }
         
         [StringLength(500)]
-        public string? Aciklama { get; set; }
+        public string Aciklama { get; set; }
         
-        public Guid? KullaniciID { get; set; }
+        [StringLength(500)]
+        public string HataMesaji { get; set; }
         
         [StringLength(100)]
-        public string KullaniciAdi { get; set; } = string.Empty;
+        public string KullaniciAdi { get; set; }
         
         [StringLength(50)]
-        public string IPAdresi { get; set; } = string.Empty;
+        public string IPAdresi { get; set; }
+        
+        public DateTime IslemTarihi { get; set; } = DateTime.Now;
         
         public bool Basarili { get; set; } = true;
         
-        [StringLength(500)]
-        public string? HataMesaji { get; set; }
+        [StringLength(100)]
+        public string TabloAdi { get; set; }
+        
+        [StringLength(100)]
+        public string KayitAdi { get; set; }
+        
+        public Guid? KayitID { get; set; }
+        
+        public Guid? KullaniciID { get; set; }
     }
 } 

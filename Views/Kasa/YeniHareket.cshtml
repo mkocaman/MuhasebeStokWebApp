@@ -52,9 +52,9 @@
                             <label for="CariID" class="control-label">Cari</label>
                             <select id="CariID" name="CariID" class="form-control">
                                 <option value="">Cari Seçiniz</option>
-                                @foreach (var cari in cariler)
+                                @foreach (var cari in ViewBag.Cariler)
                                 {
-                                    <option value="@cari.CariID">@cari.CariAdi</option>
+                                    <option value="@cari.CariID">@cari.Ad</option>
                                 }
                             </select>
                             <span asp-validation-for="CariID" class="text-danger"></span>

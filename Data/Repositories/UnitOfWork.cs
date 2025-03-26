@@ -1,7 +1,10 @@
 using System;
 using System.Collections.Generic;
 using System.Threading.Tasks;
+using System.Data;
 using MuhasebeStokWebApp.Data.Entities;
+using Microsoft.EntityFrameworkCore.Storage;
+using Microsoft.EntityFrameworkCore;
 
 namespace MuhasebeStokWebApp.Data.Repositories
 {
@@ -10,6 +13,7 @@ namespace MuhasebeStokWebApp.Data.Repositories
         private readonly ApplicationDbContext _context;
         private Dictionary<Type, object> _repositories;
         private bool disposed = false;
+        private IDbContextTransaction _transaction;
 
         // Özel repository'ler
         private IRepository<Urun>? _urunRepository;
@@ -73,13 +77,113 @@ namespace MuhasebeStokWebApp.Data.Repositories
 
         public async Task SaveAsync()
         {
-            await _context.SaveChangesAsync();
+            try 
+            {
+                await _context.SaveChangesAsync();
+            }
+            catch (DbUpdateConcurrencyException ex)
+            {
+                // Eşzamanlılık hataları için kayıtları yeniden yükleme
+                foreach (var entry in ex.Entries)
+                {
+                    if (entry.Entity is BaseEntity)
+                    {
+                        var proposedValues = entry.CurrentValues;
+                        var databaseValues = await entry.GetDatabaseValuesAsync();
+
+                        // Değer yoksa silindi demektir, bu durumu yönet
+                        if (databaseValues == null)
+                        {
+                            // Silinen kaydı güncellemek mümkün değil, işlem iptali
+                            throw;
+                        }
+
+                        // Değerleri yeniden yükle
+                        foreach (var property in proposedValues.Properties)
+                        {
+                            // GuncellemeTarihi gibi izlenen alanları atla
+                            if (property.Name == "GuncellemeTarihi" || property.Name == "OlusturmaTarihi")
+                                continue;
+
+                            var proposedValue = proposedValues[property];
+                            var databaseValue = databaseValues[property];
+
+                            // Değer değişmişse güncelle
+                            if (proposedValue != databaseValue)
+                            {
+                                proposedValues[property] = databaseValue;
+                            }
+                        }
+
+                        // Değişiklikler uygulandı, tekrar kaydet
+                        entry.OriginalValues.SetValues(databaseValues);
+                    }
+                    else
+                    {
+                        throw new NotSupportedException(
+                            "Don't know how to handle concurrency conflicts for "
+                            + entry.Metadata.Name);
+                    }
+                }
+
+                // Tekrar kaydetmeyi dene
+                await _context.SaveChangesAsync();
+            }
         }
 
         // CompleteAsync metodu ekledik
         public async Task CompleteAsync()
         {
-            await _context.SaveChangesAsync();
+            await SaveAsync();
+        }
+
+        // Transaction yönetimi için yeni metotlar
+        public async Task<IDbContextTransaction> BeginTransactionAsync()
+        {
+            if (_transaction != null)
+            {
+                return _transaction;
+            }
+
+            _transaction = await _context.Database.BeginTransactionAsync(IsolationLevel.ReadCommitted);
+            return _transaction;
+        }
+
+        public async Task CommitTransactionAsync()
+        {
+            try
+            {
+                await SaveAsync();
+
+                if (_transaction != null)
+                {
+                    await _transaction.CommitAsync();
+                    await DisposeTransactionAsync();
+                }
+            }
+            catch
+            {
+                await RollbackTransactionAsync();
+                throw;
+            }
+        }
+
+        public async Task RollbackTransactionAsync()
+        {
+            if (_transaction != null)
+            {
+                await _transaction.RollbackAsync();
+                await DisposeTransactionAsync();
+            }
+        }
+
+        private async Task DisposeTransactionAsync()
+        {
+            if (_transaction != null)
+            {
+                await _transaction.DisposeAsync();
+                _transaction = null;
+            }
         }
 
         protected virtual void Dispose(bool disposing)
@@ -88,6 +192,11 @@ namespace MuhasebeStokWebApp.Data.Repositories
             {
                 if (disposing)
                 {
+                    if (_transaction != null)
+                    {
+                        _transaction.Dispose();
+                        _transaction = null;
+                    }
                     _context.Dispose();
                 }
             }

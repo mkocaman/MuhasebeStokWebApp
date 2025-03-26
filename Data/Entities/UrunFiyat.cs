@@ -7,7 +7,7 @@ namespace MuhasebeStokWebApp.Data.Entities
     public class UrunFiyat
     {
         [Key]
-        public int FiyatID { get; set; }
+        public Guid FiyatID { get; set; }
         
         public Guid? UrunID { get; set; }
         
@@ -27,7 +27,7 @@ namespace MuhasebeStokWebApp.Data.Entities
         
         public DateTime? GuncellemeTarihi { get; set; }
         
-        public bool SoftDelete { get; set; }
+        public bool Silindi { get; set; }
         
         // Navigation properties
         [ForeignKey("UrunID")]
@@ -35,5 +35,10 @@ namespace MuhasebeStokWebApp.Data.Entities
         
         [ForeignKey("FiyatTipiID")]
         public virtual FiyatTipi? FiyatTipi { get; set; }
+        
+        public UrunFiyat()
+        {
+            FiyatID = Guid.NewGuid();
+        }
     }
 } 

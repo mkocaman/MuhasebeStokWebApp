@@ -378,6 +378,11 @@ namespace MuhasebeStokWebApp.ViewModels.Stok
         
         [Display(Name = "Hareket Türü")]
         public string HareketTuru { get; set; } = "Giriş";
+
+        [Display(Name = "Para Birimi")]
+        public string ParaBirimi { get; set; } = "TRY";
+        
+        public List<string> ParaBirimleri { get; set; }
     }
 
     // Stok Çıkış ViewModel
@@ -468,12 +473,17 @@ namespace MuhasebeStokWebApp.ViewModels.Stok
 
         [Display(Name = "Sayım Notu")]
         public string SayimNotu { get; set; }
-        
+
         [Display(Name = "Referans No")]
         public string ReferansNo { get; set; }
-        
+
         [Display(Name = "Açıklama")]
         public string Aciklama { get; set; }
+
+        [Display(Name = "Para Birimi")]
+        public string ParaBirimi { get; set; } = "TRY";
+        
+        public List<string> ParaBirimleri { get; set; }
 
         public List<StokSayimUrunViewModel> UrunListesi { get; set; } = new List<StokSayimUrunViewModel>();
     }

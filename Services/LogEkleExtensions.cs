@@ -1,6 +1,11 @@
 using System;
+using System.Text;
 using System.Threading.Tasks;
-using MuhasebeStokWebApp.Services;
+using Microsoft.AspNetCore.Identity;
+using Microsoft.Extensions.DependencyInjection;
+using Microsoft.Extensions.Logging;
+using MuhasebeStokWebApp.Enums;
+using MuhasebeStokWebApp.Services.Interfaces;
 
 namespace MuhasebeStokWebApp.Extensions
 {
@@ -32,7 +37,8 @@ namespace MuhasebeStokWebApp.Extensions
             MuhasebeStokWebApp.Enums.LogTuru logTuru, 
             Guid? kayitID = null, 
             string tabloAdi = null, 
-            string kayitAdi = null)
+            string kayitAdi = null,
+            ILogger logger = null)
         {
             try 
             {
@@ -48,8 +54,11 @@ namespace MuhasebeStokWebApp.Extensions
             }
             catch (Exception ex)
             {
-                // Hata durumunda sessizce devam et
-                Console.WriteLine($"Log oluşturma hatası (SafeLogEkleAsync): {ex.Message}");
+                // Hata durumunda logger varsa kullan, yoksa sessizce devam et
+                if (logger != null)
+                {
+                    logger.LogError(ex, "Log oluşturma hatası (SafeLogEkleAsync): {Message}", ex.Message);
+                }
             }
         }
     }

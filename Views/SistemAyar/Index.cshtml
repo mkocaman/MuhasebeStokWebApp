@@ -1,0 +1,125 @@
+@using System.Collections.Generic
+@model IEnumerable<KeyValuePair<string, string>>
+
+@{
+    ViewData["Title"] = "Sistem Ayarları";
+}
+
+<div class="content-header">
+    <div class="container-fluid">
+        <div class="row mb-2">
+            <div class="col-sm-6">
+                <h1 class="m-0">Sistem Ayarları</h1>
+            </div>
+            <div class="col-sm-6">
+                <ol class="breadcrumb float-sm-right">
+                    <li class="breadcrumb-item"><a href="/">Ana Sayfa</a></li>
+                    <li class="breadcrumb-item active">Sistem Ayarları</li>
+                </ol>
+            </div>
+        </div>
+    </div>
+</div>
+
+<div class="content">
+    <div class="container-fluid">
+        @if (TempData["Success"] != null)
+        {
+            <div class="alert alert-success alert-dismissible fade show" role="alert">
+                @TempData["Success"]
+                <button type="button" class="close" data-dismiss="alert" aria-label="Close">
+                    <span aria-hidden="true">&times;</span>
+                </button>
+            </div>
+        }
+        @if (TempData["Error"] != null)
+        {
+            <div class="alert alert-danger alert-dismissible fade show" role="alert">
+                @TempData["Error"]
+                <button type="button" class="close" data-dismiss="alert" aria-label="Close">
+                    <span aria-hidden="true">&times;</span>
+                </button>
+            </div>
+        }
+
+        <div class="row">
+            <div class="col-md-4">
+                <div class="card">
+                    <div class="card-header">
+                        <h3 class="card-title">E-posta Ayarları</h3>
+                    </div>
+                    <div class="card-body">
+                        <p>SMTP sunucu ayarları, e-posta şablonları ve diğer e-posta ile ilgili yapılandırmalar.</p>
+                        <a href="@Url.Action("EmailAyarlari", "SistemAyar")" class="btn btn-primary btn-block">E-posta Ayarlarını Düzenle</a>
+                    </div>
+                </div>
+            </div>
+            <div class="col-md-4">
+                <div class="card">
+                    <div class="card-header">
+                        <h3 class="card-title">Bildirim Ayarları</h3>
+                    </div>
+                    <div class="card-body">
+                        <p>Bildirim seçenekleri, otomatik bildirimler ve bildirim kanalı yapılandırmaları.</p>
+                        <a href="@Url.Action("BildirimAyarlari", "SistemAyar")" class="btn btn-primary btn-block">Bildirim Ayarlarını Düzenle</a>
+                    </div>
+                </div>
+            </div>
+            <div class="col-md-4">
+                <div class="card">
+                    <div class="card-header">
+                        <h3 class="card-title">Dil Ayarları</h3>
+                    </div>
+                    <div class="card-body">
+                        <p>Varsayılan dil, tarih formatları ve para birimi görüntüleme ayarları.</p>
+                        <a href="@Url.Action("DilAyarlari", "SistemAyar")" class="btn btn-primary btn-block">Dil Ayarlarını Düzenle</a>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <div class="row mt-4">
+            <div class="col-md-12">
+                <div class="card">
+                    <div class="card-header">
+                        <h3 class="card-title">Mevcut Sistem Ayarları</h3>
+                    </div>
+                    <div class="card-body">
+                        <div class="table-responsive">
+                            <table class="table table-bordered table-striped">
+                                <thead>
+                                    <tr>
+                                        <th>Ayar Adı</th>
+                                        <th>Değer</th>
+                                    </tr>
+                                </thead>
+                                <tbody>
+                                    @foreach (var ayar in Model)
+                                    {
+                                        <tr>
+                                            <td>@ayar.Key</td>
+                                            <td>@ayar.Value</td>
+                                        </tr>
+                                    }
+                                </tbody>
+                            </table>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+
+@section Scripts {
+    <script>
+        $(document).ready(function() {
+            // 4 saniye sonra uyarıları otomatik olarak kapat
+            setTimeout(function() {
+                $('.alert').fadeOut('slow', function() {
+                    $(this).remove();
+                });
+            }, 4000);
+        });
+    </script>
+} 

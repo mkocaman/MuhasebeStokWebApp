@@ -21,13 +21,21 @@
     <link href="~/css/site.css" asp-append-version="true" rel="stylesheet" />
     
     <!-- Font Awesome -->
-    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.2/css/all.min.css" integrity="sha512-z3gLpd7yknf1YoNbCzqRKc4qyor8gaKU1qmn+CShxbuBusANI9QpRohGBreCFkKxLhei6S9CQXFEbbKuqLg0DA==" crossorigin="anonymous" referrerpolicy="no-referrer" />
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css" />
     
     <!-- DataTables CSS -->
     <link rel="stylesheet" href="https://cdn.datatables.net/1.13.7/css/dataTables.bootstrap5.min.css">
+    <link rel="stylesheet" href="https://cdn.datatables.net/responsive/2.5.0/css/responsive.bootstrap5.min.css">
+    
+    <!-- Select2 -->
+    <link href="https://cdn.jsdelivr.net/npm/select2@4.1.0-rc.0/dist/css/select2.min.css" rel="stylesheet" />
+    <link href="https://cdn.jsdelivr.net/npm/select2-bootstrap-5-theme@1.3.0/dist/select2-bootstrap-5-theme.min.css" rel="stylesheet" />
     
     <!-- SweetAlert2 -->
     <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/sweetalert2@11.7.32/dist/sweetalert2.min.css">
+    
+    <!-- Toastr -->
+    <link rel="stylesheet" href="~/lib/toastr/toastr.min.css" />
     
     @await RenderSectionAsync("Styles", required: false)
     <style>
@@ -39,10 +47,84 @@
         .dropdown > a.active + .nav-submenu {
             display: block;
         }
+        
+        .card {
+            margin-bottom: 1.5rem;
+            box-shadow: 0 0.125rem 0.25rem rgba(0, 0, 0, 0.075);
+        }
+        .card-header {
+            padding: 1rem;
+        }
+        .info-group {
+            margin-bottom: 1rem;
+        }
+        .info-group h6 {
+            margin-bottom: 0.25rem;
+            color: #6c757d;
+        }
+        .info-group p {
+            margin-bottom: 0;
+            font-size: 1rem;
+        }
+        .table th {
+            background-color: #f8f9fa;
+        }
+        .btn-group .btn {
+            margin-right: 0.25rem;
+        }
+        .alert {
+            margin-bottom: 1rem;
+        }
+        
+        /* Select2 Özelleştirmeleri */
+        .select2-container--bootstrap-5 .select2-selection {
+            min-height: calc(1.5em + 0.75rem + 2px);
+            padding: 0.375rem 0.75rem;
+        }
+        
+        /* DataTables Özelleştirmeleri */
+        .dataTables_wrapper .dataTables_length select {
+            min-width: 80px;
+        }
+        
+        /* Toastr Özelleştirmeleri */
+        #toast-container > div {
+            opacity: 1;
+            box-shadow: 0 0.5rem 1rem rgba(0, 0, 0, 0.15);
+        }
+        
+        /* Loader Özelleştirmeleri */
+        .loader-wrapper {
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background: rgba(255, 255, 255, 0.9);
+            z-index: 9999;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+        }
+        
+        .loader-p {
+            width: 40px;
+            height: 40px;
+            border: 4px solid #f3f3f3;
+            border-top: 4px solid #3498db;
+            border-radius: 50%;
+            animation: spin 1s linear infinite;
+        }
+        
+        @@keyframes spin {
+            0% { transform: rotate(0deg); }
+            100% { transform: rotate(360deg); }
+        }
     </style>
 </head>
 
 <body>
+    <div id="notificationContainer" class="toast-container position-fixed top-0 end-0 p-3"></div>
     <!-- Loader starts-->
     <div class="loader-wrapper">
         <div class="theme-loader">
@@ -111,6 +193,30 @@
                                 <i class="material-icons">exit_to_app</i>Çıkış
                             </a>
                         </li>
+                        <!-- Dil Seçimi -->
+                        <li class="onhover-dropdown">
+                            <div class="language-box">
+                                <i class="material-icons">language</i>
+                            </div>
+                            <ul class="language-dropdown onhover-show-div">
+                                <li>
+                                    <form asp-controller="Language" asp-action="SetLanguage" method="post">
+                                        <input type="hidden" name="returnUrl" value="@Context.Request.Path" />
+                                        <button type="submit" name="culture" value="tr-TR" class="btn btn-link">
+                                            <i class="flag-icon flag-icon-tr"></i> Türkçe
+                                        </button>
+                                    </form>
+                                </li>
+                                <li>
+                                    <form asp-controller="Language" asp-action="SetLanguage" method="post">
+                                        <input type="hidden" name="returnUrl" value="@Context.Request.Path" />
+                                        <button type="submit" name="culture" value="en-US" class="btn btn-link">
+                                            <i class="flag-icon flag-icon-us"></i> English
+                                        </button>
+                                    </form>
+                                </li>
+                            </ul>
+                        </li>
                     </ul>
                 </div>
                 <div class="d-lg-none mobile-toggle pull-right w-auto">
@@ -160,10 +266,10 @@
                                 {
                                     foreach (var menuItem in ViewBag.MenuItems)
                                     {
-                                        if (menuItem.HasChildren)
+                                        if (menuItem.AltMenuler != null && menuItem.AltMenuler.Count > 0)
                                         {
                                             <li class="dropdown">
-                                                <a class="nav-link menu-title" href="#">
+                                                <a class="nav-link menu-title @(menuItem.Active ? "active" : "")" href="#">
                                                     @if (!string.IsNullOrEmpty(menuItem.Icon))
                                                     {
                                                         <i class="@menuItem.Icon"></i>
@@ -174,11 +280,11 @@
                                                     }
                                                     <span>@menuItem.Ad</span>
                                                 </a>
-                                                <ul class="nav-submenu menu-content">
+                                                <ul class="nav-submenu menu-content @(menuItem.Active ? "show" : "")">
                                                     @foreach (var subItem in menuItem.AltMenuler)
                                                     {
                                                         <li>
-                                                            <a asp-controller="@subItem.Controller" asp-action="@subItem.Action">
+                                                            <a asp-controller="@subItem.Controller" asp-action="@subItem.Action" class="@(subItem.Active ? "active" : "")">
                                                                 @if (!string.IsNullOrEmpty(subItem.Icon))
                                                                 {
                                                                     <i class="@subItem.Icon"></i>
@@ -193,7 +299,7 @@
                                         else
                                         {
                                             <li class="dropdown">
-                                                <a class="nav-link menu-title" asp-controller="@menuItem.Controller" asp-action="@menuItem.Action">
+                                                <a class="nav-link menu-title @(menuItem.Active ? "active" : "")" asp-controller="@menuItem.Controller" asp-action="@menuItem.Action">
                                                     @if (!string.IsNullOrEmpty(menuItem.Icon))
                                                     {
                                                         <i class="@menuItem.Icon"></i>
@@ -210,7 +316,6 @@
                                 }
                                 else
                                 {
-                                    <!-- Varsayılan menü öğeleri -->
                                     <li class="dropdown">
                                         <a class="nav-link menu-title" asp-controller="Home" asp-action="Index">
                                             <i class="material-icons">dashboard</i>
@@ -218,83 +323,11 @@
                                         </a>
                                     </li>
                                     <li class="dropdown">
-                                        <a class="nav-link menu-title" asp-controller="Cari" asp-action="Index">
-                                            <i class="material-icons">people</i>
-                                            <span>Cariler</span>
+                                        <a class="nav-link menu-title" asp-controller="Menu" asp-action="Index">
+                                            <i class="material-icons">menu</i>
+                                            <span>Menü Yönetimi</span>
                                         </a>
                                     </li>
-                                    <li class="dropdown">
-                                        <a class="nav-link menu-title" href="#">
-                                            <i class="material-icons">inventory</i>
-                                            <span>Stok Yönetimi</span>
-                                        </a>
-                                        <ul class="nav-submenu menu-content">
-                                            <li><a asp-controller="Urun" asp-action="Index">Ürünler</a></li>
-                                            <li><a asp-controller="UrunKategori" asp-action="Index">Kategoriler</a></li>
-                                            <li><a asp-controller="UrunFiyat" asp-action="Index">Ürün Fiyatları</a></li>
-                                            <li><a asp-controller="Stok" asp-action="StokGiris">Stok Girişi</a></li>
-                                            <li><a asp-controller="Stok" asp-action="StokCikis">Stok Çıkışı</a></li>
-                                            <li><a asp-controller="Stok" asp-action="StokDurumu">Stok Durumu</a></li>
-                                            <li><a asp-controller="Stok" asp-action="Index">Stok Hareketleri</a></li>
-                                            <li><a asp-controller="Birim" asp-action="Index">Birimler</a></li>
-                                        </ul>
-                                    </li>
-                                    <li class="dropdown">
-                                        <a class="nav-link menu-title" asp-controller="Fatura" asp-action="Index">
-                                            <i class="material-icons">receipt</i>
-                                            <span>Faturalar</span>
-                                        </a>
-                                    </li>
-                                    <li class="dropdown">
-                                        <a class="nav-link menu-title" asp-controller="Irsaliye" asp-action="Index">
-                                            <i class="material-icons">description</i>
-                                            <span>İrsaliyeler</span>
-                                        </a>
-                                    </li>
-                                    <li class="dropdown">
-                                        <a class="nav-link menu-title" href="#">
-                                            <i class="material-icons">payments</i>
-                                            <span>Finans</span>
-                                        </a>
-                                        <ul class="nav-submenu menu-content">
-                                            <li><a asp-controller="Kasa" asp-action="Index">Kasa İşlemleri</a></li>
-                                            <li><a asp-controller="Banka" asp-action="Index">Banka İşlemleri</a></li>
-                                            <li><a asp-controller="DovizKuru" asp-action="Index">Döviz Kurları</a></li>
-                                            <li><a asp-controller="ParaBirimi" asp-action="Index">Para Birimleri</a></li>
-                                            <li><a asp-controller="ParaBirimiIliski" asp-action="Index">Para Birimi İlişkileri</a></li>
-                                        </ul>
-                                    </li>
-                                    
-                                    <li class="sidebar-main-title">
-                                        <div>
-                                            <h6>Ayarlar</h6>
-                                        </div>
-                                    </li>
-                                    
-                                    <li class="dropdown">
-                                        <a class="nav-link menu-title" href="#">
-                                            <i class="material-icons">settings</i>
-                                            <span>Sistem Ayarları</span>
-                                        </a>
-                                        <ul class="nav-submenu menu-content">
-                                            <li><a asp-controller="Depo" asp-action="Index">Depolar</a></li>
-                                            <li><a asp-controller="SistemLog" asp-action="Index">Sistem Logları</a></li>
-                                            @if (User.IsInRole("Admin"))
-                                            {
-                                                <li><a asp-controller="Menu" asp-action="Index">Menü Yönetimi</a></li>
-                                                <li><a asp-controller="DbInit" asp-action="Index">Veritabanı İşlemleri</a></li>
-                                            }
-                                        </ul>
-                                    </li>
-                                    @if (ViewBag.IsAdmin == true)
-                                    {
-                                        <li class="sidebar-item">
-                                            <a asp-controller="Account" asp-action="UserManagement" class="sidebar-link">
-                                                <i class="fas fa-users"></i>
-                                                <span class="sidebar-text">Kullanıcı Yönetimi</span>
-                                            </a>
-                                        </li>
-                                    }
                                 }
                             </ul>
                         </div>
@@ -366,25 +399,25 @@
                 @RenderBody()
             </div>
             <!-- Page content ends -->
-            
-            <!-- Footer starts -->
-            <footer class="footer">
-                <div class="container-fluid">
-                    <div class="row">
-                        <div class="col-md-6 footer-copyright">
-                            <p class="mb-0">Copyright &copy; @DateTime.Now.Year Muhasebe Stok Web App</p>
-                        </div>
-                        <div class="col-md-6">
-                            <p class="pull-right mb-0">
-                                <i class="fa fa-heart"></i> ile geliştirildi, uykusuz gecelerin mahsülü.
-                            </p>
-                        </div>
-                    </div>
-                </div>
-            </footer>
-            <!-- Footer ends -->
         </div>
         <!-- Page body ends -->
+        
+        <!-- Footer starts -->
+        <footer class="footer fixed-bottom bg-light py-3">
+            <div class="container-fluid">
+                <div class="row">
+                    <div class="col-md-6 footer-copyright">
+                        <p class="mb-0">Copyright &copy; @DateTime.Now.Year Muhasebe Stok Web App</p>
+                    </div>
+                    <div class="col-md-6 text-end">
+                        <p class="mb-0">
+                            <i class="fa fa-heart"></i> ile geliştirildi, uykusuz gecelerin mahsülü.
+                        </p>
+                    </div>
+                </div>
+            </div>
+        </footer>
+        <!-- Footer ends -->
     </div>
     <!-- Page wrapper ends -->
     
@@ -392,126 +425,31 @@
     <script src="~/lib/jquery/dist/jquery.min.js"></script>
     <script src="~/lib/bootstrap/dist/js/bootstrap.bundle.min.js"></script>
     
-    <!-- DataTables JS -->
+    <!-- Chart.js -->
+    <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+    
+    <!-- DataTables -->
     <script src="https://cdn.datatables.net/1.13.7/js/jquery.dataTables.min.js"></script>
     <script src="https://cdn.datatables.net/1.13.7/js/dataTables.bootstrap5.min.js"></script>
+    <script src="https://cdn.datatables.net/responsive/2.5.0/js/dataTables.responsive.min.js"></script>
+    <script src="https://cdn.datatables.net/responsive/2.5.0/js/responsive.bootstrap5.min.js"></script>
     
-    <script src="~/assets/js/config.js"></script>
-    <script src="~/assets/js/script.js"></script>
-    <script src="~/js/site.js" asp-append-version="true"></script>
+    <!-- Select2 -->
+    <script src="https://cdn.jsdelivr.net/npm/select2@4.1.0-rc.0/dist/js/select2.min.js"></script>
     
     <!-- SweetAlert2 -->
     <script src="https://cdn.jsdelivr.net/npm/sweetalert2@11.7.32/dist/sweetalert2.all.min.js"></script>
     
-    <script>
-        $(document).ready(function() {
-            // Sidebar toggle
-            $('#sidebar-toggle').click(function() {
-                $('.page-body-wrapper').toggleClass('sidebar-close');
-            });
-            
-            // Tam ekran
-            function toggleFullScreen() {
-                if ((document.fullScreenElement && document.fullScreenElement !== null) || (!document.mozFullScreen && !document.webkitIsFullScreen)) {
-                    if (document.documentElement.requestFullScreen) {
-                        document.documentElement.requestFullScreen();
-                    } else if (document.documentElement.mozRequestFullScreen) {
-                        document.documentElement.mozRequestFullScreen();
-                    } else if (document.documentElement.webkitRequestFullScreen) {
-                        document.documentElement.webkitRequestFullScreen(Element.ALLOW_KEYBOARD_INPUT);
-                    }
-                } else {
-                    if (document.cancelFullScreen) {
-                        document.cancelFullScreen();
-                    } else if (document.mozCancelFullScreen) {
-                        document.mozCancelFullScreen();
-                    } else if (document.webkitCancelFullScreen) {
-                        document.webkitCancelFullScreen();
-                    }
-                }
-            }
-            
-            // Tam ekran butonu için
-            $('[onclick="javascript:toggleFullScreen()"]').on('click', function() {
-                toggleFullScreen();
-            });
-            
-            // Menü tıklama olayı
-            $('.dropdown > a').on('click', function(e) {
-                // Alt menüsü olan menüler için
-                if ($(this).siblings('.nav-submenu').length) {
-                    e.preventDefault();
-                    e.stopPropagation();
-                    
-                    // Eğer bu menü zaten açıksa, kapat
-                    if ($(this).hasClass('active')) {
-                        $(this).removeClass('active');
-                    } else {
-                        // Diğer tüm menüleri kapat
-                        $('.dropdown > a').removeClass('active');
-                        
-                        // Bu menüyü aç
-                        $(this).addClass('active');
-                    }
-                }
-            });
-            
-            // Alt menü elemanlarına tıklandığında yayılımı durdur
-            $('.nav-submenu a').on('click', function(e) {
-                e.stopPropagation();
-            });
-            
-            // Sayfa dışına tıklandığında menüleri kapat
-            $(document).on('click', function(e) {
-                if (!$(e.target).closest('.dropdown').length) {
-                    $('.dropdown > a').removeClass('active');
-                }
-            });
-            
-            // Aktif menü öğesini işaretle
-            var currentUrl = window.location.pathname;
-            
-            // Tam eşleşme için
-            $('.nav-menu a[href="' + currentUrl + '"]').addClass('active');
-            
-            // Kısmi eşleşme için
-            $('.nav-menu a').each(function() {
-                var menuUrl = $(this).attr('href');
-                if (menuUrl && currentUrl.startsWith(menuUrl) && menuUrl !== '/') {
-                    $(this).addClass('active');
-                }
-            });
-            
-            // Eğer alt menü elemanı aktifse, üst menüyü de aktif yap
-            var $activeSubmenuItem = $('.nav-submenu a').filter(function() {
-                var href = $(this).attr('href');
-                return href === currentUrl || (href && currentUrl.startsWith(href) && href !== '/');
-            });
-            
-            if ($activeSubmenuItem.length) {
-                $activeSubmenuItem.addClass('active');
-                $activeSubmenuItem.closest('.dropdown').find('> a').addClass('active');
-            }
-
-            // Mobil menü için geri butonu
-            $('.mobile-back').click(function() {
-                $('.dropdown > a').removeClass('active');
-            });
-
-            // Sayfa yüklendiğinde loader'ı kaldır
-            $('.loader-wrapper').fadeOut('slow');
-        });
-    </script>
+    <!-- SignalR -->
+    <script src="~/lib/microsoft/signalr/dist/browser/signalr.min.js"></script>
     
-    @if (ViewBag.RequiresLogin == true)
-    {
-        <script>
-            // Giriş gerekli olan sayfalar için login sayfasına yönlendir
-            window.onload = function() {
-                window.location.href = '@Url.Action("Login", "Account", new { returnUrl = Context.Request.Path })';
-            };
-        </script>
-    }
+    <!-- Toastr -->
+    <script src="~/lib/toastr/toastr.min.js"></script>
+    
+    <!-- Custom Scripts -->
+    <script src="~/assets/js/config.js"></script>
+    <script src="~/assets/js/script.js"></script>
+    <script src="~/js/site.js" asp-append-version="true"></script>
     
     @await RenderSectionAsync("Scripts", required: false)
 </body>

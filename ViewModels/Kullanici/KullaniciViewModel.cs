@@ -6,77 +6,84 @@ namespace MuhasebeStokWebApp.ViewModels.Kullanici
 {
     public class KullaniciViewModel
     {
-        public string Id { get; set; }
+        [Required]
+        public required string Id { get; set; }
         
+        [Required]
         [Display(Name = "Kullanıcı Adı")]
-        public string KullaniciAdi { get; set; }
+        public required string KullaniciAdi { get; set; }
         
+        [Required]
         [Display(Name = "E-posta")]
-        public string Email { get; set; }
+        public required string Email { get; set; }
         
+        [Required]
         [Display(Name = "Roller")]
-        public string Roller { get; set; }
+        public required string Roller { get; set; }
     }
 
     public class KullaniciCreateViewModel
     {
         [Required(ErrorMessage = "Kullanıcı adı zorunludur.")]
         [Display(Name = "Kullanıcı Adı")]
-        public string KullaniciAdi { get; set; }
+        public required string KullaniciAdi { get; set; }
         
         [Required(ErrorMessage = "E-posta adresi zorunludur.")]
         [EmailAddress(ErrorMessage = "Geçerli bir e-posta adresi giriniz.")]
         [Display(Name = "E-posta")]
-        public string Email { get; set; }
+        public required string Email { get; set; }
         
         [Required(ErrorMessage = "Şifre zorunludur.")]
         [StringLength(100, ErrorMessage = "Şifre en az {2} karakter uzunluğunda olmalıdır.", MinimumLength = 6)]
         [DataType(DataType.Password)]
         [Display(Name = "Şifre")]
-        public string Sifre { get; set; }
+        public required string Password { get; set; }
         
+        [Required(ErrorMessage = "Şifre tekrarı zorunludur.")]
         [DataType(DataType.Password)]
         [Display(Name = "Şifre Tekrar")]
-        [Compare("Sifre", ErrorMessage = "Şifreler eşleşmiyor.")]
-        public string SifreTekrar { get; set; }
+        [Compare("Password", ErrorMessage = "Şifreler eşleşmiyor.")]
+        public required string ConfirmPassword { get; set; }
         
         [Display(Name = "Roller")]
-        public List<string> SecilenRoller { get; set; }
+        public required List<string> SelectedRoles { get; set; } = new List<string>();
     }
 
     public class KullaniciEditViewModel
     {
-        public string Id { get; set; }
+        [Required]
+        public required string Id { get; set; }
         
         [Required(ErrorMessage = "Kullanıcı adı zorunludur.")]
         [Display(Name = "Kullanıcı Adı")]
-        public string KullaniciAdi { get; set; }
+        public required string KullaniciAdi { get; set; }
         
         [Required(ErrorMessage = "E-posta adresi zorunludur.")]
         [EmailAddress(ErrorMessage = "Geçerli bir e-posta adresi giriniz.")]
         [Display(Name = "E-posta")]
-        public string Email { get; set; }
+        public required string Email { get; set; }
         
         [StringLength(100, ErrorMessage = "Şifre en az {2} karakter uzunluğunda olmalıdır.", MinimumLength = 6)]
         [DataType(DataType.Password)]
         [Display(Name = "Şifre")]
-        public string Sifre { get; set; }
+        public string? Password { get; set; }
         
         [DataType(DataType.Password)]
         [Display(Name = "Şifre Tekrar")]
-        [Compare("Sifre", ErrorMessage = "Şifreler eşleşmiyor.")]
-        public string SifreTekrar { get; set; }
+        [Compare("Password", ErrorMessage = "Şifreler eşleşmiyor.")]
+        public string? ConfirmPassword { get; set; }
         
         [Display(Name = "Roller")]
-        public List<string> SecilenRoller { get; set; }
+        public required List<string> SelectedRoles { get; set; } = new List<string>();
     }
 
     public class RoleViewModel
     {
-        public string Id { get; set; }
+        [Required]
+        public required string Id { get; set; }
         
         [Required(ErrorMessage = "Rol adı zorunludur.")]
         [Display(Name = "Rol Adı")]
-        public string RolAdi { get; set; }
+        public required string RolAdi { get; set; }
     }
 } 

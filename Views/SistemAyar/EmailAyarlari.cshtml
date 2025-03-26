@@ -1,0 +1,138 @@
+@model MuhasebeStokWebApp.ViewModels.SistemAyar.EmailAyarlariViewModel
+
+@{
+    ViewData["Title"] = "E-posta Ayarları";
+}
+
+<div class="content-header">
+    <div class="container-fluid">
+        <div class="row mb-2">
+            <div class="col-sm-6">
+                <h1 class="m-0">E-posta Ayarları</h1>
+            </div>
+            <div class="col-sm-6">
+                <ol class="breadcrumb float-sm-right">
+                    <li class="breadcrumb-item"><a href="/">Ana Sayfa</a></li>
+                    <li class="breadcrumb-item"><a asp-controller="SistemAyar" asp-action="Index">Sistem Ayarları</a></li>
+                    <li class="breadcrumb-item active">E-posta Ayarları</li>
+                </ol>
+            </div>
+        </div>
+    </div>
+</div>
+
+<div class="content">
+    <div class="container-fluid">
+        @if (TempData["Success"] != null)
+        {
+            <div class="alert alert-success alert-dismissible fade show" role="alert">
+                @TempData["Success"]
+                <button type="button" class="close" data-dismiss="alert" aria-label="Close">
+                    <span aria-hidden="true">&times;</span>
+                </button>
+            </div>
+        }
+        
+        <div class="card">
+            <div class="card-header">
+                <h3 class="card-title">E-posta Sunucu Ayarları</h3>
+            </div>
+            <div class="card-body">
+                <form asp-action="EmailAyarlari" method="post">
+                    <div asp-validation-summary="ModelOnly" class="text-danger"></div>
+
+                    <div class="row">
+                        <div class="col-md-6">
+                            <div class="form-group">
+                                <label asp-for="SmtpServer" class="control-label"></label>
+                                <input asp-for="SmtpServer" class="form-control" />
+                                <span asp-validation-for="SmtpServer" class="text-danger"></span>
+                            </div>
+                        </div>
+                        <div class="col-md-6">
+                            <div class="form-group">
+                                <label asp-for="SmtpPort" class="control-label"></label>
+                                <input asp-for="SmtpPort" class="form-control" />
+                                <span asp-validation-for="SmtpPort" class="text-danger"></span>
+                            </div>
+                        </div>
+                    </div>
+
+                    <div class="row">
+                        <div class="col-md-6">
+                            <div class="form-group">
+                                <label asp-for="Username" class="control-label"></label>
+                                <input asp-for="Username" class="form-control" />
+                                <span asp-validation-for="Username" class="text-danger"></span>
+                            </div>
+                        </div>
+                        <div class="col-md-6">
+                            <div class="form-group">
+                                <label asp-for="Password" class="control-label"></label>
+                                <input asp-for="Password" type="password" class="form-control" placeholder="********" />
+                                <span asp-validation-for="Password" class="text-danger"></span>
+                                <small class="form-text text-muted">Değiştirmek istemiyorsanız boş bırakın.</small>
+                            </div>
+                        </div>
+                    </div>
+
+                    <div class="row">
+                        <div class="col-md-6">
+                            <div class="form-group">
+                                <label asp-for="SenderEmail" class="control-label"></label>
+                                <input asp-for="SenderEmail" class="form-control" />
+                                <span asp-validation-for="SenderEmail" class="text-danger"></span>
+                            </div>
+                        </div>
+                        <div class="col-md-6">
+                            <div class="form-group">
+                                <label asp-for="SenderName" class="control-label"></label>
+                                <input asp-for="SenderName" class="form-control" />
+                                <span asp-validation-for="SenderName" class="text-danger"></span>
+                            </div>
+                        </div>
+                    </div>
+
+                    <div class="row">
+                        <div class="col-md-6">
+                            <div class="form-group">
+                                <div class="checkbox">
+                                    <label>
+                                        <input asp-for="UseSsl" /> @Html.DisplayNameFor(model => model.UseSsl)
+                                    </label>
+                                </div>
+                            </div>
+                        </div>
+                        <div class="col-md-6">
+                            <div class="form-group">
+                                <label asp-for="AdminEmails" class="control-label"></label>
+                                <input asp-for="AdminEmails" class="form-control" />
+                                <span asp-validation-for="AdminEmails" class="text-danger"></span>
+                                <small class="form-text text-muted">E-posta adreslerini virgülle ayırın. Örn: admin@example.com, destek@example.com</small>
+                            </div>
+                        </div>
+                    </div>
+
+                    <div class="form-group mt-4">
+                        <button type="submit" class="btn btn-primary">Kaydet</button>
+                        <a asp-action="Index" class="btn btn-secondary">İptal</a>
+                    </div>
+                </form>
+            </div>
+        </div>
+    </div>
+</div>
+
+@section Scripts {
+    @{await Html.RenderPartialAsync("_ValidationScriptsPartial");}
+    <script>
+        $(document).ready(function() {
+            // 4 saniye sonra uyarıları otomatik olarak kapat
+            setTimeout(function() {
+                $('.alert').fadeOut('slow', function() {
+                    $(this).remove();
+                });
+            }, 4000);
+        });
+    </script>
+} 

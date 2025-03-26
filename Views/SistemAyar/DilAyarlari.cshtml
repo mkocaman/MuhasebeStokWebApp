@@ -1,0 +1,173 @@
+@model MuhasebeStokWebApp.ViewModels.SistemAyar.DilAyarlariViewModel
+
+@{
+    ViewData["Title"] = "Dil Ayarları";
+}
+
+<div class="content-header">
+    <div class="container-fluid">
+        <div class="row mb-2">
+            <div class="col-sm-6">
+                <h1 class="m-0">Dil Ayarları</h1>
+            </div>
+            <div class="col-sm-6">
+                <ol class="breadcrumb float-sm-right">
+                    <li class="breadcrumb-item"><a href="/">Ana Sayfa</a></li>
+                    <li class="breadcrumb-item"><a asp-controller="SistemAyar" asp-action="Index">Sistem Ayarları</a></li>
+                    <li class="breadcrumb-item active">Dil Ayarları</li>
+                </ol>
+            </div>
+        </div>
+    </div>
+</div>
+
+<div class="content">
+    <div class="container-fluid">
+        @if (TempData["Success"] != null)
+        {
+            <div class="alert alert-success alert-dismissible fade show" role="alert">
+                @TempData["Success"]
+                <button type="button" class="close" data-dismiss="alert" aria-label="Close">
+                    <span aria-hidden="true">&times;</span>
+                </button>
+            </div>
+        }
+        
+        <div class="card">
+            <div class="card-header">
+                <h3 class="card-title">Dil ve Format Ayarları</h3>
+            </div>
+            <div class="card-body">
+                <form asp-action="DilAyarlari" method="post">
+                    <div asp-validation-summary="ModelOnly" class="text-danger"></div>
+
+                    <div class="card">
+                        <div class="card-header bg-light">
+                            <h3 class="card-title">Dil Ayarları</h3>
+                        </div>
+                        <div class="card-body">
+                            <div class="row">
+                                <div class="col-md-6">
+                                    <div class="form-group">
+                                        <label asp-for="VarsayilanDil" class="control-label"></label>
+                                        <select asp-for="VarsayilanDil" class="form-control">
+                                            <option value="tr-TR">Türkçe (Türkiye)</option>
+                                            <option value="en-US">English (US)</option>
+                                            <option value="en-GB">English (UK)</option>
+                                            <option value="de-DE">Deutsch</option>
+                                            <option value="fr-FR">Français</option>
+                                            <option value="es-ES">Español</option>
+                                        </select>
+                                        <span asp-validation-for="VarsayilanDil" class="text-danger"></span>
+                                    </div>
+                                </div>
+                                <div class="col-md-6">
+                                    <div class="form-group">
+                                        <div class="checkbox">
+                                            <label>
+                                                <input asp-for="CokluDilDestegi" /> @Html.DisplayNameFor(model => model.CokluDilDestegi)
+                                            </label>
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+                            <div class="row">
+                                <div class="col-md-12">
+                                    <div class="form-group">
+                                        <label>Aktif Diller</label>
+                                        <div class="checkbox-list mt-2">
+                                            <div class="form-check form-check-inline">
+                                                <input type="checkbox" name="AktifDiller" value="tr-TR" checked class="form-check-input" />
+                                                <label class="form-check-label">Türkçe (Türkiye)</label>
+                                            </div>
+                                            <div class="form-check form-check-inline">
+                                                <input type="checkbox" name="AktifDiller" value="en-US" class="form-check-input" />
+                                                <label class="form-check-label">English (US)</label>
+                                            </div>
+                                            <div class="form-check form-check-inline">
+                                                <input type="checkbox" name="AktifDiller" value="en-GB" class="form-check-input" />
+                                                <label class="form-check-label">English (UK)</label>
+                                            </div>
+                                            <div class="form-check form-check-inline">
+                                                <input type="checkbox" name="AktifDiller" value="de-DE" class="form-check-input" />
+                                                <label class="form-check-label">Deutsch</label>
+                                            </div>
+                                            <div class="form-check form-check-inline">
+                                                <input type="checkbox" name="AktifDiller" value="fr-FR" class="form-check-input" />
+                                                <label class="form-check-label">Français</label>
+                                            </div>
+                                            <div class="form-check form-check-inline">
+                                                <input type="checkbox" name="AktifDiller" value="es-ES" class="form-check-input" />
+                                                <label class="form-check-label">Español</label>
+                                            </div>
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+
+                    <div class="card mt-4">
+                        <div class="card-header bg-light">
+                            <h3 class="card-title">Format Ayarları</h3>
+                        </div>
+                        <div class="card-body">
+                            <div class="row">
+                                <div class="col-md-6">
+                                    <div class="form-group">
+                                        <label asp-for="ParaBirimiFormat" class="control-label"></label>
+                                        <input asp-for="ParaBirimiFormat" class="form-control" />
+                                        <span asp-validation-for="ParaBirimiFormat" class="text-danger"></span>
+                                        <small class="form-text text-muted">Örnek: #,##0.00 ₺ veya $ #,##0.00</small>
+                                    </div>
+                                </div>
+                                <div class="col-md-6">
+                                    <div class="form-group">
+                                        <label asp-for="TarihFormat" class="control-label"></label>
+                                        <input asp-for="TarihFormat" class="form-control" />
+                                        <span asp-validation-for="TarihFormat" class="text-danger"></span>
+                                        <small class="form-text text-muted">Örnek: dd.MM.yyyy veya yyyy-MM-dd</small>
+                                    </div>
+                                </div>
+                            </div>
+                            <div class="row">
+                                <div class="col-md-6">
+                                    <div class="form-group">
+                                        <label asp-for="SaatFormat" class="control-label"></label>
+                                        <input asp-for="SaatFormat" class="form-control" />
+                                        <span asp-validation-for="SaatFormat" class="text-danger"></span>
+                                        <small class="form-text text-muted">Örnek: HH:mm veya hh:mm tt</small>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+
+                    <div class="form-group mt-4">
+                        <button type="submit" class="btn btn-primary">Kaydet</button>
+                        <a asp-action="Index" class="btn btn-secondary">İptal</a>
+                    </div>
+                </form>
+            </div>
+        </div>
+    </div>
+</div>
+
+@section Scripts {
+    @{await Html.RenderPartialAsync("_ValidationScriptsPartial");}
+    <script>
+        $(document).ready(function() {
+            // 4 saniye sonra uyarıları otomatik olarak kapat
+            setTimeout(function() {
+                $('.alert').fadeOut('slow', function() {
+                    $(this).remove();
+                });
+            }, 4000);
+
+            // Çoklu dil desteğine göre dil seçeneklerini etkinleştir/devre dışı bırak
+            $('#CokluDilDestegi').change(function() {
+                $('.checkbox-list input[type="checkbox"]').prop('disabled', !this.checked);
+            }).trigger('change');
+        });
+    </script>
+} 

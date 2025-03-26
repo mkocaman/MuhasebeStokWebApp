@@ -16,14 +16,39 @@
     </div>
 </div>
 
+@if (!ViewData.ModelState.IsValid)
+{
+    <div class="alert alert-danger alert-dismissible fade show" role="alert">
+        <h5>Form hatalarını düzeltin:</h5>
+        <ul>
+            @foreach (var modelState in ViewData.ModelState.Values)
+            {
+                foreach (var error in modelState.Errors)
+                {
+                    <li>@error.ErrorMessage</li>
+                }
+            }
+        </ul>
+        <button type="button" class="btn-close" data-bs-dismiss="alert" aria-label="Close"></button>
+    </div>
+}
+
+@if (TempData["ErrorMessage"] != null)
+{
+    <div class="alert alert-danger alert-dismissible fade show" role="alert">
+        <strong>Hata!</strong> @TempData["ErrorMessage"]
+        <button type="button" class="btn-close" data-bs-dismiss="alert" aria-label="Close"></button>
+    </div>
+}
+
 <div class="row">
     <div class="col-12">
         <div class="card">
             <div class="card-header">
                 <h5>
-                    @if (Model.ParentMenu != null)
+                    @if (Model.UstMenuAdi != null)
                     {
-                        <span>@Model.ParentMenu.Ad Menüsü İçin Alt Menü Oluştur</span>
+                        <span>@Model.UstMenuAdi Menüsü İçin Alt Menü Oluştur</span>
                     }
                     else
                     {
@@ -32,16 +57,34 @@
                 </h5>
             </div>
             <div class="card-body">
-                <form asp-action="Create" method="post">
+                <form asp-action="Create" method="post" id="createMenuForm">
                     <div asp-validation-summary="ModelOnly" class="text-danger"></div>
                     
-                    @if (Model.ParentId.HasValue)
+                    @if (Model.UstMenuID.HasValue)
                     {
-                        <input type="hidden" asp-for="ParentId" />
+                        <input type="hidden" asp-for="UstMenuID" />
                         <div class="row mb-3">
                             <label class="col-sm-3 col-form-label">Üst Menü</label>
                             <div class="col-sm-9">
-                                <input type="text" class="form-control" value="@Model.ParentMenu?.Ad" disabled />
+                                <input type="text" class="form-control" value="@Model.UstMenuAdi" disabled />
+                            </div>
+                        </div>
+                    }
+                    else if (Model.UstMenuAdi == null)
+                    {
+                        <div class="row mb-3">
+                            <label class="col-sm-3 col-form-label">Üst Menü</label>
+                            <div class="col-sm-9">
+                                <select name="UstMenuID" class="form-select">
+                                    <option value="">Üst Menü Yok (Ana Menü)</option>
+                                    @if (ViewBag.ParentMenuOptions != null)
+                                    {
+                                        @foreach (var item in ViewBag.ParentMenuOptions)
+                                        {
+                                            <option value="@item.Value">@item.Text</option>
+                                        }
+                                    }
+                                </select>
                             </div>
                         </div>
                     }
@@ -49,7 +92,7 @@
                     <div class="row mb-3">
                         <label asp-for="Ad" class="col-sm-3 col-form-label"></label>
                         <div class="col-sm-9">
-                            <input asp-for="Ad" class="form-control" />
+                            <input asp-for="Ad" class="form-control" required />
                             <span asp-validation-for="Ad" class="text-danger"></span>
                         </div>
                     </div>
@@ -106,31 +149,31 @@
                     <div class="row mb-3">
                         <label asp-for="Sira" class="col-sm-3 col-form-label"></label>
                         <div class="col-sm-9">
-                            <input asp-for="Sira" class="form-control" />
+                            <input asp-for="Sira" class="form-control" value="0" />
                             <span asp-validation-for="Sira" class="text-danger"></span>
                         </div>
                     </div>
                     
                     <div class="row mb-3">
-                        <label asp-for="Aktif" class="col-sm-3 col-form-label"></label>
+                        <label asp-for="AktifMi" class="col-sm-3 col-form-label"></label>
                         <div class="col-sm-9">
                             <div class="form-check form-switch">
-                                <input asp-for="Aktif" class="form-check-input" />
+                                <input asp-for="AktifMi" class="form-check-input" checked />
                             </div>
                         </div>
                     </div>
                     
                     <div class="row mb-3">
-                        <label asp-for="SelectedRoleIds" class="col-sm-3 col-form-label"></label>
+                        <label asp-for="SeciliRoller" class="col-sm-3 col-form-label"></label>
                         <div class="col-sm-9">
-                            <select asp-for="SelectedRoleIds" class="form-select" multiple>
+                            <select asp-for="SeciliRoller" class="form-select" multiple>
                                 @foreach (var role in Model.Roles)
                                 {
                                     <option value="@role.Id">@role.Name</option>
                                 }
                             </select>
-                            <span asp-validation-for="SelectedRoleIds" class="text-danger"></span>
-                            <small class="form-text text-muted">Birden fazla rol seçmek için CTRL tuşuna basarak seçim yapabilirsiniz.</small>
+                            <span asp-validation-for="SeciliRoller" class="text-danger"></span>
+                            <small class="form-text text-muted">Birden fazla rol seçmek için CTRL tuşuna basarak seçim yapabilirsiniz. Rol seçimi zorunlu değildir, seçim yapılmazsa varsayılan olarak Admin rolü eklenecektir.</small>
                         </div>
                     </div>
                     
@@ -166,6 +209,39 @@
                     $('#controllerActionGroup').hide();
                     $('#urlGroup').show();
                 }
+            });
+            
+            // Form submit kontrolü
+            $('#createMenuForm').on('submit', function(e) {
+                var ad = $('#Ad').val().trim();
+                
+                if (!ad) {
+                    e.preventDefault();
+                    alert('Menü Adı alanı boş bırakılamaz!');
+                    $('#Ad').focus();
+                    return false;
+                }
+                
+                var menuType = $('#menuType').val();
+                
+                if (menuType === 'controller') {
+                    var controller = $('#Controller').val().trim();
+                    var action = $('#Action').val().trim();
+                    
+                    if (!controller && !action) {
+                        // Controller/Action boş olabilir, ama bunu log kaydı için bildirelim
+                        console.log('Controller ve Action alanları boş!');
+                    }
+                } else {
+                    var url = $('#Url').val().trim();
+                    
+                    if (!url) {
+                        // URL boş olabilir, varsayılan # değeri kullanılacak
+                        console.log('URL alanı boş, varsayılan # değeri kullanılacak');
+                    }
+                }
+                
+                return true;
             });
         });
     </script>

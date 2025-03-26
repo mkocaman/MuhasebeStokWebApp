@@ -2,28 +2,62 @@ using Microsoft.AspNetCore.Identity;
 using Microsoft.EntityFrameworkCore;
 using MuhasebeStokWebApp.Data;
 using MuhasebeStokWebApp.Data.Repositories;
+using MuhasebeStokWebApp.Data.Entities;
 using Microsoft.AspNetCore.Authentication.Cookies;
 using MuhasebeStokWebApp.Services;
 using MuhasebeStokWebApp.Services.Menu;
+using MuhasebeStokWebApp.Services.Interfaces;
+using MuhasebeStokWebApp.Services.Auth;
+using MuhasebeStokWebApp.Services.DovizModulu;
+using MuhasebeStokWebApp.Services.Currency;
+using MuhasebeStokWebApp.Middleware;
+using Microsoft.AspNetCore.SignalR;
+using MuhasebeStokWebApp.Services.Notification;
+using MuhasebeStokWebApp.Hubs;
+using MuhasebeStokWebApp.Services.Report;
+using MuhasebeStokWebApp.Services.Email;
+using Serilog;
+using Serilog.Events;
+using Microsoft.Extensions.Localization;
+using Microsoft.AspNetCore.Localization;
+using System.Globalization;
+using System;
+using System.IO;
 
 var builder = WebApplication.CreateBuilder(args);
+
+// Serilog yapılandırması
+Log.Logger = new LoggerConfiguration()
+    .MinimumLevel.Information()
+    .MinimumLevel.Override("Microsoft", LogEventLevel.Warning)
+    .Enrich.FromLogContext()
+    .WriteTo.Console()
+    .WriteTo.File("Logs/log-.txt", 
+        rollingInterval: RollingInterval.Day,
+        retainedFileCountLimit: 31)
+    .CreateLogger();
+
+builder.Host.UseSerilog();
 
 // Add services to the container.
 var connectionString = builder.Configuration.GetConnectionString("DefaultConnection");
 
-// SQL Server kullanımı (tüm ortamlarda)
+// SQL Server kullanımı
 builder.Services.AddDbContext<ApplicationDbContext>(options =>
-    options.UseSqlServer(connectionString));
+    options.UseSqlServer(
+        connectionString, 
+        b => b.MigrationsAssembly("MuhasebeStokWebApp")
+    ));
 
 // Identity servislerini ekliyoruz
-builder.Services.AddIdentity<IdentityUser, IdentityRole>(options => 
+builder.Services.AddIdentity<ApplicationUser, IdentityRole>(options => 
 {
-    // Şifre politikaları
-    options.Password.RequireDigit = true;
-    options.Password.RequireLowercase = true;
-    options.Password.RequireUppercase = true;
-    options.Password.RequireNonAlphanumeric = true;
-    options.Password.RequiredLength = 8;
+    // Şifre politikaları - Geliştirme için basitleştirildi
+    options.Password.RequireDigit = false;  
+    options.Password.RequireLowercase = false;
+    options.Password.RequireUppercase = false;
+    options.Password.RequireNonAlphanumeric = false;
+    options.Password.RequiredLength = 6;
     
     // Kullanıcı politikaları
     options.User.RequireUniqueEmail = true;
@@ -33,8 +67,7 @@ builder.Services.AddIdentity<IdentityUser, IdentityRole>(options =>
     options.Lockout.MaxFailedAccessAttempts = 5;
 })
     .AddEntityFrameworkStores<ApplicationDbContext>()
-    .AddDefaultTokenProviders()
-    .AddSignInManager<SignInManager<IdentityUser>>();
+    .AddDefaultTokenProviders();
 
 // Role bazlı yetkilendirme ekliyoruz
 builder.Services.AddAuthorization(options =>
@@ -52,24 +85,35 @@ builder.Services.AddAuthorization(options =>
     options.AddPolicy("AuthenticatedUser", policy => policy.RequireAuthenticatedUser());
 });
 
-// Cookie Authentication
-builder.Services.AddAuthentication(options => 
+// Session servisi ekliyoruz
+builder.Services.AddDistributedMemoryCache();
+builder.Services.AddSession(options =>
 {
-    options.DefaultAuthenticateScheme = CookieAuthenticationDefaults.AuthenticationScheme;
-    options.DefaultChallengeScheme = CookieAuthenticationDefaults.AuthenticationScheme;
-    options.DefaultSignInScheme = CookieAuthenticationDefaults.AuthenticationScheme;
+    options.IdleTimeout = TimeSpan.FromHours(2);
+    options.Cookie.HttpOnly = true;
+    options.Cookie.IsEssential = true;
+});
+
+// Authentication cookie ayarları
+builder.Services.AddAuthentication(options =>
+{
+    options.DefaultScheme = "Cookies";
+    options.DefaultSignInScheme = "Cookies";
 })
-    .AddCookie(options =>
-    {
-        options.Cookie.Name = "MuhasebeStokAuth";
-        options.LoginPath = "/Account/Login";
-        options.AccessDeniedPath = "/Account/AccessDenied";
-        options.ExpireTimeSpan = TimeSpan.FromDays(30);
-        options.SlidingExpiration = true;
-        options.Cookie.HttpOnly = true;
-        options.Cookie.IsEssential = true;
-        options.Cookie.SameSite = Microsoft.AspNetCore.Http.SameSiteMode.Lax;
-    });
+.AddCookie("Cookies", options =>
+{
+    options.Cookie.Name = "MuhasebeStokAuth";
+    options.Cookie.HttpOnly = true;
+    options.ExpireTimeSpan = TimeSpan.FromHours(24);
+    options.LoginPath = "/Account/Login";
+    options.LogoutPath = "/Account/Logout";
+    options.AccessDeniedPath = "/Account/AccessDenied";
+    options.SlidingExpiration = true;
+    options.Cookie.SameSite = SameSiteMode.Lax;
+});
+
+// Data Protection servisini ekliyoruz
+builder.Services.AddDataProtection();
 
 // Repository ve UnitOfWork servislerini ekliyoruz
 builder.Services.AddScoped(typeof(IRepository<>), typeof(Repository<>));
@@ -91,15 +135,67 @@ builder.Services.AddScoped<UserManager>();
 // StokFifoService'i ekliyoruz
 builder.Services.AddScoped<StokFifoService>();
 
-// Para birimi ve döviz kuru servislerini ekliyoruz
-builder.Services.AddScoped<IParaBirimiService, ParaBirimiService>();
-builder.Services.AddScoped<IDovizKuruService, DovizKuruService>();
-
 // DropdownService'i ekliyoruz
 builder.Services.AddScoped<IDropdownService, DropdownService>();
 
+// CariService'i ekliyoruz
+builder.Services.AddScoped<ICariService, CariService>();
+
+// SistemAyarService'i ekliyoruz
+builder.Services.AddScoped<ISistemAyarService, SistemAyarService>();
+
+// AuthService'i ekliyoruz
+builder.Services.AddScoped<IAuthService, AuthService>();
+
 // MenuService'i ekliyoruz
 builder.Services.AddScoped<IMenuService, MenuService>();
+
+// Döviz modülü servislerini ekliyoruz
+builder.Services.AddScoped<IDovizService, DovizService>();
+builder.Services.AddScoped<IDovizKuruService, DovizKuruService>();
+builder.Services.AddScoped<MuhasebeStokWebApp.Services.Interfaces.IParaBirimiService, MuhasebeStokWebApp.Services.DovizModulu.ParaBirimiService>();
+
+// CurrencyService'i ekliyoruz
+builder.Services.AddScoped<ICurrencyService, CurrencyService>();
+
+// ReportService'i ekliyoruz
+builder.Services.AddScoped<IReportService, ReportService>();
+
+builder.Services.AddMemoryCache();
+
+builder.Services.AddSignalR();
+builder.Services.Configure<EmailSettings>(builder.Configuration.GetSection("EmailSettings"));
+builder.Services.AddScoped<MuhasebeStokWebApp.Services.Email.IEmailService, MuhasebeStokWebApp.Services.Email.EmailService>();
+builder.Services.AddScoped<INotificationService, NotificationService>();
+
+// Localization
+builder.Services.AddLocalization(options => options.ResourcesPath = "Resources");
+builder.Services.AddMvc()
+    .AddViewLocalization()
+    .AddDataAnnotationsLocalization();
+
+builder.Services.Configure<RequestLocalizationOptions>(options =>
+{
+    var supportedCultures = new[]
+    {
+        new CultureInfo("tr-TR"),
+        new CultureInfo("en-US")
+    };
+    options.DefaultRequestCulture = new RequestCulture("tr-TR");
+    options.SupportedCultures = supportedCultures;
+    options.SupportedUICultures = supportedCultures;
+});
+
+// CORS yapılandırması ekle
+builder.Services.AddCors(options =>
+{
+    options.AddPolicy("AllowAll", policy =>
+    {
+        policy.AllowAnyOrigin()
+              .AllowAnyMethod()
+              .AllowAnyHeader();
+    });
+});
 
 builder.Services.AddControllersWithViews();
 
@@ -124,6 +220,8 @@ using (var scope = app.Services.CreateScope())
     try
     {
         var context = services.GetRequiredService<ApplicationDbContext>();
+        // Veritabanını oluştur ve migrasyon uygula
+        context.Database.Migrate();
         await AppDbInitializer.SeedData(services, context);
     }
     catch (Exception ex)
@@ -141,9 +239,24 @@ app.UseStaticFiles();
 
 app.UseRouting();
 
-// Yetkilendirmeyi etkinleştiriyoruz
+// CORS middleware'ini ekle - UseRouting'den sonra, UseAuthorization'dan önce olmalı
+app.UseCors("AllowAll");
+
+// Session middleware'i önce kullanılmalı
+app.UseSession();
+
+// Authentication ve Authorization middleware'leri
 app.UseAuthentication();
 app.UseAuthorization();
+
+// Global exception handling middleware'ini ekle
+app.UseMiddleware<GlobalExceptionHandlingMiddleware>();
+
+// SignalR endpoint'ini ekle
+app.MapHub<NotificationHub>("/notificationHub");
+
+// Localization middleware
+app.UseRequestLocalization();
 
 app.MapControllerRoute(
     name: "default",

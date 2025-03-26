@@ -83,7 +83,7 @@ namespace MuhasebeStokWebApp.Data.Entities
         public DateTime? GuncellemeTarihi { get; set; }
         
         [Required]
-        public bool SoftDelete { get; set; } = false;
+        public bool Silindi { get; set; } = false;
         
         // Navigation properties
         [ForeignKey("UrunID")]

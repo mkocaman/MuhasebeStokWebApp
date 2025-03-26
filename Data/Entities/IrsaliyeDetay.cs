@@ -16,15 +16,24 @@ namespace MuhasebeStokWebApp.Data.Entities
         [Required]
         public decimal Miktar { get; set; }
         
+        [Required]
+        public decimal BirimFiyat { get; set; }
+        
+        [Required]
+        public decimal KdvOrani { get; set; }
+        
+        [Required]
+        public decimal IndirimOrani { get; set; }
+        
         [StringLength(50)]
         public string Birim { get; set; }
         
         [StringLength(200)]
         public string Aciklama { get; set; }
         
-        public Guid? OlusturanKullaniciID { get; set; }
+        public Guid? OlusturanKullaniciId { get; set; }
         
-        public Guid? SonGuncelleyenKullaniciID { get; set; }
+        public Guid? SonGuncelleyenKullaniciId { get; set; }
         
         public DateTime? OlusturmaTarihi { get; set; }
         
@@ -46,5 +55,13 @@ namespace MuhasebeStokWebApp.Data.Entities
         
         [ForeignKey("UrunID")]
         public virtual Urun Urun { get; set; }
+        
+        public IrsaliyeDetay()
+        {
+            IrsaliyeDetayID = Guid.NewGuid();
+            OlusturmaTarihi = DateTime.Now;
+            Aktif = true;
+            SoftDelete = false;
+        }
     }
 } 

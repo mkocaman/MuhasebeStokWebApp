@@ -3,6 +3,7 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Linq.Expressions;
 using System.Threading.Tasks;
+using MuhasebeStokWebApp.Data.Entities;
 
 namespace MuhasebeStokWebApp.Data.Repositories
 {
@@ -22,5 +23,6 @@ namespace MuhasebeStokWebApp.Data.Repositories
         Task RemoveRangeAsync(IEnumerable<T> entities);
         Task<IEnumerable<T>> FindAsync(Expression<Func<T, bool>> predicate);
         Task AddOrUpdateAsync(T entity);
+        Task<Irsaliye> GetIrsaliyeWithDetailsAsync(Guid id);
     }
 } 

@@ -8,24 +8,42 @@ using Microsoft.EntityFrameworkCore;
 using MuhasebeStokWebApp.Data;
 using MuhasebeStokWebApp.Data.Entities;
 using MuhasebeStokWebApp.ViewModels.Depo;
+using MuhasebeStokWebApp.Services;
+using Microsoft.AspNetCore.Identity;
 using System.Security.Claims;
+using Microsoft.Extensions.Logging;
+using Microsoft.AspNetCore.Authorization;
+using MuhasebeStokWebApp.Models;
+using MuhasebeStokWebApp.Services.Interfaces;
 
 namespace MuhasebeStokWebApp.Controllers
 {
-    public class DepoController : Controller
+    [Authorize]
+    public class DepoController : BaseController
     {
         private readonly ApplicationDbContext _context;
+        private readonly ILogger<DepoController> _logger;
+        private readonly ILogService _logService;
 
-        public DepoController(ApplicationDbContext context)
+        public DepoController(
+            ApplicationDbContext context,
+            IMenuService menuService,
+            UserManager<ApplicationUser> userManager,
+            RoleManager<IdentityRole> roleManager,
+            ILogService logService,
+            ILogger<DepoController> logger)
+            : base(menuService, userManager, roleManager, logService)
         {
             _context = context;
+            _logger = logger;
+            _logService = logService;
         }
 
         // GET: Depo
         public async Task<IActionResult> Index()
         {
             var depolar = await _context.Depolar
-                .Where(d => !d.SoftDelete)
+                .Where(d => !d.Silindi)
                 .OrderBy(d => d.DepoAdi)
                 .Select(d => new DepoViewModel
                 {
@@ -49,7 +67,7 @@ namespace MuhasebeStokWebApp.Controllers
             }
 
             var depo = await _context.Depolar
-                .FirstOrDefaultAsync(m => m.DepoID == id && !m.SoftDelete);
+                .FirstOrDefaultAsync(m => m.DepoID == id && !m.Silindi);
             if (depo == null)
             {
                 return NotFound();
@@ -84,53 +102,47 @@ namespace MuhasebeStokWebApp.Controllers
         {
             try
             {
-                // Aktif değeri için manuol kontrol ekle
-                if (!ModelState.IsValid)
-                {
-                    // Hataları yazdır
-                    foreach (var state in ModelState)
-                    {
-                        if (state.Key == "Aktif" && state.Value.Errors.Count > 0)
-                        {
-                            // Aktif alanı için varsayılan değeri true olarak ayarla
-                            model.Aktif = true;
-                            ModelState.Remove("Aktif");
-                        }
-                        else
-                        {
-                            foreach (var error in state.Value.Errors)
-                            {
-                                Console.WriteLine($"Hata - {state.Key}: {error.ErrorMessage}");
-                            }
-                        }
-                    }
-                }
-
                 if (ModelState.IsValid)
                 {
+                    var kullaniciId = GetCurrentUserId();
+                    
+                    if (kullaniciId == Guid.Empty)
+                    {
+                        ModelState.AddModelError("", "Kullanıcı bilgisi alınamadı.");
+                        return View(model);
+                    }
+
                     var depo = new Depo
                     {
                         DepoID = Guid.NewGuid(),
                         DepoAdi = model.DepoAdi,
                         Adres = model.Adres,
-                        Aktif = model.Aktif,
-                        OlusturanKullaniciID = GetCurrentUserId(),
                         OlusturmaTarihi = DateTime.Now,
-                        SoftDelete = false,
-                        GuncellemeTarihi = DateTime.Now,
-                        SonGuncelleyenKullaniciID = GetCurrentUserId()
+                        OlusturanKullaniciID = kullaniciId,
+                        Silindi = false,
+                        Aktif = true
                     };
 
                     _context.Add(depo);
                     await _context.SaveChangesAsync();
                     return RedirectToAction(nameof(Index));
                 }
+
+                foreach (var state in ModelState)
+                {
+                    foreach (var error in state.Value.Errors)
+                    {
+                        _logger.LogWarning($"Hata - {state.Key}: {error.ErrorMessage}");
+                    }
+                }
+                return View(model);
             }
             catch (Exception ex)
             {
-                ModelState.AddModelError("", $"Bir hata oluştu: {ex.Message}");
+                _logger.LogError(ex, "Depo oluşturulurken hata oluştu");
+                ModelState.AddModelError("", "Depo oluşturulurken bir hata oluştu. Lütfen tekrar deneyin.");
+                return View(model);
             }
-            return View(model);
         }
 
         // GET: Depo/Edit/5
@@ -142,7 +154,7 @@ namespace MuhasebeStokWebApp.Controllers
             }
 
             var depo = await _context.Depolar
-                .FirstOrDefaultAsync(d => d.DepoID == id && !d.SoftDelete);
+                .FirstOrDefaultAsync(d => d.DepoID == id && !d.Silindi);
             if (depo == null)
             {
                 return NotFound();
@@ -214,7 +226,7 @@ namespace MuhasebeStokWebApp.Controllers
             }
 
             var depo = await _context.Depolar
-                .FirstOrDefaultAsync(d => d.DepoID == id && !d.SoftDelete);
+                .FirstOrDefaultAsync(d => d.DepoID == id && !d.Silindi);
 
             if (depo == null)
             {
@@ -245,17 +257,13 @@ namespace MuhasebeStokWebApp.Controllers
                 return NotFound();
             }
 
-            // İlişkili kayıt var mı kontrol et
-            var iliskiliKayitVar = await _context.StokHareketleri.AnyAsync(s => s.DepoID == id && !s.SoftDelete);
-            if (iliskiliKayitVar)
-            {
-                // Eğer ilişkili kayıt varsa, hata mesajı göster
-                TempData["ErrorMessage"] = "Bu depo, stok hareketlerinde kullanıldığı için silinemez.";
-                return RedirectToAction(nameof(Index));
-            }
+            // Önce ilişkili stok hareketleri soft-delete yap
+            var stokHareketleri = await _context.StokHareketleri
+                .Where(s => s.DepoID == id && !s.Silindi)
+                .ToListAsync();
 
-            // Soft delete işlemi
-            depo.SoftDelete = true;
+            // Depo soft-delete
+            depo.Silindi = true;
             depo.GuncellemeTarihi = DateTime.Now;
             depo.SonGuncelleyenKullaniciID = GetCurrentUserId();
             
@@ -270,7 +278,7 @@ namespace MuhasebeStokWebApp.Controllers
         [NonAction]
         private async Task<bool> DepoExists(Guid id)
         {
-            return await _context.Depolar.AnyAsync(e => e.DepoID == id && !e.SoftDelete);
+            return await _context.Depolar.AnyAsync(d => d.DepoID == id && !d.Silindi);
         }
 
         // Kullanıcı ID'sini al

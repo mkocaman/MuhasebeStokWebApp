@@ -1,0 +1,173 @@
+@model MuhasebeStokWebApp.ViewModels.DovizKuruEditViewModel
+
+@{
+    ViewData["Title"] = "Döviz Kuru Düzenle";
+}
+
+<div class="container-fluid">
+    <div class="card">
+        <div class="card-header bg-primary text-white">
+            <div class="d-flex justify-content-between align-items-center">
+                <h4 class="mb-0">Döviz Kuru Düzenle</h4>
+                <a asp-action="Liste" class="btn btn-outline-light">
+                    <i class="fas fa-arrow-left"></i> Listeye Dön
+                </a>
+            </div>
+        </div>
+        <div class="card-body">
+            <form asp-action="Duzenle" method="post">
+                <div asp-validation-summary="ModelOnly" class="alert alert-danger" role="alert"></div>
+                <input type="hidden" asp-for="DovizKuruID" />
+
+                <div class="row">
+                    <div class="col-md-6">
+                        <div class="card mb-4">
+                            <div class="card-header py-3 bg-light">
+                                <h6 class="m-0 font-weight-bold text-primary">Kur Bilgileri</h6>
+                            </div>
+                            <div class="card-body">
+                                <div class="form-group">
+                                    <label asp-for="KaynakParaBirimiID" class="control-label">Kaynak Para Birimi</label>
+                                    <select asp-for="KaynakParaBirimiID" class="form-control" asp-items="ViewBag.KaynakParaBirimleri">
+                                        <option value="">-- Kaynak Para Birimi Seçin --</option>
+                                    </select>
+                                    <span asp-validation-for="KaynakParaBirimiID" class="text-danger"></span>
+                                </div>
+
+                                <div class="form-group">
+                                    <label asp-for="HedefParaBirimiID" class="control-label">Hedef Para Birimi</label>
+                                    <select asp-for="HedefParaBirimiID" class="form-control" asp-items="ViewBag.HedefParaBirimleri">
+                                        <option value="">-- Hedef Para Birimi Seçin --</option>
+                                    </select>
+                                    <span asp-validation-for="HedefParaBirimiID" class="text-danger"></span>
+                                </div>
+
+                                <div class="form-group">
+                                    <label asp-for="Tarih" class="control-label">Tarih</label>
+                                    <input asp-for="Tarih" type="date" class="form-control" />
+                                    <span asp-validation-for="Tarih" class="text-danger"></span>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+
+                    <div class="col-md-6">
+                        <div class="card mb-4">
+                            <div class="card-header py-3 bg-light">
+                                <h6 class="m-0 font-weight-bold text-primary">Kur Değerleri</h6>
+                            </div>
+                            <div class="card-body">
+                                <div class="form-group">
+                                    <label asp-for="KurDegeri" class="control-label">Kur Değeri</label>
+                                    <input asp-for="KurDegeri" class="form-control" step="0.000001" />
+                                    <span asp-validation-for="KurDegeri" class="text-danger"></span>
+                                </div>
+
+                                <div class="row">
+                                    <div class="col-md-6">
+                                        <div class="form-group">
+                                            <label asp-for="AlisFiyati" class="control-label">Alış Fiyatı</label>
+                                            <input asp-for="AlisFiyati" class="form-control" step="0.000001" />
+                                            <span asp-validation-for="AlisFiyati" class="text-danger"></span>
+                                        </div>
+                                    </div>
+                                    <div class="col-md-6">
+                                        <div class="form-group">
+                                            <label asp-for="SatisFiyati" class="control-label">Satış Fiyatı</label>
+                                            <input asp-for="SatisFiyati" class="form-control" step="0.000001" />
+                                            <span asp-validation-for="SatisFiyati" class="text-danger"></span>
+                                        </div>
+                                    </div>
+                                </div>
+
+                                <div class="row">
+                                    <div class="col-md-6">
+                                        <div class="form-group">
+                                            <label asp-for="EfektifAlisFiyati" class="control-label">Efektif Alış</label>
+                                            <input asp-for="EfektifAlisFiyati" class="form-control" step="0.000001" />
+                                            <span asp-validation-for="EfektifAlisFiyati" class="text-danger"></span>
+                                        </div>
+                                    </div>
+                                    <div class="col-md-6">
+                                        <div class="form-group">
+                                            <label asp-for="EfektifSatisFiyati" class="control-label">Efektif Satış</label>
+                                            <input asp-for="EfektifSatisFiyati" class="form-control" step="0.000001" />
+                                            <span asp-validation-for="EfektifSatisFiyati" class="text-danger"></span>
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+
+                <div class="row">
+                    <div class="col-12">
+                        <div class="card mb-4">
+                            <div class="card-header py-3 bg-light">
+                                <h6 class="m-0 font-weight-bold text-primary">Ek Bilgiler</h6>
+                            </div>
+                            <div class="card-body">
+                                <div class="form-group">
+                                    <label asp-for="Aciklama" class="control-label">Açıklama</label>
+                                    <textarea asp-for="Aciklama" class="form-control" rows="3"></textarea>
+                                    <span asp-validation-for="Aciklama" class="text-danger"></span>
+                                </div>
+
+                                <div class="form-group form-check">
+                                    <input asp-for="Aktif" class="form-check-input" />
+                                    <label asp-for="Aktif" class="form-check-label">Aktif</label>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+
+                <div class="form-group text-center mt-4">
+                    <button type="submit" class="btn btn-primary">
+                        <i class="fas fa-save"></i> Kaydet
+                    </button>
+                    <a asp-action="Liste" class="btn btn-secondary">
+                        <i class="fas fa-times"></i> İptal
+                    </a>
+                    <a asp-action="Sil" asp-route-id="@Model.DovizKuruID" class="btn btn-danger">
+                        <i class="fas fa-trash"></i> Sil
+                    </a>
+                </div>
+            </form>
+        </div>
+    </div>
+</div>
+
+@section Scripts {
+    @{await Html.RenderPartialAsync("_ValidationScriptsPartial");}
+
+    <script>
+        $(document).ready(function () {
+            // Kur değeri değiştiğinde alış ve satış fiyatlarını otomatik doldur
+            $('#KurDegeri').change(function () {
+                var kurDegeri = $(this).val();
+                if (confirm('Alış ve satış değerleri güncellensin mi?')) {
+                    $('#AlisFiyati').val(kurDegeri);
+                    $('#SatisFiyati').val(kurDegeri);
+                }
+            });
+
+            // Alış fiyatı değiştiğinde efektif alış fiyatını otomatik doldur
+            $('#AlisFiyati').change(function () {
+                var alisFiyati = $(this).val();
+                if (confirm('Efektif alış değeri güncellensin mi?')) {
+                    $('#EfektifAlisFiyati').val(alisFiyati);
+                }
+            });
+
+            // Satış fiyatı değiştiğinde efektif satış fiyatını otomatik doldur
+            $('#SatisFiyati').change(function () {
+                var satisFiyati = $(this).val();
+                if (confirm('Efektif satış değeri güncellensin mi?')) {
+                    $('#EfektifSatisFiyati').val(satisFiyati);
+                }
+            });
+        });
+    </script>
+} 

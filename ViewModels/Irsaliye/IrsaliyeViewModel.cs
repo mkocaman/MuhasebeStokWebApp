@@ -8,43 +8,52 @@ namespace MuhasebeStokWebApp.ViewModels.Irsaliye
     {
         public Guid IrsaliyeID { get; set; }
 
+        [Required]
+        [StringLength(20)]
         [Display(Name = "İrsaliye No")]
         public string IrsaliyeNumarasi { get; set; }
 
+        [Required]
         [Display(Name = "İrsaliye Tarihi")]
-        [DisplayFormat(DataFormatString = "{0:dd.MM.yyyy}", ApplyFormatInEditMode = true)]
-        public DateTime? IrsaliyeTarihi { get; set; }
+        public DateTime IrsaliyeTarihi { get; set; }
 
+        [Required]
         [Display(Name = "Cari")]
         public Guid CariID { get; set; }
 
         [Display(Name = "Cari Adı")]
         public string CariAdi { get; set; }
 
-        [Display(Name = "İrsaliye Türü")]
-        public string IrsaliyeTuru { get; set; }
-
-        [Display(Name = "Fatura No")]
-        public string FaturaNumarasi { get; set; }
-
         [Display(Name = "Fatura")]
         public Guid? FaturaID { get; set; }
 
-        [Display(Name = "Açıklama")]
-        public string Aciklama { get; set; }
+        [Display(Name = "Fatura Numarası")]
+        public string FaturaNumarasi { get; set; }
 
-        [Display(Name = "Durum")]
-        public string Durum { get; set; }
-        
-        [Display(Name = "Aktif")]
-        public bool Aktif { get; set; } = true;
+        [Display(Name = "İrsaliye Türü")]
+        public string IrsaliyeTuru { get; set; }
+
+        [StringLength(500)]
+        [Display(Name = "Açıklama")]
+        public string? Aciklama { get; set; }
+
+        [Display(Name = "Toplam Tutar")]
+        public decimal ToplamTutar { get; set; }
 
         [Display(Name = "Oluşturma Tarihi")]
-        [DisplayFormat(DataFormatString = "{0:dd.MM.yyyy HH:mm}", ApplyFormatInEditMode = false)]
-        public DateTime? OlusturmaTarihi { get; set; }
+        public DateTime OlusturmaTarihi { get; set; }
 
         [Display(Name = "Güncelleme Tarihi")]
-        [DisplayFormat(DataFormatString = "{0:dd.MM.yyyy HH:mm}", ApplyFormatInEditMode = false)]
         public DateTime? GuncellemeTarihi { get; set; }
+
+        [Display(Name = "Aktif")]
+        public bool Aktif { get; set; }
+
+        public virtual ICollection<IrsaliyeKalemViewModel> IrsaliyeDetaylari { get; set; }
+
+        public IrsaliyeViewModel()
+        {
+            IrsaliyeDetaylari = new List<IrsaliyeKalemViewModel>();
+        }
     }
 } 

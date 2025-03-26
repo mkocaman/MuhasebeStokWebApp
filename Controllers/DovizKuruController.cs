@@ -2,276 +2,462 @@ using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Threading.Tasks;
+using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.AspNetCore.Mvc.Rendering;
 using Microsoft.EntityFrameworkCore;
+using Microsoft.Extensions.Logging;
 using MuhasebeStokWebApp.Data;
 using MuhasebeStokWebApp.Data.Entities;
+using MuhasebeStokWebApp.Data.Entities.DovizModulu;
+using MuhasebeStokWebApp.Services.Interfaces;
+using MuhasebeStokWebApp.ViewModels;
+using DVM = MuhasebeStokWebApp.ViewModels.Doviz;
+using Microsoft.AspNetCore.Identity;
 using MuhasebeStokWebApp.Services;
-using MuhasebeStokWebApp.ViewModels.DovizKuru;
 
 namespace MuhasebeStokWebApp.Controllers
 {
-    public class DovizKuruController : Controller
+    [Authorize]
+    [Route("Kur")]
+    public class DovizKuruController : BaseController
     {
-        private readonly IDovizKuruService _dovizKuruService;
-        private readonly IParaBirimiService _paraBirimiService;
-        private readonly ILogService _logService;
         private readonly ApplicationDbContext _context;
+        private readonly ILogger<DovizKuruController> _logger;
+        private readonly IDovizKuruService _dovizKuruService;
+        protected new readonly UserManager<ApplicationUser> _userManager;
 
         public DovizKuruController(
+            ApplicationDbContext context,
+            ILogger<DovizKuruController> logger,
             IDovizKuruService dovizKuruService,
-            IParaBirimiService paraBirimiService,
-            ILogService logService,
-            ApplicationDbContext context)
+            UserManager<ApplicationUser> userManager,
+            IMenuService menuService,
+            RoleManager<IdentityRole> roleManager,
+            ILogService logService)
+            : base(menuService, userManager, roleManager, logService)
         {
-            _dovizKuruService = dovizKuruService;
-            _paraBirimiService = paraBirimiService;
-            _logService = logService;
             _context = context;
+            _logger = logger;
+            _dovizKuruService = dovizKuruService;
+            _userManager = userManager;
         }
 
-        // GET: DovizKuru
-        public async Task<IActionResult> Index()
+        // GET: Kur/Liste
+        [Route("liste")]
+        public async Task<IActionResult> Liste()
         {
-            var kurDegerleri = await _dovizKuruService.GetGuncelKurlarAsync();
-            return View(kurDegerleri);
-        }
-
-        // GET: DovizKuru/ParaBirimiKurlari/5
-        public async Task<IActionResult> ParaBirimiKurlari(Guid id)
-        {
-            var paraBirimi = await _paraBirimiService.GetParaBirimiByIdAsync(id);
-            if (paraBirimi == null)
+            try
             {
-                return NotFound();
-            }
+                var kurlar = await _context.KurDegerleri
+                    .Include(k => k.ParaBirimi)
+                    .Where(k => !k.Silindi && k.Aktif)
+                    .OrderByDescending(k => k.Tarih)
+                    .ThenBy(k => k.ParaBirimi.Kod)
+                    .ToListAsync();
 
-            var kurDegerleri = await _dovizKuruService.GetParaBirimiKurDegerleriAsync(id);
-            
-            var viewModel = new ParaBirimiKurlariViewModel
-            {
-                ParaBirimiID = paraBirimi.ParaBirimiID,
-                ParaBirimiKodu = paraBirimi.Kod,
-                ParaBirimiAdi = paraBirimi.Ad,
-                KurDegerleri = kurDegerleri.Select(k => new DovizKuruViewModel
+                var viewModel = kurlar.Select(k => new DovizKuruViewModel
                 {
-                    KurDegeriID = k.KurDegeriID,
-                    ParaBirimiID = k.ParaBirimiID,
-                    ParaBirimiKodu = paraBirimi.Kod,
-                    ParaBirimiAdi = paraBirimi.Ad,
-                    AlisDegeri = k.AlisDegeri,
-                    SatisDegeri = k.SatisDegeri,
+                    DovizKuruID = k.KurDegeriID,
+                    DovizKodu = k.ParaBirimi.Kod,
+                    DovizAdi = k.ParaBirimi.Ad,
+                    AlisFiyati = k.Alis,
+                    SatisFiyati = k.Satis,
+                    EfektifAlisFiyati = k.Efektif_Alis,
+                    EfektifSatisFiyati = k.Efektif_Satis,
                     Tarih = k.Tarih,
-                    Kaynak = k.Kaynak,
-                    Aktif = k.Aktif
-                }).ToList()
-            };
+                    GuncellemeTarihi = k.GuncellemeTarihi ?? k.OlusturmaTarihi ?? DateTime.Now,
+                    Aktif = k.Aktif,
+                    ParaBirimiKodu = k.ParaBirimi.Kod
+                }).ToList();
 
-            return View(viewModel);
-        }
-
-        // GET: DovizKuru/Create
-        public async Task<IActionResult> Create(Guid? paraBirimiId = null)
-        {
-            var paraBirimleri = await _paraBirimiService.GetAktifParaBirimleriAsync();
-            
-            var viewModel = new DovizKuruCreateViewModel
-            {
-                Tarih = DateTime.Now,
-                Kaynak = "Manuel Giriş",
-                ParaBirimleri = paraBirimleri.Select(p => new SelectListItem
-                {
-                    Value = p.ParaBirimiID.ToString(),
-                    Text = $"{p.Ad} ({p.Kod})",
-                    Selected = paraBirimiId.HasValue && p.ParaBirimiID == paraBirimiId.Value
-                }).ToList()
-            };
-
-            return View(viewModel);
-        }
-
-        // POST: DovizKuru/Create
-        [HttpPost]
-        [ValidateAntiForgeryToken]
-        public async Task<IActionResult> Create(DovizKuruCreateViewModel viewModel)
-        {
-            if (ModelState.IsValid)
-            {
-                try
-                {
-                    // Kur değerini ekle
-                    await _dovizKuruService.KurEkleAsync(
-                        viewModel.ParaBirimiID,
-                        viewModel.AlisDegeri,
-                        viewModel.SatisDegeri,
-                        viewModel.Kaynak,
-                        viewModel.Tarih);
-
-                    TempData["SuccessMessage"] = "Döviz kuru başarıyla eklendi.";
-                    
-                    if (viewModel.ParaBirimiID != Guid.Empty)
-                    {
-                        return RedirectToAction(nameof(ParaBirimiKurlari), new { id = viewModel.ParaBirimiID });
-                    }
-                    
-                    return RedirectToAction(nameof(Index));
-                }
-                catch (Exception ex)
-                {
-                    TempData["ErrorMessage"] = ex.Message;
-                    ModelState.AddModelError("", ex.Message);
-                    await _logService.LogErrorAsync("Döviz Kuru Ekleme", ex);
-                }
-            }
-
-            // Validation hatası durumunda ParaBirimleri listesini tekrar doldurmamız gerekiyor
-            var paraBirimleri = await _paraBirimiService.GetAktifParaBirimleriAsync();
-            viewModel.ParaBirimleri = paraBirimleri.Select(p => new SelectListItem
-            {
-                Value = p.ParaBirimiID.ToString(),
-                Text = $"{p.Ad} ({p.Kod})",
-                Selected = p.ParaBirimiID == viewModel.ParaBirimiID
-            }).ToList();
-
-            return View(viewModel);
-        }
-
-        // GET: DovizKuru/Edit/5
-        public async Task<IActionResult> Edit(Guid id)
-        {
-            var kurDegeri = await _dovizKuruService.GetKurDegeriByIdAsync(id);
-            if (kurDegeri == null)
-            {
-                return NotFound();
-            }
-
-            var paraBirimi = await _paraBirimiService.GetParaBirimiByIdAsync(kurDegeri.ParaBirimiID);
-
-            var viewModel = new DovizKuruEditViewModel
-            {
-                KurDegeriID = kurDegeri.KurDegeriID,
-                ParaBirimiID = kurDegeri.ParaBirimiID,
-                ParaBirimiKodu = paraBirimi?.Kod ?? "",
-                ParaBirimiAdi = paraBirimi?.Ad ?? "",
-                AlisDegeri = kurDegeri.AlisDegeri,
-                SatisDegeri = kurDegeri.SatisDegeri,
-                Tarih = kurDegeri.Tarih,
-                Kaynak = kurDegeri.Kaynak,
-                Aktif = kurDegeri.Aktif
-            };
-
-            return View(viewModel);
-        }
-
-        // POST: DovizKuru/Edit/5
-        [HttpPost]
-        [ValidateAntiForgeryToken]
-        public async Task<IActionResult> Edit(Guid id, DovizKuruEditViewModel viewModel)
-        {
-            if (id != viewModel.KurDegeriID)
-            {
-                return NotFound();
-            }
-
-            if (ModelState.IsValid)
-            {
-                try
-                {
-                    var kurDegeri = await _dovizKuruService.GetKurDegeriByIdAsync(id);
-                    if (kurDegeri == null)
-                    {
-                        return NotFound();
-                    }
-
-                    // Değerleri güncelle
-                    kurDegeri.AlisDegeri = viewModel.AlisDegeri;
-                    kurDegeri.SatisDegeri = viewModel.SatisDegeri;
-                    kurDegeri.Tarih = viewModel.Tarih;
-                    kurDegeri.Kaynak = viewModel.Kaynak;
-                    kurDegeri.Aktif = viewModel.Aktif;
-                    kurDegeri.GuncellemeTarihi = DateTime.Now;
-
-                    // Veritabanında güncelleme
-                    await _context.SaveChangesAsync();
-
-                    TempData["SuccessMessage"] = "Döviz kuru başarıyla güncellendi.";
-                    return RedirectToAction(nameof(ParaBirimiKurlari), new { id = kurDegeri.ParaBirimiID });
-                }
-                catch (Exception ex)
-                {
-                    TempData["ErrorMessage"] = ex.Message;
-                    ModelState.AddModelError("", ex.Message);
-                    await _logService.LogErrorAsync("Döviz Kuru Güncelleme", ex);
-                }
-            }
-
-            return View(viewModel);
-        }
-
-        // GET: DovizKuru/Delete/5
-        public async Task<IActionResult> Delete(Guid id)
-        {
-            // KurDegeri ID ile ilgili kuru bul
-            var kurDegeri = await _dovizKuruService.GetKurDegeriByIdAsync(id);
-            
-            if (kurDegeri == null)
-            {
-                return NotFound();
-            }
-
-            var paraBirimi = await _paraBirimiService.GetParaBirimiByIdAsync(kurDegeri.ParaBirimiID);
-
-            var viewModel = new DovizKuruViewModel
-            {
-                KurDegeriID = kurDegeri.KurDegeriID,
-                ParaBirimiID = kurDegeri.ParaBirimiID,
-                ParaBirimiKodu = paraBirimi?.Kod ?? "",
-                ParaBirimiAdi = paraBirimi?.Ad ?? "",
-                AlisDegeri = kurDegeri.AlisDegeri,
-                SatisDegeri = kurDegeri.SatisDegeri,
-                Tarih = kurDegeri.Tarih,
-                Kaynak = kurDegeri.Kaynak,
-                Aktif = kurDegeri.Aktif
-            };
-
-            return View(viewModel);
-        }
-
-        // POST: DovizKuru/Delete/5
-        [HttpPost, ActionName("Delete")]
-        [ValidateAntiForgeryToken]
-        public async Task<IActionResult> DeleteConfirmed(Guid id)
-        {
-            try
-            {
-                await _dovizKuruService.DeleteKurDegeriAsync(id);
-                TempData["SuccessMessage"] = "Döviz kuru başarıyla silindi.";
+                return View(viewModel);
             }
             catch (Exception ex)
             {
-                TempData["ErrorMessage"] = ex.Message;
-                await _logService.LogErrorAsync("Döviz Kuru Silme", ex);
+                _logger.LogError(ex, "Döviz kurları listelenirken hata oluştu");
+                TempData["ErrorMessage"] = "Döviz kurları listelenirken bir hata oluştu: " + ex.Message;
+                return View(new List<DovizKuruViewModel>());
             }
-
-            return RedirectToAction(nameof(Index));
         }
 
-        // GET: DovizKuru/Sync - API ile kurları güncellemek için redirect metodu
-        public async Task<IActionResult> Sync()
+        // GET: Kur/Detay/5
+        [Route("detay/{id:guid}")]
+        public async Task<IActionResult> Detay(Guid id)
         {
             try
             {
-                var eklenenKurlar = await _dovizKuruService.KurlariGuncelleAsync();
-                TempData["SuccessMessage"] = $"Kurlar başarıyla güncellendi. {eklenenKurlar.Count} yeni kur eklendi.";
+                var kurDegeri = await _context.KurDegerleri
+                    .Include(k => k.ParaBirimi)
+                    .FirstOrDefaultAsync(k => k.KurDegeriID == id && !k.Silindi);
+
+                if (kurDegeri == null)
+                {
+                    return NotFound();
+                }
+
+                var viewModel = new DovizKuruViewModel
+                {
+                    DovizKuruID = kurDegeri.KurDegeriID,
+                    DovizKodu = kurDegeri.ParaBirimi.Kod,
+                    DovizAdi = kurDegeri.ParaBirimi.Ad,
+                    AlisFiyati = kurDegeri.Alis,
+                    SatisFiyati = kurDegeri.Satis,
+                    EfektifAlisFiyati = kurDegeri.Efektif_Alis,
+                    EfektifSatisFiyati = kurDegeri.Efektif_Satis,
+                    Tarih = kurDegeri.Tarih,
+                    GuncellemeTarihi = kurDegeri.GuncellemeTarihi ?? kurDegeri.OlusturmaTarihi ?? DateTime.Now,
+                    Aktif = kurDegeri.Aktif,
+                    ParaBirimiKodu = kurDegeri.ParaBirimi.Kod
+                };
+
+                return View(viewModel);
             }
             catch (Exception ex)
             {
-                TempData["ErrorMessage"] = $"Kur güncelleme işlemi sırasında hata oluştu: {ex.Message}";
-                await _logService.LogErrorAsync("Kur Güncelleme", ex);
+                _logger.LogError(ex, "Döviz kuru detayı görüntülenirken hata oluştu");
+                TempData["ErrorMessage"] = "Döviz kuru detayı görüntülenirken bir hata oluştu: " + ex.Message;
+                return RedirectToAction(nameof(Liste));
+            }
+        }
+
+        // GET: Kur/Ekle
+        [Route("ekle")]
+        public async Task<IActionResult> Ekle()
+        {
+            try
+            {
+                var paraBirimleri = await _context.ParaBirimleri
+                    .Where(p => p.Aktif && !p.Silindi)
+                    .OrderBy(p => p.Kod)
+                    .ToListAsync();
+                
+                ViewBag.ParaBirimleri = new SelectList(paraBirimleri, "ParaBirimiID", "Kod");
+                
+                return View(new DovizKuruEkleViewModel
+                {
+                    Tarih = DateTime.Today
+                });
+            }
+            catch (Exception ex)
+            {
+                _logger.LogError(ex, "Döviz kuru ekleme sayfası yüklenirken hata oluştu");
+                TempData["ErrorMessage"] = "Döviz kuru ekleme sayfası yüklenirken bir hata oluştu: " + ex.Message;
+                return RedirectToAction(nameof(Liste));
+            }
+        }
+
+        // POST: Kur/Ekle
+        [HttpPost]
+        [Route("ekle")]
+        [ValidateAntiForgeryToken]
+        public async Task<IActionResult> Ekle(DovizKuruEkleViewModel viewModel)
+        {
+            if (!ModelState.IsValid)
+            {
+                var paraBirimleri = await _context.ParaBirimleri
+                    .Where(p => p.Aktif && !p.Silindi)
+                    .OrderBy(p => p.Kod)
+                    .ToListAsync();
+                
+                ViewBag.ParaBirimleri = new SelectList(paraBirimleri, "ParaBirimiID", "Kod");
+                return View(viewModel);
             }
 
-            return RedirectToAction(nameof(Index));
+            try
+            {
+                var paraBirimi = await _context.ParaBirimleri.FindAsync(viewModel.KaynakParaBirimiID);
+                
+                if (paraBirimi == null)
+                {
+                    ModelState.AddModelError("KaynakParaBirimiID", "Seçilen para birimi bulunamadı");
+                    return View(viewModel);
+                }
+                
+                // Aynı gün ve para birimi için kayıt var mı kontrol et
+                var existingKur = await _context.KurDegerleri
+                    .FirstOrDefaultAsync(k => k.ParaBirimiID == viewModel.KaynakParaBirimiID && 
+                                      k.Tarih.Date == viewModel.Tarih.Date &&
+                                      !k.Silindi);
+
+                if (existingKur != null)
+                {
+                    ModelState.AddModelError("", "Bu para birimi için belirtilen tarihte zaten bir kur kaydı mevcut.");
+                    ViewBag.ParaBirimleri = new SelectList(await _context.ParaBirimleri.Where(p => !p.Silindi && p.Aktif).ToListAsync(), "ParaBirimiID", "Ad");
+                    return View(viewModel);
+                }
+                
+                var kurDegeri = new KurDegeri
+                {
+                    ParaBirimiID = viewModel.KaynakParaBirimiID,
+                    Tarih = viewModel.Tarih,
+                    Alis = viewModel.Alis,
+                    Satis = viewModel.Satis,
+                    Efektif_Alis = viewModel.Efektif_Alis.GetValueOrDefault(),
+                    Efektif_Satis = viewModel.Efektif_Satis.GetValueOrDefault(),
+                    Aciklama = viewModel.Aciklama,
+                    Aktif = true,
+                    OlusturmaTarihi = DateTime.Now,
+                    OlusturanKullaniciID = _userManager.GetUserId(User),
+                };
+                
+                _context.KurDegerleri.Add(kurDegeri);
+                await _context.SaveChangesAsync();
+                
+                TempData["SuccessMessage"] = "Döviz kuru başarıyla eklendi";
+                return RedirectToAction(nameof(Liste));
+            }
+            catch (Exception ex)
+            {
+                _logger.LogError(ex, "Döviz kuru eklenirken hata oluştu");
+                TempData["ErrorMessage"] = "Döviz kuru eklenirken bir hata oluştu: " + ex.Message;
+                
+                var paraBirimleri = await _context.ParaBirimleri
+                    .Where(p => p.Aktif && !p.Silindi)
+                    .OrderBy(p => p.Kod)
+                    .ToListAsync();
+                
+                ViewBag.ParaBirimleri = new SelectList(paraBirimleri, "ParaBirimiID", "Kod");
+                return View(viewModel);
+            }
+        }
+
+        // GET: Kur/Duzenle/5
+        [Route("duzenle/{id:guid}")]
+        public async Task<IActionResult> Duzenle(Guid id)
+        {
+            try
+            {
+                var kurDegeri = await _context.KurDegerleri
+                    .Include(k => k.ParaBirimi)
+                    .FirstOrDefaultAsync(k => k.KurDegeriID == id && !k.Silindi);
+                
+                if (kurDegeri == null)
+                {
+                    return NotFound();
+                }
+                
+                var paraBirimleri = await _context.ParaBirimleri
+                    .Where(p => p.Aktif && !p.Silindi)
+                    .OrderBy(p => p.Kod)
+                    .ToListAsync();
+                
+                ViewBag.ParaBirimleri = new SelectList(paraBirimleri, "ParaBirimiID", "Kod", kurDegeri.ParaBirimiID);
+                
+                var viewModel = new DovizKuruDuzenleViewModel
+                {
+                    DovizKuruID = kurDegeri.KurDegeriID,
+                    KaynakParaBirimiID = kurDegeri.ParaBirimiID,
+                    Tarih = kurDegeri.Tarih,
+                    Alis = kurDegeri.Alis,
+                    Satis = kurDegeri.Satis,
+                    Efektif_Alis = kurDegeri.Efektif_Alis,
+                    Efektif_Satis = kurDegeri.Efektif_Satis,
+                    Aktif = kurDegeri.Aktif,
+                    Kaynak = kurDegeri.OlusturanKullaniciID ?? "Manuel",
+                    Aciklama = kurDegeri.Aciklama
+                };
+                
+                return View(viewModel);
+            }
+            catch (Exception ex)
+            {
+                _logger.LogError(ex, "Döviz kuru düzenleme sayfası yüklenirken hata oluştu");
+                TempData["ErrorMessage"] = "Döviz kuru düzenleme sayfası yüklenirken bir hata oluştu: " + ex.Message;
+                return RedirectToAction(nameof(Liste));
+            }
+        }
+
+        // POST: Kur/Duzenle/5
+        [HttpPost]
+        [Route("duzenle/{id:guid}")]
+        [ValidateAntiForgeryToken]
+        public async Task<IActionResult> Duzenle(Guid id, DovizKuruDuzenleViewModel viewModel)
+        {
+            if (id != viewModel.DovizKuruID)
+            {
+                return NotFound();
+            }
+
+            if (!ModelState.IsValid)
+            {
+                var paraBirimleri = await _context.ParaBirimleri
+                    .Where(p => p.Aktif && !p.Silindi)
+                    .OrderBy(p => p.Kod)
+                    .ToListAsync();
+                
+                ViewBag.ParaBirimleri = new SelectList(paraBirimleri, "ParaBirimiID", "Kod", viewModel.KaynakParaBirimiID);
+                return View(viewModel);
+            }
+
+            try
+            {
+                var kurDegeri = await _context.KurDegerleri
+                    .FirstOrDefaultAsync(k => k.KurDegeriID == id && !k.Silindi);
+                
+                if (kurDegeri == null)
+                {
+                    return NotFound();
+                }
+                
+                var paraBirimi = await _context.ParaBirimleri.FindAsync(viewModel.KaynakParaBirimiID);
+                
+                if (paraBirimi == null)
+                {
+                    ModelState.AddModelError("KaynakParaBirimiID", "Seçilen para birimi bulunamadı");
+                    return View(viewModel);
+                }
+                
+                // Değişiklik yapılan para birimi ve tarih için başka bir kur kaydı var mı?
+                if (kurDegeri.ParaBirimiID != viewModel.KaynakParaBirimiID || kurDegeri.Tarih.Date != viewModel.Tarih.Date)
+                {
+                    var existingKur = await _context.KurDegerleri
+                        .FirstOrDefaultAsync(k => k.ParaBirimiID == viewModel.KaynakParaBirimiID && 
+                                               k.Tarih.Date == viewModel.Tarih.Date &&
+                                               !k.Silindi && k.KurDegeriID != viewModel.DovizKuruID);
+                    
+                    if (existingKur != null)
+                    {
+                        ModelState.AddModelError("", "Bu para birimi için seçilen tarihte zaten bir kur kaydı mevcut");
+                        return View(viewModel);
+                    }
+                }
+                
+                // Kur değeri güncelleme
+                kurDegeri.ParaBirimiID = viewModel.KaynakParaBirimiID;
+                kurDegeri.Tarih = viewModel.Tarih;
+                kurDegeri.Alis = viewModel.Alis;
+                kurDegeri.Satis = viewModel.Satis;
+                kurDegeri.Efektif_Alis = viewModel.Efektif_Alis.GetValueOrDefault();
+                kurDegeri.Efektif_Satis = viewModel.Efektif_Satis.GetValueOrDefault();
+                kurDegeri.Aktif = viewModel.Aktif;
+                kurDegeri.GuncellemeTarihi = DateTime.Now;
+                kurDegeri.SonGuncelleyenKullaniciID = User.Identity?.Name;
+                kurDegeri.Aciklama = viewModel.Aciklama;
+                
+                _context.Update(kurDegeri);
+                await _context.SaveChangesAsync();
+                
+                TempData["SuccessMessage"] = "Döviz kuru başarıyla güncellendi";
+                return RedirectToAction(nameof(Liste));
+            }
+            catch (Exception ex)
+            {
+                _logger.LogError(ex, "Döviz kuru güncellenirken hata oluştu");
+                TempData["ErrorMessage"] = "Döviz kuru güncellenirken bir hata oluştu: " + ex.Message;
+                
+                var paraBirimleri = await _context.ParaBirimleri
+                    .Where(p => p.Aktif && !p.Silindi)
+                    .OrderBy(p => p.Kod)
+                    .ToListAsync();
+                
+                ViewBag.ParaBirimleri = new SelectList(paraBirimleri, "ParaBirimiID", "Kod", viewModel.KaynakParaBirimiID);
+                return View(viewModel);
+            }
+        }
+
+        // GET: Kur/Sil/5
+        [Route("sil/{id:guid}")]
+        public async Task<IActionResult> Sil(Guid id)
+        {
+            try
+            {
+                var kurDegeri = await _context.KurDegerleri
+                    .Include(k => k.ParaBirimi)
+                    .FirstOrDefaultAsync(k => k.KurDegeriID == id && !k.Silindi);
+                
+                if (kurDegeri == null)
+                {
+                    return NotFound();
+                }
+                
+                var viewModel = new DovizKuruViewModel
+                {
+                    DovizKuruID = kurDegeri.KurDegeriID,
+                    DovizKodu = kurDegeri.ParaBirimi.Kod,
+                    DovizAdi = kurDegeri.ParaBirimi.Ad,
+                    AlisFiyati = kurDegeri.Alis,
+                    SatisFiyati = kurDegeri.Satis,
+                    EfektifAlisFiyati = kurDegeri.Efektif_Alis,
+                    EfektifSatisFiyati = kurDegeri.Efektif_Satis,
+                    Tarih = kurDegeri.Tarih,
+                    GuncellemeTarihi = kurDegeri.GuncellemeTarihi ?? kurDegeri.OlusturmaTarihi ?? DateTime.Now,
+                    Aktif = kurDegeri.Aktif,
+                    ParaBirimiKodu = kurDegeri.ParaBirimi.Kod
+                };
+                
+                return View(viewModel);
+            }
+            catch (Exception ex)
+            {
+                _logger.LogError(ex, "Döviz kuru silme sayfası yüklenirken hata oluştu");
+                TempData["ErrorMessage"] = "Döviz kuru silme sayfası yüklenirken bir hata oluştu: " + ex.Message;
+                return RedirectToAction(nameof(Liste));
+            }
+        }
+
+        // POST: Kur/Sil/5
+        [HttpPost, ActionName("Sil")]
+        [Route("sil/{id:guid}")]
+        [ValidateAntiForgeryToken]
+        public async Task<IActionResult> SilOnay(Guid id)
+        {
+            try
+            {
+                var kurDegeri = await _context.KurDegerleri.FindAsync(id);
+                
+                if (kurDegeri == null)
+                {
+                    return NotFound();
+                }
+                
+                // Soft delete işlemi
+                kurDegeri.Silindi = true;
+                kurDegeri.Aktif = false;
+                kurDegeri.GuncellemeTarihi = DateTime.Now;
+                kurDegeri.SonGuncelleyenKullaniciID = User.Identity?.Name;
+                
+                _context.Update(kurDegeri);
+                await _context.SaveChangesAsync();
+                
+                TempData["SuccessMessage"] = "Döviz kuru başarıyla silindi";
+                return RedirectToAction(nameof(Liste));
+            }
+            catch (Exception ex)
+            {
+                _logger.LogError(ex, "Döviz kuru silinirken hata oluştu");
+                TempData["ErrorMessage"] = "Döviz kuru silinirken bir hata oluştu: " + ex.Message;
+                return RedirectToAction(nameof(Liste));
+            }
+        }
+
+        // GET: Kur/KurlariGuncelle
+        [HttpGet]
+        [Route("kurlari-guncelle")]
+        public async Task<IActionResult> KurlariGuncelle()
+        {
+            try
+            {
+                // TCMB'den kurlar güncellenecek. Şimdilik sadece görüntüleme sayfası
+                var paraBirimleri = await _context.ParaBirimleri
+                    .Where(p => p.Aktif && !p.Silindi)
+                    .OrderBy(p => p.Kod)
+                    .ToListAsync();
+                
+                return View(paraBirimleri);
+            }
+            catch (Exception ex)
+            {
+                _logger.LogError(ex, "Döviz kurları güncelleme sayfası yüklenirken hata oluştu");
+                TempData["ErrorMessage"] = "Döviz kurları güncelleme sayfası yüklenirken bir hata oluştu: " + ex.Message;
+                return RedirectToAction(nameof(Liste));
+            }
+        }
+
+        // Kur değerinin varlığını kontrol eden yardımcı metod
+        private async Task<bool> KurDegeriExists(Guid id)
+        {
+            return await _context.KurDegerleri.AnyAsync(k => k.KurDegeriID == id && !k.Silindi);
         }
     }
 } 

@@ -1,6 +1,8 @@
 using System;
 using System.Threading.Tasks;
+using System.Data;
 using MuhasebeStokWebApp.Data.Entities;
+using Microsoft.EntityFrameworkCore.Storage;
 
 namespace MuhasebeStokWebApp.Data.Repositories
 {
@@ -30,5 +32,9 @@ namespace MuhasebeStokWebApp.Data.Repositories
         
         Task SaveAsync();
         Task CompleteAsync();
+        
+        Task<IDbContextTransaction> BeginTransactionAsync();
+        Task CommitTransactionAsync();
+        Task RollbackTransactionAsync();
     }
 } 

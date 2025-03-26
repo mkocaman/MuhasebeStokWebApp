@@ -62,5 +62,8 @@ namespace MuhasebeStokWebApp.ViewModels.Menu
         // Görüntü özellikleri
         public int Level { get; set; }
         public bool HasChildren => AltMenuler != null && AltMenuler.Count > 0;
+        
+        // Menünün aktif olup olmadığını belirler (mevcut controller/action ile eşleşiyorsa)
+        public bool Active { get; set; }
     }
 } 

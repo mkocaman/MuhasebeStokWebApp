@@ -24,8 +24,20 @@ build_property.EnableCodeStyleSeverity =
 build_metadata.AdditionalFiles.TargetPath = Vmlld3MvQWNjb3VudC9BY2Nlc3NEZW5pZWQuY3NodG1s
 build_metadata.AdditionalFiles.CssScope = 
 
+[/Users/muhammetkocaman/MuhasebeStokWebApp/Views/Account/EditUser.cshtml]
+build_metadata.AdditionalFiles.TargetPath = Vmlld3MvQWNjb3VudC9FZGl0VXNlci5jc2h0bWw=
+build_metadata.AdditionalFiles.CssScope = 
+
 [/Users/muhammetkocaman/MuhasebeStokWebApp/Views/Account/Login.cshtml]
 build_metadata.AdditionalFiles.TargetPath = Vmlld3MvQWNjb3VudC9Mb2dpbi5jc2h0bWw=
+build_metadata.AdditionalFiles.CssScope = 
+
+[/Users/muhammetkocaman/MuhasebeStokWebApp/Views/Account/Register.cshtml]
+build_metadata.AdditionalFiles.TargetPath = Vmlld3MvQWNjb3VudC9SZWdpc3Rlci5jc2h0bWw=
+build_metadata.AdditionalFiles.CssScope = 
+
+[/Users/muhammetkocaman/MuhasebeStokWebApp/Views/Account/UserManagement.cshtml]
+build_metadata.AdditionalFiles.TargetPath = Vmlld3MvQWNjb3VudC9Vc2VyTWFuYWdlbWVudC5jc2h0bWw=
 build_metadata.AdditionalFiles.CssScope = 
 
 [/Users/muhammetkocaman/MuhasebeStokWebApp/Views/Banka/Create.cshtml]
@@ -116,6 +128,10 @@ build_metadata.AdditionalFiles.CssScope =
 build_metadata.AdditionalFiles.TargetPath = Vmlld3MvQ2FyaS9fSGFyZWtldEVrbGVQYXJ0aWFsLmNzaHRtbA==
 build_metadata.AdditionalFiles.CssScope = 
 
+[/Users/muhammetkocaman/MuhasebeStokWebApp/Views/DbInit/Index.cshtml]
+build_metadata.AdditionalFiles.TargetPath = Vmlld3MvRGJJbml0L0luZGV4LmNzaHRtbA==
+build_metadata.AdditionalFiles.CssScope = 
+
 [/Users/muhammetkocaman/MuhasebeStokWebApp/Views/Depo/Create.cshtml]
 build_metadata.AdditionalFiles.TargetPath = Vmlld3MvRGVwby9DcmVhdGUuY3NodG1s
 build_metadata.AdditionalFiles.CssScope = 
@@ -142,6 +158,42 @@ build_metadata.AdditionalFiles.CssScope =
 
 [/Users/muhammetkocaman/MuhasebeStokWebApp/Views/Depo/_EditPartial.cshtml]
 build_metadata.AdditionalFiles.TargetPath = Vmlld3MvRGVwby9fRWRpdFBhcnRpYWwuY3NodG1s
+build_metadata.AdditionalFiles.CssScope = 
+
+[/Users/muhammetkocaman/MuhasebeStokWebApp/Views/Doviz/Create.cshtml]
+build_metadata.AdditionalFiles.TargetPath = Vmlld3MvRG92aXovQ3JlYXRlLmNzaHRtbA==
+build_metadata.AdditionalFiles.CssScope = 
+
+[/Users/muhammetkocaman/MuhasebeStokWebApp/Views/Doviz/Edit.cshtml]
+build_metadata.AdditionalFiles.TargetPath = Vmlld3MvRG92aXovRWRpdC5jc2h0bWw=
+build_metadata.AdditionalFiles.CssScope = 
+
+[/Users/muhammetkocaman/MuhasebeStokWebApp/Views/Doviz/Index.cshtml]
+build_metadata.AdditionalFiles.TargetPath = Vmlld3MvRG92aXovSW5kZXguY3NodG1s
+build_metadata.AdditionalFiles.CssScope = 
+
+[/Users/muhammetkocaman/MuhasebeStokWebApp/Views/DovizKuru/Detay.cshtml]
+build_metadata.AdditionalFiles.TargetPath = Vmlld3MvRG92aXpLdXJ1L0RldGF5LmNzaHRtbA==
+build_metadata.AdditionalFiles.CssScope = 
+
+[/Users/muhammetkocaman/MuhasebeStokWebApp/Views/DovizKuru/Duzenle.cshtml]
+build_metadata.AdditionalFiles.TargetPath = Vmlld3MvRG92aXpLdXJ1L0R1emVubGUuY3NodG1s
+build_metadata.AdditionalFiles.CssScope = 
+
+[/Users/muhammetkocaman/MuhasebeStokWebApp/Views/DovizKuru/Ekle.cshtml]
+build_metadata.AdditionalFiles.TargetPath = Vmlld3MvRG92aXpLdXJ1L0VrbGUuY3NodG1s
+build_metadata.AdditionalFiles.CssScope = 
+
+[/Users/muhammetkocaman/MuhasebeStokWebApp/Views/DovizKuru/KurlariGuncelle.cshtml]
+build_metadata.AdditionalFiles.TargetPath = Vmlld3MvRG92aXpLdXJ1L0t1cmxhcmlHdW5jZWxsZS5jc2h0bWw=
+build_metadata.AdditionalFiles.CssScope = 
+
+[/Users/muhammetkocaman/MuhasebeStokWebApp/Views/DovizKuru/Liste.cshtml]
+build_metadata.AdditionalFiles.TargetPath = Vmlld3MvRG92aXpLdXJ1L0xpc3RlLmNzaHRtbA==
+build_metadata.AdditionalFiles.CssScope = 
+
+[/Users/muhammetkocaman/MuhasebeStokWebApp/Views/DovizKuru/Sil.cshtml]
+build_metadata.AdditionalFiles.TargetPath = Vmlld3MvRG92aXpLdXJ1L1NpbC5jc2h0bWw=
 build_metadata.AdditionalFiles.CssScope = 
 
 [/Users/muhammetkocaman/MuhasebeStokWebApp/Views/Fatura/AddOdeme.cshtml]
@@ -272,36 +324,48 @@ build_metadata.AdditionalFiles.CssScope =
 build_metadata.AdditionalFiles.TargetPath = Vmlld3MvS3VsbGFuaWNpL1JvbGxlci5jc2h0bWw=
 build_metadata.AdditionalFiles.CssScope = 
 
-[/Users/muhammetkocaman/MuhasebeStokWebApp/Views/Kur/Index.cshtml]
-build_metadata.AdditionalFiles.TargetPath = Vmlld3MvS3VyL0luZGV4LmNzaHRtbA==
+[/Users/muhammetkocaman/MuhasebeStokWebApp/Views/Kur/Detay.cshtml]
+build_metadata.AdditionalFiles.TargetPath = Vmlld3MvS3VyL0RldGF5LmNzaHRtbA==
 build_metadata.AdditionalFiles.CssScope = 
 
-[/Users/muhammetkocaman/MuhasebeStokWebApp/Views/Kur/_IliskiDetay.cshtml]
-build_metadata.AdditionalFiles.TargetPath = Vmlld3MvS3VyL19JbGlza2lEZXRheS5jc2h0bWw=
+[/Users/muhammetkocaman/MuhasebeStokWebApp/Views/Kur/Duzenle.cshtml]
+build_metadata.AdditionalFiles.TargetPath = Vmlld3MvS3VyL0R1emVubGUuY3NodG1s
 build_metadata.AdditionalFiles.CssScope = 
 
-[/Users/muhammetkocaman/MuhasebeStokWebApp/Views/ParaBirimi/Create.cshtml]
-build_metadata.AdditionalFiles.TargetPath = Vmlld3MvUGFyYUJpcmltaS9DcmVhdGUuY3NodG1s
+[/Users/muhammetkocaman/MuhasebeStokWebApp/Views/Kur/Ekle.cshtml]
+build_metadata.AdditionalFiles.TargetPath = Vmlld3MvS3VyL0VrbGUuY3NodG1s
 build_metadata.AdditionalFiles.CssScope = 
 
-[/Users/muhammetkocaman/MuhasebeStokWebApp/Views/ParaBirimi/Delete.cshtml]
-build_metadata.AdditionalFiles.TargetPath = Vmlld3MvUGFyYUJpcmltaS9EZWxldGUuY3NodG1s
+[/Users/muhammetkocaman/MuhasebeStokWebApp/Views/Kur/Liste.cshtml]
+build_metadata.AdditionalFiles.TargetPath = Vmlld3MvS3VyL0xpc3RlLmNzaHRtbA==
 build_metadata.AdditionalFiles.CssScope = 
 
-[/Users/muhammetkocaman/MuhasebeStokWebApp/Views/ParaBirimi/Details.cshtml]
-build_metadata.AdditionalFiles.TargetPath = Vmlld3MvUGFyYUJpcmltaS9EZXRhaWxzLmNzaHRtbA==
+[/Users/muhammetkocaman/MuhasebeStokWebApp/Views/Kur/Sil.cshtml]
+build_metadata.AdditionalFiles.TargetPath = Vmlld3MvS3VyL1NpbC5jc2h0bWw=
 build_metadata.AdditionalFiles.CssScope = 
 
-[/Users/muhammetkocaman/MuhasebeStokWebApp/Views/ParaBirimi/Edit.cshtml]
-build_metadata.AdditionalFiles.TargetPath = Vmlld3MvUGFyYUJpcmltaS9FZGl0LmNzaHRtbA==
+[/Users/muhammetkocaman/MuhasebeStokWebApp/Views/Menu/Create.cshtml]
+build_metadata.AdditionalFiles.TargetPath = Vmlld3MvTWVudS9DcmVhdGUuY3NodG1s
 build_metadata.AdditionalFiles.CssScope = 
 
-[/Users/muhammetkocaman/MuhasebeStokWebApp/Views/ParaBirimi/Index.cshtml]
-build_metadata.AdditionalFiles.TargetPath = Vmlld3MvUGFyYUJpcmltaS9JbmRleC5jc2h0bWw=
+[/Users/muhammetkocaman/MuhasebeStokWebApp/Views/Menu/Delete.cshtml]
+build_metadata.AdditionalFiles.TargetPath = Vmlld3MvTWVudS9EZWxldGUuY3NodG1s
 build_metadata.AdditionalFiles.CssScope = 
 
-[/Users/muhammetkocaman/MuhasebeStokWebApp/Views/ParaBirimi/ParaBirimiIliskileri.cshtml]
-build_metadata.AdditionalFiles.TargetPath = Vmlld3MvUGFyYUJpcmltaS9QYXJhQmlyaW1pSWxpc2tpbGVyaS5jc2h0bWw=
+[/Users/muhammetkocaman/MuhasebeStokWebApp/Views/Menu/Details.cshtml]
+build_metadata.AdditionalFiles.TargetPath = Vmlld3MvTWVudS9EZXRhaWxzLmNzaHRtbA==
+build_metadata.AdditionalFiles.CssScope = 
+
+[/Users/muhammetkocaman/MuhasebeStokWebApp/Views/Menu/Edit.cshtml]
+build_metadata.AdditionalFiles.TargetPath = Vmlld3MvTWVudS9FZGl0LmNzaHRtbA==
+build_metadata.AdditionalFiles.CssScope = 
+
+[/Users/muhammetkocaman/MuhasebeStokWebApp/Views/Menu/Index.cshtml]
+build_metadata.AdditionalFiles.TargetPath = Vmlld3MvTWVudS9JbmRleC5jc2h0bWw=
+build_metadata.AdditionalFiles.CssScope = 
+
+[/Users/muhammetkocaman/MuhasebeStokWebApp/Views/Menu/InitDefaultsConfirm.cshtml]
+build_metadata.AdditionalFiles.TargetPath = Vmlld3MvTWVudS9Jbml0RGVmYXVsdHNDb25maXJtLmNzaHRtbA==
 build_metadata.AdditionalFiles.CssScope = 
 
 [/Users/muhammetkocaman/MuhasebeStokWebApp/Views/Rapor/Banka.cshtml]
@@ -376,6 +440,10 @@ build_metadata.AdditionalFiles.CssScope =
 build_metadata.AdditionalFiles.TargetPath = Vmlld3MvU2hhcmVkL19IYXRhLmNzaHRtbA==
 build_metadata.AdditionalFiles.CssScope = 
 
+[/Users/muhammetkocaman/MuhasebeStokWebApp/Views/Shared/_LayoutLogin.cshtml]
+build_metadata.AdditionalFiles.TargetPath = Vmlld3MvU2hhcmVkL19MYXlvdXRMb2dpbi5jc2h0bWw=
+build_metadata.AdditionalFiles.CssScope = 
+
 [/Users/muhammetkocaman/MuhasebeStokWebApp/Views/Shared/_LoginLayout.cshtml]
 build_metadata.AdditionalFiles.TargetPath = Vmlld3MvU2hhcmVkL19Mb2dpbkxheW91dC5jc2h0bWw=
 build_metadata.AdditionalFiles.CssScope = 
@@ -390,6 +458,26 @@ build_metadata.AdditionalFiles.CssScope =
 
 [/Users/muhammetkocaman/MuhasebeStokWebApp/Views/Shared/_ValidationScriptsPartial.cshtml]
 build_metadata.AdditionalFiles.TargetPath = Vmlld3MvU2hhcmVkL19WYWxpZGF0aW9uU2NyaXB0c1BhcnRpYWwuY3NodG1s
+build_metadata.AdditionalFiles.CssScope = 
+
+[/Users/muhammetkocaman/MuhasebeStokWebApp/Views/Shared/_ViewImports.cshtml]
+build_metadata.AdditionalFiles.TargetPath = Vmlld3MvU2hhcmVkL19WaWV3SW1wb3J0cy5jc2h0bWw=
+build_metadata.AdditionalFiles.CssScope = 
+
+[/Users/muhammetkocaman/MuhasebeStokWebApp/Views/SistemAyar/BildirimAyarlari.cshtml]
+build_metadata.AdditionalFiles.TargetPath = Vmlld3MvU2lzdGVtQXlhci9CaWxkaXJpbUF5YXJsYXJpLmNzaHRtbA==
+build_metadata.AdditionalFiles.CssScope = 
+
+[/Users/muhammetkocaman/MuhasebeStokWebApp/Views/SistemAyar/DilAyarlari.cshtml]
+build_metadata.AdditionalFiles.TargetPath = Vmlld3MvU2lzdGVtQXlhci9EaWxBeWFybGFyaS5jc2h0bWw=
+build_metadata.AdditionalFiles.CssScope = 
+
+[/Users/muhammetkocaman/MuhasebeStokWebApp/Views/SistemAyar/EmailAyarlari.cshtml]
+build_metadata.AdditionalFiles.TargetPath = Vmlld3MvU2lzdGVtQXlhci9FbWFpbEF5YXJsYXJpLmNzaHRtbA==
+build_metadata.AdditionalFiles.CssScope = 
+
+[/Users/muhammetkocaman/MuhasebeStokWebApp/Views/SistemAyar/Index.cshtml]
+build_metadata.AdditionalFiles.TargetPath = Vmlld3MvU2lzdGVtQXlhci9JbmRleC5jc2h0bWw=
 build_metadata.AdditionalFiles.CssScope = 
 
 [/Users/muhammetkocaman/MuhasebeStokWebApp/Views/SistemLog/CariLogs.cshtml]
@@ -466,6 +554,30 @@ build_metadata.AdditionalFiles.CssScope =
 
 [/Users/muhammetkocaman/MuhasebeStokWebApp/Views/Urun/_EditPartial.cshtml]
 build_metadata.AdditionalFiles.TargetPath = Vmlld3MvVXJ1bi9fRWRpdFBhcnRpYWwuY3NodG1s
+build_metadata.AdditionalFiles.CssScope = 
+
+[/Users/muhammetkocaman/MuhasebeStokWebApp/Views/UrunFiyat/Create.cshtml]
+build_metadata.AdditionalFiles.TargetPath = Vmlld3MvVXJ1bkZpeWF0L0NyZWF0ZS5jc2h0bWw=
+build_metadata.AdditionalFiles.CssScope = 
+
+[/Users/muhammetkocaman/MuhasebeStokWebApp/Views/UrunFiyat/Delete.cshtml]
+build_metadata.AdditionalFiles.TargetPath = Vmlld3MvVXJ1bkZpeWF0L0RlbGV0ZS5jc2h0bWw=
+build_metadata.AdditionalFiles.CssScope = 
+
+[/Users/muhammetkocaman/MuhasebeStokWebApp/Views/UrunFiyat/Edit.cshtml]
+build_metadata.AdditionalFiles.TargetPath = Vmlld3MvVXJ1bkZpeWF0L0VkaXQuY3NodG1s
+build_metadata.AdditionalFiles.CssScope = 
+
+[/Users/muhammetkocaman/MuhasebeStokWebApp/Views/UrunFiyat/Index.cshtml]
+build_metadata.AdditionalFiles.TargetPath = Vmlld3MvVXJ1bkZpeWF0L0luZGV4LmNzaHRtbA==
+build_metadata.AdditionalFiles.CssScope = 
+
+[/Users/muhammetkocaman/MuhasebeStokWebApp/Views/UrunFiyat/_CreatePartial.cshtml]
+build_metadata.AdditionalFiles.TargetPath = Vmlld3MvVXJ1bkZpeWF0L19DcmVhdGVQYXJ0aWFsLmNzaHRtbA==
+build_metadata.AdditionalFiles.CssScope = 
+
+[/Users/muhammetkocaman/MuhasebeStokWebApp/Views/UrunFiyat/_EditPartial.cshtml]
+build_metadata.AdditionalFiles.TargetPath = Vmlld3MvVXJ1bkZpeWF0L19FZGl0UGFydGlhbC5jc2h0bWw=
 build_metadata.AdditionalFiles.CssScope = 
 
 [/Users/muhammetkocaman/MuhasebeStokWebApp/Views/UrunKategori/Index.cshtml]

@@ -6,7 +6,7 @@ namespace MuhasebeStokWebApp.ViewModels.UrunFiyat
 {
     public class UrunFiyatViewModel
     {
-        public int FiyatID { get; set; }
+        public Guid FiyatID { get; set; }
         
         [Required(ErrorMessage = "Ürün seçimi zorunludur.")]
         [Display(Name = "Ürün")]

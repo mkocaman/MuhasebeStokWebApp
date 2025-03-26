@@ -54,7 +54,7 @@
                         <div class="col-sm-6 col-md-12 col-lg-6">
                             <div class="info-group">
                                 <h6 class="f-w-600">İrsaliye Tarihi</h6>
-                                <p>@(Model.IrsaliyeTarihi.HasValue ? Model.IrsaliyeTarihi.Value.ToString("dd.MM.yyyy") : "")</p>
+                                <p>@Model.IrsaliyeTarihi.ToString("dd.MM.yyyy")</p>
                             </div>
                         </div>
                         <div class="col-12">
@@ -85,20 +85,13 @@
                             <div class="info-group">
                                 <h6 class="f-w-600">Durum</h6>
                                 <p>
-                                    @switch (Model.Durum)
+                                    @if (Model.Aktif)
                                     {
-                                        case "Açık":
-                                            <span class="badge bg-warning">Açık</span>
-                                            break;
-                                        case "Kapalı":
-                                            <span class="badge bg-success">Kapalı</span>
-                                            break;
-                                        case "İptal":
-                                            <span class="badge bg-danger">İptal</span>
-                                            break;
-                                        default:
-                                            <span class="badge bg-secondary">@Model.Durum</span>
-                                            break;
+                                        <span class="badge bg-success">Aktif</span>
+                                    }
+                                    else
+                                    {
+                                        <span class="badge bg-danger">Pasif</span>
                                     }
                                 </p>
                             </div>
@@ -156,7 +149,7 @@
                                 </tr>
                             </thead>
                             <tbody>
-                                @foreach (var detay in Model.Detaylar)
+                                @foreach (var detay in Model.IrsaliyeDetaylari)
                                 {
                                     <tr>
                                         <td>@detay.UrunKodu</td>

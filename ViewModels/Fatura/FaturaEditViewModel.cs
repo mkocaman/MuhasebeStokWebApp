@@ -62,6 +62,9 @@ namespace MuhasebeStokWebApp.ViewModels.Fatura
         [Display(Name = "Aktif")]
         public bool Aktif { get; set; } = true;
 
+        [Display(Name = "İrsaliye")]
+        public Guid? IrsaliyeID { get; set; }
+
         public List<FaturaKalemViewModel> FaturaKalemleri { get; set; } = new List<FaturaKalemViewModel>();
         
         // Dropdown listeler için
