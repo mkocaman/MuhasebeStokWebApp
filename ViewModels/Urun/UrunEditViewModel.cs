@@ -21,7 +21,7 @@ namespace MuhasebeStokWebApp.ViewModels.Urun
         
         [Required(ErrorMessage = "Birim seçimi zorunludur.")]
         [Display(Name = "Birim")]
-        public int? BirimID { get; set; }
+        public Guid? BirimID { get; set; }
         
         [Display(Name = "Birim")]
         public string Birim { get; set; }

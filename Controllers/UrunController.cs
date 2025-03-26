@@ -637,7 +637,7 @@ namespace MuhasebeStokWebApp.Controllers
         }
         
         // Dropdown listelerini doldur
-        private async Task ListeleriDoldur(Guid? kategoriID = null, Guid? birimID = null)
+        private async Task ListeleriDoldur(Guid? kategoriID = null, int? birimID = null)
         {
             var kategoriRepository = _unitOfWork.Repository<UrunKategori>();
             var kategoriler = await kategoriRepository.GetAsync(

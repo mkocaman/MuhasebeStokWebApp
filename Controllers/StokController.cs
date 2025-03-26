@@ -68,7 +68,7 @@ namespace MuhasebeStokWebApp.Controllers
                     Birim = u.Birim?.BirimAdi ?? "-",
                     StokMiktar = u.StokMiktar,
                     Kategori = u.Kategori?.KategoriAdi ?? "Kategorisiz",
-                    BirimID = u.BirimID,
+                    BirimID = (Guid?)(object)u.BirimID,
                     KategoriID = u.KategoriID
                 }).ToList()
             };
@@ -691,7 +691,7 @@ namespace MuhasebeStokWebApp.Controllers
         public async Task<IActionResult> StokDurumu()
         {
             var urunler = await _unitOfWork.Repository<Urun>().GetAsync(
-                filter: u => u.SoftDelete == false && u.Aktif,
+                filter: u => u.Silindi == false && u.Aktif,
                 orderBy: q => q.OrderBy(u => u.UrunAdi),
                 includeProperties: "Birim,Kategori"
             );
@@ -708,7 +708,7 @@ namespace MuhasebeStokWebApp.Controllers
                 
                 // Ürünün son fiyatını al
                 var urunFiyat = await _context.UrunFiyatlari
-                    .Where(uf => uf.UrunID == urun.UrunID && !uf.SoftDelete && uf.FiyatTipiID == 3) // Satış fiyatı
+                    .Where(uf => uf.UrunID == urun.UrunID && !uf.Silindi && uf.FiyatTipiID == 3) // Satış fiyatı
                     .OrderByDescending(uf => uf.GecerliTarih)
                     .FirstOrDefaultAsync();
 
@@ -748,7 +748,7 @@ namespace MuhasebeStokWebApp.Controllers
             {
                 // Kategorileri getir
                 var kategoriler = await _unitOfWork.Repository<UrunKategori>().GetAsync(
-                    filter: k => k.SoftDelete == false && k.Aktif,
+                    filter: k => k.Silindi == false && k.Aktif,
                     orderBy: q => q.OrderBy(k => k.KategoriAdi)
                 );
                 
@@ -757,7 +757,7 @@ namespace MuhasebeStokWebApp.Controllers
                 
                 // Depoları getir
                 var depolar = await _unitOfWork.Repository<Depo>().GetAsync(
-                    filter: d => d.SoftDelete == false && d.Aktif,
+                    filter: d => d.Silindi == false && d.Aktif,
                     orderBy: q => q.OrderBy(d => d.DepoAdi)
                 );
                 
@@ -769,7 +769,7 @@ namespace MuhasebeStokWebApp.Controllers
                 var urunQuery = _context.Urunler
                     .Include(u => u.Kategori)
                     .Include(u => u.Birim)
-                    .Where(u => !u.SoftDelete && u.Aktif);
+                    .Where(u => !u.Silindi && u.Aktif);
                 
                 // Kategori filtresi
                 if (kategoriID.HasValue)
@@ -801,7 +801,7 @@ namespace MuhasebeStokWebApp.Controllers
                 {
                     // Depo bazlı filtreleme için stok hareketlerini getir
                     var stokHareketleri = await _context.StokHareketleri
-                        .Where(sh => !sh.SoftDelete && sh.DepoID == depoID.Value)
+                        .Where(sh => !sh.Silindi && sh.DepoID == depoID.Value)
                         .GroupBy(sh => sh.UrunID)
                         .Select(g => new { UrunID = g.Key, ToplamMiktar = g.Sum(sh => sh.HareketTuru == "Giriş" ? sh.Miktar : -sh.Miktar) })
                         .ToListAsync();
@@ -814,7 +814,7 @@ namespace MuhasebeStokWebApp.Controllers
                 // ViewModel oluştur
                 var model = new StokRaporViewModel
                 {
-                    ToplamUrunSayisi = urunler.Count,
+                    ToplamUrunSayisi = urunler.Count(),
                     ToplamStokDegeri = await HesaplaToplamStokDegeri(urunler),
                     KritikStokUrunSayisi = urunler.Count(u => u.StokMiktar <= 10),
                     DusukStokUrunSayisi = urunler.Count(u => u.StokMiktar > 10 && u.StokMiktar <= 20),
@@ -878,7 +878,7 @@ namespace MuhasebeStokWebApp.Controllers
         private decimal GetUrunBirimFiyat(Guid urunID)
         {
             var urunFiyat = _context.UrunFiyatlari
-                .Where(uf => uf.UrunID == urunID && !uf.SoftDelete)
+                .Where(uf => uf.UrunID == urunID && !uf.Silindi)
                 .OrderByDescending(uf => uf.GecerliTarih)
                 .FirstOrDefault();
                 
@@ -889,7 +889,7 @@ namespace MuhasebeStokWebApp.Controllers
         private async Task<List<KategoriBazliRaporViewModel>> GetKategoriBazliRapor(Guid? kategoriID, Guid? depoID, string stokDurumu)
         {
             var kategoriler = await _unitOfWork.Repository<UrunKategori>().GetAsync(
-                filter: k => k.SoftDelete == false && k.Aktif,
+                filter: k => k.Silindi == false && k.Aktif,
                 orderBy: q => q.OrderBy(k => k.KategoriAdi)
             );
             
@@ -902,7 +902,7 @@ namespace MuhasebeStokWebApp.Controllers
                     continue;
                 
                 var urunQuery = _context.Urunler
-                    .Where(u => !u.SoftDelete && u.Aktif && u.KategoriID == kategori.KategoriID);
+                    .Where(u => !u.Silindi && u.Aktif && u.KategoriID == kategori.KategoriID);
                 
                 // Stok durumu filtresi
                 if (!string.IsNullOrEmpty(stokDurumu))
@@ -928,7 +928,7 @@ namespace MuhasebeStokWebApp.Controllers
                 {
                     // Depo bazlı filtreleme için stok hareketlerini getir
                     var stokHareketleri = await _context.StokHareketleri
-                        .Where(sh => !sh.SoftDelete && sh.DepoID == depoID.Value)
+                        .Where(sh => !sh.Silindi && sh.DepoID == depoID.Value)
                         .GroupBy(sh => sh.UrunID)
                         .Select(g => new { UrunID = g.Key, ToplamMiktar = g.Sum(sh => sh.HareketTuru == "Giriş" ? sh.Miktar : -sh.Miktar) })
                         .ToListAsync();
@@ -951,7 +951,7 @@ namespace MuhasebeStokWebApp.Controllers
                     {
                         KategoriID = kategori.KategoriID,
                         KategoriAdi = kategori.KategoriAdi,
-                        UrunSayisi = urunler.Count,
+                        UrunSayisi = urunler.Count(),
                         ToplamStokDegeri = toplamStokDegeri,
                         KritikStokUrunSayisi = urunler.Count(u => u.StokMiktar <= 10),
                         DusukStokUrunSayisi = urunler.Count(u => u.StokMiktar > 10 && u.StokMiktar <= 20)
@@ -966,7 +966,7 @@ namespace MuhasebeStokWebApp.Controllers
         private async Task<List<DepoBazliRaporViewModel>> GetDepoBazliRapor(Guid? kategoriID, Guid? depoID, string stokDurumu)
         {
             var depolar = await _unitOfWork.Repository<Depo>().GetAsync(
-                filter: d => d.SoftDelete == false && d.Aktif,
+                filter: d => d.Silindi == false && d.Aktif,
                 orderBy: q => q.OrderBy(d => d.DepoAdi)
             );
             
@@ -980,7 +980,7 @@ namespace MuhasebeStokWebApp.Controllers
                 
                 // Bu depodaki stok hareketlerini getir
                 var stokHareketleri = await _context.StokHareketleri
-                    .Where(sh => !sh.SoftDelete && sh.DepoID == depo.DepoID)
+                    .Where(sh => !sh.Silindi && sh.DepoID == depo.DepoID)
                     .GroupBy(sh => sh.UrunID)
                     .Select(g => new { UrunID = g.Key, ToplamMiktar = g.Sum(sh => sh.HareketTuru == "Giriş" ? sh.Miktar : -sh.Miktar) })
                     .ToListAsync();
@@ -991,7 +991,7 @@ namespace MuhasebeStokWebApp.Controllers
                 if (depoUrunIDs.Any())
                 {
                     var urunQuery = _context.Urunler
-                        .Where(u => !u.SoftDelete && u.Aktif && depoUrunIDs.Contains(u.UrunID));
+                        .Where(u => !u.Silindi && u.Aktif && depoUrunIDs.Contains(u.UrunID));
                     
                     // Kategori filtresi
                     if (kategoriID.HasValue)
@@ -1033,7 +1033,7 @@ namespace MuhasebeStokWebApp.Controllers
                         {
                             DepoID = depo.DepoID,
                             DepoAdi = depo.DepoAdi,
-                            UrunSayisi = urunler.Count,
+                            UrunSayisi = urunler.Count(),
                             ToplamStokDegeri = toplamStokDegeri,
                             KritikStokUrunSayisi = urunler.Count(u => u.StokMiktar <= 10),
                             DusukStokUrunSayisi = urunler.Count(u => u.StokMiktar > 10 && u.StokMiktar <= 20)
@@ -1072,7 +1072,7 @@ namespace MuhasebeStokWebApp.Controllers
         {
             // Ürünleri getir
             var urunler = await _unitOfWork.Repository<Urun>().GetAsync(
-                filter: u => u.SoftDelete == false && u.Aktif,
+                filter: u => u.Silindi == false && u.Aktif,
                 orderBy: q => q.OrderBy(u => u.UrunAdi)
             );
             
@@ -1080,7 +1080,7 @@ namespace MuhasebeStokWebApp.Controllers
             
             // Depoları getir
             var depolar = await _unitOfWork.Repository<Depo>().GetAsync(
-                filter: d => d.SoftDelete == false && d.Aktif,
+                filter: d => d.Silindi == false && d.Aktif,
                 orderBy: q => q.OrderBy(d => d.DepoAdi)
             );
             
@@ -1099,7 +1099,7 @@ namespace MuhasebeStokWebApp.Controllers
         {
             // Ürünleri getir
             var urunler = await _unitOfWork.Repository<Urun>().GetAsync(
-                filter: u => u.SoftDelete == false && u.Aktif,
+                filter: u => u.Silindi == false && u.Aktif,
                 orderBy: q => q.OrderBy(u => u.UrunAdi)
             );
             
@@ -1107,7 +1107,7 @@ namespace MuhasebeStokWebApp.Controllers
             
             // Depoları getir
             var depolar = await _unitOfWork.Repository<Depo>().GetAsync(
-                filter: d => d.SoftDelete == false && d.Aktif,
+                filter: d => d.Silindi == false && d.Aktif,
                 orderBy: q => q.OrderBy(d => d.DepoAdi)
             );
             
