@@ -33,7 +33,7 @@ namespace MuhasebeStokWebApp.Data.Entities
         
         public DateTime? GuncellemeTarihi { get; set; }
         
-        public bool SoftDelete { get; set; }
+        public bool Silindi { get; set; }
         
         public bool Aktif { get; set; } = true;
         

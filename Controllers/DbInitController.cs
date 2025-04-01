@@ -24,22 +24,24 @@ namespace MuhasebeStokWebApp.Controllers
     {
         private readonly ApplicationDbContext _context;
         private readonly ILogger<DbInitController> _logger;
-        private readonly ILogService _logService;
-        private readonly IParaBirimiService _paraBirimiService;
+        private new readonly ILogService _logService;
+        private readonly MuhasebeStokWebApp.Services.ParaBirimiModulu.IParaBirimiService _paraBirimiService;
         private readonly ISistemAyarService _sistemAyarService;
         private readonly IAuthService _authService;
         private readonly UserManager<ApplicationUser> _identityUserManager;
         private readonly RoleManager<IdentityRole> _identityRoleManager;
-        private readonly UserManager<ApplicationUser> _userManager;
+        private new readonly UserManager<ApplicationUser> _userManager;
+        private new readonly RoleManager<IdentityRole> _roleManager;
         private readonly IConfiguration _configuration;
         private readonly IBirimService _birimService;
         private readonly IMenuService _menuService;
+        private readonly IPasswordHasher<ApplicationUser> _passwordHasher;
 
         public DbInitController(
             ApplicationDbContext context,
             ILogger<DbInitController> logger,
             ILogService logService,
-            IParaBirimiService paraBirimiService,
+            MuhasebeStokWebApp.Services.ParaBirimiModulu.IParaBirimiService paraBirimiService,
             ISistemAyarService sistemAyarService,
             IAuthService authService,
             UserManager<ApplicationUser> identityUserManager,
@@ -47,7 +49,9 @@ namespace MuhasebeStokWebApp.Controllers
             UserManager<ApplicationUser> userManager,
             IConfiguration configuration,
             IBirimService birimService,
-            IMenuService menuService)
+            IMenuService menuService,
+            IPasswordHasher<ApplicationUser> passwordHasher,
+            RoleManager<IdentityRole> roleManager)
             : base(menuService, identityUserManager, identityRoleManager, logService)
         {
             _context = context;
@@ -62,6 +66,8 @@ namespace MuhasebeStokWebApp.Controllers
             _configuration = configuration;
             _birimService = birimService;
             _menuService = menuService;
+            _passwordHasher = passwordHasher;
+            _roleManager = roleManager;
         }
 
         [HttpGet]
@@ -70,7 +76,7 @@ namespace MuhasebeStokWebApp.Controllers
             try
             {
                 // Mevcut verilerin durumunu kontrol et
-                ViewBag.SistemAyarlari = await _context.GenelSistemAyarlari.Where(s => s.Aktif && !s.SoftDelete).CountAsync();
+                ViewBag.SistemAyarlari = await _context.GenelSistemAyarlari.Where(s => s.Aktif && !s.Silindi).CountAsync();
                 ViewBag.ParaBirimleri = await _context.ParaBirimleri.CountAsync();
                 ViewBag.KurDegerleri = await _context.KurDegerleri.CountAsync();
                 
@@ -98,9 +104,9 @@ namespace MuhasebeStokWebApp.Controllers
                 }
 
                 // Yeni para birimleri oluştur
-                var paraBirimleri = new List<MuhasebeStokWebApp.Data.Entities.DovizModulu.ParaBirimi>();
+                var paraBirimleri = new List<MuhasebeStokWebApp.Data.Entities.ParaBirimiModulu.ParaBirimi>();
                 
-                var usd = new MuhasebeStokWebApp.Data.Entities.DovizModulu.ParaBirimi
+                var usd = new MuhasebeStokWebApp.Data.Entities.ParaBirimiModulu.ParaBirimi
                 {
                     ParaBirimiID = Guid.NewGuid(),
                     Kod = "USD",
@@ -113,7 +119,7 @@ namespace MuhasebeStokWebApp.Controllers
                     Sira = 2
                 };
                 
-                var try_ = new MuhasebeStokWebApp.Data.Entities.DovizModulu.ParaBirimi
+                var try_ = new MuhasebeStokWebApp.Data.Entities.ParaBirimiModulu.ParaBirimi
                 {
                     ParaBirimiID = Guid.NewGuid(),
                     Kod = "TRY",
@@ -127,7 +133,7 @@ namespace MuhasebeStokWebApp.Controllers
                     Sira = 1
                 };
                 
-                var eur = new MuhasebeStokWebApp.Data.Entities.DovizModulu.ParaBirimi
+                var eur = new MuhasebeStokWebApp.Data.Entities.ParaBirimiModulu.ParaBirimi
                 {
                     ParaBirimiID = Guid.NewGuid(),
                     Kod = "EUR",
@@ -140,7 +146,7 @@ namespace MuhasebeStokWebApp.Controllers
                     Sira = 3
                 };
                 
-                var gbp = new MuhasebeStokWebApp.Data.Entities.DovizModulu.ParaBirimi
+                var gbp = new MuhasebeStokWebApp.Data.Entities.ParaBirimiModulu.ParaBirimi
                 {
                     ParaBirimiID = Guid.NewGuid(),
                     Kod = "GBP",
@@ -205,7 +211,7 @@ namespace MuhasebeStokWebApp.Controllers
                         DovizGuncellemeSikligi = 24,
                         SonDovizGuncellemeTarihi = DateTime.Now,
                         Aktif = true,
-                        SoftDelete = false,
+                        Silindi = false,
                         OlusturmaTarihi = DateTime.Now
                     },
                     new SistemAyarlari 
@@ -221,7 +227,7 @@ namespace MuhasebeStokWebApp.Controllers
                         DovizGuncellemeSikligi = 24,
                         SonDovizGuncellemeTarihi = DateTime.Now,
                         Aktif = true,
-                        SoftDelete = false,
+                        Silindi = false,
                         OlusturmaTarihi = DateTime.Now
                     },
                     new SistemAyarlari 
@@ -237,7 +243,7 @@ namespace MuhasebeStokWebApp.Controllers
                         DovizGuncellemeSikligi = 24,
                         SonDovizGuncellemeTarihi = DateTime.Now,
                         Aktif = true,
-                        SoftDelete = false,
+                        Silindi = false,
                         OlusturmaTarihi = DateTime.Now
                     },
                     new SistemAyarlari 
@@ -253,7 +259,7 @@ namespace MuhasebeStokWebApp.Controllers
                         DovizGuncellemeSikligi = 24,
                         SonDovizGuncellemeTarihi = DateTime.Now,
                         Aktif = true,
-                        SoftDelete = false,
+                        Silindi = false,
                         OlusturmaTarihi = DateTime.Now
                     },
                     new SistemAyarlari 
@@ -269,7 +275,7 @@ namespace MuhasebeStokWebApp.Controllers
                         DovizGuncellemeSikligi = 24,
                         SonDovizGuncellemeTarihi = DateTime.Now,
                         Aktif = true,
-                        SoftDelete = false,
+                        Silindi = false,
                         OlusturmaTarihi = DateTime.Now
                     }
                 };

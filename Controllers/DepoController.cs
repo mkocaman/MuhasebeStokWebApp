@@ -23,7 +23,7 @@ namespace MuhasebeStokWebApp.Controllers
     {
         private readonly ApplicationDbContext _context;
         private readonly ILogger<DepoController> _logger;
-        private readonly ILogService _logService;
+        private new readonly ILogService _logService;
 
         public DepoController(
             ApplicationDbContext context,
@@ -92,7 +92,7 @@ namespace MuhasebeStokWebApp.Controllers
             {
                 Aktif = true
             };
-            return View(model);
+            return PartialView("_CreatePartial", model);
         }
 
         // POST: Depo/Create
@@ -109,7 +109,7 @@ namespace MuhasebeStokWebApp.Controllers
                     if (kullaniciId == Guid.Empty)
                     {
                         ModelState.AddModelError("", "Kullanıcı bilgisi alınamadı.");
-                        return View(model);
+                        return PartialView("_CreatePartial", model);
                     }
 
                     var depo = new Depo
@@ -120,11 +120,19 @@ namespace MuhasebeStokWebApp.Controllers
                         OlusturmaTarihi = DateTime.Now,
                         OlusturanKullaniciID = kullaniciId,
                         Silindi = false,
-                        Aktif = true
+                        Aktif = model.Aktif
                     };
 
                     _context.Add(depo);
                     await _context.SaveChangesAsync();
+                    
+                    // AJAX isteği için başarılı sonuç döndür
+                    if (Request.Headers["X-Requested-With"] == "XMLHttpRequest")
+                    {
+                        return Json(new { success = true, message = "Depo başarıyla oluşturuldu." });
+                    }
+                    
+                    TempData["SuccessMessage"] = "Depo başarıyla oluşturuldu.";
                     return RedirectToAction(nameof(Index));
                 }
 
@@ -135,13 +143,27 @@ namespace MuhasebeStokWebApp.Controllers
                         _logger.LogWarning($"Hata - {state.Key}: {error.ErrorMessage}");
                     }
                 }
-                return View(model);
+                
+                // AJAX isteği için hata sonucu döndür
+                if (Request.Headers["X-Requested-With"] == "XMLHttpRequest")
+                {
+                    return Json(new { success = false, message = "Depo oluşturulurken hatalar oluştu.", errors = ModelState.Values.SelectMany(v => v.Errors).Select(e => e.ErrorMessage) });
+                }
+                
+                return PartialView("_CreatePartial", model);
             }
             catch (Exception ex)
             {
                 _logger.LogError(ex, "Depo oluşturulurken hata oluştu");
                 ModelState.AddModelError("", "Depo oluşturulurken bir hata oluştu. Lütfen tekrar deneyin.");
-                return View(model);
+                
+                // AJAX isteği için hata sonucu döndür
+                if (Request.Headers["X-Requested-With"] == "XMLHttpRequest")
+                {
+                    return Json(new { success = false, message = "Depo oluşturulurken bir hata oluştu: " + ex.Message });
+                }
+                
+                return PartialView("_CreatePartial", model);
             }
         }
 
@@ -282,7 +304,7 @@ namespace MuhasebeStokWebApp.Controllers
         }
 
         // Kullanıcı ID'sini al
-        private Guid GetCurrentUserId()
+        private new Guid GetCurrentUserId()
         {
             try
             {
@@ -292,10 +314,9 @@ namespace MuhasebeStokWebApp.Controllers
                     return Guid.Parse(userIdClaim.Value);
                 }
             }
-            catch (FormatException)
+            catch (Exception ex)
             {
-                // Geçersiz GUID formatı hatası durumunda loglama yapılabilir
-                // Şimdilik sadece Guid.Empty dönüyoruz
+                _logger.LogError(ex, "GetCurrentUserId: {Message}", ex.Message);
             }
             return Guid.Empty;
         }

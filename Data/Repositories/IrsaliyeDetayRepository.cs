@@ -20,7 +20,7 @@ namespace MuhasebeStokWebApp.Data.Repositories
             return await _context.Set<IrsaliyeDetay>()
                 .Include(id => id.Irsaliye)
                 .Include(id => id.Urun)
-                .FirstOrDefaultAsync(id => id.IrsaliyeDetayID == irsaliyeDetayId && !id.SoftDelete);
+                .FirstOrDefaultAsync(id => id.IrsaliyeDetayID == irsaliyeDetayId && !id.Silindi);
         }
     }
 } 

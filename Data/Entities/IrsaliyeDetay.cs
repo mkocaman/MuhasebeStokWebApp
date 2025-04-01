@@ -41,7 +41,7 @@ namespace MuhasebeStokWebApp.Data.Entities
         
         public bool Aktif { get; set; } = true;
         
-        public bool SoftDelete { get; set; } = false;
+        public bool Silindi { get; set; } = false;
         
         [Required]
         public decimal SatirToplam { get; set; }
@@ -61,7 +61,7 @@ namespace MuhasebeStokWebApp.Data.Entities
             IrsaliyeDetayID = Guid.NewGuid();
             OlusturmaTarihi = DateTime.Now;
             Aktif = true;
-            SoftDelete = false;
+            Silindi = false;
         }
     }
 } 

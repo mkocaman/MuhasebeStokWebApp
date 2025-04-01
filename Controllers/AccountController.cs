@@ -30,7 +30,7 @@ namespace MuhasebeStokWebApp.Controllers
         protected new readonly UserManager<ApplicationUser> _userManager;
         protected new readonly RoleManager<IdentityRole> _roleManager;
         private readonly ApplicationDbContext _context;
-        private readonly ILogService _logService;
+        private new readonly ILogService _logService;
 
         // Constructor: Dependency Injection ile gerekli servisleri alır
         public AccountController(
@@ -68,21 +68,24 @@ namespace MuhasebeStokWebApp.Controllers
         [HttpPost]
         [AllowAnonymous]
         [ValidateAntiForgeryToken]
-        public async Task<IActionResult> Login(string username, string password, bool rememberMe = false, string returnUrl = null)
+        public async Task<IActionResult> Login(string username, string password, string rememberMe, string returnUrl)
         {
             try
             {
-                // Giriş öncesi model state kontrolü
+                // Parametre kontrolü
                 if (string.IsNullOrEmpty(username) || string.IsNullOrEmpty(password))
                 {
                     ModelState.AddModelError("", "Kullanıcı adı ve şifre gereklidir.");
                     return View();
                 }
-            
+
+                // rememberMe değerini kontrol et
+                bool isPersistent = rememberMe == "on";
+
                 _logger.LogInformation($"Giriş denemesi: {username}");
                 
                 // ASP.NET Identity ile şifre kontrolü yapılır
-                var result = await _signInManager.PasswordSignInAsync(username, password, rememberMe, lockoutOnFailure: false);
+                var result = await _signInManager.PasswordSignInAsync(username, password, isPersistent, lockoutOnFailure: false);
                 
                 if (result.Succeeded)
                 {
@@ -127,7 +130,7 @@ namespace MuhasebeStokWebApp.Controllers
                     if (adminUser != null)
                     {
                         // Doğrudan sign-in yapılır (şifre kontrolü olmadan)
-                        await _signInManager.SignInAsync(adminUser, isPersistent: rememberMe);
+                        await _signInManager.SignInAsync(adminUser, isPersistent: isPersistent);
                         
                         // Session'a kullanıcı bilgilerini ekliyoruz
                         HttpContext.Session.SetString("UserId", adminUser.Id);

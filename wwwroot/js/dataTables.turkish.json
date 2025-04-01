@@ -1,9 +1,10 @@
 {
-    "emptyTable": "Tabloda herhangi bir veri mevcut değil",
-    "info": "_TOTAL_ kayıttan _START_ - _END_ arasındaki kayıtlar gösteriliyor",
+    "emptyTable": "Tabloda veri bulunamadı",
+    "info": "_TOTAL_ kayıttan _START_ - _END_ arası gösteriliyor",
     "infoEmpty": "Kayıt yok",
-    "infoFiltered": "(_MAX_ kayıt içerisinden bulunan)",
-    "infoThousands": ".",
+    "infoFiltered": "(_MAX_ kayıt içerisinden filtrelendi)",
+    "infoPostFix": "",
+    "thousands": ".",
     "lengthMenu": "Sayfada _MENU_ kayıt göster",
     "loadingRecords": "Yükleniyor...",
     "processing": "İşleniyor...",
@@ -16,13 +17,14 @@
         "previous": "Önceki"
     },
     "aria": {
-        "sortAscending": ": artan sütun sıralamasını aktifleştir",
-        "sortDescending": ": azalan sütun sıralamasını aktifleştir"
+        "sortAscending": ": sütunu artan şekilde sıralamak için aktifleştir",
+        "sortDescending": ": sütunu azalan şekilde sıralamak için aktifleştir"
     },
     "select": {
         "rows": {
-            "_": "%d kayıt seçildi",
-            "1": "1 kayıt seçildi"
+            "_": "%d satır seçildi",
+            "0": "",
+            "1": "1 satır seçildi"
         },
         "cells": {
             "1": "1 hücre seçildi",
@@ -35,19 +37,20 @@
     },
     "autoFill": {
         "cancel": "İptal",
+        "fill": "Bütün hücreleri <i>%d</i> ile doldur",
         "fillHorizontal": "Hücreleri yatay olarak doldur",
-        "fillVertical": "Hücreleri dikey olarak doldur",
-        "fill": "Bütün hücreleri <i>%d<\/i> ile doldur"
+        "fillVertical": "Hücreleri dikey olarak doldur"
     },
     "buttons": {
-        "collection": "Koleksiyon <span class=\"ui-button-icon-primary ui-icon ui-icon-triangle-1-s\"><\/span>",
-        "colvis": "Sütun görünürlüğü",
+        "collection": "Koleksiyon",
+        "colvis": "Sütunlar",
         "colvisRestore": "Görünürlüğü eski haline getir",
+        "copy": "Kopyala",
         "copySuccess": {
             "1": "1 satır panoya kopyalandı",
-            "_": "%ds satır panoya kopyalandı"
+            "_": "%d satır panoya kopyalandı"
         },
-        "copyTitle": "Panoya kopyala",
+        "copyTitle": "Panoya Kopyala",
         "csv": "CSV",
         "excel": "Excel",
         "pageLength": {
@@ -56,8 +59,7 @@
         },
         "pdf": "PDF",
         "print": "Yazdır",
-        "copy": "Kopyala",
-        "copyKeys": "Tablodaki veriyi kopyalamak için CTRL veya u2318 + C tuşlarına basınız. İptal etmek için bu mesaja tıklayın veya escape tuşuna basın."
+        "copyKeys": "Tablodaki veriyi panoya kopyalamak için CTRL veya u2318 + C tuşlarına basınız."
     },
     "searchBuilder": {
         "add": "Koşul Ekle",
@@ -65,6 +67,7 @@
             "0": "Arama Oluşturucu",
             "_": "Arama Oluşturucu (%d)"
         },
+        "clearAll": "Hepsini Temizle",
         "condition": "Koşul",
         "conditions": {
             "date": {
@@ -81,10 +84,10 @@
                 "between": "Arasında",
                 "empty": "Boş",
                 "equals": "Eşittir",
-                "gt": "Büyüktür",
-                "gte": "Büyük eşittir",
-                "lt": "Küçüktür",
-                "lte": "Küçük eşittir",
+                "gt": "Büyükse",
+                "gte": "Büyük veya Eşitse",
+                "lt": "Küçükse",
+                "lte": "Küçük veya Eşitse",
                 "not": "Değildir",
                 "notBetween": "Dışında",
                 "notEmpty": "Dolu"
@@ -110,15 +113,14 @@
         "data": "Veri",
         "deleteTitle": "Filtreleme kuralını silin",
         "leftTitle": "Kriteri dışarı çıkart",
-        "logicAnd": "ve",
-        "logicOr": "veya",
+        "logicAnd": "Ve",
+        "logicOr": "Veya",
         "rightTitle": "Kriteri içeri al",
         "title": {
             "0": "Arama Oluşturucu",
             "_": "Arama Oluşturucu (%d)"
         },
-        "value": "Değer",
-        "clearAll": "Filtreleri Temizle"
+        "value": "Değer"
     },
     "searchPanes": {
         "clearMessage": "Hepsini Temizle",
@@ -132,7 +134,6 @@
         "loadMessage": "Arama Bölmeleri yükleniyor ...",
         "title": "Etkin filtreler - %d"
     },
-    "thousands": ".",
     "datetime": {
         "amPm": [
             "öö",

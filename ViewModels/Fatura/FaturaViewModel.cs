@@ -73,6 +73,6 @@ namespace MuhasebeStokWebApp.ViewModels.Fatura
     
     public class FaturaListViewModel
     {
-        public List<FaturaViewModel> Faturalar { get; set; }
+        public List<FaturaViewModel> Faturalar { get; set; } = new List<FaturaViewModel>();
     }
 } 

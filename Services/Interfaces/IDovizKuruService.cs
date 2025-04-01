@@ -14,7 +14,7 @@ namespace MuhasebeStokWebApp.Services.Interfaces
         /// <summary>
         /// Belirli bir tarih için tüm döviz kurlarını getirir
         /// </summary>
-        Task<List<KurDegeri>> GetKurDegerleriByTarihAsync(DateTime tarih);
+        Task<List<KurDegeri>> GetKurDegerleriByTarihAsync(DateTime? tarih);
 
         /// <summary>
         /// Belirli bir para birimi için son kur değerini getirir

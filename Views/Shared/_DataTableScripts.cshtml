@@ -1,0 +1,54 @@
+@model dynamic
+
+@{
+    string tableId = Model?.TableId ?? "dataTable";
+    int pageLength = 25; // Varsayılan değer
+    bool responsive = true; // Varsayılan değer
+    bool autoDissmissAlerts = true; // Varsayılan değer
+    
+    // Null check ile özellikleri güvenli bir şekilde kontrol edelim
+    if (Model != null)
+    {
+        // dynamic model ile çalışırken try-catch kullanmak güvenlidir
+        try 
+        {
+            if (((object)Model).GetType().GetProperty("PageLength") != null)
+            {
+                pageLength = Model.PageLength ?? 25;
+            }
+            
+            if (((object)Model).GetType().GetProperty("Responsive") != null)
+            {
+                responsive = Model.Responsive ?? true;
+            }
+            
+            if (((object)Model).GetType().GetProperty("AutoDissmissAlerts") != null)
+            {
+                autoDissmissAlerts = Model.AutoDissmissAlerts ?? true;
+            }
+        }
+        catch {}
+    }
+}
+
+<script>
+    $(document).ready(function() {
+        $('#@tableId').DataTable({
+            language: {
+                url: '/js/dataTables.turkish.json'
+            },
+            responsive: @responsive.ToString().ToLower(),
+            pageLength: @pageLength
+        });
+        
+        @if (autoDissmissAlerts)
+        {
+            // Otomatik kapanan alertler
+            @:window.setTimeout(function() {
+            @:    $('.alert').fadeTo(500, 0).slideUp(500, function() {
+            @:        $(this).remove();
+            @:    });
+            @:}, 4000);
+        }
+    });
+</script> 

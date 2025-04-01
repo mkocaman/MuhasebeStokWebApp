@@ -4,11 +4,11 @@ using MuhasebeStokWebApp.Data;
 using MuhasebeStokWebApp.Data.Repositories;
 using MuhasebeStokWebApp.Data.Entities;
 using Microsoft.AspNetCore.Authentication.Cookies;
+using MuhasebeStokWebApp.Services.Interfaces;
 using MuhasebeStokWebApp.Services;
 using MuhasebeStokWebApp.Services.Menu;
-using MuhasebeStokWebApp.Services.Interfaces;
 using MuhasebeStokWebApp.Services.Auth;
-using MuhasebeStokWebApp.Services.DovizModulu;
+using MuhasebeStokWebApp.Services.ParaBirimiModulu;
 using MuhasebeStokWebApp.Services.Currency;
 using MuhasebeStokWebApp.Middleware;
 using Microsoft.AspNetCore.SignalR;
@@ -23,6 +23,15 @@ using Microsoft.AspNetCore.Localization;
 using System.Globalization;
 using System;
 using System.IO;
+using System.Linq;
+using Microsoft.AspNetCore.Builder;
+using Microsoft.AspNetCore.Hosting;
+using Microsoft.AspNetCore.Mvc;
+using Microsoft.Extensions.Configuration;
+using Microsoft.Extensions.DependencyInjection;
+using Microsoft.Extensions.Hosting;
+using MuhasebeStokWebApp.Data.EfCore;
+using MuhasebeStokWebApp; // AdminCreator için gerekli
 
 var builder = WebApplication.CreateBuilder(args);
 
@@ -117,13 +126,19 @@ builder.Services.AddDataProtection();
 
 // Repository ve UnitOfWork servislerini ekliyoruz
 builder.Services.AddScoped(typeof(IRepository<>), typeof(Repository<>));
-builder.Services.AddScoped<IUnitOfWork, UnitOfWork>();
+builder.Services.AddScoped<MuhasebeStokWebApp.Data.Repositories.IUnitOfWork, MuhasebeStokWebApp.Data.Repositories.UnitOfWork>();
 
 // HttpClient servisini ekliyoruz
 builder.Services.AddHttpClient();
 
 // LogService bağımlılığını ekliyoruz
 builder.Services.AddScoped<ILogService, LogService>();
+
+// ValidationService'i ekliyoruz
+builder.Services.AddScoped<IValidationService, ValidationService>();
+
+// DbMigrationService'i ekliyoruz
+builder.Services.AddScoped<IDbMigrationService, DbMigrationService>();
 
 // SistemLogService'i ekliyoruz
 builder.Services.AddScoped<MuhasebeStokWebApp.Services.SistemLogService>();
@@ -150,10 +165,19 @@ builder.Services.AddScoped<IAuthService, AuthService>();
 // MenuService'i ekliyoruz
 builder.Services.AddScoped<IMenuService, MenuService>();
 
-// Döviz modülü servislerini ekliyoruz
-builder.Services.AddScoped<IDovizService, DovizService>();
-builder.Services.AddScoped<IDovizKuruService, DovizKuruService>();
-builder.Services.AddScoped<MuhasebeStokWebApp.Services.Interfaces.IParaBirimiService, MuhasebeStokWebApp.Services.DovizModulu.ParaBirimiService>();
+// BirimService'i ekliyoruz
+builder.Services.AddScoped<IBirimService, BirimService>();
+
+// Para birimi modülü servislerini ekliyoruz
+builder.Services.AddScoped<MuhasebeStokWebApp.Services.ParaBirimiModulu.IParaBirimiService, MuhasebeStokWebApp.Services.ParaBirimiModulu.ParaBirimiService>();
+builder.Services.AddScoped<MuhasebeStokWebApp.Services.ParaBirimiModulu.IKurDegeriService, MuhasebeStokWebApp.Services.ParaBirimiModulu.KurDegeriService>();
+builder.Services.AddScoped<MuhasebeStokWebApp.Services.ParaBirimiModulu.IParaBirimiIliskiService, MuhasebeStokWebApp.Services.ParaBirimiModulu.ParaBirimiIliskiService>();
+
+// Services.Interfaces altındaki IParaBirimiService'i de açıkça kaydedelim
+builder.Services.AddScoped<MuhasebeStokWebApp.Services.Interfaces.IParaBirimiService, MuhasebeStokWebApp.Services.ParaBirimiAdapter>();
+
+// IDovizKuruService servisini DovizKuruServiceAdapter ile eşleştiriyoruz
+builder.Services.AddScoped<MuhasebeStokWebApp.Services.Interfaces.IDovizKuruService, MuhasebeStokWebApp.Services.ParaBirimiModulu.DovizKuruServiceAdapter>();
 
 // CurrencyService'i ekliyoruz
 builder.Services.AddScoped<ICurrencyService, CurrencyService>();
@@ -165,7 +189,9 @@ builder.Services.AddMemoryCache();
 
 builder.Services.AddSignalR();
 builder.Services.Configure<EmailSettings>(builder.Configuration.GetSection("EmailSettings"));
+// Arayüzlerin uygulamalarını açıkça tanımlayarak çakışmaları önlüyoruz
 builder.Services.AddScoped<MuhasebeStokWebApp.Services.Email.IEmailService, MuhasebeStokWebApp.Services.Email.EmailService>();
+builder.Services.AddScoped<MuhasebeStokWebApp.Services.Interfaces.IEmailService, MuhasebeStokWebApp.Services.EmailService>();
 builder.Services.AddScoped<INotificationService, NotificationService>();
 
 // Localization
@@ -173,6 +199,9 @@ builder.Services.AddLocalization(options => options.ResourcesPath = "Resources")
 builder.Services.AddMvc()
     .AddViewLocalization()
     .AddDataAnnotationsLocalization();
+
+// IMemoryCache servisi ekle (önbellek için)
+builder.Services.AddMemoryCache();
 
 builder.Services.Configure<RequestLocalizationOptions>(options =>
 {
@@ -213,21 +242,20 @@ else
     app.UseHsts();
 }
 
-// Veritabanı başlangıç verilerini ekle
+// Veritabanı migration'larını uygula (sadece migration uygula, temizleme ve örnek veri oluşturma yapma)
 using (var scope = app.Services.CreateScope())
 {
     var services = scope.ServiceProvider;
     try
     {
         var context = services.GetRequiredService<ApplicationDbContext>();
-        // Veritabanını oluştur ve migrasyon uygula
+        // Sadece migration'ları uygula
         context.Database.Migrate();
-        await AppDbInitializer.SeedData(services, context);
     }
     catch (Exception ex)
     {
         var logger = services.GetRequiredService<ILogger<Program>>();
-        logger.LogError(ex, "Veritabanı başlatma hatası.");
+        logger.LogError(ex, "Veritabanı migration uygulanırken hata oluştu.");
     }
 }
 

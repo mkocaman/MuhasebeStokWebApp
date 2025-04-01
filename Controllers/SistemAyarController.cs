@@ -18,7 +18,7 @@ namespace MuhasebeStokWebApp.Controllers
     {
         private readonly ApplicationDbContext _context;
         private readonly ILogger<SistemAyarController> _logger;
-        private readonly ILogService _logService;
+        private new readonly ILogService _logService;
         private readonly IEmailService _emailService;
         private readonly ISistemAyarService _sistemAyarService;
 

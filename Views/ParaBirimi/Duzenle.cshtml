@@ -1,0 +1,124 @@
+@model MuhasebeStokWebApp.Data.Entities.ParaBirimiModulu.ParaBirimi
+@{
+    ViewData["Title"] = "Para Birimi Düzenle";
+}
+
+<div class="container-fluid">
+    <div class="card">
+        <div class="card-header bg-primary text-white">
+            <h4 class="mb-0">Para Birimi Düzenle</h4>
+        </div>
+        <div class="card-body">
+            <form asp-action="Duzenle" method="post">
+                <div asp-validation-summary="ModelOnly" class="text-danger"></div>
+                <input type="hidden" asp-for="ParaBirimiID" />
+                <input type="hidden" asp-for="OlusturmaTarihi" />
+                <input type="hidden" asp-for="OlusturanKullaniciID" />
+                
+                <div class="row mb-3">
+                    <div class="col-md-6">
+                        <div class="form-group">
+                            <label asp-for="Kod" class="control-label">Para Birimi Kodu</label>
+                            <input asp-for="Kod" class="form-control" required placeholder="Örn: USD, EUR, GBP" maxlength="10" />
+                            <span asp-validation-for="Kod" class="text-danger"></span>
+                            <small class="text-muted">Para biriminin uluslararası kodu (USD, EUR, GBP, vb.)</small>
+                        </div>
+                    </div>
+                    <div class="col-md-6">
+                        <div class="form-group">
+                            <label asp-for="Ad" class="control-label">Para Birimi Adı</label>
+                            <input asp-for="Ad" class="form-control" required placeholder="Örn: Amerikan Doları" maxlength="50" />
+                            <span asp-validation-for="Ad" class="text-danger"></span>
+                        </div>
+                    </div>
+                </div>
+
+                <div class="row mb-3">
+                    <div class="col-md-6">
+                        <div class="form-group">
+                            <label asp-for="Sembol" class="control-label">Sembol</label>
+                            <input asp-for="Sembol" class="form-control" placeholder="Örn: $, €, £" maxlength="10" />
+                            <span asp-validation-for="Sembol" class="text-danger"></span>
+                        </div>
+                    </div>
+                    <div class="col-md-6">
+                        <div class="form-group">
+                            <label asp-for="OndalikHassasiyet" class="control-label">Ondalık Basamak</label>
+                            <input asp-for="OndalikHassasiyet" class="form-control" type="number" min="0" max="6" value="2" />
+                            <span asp-validation-for="OndalikHassasiyet" class="text-danger"></span>
+                            <small class="text-muted">Para birimi gösterilirken kullanılacak ondalık basamak sayısı</small>
+                        </div>
+                    </div>
+                </div>
+
+                <div class="row mb-3">
+                    <div class="col-md-6">
+                        <div class="form-group">
+                            <label asp-for="OndalikAyraci" class="control-label">Ondalık Ayracı</label>
+                            <input asp-for="OndalikAyraci" class="form-control" maxlength="1" />
+                            <span asp-validation-for="OndalikAyraci" class="text-danger"></span>
+                            <small class="text-muted">Ondalık sayıları ayırmak için kullanılan işaret (Örn: virgül (,) veya nokta (.))</small>
+                        </div>
+                    </div>
+                    <div class="col-md-6">
+                        <div class="form-group">
+                            <label asp-for="BinlikAyraci" class="control-label">Binlik Ayracı</label>
+                            <input asp-for="BinlikAyraci" class="form-control" maxlength="1" />
+                            <span asp-validation-for="BinlikAyraci" class="text-danger"></span>
+                            <small class="text-muted">Binlik sayıları ayırmak için kullanılan işaret (Örn: nokta (.) veya virgül (,))</small>
+                        </div>
+                    </div>
+                </div>
+
+                <div class="row mb-3">
+                    <div class="col-md-6">
+                        <div class="form-group">
+                            <label asp-for="Sira" class="control-label">Sıralama</label>
+                            <input asp-for="Sira" class="form-control" type="number" min="0" />
+                            <span asp-validation-for="Sira" class="text-danger"></span>
+                            <small class="text-muted">Para biriminin listelenme sırası</small>
+                        </div>
+                    </div>
+                    <div class="col-md-6">
+                        <div class="form-group">
+                            <label asp-for="Aciklama" class="control-label">Açıklama</label>
+                            <textarea asp-for="Aciklama" class="form-control" rows="3" maxlength="500"></textarea>
+                            <span asp-validation-for="Aciklama" class="text-danger"></span>
+                        </div>
+                    </div>
+                </div>
+
+                <div class="form-group mb-3">
+                    <div class="form-check">
+                        <input class="form-check-input" asp-for="Aktif" type="checkbox" />
+                        <label class="form-check-label" asp-for="Aktif">Aktif</label>
+                    </div>
+                </div>
+
+                <div class="form-group mb-3">
+                    <div class="form-check">
+                        <input class="form-check-input" asp-for="AnaParaBirimiMi" type="checkbox" />
+                        <label class="form-check-label" asp-for="AnaParaBirimiMi">Ana Para Birimi</label>
+                        <small class="d-block text-muted">Bu seçenek işaretlendiğinde, mevcut ana para birimi değişecektir.</small>
+                    </div>
+                </div>
+                
+                <div class="form-group mt-4">
+                    <button type="submit" class="btn btn-primary">
+                        <i class="fas fa-save me-2"></i> Kaydet
+                    </button>
+                    <a asp-action="Detay" asp-route-id="@Model.ParaBirimiID" class="btn btn-info">
+                        <i class="fas fa-eye me-2"></i> Detaylar
+                    </a>
+                    <a asp-action="Index" class="btn btn-secondary">
+                        <i class="fas fa-arrow-left me-2"></i> Listeye Dön
+                    </a>
+                </div>
+            </form>
+        </div>
+    </div>
+</div>
+
+@section Scripts {
+    @{await Html.RenderPartialAsync("_ValidationScriptsPartial");}
+} 

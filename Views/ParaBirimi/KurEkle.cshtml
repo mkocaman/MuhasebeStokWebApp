@@ -1,0 +1,99 @@
+@model MuhasebeStokWebApp.Data.Entities.ParaBirimiModulu.KurDegeri
+@{
+    ViewData["Title"] = "Kur Değeri Ekle";
+    var paraBirimleri = ViewBag.ParaBirimleri as List<Microsoft.AspNetCore.Mvc.Rendering.SelectListItem> ?? new List<Microsoft.AspNetCore.Mvc.Rendering.SelectListItem>();
+}
+
+<div class="container-fluid">
+    <div class="card">
+        <div class="card-header bg-primary text-white">
+            <h4 class="mb-0">Yeni Kur Değeri Ekle</h4>
+        </div>
+        <div class="card-body">
+            <form asp-action="KurEkle" method="post">
+                <div asp-validation-summary="ModelOnly" class="text-danger"></div>
+                
+                <div class="row mb-3">
+                    <div class="col-md-6">
+                        <div class="form-group">
+                            <label asp-for="ParaBirimiID" class="control-label">Para Birimi</label>
+                            <select asp-for="ParaBirimiID" class="form-select" asp-items="paraBirimleri">
+                                <option value="">Para Birimi Seçin</option>
+                            </select>
+                            <span asp-validation-for="ParaBirimiID" class="text-danger"></span>
+                        </div>
+                    </div>
+                    <div class="col-md-6">
+                        <div class="form-group">
+                            <label asp-for="Tarih" class="control-label">Değer Tarihi</label>
+                            <input asp-for="Tarih" class="form-control" type="date" value="@DateTime.Now.ToString("yyyy-MM-dd")" />
+                            <span asp-validation-for="Tarih" class="text-danger"></span>
+                        </div>
+                    </div>
+                </div>
+
+                <div class="row mb-3">
+                    <div class="col-md-6">
+                        <div class="form-group">
+                            <label asp-for="Alis" class="control-label">Alış Kuru</label>
+                            <input asp-for="Alis" class="form-control" />
+                            <span asp-validation-for="Alis" class="text-danger"></span>
+                        </div>
+                    </div>
+                    <div class="col-md-6">
+                        <div class="form-group">
+                            <label asp-for="Satis" class="control-label">Satış Kuru</label>
+                            <input asp-for="Satis" class="form-control" />
+                            <span asp-validation-for="Satis" class="text-danger"></span>
+                        </div>
+                    </div>
+                </div>
+
+                <div class="row mb-3">
+                    <div class="col-md-6">
+                        <div class="form-group">
+                            <label asp-for="Efektif_Alis" class="control-label">Efektif Alış Kuru</label>
+                            <input asp-for="Efektif_Alis" class="form-control" />
+                            <span asp-validation-for="Efektif_Alis" class="text-danger"></span>
+                        </div>
+                    </div>
+                    <div class="col-md-6">
+                        <div class="form-group">
+                            <label asp-for="Efektif_Satis" class="control-label">Efektif Satış Kuru</label>
+                            <input asp-for="Efektif_Satis" class="form-control" />
+                            <span asp-validation-for="Efektif_Satis" class="text-danger"></span>
+                        </div>
+                    </div>
+                </div>
+
+                <div class="form-group mb-3">
+                    <div class="form-check">
+                        <input class="form-check-input" asp-for="Aktif" type="checkbox" checked />
+                        <label class="form-check-label" asp-for="Aktif">Aktif</label>
+                    </div>
+                </div>
+                
+                <div class="form-group mt-4">
+                    <button type="submit" class="btn btn-primary">
+                        <i class="fas fa-save me-2"></i> Kaydet
+                    </button>
+                    <a asp-action="Kurlar" class="btn btn-secondary">
+                        <i class="fas fa-arrow-left me-2"></i> Listeye Dön
+                    </a>
+                </div>
+            </form>
+        </div>
+    </div>
+</div>
+
+@section Scripts {
+    <script>
+        $(document).ready(function() {
+            // İki ondalık sayı formatını zorunlu kılma
+            $('input[type=number]').on('change', function() {
+                $(this).val(parseFloat($(this).val()).toFixed(6));
+            });
+        });
+    </script>
+    @{await Html.RenderPartialAsync("_ValidationScriptsPartial");}
+} 

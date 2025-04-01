@@ -43,7 +43,7 @@ namespace MuhasebeStokWebApp.Data.Entities
         
         public bool Aktif { get; set; } = true;
         
-        public bool SoftDelete { get; set; } = false;
+        public bool Silindi { get; set; } = false;
         
         public DateTime OlusturmaTarihi { get; set; } = DateTime.Now;
         

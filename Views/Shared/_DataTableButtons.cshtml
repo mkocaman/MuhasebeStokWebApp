@@ -1,0 +1,70 @@
+@model dynamic
+
+@{
+    string id = Model.Id?.ToString() ?? "";
+    string detailsAction = Model.DetailsAction ?? "Details";
+    string editAction = Model.EditAction ?? "Edit";
+    string deleteAction = Model.DeleteAction ?? "Delete";
+    string editModalId = Model.EditModalId ?? "";
+    bool showDetails = true; // Varsayılan olarak true
+    bool showEdit = true; // Varsayılan olarak true
+    bool showDelete = true; // Varsayılan olarak true
+    
+    // Dinamik model özelliklerinin güvenli bir şekilde alınması
+    try {
+        // ShowDetails özelliği var mı kontrol et
+        if (((IDictionary<string, object>)Model).ContainsKey("ShowDetails"))
+        {
+            bool? showDetailsValue = Model.ShowDetails;
+            showDetails = showDetailsValue.HasValue ? showDetailsValue.Value : true;
+        }
+        
+        // ShowEdit özelliği var mı kontrol et
+        if (((IDictionary<string, object>)Model).ContainsKey("ShowEdit"))
+        {
+            bool? showEditValue = Model.ShowEdit;
+            showEdit = showEditValue.HasValue ? showEditValue.Value : true;
+        }
+        
+        // ShowDelete özelliği var mı kontrol et
+        if (((IDictionary<string, object>)Model).ContainsKey("ShowDelete"))
+        {
+            bool? showDeleteValue = Model.ShowDelete;
+            showDelete = showDeleteValue.HasValue ? showDeleteValue.Value : true;
+        }
+    } catch {
+        // Hata durumunda varsayılan değerleri kullan
+    }
+}
+
+<div class="btn-group" role="group">
+    @if (showDetails)
+    {
+        <a asp-action="@detailsAction" asp-route-id="@id" class="btn btn-sm btn-info">
+            <i class="fas fa-eye"></i>
+        </a>
+    }
+    
+    @if (showEdit)
+    {
+        @if (!string.IsNullOrEmpty(editModalId))
+        {
+            <button type="button" class="btn btn-sm btn-primary btn-edit" data-id="@id" data-bs-toggle="modal" data-bs-target="#@editModalId">
+                <i class="fas fa-edit"></i>
+            </button>
+        }
+        else
+        {
+            <a asp-action="@editAction" asp-route-id="@id" class="btn btn-sm btn-primary">
+                <i class="fas fa-edit"></i>
+            </a>
+        }
+    }
+    
+    @if (showDelete)
+    {
+        <a asp-action="@deleteAction" asp-route-id="@id" class="btn btn-sm btn-danger">
+            <i class="fas fa-trash"></i>
+        </a>
+    }
+</div> 

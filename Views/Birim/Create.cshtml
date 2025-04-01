@@ -5,74 +5,106 @@
 }
 
 <div class="container-fluid">
-    <div class="page-title">
-        <div class="row">
-            <div class="col-6">
-                <h3>Yeni Birim Ekle</h3>
-            </div>
-            <div class="col-6">
-                <ol class="breadcrumb">
-                    <li class="breadcrumb-item"><a href="/"><i data-feather="home"></i></a></li>
-                    <li class="breadcrumb-item"><a asp-action="Index">Birimler</a></li>
-                    <li class="breadcrumb-item active">Yeni Birim Ekle</li>
-                </ol>
+    <div class="card">
+        <div class="card-header bg-primary text-white">
+            <div class="d-flex justify-content-between align-items-center">
+                <h4 class="mb-0">Yeni Birim Ekle</h4>
+                <a asp-action="Index" class="btn btn-light">
+                    <i class="fas fa-arrow-left"></i> Birim Listesine Dön
+                </a>
             </div>
         </div>
-    </div>
-</div>
-
-<div class="container-fluid">
-    <div class="row">
-        <div class="col-md-12">
-            <div class="card">
-                <div class="card-header">
-                    <h5 class="mb-0">Birim Bilgileri</h5>
+        <div class="card-body">
+            @if (!string.IsNullOrEmpty(ViewBag.ErrorMessage))
+            {
+                <div class="alert alert-danger alert-dismissible fade show" role="alert">
+                    @ViewBag.ErrorMessage
+                    <button type="button" class="btn-close" data-bs-dismiss="alert" aria-label="Close"></button>
                 </div>
-                <form asp-action="Create" method="post">
-                    <div class="card-body">
-                        <div asp-validation-summary="ModelOnly" class="alert alert-danger" role="alert"></div>
-                        
-                        <div class="row">
-                            <div class="col-md-6">
-                                <div class="mb-3">
-                                    <label asp-for="BirimAdi" class="form-label"></label>
-                                    <input asp-for="BirimAdi" class="form-control" />
-                                    <span asp-validation-for="BirimAdi" class="text-danger"></span>
-                                </div>
-                            </div>
-                            <div class="col-md-6">
-                                <div class="mb-3">
-                                    <div class="form-check form-switch">
-                                        <input asp-for="Aktif" class="form-check-input" />
-                                        <label asp-for="Aktif" class="form-check-label"></label>
-                                    </div>
-                                </div>
-                            </div>
-                        </div>
-                        
-                        <div class="mb-3">
-                            <label asp-for="Aciklama" class="form-label"></label>
-                            <textarea asp-for="Aciklama" class="form-control" rows="3"></textarea>
-                            <span asp-validation-for="Aciklama" class="text-danger"></span>
-                        </div>
-                    </div>
+            }
+            
+            @if (TempData["ErrorMessage"] != null)
+            {
+                <div class="alert alert-danger alert-dismissible fade show" role="alert">
+                    @TempData["ErrorMessage"]
+                    <button type="button" class="btn-close" data-bs-dismiss="alert" aria-label="Close"></button>
+                </div>
+            }
+            
+            <div id="validationError" class="alert alert-danger" style="display: none;"></div>
 
-                    <div class="card-footer">
-                        <div class="d-flex justify-content-between">
-                            <a asp-action="Index" class="btn btn-secondary">
-                                <i class="fa fa-arrow-left"></i> Geri
-                            </a>
-                            <button type="submit" class="btn btn-primary">
-                                <i class="fa fa-save"></i> Kaydet
-                            </button>
+            <form asp-action="Create" method="post" id="birimCreateForm">
+                <div asp-validation-summary="ModelOnly" class="alert alert-danger" role="alert"></div>
+                
+                <div class="row">
+                    <div class="col-md-6">
+                        <div class="mb-3">
+                            <label asp-for="BirimAdi" class="form-label"></label>
+                            <input asp-for="BirimAdi" class="form-control" required />
+                            <span asp-validation-for="BirimAdi" class="text-danger"></span>
                         </div>
                     </div>
-                </form>
-            </div>
+                    <div class="col-md-6">
+                        <div class="mb-3">
+                            <div class="form-check mt-4">
+                                <input type="checkbox" name="Aktif" id="Aktif" value="true" class="form-check-input" checked />
+                                <input type="hidden" name="Aktif" value="false" />
+                                <label for="Aktif" class="form-check-label">Aktif</label>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+                
+                <div class="mb-3">
+                    <label asp-for="Aciklama" class="form-label"></label>
+                    <textarea asp-for="Aciklama" class="form-control" rows="3"></textarea>
+                    <span asp-validation-for="Aciklama" class="text-danger"></span>
+                </div>
+                
+                <div class="d-flex justify-content-end mt-4">
+                    <a asp-action="Index" class="btn btn-secondary me-2">
+                        <i class="fas fa-times"></i> İptal
+                    </a>
+                    <button type="submit" class="btn btn-primary">
+                        <i class="fas fa-save"></i> Kaydet
+                    </button>
+                </div>
+            </form>
         </div>
     </div>
 </div>
 
 @section Scripts {
     @{await Html.RenderPartialAsync("_ValidationScriptsPartial");}
+    
+    <script>
+        $(document).ready(function() {
+            // Otomatik kapanan alertler
+            window.setTimeout(function() {
+                $(".alert").fadeTo(500, 0).slideUp(500, function() {
+                    $(this).remove();
+                });
+            }, 4000);
+            
+            // Form submit işlemi
+            $('#birimCreateForm').on('submit', function(e) {
+                console.log('Form submit edildi');
+                
+                // Formun boş olup olmadığını kontrol et
+                var birimAdi = $('#BirimAdi').val();
+                var aciklama = $('#Aciklama').val();
+                
+                if (!birimAdi || !aciklama) {
+                    e.preventDefault();
+                    $('#validationError').text('Lütfen tüm zorunlu alanları doldurun.').show();
+                    return false;
+                }
+                
+                console.log('Birim Adı:', birimAdi);
+                console.log('Açıklama:', aciklama);
+                console.log('Aktif:', $('#Aktif').prop('checked'));
+                return true;
+            });
+        });
+    </script>
 } 

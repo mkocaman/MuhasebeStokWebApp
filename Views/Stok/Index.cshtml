@@ -113,7 +113,7 @@
                                         <a asp-action="StokCikis" asp-route-urunID="@urun.UrunID" class="btn btn-sm btn-danger" title="Stok Çıkışı">
                                             <i class="fas fa-minus"></i>
                                         </a>
-                                        <a asp-action="Hareketler" asp-route-id="@urun.UrunID" class="btn btn-sm btn-secondary" title="Stok Hareketleri">
+                                        <a asp-action="Hareketler" asp-route-id="@urun.UrunID" class="btn btn-sm btn-secondary stok-hareketleri-btn" title="Stok Hareketleri" data-urun-id="@urun.UrunID">
                                             <i class="fas fa-history"></i>
                                         </a>
                                     </div>
@@ -152,6 +152,14 @@
                 });
             }, 4000);
 
+            // Stok Hareketleri butonları tıklama olayı
+            $(document).on('click', '.stok-hareketleri-btn', function(e) {
+                var urunId = $(this).data('urun-id');
+                console.log("Stok hareketleri için ürün ID:", urunId);
+                window.location.href = '@Url.Action("Hareketler", "Stok")/' + urunId;
+                e.preventDefault();
+            });
+            
             // SweetAlert ile başarı mesajı göster
             @if (TempData["SuccessMessage"] != null)
             {

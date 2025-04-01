@@ -43,6 +43,9 @@ namespace MuhasebeStokWebApp.ViewModels.Kasa
         [Display(Name = "Oluşturma Tarihi")]
         [DisplayFormat(DataFormatString = "{0:dd.MM.yyyy HH:mm}", ApplyFormatInEditMode = false)]
         public DateTime OlusturmaTarihi { get; set; }
+        
+        [Display(Name = "Cari")]
+        public Guid? CariID { get; set; }
     }
     
     public class KasaListViewModel

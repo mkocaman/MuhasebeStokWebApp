@@ -16,12 +16,14 @@ namespace MuhasebeStokWebApp.ViewModels.Rapor
     public class RaporFiltreViewModel
     {
         [Display(Name = "Başlangıç Tarihi")]
+        [Required(ErrorMessage = "Başlangıç tarihi gereklidir")]
         [DataType(DataType.Date)]
-        public DateTime BaslangicTarihi { get; set; } = DateTime.Today.AddMonths(-1);
+        public DateTime BaslangicTarihi { get; set; } = DateTime.Now.AddMonths(-1);
 
         [Display(Name = "Bitiş Tarihi")]
+        [Required(ErrorMessage = "Bitiş tarihi gereklidir")]
         [DataType(DataType.Date)]
-        public DateTime BitisTarihi { get; set; } = DateTime.Today;
+        public DateTime BitisTarihi { get; set; } = DateTime.Now;
 
         [Display(Name = "Kasa")]
         public Guid? KasaID { get; set; }
@@ -30,7 +32,7 @@ namespace MuhasebeStokWebApp.ViewModels.Rapor
         public Guid? BankaID { get; set; }
 
         [Display(Name = "Cari")]
-        public Guid? CariID { get; set; }
+        public int? CariID { get; set; }
 
         [Display(Name = "Ürün")]
         public Guid? UrunID { get; set; }

@@ -43,6 +43,9 @@ namespace MuhasebeStokWebApp.Services
                     userAgent = userAgent.Substring(0, 1000);
                 }
 
+                // Mesaj null ise boş string ata
+                mesaj = mesaj ?? "Sistem işlemi";
+
                 // SQLite Error 1: 'table SistemLoglar has no column named LogTuruInt' hatasına karşı önlem
                 try
                 {
@@ -59,7 +62,8 @@ namespace MuhasebeStokWebApp.Services
                         IslemTarihi = DateTime.Now,
                         Basarili = true,
                         TabloAdi = string.Empty,
-                        KayitAdi = string.Empty
+                        KayitAdi = string.Empty,
+                        Mesaj = mesaj // Mesaj alanını dolduruyoruz
                     };
 
                     _context.SistemLoglar.Add(log);
@@ -84,7 +88,8 @@ namespace MuhasebeStokWebApp.Services
                             IslemTarihi = DateTime.Now,
                             Basarili = true,
                             TabloAdi = string.Empty,
-                            KayitAdi = string.Empty
+                            KayitAdi = string.Empty,
+                            Mesaj = mesaj // Mesaj alanını dolduruyoruz
                         };
 
                         _context.SistemLoglar.Add(log);
@@ -214,16 +219,22 @@ namespace MuhasebeStokWebApp.Services
         }
 
         // LogOlustur metodunda da aynı düzeltmeyi yapalım
-        public async Task<bool> LogOlustur(string mesaj, MuhasebeStokWebApp.Enums.LogTuru logTuru, string tabloAdi, string kayitAdi, Guid? kayitID, string kullaniciAdi = null, bool basarili = true)
+        public async Task<bool> LogOlustur(string mesaj, MuhasebeStokWebApp.Enums.LogTuru logTuru, string tabloAdi, string kayitAdi, Guid? kayitID, string kullaniciAdi = null, bool basarili = true, string kategori = null)
         {
             try
             {
+                // Mesaj null ise boş string ata
+                mesaj = mesaj ?? "Sistem işlemi";
+                
                 var ipAdresi = _httpContextAccessor.HttpContext?.Connection?.RemoteIpAddress?.ToString() ?? "Bilinmiyor";
                 kullaniciAdi ??= _httpContextAccessor.HttpContext?.User?.Identity?.Name ?? "Sistem";
 
                 var userAgent = _httpContextAccessor.HttpContext?.Request?.Headers["User-Agent"].ToString() ?? "Bilinmiyor";
                 var tarayici = GetBrowserInfo(userAgent);
                 var isletimSistemi = GetOSInfo(userAgent);
+
+                // Kategori belirtilmemişse uygun bir değer ata
+                kategori ??= DetermineCategory(tabloAdi);
 
                 var log = new ESistemLog
                 {
@@ -234,11 +245,12 @@ namespace MuhasebeStokWebApp.Services
                     TabloAdi = tabloAdi,
                     KayitAdi = kayitAdi,
                     KayitID = kayitID,
-                    Aciklama = string.Empty,
+                    Aciklama = string.IsNullOrEmpty(kategori) ? string.Empty : $"[{kategori}] ",
                     KullaniciAdi = kullaniciAdi,
                     IPAdresi = ipAdresi,
                     IslemTarihi = DateTime.Now,
-                    Basarili = basarili
+                    Basarili = basarili,
+                    Mesaj = mesaj // Mesaj alanını dolduruyoruz
                 };
 
                 _context.SistemLoglar.Add(log);
@@ -247,8 +259,54 @@ namespace MuhasebeStokWebApp.Services
             }
             catch (Exception ex)
             {
-                _logger.LogError(ex, "Log oluşturulurken hata: {Message}", ex.Message);
+                // Loglama hatası
+                _logger.LogError(ex, "Log oluşturma hatası: {Message}", ex.Message);
                 return false;
+            }
+        }
+
+        // Tablo adına göre kategori belirleyen yardımcı metod
+        private string DetermineCategory(string tabloAdi)
+        {
+            if (string.IsNullOrEmpty(tabloAdi))
+                return "Genel";
+        
+            switch (tabloAdi.ToLower())
+            {
+                case "cari":
+                case "carihareket":
+                case "cariler":
+                    return "Müşteri";
+            
+                case "fatura":
+                case "faturalar":
+                case "faturadetay":
+                    return "Finansal";
+            
+                case "urun":
+                case "urunler":
+                case "stokhareket":
+                case "depo":
+                    return "Stok";
+            
+                case "kullanici":
+                case "rol":
+                case "rolkullanici":
+                case "applicationuser":
+                    return "Kullanıcı";
+            
+                case "parabirimi":
+                case "kurları":
+                case "kurlar":
+                case "doviz":
+                    return "Döviz";
+            
+                case "sistemloglar":
+                case "log":
+                    return "Sistem";
+            
+                default:
+                    return tabloAdi;
             }
         }
 
@@ -1022,6 +1080,9 @@ namespace MuhasebeStokWebApp.Services
                 var kullaniciAdi = _httpContextAccessor.HttpContext?.User?.Identity?.Name ?? "Sistem";
                 var ipAdresi = _httpContextAccessor.HttpContext?.Connection?.RemoteIpAddress?.ToString() ?? "Bilinmiyor";
                 
+                // details null ise boş string ata
+                details = details ?? "Sistem işlemi";
+                
                 var log = new ESistemLog
                 {
                     LogID = Guid.NewGuid(),
@@ -1035,7 +1096,8 @@ namespace MuhasebeStokWebApp.Services
                     IPAdresi = ipAdresi,
                     IslemTarihi = DateTime.Now,
                     Basarili = true,
-                    KayitAdi = string.Empty // Eksik zorunlu alan
+                    KayitAdi = string.Empty, // Eksik zorunlu alan
+                    Mesaj = details // Mesaj alanını dolduruyoruz
                 };
                 
                 _context.SistemLoglar.Add(log);
@@ -1044,7 +1106,7 @@ namespace MuhasebeStokWebApp.Services
             }
             catch (Exception ex)
             {
-                _logger.LogError(ex, "Log oluşturulurken hata: {Message}", ex.Message);
+                _logger.LogError(ex, "Log eklenirken hata oluştu: {Message}", ex.Message);
                 return false;
             }
         }
@@ -1053,32 +1115,47 @@ namespace MuhasebeStokWebApp.Services
         {
             try
             {
+                // Mesaj null ise boş string ata
+                mesaj = mesaj ?? "Sistem işlemi";
+                
                 var kullaniciAdi = _httpContextAccessor.HttpContext?.User?.Identity?.Name ?? "Sistem";
                 var ipAdresi = _httpContextAccessor.HttpContext?.Connection?.RemoteIpAddress?.ToString() ?? "Bilinmiyor";
+                var userAgent = _httpContextAccessor.HttpContext?.Request?.Headers["User-Agent"].ToString() ?? "Bilinmiyor";
+                
+                var tarayici = GetBrowserInfo(userAgent);
+                var isletimSistemi = GetOSInfo(userAgent);
+                
+                // Kullanıcı ID'sini al
+                string kullaniciID = null;
+                if (_httpContextAccessor.HttpContext?.User?.Identity?.IsAuthenticated == true)
+                {
+                    kullaniciID = _httpContextAccessor.HttpContext.User.FindFirstValue(ClaimTypes.NameIdentifier);
+                }
                 
                 var log = new ESistemLog
                 {
                     LogID = Guid.NewGuid(),
                     LogTuru = logTuru.ToString(),
                     LogTuruInt = (int)logTuru,
-                    Mesaj = mesaj,
+                    IslemTuru = logTuru.ToString(),
+                    Aciklama = mesaj,
                     HataMesaji = detay,
                     KullaniciAdi = kullaniciAdi,
                     IPAdresi = ipAdresi,
                     IslemTarihi = DateTime.Now,
-                    IslemTuru = logTuru.ToString(),
-                    Basarili = true,
-                    TabloAdi = "",
-                    KayitAdi = ""
+                    TabloAdi = string.Empty,
+                    KayitAdi = string.Empty,
+                    Mesaj = mesaj // Mesaj alanını dolduruyoruz
                 };
-
+                
                 _context.SistemLoglar.Add(log);
                 await _context.SaveChangesAsync();
+                
                 return true;
             }
             catch (Exception ex)
             {
-                _logger.LogError(ex, "Log kaydedilirken hata oluştu: {Message}", ex.Message);
+                _logger.LogError(ex, "Log eklenirken hata oluştu: {Message}", ex.Message);
                 return false;
             }
         }

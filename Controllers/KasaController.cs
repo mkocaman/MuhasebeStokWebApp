@@ -14,6 +14,7 @@ using Microsoft.AspNetCore.Authorization;
 using Microsoft.Extensions.Logging;
 using Microsoft.AspNetCore.Identity;
 using MuhasebeStokWebApp.Services.Interfaces;
+using System.Security.Claims;
 
 namespace MuhasebeStokWebApp.Controllers
 {
@@ -25,7 +26,7 @@ namespace MuhasebeStokWebApp.Controllers
     {
         private readonly IUnitOfWork _unitOfWork;
         private readonly ApplicationDbContext _context;
-        private readonly ILogService _logService;
+        private new readonly ILogService _logService;
         private readonly ILogger<KasaController> _logger;
         private readonly IDovizKuruService _dovizKuruService;
         private readonly IParaBirimiService _paraBirimiService;
@@ -372,7 +373,7 @@ namespace MuhasebeStokWebApp.Controllers
         /// <summary>
         /// Şu anki giriş yapmış kullanıcının ID'sini döndürür
         /// </summary>
-        private Guid? GetCurrentUserId()
+        private new Guid? GetCurrentUserId()
         {
             var userId = User.FindFirst(System.Security.Claims.ClaimTypes.NameIdentifier)?.Value;
             return userId != null ? Guid.Parse(userId) : (Guid?)null;
@@ -416,21 +417,30 @@ namespace MuhasebeStokWebApp.Controllers
         /// <summary>
         /// Yeni kasa hareketi oluşturma formunu gösterir
         /// </summary>
-        public async Task<IActionResult> YeniHareket(Guid? id)
+        public async Task<IActionResult> YeniHareket(Guid? id = null, Guid? cariId = null)
         {
-            if (id == null)
-            {
-                return NotFound();
-            }
-
             try
             {
-                // ID'ye göre kasa kaydını getir
-                var kasa = await _unitOfWork.Repository<Kasa>().GetByIdAsync(id.Value);
-                if (kasa == null || kasa.Silindi)
+                // Kasaları getir
+                var kasalar = await _unitOfWork.Repository<Kasa>().GetAsync(
+                    filter: k => !k.Silindi && k.Aktif,
+                    orderBy: q => q.OrderBy(k => k.KasaAdi)
+                );
+
+                if (!kasalar.Any())
                 {
-                    return NotFound();
+                    TempData["ErrorMessage"] = "Sistemde kayıtlı aktif kasa bulunamadı. Lütfen önce bir kasa ekleyin.";
+                    return RedirectToAction(nameof(Index));
                 }
+
+                // Carileri getir
+                var cariler = await _unitOfWork.Repository<Cari>().GetAsync(
+                    filter: c => !c.Silindi && c.AktifMi,
+                    orderBy: q => q.OrderBy(c => c.Ad)
+                );
+
+                ViewBag.Kasalar = kasalar.ToList();
+                ViewBag.Cariler = cariler.ToList();
 
                 // İşlem türleri için dropdown hazırla
                 ViewBag.IslemTurleri = new List<SelectListItem>
@@ -439,13 +449,43 @@ namespace MuhasebeStokWebApp.Controllers
                     new SelectListItem { Text = "Çıkış", Value = "Çıkış" }
                 };
 
-                ViewBag.Kasa = kasa;
-                return View(new KasaHareketViewModel { KasaID = id.Value, Tarih = DateTime.Now });
+                // Model oluştur
+                var model = new KasaHareket
+                {
+                    KasaHareketID = Guid.NewGuid(),
+                    Tarih = DateTime.Now,
+                    ReferansNo = "REF-" + DateTime.Now.ToString("yyyyMMddHHmmss")
+                };
+
+                // Kasa ID varsa
+                if (id.HasValue)
+                {
+                    var kasa = await _unitOfWork.Repository<Kasa>().GetByIdAsync(id.Value);
+                    if (kasa != null && !kasa.Silindi)
+                    {
+                        model.KasaID = kasa.KasaID;
+                        ViewBag.SecilenKasa = kasa;
+                    }
+                }
+
+                // Cari ID varsa
+                if (cariId.HasValue)
+                {
+                    var cari = await _unitOfWork.Repository<Cari>().GetByIdAsync(cariId.Value);
+                    if (cari != null && !cari.Silindi)
+                    {
+                        model.CariID = cari.CariID;
+                        ViewBag.SecilenCari = cari;
+                    }
+                }
+
+                return View(model);
             }
             catch (Exception ex)
             {
-                _logger.LogError(ex, "Yeni kasa hareketi sayfası yüklenirken hata oluştu. Kasa ID: {KasaId}", id);
-                return NotFound();
+                _logger.LogError(ex, "Yeni kasa hareketi sayfası yüklenirken hata oluştu.");
+                TempData["ErrorMessage"] = "Yeni kasa hareketi sayfası yüklenirken bir hata oluştu.";
+                return RedirectToAction(nameof(Index));
             }
         }
 

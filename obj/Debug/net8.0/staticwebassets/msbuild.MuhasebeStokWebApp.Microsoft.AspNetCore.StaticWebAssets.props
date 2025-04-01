@@ -46578,8 +46578,8 @@
       <RelatedAsset></RelatedAsset>
       <AssetTraitName></AssetTraitName>
       <AssetTraitValue></AssetTraitValue>
-      <Fingerprint>wsylz311gc</Fingerprint>
-      <Integrity>kB2yvfv6oM+gxtXKxmYL5FYh74aRLyMj+iOxWJ5DKlw=</Integrity>
+      <Fingerprint>miq360s9w9</Fingerprint>
+      <Integrity>/m4m0LVH8/4WYO4iD897ZastpwzGbCdyFn0vHiW62OU=</Integrity>
       <CopyToOutputDirectory>Never</CopyToOutputDirectory>
       <CopyToPublishDirectory>PreserveNewest</CopyToPublishDirectory>
       <OriginalItemSpec>$([System.IO.Path]::GetFullPath('$(MSBuildThisFileDirectory)..\staticwebassets\js\dataTables.turkish.json'))</OriginalItemSpec>
@@ -46614,8 +46614,8 @@
       <RelatedAsset></RelatedAsset>
       <AssetTraitName></AssetTraitName>
       <AssetTraitValue></AssetTraitValue>
-      <Fingerprint>8epel93c47</Fingerprint>
-      <Integrity>EKEsufFE4Ls3F+xojcel8cc8F19r1oebxBTx2LGapww=</Integrity>
+      <Fingerprint>wdcl8z7bpp</Fingerprint>
+      <Integrity>DCosXgxpcW/P+jy1zZ1khe0C9ADfZy+cAwzFl/NHh+c=</Integrity>
       <CopyToOutputDirectory>Never</CopyToOutputDirectory>
       <CopyToPublishDirectory>PreserveNewest</CopyToPublishDirectory>
       <OriginalItemSpec>$([System.IO.Path]::GetFullPath('$(MSBuildThisFileDirectory)..\staticwebassets\js\site.js'))</OriginalItemSpec>

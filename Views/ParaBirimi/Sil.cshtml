@@ -1,0 +1,75 @@
+@model MuhasebeStokWebApp.Data.Entities.ParaBirimiModulu.ParaBirimi
+@{
+    ViewData["Title"] = "Para Birimi Sil";
+}
+
+<div class="container-fluid">
+    <div class="card">
+        <div class="card-header bg-danger text-white">
+            <h4 class="mb-0">Para Birimi Silme Onayı</h4>
+        </div>
+        <div class="card-body">
+            <div class="alert alert-warning">
+                <i class="fas fa-exclamation-triangle"></i> <strong>Uyarı:</strong> Bu para birimini silmek istediğinizden emin misiniz? Bu işlem geri alınamaz.
+            </div>
+            
+            <div class="row mt-4">
+                <div class="col-md-6">
+                    <dl class="row">
+                        <dt class="col-sm-4">Para Birimi Kodu:</dt>
+                        <dd class="col-sm-8">@Model.Kod</dd>
+
+                        <dt class="col-sm-4">Para Birimi Adı:</dt>
+                        <dd class="col-sm-8">@Model.Ad</dd>
+
+                        <dt class="col-sm-4">Sembol:</dt>
+                        <dd class="col-sm-8">@Model.Sembol</dd>
+                    </dl>
+                </div>
+                <div class="col-md-6">
+                    <dl class="row">
+                        <dt class="col-sm-4">Ana Para Birimi:</dt>
+                        <dd class="col-sm-8">@(Model.AnaParaBirimiMi ? "Evet" : "Hayır")</dd>
+
+                        <dt class="col-sm-4">Aktif:</dt>
+                        <dd class="col-sm-8">
+                            @if (Model.Aktif)
+                            {
+                                <span class="badge bg-success">Aktif</span>
+                            }
+                            else
+                            {
+                                <span class="badge bg-danger">Pasif</span>
+                            }
+                        </dd>
+
+                        <dt class="col-sm-4">Oluşturma Tarihi:</dt>
+                        <dd class="col-sm-8">@Model.OlusturmaTarihi.ToString("dd.MM.yyyy HH:mm")</dd>
+                    </dl>
+                </div>
+            </div>
+
+            @if (Model.AnaParaBirimiMi)
+            {
+                <div class="alert alert-danger mt-3">
+                    <i class="fas fa-exclamation-circle"></i> <strong>Uyarı:</strong> Bu para birimi Ana Para Birimi olarak işaretlenmiştir. Silmeden önce başka bir para birimini Ana Para Birimi olarak ayarlamanız gerekmektedir.
+                </div>
+            }
+            
+            <form asp-action="Sil" method="post" class="mt-4">
+                <input type="hidden" asp-for="ParaBirimiID" />
+                <div class="form-group">
+                    <button type="submit" class="btn btn-danger">
+                        <i class="fas fa-trash-alt me-2"></i> Sil
+                    </button>
+                    <a asp-action="Detay" asp-route-id="@Model.ParaBirimiID" class="btn btn-info">
+                        <i class="fas fa-eye me-2"></i> Detaylar
+                    </a>
+                    <a asp-action="Index" class="btn btn-secondary">
+                        <i class="fas fa-arrow-left me-2"></i> Listeye Dön
+                    </a>
+                </div>
+            </form>
+        </div>
+    </div>
+</div> 

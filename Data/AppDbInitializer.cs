@@ -90,7 +90,14 @@ namespace MuhasebeStokWebApp.Data
                 {
                     UserName = "admin",
                     Email = "admin@example.com",
-                    EmailConfirmed = true
+                    EmailConfirmed = true,
+                    Ad = "Admin",
+                    Soyad = "User",
+                    Aktif = true,
+                    OlusturmaTarihi = DateTime.Now,
+                    Adres = "Test Adresi",
+                    TelefonNo = "5551234567",
+                    Silindi = false
                 };
                 
                 // Password validator'ı geçici olarak devre dışı bırak

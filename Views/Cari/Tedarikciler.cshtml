@@ -1,0 +1,140 @@
+@model IEnumerable<MuhasebeStokWebApp.Data.Entities.Cari>
+@{
+    ViewData["Title"] = "Tedarikçiler";
+    Layout = "~/Views/Shared/_Layout.cshtml";
+}
+
+<div class="container-fluid">
+    <div class="page-header">
+        <div class="row">
+            <div class="col">
+                <div class="page-header-left">
+                    <h3>Tedarikçiler</h3>
+                    <ol class="breadcrumb">
+                        <li class="breadcrumb-item"><a href="/Home"><i class="fa fa-home"></i></a></li>
+                        <li class="breadcrumb-item">Cari Yönetimi</li>
+                        <li class="breadcrumb-item active">Tedarikçiler</li>
+                    </ol>
+                </div>
+            </div>
+            <div class="col">
+                <div class="float-end">
+                    <a href="@Url.Action("Create", new { cariTipi = "Tedarikçi" })" class="btn btn-primary">
+                        <i class="fa fa-plus"></i> Yeni Tedarikçi Ekle
+                    </a>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+
+<div class="container-fluid">
+    <div class="row">
+        <div class="col-sm-12">
+            <div class="card">
+                <div class="card-header">
+                    <div class="row">
+                        <div class="col">
+                            <h5>Tedarikçi Listesi</h5>
+                        </div>
+                        <div class="col text-end">
+                            <div class="btn-group" role="group">
+                                <a href="@Url.Action("Index")" class="btn btn-outline-secondary">
+                                    <i class="fa fa-users"></i> Tüm Cariler
+                                </a>
+                                <a href="@Url.Action("Musteriler")" class="btn btn-outline-secondary">
+                                    <i class="fa fa-user"></i> Müşteriler
+                                </a>
+                                <a href="@Url.Action("Tedarikciler")" class="btn btn-primary">
+                                    <i class="fa fa-truck"></i> Tedarikçiler
+                                </a>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+                <div class="card-body">
+                    <div class="table-responsive">
+                        <table class="table table-bordered table-striped" id="cariTable">
+                            <thead>
+                                <tr>
+                                    <th>Cari Adı</th>
+                                    <th>Yetkili</th>
+                                    <th>Telefon</th>
+                                    <th>Bakiye</th>
+                                    <th>Durum</th>
+                                    <th>İşlemler</th>
+                                </tr>
+                            </thead>
+                            <tbody>
+                                @foreach (var item in Model)
+                                {
+                                    string paraBirimiSembol = "₺";
+                                    if (item.VarsayilanParaBirimiId.HasValue && ViewBag.ParaBirimleri != null)
+                                    {
+                                        foreach (var pb in ViewBag.ParaBirimleri)
+                                        {
+                                            if (pb.ParaBirimiID == item.VarsayilanParaBirimiId)
+                                            {
+                                                paraBirimiSembol = pb.Sembol;
+                                                break;
+                                            }
+                                        }
+                                    }
+
+                                    <tr>
+                                        <td>@item.Ad</td>
+                                        <td>@(string.IsNullOrEmpty(item.Yetkili) ? "-" : item.Yetkili)</td>
+                                        <td>@(string.IsNullOrEmpty(item.Telefon) ? "-" : item.Telefon)</td>
+                                        <td class="text-end @(item.BaslangicBakiye >= 0 ? "text-success" : "text-danger")">
+                                            @item.BaslangicBakiye.ToString("N2") @paraBirimiSembol
+                                        </td>
+                                        <td class="text-center">
+                                            @if (item.AktifMi)
+                                            {
+                                                <span class="badge bg-success">Aktif</span>
+                                            }
+                                            else
+                                            {
+                                                <span class="badge bg-danger">Pasif</span>
+                                            }
+                                        </td>
+                                        <td class="text-center">
+                                            <div class="btn-group" role="group">
+                                                <a href="@Url.Action("Details", new { id = item.Id })" class="btn btn-info btn-sm">
+                                                    <i class="fa fa-eye"></i>
+                                                </a>
+                                                <a href="@Url.Action("Edit", new { id = item.Id })" class="btn btn-primary btn-sm">
+                                                    <i class="fa fa-edit"></i>
+                                                </a>
+                                                <a href="@Url.Action("Ekstre", new { id = item.Id })" class="btn btn-secondary btn-sm">
+                                                    <i class="fa fa-file-alt"></i>
+                                                </a>
+                                                <a href="@Url.Action("Delete", new { id = item.Id })" class="btn btn-danger btn-sm">
+                                                    <i class="fa fa-trash"></i>
+                                                </a>
+                                            </div>
+                                        </td>
+                                    </tr>
+                                }
+                            </tbody>
+                        </table>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+
+@section Scripts {
+    <script>
+        $(document).ready(function () {
+            $('#cariTable').DataTable({
+                language: {
+                    url: '//cdn.datatables.net/plug-ins/1.13.7/i18n/tr.json'
+                },
+                responsive: true,
+                stateSave: true
+            });
+        });
+    </script>
+} 

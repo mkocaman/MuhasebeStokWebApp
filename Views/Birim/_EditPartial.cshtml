@@ -1,32 +1,134 @@
 @model MuhasebeStokWebApp.ViewModels.Birim.BirimEditViewModel
 
-<form asp-action="Edit" method="post">
+<div class="modal-header">
+    <h5 class="modal-title">Birim Düzenle</h5>
+    <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+</div>
+
+<form id="editBirimForm" asp-action="Edit" asp-controller="Birim" asp-route-id="@Model.BirimID">
+    @Html.AntiForgeryToken()
     <div class="modal-body">
+        <div id="editFormAlert" class="alert alert-danger d-none" role="alert"></div>
         <input type="hidden" asp-for="BirimID" />
         
         <div class="mb-3">
-            <label asp-for="BirimAdi" class="form-label">Birim Adı</label>
-            <input asp-for="BirimAdi" class="form-control" required />
+            <label asp-for="BirimAdi" class="form-label"></label>
+            <input asp-for="BirimAdi" class="form-control" required maxlength="50">
             <span asp-validation-for="BirimAdi" class="text-danger"></span>
         </div>
         
         <div class="mb-3">
-            <label asp-for="Aciklama" class="form-label">Açıklama</label>
-            <textarea asp-for="Aciklama" class="form-control" rows="3"></textarea>
+            <label asp-for="Aciklama" class="form-label"></label>
+            <textarea asp-for="Aciklama" class="form-control" rows="3" maxlength="500"></textarea>
             <span asp-validation-for="Aciklama" class="text-danger"></span>
         </div>
         
         <div class="form-check mb-3">
-            <input asp-for="Aktif" class="form-check-input" />
-            <label asp-for="Aktif" class="form-check-label">Aktif</label>
+            <input class="form-check-input" type="checkbox" asp-for="Aktif" id="aktifCheckbox" />
+            <label class="form-check-label" asp-for="Aktif">Aktif</label>
         </div>
     </div>
     
     <div class="modal-footer">
         <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">İptal</button>
-        <button type="submit" class="btn btn-primary">Kaydet</button>
+        <button type="submit" class="btn btn-primary" id="kaydetBtn">Kaydet</button>
     </div>
 </form>
+
+<script>
+    $(document).ready(function() {
+        // Form gönderimini yönet
+        $("#editBirimForm").on("submit", function(e) {
+            e.preventDefault();
+            
+            // Kaydet butonunu devre dışı bırak
+            $("#kaydetBtn").prop('disabled', true).html('<span class="spinner-border spinner-border-sm" role="status" aria-hidden="true"></span> İşleniyor...');
+            
+            // Form Data objesi oluştur
+            var formData = new FormData(this);
+            
+            // Checkbox durumunu kontrol et ve doğru değeri ayarla
+            var aktifValue = $("#aktifCheckbox").is(":checked");
+            formData.set("Aktif", aktifValue);
+            
+            // Debug amaçlı checkbox değerini konsola yaz
+            console.log("Gönderilen Aktif değeri:", aktifValue);
+            
+            $.ajax({
+                url: $(this).attr('action'),
+                type: "POST",
+                data: formData,
+                processData: false,
+                contentType: false,
+                headers: {
+                    "X-Requested-With": "XMLHttpRequest"
+                },
+                success: function(response) {
+                    // Kaydet butonunu normal haline getir
+                    $("#kaydetBtn").prop('disabled', false).html('Kaydet');
+                    
+                    if (response.success) {
+                        Swal.fire({
+                            icon: 'success',
+                            title: 'Başarılı!',
+                            text: response.message || 'Birim başarıyla güncellendi.',
+                            confirmButtonText: 'Tamam'
+                        }).then((result) => {
+                            $('#editBirimModal').modal('hide');
+                            window.location.reload();
+                        });
+                    } else {
+                        Swal.fire({
+                            icon: 'error',
+                            title: 'Hata!',
+                            text: response.message || 'Birim güncellenirken bir hata oluştu.',
+                            confirmButtonText: 'Tamam'
+                        });
+                        
+                        // Eğer detaylı hata mesajları varsa göster
+                        if (response.errors && response.errors.length > 0) {
+                            var errorHtml = '<ul class="mb-0">';
+                            $.each(response.errors, function(i, error) {
+                                errorHtml += '<li>' + error + '</li>';
+                            });
+                            errorHtml += '</ul>';
+                            
+                            $("#editFormAlert").html(errorHtml).removeClass('d-none');
+                        }
+                    }
+                },
+                error: function(xhr, status, error) {
+                    // Kaydet butonunu normal haline getir
+                    $("#kaydetBtn").prop('disabled', false).html('Kaydet');
+                    
+                    // HTTP durum koduna göre özel mesajlar
+                    var errorMessage = 'İşlem sırasında bir hata oluştu: ';
+                    
+                    if (xhr.status === 400) {
+                        errorMessage += 'Gönderilen veri geçersiz. Lütfen tüm alanları kontrol ediniz.';
+                    } else if (xhr.status === 401) {
+                        errorMessage += 'Bu işlemi yapmak için yetkiniz bulunmuyor.';
+                    } else if (xhr.status === 404) {
+                        errorMessage += 'Birim bulunamadı.';
+                    } else if (xhr.status === 500) {
+                        errorMessage += 'Sunucu hatası oluştu. Lütfen daha sonra tekrar deneyiniz.';
+                    } else {
+                        errorMessage += error;
+                    }
+                    
+                    Swal.fire({
+                        icon: 'error',
+                        title: 'Hata!',
+                        text: errorMessage,
+                        confirmButtonText: 'Tamam'
+                    });
+                    
+                    console.error("AJAX Hatası:", xhr, status, error);
+                }
+            });
+        });
+    });
+</script>
 
 @section Scripts {
     @{await Html.RenderPartialAsync("_ValidationScriptsPartial");}

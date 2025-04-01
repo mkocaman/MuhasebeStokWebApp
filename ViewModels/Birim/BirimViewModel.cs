@@ -5,15 +5,16 @@ namespace MuhasebeStokWebApp.ViewModels.Birim
 {
     public class BirimViewModel
     {
-        public int BirimID { get; set; }
+        public Guid BirimID { get; set; }
         
         [Display(Name = "Birim Adı")]
         [Required(ErrorMessage = "Birim adı zorunludur.")]
-        public required string BirimAdi { get; set; }
+        [StringLength(50, ErrorMessage = "Birim adı en fazla 50 karakter olabilir.")]
+        public string BirimAdi { get; set; }
         
         [Display(Name = "Açıklama")]
-        [Required(ErrorMessage = "Açıklama zorunludur.")]
-        public required string Aciklama { get; set; }
+        [StringLength(500, ErrorMessage = "Açıklama en fazla 500 karakter olabilir.")]
+        public string? Aciklama { get; set; }
         
         [Display(Name = "Aktif")]
         public bool Aktif { get; set; }
@@ -26,12 +27,11 @@ namespace MuhasebeStokWebApp.ViewModels.Birim
         [Required(ErrorMessage = "Birim adı zorunludur.")]
         [Display(Name = "Birim Adı")]
         [StringLength(50, ErrorMessage = "Birim adı en fazla 50 karakter olabilir.")]
-        public required string BirimAdi { get; set; }
+        public string BirimAdi { get; set; }
         
         [Display(Name = "Açıklama")]
-        [StringLength(200, ErrorMessage = "Açıklama en fazla 200 karakter olabilir.")]
-        [Required(ErrorMessage = "Açıklama zorunludur.")]
-        public required string Aciklama { get; set; }
+        [StringLength(500, ErrorMessage = "Açıklama en fazla 500 karakter olabilir.")]
+        public string? Aciklama { get; set; }
         
         [Display(Name = "Aktif")]
         public bool Aktif { get; set; } = true;
@@ -39,17 +39,16 @@ namespace MuhasebeStokWebApp.ViewModels.Birim
     
     public class BirimEditViewModel
     {
-        public int BirimID { get; set; }
+        public Guid BirimID { get; set; }
         
         [Required(ErrorMessage = "Birim adı zorunludur.")]
         [Display(Name = "Birim Adı")]
         [StringLength(50, ErrorMessage = "Birim adı en fazla 50 karakter olabilir.")]
-        public required string BirimAdi { get; set; }
+        public string BirimAdi { get; set; }
         
         [Display(Name = "Açıklama")]
-        [StringLength(200, ErrorMessage = "Açıklama en fazla 200 karakter olabilir.")]
-        [Required(ErrorMessage = "Açıklama zorunludur.")]
-        public required string Aciklama { get; set; }
+        [StringLength(500, ErrorMessage = "Açıklama en fazla 500 karakter olabilir.")]
+        public string? Aciklama { get; set; }
         
         [Display(Name = "Aktif")]
         public bool Aktif { get; set; }

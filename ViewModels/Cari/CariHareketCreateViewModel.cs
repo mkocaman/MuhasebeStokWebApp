@@ -5,31 +5,30 @@ namespace MuhasebeStokWebApp.ViewModels.Cari
 {
     public class CariHareketCreateViewModel
     {
-        public Guid CariID { get; set; }
+        [Required]
+        public Guid CariId { get; set; }
         
         [Display(Name = "Cari Adı")]
         public string CariAdi { get; set; }
         
-        [Required(ErrorMessage = "Tutar zorunludur.")]
-        [Range(0.01, double.MaxValue, ErrorMessage = "Tutar 0'dan büyük olmalıdır.")]
+        [Required(ErrorMessage = "Tutar girilmelidir")]
+        [Range(0.01, double.MaxValue, ErrorMessage = "Tutar 0'dan büyük olmalıdır")]
         [Display(Name = "Tutar")]
         [DisplayFormat(DataFormatString = "{0:N2}", ApplyFormatInEditMode = false)]
         public decimal Tutar { get; set; }
         
-        [Required(ErrorMessage = "Hareket türü zorunludur.")]
+        [Required(ErrorMessage = "Hareket türü seçilmelidir")]
         [Display(Name = "Hareket Türü")]
         public string HareketTuru { get; set; }
         
-        [Required(ErrorMessage = "Tarih zorunludur.")]
-        [DataType(DataType.Date)]
+        [Required(ErrorMessage = "Tarih seçilmelidir")]
         [Display(Name = "Tarih")]
-        public DateTime Tarih { get; set; } = DateTime.Now;
+        [DataType(DataType.Date)]
+        public DateTime Tarih { get; set; } = DateTime.Now.Date;
         
-        [StringLength(50, ErrorMessage = "Referans no en fazla 50 karakter olabilir.")]
         [Display(Name = "Referans No")]
         public string ReferansNo { get; set; }
         
-        [StringLength(50, ErrorMessage = "Referans türü en fazla 50 karakter olabilir.")]
         [Display(Name = "Referans Türü")]
         public string ReferansTuru { get; set; }
         

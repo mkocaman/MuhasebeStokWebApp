@@ -133,26 +133,31 @@
                 <h5 class="modal-title" id="createBirimModalLabel">Yeni Birim Ekle</h5>
                 <button type="button" class="btn-close btn-close-white" data-bs-dismiss="modal" aria-label="Close"></button>
             </div>
-            <form asp-action="Create" method="post">
-                <div class="modal-body">
-                    <div class="mb-3">
-                        <label for="BirimAdi" class="form-label">Birim Adı</label>
-                        <input type="text" class="form-control" id="BirimAdi" name="BirimAdi" required>
+            <div id="birimCreateModalContent">
+                <form asp-action="Create" method="post" id="createBirimForm">
+                    @Html.AntiForgeryToken()
+                    <div class="modal-body">
+                        <div id="createFormAlert" class="alert alert-danger d-none" role="alert"></div>
+                        <div class="mb-3">
+                            <label for="BirimAdi" class="form-label">Birim Adı</label>
+                            <input type="text" class="form-control" id="BirimAdi" name="BirimAdi" required maxlength="50">
+                            <div class="invalid-feedback">Birim adı zorunludur.</div>
+                        </div>
+                        <div class="mb-3">
+                            <label for="Aciklama" class="form-label">Açıklama</label>
+                            <textarea class="form-control" id="Aciklama" name="Aciklama" rows="3" maxlength="500"></textarea>
+                        </div>
+                        <div class="form-check mb-3">
+                            <input type="checkbox" class="form-check-input" id="Aktif" name="Aktif" value="true" checked>
+                            <label class="form-check-label" for="Aktif">Aktif</label>
+                        </div>
                     </div>
-                    <div class="mb-3">
-                        <label for="Aciklama" class="form-label">Açıklama</label>
-                        <textarea class="form-control" id="Aciklama" name="Aciklama" rows="3"></textarea>
+                    <div class="modal-footer">
+                        <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">İptal</button>
+                        <button type="submit" class="btn btn-primary">Kaydet</button>
                     </div>
-                    <div class="form-check mb-3">
-                        <input type="checkbox" class="form-check-input" id="Aktif" name="Aktif" checked>
-                        <label class="form-check-label" for="Aktif">Aktif</label>
-                    </div>
-                </div>
-                <div class="modal-footer">
-                    <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">İptal</button>
-                    <button type="submit" class="btn btn-primary">Kaydet</button>
-                </div>
-            </form>
+                </form>
+            </div>
         </div>
     </div>
 </div>
@@ -187,54 +192,161 @@
             try {
                 $('#aktifBirimTable').DataTable({
                     language: {
-                        url: '/js/dataTables.turkish.json',
-                        info: "" // Bilgilendirme yazısını kaldır (çift görünme sorununu çözmek için)
+                        url: '/js/dataTables.turkish.json'
                     },
                     responsive: true,
                     retrieve: true
                 });
-            } catch (e) {
-                console.log("DataTable başlatılırken bir hata oluştu, ancak işlem devam ediyor.");
-            }
-            
-            // Pasif Birimler DataTable başlatma
-            try {
+                
+                // Pasif Birimler DataTable başlatma
                 $('#pasifBirimTable').DataTable({
                     language: {
-                        url: '/js/dataTables.turkish.json',
-                        info: "" // Bilgilendirme yazısını kaldır (çift görünme sorununu çözmek için)
+                        url: '/js/dataTables.turkish.json'
                     },
                     responsive: true,
                     retrieve: true
                 });
             } catch (e) {
-                console.log("DataTable başlatılırken bir hata oluştu, ancak işlem devam ediyor.");
+                console.error("DataTable başlatma hatası:", e);
             }
             
-            // Otomatik kapanan alertler
-            window.setTimeout(function() {
-                $(".alert").fadeTo(500, 0).slideUp(500, function() {
-                    $(this).remove();
-                });
-            }, 4000);
-            
-            // Birim düzenleme modal
-            $(document).on('click', '.btn-edit-birim', function () {
-                var birimId = $(this).data('id');
-                $('#editBirimModalContent').html('<div class="text-center my-3"><div class="spinner-border text-primary" role="status"><span class="visually-hidden">Yükleniyor...</span></div></div>');
-                $('#editBirimModal').modal('show');
+            // Birim oluşturma formunun gönderimini ele al
+            $('#createBirimForm').on('submit', function(e) {
+                e.preventDefault();
+                
+                var formData = new FormData(this);
                 
                 $.ajax({
-                    url: '@Url.Action("Edit", "Birim")/' + birimId,
-                    type: 'GET',
-                    success: function (data) {
-                        $('#editBirimModalContent').html(data);
+                    url: $(this).attr('action'),
+                    type: 'POST',
+                    data: formData,
+                    contentType: false,
+                    processData: false,
+                    success: function(response) {
+                        if (response.success) {
+                            // Başarılı olursa Sweet Alert göster
+                            Swal.fire({
+                                icon: 'success',
+                                title: 'Başarılı!',
+                                text: response.message || 'Birim başarıyla oluşturuldu.',
+                                confirmButtonText: 'Tamam'
+                            }).then((result) => {
+                                // Modal'ı kapat ve sayfayı yenile
+                                $('#createBirimModal').modal('hide');
+                                location.reload();
+                            });
+                        } else {
+                            // Başarısız olursa Sweet Alert göster
+                            Swal.fire({
+                                icon: 'error',
+                                title: 'Hata!',
+                                text: response.message || 'Birim oluşturulurken bir hata oluştu.',
+                                confirmButtonText: 'Tamam'
+                            });
+                        }
                     },
-                    error: function () {
-                        $('#editBirimModalContent').html('<div class="alert alert-danger">Birim bilgileri yüklenirken bir hata oluştu.</div>');
+                    error: function(xhr, status, error) {
+                        // AJAX hatası olursa Sweet Alert göster
+                        Swal.fire({
+                            icon: 'error',
+                            title: 'AJAX Hatası!',
+                            text: 'Birim oluşturulurken bir hata oluştu: ' + error,
+                            confirmButtonText: 'Tamam'
+                        });
                     }
                 });
             });
+            
+            // Birim düzenleme modalı açma
+            $('.btn-edit-birim').on('click', function() {
+                var birimId = $(this).data('id');
+                
+                // Modalın içeriğini temizle ve loading göster
+                $('#editBirimModalContent').html('<div class="modal-body text-center"><div class="spinner-border text-primary" role="status"><span class="visually-hidden">Yükleniyor...</span></div></div>');
+                
+                // Modalı aç
+                $('#editBirimModal').modal('show');
+                
+                // AJAX ile düzenleme formunu yükle
+                $.ajax({
+                    url: '/Birim/Edit/' + birimId,
+                    type: 'GET',
+                    headers: {
+                        'X-Requested-With': 'XMLHttpRequest'
+                    },
+                    success: function(data) {
+                        $('#editBirimModalContent').html(data);
+                        
+                        // Düzenleme formunun gönderimini ele al
+                        $('#editBirimForm').on('submit', function(e) {
+                            e.preventDefault();
+                            
+                            var formData = {
+                                BirimID: $('#BirimID').val(),
+                                BirimAdi: $('#BirimAdi').val(),
+                                Aciklama: $('#Aciklama').val(),
+                                Aktif: $('#Aktif').is(':checked')
+                            };
+                            
+                            $.ajax({
+                                url: $(this).attr('action'),
+                                type: 'POST',
+                                data: formData,
+                                headers: {
+                                    'X-Requested-With': 'XMLHttpRequest',
+                                    'X-CSRF-TOKEN': $('input[name="__RequestVerificationToken"]').val()
+                                },
+                                success: function(response) {
+                                    if (response.success) {
+                                        Swal.fire({
+                                            icon: 'success',
+                                            title: 'Başarılı!',
+                                            text: response.message || 'Birim başarıyla güncellendi.',
+                                            confirmButtonText: 'Tamam'
+                                        }).then((result) => {
+                                            $('#editBirimModal').modal('hide');
+                                            location.reload();
+                                        });
+                                    } else {
+                                        Swal.fire({
+                                            icon: 'error',
+                                            title: 'Hata!',
+                                            text: response.message || 'Birim güncellenirken bir hata oluştu.',
+                                            confirmButtonText: 'Tamam'
+                                        });
+                                    }
+                                },
+                                error: function(xhr, status, error) {
+                                    Swal.fire({
+                                        icon: 'error',
+                                        title: 'AJAX Hatası!',
+                                        text: 'Birim güncellenirken bir hata oluştu: ' + error,
+                                        confirmButtonText: 'Tamam'
+                                    });
+                                }
+                            });
+                        });
+                    },
+                    error: function(xhr, status, error) {
+                        $('#editBirimModalContent').html('<div class="modal-body"><div class="alert alert-danger">Birim düzenleme formu yüklenirken bir hata oluştu: ' + error + '</div></div>');
+                    }
+                });
+            });
+            
+            // Yeni Birim Ekleme modalı açıldığında formun içini temizle
+            $('#createBirimModal').on('show.bs.modal', function() {
+                $('#BirimAdi').val('');
+                $('#Aciklama').val('');
+                $('#Aktif').prop('checked', true);
+                $('#createFormAlert').addClass('d-none');
+            });
+            
+            // Otomatik kapanan alertler
+            window.setTimeout(function() {
+                $('.alert:not(#createFormAlert, #editFormAlert)').fadeTo(500, 0).slideUp(500, function() {
+                    $(this).remove();
+                });
+            }, 4000);
         });
     </script>
 } 

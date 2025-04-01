@@ -1,10 +1,8 @@
 using System;
-using System.Net;
+using System.Text.Json;
 using System.Threading.Tasks;
 using Microsoft.AspNetCore.Http;
 using Microsoft.Extensions.Logging;
-using Newtonsoft.Json;
-using MuhasebeStokWebApp.Models;
 
 namespace MuhasebeStokWebApp.Middleware
 {
@@ -34,42 +32,69 @@ namespace MuhasebeStokWebApp.Middleware
 
         private static async Task HandleExceptionAsync(HttpContext context, Exception exception)
         {
-            context.Response.ContentType = "application/json";
-            
-            var response = new ErrorResponse
+            context.Response.ContentType = "text/html";
+            context.Response.StatusCode = StatusCodes.Status500InternalServerError;
+
+            // AJAX isteği mi kontrol et
+            if (context.Request.Headers["X-Requested-With"] == "XMLHttpRequest")
             {
-                Success = false,
-                Message = "İşlem sırasında bir hata oluştu"
-            };
-
-            switch (exception)
-            {
-                case UnauthorizedAccessException:
-                    context.Response.StatusCode = (int)HttpStatusCode.Unauthorized;
-                    response.Message = "Bu işlem için yetkiniz bulunmamaktadır";
-                    break;
-
-                case KeyNotFoundException:
-                    context.Response.StatusCode = (int)HttpStatusCode.NotFound;
-                    response.Message = "İstenen kayıt bulunamadı";
-                    break;
-
-                case ArgumentException:
-                    context.Response.StatusCode = (int)HttpStatusCode.BadRequest;
-                    response.Message = "Geçersiz parametre: " + exception.Message;
-                    break;
-
-                default:
-                    context.Response.StatusCode = (int)HttpStatusCode.InternalServerError;
-                    break;
+                context.Response.ContentType = "application/json";
+                string result = JsonSerializer.Serialize(new
+                {
+                    Success = false,
+                    Message = "İşlem sırasında bir hata oluştu",
+                    Details = exception.ToString()
+                });
+                await context.Response.WriteAsync(result);
             }
+            else
+            {
+                // Normal sayfa isteğinde basit bir hata sayfası döndür
+                string errorHtml = $@"
+                <!DOCTYPE html>
+                <html>
+                <head>
+                    <meta charset='utf-8'>
+                    <meta name='viewport' content='width=device-width, initial-scale=1'>
+                    <title>Hata Oluştu</title>
+                    <link href='https://cdn.jsdelivr.net/npm/bootstrap@5.1.3/dist/css/bootstrap.min.css' rel='stylesheet'>
+                    <link href='https://cdn.jsdelivr.net/npm/sweetalert2@11/dist/sweetalert2.min.css' rel='stylesheet'>
+                    <script src='https://cdn.jsdelivr.net/npm/jquery@3.6.0/dist/jquery.min.js'></script>
+                    <script src='https://cdn.jsdelivr.net/npm/bootstrap@5.1.3/dist/js/bootstrap.bundle.min.js'></script>
+                    <script src='https://cdn.jsdelivr.net/npm/sweetalert2@11/dist/sweetalert2.all.min.js'></script>
+                </head>
+                <body>
+                    <div class='container mt-5'>
+                        <div class='row'>
+                            <div class='col-md-8 offset-md-2'>
+                                <div class='card'>
+                                    <div class='card-header bg-danger text-white'>
+                                        <h5 class='mb-0'>Hata Oluştu</h5>
+                                    </div>
+                                    <div class='card-body'>
+                                        <p>İşlem sırasında bir hata oluştu. Lütfen daha sonra tekrar deneyin.</p>
+                                        <a href='/' class='btn btn-primary'>Ana Sayfaya Dön</a>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
 
-            #if DEBUG
-            response.Details = exception.ToString();
-            #endif
-
-            var result = JsonConvert.SerializeObject(response);
-            await context.Response.WriteAsync(result);
+                    <script>
+                        $(document).ready(function() {{
+                            Swal.fire({{
+                                title: 'Hata!',
+                                text: 'İşlem sırasında bir hata oluştu. Lütfen daha sonra tekrar deneyin.',
+                                icon: 'error',
+                                confirmButtonText: 'Tamam'
+                            }});
+                        }});
+                    </script>
+                </body>
+                </html>";
+                
+                await context.Response.WriteAsync(errorHtml);
+            }
         }
     }
 } 

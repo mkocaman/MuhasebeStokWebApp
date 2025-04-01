@@ -7,10 +7,13 @@ namespace MuhasebeStokWebApp.Services.Interfaces
 {
     public interface IBirimService
     {
-        Task<IEnumerable<UrunBirim>> GetAllAsync();
-        Task<UrunBirim> GetByIdAsync(int id);
-        Task<UrunBirim> AddAsync(UrunBirim birim);
-        Task<UrunBirim> UpdateAsync(UrunBirim birim);
-        Task<bool> DeleteAsync(int id);
+        Task<IEnumerable<Birim>> GetAllAsync();
+        Task<Birim> GetByIdAsync(Guid id);
+        Task<Birim> AddAsync(Birim birim);
+        Task<Birim> UpdateAsync(Birim birim);
+        Task<bool> DeleteAsync(Guid id);
+        Task<bool> IsBirimInUseAsync(Guid id);
+        Task<bool> IsBirimNameExistsAsync(string birimAdi, Guid? excludeBirimId = null);
+        Task<bool> ClearCacheAsync();
     }
 } 

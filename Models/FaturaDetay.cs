@@ -39,7 +39,7 @@ namespace MuhasebeStokWebApp.Models
 
         public Guid? SonGuncelleyenKullaniciId { get; set; }
 
-        public bool SoftDelete { get; set; }
+        public bool Silindi { get; set; }
 
         [ForeignKey("FaturaId")]
         public virtual Fatura Fatura { get; set; }

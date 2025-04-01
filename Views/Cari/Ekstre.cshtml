@@ -1,221 +1,146 @@
-@model MuhasebeStokWebApp.ViewModels.Cari.CariEkstreViewModel
+@model MuhasebeStokWebApp.Models.CariEkstreViewModel
+
 @{
-    ViewData["Title"] = "Cari Hesap Ekstresi";
+    ViewData["Title"] = "Cari Ekstre";
 }
 
-<div class="container-fluid">
+<!-- Ana sayfa içeriği - Yazdırırken gizlenecek -->
+<div class="container-fluid normal-view">
     <div class="row">
-        <!-- Filtre Kartı -->
-        <div class="col-12 mb-4 no-print">
+        <div class="col-12">
             <div class="card">
-                <div class="card-header">
-                    <h5>Filtre</h5>
-                </div>
-                <div class="card-body">
-                    <form asp-action="Ekstre" method="get" class="row">
-                        <input type="hidden" asp-for="CariID" />
-                        
-                        <div class="col-md-4 mb-3">
-                            <label asp-for="BaslangicTarihi" class="form-label">Başlangıç Tarihi</label>
-                            <input asp-for="BaslangicTarihi" class="form-control" type="date" />
-                        </div>
-                        
-                        <div class="col-md-4 mb-3">
-                            <label asp-for="BitisTarihi" class="form-label">Bitiş Tarihi</label>
-                            <input asp-for="BitisTarihi" class="form-control" type="date" />
-                        </div>
-                        
-                        <div class="col-md-4 mb-3 d-flex align-items-end">
-                            <button type="submit" class="btn btn-primary w-100">Filtrele</button>
-                        </div>
-                    </form>
-                </div>
-            </div>
-        </div>
-        
-        <!-- Cari Bilgileri -->
-        <div class="col-12 mb-4">
-            <div class="card">
-                <div class="card-header">
-                    <h5>Cari Bilgileri</h5>
-                    <div class="card-header-right no-print">
-                        <a asp-controller="Cari" asp-action="Details" asp-route-id="@Model.CariID" class="btn btn-primary btn-sm">
-                            <i class="fa fa-eye"></i> Cari Detayı
-                        </a>
-                    </div>
+                <div class="card-header bg-primary text-white">
+                    <h4 class="mb-0">@Model.CariAdi - Cari Ekstre</h4>
                 </div>
                 <div class="card-body">
                     <div class="row">
-                        <div class="col-md-6">
-                            <div class="mb-3">
-                                <h6 class="f-w-600">Cari Adı</h6>
-                                <p>@Model.CariAdi</p>
-                            </div>
-                            <div class="mb-3">
-                                <h6 class="f-w-600">Vergi No</h6>
-                                <p>@(string.IsNullOrEmpty(Model.VergiNo) ? "-" : Model.VergiNo)</p>
-                            </div>
+                        <div class="col-md-4">
+                            <dl class="row">
+                                <dt class="col-sm-5">Cari Adı:</dt>
+                                <dd class="col-sm-7">@Model.CariAdi</dd>
+                                <dt class="col-sm-5">Vergi No:</dt>
+                                <dd class="col-sm-7">@(Model.VergiNo ?? "-")</dd>
+                                <dt class="col-sm-5">Adres:</dt>
+                                <dd class="col-sm-7">@(Model.Adres ?? "-")</dd>
+                                @if (!Model.OrijinalParaBirimi)
+                                {
+                                    <dt class="col-sm-5">Para Birimi:</dt>
+                                    <dd class="col-sm-7 font-weight-bold">@Model.ParaBirimiKodu (@Model.ParaBirimiSembol)</dd>
+                                    <dt class="col-sm-5">Döviz Kuru:</dt>
+                                    <dd class="col-sm-7">@Model.DovizKuru.ToString("0.######") (@Model.DovizKuruTarihi?.ToString("dd.MM.yyyy") ?? "Güncel")</dd>
+                                }
+                            </dl>
                         </div>
-                        <div class="col-md-6">
-                            <div class="mb-3">
-                                <h6 class="f-w-600">Adres</h6>
-                                <p>@(string.IsNullOrEmpty(Model.Adres) ? "-" : Model.Adres)</p>
-                            </div>
-                            <div class="mb-3">
-                                <h6 class="f-w-600">Rapor Tarihi</h6>
-                                <p>@Model.RaporTarihi.ToString("dd.MM.yyyy HH:mm")</p>
-                            </div>
+                        <div class="col-md-4">
+                            <dl class="row">
+                                <dt class="col-sm-6">Başlangıç Tarihi:</dt>
+                                <dd class="col-sm-6">@Model.BaslangicTarihi.ToString("dd.MM.yyyy")</dd>
+                                <dt class="col-sm-6">Bitiş Tarihi:</dt>
+                                <dd class="col-sm-6">@Model.BitisTarihi.ToString("dd.MM.yyyy")</dd>
+                                <dt class="col-sm-6">Rapor Tarihi:</dt>
+                                <dd class="col-sm-6">@Model.RaporTarihi.ToString("dd.MM.yyyy HH:mm")</dd>
+                            </dl>
                         </div>
-                    </div>
-                </div>
-            </div>
-        </div>
-        
-        <!-- Özet Bilgiler -->
-        <div class="col-12 mb-4">
-            <div class="row">
-                <div class="col-md-4">
-                    <div class="card o-hidden">
-                        <div class="card-body bg-primary">
-                            <div class="media static-widget">
-                                <div class="media-body">
-                                    <h6 class="font-roboto">Toplam Borç</h6>
-                                    <h4 class="mb-0 counter">@Model.ToplamBorc.ToString("N2") ₺</h4>
+                        <div class="col-md-4">
+                            <form asp-action="Ekstre" method="get" class="mt-3">
+                                <input type="hidden" name="id" value="@Model.Id" />
+                                <div class="row">
+                                    <div class="col-md-4">
+                                        <div class="form-group">
+                                            <label for="baslangicTarihi">Başlangıç Tarihi</label>
+                                            <input type="date" id="baslangicTarihi" name="baslangicTarihi" class="form-control" value="@Model.BaslangicTarihi.ToString("yyyy-MM-dd")" />
+                                        </div>
+                                    </div>
+                                    <div class="col-md-4">
+                                        <div class="form-group">
+                                            <label for="bitisTarihi">Bitiş Tarihi</label>
+                                            <input type="date" id="bitisTarihi" name="bitisTarihi" class="form-control" value="@Model.BitisTarihi.ToString("yyyy-MM-dd")" />
+                                        </div>
+                                    </div>
+                                    <div class="col-md-4">
+                                        <div class="form-group">
+                                            <label for="paraBirimiId">Para Birimi</label>
+                                            <select id="paraBirimiId" name="paraBirimiId" class="form-control">
+                                                @foreach (var paraBirimi in ViewBag.ParaBirimleri)
+                                                {
+                                                    var isSelected = (Model.VarsayilanParaBirimiId.HasValue && Model.VarsayilanParaBirimiId.Value == paraBirimi.ParaBirimiID) || 
+                                                                    (ViewBag.SeciliParaBirimiId != null && ViewBag.SeciliParaBirimiId == paraBirimi.ParaBirimiID);
+                                                    if (isSelected)
+                                                    {
+                                                        <option value="@paraBirimi.ParaBirimiID" selected>@paraBirimi.Kod (@paraBirimi.Sembol)</option>
+                                                    }
+                                                    else
+                                                    {
+                                                        <option value="@paraBirimi.ParaBirimiID">@paraBirimi.Kod (@paraBirimi.Sembol)</option>
+                                                    }
+                                                }
+                                            </select>
+                                        </div>
+                                    </div>
                                 </div>
-                                <i class="fa fa-arrow-down icon-bg"></i>
-                            </div>
-                        </div>
-                    </div>
-                </div>
-                <div class="col-md-4">
-                    <div class="card o-hidden">
-                        <div class="card-body bg-success">
-                            <div class="media static-widget">
-                                <div class="media-body">
-                                    <h6 class="font-roboto">Toplam Alacak</h6>
-                                    <h4 class="mb-0 counter">@Model.ToplamAlacak.ToString("N2") ₺</h4>
+                                <div class="row mt-2">
+                                    <div class="col-md-12 d-flex justify-content-end">
+                                        <button type="submit" class="btn btn-primary">Filtrele</button>
+                                    </div>
                                 </div>
-                                <i class="fa fa-arrow-up icon-bg"></i>
-                            </div>
+                            </form>
                         </div>
                     </div>
-                </div>
-                <div class="col-md-4">
-                    <div class="card o-hidden">
-                        <div class="card-body @(Model.Bakiye >= 0 ? "bg-success" : "bg-danger")">
-                            <div class="media static-widget">
-                                <div class="media-body">
-                                    <h6 class="font-roboto">Bakiye</h6>
-                                    <h4 class="mb-0 counter">@Model.Bakiye.ToString("N2") ₺</h4>
-                                </div>
-                                <i class="fa fa-balance-scale icon-bg"></i>
-                            </div>
-                        </div>
-                    </div>
-                </div>
-            </div>
-        </div>
-        
-        <!-- Ekstre Tablosu -->
-        <div class="col-12">
-            <div class="card">
-                <div class="card-header">
-                    <h5>Cari Hesap Ekstresi</h5>
-                    <div class="card-header-right no-print">
-                        <button type="button" class="btn btn-primary btn-sm" onclick="printEkstre()">
-                            <i class="fa fa-print"></i> Yazdır
-                        </button>
-                        <button type="button" class="btn btn-success btn-sm" onclick="exportToPDF()">
-                            <i class="fa fa-file-pdf"></i> PDF İndir
-                        </button>
-                    </div>
-                </div>
-                <div class="card-body">
-                    <div class="table-responsive">
-                        <table class="table table-hover" id="ekstreTable">
-                            <thead>
+
+                    <hr />
+
+                    <div class="table-responsive mt-4">
+                        <table class="table table-striped table-hover" id="ekstreTable">
+                            <thead class="thead-light">
                                 <tr>
                                     <th>Tarih</th>
-                                    <th>Vade Tarihi</th>
+                                    <th>Vade</th>
+                                    <th>İşlem</th>
                                     <th>Açıklama</th>
-                                    <th>İşlem Türü</th>
                                     <th>Evrak No</th>
-                                    <th>Kaynak</th>
-                                    <th class="text-end">Borç</th>
-                                    <th class="text-end">Alacak</th>
-                                    <th class="text-end">Bakiye</th>
+                                    <th class="text-right">Borç <span class="font-weight-bold">@Model.ParaBirimiSembol</span></th>
+                                    <th class="text-right">Alacak <span class="font-weight-bold">@Model.ParaBirimiSembol</span></th>
+                                    <th class="text-right">Bakiye <span class="font-weight-bold">@Model.ParaBirimiSembol</span></th>
                                 </tr>
                             </thead>
                             <tbody>
-                                @if (Model.Hareketler != null && Model.Hareketler.Any())
-                                {
-                                    foreach (var hareket in Model.Hareketler)
-                                    {
-                                        <tr>
-                                            <td>@hareket.Tarih.ToString("dd.MM.yyyy")</td>
-                                            <td>@(hareket.VadeTarihi.HasValue ? hareket.VadeTarihi.Value.ToString("dd.MM.yyyy") : "-")</td>
-                                            <td>@hareket.Aciklama</td>
-                                            <td>
-                                                @if (hareket.IslemTuru == "Tahsilat" || hareket.IslemTuru == "Alacak" || hareket.IslemTuru == "Giriş")
-                                                {
-                                                    <span class="badge badge-success">@hareket.IslemTuru</span>
-                                                }
-                                                else if (hareket.IslemTuru == "Ödeme" || hareket.IslemTuru == "Borç" || hareket.IslemTuru == "Çıkış")
-                                                {
-                                                    <span class="badge badge-danger">@hareket.IslemTuru</span>
-                                                }
-                                                else
-                                                {
-                                                    <span class="badge badge-info">@hareket.IslemTuru</span>
-                                                }
-                                            </td>
-                                            <td>@hareket.EvrakNo</td>
-                                            <td>
-                                                @if (hareket.Kaynak == "Cari")
-                                                {
-                                                    <span class="badge badge-primary">Cari</span>
-                                                }
-                                                else if (hareket.Kaynak == "Banka")
-                                                {
-                                                    <span class="badge badge-info">Banka</span>
-                                                }
-                                                else if (hareket.Kaynak == "Kasa")
-                                                {
-                                                    <span class="badge badge-warning">Kasa</span>
-                                                }
-                                                else if (hareket.Kaynak == "Fatura")
-                                                {
-                                                    <span class="badge badge-secondary">Fatura</span>
-                                                }
-                                            </td>
-                                            <td class="text-end text-danger">
-                                                @(hareket.Borc.HasValue ? hareket.Borc.Value.ToString("N2") + " ₺" : "")
-                                            </td>
-                                            <td class="text-end text-success">
-                                                @(hareket.Alacak.HasValue ? hareket.Alacak.Value.ToString("N2") + " ₺" : "")
-                                            </td>
-                                            <td class="text-end @(hareket.Bakiye >= 0 ? "text-success" : "text-danger")">
-                                                @hareket.Bakiye.ToString("N2") ₺
-                                            </td>
-                                        </tr>
-                                    }
-                                }
-                                else
+                                @foreach (var hareket in Model.Hareketler)
                                 {
                                     <tr>
-                                        <td colspan="9" class="text-center">Belirtilen tarih aralığında hareket bulunamadı.</td>
+                                        <td>@hareket.Tarih.ToString("dd.MM.yyyy")</td>
+                                        <td>@(hareket.VadeTarihi.HasValue ? hareket.VadeTarihi.Value.ToString("dd.MM.yyyy") : "")</td>
+                                        <td>@hareket.IslemTuru</td>
+                                        <td>@hareket.Aciklama</td>
+                                        <td>@hareket.EvrakNo</td>
+                                        <td class="text-right">@(hareket.Borc > 0 ? hareket.Borc.ToString("N2") : "")</td>
+                                        <td class="text-right">@(hareket.Alacak > 0 ? hareket.Alacak.ToString("N2") : "")</td>
+                                        <td class="text-right">@hareket.Bakiye.ToString("N2")</td>
                                     </tr>
                                 }
                             </tbody>
                             <tfoot>
-                                <tr class="table-primary">
-                                    <th colspan="6" class="text-end">Toplam:</th>
-                                    <th class="text-end text-danger">@Model.ToplamBorc.ToString("N2") ₺</th>
-                                    <th class="text-end text-success">@Model.ToplamAlacak.ToString("N2") ₺</th>
-                                    <th class="text-end @(Model.Bakiye >= 0 ? "text-success" : "text-danger")">@Model.Bakiye.ToString("N2") ₺</th>
+                                <tr class="font-weight-bold">
+                                    <td colspan="5" class="text-right">TOPLAM</td>
+                                    <td class="text-right">@Model.ToplamBorc.ToString("N2")</td>
+                                    <td class="text-right">@Model.ToplamAlacak.ToString("N2")</td>
+                                    <td class="text-right">@Model.Bakiye.ToString("N2")</td>
                                 </tr>
                             </tfoot>
                         </table>
+                    </div>
+
+                    <div class="row mt-4">
+                        <div class="col-md-12">
+                            <a asp-action="Details" asp-route-id="@Model.Id" class="btn btn-secondary">
+                                <i class="fas fa-arrow-left"></i> Cari Detayına Dön
+                            </a>
+                            <button type="button" class="btn btn-info" id="btnPrint">
+                                <i class="fas fa-print"></i> Yazdır
+                            </button>
+                            <button type="button" class="btn btn-primary" id="btnExportPdf">
+                                <i class="fas fa-file-pdf"></i> PDF Olarak Kaydet
+                            </button>
+                        </div>
                     </div>
                 </div>
             </div>
@@ -223,132 +148,175 @@
     </div>
 </div>
 
+<!-- Yazdırma görünümü - Sadece yazdırma sırasında gösterilecek -->
+<div class="print-view" style="display: none;">
+    <div class="print-header">
+        <h2 class="text-center mb-3">@Model.CariAdi - Cari Ekstre</h2>
+        <div class="row mb-3">
+            <div class="col-4">
+                <strong>Cari Adı:</strong> @Model.CariAdi<br />
+                <strong>Vergi No:</strong> @(Model.VergiNo ?? "-")<br />
+                <strong>Adres:</strong> @(Model.Adres ?? "-")<br />
+                @if (!Model.OrijinalParaBirimi)
+                {
+                    <div class="currency-info" style="margin-top: 5px; padding: 2px 5px; background-color: #f0f0f0; border-radius: 4px; display: inline-block;">
+                        <strong>Para Birimi:</strong> @Model.ParaBirimiKodu (@Model.ParaBirimiSembol)<br />
+                        <strong>Döviz Kuru:</strong> @Model.DovizKuru.ToString("0.######") (@Model.DovizKuruTarihi?.ToString("dd.MM.yyyy") ?? "Güncel")
+                    </div>
+                }
+            </div>
+            <div class="col-4 text-center">
+                <strong>Başlangıç Tarihi:</strong> @Model.BaslangicTarihi.ToString("dd.MM.yyyy")<br />
+                <strong>Bitiş Tarihi:</strong> @Model.BitisTarihi.ToString("dd.MM.yyyy")<br />
+                <strong>Rapor Tarihi:</strong> @Model.RaporTarihi.ToString("dd.MM.yyyy HH:mm")
+            </div>
+            <div class="col-4 text-right">
+                <img src="/img/logo.png" alt="Logo" style="max-height: 60px;" />
+            </div>
+        </div>
+    </div>
+
+    <table class="table table-bordered" style="width: 100%;">
+        <thead>
+            <tr style="background-color: #f2f2f2;">
+                <th>Tarih</th>
+                <th>Vade</th>
+                <th>İşlem</th>
+                <th>Açıklama</th>
+                <th>Evrak No</th>
+                <th style="text-align: right;">Borç <span style="font-weight: bold;">@Model.ParaBirimiSembol</span></th>
+                <th style="text-align: right;">Alacak <span style="font-weight: bold;">@Model.ParaBirimiSembol</span></th>
+                <th style="text-align: right;">Bakiye <span style="font-weight: bold;">@Model.ParaBirimiSembol</span></th>
+            </tr>
+        </thead>
+        <tbody>
+            @foreach (var hareket in Model.Hareketler)
+            {
+                <tr>
+                    <td>@hareket.Tarih.ToString("dd.MM.yyyy")</td>
+                    <td>@(hareket.VadeTarihi.HasValue ? hareket.VadeTarihi.Value.ToString("dd.MM.yyyy") : "")</td>
+                    <td>@hareket.IslemTuru</td>
+                    <td>@hareket.Aciklama</td>
+                    <td>@hareket.EvrakNo</td>
+                    <td style="text-align: right;">@(hareket.Borc > 0 ? hareket.Borc.ToString("N2") : "")</td>
+                    <td style="text-align: right;">@(hareket.Alacak > 0 ? hareket.Alacak.ToString("N2") : "")</td>
+                    <td style="text-align: right;">@hareket.Bakiye.ToString("N2")</td>
+                </tr>
+            }
+        </tbody>
+        <tfoot>
+            <tr style="font-weight: bold; background-color: #f2f2f2;">
+                <td colspan="5" style="text-align: right;">TOPLAM</td>
+                <td style="text-align: right;">@Model.ToplamBorc.ToString("N2")</td>
+                <td style="text-align: right;">@Model.ToplamAlacak.ToString("N2")</td>
+                <td style="text-align: right;">@Model.Bakiye.ToString("N2")</td>
+            </tr>
+        </tfoot>
+    </table>
+
+    <div class="print-footer mt-3">
+        <p class="text-center small">Bu belge @DateTime.Now.ToString("dd.MM.yyyy HH:mm") tarihinde oluşturulmuştur.</p>
+    </div>
+</div>
+
 @section Styles {
-    <style>
+    <style type="text/css">
+        /* Normal görünüm stil ayarları */
+        .normal-view {
+            display: block;
+        }
+        
+        .print-view {
+            display: none;
+        }
+        
+        /* Yazdırma stilleri */
         @@media print {
-            .breadcrumb, .page-title, .card-header-right, .btn, .footer {
-                display: none !important;
+            body * {
+                visibility: hidden;
             }
             
-            .card {
-                border: none !important;
-                box-shadow: none !important;
+            .print-view, .print-view * {
+                visibility: visible;
+                display: block;
             }
             
-            .card-header {
-                border-bottom: 1px solid #ddd !important;
+            .print-view {
+                position: absolute;
+                left: 0;
+                top: 0;
+                width: 100%;
+                padding: 20px;
             }
             
-            body {
-                padding: 0 !important;
-                margin: 0 !important;
+            .normal-view {
+                display: none;
             }
             
-            .container-fluid {
-                padding: 0 !important;
-                margin: 0 !important;
+            .print-header, .print-footer {
+                margin-bottom: 20px;
+            }
+            
+            table {
+                width: 100%;
+                border-collapse: collapse;
+            }
+            
+            th, td {
+                padding: 8px;
+                border: 1px solid #dee2e6;
+            }
+            
+            thead {
+                display: table-header-group;
+            }
+            
+            tfoot {
+                display: table-footer-group;
             }
         }
     </style>
 }
 
 @section Scripts {
-    <script src="https://cdnjs.cloudflare.com/ajax/libs/jspdf/2.5.1/jspdf.umd.min.js"></script>
-    <script src="https://cdnjs.cloudflare.com/ajax/libs/html2canvas/1.4.1/html2canvas.min.js"></script>
+    <!-- HTML2PDF kütüphanesini ekleyin -->
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/html2pdf.js/0.10.1/html2pdf.bundle.min.js" integrity="sha512-GsLlZN/3F2ErC5ifS5QtgpiJtWd43JWSuIgh7mbzZ8zBps+dvLusV+eNQATqgA/HdeKFVgA5v3S/cIrLF7QnIg==" crossorigin="anonymous" referrerpolicy="no-referrer"></script>
+    
     <script>
         $(document).ready(function() {
-            // DataTable uyarılarını gizle
-            $.fn.dataTable.ext.errMode = 'none';
-            
-            // DataTable başlatma
-            try {
-                $('#ekstreTable').DataTable({
-                    language: {
-                        url: '//cdn.datatables.net/plug-ins/1.13.7/i18n/tr.json',
-                        info: "" // Bilgilendirme yazısını kaldır (çift görünme sorununu çözmek için)
-                    },
-                    responsive: true,
-                    order: [[0, 'asc']],
-                    retrieve: true
-                });
-            } catch (e) {
-                console.log("DataTable başlatılırken bir hata oluştu, ancak işlem devam ediyor.");
-            }
-        });
-        
-        function printEkstre() {
-            // Yazdırma işlemi için özel bir div oluştur
-            var printContent = document.createElement('div');
-            printContent.innerHTML = `
-                <div style="text-align: center; margin-bottom: 20px;">
-                    <h2>Cari Hesap Ekstresi</h2>
-                    <h3>${document.querySelector('.card-body p').textContent}</h3>
-                    <p>Rapor Tarihi: ${document.querySelectorAll('.card-body p')[3].textContent}</p>
-                </div>
-            `;
-            
-            // Tabloyu kopyala
-            var tableClone = document.getElementById('ekstreTable').cloneNode(true);
-            printContent.appendChild(tableClone);
-            
-            // Mevcut sayfayı kaydet
-            var originalContent = document.body.innerHTML;
-            
-            // Yazdırma içeriğini ayarla
-            document.body.innerHTML = printContent.innerHTML;
-            
-            // Yazdır
-            window.print();
-            
-            // Orijinal içeriği geri yükle
-            document.body.innerHTML = originalContent;
-            
-            // Feather ikonlarını yeniden başlat
-            if (typeof feather !== 'undefined') {
-                feather.replace();
-            }
-        }
-        
-        function exportToPDF() {
-            // PDF oluşturma için gerekli kütüphaneleri kontrol et
-            if (typeof window.jspdf === 'undefined' || typeof html2canvas === 'undefined') {
-                alert('PDF oluşturmak için gerekli kütüphaneler yüklenemedi. Lütfen internet bağlantınızı kontrol edin.');
-                return;
-            }
-            
-            // Yazdırma içeriğini oluştur
-            var content = document.createElement('div');
-            content.innerHTML = `
-                <div style="text-align: center; margin-bottom: 20px;">
-                    <h2>Cari Hesap Ekstresi</h2>
-                    <h3>${document.querySelector('.card-body p').textContent}</h3>
-                    <p>Rapor Tarihi: ${document.querySelectorAll('.card-body p')[3].textContent}</p>
-                </div>
-            `;
-            
-            // Tabloyu kopyala
-            var tableClone = document.getElementById('ekstreTable').cloneNode(true);
-            content.appendChild(tableClone);
-            
-            // Geçici olarak DOM'a ekle
-            content.style.position = 'absolute';
-            content.style.left = '-9999px';
-            document.body.appendChild(content);
-            
-            // PDF oluştur
-            html2canvas(content).then(canvas => {
-                const imgData = canvas.toDataURL('image/png');
-                const pdf = new jspdf.jsPDF('p', 'mm', 'a4');
-                const imgProps = pdf.getImageProperties(imgData);
-                const pdfWidth = pdf.internal.pageSize.getWidth();
-                const pdfHeight = (imgProps.height * pdfWidth) / imgProps.width;
+            // Yazdırma işlemi
+            $("#btnPrint").click(function() {
+                // Yazdırma işlemi öncesi görünümü ayarla
+                $(".print-view").show();
+                window.print();
                 
-                pdf.addImage(imgData, 'PNG', 0, 0, pdfWidth, pdfHeight);
-                pdf.save('cari_ekstre.pdf');
-                
-                // Geçici içeriği kaldır
-                document.body.removeChild(content);
+                // Yazdırma sonrası görünümü geri al
+                setTimeout(function() {
+                    $(".print-view").hide();
+                }, 1000);
             });
-        }
+            
+            // PDF olarak kaydetme işlemi
+            $("#btnExportPdf").click(function() {
+                // Yazdırma görünümünü geçici olarak göster
+                var printView = $(".print-view").clone();
+                printView.css("display", "block");
+                $("body").append(printView);
+                
+                // HTML2PDF ayarları
+                var opt = {
+                    margin: [10, 10],
+                    filename: '@(Model.CariAdi.Replace(" ", "_") + "_Ekstre_" + DateTime.Now.ToString("ddMMyyyy") + ".pdf")',
+                    image: { type: 'jpeg', quality: 0.98 },
+                    html2canvas: { scale: 2, useCORS: true },
+                    jsPDF: { unit: 'mm', format: 'a4', orientation: 'landscape' }
+                };
+                
+                // PDF oluşturma ve indirme
+                html2pdf().set(opt).from(printView[0]).save().then(function() {
+                    printView.remove(); // Geçici eklenen elemanı kaldır
+                });
+            });
+        });
     </script>
 } 

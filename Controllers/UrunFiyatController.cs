@@ -17,11 +17,11 @@ namespace MuhasebeStokWebApp.Controllers
     public class UrunFiyatController : BaseController
     {
         private readonly IUnitOfWork _unitOfWork;
-        private readonly UserManager _userManager;
+        private new readonly UserManager<ApplicationUser> _userManager;
 
         public UrunFiyatController(
             IUnitOfWork unitOfWork, 
-            UserManager userManager,
+            UserManager<ApplicationUser> userManager,
             IMenuService menuService,
             UserManager<ApplicationUser> identityUserManager,
             RoleManager<IdentityRole> roleManager,
@@ -129,7 +129,7 @@ namespace MuhasebeStokWebApp.Controllers
         {
             if (ModelState.IsValid)
             {
-                var kullaniciID = _userManager.GetCurrentUserId();
+                var kullaniciID = GetCurrentUserId();
                 var urunFiyatRepository = _unitOfWork.Repository<UrunFiyat>();
                 
                 var yeniFiyat = new UrunFiyat
@@ -224,7 +224,7 @@ namespace MuhasebeStokWebApp.Controllers
             
             if (ModelState.IsValid)
             {
-                var kullaniciID = _userManager.GetCurrentUserId();
+                var kullaniciID = GetCurrentUserId();
                 var urunFiyatRepository = _unitOfWork.Repository<UrunFiyat>();
                 
                 var fiyat = await urunFiyatRepository.GetFirstOrDefaultAsync(
@@ -326,7 +326,7 @@ namespace MuhasebeStokWebApp.Controllers
             // Soft delete
             fiyat.Silindi = true;
             fiyat.GuncellemeTarihi = DateTime.Now;
-            fiyat.SonGuncelleyenKullaniciID = _userManager.GetCurrentUserId();
+            fiyat.SonGuncelleyenKullaniciID = GetCurrentUserId();
             
             await urunFiyatRepository.UpdateAsync(fiyat);
             await _unitOfWork.SaveAsync();

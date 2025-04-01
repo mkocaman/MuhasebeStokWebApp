@@ -1,0 +1,132 @@
+@model IEnumerable<MuhasebeStokWebApp.Data.Entities.Cari>
+@{
+    string cariTipi = ViewBag.CariTipi ?? "Cari";
+    ViewData["Title"] = cariTipi + " Listesi";
+    Layout = "~/Views/Shared/_Layout.cshtml";
+}
+
+<div class="container-fluid">
+    <div class="page-header">
+        <div class="row">
+            <div class="col">
+                <div class="page-header-left">
+                    <h3>@cariTipi Yönetimi</h3>
+                    <ol class="breadcrumb">
+                        <li class="breadcrumb-item"><a href="/Home"><i class="fa fa-home"></i></a></li>
+                        <li class="breadcrumb-item active">@cariTipi Listesi</li>
+                    </ol>
+                </div>
+            </div>
+            <div class="col">
+                <div class="float-end">
+                    <a href="@Url.Action("Create")" class="btn btn-primary">
+                        <i class="fa fa-plus"></i> Yeni @cariTipi Ekle
+                    </a>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+
+<div class="container-fluid">
+    <div class="row">
+        <div class="col-sm-12">
+            <div class="card">
+                <div class="card-header bg-primary">
+                    <div class="d-flex justify-content-between align-items-center">
+                        <h5 class="text-white">@cariTipi Listesi</h5>
+                        <div class="btn-group">
+                            <a href="@Url.Action("Index")" class="btn btn-light">Tüm Cariler</a>
+                            <a href="@Url.Action("Musteriler")" class="btn @(cariTipi == "Müşteri" ? "btn-warning" : "btn-light")">Müşteriler</a>
+                            <a href="@Url.Action("Tedarikciler")" class="btn @(cariTipi == "Tedarikçi" ? "btn-warning" : "btn-light")">Tedarikçiler</a>
+                        </div>
+                    </div>
+                </div>
+                <div class="card-body">
+                    <div class="table-responsive">
+                        <table class="table table-bordered table-striped" id="cariTablosu">
+                            <thead>
+                                <tr>
+                                    <th>Cari Adı</th>
+                                    <th>Yetkili</th>
+                                    <th>Telefon</th>
+                                    <th>Bakiye</th>
+                                    <th>Durum</th>
+                                    <th>İşlemler</th>
+                                </tr>
+                            </thead>
+                            <tbody>
+                                @foreach (var cari in Model)
+                                {
+                                    string paraBirimiSembol = "₺";
+                                    if (cari.VarsayilanParaBirimiId.HasValue && ViewBag.ParaBirimleri != null)
+                                    {
+                                        foreach (var pb in ViewBag.ParaBirimleri)
+                                        {
+                                            if (pb.ParaBirimiID == cari.VarsayilanParaBirimiId)
+                                            {
+                                                paraBirimiSembol = pb.Sembol;
+                                                break;
+                                            }
+                                        }
+                                    }
+                                    
+                                    <tr>
+                                        <td>
+                                            <a href="@Url.Action("Details", new { id = cari.Id })" class="font-weight-bold text-primary">
+                                                @cari.Ad
+                                            </a>
+                                        </td>
+                                        <td>@(string.IsNullOrEmpty(cari.Yetkili) ? "-" : cari.Yetkili)</td>
+                                        <td>@(string.IsNullOrEmpty(cari.Telefon) ? "-" : cari.Telefon)</td>
+                                        <td class="text-end @(cari.BaslangicBakiye >= 0 ? "text-success" : "text-danger")">
+                                            @cari.BaslangicBakiye.ToString("N2") @paraBirimiSembol
+                                        </td>
+                                        <td class="text-center">
+                                            @if (cari.AktifMi)
+                                            {
+                                                <span class="badge bg-success">Aktif</span>
+                                            }
+                                            else
+                                            {
+                                                <span class="badge bg-danger">Pasif</span>
+                                            }
+                                        </td>
+                                        <td class="text-center">
+                                            <div class="btn-group">
+                                                <a href="@Url.Action("Details", new { id = cari.Id })" class="btn btn-info btn-sm" title="Detay">
+                                                    <i class="fa fa-eye"></i>
+                                                </a>
+                                                <a href="@Url.Action("Edit", new { id = cari.Id })" class="btn btn-primary btn-sm" title="Düzenle">
+                                                    <i class="fa fa-edit"></i>
+                                                </a>
+                                                <a href="@Url.Action("Delete", new { id = cari.Id })" class="btn btn-danger btn-sm" title="Sil">
+                                                    <i class="fa fa-trash"></i>
+                                                </a>
+                                            </div>
+                                        </td>
+                                    </tr>
+                                }
+                            </tbody>
+                        </table>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+
+@section Scripts {
+    <script>
+        $(document).ready(function () {
+            $('#cariTablosu').DataTable({
+                language: {
+                    url: '//cdn.datatables.net/plug-ins/1.13.7/i18n/tr.json'
+                },
+                responsive: true,
+                pageLength: 25,
+                order: [[0, 'asc']]
+            });
+        });
+    </script>
+} 

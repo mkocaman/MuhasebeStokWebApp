@@ -46,7 +46,7 @@ namespace MuhasebeStokWebApp.Controllers
         public async Task<IActionResult> Kasa()
         {
             ViewBag.Kasalar = await _context.Kasalar
-                .Where(k => !k.SoftDelete && k.Aktif)
+                .Where(k => !k.Silindi && k.Aktif)
                 .Select(k => new SelectListItem
                 {
                     Value = k.KasaID.ToString(),
@@ -70,7 +70,7 @@ namespace MuhasebeStokWebApp.Controllers
 
             var query = _context.KasaHareketleri
                 .Include(k => k.Kasa)
-                .Where(k => !k.SoftDelete)
+                .Where(k => !k.Silindi)
                 .Where(k => k.Tarih >= filtre.BaslangicTarihi && k.Tarih <= filtre.BitisTarihi.AddDays(1).AddSeconds(-1));
 
             if (filtre.KasaID.HasValue)
@@ -106,7 +106,7 @@ namespace MuhasebeStokWebApp.Controllers
         public async Task<IActionResult> Banka()
         {
             ViewBag.Bankalar = await _context.Bankalar
-                .Where(b => !b.SoftDelete && b.Aktif)
+                .Where(b => !b.Silindi && b.Aktif)
                 .Select(b => new SelectListItem
                 {
                     Value = b.BankaID.ToString(),
@@ -130,7 +130,7 @@ namespace MuhasebeStokWebApp.Controllers
 
             var query = _context.BankaHareketleri
                 .Include(b => b.Banka)
-                .Where(b => !b.SoftDelete)
+                .Where(b => !b.Silindi)
                 .Where(b => b.Tarih >= filtre.BaslangicTarihi && b.Tarih <= filtre.BitisTarihi.AddDays(1).AddSeconds(-1));
 
             if (filtre.BankaID.HasValue)
@@ -185,7 +185,7 @@ namespace MuhasebeStokWebApp.Controllers
             try
             {
                 ViewBag.Cariler = await _context.Cariler
-                    .Where(c => !c.SoftDelete && c.AktifMi)
+                    .Where(c => !c.Silindi && c.AktifMi)
                     .Select(c => new SelectListItem
                     {
                         Value = c.CariID.ToString(),
@@ -199,7 +199,7 @@ namespace MuhasebeStokWebApp.Controllers
                 // Hatayı loglayabilirsiniz
                 _logger.LogError(ex, "Cariler yüklenirken hata oluştu: {Message}", ex.Message);
                 ViewBag.Cariler = await _context.Cariler
-                    .Where(c => !c.SoftDelete && c.AktifMi)
+                    .Where(c => !c.Silindi && c.AktifMi)
                     .Select(c => new SelectListItem
                     {
                         Value = c.CariID.ToString(),
@@ -224,12 +224,13 @@ namespace MuhasebeStokWebApp.Controllers
 
             var query = _context.CariHareketler
                 .Include(c => c.Cari)
-                .Where(c => !c.SoftDelete)
+                .Where(c => !c.Silindi)
                 .Where(c => c.Tarih >= filtre.BaslangicTarihi && c.Tarih <= filtre.BitisTarihi.AddDays(1).AddSeconds(-1));
 
             if (filtre.CariID.HasValue)
             {
-                query = query.Where(c => c.CariID == filtre.CariID.Value);
+                var cariId = filtre.CariID.Value;
+                query = query.Where(c => c.CariId.ToString().Contains(cariId.ToString()));
             }
 
             if (!string.IsNullOrEmpty(filtre.HareketTuru))
@@ -262,7 +263,7 @@ namespace MuhasebeStokWebApp.Controllers
             try
             {
                 ViewBag.Urunler = await _context.Urunler
-                    .Where(u => !u.SoftDelete && u.Aktif)
+                    .Where(u => !u.Silindi && u.Aktif)
                     .Select(u => new SelectListItem
                     {
                         Value = u.UrunID.ToString(),
@@ -295,7 +296,7 @@ namespace MuhasebeStokWebApp.Controllers
 
             var query = _context.StokHareketleri
                 .Include(s => s.Urun)
-                .Where(s => !s.SoftDelete)
+                .Where(s => !s.Silindi)
                 .Where(s => s.Tarih >= filtre.BaslangicTarihi && s.Tarih <= filtre.BitisTarihi.AddDays(1).AddSeconds(-1));
 
             if (filtre.UrunID.HasValue)
@@ -352,7 +353,7 @@ namespace MuhasebeStokWebApp.Controllers
             try
             {
                 ViewBag.Cariler = await _context.Cariler
-                    .Where(c => !c.SoftDelete && c.AktifMi)
+                    .Where(c => !c.Silindi && c.AktifMi)
                     .Select(c => new SelectListItem
                     {
                         Value = c.CariID.ToString(),
@@ -371,7 +372,7 @@ namespace MuhasebeStokWebApp.Controllers
             try
             {
                 ViewBag.Urunler = await _context.Urunler
-                    .Where(u => !u.SoftDelete && u.Aktif)
+                    .Where(u => !u.Silindi && u.Aktif)
                     .Select(u => new SelectListItem
                     {
                         Value = u.UrunID.ToString(),
@@ -407,12 +408,13 @@ namespace MuhasebeStokWebApp.Controllers
                 .Include(f => f.FaturaDetaylari)
                 .ThenInclude(fd => fd.Urun)
                 .Include(f => f.FaturaTuru)
-                .Where(f => !f.SoftDelete)
+                .Where(f => !f.Silindi)
                 .Where(f => f.FaturaTarihi >= filtre.BaslangicTarihi && f.FaturaTarihi <= filtre.BitisTarihi.AddDays(1).AddSeconds(-1));
 
             if (filtre.CariID.HasValue)
             {
-                query = query.Where(f => f.CariID == filtre.CariID.Value);
+                var cariId = filtre.CariID.Value;
+                query = query.Where(f => f.CariID.HasValue && f.CariID.Value.ToString().Contains(cariId.ToString()));
             }
 
             var faturalar = await query.OrderBy(f => f.FaturaTarihi).ToListAsync();
@@ -429,7 +431,7 @@ namespace MuhasebeStokWebApp.Controllers
             {
                 if (fatura.FaturaDetaylari == null) continue;
                 
-                foreach (var detay in fatura.FaturaDetaylari.Where(fd => !fd.SoftDelete))
+                foreach (var detay in fatura.FaturaDetaylari.Where(fd => !fd.Silindi))
                 {
                     if (filtre.UrunID.HasValue && detay.UrunID != filtre.UrunID.Value)
                         continue;
@@ -486,7 +488,7 @@ namespace MuhasebeStokWebApp.Controllers
             // Satış ve alış toplamları
             var faturalar = await _context.Faturalar
                 .Include(f => f.FaturaTuru)
-                .Where(f => !f.SoftDelete)
+                .Where(f => !f.Silindi)
                 .Where(f => f.FaturaTarihi >= filtre.BaslangicTarihi && f.FaturaTarihi <= filtre.BitisTarihi.AddDays(1).AddSeconds(-1))
                 .ToListAsync();
 
@@ -507,7 +509,7 @@ namespace MuhasebeStokWebApp.Controllers
 
             // Tahsilat ve ödeme toplamları
             var kasaHareketleri = await _context.KasaHareketleri
-                .Where(k => !k.SoftDelete)
+                .Where(k => !k.Silindi)
                 .Where(k => k.Tarih >= filtre.BaslangicTarihi && k.Tarih <= filtre.BitisTarihi.AddDays(1).AddSeconds(-1))
                 .ToListAsync();
 
@@ -516,7 +518,7 @@ namespace MuhasebeStokWebApp.Controllers
 
             // Cari alacak ve borç toplamları
             var cariHareketleri = await _context.CariHareketler
-                .Where(c => !c.SoftDelete)
+                .Where(c => !c.Silindi)
                 .Where(c => c.Tarih >= filtre.BaslangicTarihi && c.Tarih <= filtre.BitisTarihi.AddDays(1).AddSeconds(-1))
                 .ToListAsync();
 

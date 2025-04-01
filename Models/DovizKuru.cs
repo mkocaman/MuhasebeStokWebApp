@@ -114,10 +114,10 @@ namespace MuhasebeStokWebApp.Models
         public string? Aciklama { get; set; }
 
         /// <summary>
-        /// Silinmiş
+        /// Silindi
         /// </summary>
-        [Display(Name = "Silinmiş")]
-        public bool SoftDelete { get; set; } = false;
+        [Display(Name = "Silindi")]
+        public bool Silindi { get; set; } = false;
 
         /// <summary>
         /// Oluşturma Tarihi

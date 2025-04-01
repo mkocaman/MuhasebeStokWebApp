@@ -847,14 +847,14 @@ namespace MuhasebeStokWebApp.Controllers
         }
         
         // Excel raporu için action
-        public async Task<IActionResult> StokRaporExcel(Guid? kategoriID = null, Guid? depoID = null, string stokDurumu = null)
+        public IActionResult StokRaporExcel(Guid? kategoriID = null, Guid? depoID = null, string stokDurumu = null)
         {
             // Excel raporu oluşturma işlemleri
             return RedirectToAction(nameof(StokRapor), new { kategoriID, depoID, stokDurumu });
         }
         
         // PDF raporu için action
-        public async Task<IActionResult> StokRaporPdf(Guid? kategoriID = null, Guid? depoID = null, string stokDurumu = null)
+        public IActionResult StokRaporPdf(Guid? kategoriID = null, Guid? depoID = null, string stokDurumu = null)
         {
             // PDF raporu oluşturma işlemleri
             return RedirectToAction(nameof(StokRapor), new { kategoriID, depoID, stokDurumu });
@@ -1088,7 +1088,7 @@ namespace MuhasebeStokWebApp.Controllers
             
             // Birimleri getir
             var birimler = await _unitOfWork.Repository<Birim>().GetAsync(
-                filter: b => b.SoftDelete == false && b.Aktif,
+                filter: b => b.Silindi == false && b.Aktif,
                 orderBy: q => q.OrderBy(b => b.BirimAdi)
             );
             
@@ -1115,7 +1115,7 @@ namespace MuhasebeStokWebApp.Controllers
             
             // Birimleri getir
             var birimler = await _unitOfWork.Repository<Birim>().GetAsync(
-                filter: b => b.SoftDelete == false && b.Aktif,
+                filter: b => b.Silindi == false && b.Aktif,
                 orderBy: q => q.OrderBy(b => b.BirimAdi)
             );
             

@@ -150,7 +150,7 @@ namespace MuhasebeStokWebApp.Controllers
             );
             
             // Aktif birimleri getir
-            var birimRepository = _unitOfWork.Repository<UrunBirim>();
+            var birimRepository = _unitOfWork.Repository<Birim>();
             var birimler = await birimRepository.GetAsync(
                 filter: b => b.Silindi == false && b.Aktif,
                 orderBy: q => q.OrderBy(b => b.BirimAdi)
@@ -160,17 +160,23 @@ namespace MuhasebeStokWebApp.Controllers
             ViewBag.Kategoriler = new SelectList(kategoriler, "KategoriID", "KategoriAdi");
             ViewBag.Birimler = new SelectList(birimler, "BirimID", "BirimAdi");
             
+            var model = new UrunCreateViewModel
+            {
+                Aktif = true
+            };
+            
             // AJAX isteğiyse partial view döndür
             if (Request.Headers["X-Requested-With"] == "XMLHttpRequest")
             {
-                return PartialView("_CreatePartial", new UrunCreateViewModel());
+                return PartialView("_CreateUrun", model);
             }
             
-            return View();
+            return View(model);
         }
 
         // Yeni ürün oluşturma işlemi
         [HttpPost]
+        [ValidateAntiForgeryToken]
         public async Task<IActionResult> Create(UrunCreateViewModel model)
         {
             try
@@ -203,57 +209,59 @@ namespace MuhasebeStokWebApp.Controllers
                         UrunKodu = model.UrunKodu,
                         UrunAdi = model.UrunAdi,
                         BirimID = model.BirimID,
-                        Aktif = model.Aktif,
                         KategoriID = model.KategoriID,
+                        KDVOrani = (int)model.KDVOrani,
+                        StokMiktar = model.StokMiktar,
+                        Aktif = model.Aktif,
                         OlusturmaTarihi = DateTime.Now,
-                        Silindi = false,
-                        StokMiktar = 0,
-                        KDVOrani = model.KDVOrani
+                        OlusturanKullaniciID = GetCurrentUserId()
                     };
-
+                    
                     // Ürünü veritabanına ekle
                     await urunRepository.AddAsync(urun);
                     await _unitOfWork.SaveAsync();
-            
-                    TempData["SuccessMessage"] = $"{model.UrunAdi} ürünü başarıyla eklendi. Stok girişini 'Stok Yönetimi > Stok Girişi' menüsünden yapabilirsiniz.";
-
-                    // AJAX isteği için başarılı sonuç döndür
+                    
+                    // Başarı durumunu don
                     if (Request.Headers["X-Requested-With"] == "XMLHttpRequest")
                     {
-                        return Json(new { success = true, message = $"{model.UrunAdi} ürünü başarıyla eklendi." });
+                        return Json(new { success = true, message = "Ürün başarıyla oluşturuldu." });
                     }
-
+                    
+                    TempData["SuccessMessage"] = "Ürün başarıyla oluşturuldu.";
                     return RedirectToAction(nameof(Index));
                 }
                 
-                // ModelState geçersizse dropdown listelerini tekrar doldur
+                // Hata durumunda dropdown listelerini tekrar doldur
                 await ListeleriDoldur(model.KategoriID, model.BirimID);
                 
-                // AJAX isteği için hata mesajları döndür
+                // AJAX isteği için hata mesajlarını döndür
                 if (Request.Headers["X-Requested-With"] == "XMLHttpRequest")
                 {
-                    return Json(new 
-                    { 
+                    return Json(new { 
                         success = false, 
-                        message = "Ürün eklenirken hatalar oluştu.", 
+                        message = "Ürün oluşturulurken hatalar oluştu.", 
                         errors = ModelState.Values.SelectMany(v => v.Errors).Select(e => e.ErrorMessage).ToList() 
                     });
                 }
                 
-                return View(model);
+                return PartialView("_CreateUrun", model);
             }
             catch (Exception ex)
             {
-                // Hata log
-                TempData["ErrorMessage"] = $"Ürün eklenirken bir hata oluştu: {ex.Message}";
+                // Hata log'u
+                await _logService.LogErrorAsync("UrunController.Create", $"Ürün oluşturulurken hata: {ex.Message}");
+                
+                // Hata durumunda dropdown listelerini tekrar doldur
+                await ListeleriDoldur(model.KategoriID, model.BirimID);
                 
                 // AJAX isteği için hata mesajı döndür
                 if (Request.Headers["X-Requested-With"] == "XMLHttpRequest")
                 {
-                    return Json(new { success = false, message = $"Ürün eklenirken bir hata oluştu: {ex.Message}" });
+                    return Json(new { success = false, message = "Ürün oluşturulurken bir hata oluştu: " + ex.Message });
                 }
                 
-                return RedirectToAction(nameof(Index));
+                ModelState.AddModelError("", "Ürün oluşturulurken beklenmeyen bir hata oluştu.");
+                return PartialView("_CreateUrun", model);
             }
         }
 
@@ -637,7 +645,7 @@ namespace MuhasebeStokWebApp.Controllers
         }
         
         // Dropdown listelerini doldur
-        private async Task ListeleriDoldur(Guid? kategoriID = null, int? birimID = null)
+        private async Task ListeleriDoldur(Guid? kategoriID = null, Guid? birimID = null)
         {
             var kategoriRepository = _unitOfWork.Repository<UrunKategori>();
             var kategoriler = await kategoriRepository.GetAsync(
@@ -645,7 +653,7 @@ namespace MuhasebeStokWebApp.Controllers
                 orderBy: q => q.OrderBy(k => k.KategoriAdi)
             );
             
-            var birimRepository = _unitOfWork.Repository<UrunBirim>();
+            var birimRepository = _unitOfWork.Repository<Birim>();
             var birimler = await birimRepository.GetAsync(
                 filter: b => b.Silindi == false && b.Aktif,
                 orderBy: q => q.OrderBy(b => b.BirimAdi)

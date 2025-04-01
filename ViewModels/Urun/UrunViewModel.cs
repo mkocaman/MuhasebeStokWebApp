@@ -22,6 +22,9 @@ namespace MuhasebeStokWebApp.ViewModels.Urun
         [Display(Name = "Birim")]
         public string Birim { get; set; }
         
+        [Display(Name = "Birim ID")]
+        public Guid? BirimID { get; set; }
+        
         [Display(Name = "Stok Miktarı")]
         public decimal StokMiktar { get; set; }
         

@@ -1,194 +1,244 @@
-@model MuhasebeStokWebApp.ViewModels.Cari.CariDetailViewModel
+@model MuhasebeStokWebApp.Data.Entities.Cari
 @{
-    ViewData["Title"] = "Cari Detayı";
+    ViewData["Title"] = "Cari Detayları";
     Layout = "~/Views/Shared/_Layout.cshtml";
+    
+    string paraBirimiSembol = "₺";
+    if (Model.VarsayilanParaBirimiId.HasValue && ViewBag.ParaBirimleri != null)
+    {
+        foreach (var pb in ViewBag.ParaBirimleri)
+        {
+            if (pb.ParaBirimiID == Model.VarsayilanParaBirimiId)
+            {
+                paraBirimiSembol = pb.Sembol;
+                break;
+            }
+        }
+    }
 }
+
+<div class="container-fluid">
+    <div class="page-header">
+        <div class="row">
+            <div class="col">
+                <div class="page-header-left">
+                    <h3>Cari Detayları</h3>
+                    <ol class="breadcrumb">
+                        <li class="breadcrumb-item"><a href="/Home"><i class="fa fa-home"></i></a></li>
+                        <li class="breadcrumb-item"><a href="@Url.Action("Index")">Cariler</a></li>
+                        <li class="breadcrumb-item active">Cari Detayları</li>
+                    </ol>
+                </div>
+            </div>
+            <div class="col">
+                <div class="float-end">
+                    <a href="@Url.Action("Edit", new { id = Model.Id })" class="btn btn-primary">
+                        <i class="fa fa-edit"></i> Düzenle
+                    </a>
+                    <a href="@Url.Action("Ekstre", new { id = Model.Id })" class="btn btn-info">
+                        <i class="fa fa-file-alt"></i> Ekstre
+                    </a>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
 
 <div class="container-fluid">
     <div class="row">
         <!-- Cari Bilgileri -->
-        <div class="col-xl-4 col-md-12 box-col-12">
+        <div class="col-xl-4 col-lg-5 col-md-12 mx-auto">
             <div class="card">
-                <div class="card-header bg-primary text-white">
-                    <div class="d-flex justify-content-between align-items-center">
-                        <h5 class="mb-0">Cari Bilgileri</h5>
-                        <div>
-                            <button type="button" class="btn btn-info btn-sm edit-cari" data-id="@Model.CariID">
-                                <i class="fas fa-edit"></i> Düzenle
-                            </button>
-                            <a asp-controller="Cari" asp-action="Ekstre" asp-route-id="@Model.CariID" class="btn btn-light btn-sm">
-                                <i class="fas fa-file-alt"></i> Hesap Ekstresi
-                            </a>
-                        </div>
-                    </div>
+                <div class="card-header bg-primary">
+                    <h5 class="text-white mb-0">Cari Bilgileri</h5>
                 </div>
                 <div class="card-body">
-                    <div class="row">
-                        <div class="col-12 mb-3">
-                            <h4 class="fw-bold">@Model.CariAdi</h4>
-                            <span class="@(Model.Bakiye >= 0 ? "badge bg-success" : "badge bg-danger") fs-6">
-                                Bakiye: @Model.Bakiye.ToString("N2") ₺
-                            </span>
-                            <span class="@(Model.Aktif ? "badge bg-success" : "badge bg-danger") fs-6 ms-2">
-                                @(Model.Aktif ? "Aktif" : "Pasif")
-                            </span>
-                        </div>
-                    </div>
-                    <div class="row">
-                        <div class="col-sm-6 col-md-12 col-lg-6">
-                            <div class="mb-3">
-                                <h6 class="fw-bold">Vergi No</h6>
-                                <p>@(string.IsNullOrEmpty(Model.VergiNo) ? "-" : Model.VergiNo)</p>
-                            </div>
-                        </div>
-                        <div class="col-sm-6 col-md-12 col-lg-6">
-                            <div class="mb-3">
-                                <h6 class="fw-bold">Telefon</h6>
-                                <p>@(string.IsNullOrEmpty(Model.Telefon) ? "-" : Model.Telefon)</p>
-                            </div>
-                        </div>
-                        <div class="col-sm-6 col-md-12 col-lg-6">
-                            <div class="mb-3">
-                                <h6 class="fw-bold">E-posta</h6>
-                                <p>@(string.IsNullOrEmpty(Model.Email) ? "-" : Model.Email)</p>
-                            </div>
-                        </div>
-                        <div class="col-sm-6 col-md-12 col-lg-6">
-                            <div class="mb-3">
-                                <h6 class="fw-bold">Yetkili</h6>
-                                <p>@(string.IsNullOrEmpty(Model.Yetkili) ? "-" : Model.Yetkili)</p>
-                            </div>
-                        </div>
+                    <div class="row justify-content-center">
                         <div class="col-12">
-                            <div class="mb-3">
-                                <h6 class="fw-bold">Adres</h6>
-                                <p>@(string.IsNullOrEmpty(Model.Adres) ? "-" : Model.Adres)</p>
+                            <div class="cari-title mb-4">
+                                <h3 class="d-flex justify-content-between">
+                                    @Model.Ad
+                                    <span class="badge @(Model.AktifMi ? "bg-success" : "bg-danger")">
+                                        @(Model.AktifMi ? "Aktif" : "Pasif")
+                                    </span>
+                                </h3>
+                                <h5 class="d-flex justify-content-between">
+                                    <span>Bakiye</span>
+                                    <span class="@(Model.BaslangicBakiye >= 0 ? "text-success" : "text-danger")">
+                                        @Model.BaslangicBakiye.ToString("N2") @paraBirimiSembol
+                                    </span>
+                                </h5>
                             </div>
-                        </div>
-                        <div class="col-12">
-                            <div class="mb-3">
-                                <h6 class="fw-bold">Açıklama</h6>
-                                <p>@(string.IsNullOrEmpty(Model.Aciklama) ? "-" : Model.Aciklama)</p>
+                            
+                            <div class="cari-details">
+                                <table class="table table-bordered">
+                                    <tbody>
+                                        <tr>
+                                            <th width="35%">Cari Tipi</th>
+                                            <td>@Model.CariTipi</td>
+                                        </tr>
+                                        <tr>
+                                            <th>Cari Kodu</th>
+                                            <td>@Model.CariKodu</td>
+                                        </tr>
+                                        <tr>
+                                            <th>Vergi No</th>
+                                            <td>@(string.IsNullOrEmpty(Model.VergiNo) ? "-" : Model.VergiNo)</td>
+                                        </tr>
+                                        <tr>
+                                            <th>Vergi Dairesi</th>
+                                            <td>@(string.IsNullOrEmpty(Model.VergiDairesi) ? "-" : Model.VergiDairesi)</td>
+                                        </tr>
+                                        <tr>
+                                            <th>Telefon</th>
+                                            <td>@(string.IsNullOrEmpty(Model.Telefon) ? "-" : Model.Telefon)</td>
+                                        </tr>
+                                        <tr>
+                                            <th>E-posta</th>
+                                            <td>@(string.IsNullOrEmpty(Model.Email) ? "-" : Model.Email)</td>
+                                        </tr>
+                                        <tr>
+                                            <th>Yetkili</th>
+                                            <td>@(string.IsNullOrEmpty(Model.Yetkili) ? "-" : Model.Yetkili)</td>
+                                        </tr>
+                                        <tr>
+                                            <th>Adres</th>
+                                            <td>@(string.IsNullOrEmpty(Model.Adres) ? "-" : Model.Adres)</td>
+                                        </tr>
+                                        <tr>
+                                            <th>Para Birimi</th>
+                                            <td>
+                                                @{
+                                                    bool paraBirimiFound = false;
+                                                    
+                                                    if (Model.VarsayilanParaBirimiId.HasValue && ViewBag.ParaBirimleri != null)
+                                                    {
+                                                        foreach (var pb in ViewBag.ParaBirimleri)
+                                                        {
+                                                            if (pb.ParaBirimiID == Model.VarsayilanParaBirimiId)
+                                                            {
+                                                                @($"{pb.Kod} - {pb.Ad} ({pb.Sembol})")
+                                                                paraBirimiFound = true;
+                                                                break;
+                                                            }
+                                                        }
+                                                    }
+                                                    
+                                                    if (!paraBirimiFound)
+                                                    {
+                                                        @:Ana Para Birimi (UZS)
+                                                    }
+                                                }
+                                            </td>
+                                        </tr>
+                                        <tr>
+                                            <th>Varsayılan Kur</th>
+                                            <td>
+                                                @(Model.VarsayilanKurKullan ? "Varsayılan kur kullanılıyor" : "Güncel kur kullanılıyor")
+                                            </td>
+                                        </tr>
+                                        <tr>
+                                            <th>Oluşturma Tarihi</th>
+                                            <td>@Model.OlusturmaTarihi.ToString("dd.MM.yyyy HH:mm")</td>
+                                        </tr>
+                                        @if (Model.GuncellemeTarihi.HasValue)
+                                        {
+                                            <tr>
+                                                <th>Güncelleme Tarihi</th>
+                                                <td>@Model.GuncellemeTarihi.Value.ToString("dd.MM.yyyy HH:mm")</td>
+                                            </tr>
+                                        }
+                                    </tbody>
+                                </table>
                             </div>
-                        </div>
-                        <div class="col-sm-6 col-md-12 col-lg-6">
-                            <div class="mb-3">
-                                <h6 class="fw-bold">Oluşturma Tarihi</h6>
-                                <p>@string.Format("{0:dd.MM.yyyy HH:mm}", Model.OlusturmaTarihi)</p>
-                            </div>
-                        </div>
-                        <div class="col-sm-6 col-md-12 col-lg-6">
-                            <div class="mb-3">
-                                <h6 class="fw-bold">Güncelleme Tarihi</h6>
-                                <p>@(Model.GuncellemeTarihi.HasValue ? Model.GuncellemeTarihi.Value.ToString("dd.MM.yyyy HH:mm") : "-")</p>
-                            </div>
-                        </div>
-                    </div>
-                </div>
-                <div class="card-footer">
-                    <div class="d-flex justify-content-between">
-                        <a asp-action="Index" class="btn btn-secondary">
-                            <i class="fas fa-arrow-left"></i> Listeye Dön
-                        </a>
-                        <div>
-                            <a asp-controller="SistemLog" asp-action="CariLogs" asp-route-cariId="@Model.CariID" class="btn btn-info me-2">
-                                <i class="fas fa-history"></i> İşlem Logları
-                            </a>
-                            <a asp-action="Edit" asp-route-id="@Model.CariID" class="btn btn-primary">
-                                <i class="fas fa-edit"></i> Düzenle
-                            </a>
                         </div>
                     </div>
                 </div>
             </div>
         </div>
-
-        <!-- Cari Hareketleri ve Faturalar -->
-        <div class="col-xl-8 col-md-12 box-col-12">
-            <!-- Cari Hareketleri -->
+        
+        <!-- Cari Hareketleri -->
+        <div class="col-xl-8 col-lg-7 col-md-12">
             <div class="card">
-                <div class="card-header bg-primary text-white">
+                <div class="card-header bg-primary">
                     <div class="d-flex justify-content-between align-items-center">
-                        <h5 class="mb-0">Cari Hareketleri</h5>
-                        <div class="dropdown">
-                            <button type="button" class="btn btn-success btn-sm dropdown-toggle" id="btnAddHareket" data-bs-toggle="dropdown" aria-expanded="false">
-                                <i class="fas fa-plus"></i> Yeni Hareket
-                            </button>
-                            <ul class="dropdown-menu dropdown-menu-end" aria-labelledby="btnAddHareket">
-                                <li><a class="dropdown-item" href="javascript:void(0);" id="btnCariHareketEkle"><i class="fas fa-exchange-alt"></i> Cari Hareket Ekle</a></li>
-                                <li><a class="dropdown-item" href="@Url.Action("Create", "KasaHareket", new { cariId = Model.CariID })"><i class="fas fa-money-bill-wave"></i> Kasa Hareketi Ekle</a></li>
-                                <li><a class="dropdown-item" href="@Url.Action("Create", "BankaHareket", new { cariId = Model.CariID })"><i class="fas fa-university"></i> Banka Hareketi Ekle</a></li>
-                            </ul>
+                        <h5 class="text-white mb-0">Son Hareketler</h5>
+                        <div>
+                            <div class="btn-group">
+                                <a href="@Url.Action("Ekstre", new { id = Model.Id })" class="btn btn-info btn-sm">
+                                    <i class="fa fa-file-alt"></i> Tüm Hareketler
+                                </a>
+                                <div class="btn-group ms-2">
+                                    <button type="button" class="btn btn-success btn-sm dropdown-toggle" data-bs-toggle="dropdown" aria-expanded="false">
+                                        <i class="fa fa-plus"></i> Hareket Ekle
+                                    </button>
+                                    <ul class="dropdown-menu dropdown-menu-end">
+                                        <li><a class="dropdown-item" href="@Url.Action("HareketEkle", new { id = Model.Id })">
+                                            <i class="fa fa-money-bill-alt"></i> Cari Hareketi Ekle
+                                        </a></li>
+                                        <li><a class="dropdown-item" href="@Url.Action("YeniHareket", "Banka", new { cariId = Model.Id })">
+                                            <i class="fa fa-university"></i> Banka Hareketi Ekle
+                                        </a></li>
+                                        <li><a class="dropdown-item" href="@Url.Action("YeniHareket", "Kasa", new { cariId = Model.Id })">
+                                            <i class="fa fa-cash-register"></i> Kasa Hareketi Ekle
+                                        </a></li>
+                                    </ul>
+                                </div>
+                            </div>
                         </div>
                     </div>
                 </div>
                 <div class="card-body">
-                    <div class="table-responsive">
-                        <table class="table table-bordered table-hover" id="hareketTable">
-                            <thead class="table-light">
-                                <tr>
-                                    <th>Tarih</th>
-                                    <th>İşlem Türü</th>
-                                    <th>Tutar</th>
-                                    <th>Açıklama</th>
-                                    <th>Evrak No</th>
-                                </tr>
-                            </thead>
-                            <tbody>
-                                @if (Model.CariHareketleri != null && Model.CariHareketleri.Any())
-                                {
-                                    foreach (var hareket in Model.CariHareketleri)
-                                    {
-                                        <tr>
-                                            <td>@string.Format("{0:dd.MM.yyyy}", hareket.Tarih)</td>
-                                            <td>
-                                                @if (hareket.HareketTuru == "Tahsilat" || hareket.HareketTuru == "Alacak")
-                                                {
-                                                    <span class="badge bg-success">@hareket.HareketTuru</span>
-                                                }
-                                                else if (hareket.HareketTuru == "Ödeme" || hareket.HareketTuru == "Borç")
-                                                {
-                                                    <span class="badge bg-danger">@hareket.HareketTuru</span>
-                                                }
-                                                else
-                                                {
-                                                    <span class="badge bg-info">@hareket.HareketTuru</span>
-                                                }
-                                            </td>
-                                            <td class="text-end @(hareket.HareketTuru == "Tahsilat" || hareket.HareketTuru == "Alacak" ? "text-success" : "text-danger")">
-                                                @string.Format("{0:N2}", hareket.Tutar) ₺
-                                            </td>
-                                            <td>@hareket.Aciklama</td>
-                                            <td>@hareket.EvrakNo</td>
-                                        </tr>
-                                    }
-                                }
-                                else
+                    <table class="table table-bordered table-striped" id="hareketlerTablosu">
+                        <thead>
+                            <tr>
+                                <th>Tarih</th>
+                                <th>İşlem Türü</th>
+                                <th>Tutar</th>
+                                <th>Açıklama</th>
+                            </tr>
+                        </thead>
+                        <tbody>
+                            @if (Model.CariHareketler != null && Model.CariHareketler.Any())
+                            {
+                                foreach (var hareket in Model.CariHareketler.OrderByDescending(h => h.Tarih).Take(10))
                                 {
                                     <tr>
-                                        <td colspan="5" class="text-center">Cari hareket bulunamadı.</td>
+                                        <td>@hareket.Tarih.ToString("dd.MM.yyyy HH:mm")</td>
+                                        <td>@hareket.HareketTuru</td>
+                                        <td class="text-end @(hareket.Alacak > 0 ? "text-success" : "text-danger")">
+                                            @((hareket.Alacak > 0 ? hareket.Alacak : hareket.Borc).ToString("N2")) @paraBirimiSembol
+                                        </td>
+                                        <td>@hareket.Aciklama</td>
                                     </tr>
                                 }
-                            </tbody>
-                        </table>
-                    </div>
+                            }
+                            else
+                            {
+                                <tr>
+                                    <td colspan="4" class="text-center">Henüz hareket bulunmuyor.</td>
+                                </tr>
+                            }
+                        </tbody>
+                    </table>
                 </div>
             </div>
-
+            
             <!-- Son Faturalar -->
             <div class="card mt-4">
-                <div class="card-header bg-primary text-white">
+                <div class="card-header bg-primary">
                     <div class="d-flex justify-content-between align-items-center">
-                        <h5 class="mb-0">Son Faturalar</h5>
-                        <a asp-controller="Fatura" asp-action="Create" asp-route-cariId="@Model.CariID" class="btn btn-success btn-sm">
-                            <i class="fas fa-plus"></i> Yeni Fatura
+                        <h5 class="text-white mb-0">Son Faturalar</h5>
+                        <a href="@Url.Action("Create", "Fatura", new { cariId = Model.Id })" class="btn btn-light btn-sm">
+                            <i class="fa fa-plus"></i> Yeni Fatura
                         </a>
                     </div>
                 </div>
                 <div class="card-body">
-                    <div class="table-responsive">
-                        <table class="table table-bordered table-hover" id="faturaTable">
-                            <thead class="table-light">
+                    @if (Model.SonFaturalar != null && Model.SonFaturalar.Any())
+                    {
+                        <table class="table table-bordered table-striped" id="faturalarTablosu">
+                            <thead>
                                 <tr>
                                     <th>Fatura No</th>
                                     <th>Fatura Tarihi</th>
@@ -199,50 +249,103 @@
                                 </tr>
                             </thead>
                             <tbody>
-                                @if (Model.SonFaturalar != null && Model.SonFaturalar.Any())
+                                @foreach (var faturaObj in Model.SonFaturalar)
                                 {
-                                    foreach (var fatura in Model.SonFaturalar)
-                                    {
-                                        <tr>
-                                            <td>@fatura.FaturaNumarasi</td>
-                                            <td>@string.Format("{0:dd.MM.yyyy}", fatura.FaturaTarihi)</td>
-                                            <td>@(fatura.VadeTarihi.HasValue ? string.Format("{0:dd.MM.yyyy}", fatura.VadeTarihi.Value) : "-")</td>
-                                            <td>@fatura.FaturaTuru</td>
-                                            <td class="text-end">@string.Format("{0:N2}", fatura.GenelToplam) ₺</td>
-                                            <td class="text-center">
-                                                <a asp-controller="Fatura" asp-action="Details" asp-route-id="@fatura.FaturaID" class="btn btn-sm btn-info">
-                                                    <i class="fas fa-eye"></i>
-                                                </a>
-                                            </td>
-                                        </tr>
-                                    }
-                                }
-                                else
-                                {
+                                    var fatura = (MuhasebeStokWebApp.Data.Entities.Fatura)faturaObj;
                                     <tr>
-                                        <td colspan="6" class="text-center">Fatura bulunamadı.</td>
+                                        <td>@fatura.FaturaNumarasi</td>
+                                        <td>@(fatura.FaturaTarihi.HasValue ? fatura.FaturaTarihi.Value.ToString("dd.MM.yyyy") : "-")</td>
+                                        <td>@(fatura.VadeTarihi.HasValue ? fatura.VadeTarihi.Value.ToString("dd.MM.yyyy") : "-")</td>
+                                        <td>@(fatura.FaturaTuru != null ? fatura.FaturaTuru.FaturaTuruAdi : "-")</td>
+                                        <td class="text-end">@(fatura.GenelToplam.HasValue ? fatura.GenelToplam.Value.ToString("N2") + " ₺" : "-")</td>
+                                        <td class="text-center">
+                                            <a href="@Url.Action("Details", "Fatura", new { id = fatura.FaturaID })" class="btn btn-info btn-sm">
+                                                <i class="fa fa-eye"></i>
+                                            </a>
+                                        </td>
                                     </tr>
                                 }
                             </tbody>
                         </table>
-                    </div>
+                    }
+                    else
+                    {
+                        <div class="alert alert-info">Bu cariye ait fatura bulunmamaktadır.</div>
+                    }
                 </div>
             </div>
         </div>
     </div>
 </div>
 
-<!-- Cari Düzenleme Modal -->
-<div class="modal fade" id="editCariModal" tabindex="-1" aria-labelledby="editCariModalLabel" aria-hidden="true">
-    <div class="modal-dialog modal-lg">
+<div class="container-fluid mt-4">
+    <div class="row">
+        <div class="col-12 text-end">
+            <a href="@Url.Action("Index")" class="btn btn-secondary">
+                <i class="fa fa-arrow-left"></i> Listeye Dön
+            </a>
+            <a href="@Url.Action("Edit", new { id = Model.Id })" class="btn btn-primary">
+                <i class="fa fa-edit"></i> Düzenle
+            </a>
+            <a href="@Url.Action("Ekstre", new { id = Model.Id })" class="btn btn-info">
+                <i class="fa fa-file-alt"></i> Ekstre
+            </a>
+            <a href="@Url.Action("Delete", new { id = Model.Id })" class="btn btn-danger">
+                <i class="fa fa-trash"></i> Sil
+            </a>
+        </div>
+    </div>
+</div>
+
+<!-- Hareket Ekle Modal -->
+<div class="modal fade" id="hareketEkleModal" tabindex="-1" aria-labelledby="hareketEkleModalLabel" aria-hidden="true">
+    <div class="modal-dialog">
         <div class="modal-content">
-            <div id="editCariModalContent">
-                <!-- Partial view içeriği buraya yüklenecek -->
-                <div class="modal-body text-center">
-                    <div class="spinner-border text-primary" role="status">
-                        <span class="visually-hidden">Yükleniyor...</span>
+            <div class="modal-header bg-primary text-white">
+                <h5 class="modal-title" id="hareketEkleModalLabel">Yeni Hareket Ekle</h5>
+                <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Kapat"></button>
+            </div>
+            <div class="modal-body">
+                <form id="hareketEkleForm" action="@Url.Action("HareketEkle")" method="post">
+                    <input type="hidden" name="CariId" value="@Model.Id" />
+                    <input type="hidden" name="CariAdi" value="@Model.Ad" />
+                    
+                    <div class="mb-3">
+                        <label for="HareketTuru" class="form-label">Hareket Türü</label>
+                        <select class="form-select" id="HareketTuru" name="HareketTuru" required>
+                            <option value="">Seçiniz</option>
+                            <option value="Tahsilat">Tahsilat</option>
+                            <option value="Ödeme">Ödeme</option>
+                            <option value="Alacak">Alacak</option>
+                            <option value="Borç">Borç</option>
+                        </select>
                     </div>
-                </div>
+                    
+                    <div class="mb-3">
+                        <label for="Tutar" class="form-label">Tutar</label>
+                        <input type="number" class="form-control" id="Tutar" name="Tutar" step="0.01" min="0.01" required />
+                    </div>
+                    
+                    <div class="mb-3">
+                        <label for="Tarih" class="form-label">Tarih</label>
+                        <input type="date" class="form-control" id="Tarih" name="Tarih" value="@DateTime.Now.ToString("yyyy-MM-dd")" required />
+                    </div>
+                    
+                    <div class="mb-3">
+                        <label for="Aciklama" class="form-label">Açıklama</label>
+                        <textarea class="form-control" id="Aciklama" name="Aciklama" rows="3"></textarea>
+                    </div>
+                    
+                    <div class="mb-3">
+                        <label for="ReferansNo" class="form-label">Referans No</label>
+                        <input type="text" class="form-control" id="ReferansNo" name="ReferansNo" />
+                    </div>
+                    
+                    <div class="text-end">
+                        <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">İptal</button>
+                        <button type="submit" class="btn btn-primary">Kaydet</button>
+                    </div>
+                </form>
             </div>
         </div>
     </div>
@@ -251,87 +354,44 @@
 @section Scripts {
     <script>
         $(document).ready(function() {
-            // DataTable uyarılarını gizle
-            $.fn.dataTable.ext.errMode = 'none';
-            
-            // DataTable başlatma - Hareketler
-            try {
-                $('#hareketTable').DataTable({
-                    language: {
-                        url: '//cdn.datatables.net/plug-ins/1.13.7/i18n/tr.json',
-                        info: "" // Bilgilendirme yazısını kaldır (çift görünme sorununu çözmek için)
-                    },
-                    responsive: true,
-                    order: [[0, 'desc']],
-                    retrieve: true
-                });
-            } catch (e) {
-                console.log("Hareketler tablosu başlatılırken bir hata oluştu, ancak işlem devam ediyor.");
-            }
-            
-            // DataTable başlatma - Faturalar
-            try {
-                $('#faturaTable').DataTable({
-                    language: {
-                        url: '//cdn.datatables.net/plug-ins/1.13.7/i18n/tr.json',
-                        info: "" // Bilgilendirme yazısını kaldır (çift görünme sorununu çözmek için)
-                    },
-                    responsive: true,
-                    order: [[1, 'desc']],
-                    retrieve: true
-                });
-            } catch (e) {
-                console.log("Faturalar tablosu başlatılırken bir hata oluştu, ancak işlem devam ediyor.");
-            }
-            
-            // Düzenleme Modal açıldığında
-            $(document).on('click', '.edit-cari', function() {
-                var id = $(this).data('id');
-                $.ajax({
-                    url: '@Url.Action("Edit", "Cari")/' + id,
-                    type: 'GET',
-                    success: function(result) {
-                        $('#editCariModalContent').html(result);
-                        $('#editCariModal').modal('show');
-                    },
-                    error: function() {
-                        alert('Form yüklenirken bir hata oluştu.');
-                    }
-                });
+            // DataTable başlatma
+            $('#hareketlerTablosu').DataTable({
+                language: {
+                    url: '//cdn.datatables.net/plug-ins/1.13.7/i18n/tr.json'
+                },
+                responsive: true,
+                order: [[0, 'desc']],
+                pageLength: 10
             });
             
-            // Düzenleme Form Submit
-            $(document).on('submit', '#editCariForm', function(e) {
+            // Faturalar tablosu
+            $('#faturalarTablosu').DataTable({
+                language: {
+                    url: '//cdn.datatables.net/plug-ins/1.13.7/i18n/tr.json'
+                },
+                responsive: true,
+                order: [[1, 'desc']],
+                pageLength: 5
+            });
+            
+            // Form gönderimi
+            $('#hareketEkleForm').submit(function(e) {
                 e.preventDefault();
                 
-                var id = $('#editCariForm input[name="CariID"]').val();
-                
                 $.ajax({
-                    url: '@Url.Action("Edit", "Cari")/' + id,
+                    url: $(this).attr('action'),
                     type: 'POST',
                     data: $(this).serialize(),
                     success: function(result) {
                         if (result.success) {
-                            $('#editCariModal').modal('hide');
+                            $('#hareketEkleModal').modal('hide');
                             window.location.reload();
                         } else {
-                            $('#editCariModalContent').html(result);
+                            alert('Hareket eklenirken bir hata oluştu.');
                         }
                     },
                     error: function() {
                         alert('İşlem sırasında bir hata oluştu.');
-                    }
-                });
-            });
-            
-            // Yeni Hareket Ekleme
-            $('#btnCariHareketEkle').click(function() {
-                $.ajax({
-                    url: '@Url.Action("HareketEkle", "Cari", new { id = Model.CariID })',
-                    type: 'GET',
-                    success: function(result) {
-                        $('#modalContainer .modal-content').html(result);
-                        $('#modalContainer').modal('show');
                     }
                 });
             });

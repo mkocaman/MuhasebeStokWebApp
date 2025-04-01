@@ -19,10 +19,10 @@ namespace MuhasebeStokWebApp.Data.Entities
         public string UrunAdi { get; set; } = string.Empty;
         
         // Birim ilişkisi
-        public int? BirimID { get; set; }
+        public Guid? BirimID { get; set; }
         
         [ForeignKey("BirimID")]
-        public virtual UrunBirim? Birim { get; set; }
+        public virtual Birim? Birim { get; set; }
         
         public decimal StokMiktar { get; set; }
         

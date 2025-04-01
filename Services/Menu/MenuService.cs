@@ -11,6 +11,7 @@ using MuhasebeStokWebApp.Services;
 using MuhasebeStokWebApp.ViewModels.Menu;
 using MuhasebeStokWebApp.Services.Interfaces;
 using Microsoft.Extensions.Logging;
+using Microsoft.Data.SqlClient;
 
 namespace MuhasebeStokWebApp.Services.Menu
 {
@@ -340,62 +341,29 @@ namespace MuhasebeStokWebApp.Services.Menu
                     _logger.LogWarning(ex, "Mevcut menüleri temizlerken hata oluştu, işleme devam ediliyor: {Message}", ex.Message);
                 }
 
-                await _logService.LogInfoAsync("MenuService.InitDefaultMenusAsync", "Varsayılan menüler oluşturuluyor...");
+                try 
+                {
+                    await _logService.LogInfoAsync("MenuService.InitDefaultMenusAsync", "Varsayılan menüler oluşturuluyor...");
+                } 
+                catch (Exception logEx)
+                {
+                    // Log hatası olsa bile işleme devam et
+                    _logger.LogWarning(logEx, "Log kaydetme işlemi sırasında hata oluştu, işleme devam ediliyor: {Message}", logEx.Message);
+                }
                 
                 // Admin rolünün ID'sini al
                 var adminRole = await _roleManager.FindByNameAsync("Admin");
                 if (adminRole == null)
                 {
-                    // Admin rolü yoksa oluştur
-                    adminRole = new IdentityRole("Admin");
-                    var roleResult = await _roleManager.CreateAsync(adminRole);
-                    
-                    if (!roleResult.Succeeded)
-                    {
-                        var hata = "Admin rolü bulunamadı ve oluşturulamadı: " + string.Join(", ", roleResult.Errors.Select(e => e.Description));
-                        await _logService.LogErrorAsync("MenuService.InitDefaultMenusAsync", hata);
-                        throw new Exception(hata);
-                    }
-                    
-                    await _logService.LogInfoAsync("MenuService.InitDefaultMenusAsync", $"Admin rolü oluşturuldu. RolID: {adminRole.Id}");
-                }
-                else
-                {
-                    await _logService.LogInfoAsync("MenuService.InitDefaultMenusAsync", $"Admin rolü bulundu. RolID: {adminRole.Id}");
+                    _logger.LogError("Admin rolü bulunamadı");
+                    return false;
                 }
 
+                // Transaction içinde menüleri oluştur
                 using (var transaction = await _context.Database.BeginTransactionAsync())
                 {
                     try
                     {
-                        // Mevcut tüm menü rollerini sil
-                        await _logService.LogInfoAsync("MenuService.InitDefaultMenusAsync", "Mevcut tüm menü-rol ilişkileri siliniyor...");
-                        try 
-                        {
-                            await _context.Database.ExecuteSqlRawAsync("DELETE FROM \"MenuRoller\"");
-                        }
-                        catch (Exception ex)
-                        {
-                            await _logService.LogWarningAsync("MenuService.InitDefaultMenusAsync", 
-                                $"MenuRoller tablosundan veri silerken hata oluştu: {ex.Message}. İşleme devam ediliyor.");
-                        }
-                        
-                        // Mevcut tüm menüleri sil
-                        await _logService.LogInfoAsync("MenuService.InitDefaultMenusAsync", "Mevcut tüm menüler siliniyor...");
-                        try 
-                        {
-                            await _context.Database.ExecuteSqlRawAsync("DELETE FROM \"Menuler\"");
-                        }
-                        catch (Exception ex)
-                        {
-                            await _logService.LogWarningAsync("MenuService.InitDefaultMenusAsync", 
-                                $"Menuler tablosundan veri silerken hata oluştu: {ex.Message}. İşleme devam ediliyor.");
-                        }
-                        
-                        await _logService.LogInfoAsync("MenuService.InitDefaultMenusAsync", "Eski menüler başarıyla silindi, yeni menüler oluşturuluyor...");
-
-                        // Tüm menüleri önce oluşturalım
-
                         // 1. Ana Sayfa Menüsü
                         var dashboardMenu = CreateMenu(
                             "Dashboard", 
@@ -407,24 +375,13 @@ namespace MuhasebeStokWebApp.Services.Menu
                             "/Home/Index"
                         );
 
-                        // 2. Cariler Menüsü
-                        var carilerMenu = CreateMenu(
-                            "Cariler", 
-                            "fas fa-users", 
-                            "Cari", 
-                            "Index", 
-                            2, 
-                            null, 
-                            "/Cari/Index"
-                        );
-
-                        // 3. Stok Yönetimi Menüsü (Üst menü)
+                        // 2. Stok Yönetimi Menüsü (Üst menü)
                         var stokYonetimiMenu = CreateMenu(
                             "Stok Yönetimi", 
                             "fas fa-boxes", 
                             "", 
                             "", 
-                            3, 
+                            2, 
                             null, 
                             "#"
                         );
@@ -443,28 +400,105 @@ namespace MuhasebeStokWebApp.Services.Menu
                         var stokHareketleriMenu = CreateMenu(
                             "Stok Hareketleri", 
                             "fas fa-exchange-alt", 
-                            "StokHareket", 
+                            "Stok", 
                             "Index", 
                             2, 
                             stokYonetimiMenu.MenuID, 
-                            "/StokHareket/Index"
+                            "/Stok/Index"
                         );
 
-                        // 4. Faturalar Menüsü
-                        var faturalarMenu = CreateMenu(
-                            "Faturalar", 
-                            "fas fa-file-invoice", 
-                            "Fatura", 
+                        // Gerçekten mevcut olan kategori menüsü
+                        var kategoriMenu = CreateMenu(
+                            "Kategoriler",
+                            "fas fa-tags",
+                            "UrunKategori",
+                            "Index",
+                            3,
+                            stokYonetimiMenu.MenuID,
+                            "/UrunKategori/Index"
+                        );
+
+                        // Gerçekten mevcut olan depo menüsü
+                        var depoMenu = CreateMenu(
+                            "Depolar",
+                            "fas fa-warehouse",
+                            "Depo",
+                            "Index",
+                            4,
+                            stokYonetimiMenu.MenuID,
+                            "/Depo/Index"
+                        );
+
+                        // Birim menüsü
+                        var birimMenu = CreateMenu(
+                            "Birimler",
+                            "fas fa-ruler",
+                            "Birim",
+                            "Index",
+                            5,
+                            stokYonetimiMenu.MenuID,
+                            "/Birim/Index"
+                        );
+
+                        // Ürün Fiyat menüsü
+                        var urunFiyatMenu = CreateMenu(
+                            "Ürün Fiyatları",
+                            "fas fa-tag",
+                            "UrunFiyat",
+                            "Index",
+                            6,
+                            stokYonetimiMenu.MenuID,
+                            "/UrunFiyat/Index"
+                        );
+
+                        // 3. Cariler Menüsü
+                        var carilerMenu = CreateMenu(
+                            "Cariler", 
+                            "fas fa-users", 
+                            "Cari", 
                             "Index", 
+                            3, 
+                            null, 
+                            "/Cari/Index"
+                        );
+
+                        // 4. Faturalar Menüsü (Üst menü)
+                        var belgelerMenu = CreateMenu(
+                            "Belgeler", 
+                            "fas fa-file-invoice", 
+                            "", 
+                            "", 
                             4, 
                             null, 
+                            "#"
+                        );
+
+                        // Faturalar alt menüsü
+                        var faturalarMenu = CreateMenu(
+                            "Faturalar", 
+                            "fas fa-file-invoice-dollar", 
+                            "Fatura", 
+                            "Index", 
+                            1, 
+                            belgelerMenu.MenuID, 
                             "/Fatura/Index"
                         );
 
-                        // 5. Sistem Ayarları Menüsü
-                        var sistemAyarlariMenu = CreateMenu(
-                            "Sistem Ayarları", 
-                            "fas fa-cogs", 
+                        // İrsaliye alt menüsü
+                        var irsaliyeMenu = CreateMenu(
+                            "İrsaliyeler",
+                            "fas fa-truck-loading",
+                            "Irsaliye",
+                            "Index",
+                            2,
+                            belgelerMenu.MenuID,
+                            "/Irsaliye/Index"
+                        );
+
+                        // 5. Finans Menüsü (Üst menü)
+                        var finansMenu = CreateMenu(
+                            "Finans", 
+                            "fas fa-money-bill-wave", 
                             "", 
                             "", 
                             5, 
@@ -472,7 +506,139 @@ namespace MuhasebeStokWebApp.Services.Menu
                             "#"
                         );
 
-                        // Sistem Ayarları Alt Menüleri
+                        // Kasa alt menüsü
+                        var kasaMenu = CreateMenu(
+                            "Kasa", 
+                            "fas fa-cash-register", 
+                            "Kasa", 
+                            "Index", 
+                            1, 
+                            finansMenu.MenuID, 
+                            "/Kasa/Index"
+                        );
+
+                        // Banka alt menüsü
+                        var bankaMenu = CreateMenu(
+                            "Banka", 
+                            "fas fa-university", 
+                            "Banka", 
+                            "Index", 
+                            2, 
+                            finansMenu.MenuID, 
+                            "/Banka/Index"
+                        );
+
+                        // 6. Döviz Modülü (Üst menü)
+                        var dovizMenu = CreateMenu(
+                            "Döviz İşlemleri", 
+                            "fas fa-dollar-sign", 
+                            "", 
+                            "", 
+                            6, 
+                            null, 
+                            "#"
+                        );
+
+                        // Döviz işlemleri alt menüsü
+                        var dovizIslemMenu = CreateMenu(
+                            "Döviz Kurları", 
+                            "fas fa-exchange-alt", 
+                            "ParaBirimi", 
+                            "Kurlar", 
+                            1, 
+                            dovizMenu.MenuID, 
+                            "/ParaBirimi/Kurlar"
+                        );
+
+                        // Para Birimi modülü alt menüsü
+                        var paraBirimiMenu = CreateMenu(
+                            "Para Birimleri", 
+                            "fas fa-coins", 
+                            "ParaBirimi", 
+                            "Index", 
+                            2, 
+                            dovizMenu.MenuID, 
+                            "/ParaBirimi/Index"
+                        );
+
+                        // Para Birimi İlişkileri alt menüsü
+                        var paraBirimiIliskiMenu = CreateMenu(
+                            "Para Birimi İlişkileri", 
+                            "fas fa-link", 
+                            "ParaBirimi", 
+                            "Iliskiler", 
+                            3, 
+                            dovizMenu.MenuID, 
+                            "/ParaBirimi/Iliskiler"
+                        );
+
+                        // Kur Değerleri alt menüsü
+                        var kurDegeriMenu = CreateMenu(
+                            "Kur Değerleri", 
+                            "fas fa-chart-line", 
+                            "ParaBirimi", 
+                            "Kurlar", 
+                            4, 
+                            dovizMenu.MenuID, 
+                            "/ParaBirimi/Kurlar"
+                        );
+
+                        // 7. Raporlar Menüsü (Üst menü)
+                        var raporlarMenu = CreateMenu(
+                            "Raporlar", 
+                            "fas fa-chart-bar", 
+                            "", 
+                            "", 
+                            7, 
+                            null, 
+                            "#"
+                        );
+
+                        // Stok raporu alt menüsü
+                        var stokRaporMenu = CreateMenu(
+                            "Stok Raporu", 
+                            "fas fa-boxes", 
+                            "Stok", 
+                            "StokRapor", 
+                            1, 
+                            raporlarMenu.MenuID, 
+                            "/Stok/StokRapor"
+                        );
+
+                        // Satış raporu alt menüsü
+                        var satisRaporMenu = CreateMenu(
+                            "Satış Raporu", 
+                            "fas fa-chart-line", 
+                            "Rapor", 
+                            "SatisRapor", 
+                            2, 
+                            raporlarMenu.MenuID, 
+                            "/Rapor/SatisRapor"
+                        );
+
+                        // 8. Kullanıcı Yönetimi Menüsü 
+                        var kullaniciMenu = CreateMenu(
+                            "Kullanıcı Yönetimi", 
+                            "fas fa-users-cog", 
+                            "Kullanici", 
+                            "Index", 
+                            8, 
+                            null, 
+                            "/Kullanici/Index"
+                        );
+
+                        // 9. Sistem Ayarları Menüsü (Üst menü)
+                        var sistemAyarlariMenu = CreateMenu(
+                            "Sistem Ayarları", 
+                            "fas fa-cogs", 
+                            "", 
+                            "", 
+                            9, 
+                            null, 
+                            "#"
+                        );
+
+                        // Sistem ayarları alt menüleri
                         var menuYonetimMenu = CreateMenu(
                             "Menü Yönetimi", 
                             "fas fa-bars", 
@@ -483,17 +649,90 @@ namespace MuhasebeStokWebApp.Services.Menu
                             "/Menu/Index"
                         );
 
+                        var sistemLogMenu = CreateMenu(
+                            "Sistem Logları", 
+                            "fas fa-history", 
+                            "SistemLog", 
+                            "Index", 
+                            2, 
+                            sistemAyarlariMenu.MenuID, 
+                            "/SistemLog/Index"
+                        );
+
+                        var genelAyarlarMenu = CreateMenu(
+                            "Genel Ayarlar", 
+                            "fas fa-sliders-h", 
+                            "SistemAyar", 
+                            "Index", 
+                            3, 
+                            sistemAyarlariMenu.MenuID, 
+                            "/SistemAyar/Index"
+                        );
+
+                        var dilAyarlariMenu = CreateMenu(
+                            "Dil Ayarları", 
+                            "fas fa-language", 
+                            "Language", 
+                            "Index", 
+                            4, 
+                            sistemAyarlariMenu.MenuID, 
+                            "/Language/Index"
+                        );
+
+                        var bildirimAyarlariMenu = CreateMenu(
+                            "Bildirim Ayarları", 
+                            "fas fa-bell", 
+                            "SistemAyar", 
+                            "Bildirimler", 
+                            5, 
+                            sistemAyarlariMenu.MenuID, 
+                            "/SistemAyar/Bildirimler"
+                        );
+
+                        var dbYonetimMenu = CreateMenu(
+                            "Veritabanı Yönetimi", 
+                            "fas fa-database", 
+                            "DbInit", 
+                            "Index", 
+                            6, 
+                            sistemAyarlariMenu.MenuID, 
+                            "/DbInit/Index"
+                        );
+
                         // Tüm menüleri veritabanına ekle
                         var menuler = new List<Data.Entities.Menu>
                         {
                             dashboardMenu,
-                            carilerMenu,
                             stokYonetimiMenu,
                             urunlerMenu,
                             stokHareketleriMenu,
+                            kategoriMenu,
+                            depoMenu,
+                            birimMenu,
+                            urunFiyatMenu,
+                            carilerMenu,
+                            belgelerMenu,
                             faturalarMenu,
+                            irsaliyeMenu,
+                            finansMenu,
+                            kasaMenu,
+                            bankaMenu,
+                            dovizMenu,
+                            dovizIslemMenu,
+                            paraBirimiMenu,
+                            paraBirimiIliskiMenu,
+                            kurDegeriMenu,
+                            raporlarMenu,
+                            stokRaporMenu,
+                            satisRaporMenu,
+                            kullaniciMenu,
                             sistemAyarlariMenu,
-                            menuYonetimMenu
+                            menuYonetimMenu,
+                            sistemLogMenu,
+                            genelAyarlarMenu,
+                            dilAyarlariMenu,
+                            bildirimAyarlariMenu,
+                            dbYonetimMenu
                         };
 
                         foreach (var menu in menuler)
@@ -531,7 +770,15 @@ namespace MuhasebeStokWebApp.Services.Menu
                         // Transaction'ı onaylayarak işlemi tamamla
                         await transaction.CommitAsync();
                         
-                        await _logService.LogInfoAsync("MenuService.InitDefaultMenusAsync", "Varsayılan menüler başarıyla oluşturuldu!");
+                        try 
+                        {
+                            await _logService.LogInfoAsync("MenuService.InitDefaultMenusAsync", "Varsayılan menüler başarıyla oluşturuldu!");
+                        } 
+                        catch (Exception logEx)
+                        {
+                            // Log hatası olsa bile işlemi başarılı sayalım
+                            _logger.LogWarning(logEx, "Log kaydetme işlemi sırasında hata oluştu, ancak menüler başarıyla oluşturuldu: {Message}", logEx.Message);
+                        }
                         
                         return true;
                     }
@@ -555,14 +802,23 @@ namespace MuhasebeStokWebApp.Services.Menu
             }
             catch (Exception ex)
             {
-                string errorMessage = $"Varsayılan menüleri oluştururken beklenmeyen hata: {ex.Message}";
+                _logger.LogError(ex, "Varsayılan menüleri oluşturma işlemi başarısız oldu: {Message}", ex.Message);
+                
+                // İç hatayı da logla
                 if (ex.InnerException != null)
                 {
-                    errorMessage += $"\nİç Hata: {ex.InnerException.Message}";
+                    _logger.LogError(ex.InnerException, "İç hata: {Message}", ex.InnerException.Message);
                 }
                 
-                _logger.LogError(ex, "Varsayılan menüleri oluştururken beklenmeyen hata: {Message}", errorMessage);
-                await _logService.LogErrorAsync("MenuService.InitDefaultMenusAsync", errorMessage);
+                // Log servisinde hata olabileceği için try-catch içine al
+                try
+                {
+                    await _logService.LogErrorAsync("MenuService.InitDefaultMenusAsync", ex.Message + "\n" + ex.StackTrace);
+                }
+                catch (Exception logEx)
+                {
+                    _logger.LogWarning(logEx, "Hata log kaydı sırasında ikincil bir hata oluştu: {Message}", logEx.Message);
+                }
                 
                 return false;
             }
@@ -906,6 +1162,46 @@ namespace MuhasebeStokWebApp.Services.Menu
                 AltMenuler = new List<MenuViewModel>()
             });
             
+            // Yeni alt menüler
+            stokYonetimiMenu.AltMenuler.Add(new MenuViewModel
+            {
+                MenuID = Guid.NewGuid(),
+                Ad = "Kategoriler",
+                Controller = "Kategori",
+                Action = "Index",
+                AktifMi = true,
+                Sira = 3,
+                UstMenuID = stokYonetimiMenu.MenuID,
+                Url = "/Kategori/Index",
+                AltMenuler = new List<MenuViewModel>()
+            });
+            
+            stokYonetimiMenu.AltMenuler.Add(new MenuViewModel
+            {
+                MenuID = Guid.NewGuid(),
+                Ad = "Depolar",
+                Controller = "Depo",
+                Action = "Index",
+                AktifMi = true,
+                Sira = 4,
+                UstMenuID = stokYonetimiMenu.MenuID,
+                Url = "/Depo/Index",
+                AltMenuler = new List<MenuViewModel>()
+            });
+            
+            stokYonetimiMenu.AltMenuler.Add(new MenuViewModel
+            {
+                MenuID = Guid.NewGuid(),
+                Ad = "Birimler",
+                Controller = "Birim",
+                Action = "Index",
+                AktifMi = true,
+                Sira = 5,
+                UstMenuID = stokYonetimiMenu.MenuID,
+                Url = "/Birim/Index",
+                AltMenuler = new List<MenuViewModel>()
+            });
+            
             result.Add(stokYonetimiMenu);
             
             // Faturalar menüsü
@@ -922,6 +1218,316 @@ namespace MuhasebeStokWebApp.Services.Menu
                 AltMenuler = new List<MenuViewModel>()
             });
             
+            // Raporlar menüsü (üst menü)
+            var raporlarMenu = new MenuViewModel
+            {
+                MenuID = Guid.NewGuid(),
+                Ad = "Raporlar",
+                Icon = "fas fa-chart-bar",
+                AktifMi = true,
+                Sira = 5,
+                Url = "#",
+                AltMenuler = new List<MenuViewModel>()
+            };
+            
+            // Rapor alt menüleri
+            raporlarMenu.AltMenuler.Add(new MenuViewModel
+            {
+                MenuID = Guid.NewGuid(),
+                Ad = "Stok Raporu",
+                Controller = "Stok",
+                Action = "StokRapor",
+                AktifMi = true,
+                Sira = 1,
+                UstMenuID = raporlarMenu.MenuID,
+                Url = "/Stok/StokRapor",
+                AltMenuler = new List<MenuViewModel>()
+            });
+            
+            raporlarMenu.AltMenuler.Add(new MenuViewModel
+            {
+                MenuID = Guid.NewGuid(),
+                Ad = "Satış Raporu",
+                Controller = "Rapor",
+                Action = "SatisRapor",
+                AktifMi = true,
+                Sira = 2,
+                UstMenuID = raporlarMenu.MenuID,
+                Url = "/Rapor/SatisRapor",
+                AltMenuler = new List<MenuViewModel>()
+            });
+            
+            result.Add(raporlarMenu);
+            
+            // Kullanıcılar menüsü
+            result.Add(new MenuViewModel
+            {
+                MenuID = Guid.NewGuid(),
+                Ad = "Kullanıcılar",
+                Icon = "fas fa-users-cog",
+                Controller = "User",
+                Action = "Index",
+                AktifMi = true,
+                Sira = 6,
+                Url = "/User/Index",
+                AltMenuler = new List<MenuViewModel>()
+            });
+            
+            // Şirket Yönetimi menüsü
+            var sirketMenu = new MenuViewModel
+            {
+                MenuID = Guid.NewGuid(),
+                Ad = "Şirket Yönetimi",
+                Icon = "fas fa-building",
+                AktifMi = true,
+                Sira = 7,
+                Url = "#",
+                AltMenuler = new List<MenuViewModel>()
+            };
+            
+            // Şirket alt menüleri
+            sirketMenu.AltMenuler.Add(new MenuViewModel
+            {
+                MenuID = Guid.NewGuid(),
+                Ad = "Şirket Ayarları",
+                Controller = "Sirket",
+                Action = "Index",
+                AktifMi = true,
+                Sira = 1,
+                UstMenuID = sirketMenu.MenuID,
+                Url = "/Sirket/Index",
+                AltMenuler = new List<MenuViewModel>()
+            });
+            
+            sirketMenu.AltMenuler.Add(new MenuViewModel
+            {
+                MenuID = Guid.NewGuid(),
+                Ad = "Şubeler",
+                Controller = "Sube",
+                Action = "Index",
+                AktifMi = true,
+                Sira = 2,
+                UstMenuID = sirketMenu.MenuID,
+                Url = "/Sube/Index",
+                AltMenuler = new List<MenuViewModel>()
+            });
+            
+            sirketMenu.AltMenuler.Add(new MenuViewModel
+            {
+                MenuID = Guid.NewGuid(),
+                Ad = "Departmanlar",
+                Controller = "Departman",
+                Action = "Index",
+                AktifMi = true,
+                Sira = 3,
+                UstMenuID = sirketMenu.MenuID,
+                Url = "/Departman/Index",
+                AltMenuler = new List<MenuViewModel>()
+            });
+            
+            sirketMenu.AltMenuler.Add(new MenuViewModel
+            {
+                MenuID = Guid.NewGuid(),
+                Ad = "Personel",
+                Controller = "Personel",
+                Action = "Index",
+                AktifMi = true,
+                Sira = 4,
+                UstMenuID = sirketMenu.MenuID,
+                Url = "/Personel/Index",
+                AltMenuler = new List<MenuViewModel>()
+            });
+            
+            result.Add(sirketMenu);
+            
+            // Finans Yönetimi menüsü
+            var finansMenu = new MenuViewModel
+            {
+                MenuID = Guid.NewGuid(),
+                Ad = "Finans",
+                Icon = "fas fa-money-check-alt",
+                AktifMi = true,
+                Sira = 8,
+                Url = "#",
+                AltMenuler = new List<MenuViewModel>()
+            };
+            
+            // Finans alt menüleri
+            finansMenu.AltMenuler.Add(new MenuViewModel
+            {
+                MenuID = Guid.NewGuid(),
+                Ad = "Gelirler",
+                Controller = "Gelir",
+                Action = "Index",
+                AktifMi = true,
+                Sira = 1,
+                UstMenuID = finansMenu.MenuID,
+                Url = "/Gelir/Index",
+                AltMenuler = new List<MenuViewModel>()
+            });
+            
+            finansMenu.AltMenuler.Add(new MenuViewModel
+            {
+                MenuID = Guid.NewGuid(),
+                Ad = "Giderler",
+                Controller = "Gider",
+                Action = "Index",
+                AktifMi = true,
+                Sira = 2,
+                UstMenuID = finansMenu.MenuID,
+                Url = "/Gider/Index",
+                AltMenuler = new List<MenuViewModel>()
+            });
+            
+            finansMenu.AltMenuler.Add(new MenuViewModel
+            {
+                MenuID = Guid.NewGuid(),
+                Ad = "Kasa İşlemleri",
+                Controller = "Kasa",
+                Action = "Index",
+                AktifMi = true,
+                Sira = 3,
+                UstMenuID = finansMenu.MenuID,
+                Url = "/Kasa/Index",
+                AltMenuler = new List<MenuViewModel>()
+            });
+            
+            finansMenu.AltMenuler.Add(new MenuViewModel
+            {
+                MenuID = Guid.NewGuid(),
+                Ad = "Banka Hesapları",
+                Controller = "BankaHesap",
+                Action = "Index",
+                AktifMi = true,
+                Sira = 4,
+                UstMenuID = finansMenu.MenuID,
+                Url = "/BankaHesap/Index",
+                AltMenuler = new List<MenuViewModel>()
+            });
+            
+            finansMenu.AltMenuler.Add(new MenuViewModel
+            {
+                MenuID = Guid.NewGuid(),
+                Ad = "Ödemeler",
+                Controller = "Odeme",
+                Action = "Index",
+                AktifMi = true,
+                Sira = 5,
+                UstMenuID = finansMenu.MenuID,
+                Url = "/Odeme/Index",
+                AltMenuler = new List<MenuViewModel>()
+            });
+            
+            result.Add(finansMenu);
+            
+            // Döviz İşlemleri menüsü
+            var dovizMenu = new MenuViewModel
+            {
+                MenuID = Guid.NewGuid(),
+                Ad = "Döviz İşlemleri",
+                Icon = "fas fa-dollar-sign",
+                AktifMi = true,
+                Sira = 9,
+                Url = "#",
+                AltMenuler = new List<MenuViewModel>()
+            };
+            
+            // Döviz İşlemleri alt menüleri
+            dovizMenu.AltMenuler.Add(new MenuViewModel
+            {
+                MenuID = Guid.NewGuid(),
+                Ad = "Döviz Kurları",
+                Controller = "ParaBirimi",
+                Action = "Kurlar",
+                AktifMi = true,
+                Sira = 1,
+                UstMenuID = dovizMenu.MenuID,
+                Url = "/ParaBirimi/Kurlar",
+                AltMenuler = new List<MenuViewModel>()
+            });
+            
+            dovizMenu.AltMenuler.Add(new MenuViewModel
+            {
+                MenuID = Guid.NewGuid(),
+                Ad = "Para Birimleri",
+                Controller = "ParaBirimi",
+                Action = "Index",
+                AktifMi = true,
+                Sira = 2,
+                UstMenuID = dovizMenu.MenuID,
+                Url = "/ParaBirimi/Index",
+                AltMenuler = new List<MenuViewModel>()
+            });
+            
+            dovizMenu.AltMenuler.Add(new MenuViewModel
+            {
+                MenuID = Guid.NewGuid(),
+                Ad = "Para Birimi İlişkileri",
+                Controller = "ParaBirimi",
+                Action = "Iliskiler",
+                AktifMi = true,
+                Sira = 3,
+                UstMenuID = dovizMenu.MenuID,
+                Url = "/ParaBirimi/Iliskiler",
+                AltMenuler = new List<MenuViewModel>()
+            });
+            
+            result.Add(dovizMenu);
+            
+            // Satın Alma menüsü
+            var satinAlmaMenu = new MenuViewModel
+            {
+                MenuID = Guid.NewGuid(),
+                Ad = "Satın Alma",
+                Icon = "fas fa-shopping-cart",
+                AktifMi = true,
+                Sira = 10,
+                Url = "#",
+                AltMenuler = new List<MenuViewModel>()
+            };
+            
+            // Satın Alma alt menüleri
+            satinAlmaMenu.AltMenuler.Add(new MenuViewModel
+            {
+                MenuID = Guid.NewGuid(),
+                Ad = "Tedarikçiler",
+                Controller = "Tedarikci",
+                Action = "Index",
+                AktifMi = true,
+                Sira = 1,
+                UstMenuID = satinAlmaMenu.MenuID,
+                Url = "/Tedarikci/Index",
+                AltMenuler = new List<MenuViewModel>()
+            });
+            
+            satinAlmaMenu.AltMenuler.Add(new MenuViewModel
+            {
+                MenuID = Guid.NewGuid(),
+                Ad = "Satın Alma Siparişleri",
+                Controller = "SatinAlmaSiparis",
+                Action = "Index",
+                AktifMi = true,
+                Sira = 2,
+                UstMenuID = satinAlmaMenu.MenuID,
+                Url = "/SatinAlmaSiparis/Index",
+                AltMenuler = new List<MenuViewModel>()
+            });
+            
+            satinAlmaMenu.AltMenuler.Add(new MenuViewModel
+            {
+                MenuID = Guid.NewGuid(),
+                Ad = "Alım Faturaları",
+                Controller = "AlimFatura",
+                Action = "Index",
+                AktifMi = true,
+                Sira = 3,
+                UstMenuID = satinAlmaMenu.MenuID,
+                Url = "/AlimFatura/Index",
+                AltMenuler = new List<MenuViewModel>()
+            });
+            
+            result.Add(satinAlmaMenu);
+            
             // Sistem Ayarları menüsü
             var sistemMenu = new MenuViewModel
             {
@@ -929,7 +1535,7 @@ namespace MuhasebeStokWebApp.Services.Menu
                 Ad = "Sistem Ayarları",
                 Icon = "fas fa-cogs",
                 AktifMi = true,
-                Sira = 5,
+                Sira = 11,
                 Url = "#",
                 AltMenuler = new List<MenuViewModel>()
             };
@@ -945,6 +1551,32 @@ namespace MuhasebeStokWebApp.Services.Menu
                 Sira = 1,
                 UstMenuID = sistemMenu.MenuID,
                 Url = "/Menu/Index",
+                AltMenuler = new List<MenuViewModel>()
+            });
+            
+            sistemMenu.AltMenuler.Add(new MenuViewModel
+            {
+                MenuID = Guid.NewGuid(),
+                Ad = "Sistem Logları",
+                Controller = "SistemLog",
+                Action = "Index",
+                AktifMi = true,
+                Sira = 2,
+                UstMenuID = sistemMenu.MenuID,
+                Url = "/SistemLog/Index",
+                AltMenuler = new List<MenuViewModel>()
+            });
+            
+            sistemMenu.AltMenuler.Add(new MenuViewModel
+            {
+                MenuID = Guid.NewGuid(),
+                Ad = "Veritabanı Yönetimi",
+                Controller = "DbInit",
+                Action = "Index",
+                AktifMi = true,
+                Sira = 3,
+                UstMenuID = sistemMenu.MenuID,
+                Url = "/DbInit/Index",
                 AltMenuler = new List<MenuViewModel>()
             });
             
@@ -1164,6 +1796,57 @@ namespace MuhasebeStokWebApp.Services.Menu
                 AktifMi = true,
                 OlusturmaTarihi = DateTime.Now
             };
+        }
+
+        /// <summary>
+        /// Veritabanı bağlantısını ve gerekli kolonların varlığını kontrol eder
+        /// </summary>
+        /// <returns>Sonuç bilgisi</returns>
+        public async Task<bool> CheckDatabaseConnection()
+        {
+            try
+            {
+                _logger.LogInformation("Veritabanı bağlantısı kontrol ediliyor...");
+                
+                // Veritabanına bağlanabildiğimizi doğrula
+                bool canConnect = await _context.Database.CanConnectAsync();
+                
+                if (!canConnect)
+                {
+                    _logger.LogError("Veritabanına bağlantı sağlanamadı.");
+                    return false;
+                }
+                
+                _logger.LogInformation("Veritabanına başarıyla bağlanıldı.");
+                
+                // Silindi kolonunun varlığını kontrol et
+                bool hasSilindiColumn = false;
+                
+                try {
+                    // SQL Injection'a karşı parametre kullanarak sorgu
+                    string sql = "SELECT COUNT(*) FROM INFORMATION_SCHEMA.COLUMNS WHERE TABLE_NAME = @tableName AND COLUMN_NAME = @columnName";
+                    var parameters = new[] { 
+                        new SqlParameter("@tableName", "Menuler"),
+                        new SqlParameter("@columnName", "Silindi")
+                    };
+                    
+                    var result = await _context.Database.ExecuteSqlRawAsync(sql, parameters);
+                    hasSilindiColumn = result > 0;
+                    
+                    _logger.LogInformation($"'Silindi' kolonu kontrolü: {(hasSilindiColumn ? "Var" : "Yok")}");
+                }
+                catch (Exception ex) {
+                    _logger.LogError(ex, "Silindi kolonu kontrol edilirken hata oluştu");
+                    // Hatayı yut, bu sadece kontrol amaçlı
+                }
+                
+                return true;
+            }
+            catch (Exception ex)
+            {
+                _logger.LogError(ex, "Veritabanı bağlantı kontrolü sırasında hata oluştu");
+                return false;
+            }
         }
     }
 } 

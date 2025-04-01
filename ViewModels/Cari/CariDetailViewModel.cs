@@ -135,7 +135,7 @@ namespace MuhasebeStokWebApp.ViewModels.Cari
         public string FaturaTuru { get; set; }
     }
     
-    // Cari Hesap Ekstresi için ViewModel
+    // Cari Ekstre için ViewModel
     public class CariEkstreViewModel
     {
         public Guid CariID { get; set; }
@@ -159,6 +159,14 @@ namespace MuhasebeStokWebApp.ViewModels.Cari
         
         [Display(Name = "Rapor Tarihi")]
         public DateTime RaporTarihi { get; set; } = DateTime.Now;
+        
+        // Başlangıç bakiyesi
+        [Display(Name = "Başlangıç Bakiyesi")]
+        public decimal BaslangicBakiye { get; set; }
+        
+        // Bitiş bakiyesi
+        [Display(Name = "Bitiş Bakiyesi")]
+        public decimal BitisGuncelBakiye { get; set; }
         
         // Tüm hareketleri içeren liste (Cari, Kasa, Banka, Fatura)
         public List<CariEkstreHareketViewModel> Hareketler { get; set; }
@@ -188,6 +196,8 @@ namespace MuhasebeStokWebApp.ViewModels.Cari
     // Cari Ekstre Hareket için ViewModel
     public class CariEkstreHareketViewModel
     {
+        public Guid HareketID { get; set; }
+
         public DateTime Tarih { get; set; }
         
         [Display(Name = "Açıklama")]
@@ -199,11 +209,14 @@ namespace MuhasebeStokWebApp.ViewModels.Cari
         [Display(Name = "İşlem Türü")]
         public string IslemTuru { get; set; }
         
+        [Display(Name = "İşlem No")]
+        public string IslemNo { get; set; }
+        
         [Display(Name = "Borç")]
-        public decimal? Borc { get; set; }
+        public decimal Borc { get; set; }
         
         [Display(Name = "Alacak")]
-        public decimal? Alacak { get; set; }
+        public decimal Alacak { get; set; }
         
         [Display(Name = "Bakiye")]
         public decimal Bakiye { get; set; }

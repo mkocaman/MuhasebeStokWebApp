@@ -2,9 +2,7 @@
 
 <div class="modal-header">
     <h5 class="modal-title">Cari Düzenle</h5>
-    <button type="button" class="close" data-dismiss="modal" aria-label="Close">
-        <span aria-hidden="true">&times;</span>
-    </button>
+    <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
 </div>
 <form id="editCariForm" method="post" asp-action="Edit" asp-controller="Cari">
     <input type="hidden" asp-for="Id" />
@@ -12,63 +10,152 @@
         <div asp-validation-summary="ModelOnly" class="text-danger"></div>
         <div class="row">
             <div class="col-md-6">
-                <div class="form-group">
+                <div class="form-group mb-3">
                     <label asp-for="Ad" class="control-label">Cari Adı</label>
                     <input asp-for="Ad" class="form-control" />
                     <span asp-validation-for="Ad" class="text-danger"></span>
                 </div>
-                <div class="form-group">
+                <div class="form-group mb-3">
                     <label asp-for="VergiNo" class="control-label">Vergi No</label>
                     <input asp-for="VergiNo" class="form-control" />
                     <span asp-validation-for="VergiNo" class="text-danger"></span>
                 </div>
-                <div class="form-group">
+                <div class="form-group mb-3">
                     <label asp-for="Telefon" class="control-label">Telefon</label>
                     <input asp-for="Telefon" class="form-control" />
                     <span asp-validation-for="Telefon" class="text-danger"></span>
                 </div>
-                <div class="form-group">
+                <div class="form-group mb-3">
                     <label asp-for="Email" class="control-label">Email</label>
                     <input asp-for="Email" class="form-control" />
                     <span asp-validation-for="Email" class="text-danger"></span>
                 </div>
             </div>
             <div class="col-md-6">
-                <div class="form-group">
+                <div class="form-group mb-3">
                     <label asp-for="Yetkili" class="control-label">Yetkili</label>
                     <input asp-for="Yetkili" class="form-control" />
                     <span asp-validation-for="Yetkili" class="text-danger"></span>
                 </div>
-                <div class="form-group">
+                <div class="form-group mb-3">
                     <label asp-for="BaslangicBakiye" class="control-label">Bakiye</label>
                     <input asp-for="BaslangicBakiye" class="form-control" />
                     <span asp-validation-for="BaslangicBakiye" class="text-danger"></span>
                 </div>
-                <div class="form-group">
+                <div class="form-group mb-3">
                     <label asp-for="Adres" class="control-label">Adres</label>
                     <textarea asp-for="Adres" class="form-control" rows="2"></textarea>
                     <span asp-validation-for="Adres" class="text-danger"></span>
                 </div>
-                <div class="form-group">
+                <div class="form-group mb-3">
                     <label asp-for="Aciklama" class="control-label">Açıklama</label>
                     <textarea asp-for="Aciklama" class="form-control" rows="2"></textarea>
                     <span asp-validation-for="Aciklama" class="text-danger"></span>
+                </div>
+                <div class="form-check mb-3">
+                    <input asp-for="AktifMi" class="form-check-input" />
+                    <label asp-for="AktifMi" class="form-check-label">Aktif</label>
                 </div>
             </div>
         </div>
     </div>
     <div class="modal-footer">
-        <button type="button" class="btn btn-secondary" data-dismiss="modal">İptal</button>
+        <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">İptal</button>
         <button type="submit" class="btn btn-primary">Kaydet</button>
     </div>
 </form>
 
 <script>
     $(document).ready(function () {
-        // Form submit olayını yakalayarak AJAX ile göndermek
-        $("#editCariForm").on('submit', function (e) {
+        // Form validasyonunu aktif et
+        $.validator.unobtrusive.parse("#editCariForm");
+        
+        // AJAX form gönderimi
+        $("#editCariForm").submit(function (e) {
             e.preventDefault();
-            submitForm(this);
+            
+            if (!$(this).valid()) {
+                return false;
+            }
+            
+            // Form verilerini topla
+            var formData = $(this).serialize();
+            
+            // Butonu devre dışı bırak ve yükleniyor göster
+            var submitBtn = $(this).find('button[type="submit"]');
+            var originalText = submitBtn.text();
+            submitBtn.prop('disabled', true).html('<span class="spinner-border spinner-border-sm" role="status" aria-hidden="true"></span> Kaydediliyor...');
+            
+            $.ajax({
+                url: $(this).attr("action"),
+                type: "POST",
+                data: formData,
+                success: function (response) {
+                    if (response.success) {
+                        // Başarılı güncelleme durumunda
+                        Swal.fire({
+                            title: 'Başarılı!',
+                            text: 'Cari başarıyla güncellendi.',
+                            icon: 'success',
+                            confirmButtonText: 'Tamam'
+                        }).then(function() {
+                            // Modalı kapat
+                            $('#cariEditModal').modal('hide');
+                            // Sayfayı yenile
+                            window.location.reload();
+                        });
+                    } else {
+                        // İşlem hatası
+                        Swal.fire({
+                            title: 'Hata!',
+                            text: response.message || 'Cari güncellenirken bir hata oluştu.',
+                            icon: 'error',
+                            confirmButtonText: 'Tamam'
+                        });
+                        
+                        // Varsa hata mesajlarını göster
+                        if (response.errors && response.errors.length > 0) {
+                            var errorList = '<ul>';
+                            $.each(response.errors, function(index, error) {
+                                errorList += '<li>' + error + '</li>';
+                            });
+                            errorList += '</ul>';
+                            
+                            $('.validation-summary-errors').html(errorList);
+                        }
+                    }
+                    
+                    // Butonu normal duruma getir
+                    submitBtn.prop('disabled', false).text(originalText);
+                },
+                error: function (xhr, status, error) {
+                    console.error(xhr.responseText);
+                    
+                    // JSON yanıtını analiz etmeye çalış
+                    var errorMessage = 'İşlem sırasında beklenmeyen bir hata oluştu.';
+                    try {
+                        var jsonResponse = JSON.parse(xhr.responseText);
+                        if (jsonResponse && jsonResponse.message) {
+                            errorMessage = jsonResponse.message;
+                        }
+                    } catch (e) {
+                        // JSON parse hatası - varsayılan mesajı kullan
+                    }
+                    
+                    // Hata mesajını göster
+                    Swal.fire({
+                        title: 'Hata!',
+                        text: errorMessage,
+                        icon: 'error',
+                        confirmButtonText: 'Tamam'
+                    });
+                    
+                    // Butonu normal duruma getir
+                    submitBtn.prop('disabled', false).text(originalText);
+                }
+            });
+            
+            return false;
         });
     });
 </script> 

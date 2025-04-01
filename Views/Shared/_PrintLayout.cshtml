@@ -8,26 +8,327 @@
     <link rel="stylesheet" href="~/lib/font-awesome/css/all.min.css" />
     <link rel="stylesheet" href="~/css/site.css" />
     <style>
+        :root {
+            --primary-color: #007bff;
+            --secondary-color: #6c757d;
+            --border-color: #dee2e6;
+            --watermark-opacity: 0.1;
+            --currency-symbol: "UZS";
+            --currency-spacing: 0.3em;
+        }
+
+        body {
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+            line-height: 1.5;
+            color: #333;
+            padding: 0;
+            margin: 0;
+            -webkit-print-color-adjust: exact !important;
+            print-color-adjust: exact !important;
+            color-adjust: exact !important;
+        }
+        
+        /* Yazdırma için temel stiller */
         @@media print {
             .no-print {
-                display: none;
+                display: none !important;
             }
             
             body {
                 padding: 0;
                 margin: 0;
+                background-color: #fff;
+                width: 100%;
+                height: 100%;
+                print-color-adjust: exact;
+                -webkit-print-color-adjust: exact;
             }
+            
+            .container {
+                width: 100% !important;
+                max-width: 100% !important;
+                padding: 0 5mm !important;
+                margin: 0 auto !important;
+                overflow: visible !important;
+            }
+
+            /* Sayfa kesme önleme */
+            .print-together {
+                page-break-inside: avoid;
+            }
+
+            /* Sayfa sonlarında başlıkların tekrarı */
+            thead {
+                display: table-header-group;
+            }
+            
+            tfoot {
+                display: table-footer-group;
+            }
+            
+            /* Sayfa kenar boşlukları */
+            @@page {
+                size: A4;
+                margin: 15mm 15mm 15mm 15mm;
+            }
+            
+            /* Yazı boyutlarını garantiye al */
+            p, span, div, td, th {
+                font-size: 11px !important;
+            }
+            
+            h1 { font-size: 18px !important; }
+            h2 { font-size: 16px !important; }
+            h3 { font-size: 14px !important; }
+            h4 { font-size: 12px !important; }
+            
+            /* Tablolarda taşma önleme */
+            table {
+                table-layout: fixed;
+                width: 100% !important;
+                max-width: 100% !important;
+                page-break-inside: auto;
+                margin-bottom: 10mm !important;
+            }
+            
+            tr { page-break-inside: avoid; }
+            
+            td, th {
+                overflow: visible;
+                text-overflow: ellipsis;
+                white-space: normal;
+                word-wrap: break-word;
+                padding: 4px !important;
+            }
+        }
+        
+        /* Farklı kağıt boyutları için düzenlemeler */
+        @@media print and (min-width: 21cm) and (max-width: 21.5cm) { /* A4 */
+            .container {
+                font-size: 12px;
+            }
+            h1 { font-size: 24px; }
+            h2 { font-size: 20px; }
+            h3 { font-size: 18px; }
+        }
+        
+        @@media print and (min-width: 14.8cm) and (max-width: 15.3cm) { /* A5 */
+            .container {
+                font-size: 10px;
+            }
+            h1 { font-size: 20px; }
+            h2 { font-size: 18px; }
+            h3 { font-size: 16px; }
+            .shrink-on-small {
+                font-size: 85%;
+            }
+        }
+        
+        /* Filigran stili */
+        .watermark {
+            position: fixed;
+            top: 50%;
+            left: 50%;
+            transform: translate(-50%, -50%) rotate(-45deg);
+            font-size: 120px;
+            color: #888;
+            opacity: var(--watermark-opacity);
+            z-index: -1;
+            pointer-events: none;
+        }
+        
+        /* Şirket Bilgileri */
+        .company-info {
+            text-align: center;
+            margin-bottom: 20px;
+            border-bottom: 1px solid var(--border-color);
+            padding-bottom: 10px;
+        }
+        
+        .company-logo {
+            max-height: 80px;
+            margin-bottom: 10px;
+        }
+        
+        /* İmza ve Onay Bölümü */
+        .signature-area {
+            margin-top: 40px;
+            display: flex;
+            justify-content: space-between;
+            padding-top: 20px;
+            border-top: 1px solid var(--border-color);
+        }
+        
+        .signature-box {
+            border-top: 1px solid #333;
+            margin-top: 50px;
+            padding-top: 10px;
+            width: 200px;
+            text-align: center;
+        }
+        
+        /* Belge Üstbilgisi */
+        .document-header {
+            margin-bottom: 20px;
+        }
+        
+        /* Belge Altbilgisi */
+        .document-footer {
+            margin-top: 30px;
+            font-size: 0.8em;
+            color: var(--secondary-color);
+            border-top: 1px solid var(--border-color);
+            padding-top: 10px;
+            position: relative;
+            bottom: 0;
+            width: 100%;
+            page-break-inside: avoid;
+        }
+
+        /* Filigran gösterme/gizleme kontrolü */
+        .watermark.hide-watermark {
+            display: none;
+        }
+
+        /* QR Kod alanı */
+        .qr-code {
+            text-align: right;
+        }
+        
+        /* Tablo stilleri */
+        .table-print {
+            width: 100%;
+            border-collapse: collapse;
+        }
+        
+        .table-print th, .table-print td {
+            border: 1px solid var(--border-color);
+            padding: 8px;
+        }
+        
+        .table-print th {
+            background-color: #f2f2f2;
+        }
+        
+        .table-print tr:nth-child(even) {
+            background-color: #f9f9f9;
+        }
+        
+        /* Para birimi gösterimi */
+        .currency::after {
+            content: " " var(--currency-symbol);
+            margin-left: var(--currency-spacing);
+            font-weight: normal;
+        }
+        
+        .currency-usd::after {
+            content: " USD";
+            margin-left: var(--currency-spacing);
+            font-weight: normal;
+        }
+        
+        .currency-uzs::after {
+            content: " UZS";
+            margin-left: var(--currency-spacing);
+            font-weight: normal;
         }
     </style>
 </head>
 <body>
+    <!-- Filigran (Watermark) -->
+    <div id="watermark" class="watermark">
+        @(ViewData["Watermark"]?.ToString() ?? "KOPYA")
+    </div>
+
     <div class="container">
+        <!-- Şirket Bilgileri / Logo -->
+        <div class="company-info">
+            <img src="~/img/logo.png" alt="Şirket Logo" class="company-logo" />
+            <h3>@(ViewData["CompanyName"]?.ToString() ?? "VIHO Muhasebe ve Stok")</h3>
+            <p>@(ViewData["CompanyAddress"]?.ToString() ?? "Örnek Mah. VIHO Cad. No:123 Ankara")</p>
+            <p>Tel: @(ViewData["CompanyPhone"]?.ToString() ?? "+90 312 123 45 67") | @(ViewData["CompanyEmail"]?.ToString() ?? "info@viho.com.tr")</p>
+        </div>
+
+        <!-- Belge Üstbilgisi -->
+        <div class="document-header">
+            <div class="row">
+                <div class="col-8">
+                    <h2>@ViewData["Title"]</h2>
+                    <p class="text-muted">@(ViewData["DocumentDescription"]?.ToString() ?? "")</p>
+                </div>
+                <div class="col-4 qr-code">
+                    @if (ViewData["ShowQrCode"] != null && (bool)ViewData["ShowQrCode"])
+                    {
+                        <img src="@ViewData["QrCodeUrl"]" alt="QR Kod" style="width: 80px; height: 80px;" />
+                    }
+                </div>
+            </div>
+        </div>
+
+        <!-- Ana İçerik -->
         @RenderBody()
+
+        <!-- İmza ve Onay Bölümü -->
+        @if (ViewData["ShowSignatureArea"] == null || (bool)ViewData["ShowSignatureArea"])
+        {
+            <div class="signature-area">
+                <div class="signature-box">
+                    <p>Hazırlayan</p>
+                </div>
+                <div class="signature-box">
+                    <p>Onaylayan</p>
+                </div>
+                <div class="signature-box">
+                    <p>Teslim Alan</p>
+                </div>
+            </div>
+        }
+
+        <!-- Belge Altbilgisi -->
+        <div class="document-footer">
+            <div class="row">
+                <div class="col-6">
+                    <p>Belge No: @(ViewData["DocumentNumber"]?.ToString() ?? "BELGE-" + DateTime.Now.ToString("yyyyMMddHHmmss"))</p>
+                </div>
+                <div class="col-6 text-right">
+                    <p>Oluşturulma Tarihi: @DateTime.Now.ToString("dd.MM.yyyy HH:mm")</p>
+                </div>
+            </div>
+            <p class="text-center">Bu belge elektronik olarak oluşturulmuştur. @(ViewData["FooterText"]?.ToString() ?? "")</p>
+        </div>
     </div>
 
     <script src="~/lib/jquery/dist/jquery.min.js"></script>
     <script src="~/lib/bootstrap/dist/js/bootstrap.bundle.min.js"></script>
     <script src="~/js/site.js" asp-append-version="true"></script>
+    <script>
+        // Filigran gösterme kontrolü (print.js'ten kontrol edilebilir)
+        function toggleWatermark(show) {
+            const watermark = document.getElementById('watermark');
+            if (watermark) {
+                if (show) {
+                    watermark.classList.remove('hide-watermark');
+                } else {
+                    watermark.classList.add('hide-watermark');
+                }
+            }
+        }
+        
+        // Farklı kağıt boyutları için otomatik ölçekleme
+        function adjustForPageSize() {
+            const width = window.innerWidth;
+            document.body.classList.remove('a4', 'a5');
+            
+            if (width >= 793 && width <= 816) { // ~21cm A4 genişlik
+                document.body.classList.add('a4');
+            } else if (width >= 559 && width <= 578) { // ~14.8cm A5 genişlik
+                document.body.classList.add('a5');
+            }
+        }
+        
+        window.addEventListener('resize', adjustForPageSize);
+        window.addEventListener('load', adjustForPageSize);
+    </script>
     @await RenderSectionAsync("Scripts", required: false)
 </body>
 </html> 

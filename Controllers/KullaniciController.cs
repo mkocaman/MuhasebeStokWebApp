@@ -13,6 +13,7 @@ using MuhasebeStokWebApp.Data.Entities;
 using MuhasebeStokWebApp.Services;
 using MuhasebeStokWebApp.ViewModels.Kullanici;
 using MuhasebeStokWebApp.Services.Interfaces;
+using Microsoft.Extensions.Logging;
 
 namespace MuhasebeStokWebApp.Controllers
 {
@@ -24,7 +25,8 @@ namespace MuhasebeStokWebApp.Controllers
         private readonly ApplicationDbContext _context;
         private readonly IConfiguration _configuration;
         private readonly IMenuService _menuService;
-        private readonly ILogService _logService;
+        private readonly ILogger<KullaniciController> _logger;
+        private new readonly ILogService _logService;
 
         public KullaniciController(
             UserManager<ApplicationUser> userManager,
@@ -32,6 +34,7 @@ namespace MuhasebeStokWebApp.Controllers
             ApplicationDbContext context,
             IConfiguration configuration,
             IMenuService menuService,
+            ILogger<KullaniciController> logger,
             ILogService logService)
             : base(menuService, userManager, roleManager, logService)
         {
@@ -40,6 +43,7 @@ namespace MuhasebeStokWebApp.Controllers
             _context = context;
             _configuration = configuration;
             _menuService = menuService;
+            _logger = logger;
             _logService = logService;
         }
 

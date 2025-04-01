@@ -1,0 +1,103 @@
+@model IEnumerable<MuhasebeStokWebApp.Data.Entities.ParaBirimiModulu.ParaBirimiIliski>
+
+@{
+    ViewData["Title"] = "Para Birimi İlişkileri";
+}
+
+<div class="container-fluid">
+    <div class="card">
+        <div class="card-header bg-primary text-white">
+            <div class="d-flex justify-content-between align-items-center">
+                <h4 class="mb-0">Para Birimi İlişkileri Listesi</h4>
+                <a asp-action="IliskiEkle" class="btn btn-success">
+                    <i class="fas fa-plus"></i> Yeni İlişki Ekle
+                </a>
+            </div>
+        </div>
+        <div class="card-body">
+            @if (TempData["SuccessMessage"] != null)
+            {
+                <div class="alert alert-success alert-dismissible fade show" role="alert">
+                    @TempData["SuccessMessage"]
+                    <button type="button" class="btn-close" data-bs-dismiss="alert" aria-label="Close"></button>
+                </div>
+            }
+            
+            @if (TempData["ErrorMessage"] != null)
+            {
+                <div class="alert alert-danger alert-dismissible fade show" role="alert">
+                    @TempData["ErrorMessage"]
+                    <button type="button" class="btn-close" data-bs-dismiss="alert" aria-label="Close"></button>
+                </div>
+            }
+
+            <div class="table-responsive">
+                <table class="table table-bordered table-hover" id="iliskilerTable">
+                    <thead class="table-light">
+                        <tr>
+                            <th>Kaynak Para Birimi</th>
+                            <th>Hedef Para Birimi</th>
+                            <th>Durum</th>
+                            <th>Oluşturma Tarihi</th>
+                            <th>İşlemler</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        @foreach (var item in Model)
+                        {
+                            <tr>
+                                <td>@item.KaynakParaBirimi?.Kod (@item.KaynakParaBirimi?.Sembol)</td>
+                                <td>@item.HedefParaBirimi?.Kod (@item.HedefParaBirimi?.Sembol)</td>
+                                <td>
+                                    @if (item.Aktif)
+                                    {
+                                        <span class="badge bg-success">Aktif</span>
+                                    }
+                                    else
+                                    {
+                                        <span class="badge bg-danger">Pasif</span>
+                                    }
+                                </td>
+                                <td>@item.OlusturmaTarihi.ToString("dd.MM.yyyy HH:mm")</td>
+                                <td class="text-center">
+                                    <div class="btn-group" role="group">
+                                        <a asp-action="IliskiDetay" asp-route-id="@item.ParaBirimiIliskiID" class="btn btn-sm btn-info">
+                                            <i class="fas fa-eye"></i>
+                                        </a>
+                                        <a asp-action="IliskiDuzenle" asp-route-id="@item.ParaBirimiIliskiID" class="btn btn-sm btn-primary">
+                                            <i class="fas fa-edit"></i>
+                                        </a>
+                                        <a asp-action="IliskiSil" asp-route-id="@item.ParaBirimiIliskiID" class="btn btn-sm btn-danger">
+                                            <i class="fas fa-trash"></i>
+                                        </a>
+                                    </div>
+                                </td>
+                            </tr>
+                        }
+                    </tbody>
+                </table>
+            </div>
+        </div>
+    </div>
+</div>
+
+@section Scripts {
+    <script>
+        $(document).ready(function() {
+            $('#iliskilerTable').DataTable({
+                language: {
+                    url: '/js/dataTables.turkish.json'
+                },
+                responsive: true,
+                "pageLength": 25
+            });
+            
+            // Otomatik kapanan alertler
+            window.setTimeout(function() {
+                $('.alert').fadeTo(500, 0).slideUp(500, function() {
+                    $(this).remove();
+                });
+            }, 4000);
+        });
+    </script>
+}

@@ -64,7 +64,7 @@ namespace MuhasebeStokWebApp.Controllers
         private readonly ApplicationDbContext _context;
         private readonly StokFifoService _stokFifoService;
         private readonly IDovizKuruService _dovizKuruService;
-        private readonly ILogService _logService;
+        private new readonly ILogService _logService;
         private readonly IWebHostEnvironment _env;
         private readonly IDropdownService _dropdownService;
         protected new readonly UserManager<ApplicationUser> _userManager;
@@ -470,7 +470,7 @@ namespace MuhasebeStokWebApp.Controllers
 
             // Fatura bilgilerini al
             var fatura = await _unitOfWork.Repository<DEntityFatura>().GetFirstOrDefaultAsync(
-                filter: f => f.FaturaID.Equals(faturaId) && !f.SoftDelete,
+                filter: f => f.FaturaID.Equals(faturaId) && !f.Silindi,
                 includeProperties: "Cari,FaturaDetaylari,FaturaDetaylari.Urun");
 
             if (fatura == null)
@@ -490,7 +490,7 @@ namespace MuhasebeStokWebApp.Controllers
             {
                 IrsaliyeNumarasi = irsaliyeNumarasi,
                 IrsaliyeTarihi = DateTime.Today,
-                CariID = fatura.CariID ?? Guid.Empty,
+                CariID = fatura.CariID.HasValue ? fatura.CariID.Value : Guid.Empty,
                 IrsaliyeTuru = irsaliyeTuru,
                 FaturaID = fatura.FaturaID,
                 Aciklama = $"{fatura.FaturaNumarasi} numaralı faturadan oluşturulmuştur.",
@@ -571,7 +571,7 @@ namespace MuhasebeStokWebApp.Controllers
         }
 
         // Get Current User ID metodu
-        private Guid GetCurrentUserId()
+        private new Guid GetCurrentUserId()
         {
             try
             {
@@ -598,7 +598,7 @@ namespace MuhasebeStokWebApp.Controllers
         private async Task PrepareViewBagForCreate()
         {
             var cariler = await _context.Cariler
-                .Where(c => c.AktifMi)
+                .Where(c => c.AktifMi && !c.Silindi)
                 .OrderBy(c => c.Ad)
                 .Select(c => new SelectListItem
                 {
@@ -739,7 +739,7 @@ namespace MuhasebeStokWebApp.Controllers
             try
             {
                 var cariler = _context.Cariler
-                    .Where(c => c.AktifMi && !c.SoftDelete)
+                    .Where(c => c.AktifMi && !c.Silindi)
                     .OrderBy(c => c.Ad)
                     .ToList();
                 model.CariListesi = new SelectList(cariler, "CariID", "Ad");
@@ -776,7 +776,7 @@ namespace MuhasebeStokWebApp.Controllers
         private void PrepareDropdownLists(IrsaliyeEditViewModel model)
         {
             var cariler = _context.Cariler
-                .Where(c => c.AktifMi && !c.SoftDelete)
+                .Where(c => c.AktifMi && !c.Silindi)
                 .OrderBy(c => c.Ad)
                 .ToList();
             model.CariListesi = new SelectList(cariler, "CariID", "Ad", model.CariID);
@@ -791,10 +791,10 @@ namespace MuhasebeStokWebApp.Controllers
         private async Task PrepareEditViewModelAsync(IrsaliyeEditViewModel model)
         {
             var cariler = await _unitOfWork.Repository<DEntityCari>().GetAsync(
-                filter: c => c.AktifMi && !c.SoftDelete);
+                filter: c => c.AktifMi && !c.Silindi);
             
             var faturalar = await _unitOfWork.Repository<DEntityFatura>().GetAsync(
-                filter: f => f.Aktif == true && !f.SoftDelete,
+                filter: f => f.Aktif == true && !f.Silindi,
                 includeProperties: "Cari");
 
             ViewBag.Cariler = new SelectList(cariler, "CariID", "Ad", model.CariID);
@@ -808,7 +808,7 @@ namespace MuhasebeStokWebApp.Controllers
             }
 
             var urunler = await _unitOfWork.Repository<DEntityUrun>().GetAsync(
-                filter: u => u.Aktif == true && !u.SoftDelete);
+                filter: u => u.Aktif == true && !u.Silindi);
             ViewBag.Urunler = new SelectList(urunler, "UrunID", "UrunAdi");
             
             // Dropdown listeleri doldur
@@ -893,7 +893,7 @@ namespace MuhasebeStokWebApp.Controllers
 
             // Ürünün fiyatını al
             var urunFiyat = await _context.UrunFiyatlari
-                .Where(f => f.UrunID.Equals(id) && !f.SoftDelete)
+                .Where(f => f.UrunID.Equals(id) && !f.Silindi)
                 .OrderByDescending(f => f.GecerliTarih)
                 .FirstOrDefaultAsync();
 

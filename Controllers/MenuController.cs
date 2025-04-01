@@ -20,8 +20,8 @@ namespace MuhasebeStokWebApp.Controllers
     public class MenuController : BaseController
     {
         private readonly IMenuService _menuService;
-        private readonly RoleManager<IdentityRole> _roleManager;
-        private readonly ILogService _logService;
+        protected new readonly RoleManager<IdentityRole> _roleManager;
+        private new readonly ILogService _logService;
         private readonly ApplicationDbContext _context;
         private readonly ILogger<MenuController> _logger;
 
@@ -313,7 +313,7 @@ namespace MuhasebeStokWebApp.Controllers
                 
                 // Mevcut rol-menü ilişkilerini sil ve yenilerini ekle
                 await _context.Database.ExecuteSqlRawAsync($"DELETE FROM \"MenuRoller\" WHERE \"MenuID\" = '{id}'");
-                await _logService.LogInfoAsync("MenuController.Edit", $"Menü ID: {id} için mevcut tüm rol ilişkileri silindi.");
+                await _logService.AddLogAsync("Bilgi", $"Menü ID: {id} için mevcut tüm rol ilişkileri silindi.", "MenuController/Edit");
                 
                 // Yeni rol-menü ilişkilerini ekle
                 int basariliRolSayisi = 0;
@@ -454,19 +454,30 @@ namespace MuhasebeStokWebApp.Controllers
         {
             try
             {
-                await _logService.LogInfoAsync("MenuController.InitDefaults", "Varsayılan menüler oluşturulmaya başlanıyor...");
+                try {
+                    await _logService.LogInfoAsync("MenuController.InitDefaults", "Varsayılan menüler oluşturulmaya başlanıyor...");
+                } catch (Exception logEx) {
+                    _logger.LogWarning(logEx, "Log kaydı sırasında hata: {Message}", logEx.Message);
+                    // Log hatası işlemi engellemeyecek
+                }
                 
                 // Veritabanı bağlantısını kontrol et
                 try {
                     await _context.Database.CanConnectAsync();
-                    await _logService.LogInfoAsync("MenuController.InitDefaults", "Veritabanına başarıyla bağlanıldı.");
+                    try {
+                        await _logService.LogInfoAsync("MenuController.InitDefaults", "Veritabanına başarıyla bağlanıldı.");
+                    } catch {}
                     
                     // Veritabanı tipini kontrol et
                     var dbType = _context.Database.ProviderName;
-                    await _logService.LogInfoAsync("MenuController.InitDefaults", $"Veritabanı sağlayıcısı: {dbType}");
+                    try {
+                        await _logService.LogInfoAsync("MenuController.InitDefaults", $"Veritabanı sağlayıcısı: {dbType}");
+                    } catch {}
                 }
                 catch (Exception ex) {
-                    await _logService.LogErrorAsync("MenuController.InitDefaults", $"Veritabanına bağlanırken hata: {ex.Message}");
+                    try {
+                        await _logService.LogErrorAsync("MenuController.InitDefaults", $"Veritabanına bağlanırken hata: {ex.Message}");
+                    } catch {}
                     throw;
                 }
                 
@@ -476,7 +487,10 @@ namespace MuhasebeStokWebApp.Controllers
             }
             catch (Exception ex)
             {
-                await _logService.LogErrorAsync("MenuController.InitDefaults", $"Hata: {ex.Message}\n{ex.StackTrace}");
+                _logger.LogError(ex, "Varsayılan menüleri oluştururken hata: {Message}", ex.Message);
+                try {
+                    await _logService.LogErrorAsync("MenuController.InitDefaults", $"Hata: {ex.Message}\n{ex.StackTrace}");
+                } catch {}
                 TempData["Error"] = "Varsayılan menüler oluşturulurken bir hata oluştu: " + ex.Message;
                 return RedirectToAction("Index");
             }
@@ -495,43 +509,66 @@ namespace MuhasebeStokWebApp.Controllers
             
             try
             {
-                await _logService.LogInfoAsync("MenuController.InitDefaultsConfirm", "Kullanıcı varsayılan menüleri oluşturmayı onayladı.");
+                try {
+                    await _logService.LogInfoAsync("MenuController.InitDefaultsConfirm", "Kullanıcı varsayılan menüleri oluşturmayı onayladı.");
+                } catch (Exception logEx) {
+                    _logger.LogWarning(logEx, "Log kaydı sırasında hata: {Message}", logEx.Message);
+                    // Log hatası işlemi engellemeyecek
+                }
                 
                 // Menu Service'deki metodu çağır
-                await _logService.LogInfoAsync("MenuController.InitDefaultsConfirm", "InitDefaultMenusAsync metodu çağrılıyor...");
+                try {
+                    await _logService.LogInfoAsync("MenuController.InitDefaultsConfirm", "InitDefaultMenusAsync metodu çağrılıyor...");
+                } catch {}
+                
                 bool result = await _menuService.InitDefaultMenusAsync();
                 
                 // Oluşturma sonrası menü sayısını kontrol et
                 try {
                     var menuSayisi = await _context.Menuler.CountAsync();
                     var menuRolSayisi = await _context.MenuRoller.CountAsync();
-                    await _logService.LogInfoAsync("MenuController.InitDefaultsConfirm", 
-                        $"İşlem sonrası durum - Veritabanında {menuSayisi} adet menü ve {menuRolSayisi} adet menü-rol ilişkisi bulunuyor.");
+                    try {
+                        await _logService.LogInfoAsync("MenuController.InitDefaultsConfirm", 
+                            $"İşlem sonrası durum - Veritabanında {menuSayisi} adet menü ve {menuRolSayisi} adet menü-rol ilişkisi bulunuyor.");
+                    } catch {}
                 }
                 catch (Exception ex) {
-                    await _logService.LogErrorAsync("MenuController.InitDefaultsConfirm", $"Menü sayısı kontrol edilirken hata: {ex.Message}");
+                    try {
+                        await _logService.LogErrorAsync("MenuController.InitDefaultsConfirm", $"Menü sayısı kontrol edilirken hata: {ex.Message}");
+                    } catch {}
                 }
                 
                 if (result)
                 {
                     TempData["Success"] = "Varsayılan menüler başarıyla oluşturuldu.";
-                    await _logService.LogInfoAsync("MenuController.InitDefaultsConfirm", "Varsayılan menüler başarıyla oluşturuldu.");
+                    try {
+                        await _logService.LogInfoAsync("MenuController.InitDefaultsConfirm", "Varsayılan menüler başarıyla oluşturuldu.");
+                    } catch {}
                     return RedirectToAction("Index", "Menu");
                 }
                 else
                 {
                     TempData["Error"] = "Varsayılan menüler oluşturulurken bir hata oluştu.";
-                    await _logService.LogErrorAsync("MenuController.InitDefaultsConfirm", "Varsayılan menüler oluşturulamadı.");
+                    try {
+                        await _logService.LogErrorAsync("MenuController.InitDefaultsConfirm", "Varsayılan menüler oluşturulamadı.");
+                    } catch {}
                     return RedirectToAction("Index", "Menu");
                 }
             }
             catch (Exception ex)
             {
-                await _logService.LogErrorAsync("MenuController.InitDefaultsConfirm", $"Hata: {ex.Message}\n{ex.StackTrace}");
+                _logger.LogError(ex, "Varsayılan menüleri oluştururken hata: {Message}", ex.Message);
+                try {
+                    await _logService.LogErrorAsync("MenuController.InitDefaultsConfirm", $"Hata: {ex.Message}\n{ex.StackTrace}");
+                } catch {}
+                
                 if (ex.InnerException != null)
                 {
-                    await _logService.LogErrorAsync("MenuController.InitDefaultsConfirm", $"İç Hata: {ex.InnerException.Message}");
+                    try {
+                        await _logService.LogErrorAsync("MenuController.InitDefaultsConfirm", $"İç Hata: {ex.InnerException.Message}");
+                    } catch {}
                 }
+                
                 // Kullanıcıya daha açıklayıcı bir hata mesajı gösterilecek
                 TempData["Error"] = $"Varsayılan menüler oluşturulurken bir hata oluştu: {ex.Message}";
                 if (ex.InnerException != null && ex.InnerException.Message.Contains("NOT NULL constraint failed: Menuler.Icon"))

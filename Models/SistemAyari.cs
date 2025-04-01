@@ -54,8 +54,8 @@ namespace MuhasebeStokWebApp.Models
         [Display(Name = "Aktif")]
         public bool Aktif { get; set; } = true;
         
-        [Display(Name = "Silinmiş")]
-        public bool SoftDelete { get; set; } = false;
+        [Display(Name = "Silindi")]
+        public bool Silindi { get; set; } = false;
         
         [Display(Name = "Oluşturma Tarihi")]
         public DateTime OlusturmaTarihi { get; set; } = DateTime.Now;

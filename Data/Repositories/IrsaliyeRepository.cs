@@ -17,7 +17,7 @@ namespace MuhasebeStokWebApp.Data.Repositories
             _context = context;
         }
 
-        public async Task<Irsaliye> GetIrsaliyeWithDetailsAsync(Guid id)
+        public new async Task<Irsaliye> GetIrsaliyeWithDetailsAsync(Guid id)
         {
             return await _context.Irsaliyeler
                 .Include(i => i.Cari)

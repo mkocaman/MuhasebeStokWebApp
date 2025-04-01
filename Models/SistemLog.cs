@@ -79,6 +79,6 @@ namespace MuhasebeStokWebApp.Models
         
         public DateTime? GuncellemeTarihi { get; set; }
         
-        public bool SoftDelete { get; set; } = false;
+        public bool Silindi { get; set; } = false;
     }
 } 

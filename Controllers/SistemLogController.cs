@@ -12,6 +12,7 @@ using MuhasebeStokWebApp.ViewModels.SistemLog;
 using MuhasebeStokWebApp.ViewModels.Menu;
 using MuhasebeStokWebApp.Data.Entities;
 using MuhasebeStokWebApp.Services.Interfaces;
+using Microsoft.Extensions.Logging;
 
 namespace MuhasebeStokWebApp.Controllers
 {
@@ -19,17 +20,20 @@ namespace MuhasebeStokWebApp.Controllers
     public class SistemLogController : BaseController
     {
         private readonly ApplicationDbContext _context;
-        private readonly ILogService _logService;
+        private readonly ILogger<SistemLogController> _logger;
+        private new readonly ILogService _logService;
 
         public SistemLogController(
             ApplicationDbContext context,
             ILogService logService,
+            ILogger<SistemLogController> logger,
             IMenuService menuService,
             UserManager<ApplicationUser> userManager,
             RoleManager<IdentityRole> roleManager) : base(menuService, userManager, roleManager, logService)
         {
             _context = context;
             _logService = logService;
+            _logger = logger;
         }
 
         // GET: SistemLog
@@ -109,7 +113,8 @@ namespace MuhasebeStokWebApp.Controllers
         // GET: SistemLog/Details/5
         public async Task<IActionResult> Details(Guid id)
         {
-            var log = await _context.SistemLoglar.FindAsync(id);
+            var log = await _context.SistemLoglar
+                .FirstOrDefaultAsync(l => l.LogID == id);
             
             if (log == null)
             {
@@ -130,7 +135,7 @@ namespace MuhasebeStokWebApp.Controllers
             }
             
             var logs = await _context.SistemLoglar
-                .Where(l => l.KayitID == cariId && l.TabloAdi == "Cariler")
+                .Where(l => l.KayitID == cariId)
                 .OrderByDescending(l => l.IslemTarihi)
                 .ToListAsync();
             

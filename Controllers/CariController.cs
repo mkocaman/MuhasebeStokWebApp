@@ -12,249 +12,1112 @@ using System;
 using System.Collections.Generic;
 using System.Threading.Tasks;
 using System.Linq;
+using Microsoft.Extensions.Logging;
+using MuhasebeStokWebApp.Data.Repositories;
+using MuhasebeStokWebApp.Enums;
+using MuhasebeStokWebApp.Extensions;
+using Microsoft.AspNetCore.Hosting;
 
 namespace MuhasebeStokWebApp.Controllers
 {
     [Authorize]
     public class CariController : BaseController
     {
-        private readonly ApplicationDbContext _context;
-        private readonly ICariService _cariService;
+        private readonly IUnitOfWork _unitOfWork;
+        private readonly ILogger<CariController> _logger;
+        private readonly IParaBirimiService _paraBirimiService;
+        private readonly IDovizKuruService _dovizKuruService;
+        private readonly IWebHostEnvironment _webHostEnvironment;
 
         public CariController(
-            ApplicationDbContext context, 
-            ICariService cariService, 
+            IUnitOfWork unitOfWork,
+            UserManager<ApplicationUser> userManager,
             ILogService logService,
             IMenuService menuService,
-            UserManager<ApplicationUser> userManager,
-            RoleManager<IdentityRole> roleManager) 
+            RoleManager<IdentityRole> roleManager,
+            ILogger<CariController> logger,
+            IParaBirimiService paraBirimiService,
+            IDovizKuruService dovizKuruService,
+            IWebHostEnvironment webHostEnvironment) 
             : base(menuService, userManager, roleManager, logService)
         {
-            _context = context;
-            _cariService = cariService;
-        }
-
-        public async Task<IActionResult> Index()
-        {
-            try
-            {
-                var cariler = await _cariService.GetAllAsync();
-                return View(cariler);
-            }
-            catch (Exception ex)
-            {
-                await _logService.AddLogAsync("Hata", $"Cari listesi alınırken hata oluştu: {ex.Message}", "CariController/Index");
-                TempData["ErrorMessage"] = "Cari listesi alınırken bir hata oluştu.";
-                return View(new List<Cari>());
-            }
+            _unitOfWork = unitOfWork;
+            _logger = logger;
+            _paraBirimiService = paraBirimiService;
+            _dovizKuruService = dovizKuruService;
+            _webHostEnvironment = webHostEnvironment;
         }
 
         [HttpGet]
-        public IActionResult Create()
+        public async Task<IActionResult> Index()
         {
-            var model = new CariCreateViewModel
-            {
-                Ad = "",
-                VergiNo = "",
-                Telefon = "",
-                Email = "",
-                Yetkili = "",
-                BaslangicBakiye = 0,
-                Adres = "",
-                Aciklama = "",
-                CariKodu = "",
-                CariTipi = "",
-                VergiDairesi = "",
-                Il = "",
-                Ilce = "",
-                PostaKodu = "",
-                Ulke = "Türkiye",
-                WebSitesi = "",
-                Notlar = "",
-                Aktif = true
-            };
+            var cariler = await _unitOfWork.CariRepository.GetAllAsync();
             
-            return PartialView("_CreatePartial", model);
+            // Para birimi listesini view'a gönder
+            ViewBag.ParaBirimleri = await _paraBirimiService.GetAktifParaBirimleriAsync();
+            
+            return View(cariler);
+        }
+
+        [HttpGet]
+        public async Task<IActionResult> Details(Guid id)
+        {
+            var cari = await _unitOfWork.CariRepository.GetByIdAsync(id);
+            if (cari == null)
+            {
+                return NotFound();
+            }
+
+            // Para birimi listesini view'a gönder
+            ViewBag.ParaBirimleri = await _paraBirimiService.GetAktifParaBirimleriAsync();
+
+            // Cari hareketlerini yükle
+            cari.CariHareketler = (await _unitOfWork.CariHareketRepository
+                .GetAsync(filter: ch => ch.CariId == id && !ch.Silindi, 
+                         orderBy: q => q.OrderByDescending(ch => ch.Tarih))).ToList();
+
+            // Son 10 cari hareketi getir - orderBy kısmı düzeltildi
+            var cariHareketler = await _unitOfWork.CariHareketRepository.GetAsync(
+                filter: ch => ch.CariId == id);
+                
+            // Sorgu sonucunu uygulama tarafında sıralayalım (OrderBy sorunu)
+            cari.CariHareketler = cariHareketler
+                .OrderByDescending(h => h.Tarih)
+                .Take(10)
+                .ToList();
+
+            // Son faturaları getir - orderBy kısmı düzeltildi
+            var sonFaturalar = await _unitOfWork.FaturaRepository.GetAsync(
+                filter: f => f.CariID == id);
+                
+            // Sorgu sonucunu uygulama tarafında sıralayalım
+            cari.SonFaturalar = sonFaturalar
+                .OrderByDescending(f => f.FaturaTarihi)
+                .Take(5)
+                .Cast<object>()
+                .ToList();
+
+            return View(cari);
+        }
+
+        [HttpGet]
+        public async Task<IActionResult> Create()
+        {
+            // Para birimi listesini view'a gönder
+            ViewBag.ParaBirimleri = await _paraBirimiService.GetAktifParaBirimleriAsync();
+            
+            return View();
         }
 
         [HttpPost]
         [ValidateAntiForgeryToken]
         public async Task<IActionResult> Create(CariCreateViewModel model)
         {
-            if (!ModelState.IsValid)
+            if (ModelState.IsValid)
             {
-                var errors = ModelState.Values
-                    .SelectMany(v => v.Errors)
-                    .Select(e => e.ErrorMessage)
-                    .ToList();
+                try
+                {
+                    // Null ya da boş alanlar için varsayılan değerler atanıyor
+                    if (string.IsNullOrEmpty(model.Aciklama))
+                    {
+                        model.Aciklama = "";
+                    }
+                    
+                    if (string.IsNullOrEmpty(model.VergiDairesi))
+                    {
+                        model.VergiDairesi = "Belirtilmemiş";
+                    }
+                    
+                    if (string.IsNullOrEmpty(model.CariTipi))
+                    {
+                        model.CariTipi = "Müşteri";
+                    }
+                    // CariTipi değerini kontrol et ve sadece izin verilen değerlerden birini kullan
+                    else if (model.CariTipi != "Müşteri" && model.CariTipi != "Tedarikçi" && model.CariTipi != "Müşteri ve Tedarikçi")
+                    {
+                        model.CariTipi = "Müşteri"; // Geçersiz değer durumunda varsayılan olarak Müşteri ata
+                    }
 
-                return Json(new { success = false, message = "Form doğrulama hatası!", errors = errors });
-            }
-
-            try
-            {
                 var cari = new Cari
                 {
-                    CariID = Guid.NewGuid(),
                     Ad = model.Ad,
+                        CariKodu = !string.IsNullOrEmpty(model.CariKodu) ? model.CariKodu : "CRI-" + DateTime.Now.ToString("yyyyMMddHHmmss"),
+                        CariTipi = model.CariTipi,
                     VergiNo = model.VergiNo,
+                        VergiDairesi = model.VergiDairesi,
                     Telefon = model.Telefon,
                     Email = model.Email,
                     Yetkili = model.Yetkili,
                     BaslangicBakiye = model.BaslangicBakiye,
-                    Adres = model.Adres,
+                        Adres = model.Adres ?? "",
                     Aciklama = model.Aciklama,
-                    CariKodu = model.CariKodu ?? "",
-                    CariTipi = model.CariTipi ?? "",
-                    VergiDairesi = model.VergiDairesi ?? "",
                     Il = model.Il ?? "",
                     Ilce = model.Ilce ?? "",
                     PostaKodu = model.PostaKodu ?? "",
-                    Ulke = model.Ulke ?? "",
+                        Ulke = model.Ulke ?? "Türkiye",
                     WebSitesi = model.WebSitesi ?? "",
                     Notlar = model.Notlar ?? "",
                     AktifMi = model.Aktif,
-                    OlusturmaTarihi = DateTime.Now
-                };
-
-                try
-                {
-                    await _cariService.AddAsync(cari);
-                    try
+                        OlusturmaTarihi = DateTime.Now,
+                        OlusturanKullaniciId = Guid.Parse(User.FindFirst(System.Security.Claims.ClaimTypes.NameIdentifier)?.Value)
+                    };
+                    
+                    await _unitOfWork.CariRepository.AddAsync(cari);
+                    
+                    // Eğer başlangıç bakiyesi 0 ise veya null ise, başlangıç bakiyesi hareketi oluştur
+                    if (cari.BaslangicBakiye == 0)
                     {
-                        await _logService.AddLogAsync("Bilgi", $"{cari.Ad} adlı cari eklendi.", "CariController/Create");
+                        var acilisHareketi = new Data.Entities.CariHareket
+                        {
+                            CariId = cari.CariID,
+                            HareketTuru = "Açılış bakiyesi",
+                            Tutar = 0,
+                            Tarih = DateTime.Now,
+                            Aciklama = "Cari oluşturulurken belirlenen bakiye",
+                            OlusturmaTarihi = DateTime.Now,
+                            OlusturanKullaniciId = Guid.Parse(User.FindFirst(System.Security.Claims.ClaimTypes.NameIdentifier)?.Value),
+                            Borc = 0,
+                            Alacak = 0,
+                            Silindi = false
+                        };
+                        
+                        await _unitOfWork.CariHareketRepository.AddAsync(acilisHareketi);
                     }
-                    catch (Exception logEx)
+                    // Başlangıç bakiyesi 0'dan farklı ise, uygun hareket kaydını oluştur
+                    else if (cari.BaslangicBakiye != 0)
                     {
-                        // Loglama hatası, ama cari kaydedildi o yüzden devam et
-                        Console.WriteLine($"Loglama hatası: {logEx.Message}");
+                        var acilisHareketi = new Data.Entities.CariHareket
+                        {
+                            CariId = cari.CariID,
+                            HareketTuru = "Açılış bakiyesi",
+                            Tutar = Math.Abs(cari.BaslangicBakiye),
+                            Tarih = DateTime.Now,
+                            Aciklama = "Cari oluşturulurken belirlenen bakiye",
+                            OlusturmaTarihi = DateTime.Now,
+                            OlusturanKullaniciId = Guid.Parse(User.FindFirst(System.Security.Claims.ClaimTypes.NameIdentifier)?.Value),
+                            Borc = cari.BaslangicBakiye < 0 ? Math.Abs(cari.BaslangicBakiye) : 0,
+                            Alacak = cari.BaslangicBakiye > 0 ? Math.Abs(cari.BaslangicBakiye) : 0,
+                            Silindi = false
+                        };
+                        
+                        await _unitOfWork.CariHareketRepository.AddAsync(acilisHareketi);
                     }
-
-                    return Json(new { success = true, message = "Cari başarıyla eklendi." });
+                    
+                    await _unitOfWork.SaveAsync();
+                    
+                    await _logService.LogOlustur(
+                        "Cari eklendi", 
+                        LogTuru.Bilgi, 
+                        "Cari", 
+                        cari.Ad, 
+                        Guid.Parse(cari.Id.ToString()), 
+                        $"{cari.Ad} adlı cari kaydı oluşturuldu.");
+                    
+                    // AJAX isteği mi kontrolü ekle
+                    if (Request.Headers["X-Requested-With"] == "XMLHttpRequest")
+                    {
+                        return Json(new { success = true, message = "Cari başarıyla eklendi." });
+                    }
+                    
+                    // Normal form submit için TempData ile mesaj ve yönlendirme
+                    TempData["SuccessMessage"] = "Cari başarıyla eklendi.";
+                    return RedirectToAction(nameof(Index));
                 }
                 catch (Exception ex)
                 {
-                    string message = $"Cari eklenirken veritabanı hatası oluştu: {ex.Message}";
+                    _logger.LogError(ex, "Cari ekleme hatası");
+                    
+                    string errorMessage = "Cari eklenirken bir hata oluştu.";
+                    
+                    // İç hatayı kontrol et
                     if (ex.InnerException != null)
                     {
-                        message += $" İç hata: {ex.InnerException.Message}";
+                        // SQL hata mesajlarını daha anlaşılır hale getir
+                        if (ex.InnerException.Message.Contains("VergiDairesi"))
+                        {
+                            errorMessage = "Vergi dairesi alanı boş olamaz.";
+                        }
+                        else if (ex.InnerException.Message.Contains("duplicate") || ex.InnerException.Message.Contains("unique"))
+                        {
+                            errorMessage = "Bu bilgilerle kayıtlı bir cari zaten mevcut.";
+                        }
+                        else
+                        {
+                            // Genel hata durumunda iç hata mesajını ekle
+                            errorMessage += " Detay: " + ex.InnerException.Message;
+                        }
                     }
                     
-                    await _logService.LogErrorAsync("CariController.Create", ex);
-                    return Json(new { success = false, message = message });
+                    ModelState.AddModelError("", errorMessage);
+                    
+                    if (Request.Headers["X-Requested-With"] == "XMLHttpRequest")
+                    {
+                        return Json(new { success = false, message = errorMessage });
+                    }
+                    
+                    return View(model);
                 }
             }
-            catch (Exception ex)
+            
+            // ModelState hataları
+            if (Request.Headers["X-Requested-With"] == "XMLHttpRequest")
             {
-                string message = $"Cari eklenirken beklenmeyen bir hata oluştu: {ex.Message}";
-                if (ex.InnerException != null)
-                {
-                    message += $" İç hata: {ex.InnerException.Message}";
-                }
-                
-                try
-                {
-                    await _logService.LogErrorAsync("CariController.Create", ex);
-                }
-                catch {}
-                
-                return Json(new { success = false, message = message });
+                var errors = ModelState.Values.SelectMany(v => v.Errors).Select(e => e.ErrorMessage).ToList();
+                return Json(new { success = false, message = "Form doğrulama hataları mevcut", errors = errors });
             }
+            
+            return View(model);
         }
 
         [HttpGet]
         public async Task<IActionResult> Edit(Guid id)
         {
-            try
+            var cari = await _unitOfWork.CariRepository.GetByIdAsync(id);
+            if (cari == null)
             {
-                var cari = await _cariService.GetByIdAsync(id);
-                if (cari == null)
+                return NotFound();
+            }
+
+            var viewModel = new CariEditViewModel
+            {
+                Id = cari.CariID,
+                Ad = cari.Ad,
+                CariKodu = cari.CariKodu,
+                VergiNo = cari.VergiNo,
+                VergiDairesi = cari.VergiDairesi,
+                Adres = cari.Adres,
+                Telefon = cari.Telefon,
+                Email = cari.Email,
+                Yetkili = cari.Yetkili,
+                BaslangicBakiye = cari.BaslangicBakiye,
+                MevcutBakiye = cari.BaslangicBakiye,
+                Il = cari.Il,
+                Ilce = cari.Ilce,
+                PostaKodu = cari.PostaKodu,
+                Aciklama = cari.Aciklama,
+                AktifMi = cari.AktifMi,
+                OlusturmaTarihi = cari.OlusturmaTarihi,
+                VarsayilanParaBirimiId = cari.VarsayilanParaBirimiId,
+                VarsayilanKurKullan = cari.VarsayilanKurKullan
+            };
+
+            // Para birimi bilgilerini al
+            if (cari.VarsayilanParaBirimiId.HasValue)
+            {
+                var paraBirimi = await _paraBirimiService.GetParaBirimiByIdAsync(cari.VarsayilanParaBirimiId.Value);
+                if (paraBirimi != null)
                 {
-                    return Json(new { success = false, message = "Cari bulunamadı." });
+                    viewModel.VarsayilanParaBirimiKodu = paraBirimi.Kod;
+                    viewModel.VarsayilanParaBirimiAdi = paraBirimi.Ad;
+                    viewModel.VarsayilanParaBirimiSembol = paraBirimi.Sembol;
                 }
-
-                var model = new CariEditViewModel
-                {
-                    Id = cari.CariID,
-                    Ad = cari.Ad,
-                    VergiNo = cari.VergiNo,
-                    Telefon = cari.Telefon,
-                    Email = cari.Email,
-                    Yetkili = cari.Yetkili,
-                    BaslangicBakiye = cari.BaslangicBakiye,
-                    Adres = cari.Adres,
-                    Aciklama = cari.Aciklama
-                };
-
-                return PartialView("_EditPartial", model);
             }
-            catch (Exception ex)
-            {
-                await _logService.AddLogAsync("Hata", $"Cari düzenleme formunu açarken hata oluştu: {ex.Message}", "CariController/Edit");
-                return Json(new { success = false, message = "Cari bilgileri alınırken bir hata oluştu." });
-            }
+
+            // Para birimi listesini view'a gönder
+            ViewBag.ParaBirimleri = await _paraBirimiService.GetAktifParaBirimleriAsync();
+
+            return View(viewModel);
         }
 
         [HttpPost]
         [ValidateAntiForgeryToken]
-        public async Task<IActionResult> Edit(CariEditViewModel model)
+        public async Task<IActionResult> Edit(Guid id, CariEditViewModel model)
         {
-            if (!ModelState.IsValid)
+            if (id != model.Id)
             {
-                return Json(new { success = false, message = "Form doğrulama hatası!" });
+                return BadRequest();
             }
 
-            try
+            if (ModelState.IsValid)
             {
-                var cari = await _cariService.GetByIdAsync(model.Id);
-                if (cari == null)
+                try
                 {
-                    return Json(new { success = false, message = "Cari bulunamadı." });
+                    var cari = await _unitOfWork.CariRepository.GetByIdAsync(id);
+                    if (cari == null)
+                    {
+                        return NotFound();
+                    }
+
+                    // Bakiye değişikliğini kontrol et
+                    decimal bakiyeDegisimi = model.BaslangicBakiye - model.MevcutBakiye;
+                    
+                    // Güncelleme işlemleri
+                    cari.Ad = model.Ad;
+                    cari.CariKodu = !string.IsNullOrEmpty(model.CariKodu) ? model.CariKodu : "CRI-" + DateTime.Now.ToString("yyyyMMddHHmmss");
+                    
+                    // CariTipi için validasyon kontrolü
+                    if (string.IsNullOrEmpty(model.CariTipi))
+                    {
+                        cari.CariTipi = "Müşteri";
+                    }
+                    else if (model.CariTipi != "Müşteri" && model.CariTipi != "Tedarikçi" && model.CariTipi != "Müşteri ve Tedarikçi")
+                    {
+                        cari.CariTipi = "Müşteri"; // Geçersiz değer durumunda varsayılan olarak Müşteri ata
+                    }
+                    else
+                    {
+                        cari.CariTipi = model.CariTipi;
+                    }
+                    
+                    cari.VergiNo = model.VergiNo;
+                    cari.VergiDairesi = model.VergiDairesi ?? "Belirtilmemiş";
+                    cari.Telefon = model.Telefon;
+                    cari.Email = model.Email;
+                    cari.Yetkili = model.Yetkili;
+
+                    // Önceki bakiye değerini saklayalım
+                    decimal eskiBakiye = cari.BaslangicBakiye;
+                    
+                    // Yeni bakiye değeri
+                    cari.BaslangicBakiye = model.BaslangicBakiye;
+                    cari.Adres = model.Adres ?? "";
+                    cari.Aciklama = model.Aciklama ?? "";
+                    cari.AktifMi = model.AktifMi;
+                    cari.GuncellemeTarihi = DateTime.Now;
+                    cari.SonGuncelleyenKullaniciId = Guid.Parse(User.FindFirst(System.Security.Claims.ClaimTypes.NameIdentifier)?.Value);
+                    
+                    // Para birimi ayarlarını güncelle
+                    cari.VarsayilanParaBirimiId = model.VarsayilanParaBirimiId;
+                    cari.VarsayilanKurKullan = model.VarsayilanKurKullan;
+                    
+                    await _unitOfWork.CariRepository.UpdateAsync(cari);
+                    
+                    // Bakiye değişikliği varsa cari hareketi oluştur
+                    if (bakiyeDegisimi != 0)
+                    {
+                        var cariHareket = new Data.Entities.CariHareket
+                        {
+                            CariId = cari.CariID,
+                            HareketTuru = "Bakiye Düzeltmesi",
+                            // Tutar her zaman değişim miktarının mutlak değeri olmalı
+                            Tutar = Math.Abs(bakiyeDegisimi),
+                            Tarih = DateTime.Now,
+                            // Açıklamada gerçek önceki bakiye değerini göster
+                            Aciklama = $"Bakiye düzeltmesi yapıldı. Önceki bakiye: {eskiBakiye:N2}, Yeni bakiye: {model.BaslangicBakiye:N2}",
+                            OlusturmaTarihi = DateTime.Now,
+                            OlusturanKullaniciId = Guid.Parse(User.FindFirst(System.Security.Claims.ClaimTypes.NameIdentifier)?.Value),
+                            // Borç ve Alacak alanlarını bakiye değişimine göre belirle
+                            Borc = bakiyeDegisimi < 0 ? Math.Abs(bakiyeDegisimi) : 0,
+                            Alacak = bakiyeDegisimi > 0 ? Math.Abs(bakiyeDegisimi) : 0,
+                            Silindi = false
+                        };
+                        
+                        await _unitOfWork.CariHareketRepository.AddAsync(cariHareket);
+                    }
+                    
+                    await _unitOfWork.SaveAsync();
+                    
+                    await _logService.LogOlustur(
+                        "Cari güncellendi", 
+                        LogTuru.Bilgi, 
+                        "Cari", 
+                        cari.Ad, 
+                        Guid.Parse(cari.Id.ToString()), 
+                        $"{cari.Ad} adlı cari kaydı güncellendi. {(bakiyeDegisimi != 0 ? $"Bakiye değişimi: {bakiyeDegisimi:N2}" : "")}"
+                    );
+                    
+                    TempData["SuccessMessage"] = bakiyeDegisimi != 0 
+                        ? $"Cari başarıyla güncellendi. Bakiye düzeltmesi ({bakiyeDegisimi:N2} TL) cari hareketlerine kaydedildi."
+                        : "Cari başarıyla güncellendi.";
+                    
+                    if (Request.Headers["X-Requested-With"] == "XMLHttpRequest")
+                    {
+                        return Json(new { success = true, message = "Cari başarıyla güncellendi." });
+                    }
+                    
+                    return RedirectToAction(nameof(Details), new { id = cari.Id });
                 }
-
-                cari.Ad = model.Ad;
-                cari.VergiNo = model.VergiNo;
-                cari.Telefon = model.Telefon;
-                cari.Email = model.Email;
-                cari.Yetkili = model.Yetkili;
-                cari.BaslangicBakiye = model.BaslangicBakiye;
-                cari.Adres = model.Adres;
-                cari.Aciklama = model.Aciklama;
-                cari.GuncellemeTarihi = DateTime.Now;
-
-                await _cariService.UpdateAsync(cari);
-                await _logService.AddLogAsync("Bilgi", $"{cari.Ad} adlı cari güncellendi.", "CariController/Edit");
-
-                return Json(new { success = true, message = "Cari başarıyla güncellendi." });
+                catch (Exception ex)
+                {
+                    _logger.LogError(ex, "Cari güncelleme hatası");
+                    ModelState.AddModelError("", "Cari güncellenirken bir hata oluştu. Lütfen tekrar deneyin.");
+                }
             }
-            catch (Exception ex)
+            
+            // Para birimi listesini view'a gönder
+            ViewBag.ParaBirimleri = await _paraBirimiService.GetAktifParaBirimleriAsync();
+            
+            return View(model);
+        }
+
+        [HttpGet]
+        public async Task<IActionResult> Delete(Guid id)
+        {
+            var cari = await _unitOfWork.CariRepository.GetByIdAsync(id);
+            if (cari == null)
             {
-                await _logService.AddLogAsync("Hata", $"Cari güncellenirken hata oluştu: {ex.Message}", "CariController/Edit");
-                return Json(new { success = false, message = "Cari güncellenirken bir hata oluştu." });
+                return NotFound();
             }
+            
+            return View(cari);
+        }
+
+        [HttpPost, ActionName("Delete")]
+        [ValidateAntiForgeryToken]
+        public async Task<IActionResult> DeleteConfirmed(Guid id)
+        {
+            var cari = await _unitOfWork.CariRepository.GetByIdAsync(id);
+            if (cari == null)
+            {
+                return NotFound();
+            }
+            
+            // Cari ile ilgili hareket/fatura kontrolü yap
+            var hareketSayisi = (await _unitOfWork.CariHareketRepository
+                .GetAsync(filter: ch => ch.CariId == id)).Count();
+                
+            var faturaSayisi = (await _unitOfWork.FaturaRepository
+                .GetAsync(filter: f => f.CariID == id)).Count();
+            
+            if (hareketSayisi > 0 || faturaSayisi > 0)
+            {
+                // İlişkili kayıtlar varsa sadece pasife al
+                cari.AktifMi = false;
+                cari.GuncellemeTarihi = DateTime.Now;
+                cari.SonGuncelleyenKullaniciId = Guid.Parse(User.FindFirst(System.Security.Claims.ClaimTypes.NameIdentifier)?.Value);
+                
+                await _unitOfWork.CariRepository.UpdateAsync(cari);
+                await _unitOfWork.SaveAsync();
+                
+                await _logService.LogOlustur(
+                    "Cari pasife alındı", 
+                    LogTuru.Bilgi, 
+                    "Cari", 
+                    cari.Ad, 
+                    Guid.Parse(cari.Id.ToString()), 
+                    $"{cari.Ad} adlı cari kaydı pasife alındı.");
+                
+                TempData["SuccessMessage"] = "Cari pasife alındı. İlişkili kayıtlar olduğu için tamamen silinemedi.";
+            }
+            else
+            {
+                // İlişkili kayıt yoksa silinebilir
+                cari.Silindi = true;
+                cari.GuncellemeTarihi = DateTime.Now;
+                cari.SonGuncelleyenKullaniciId = Guid.Parse(User.FindFirst(System.Security.Claims.ClaimTypes.NameIdentifier)?.Value);
+                
+                await _unitOfWork.CariRepository.UpdateAsync(cari);
+                await _unitOfWork.SaveAsync();
+                
+                await _logService.LogOlustur(
+                    "Cari silindi", 
+                    LogTuru.Bilgi, 
+                    "Cari", 
+                    cari.Ad, 
+                    Guid.Parse(cari.Id.ToString()), 
+                    $"{cari.Ad} adlı cari kaydı silindi.");
+                
+                TempData["SuccessMessage"] = "Cari başarıyla silindi.";
+            }
+            
+            return RedirectToAction(nameof(Index));
+        }
+
+        [HttpGet]
+        public async Task<IActionResult> HareketEkle(Guid id)
+        {
+            var cari = await _unitOfWork.CariRepository.GetByIdAsync(id);
+            if (cari == null)
+            {
+                return NotFound();
+            }
+            
+            var model = new CariHareketCreateViewModel
+            {
+                CariId = cari.CariID,
+                CariAdi = cari.Ad,
+                Tarih = DateTime.Now.Date
+            };
+            
+            if (Request.Headers["X-Requested-With"] == "XMLHttpRequest")
+            {
+                return PartialView("_HareketEklePartial", model);
+            }
+            
+            return View(model);
         }
 
         [HttpPost]
-        public async Task<IActionResult> Delete(Guid id)
+        [ValidateAntiForgeryToken]
+        public async Task<IActionResult> HareketEkle(CariHareketCreateViewModel model)
+        {
+            if (ModelState.IsValid)
+            {
+                try
+                {
+                    var cari = await _unitOfWork.CariRepository.GetByIdAsync(model.CariId);
+                    if (cari == null)
+                    {
+                        return NotFound();
+                    }
+                    
+                    var cariHareket = new Data.Entities.CariHareket
+                    {
+                        CariId = model.CariId,
+                        HareketTuru = model.HareketTuru,
+                        Tutar = model.Tutar,
+                        Tarih = model.Tarih,
+                        ReferansNo = model.ReferansNo,
+                        ReferansTuru = model.ReferansTuru,
+                        ReferansID = model.ReferansID,
+                        Aciklama = model.Aciklama,
+                        OlusturmaTarihi = DateTime.Now,
+                        OlusturanKullaniciId = Guid.Parse(User.FindFirst(System.Security.Claims.ClaimTypes.NameIdentifier)?.Value),
+                        Silindi = false
+                    };
+                    
+                    await _unitOfWork.CariHareketRepository.AddAsync(cariHareket);
+                    await _unitOfWork.SaveAsync();
+                    
+                    await _logService.LogOlustur(
+                        "Cari hareket eklendi", 
+                        LogTuru.Bilgi, 
+                        "CariHareket", 
+                        cari.Ad, 
+                        Guid.Parse(cariHareket.Id.ToString()), 
+                        $"{cari.Ad} adlı cariye {model.HareketTuru} hareketi eklendi. Tutar: {model.Tutar:N2} TL");
+                    
+                    TempData["SuccessMessage"] = "Cari hareket başarıyla eklendi.";
+                    
+                    if (Request.Headers["X-Requested-With"] == "XMLHttpRequest")
+                    {
+                        return Json(new { success = true });
+                    }
+                    
+                    return RedirectToAction(nameof(Details), new { id = model.CariId });
+                }
+                catch (Exception ex)
+                {
+                    _logger.LogError(ex, "Cari hareket ekleme hatası");
+                    ModelState.AddModelError("", "Cari hareket eklenirken bir hata oluştu. Lütfen tekrar deneyin.");
+                }
+            }
+            
+            if (Request.Headers["X-Requested-With"] == "XMLHttpRequest")
+            {
+                return PartialView("_HareketEklePartial", model);
+            }
+            
+            return View(model);
+        }
+
+        [HttpGet]
+        public async Task<IActionResult> Ekstre(Guid id, DateTime? baslangicTarihi = null, DateTime? bitisTarihi = null, Guid? paraBirimiId = null)
         {
             try
             {
-                var cari = await _cariService.GetByIdAsync(id);
+                var cari = await _unitOfWork.CariRepository.GetByIdAsync(id);
                 if (cari == null)
                 {
-                    return Json(new { success = false, message = "Cari bulunamadı." });
+                    return NotFound();
+                }
+                
+                var startDate = baslangicTarihi ?? DateTime.Now.AddMonths(-1).Date;
+                var endDate = bitisTarihi ?? DateTime.Now.Date.AddDays(1).AddSeconds(-1);
+                
+                // Eğer paraBirimiId belirtilmemişse ve carinin varsayılan para birimi varsa, onu kullan
+                if (!paraBirimiId.HasValue && cari.VarsayilanParaBirimiId.HasValue)
+                {
+                    paraBirimiId = cari.VarsayilanParaBirimiId.Value;
                 }
 
-                await _cariService.DeleteAsync(cari);
-                await _logService.AddLogAsync("Bilgi", $"{cari.Ad} adlı cari silindi.", "CariController/Delete");
-
-                return Json(new { success = true, message = "Cari başarıyla silindi." });
+                // Veritabanındaki tüm cari hareketlerini getir - filtreyi burada uygulamıyoruz
+                var tumHareketler = await _unitOfWork.CariHareketRepository.GetAsync(
+                    filter: ch => ch.CariId == id);
+                
+                // Açılış bakiyesi hareketlerini ayrı al 
+                var acilisBakiyeHareketleri = tumHareketler.Where(h => h.HareketTuru == "Açılış bakiyesi").OrderBy(h => h.Tarih).ToList();
+                
+                // Diğer hareketleri al
+                var digerHareketler = tumHareketler.Where(h => h.HareketTuru != "Açılış bakiyesi").OrderBy(h => h.Tarih).ToList();
+                
+                // Veritabanında açılış bakiyesi hareketi yoksa, cari.BaslangicBakiye'yi kullan
+                decimal baslangicBakiyesi = 0;
+                
+                // İlk açılış bakiyesi hareketi varsa onu kullan
+                if (acilisBakiyeHareketleri.Any())
+                {
+                    var ilkAcilisBakiyeHareketi = acilisBakiyeHareketleri.First();
+                    baslangicBakiyesi = ilkAcilisBakiyeHareketi.Alacak - ilkAcilisBakiyeHareketi.Borc;
+                }
+                else
+                {
+                    baslangicBakiyesi = cari.BaslangicBakiye;
+                }
+                
+                // Şimdi gösterilecek hareketleri seçilen tarih aralığına göre filtrele
+                var gosterilecekHareketler = digerHareketler
+                    .Where(h => h.Tarih >= startDate && h.Tarih <= endDate)
+                    .ToList();
+                
+                // Başlangıç tarihinden önceki diğer hareketlerin etkisini hesapla
+                decimal oncekiHareketlerinEtkisi = 0;
+                foreach (var oncekiHareket in digerHareketler.Where(h => h.Tarih < startDate))
+                {
+                    if (oncekiHareket.HareketTuru == "Bakiye Düzeltmesi")
+                    {
+                        oncekiHareketlerinEtkisi += oncekiHareket.Alacak - oncekiHareket.Borc;
+                    }
+                    else if (oncekiHareket.HareketTuru == "Ödeme" || oncekiHareket.HareketTuru == "Borç" || oncekiHareket.HareketTuru == "Çıkış")
+                    {
+                        oncekiHareketlerinEtkisi -= oncekiHareket.Tutar;
+                    }
+                    else if (oncekiHareket.HareketTuru == "Tahsilat" || oncekiHareket.HareketTuru == "Alacak" || oncekiHareket.HareketTuru == "Giriş")
+                    {
+                        oncekiHareketlerinEtkisi += oncekiHareket.Tutar;
+                    }
+                }
+                
+                // Başlangıç bakiyesine önceki hareketlerin etkisini ekle
+                baslangicBakiyesi += oncekiHareketlerinEtkisi;
+                
+                var model = new Models.CariEkstreViewModel
+                {
+                    Id = cari.CariID,
+                    CariAdi = cari.Ad,
+                    VergiNo = cari.VergiNo,
+                    Adres = cari.Adres,
+                    BaslangicTarihi = startDate,
+                    BitisTarihi = endDate,
+                    RaporTarihi = DateTime.Now,
+                    Hareketler = new List<Models.CariHareketViewModel>(),
+                    ParaBirimiKodu = "TRY",
+                    ParaBirimiSembol = "₺",
+                    DovizKuru = 1M,
+                    DovizKuruTarihi = DateTime.Now,
+                    OrijinalParaBirimi = true
+                };
+                
+                // Para birimi seçilmiş mi kontrol et
+                if (paraBirimiId.HasValue && paraBirimiId.Value != Guid.Empty)
+                {
+                    try 
+                    {
+                        // Para birimi bilgilerini getir
+                        var paraBirimi = await _paraBirimiService.GetParaBirimiByIdAsync(paraBirimiId.Value);
+                        
+                        if (paraBirimi != null)
+                        {
+                            // Para birimi ve kur bilgilerini modele ekle
+                            model.ParaBirimiId = paraBirimi.ParaBirimiID;
+                            model.ParaBirimiKodu = paraBirimi.Kod;
+                            model.ParaBirimiSembol = paraBirimi.Sembol;
+                            model.OrijinalParaBirimi = false;
+                            
+                            // Seçilen para birimine göre güncel kur bilgisini al
+                            var kurDegeri = await _dovizKuruService.GetSonKurDegeriByParaBirimiAsync(paraBirimi.ParaBirimiID);
+                            
+                            if (kurDegeri != null)
+                            {
+                                model.DovizKuru = kurDegeri.Satis;
+                                model.DovizKuruTarihi = kurDegeri.Tarih;
+                            }
+                            else
+                            {
+                                // Kur bulunamadıysa varsayılan değeri 1 olarak ayarla
+                                model.DovizKuru = 1M;
+                                TempData["Warning"] = $"{paraBirimi.Kod} para birimi için güncel kur bilgisi bulunamadı. Varsayılan döviz kuru 1:1 olarak ayarlandı.";
+                            }
+                        }
+                    }
+                    catch (Exception ex)
+                    {
+                        _logger.LogError(ex, $"Döviz kuru bilgisi alınırken hata oluştu: {ex.Message}");
+                        TempData["Warning"] = "Döviz kuru bilgisi alınırken bir hata oluştu, TL bazında ekstre gösteriliyor.";
+                    }
+                }
+                
+                // Para birimi bilgilerini ViewBag'e ekle (dropdown için)
+                ViewBag.ParaBirimleri = await _paraBirimiService.GetAktifParaBirimleriAsync();
+                ViewBag.SeciliParaBirimiId = model.ParaBirimiId;
+                
+                // Carinin varsayılan para birimini modele ekle
+                model.VarsayilanParaBirimiId = cari.VarsayilanParaBirimiId;
+                
+                // Açılış bakiyesi gösterimi
+                var acilisBakiyeGosterimi = new Models.CariHareketViewModel
+                {
+                    Tarih = acilisBakiyeHareketleri.Any() ? acilisBakiyeHareketleri.First().Tarih : cari.OlusturmaTarihi,
+                    IslemTuru = "Açılış bakiyesi",
+                    Aciklama = "Açılış Bakiyesi",
+                    Kaynak = "Sistem",
+                    Borc = baslangicBakiyesi < 0 ? Math.Abs(baslangicBakiyesi) : 0,
+                    Alacak = baslangicBakiyesi > 0 ? baslangicBakiyesi : 0,
+                    Bakiye = baslangicBakiyesi,
+                    // Orijinal değerler (TL cinsinden)
+                    OrijinalBorc = baslangicBakiyesi < 0 ? Math.Abs(baslangicBakiyesi) : 0,
+                    OrijinalAlacak = baslangicBakiyesi > 0 ? baslangicBakiyesi : 0,
+                    OrijinalBakiye = baslangicBakiyesi,
+                    HareketParaBirimi = "TRY"
+                };
+                
+                // Eğer farklı bir para birimi seçilmişse, açılış bakiyesini dönüştür
+                if (!model.OrijinalParaBirimi && model.DovizKuru > 0)
+                {
+                    // Eğer cari.VarsayilanParaBirimiId ile paraBirimiId eşleşiyorsa doğrudan bakiyeyi kullan
+                    if (cari.VarsayilanParaBirimiId.HasValue && paraBirimiId.HasValue && 
+                        cari.VarsayilanParaBirimiId.Value == paraBirimiId.Value)
+                    {
+                        acilisBakiyeGosterimi.Borc = acilisBakiyeGosterimi.OrijinalBorc;
+                        acilisBakiyeGosterimi.Alacak = acilisBakiyeGosterimi.OrijinalAlacak;
+                        acilisBakiyeGosterimi.Bakiye = cari.BaslangicBakiye; // Doğrudan cari bakiyesini kullan
+                    }
+                    else
+                    {
+                        // Farklı para birimi seçilmişse dönüşüm yap
+                        acilisBakiyeGosterimi.Borc = Math.Round(acilisBakiyeGosterimi.OrijinalBorc / model.DovizKuru, 2);
+                        acilisBakiyeGosterimi.Alacak = Math.Round(acilisBakiyeGosterimi.OrijinalAlacak / model.DovizKuru, 2);
+                        acilisBakiyeGosterimi.Bakiye = Math.Round(acilisBakiyeGosterimi.OrijinalBakiye / model.DovizKuru, 2);
+                    }
+                }
+                
+                model.Hareketler.Add(acilisBakiyeGosterimi);
+                
+                // Şimdi gösterilecek diğer hareketleri ekle ve bakiyeyi güncelle
+                decimal bakiye = baslangicBakiyesi;
+                decimal dovizBakiye = acilisBakiyeGosterimi.Bakiye; // Döviz cinsinden bakiye
+                
+                foreach (var hareket in gosterilecekHareketler)
+                {
+                    decimal hareketTutari = 0;
+                    
+                    if (hareket.HareketTuru == "Bakiye Düzeltmesi")
+                    {
+                        hareketTutari = hareket.Alacak - hareket.Borc;
+                    }
+                    else if (hareket.HareketTuru == "Ödeme" || hareket.HareketTuru == "Borç" || hareket.HareketTuru == "Çıkış")
+                    {
+                        hareketTutari = -hareket.Tutar;
+                    }
+                    else if (hareket.HareketTuru == "Tahsilat" || hareket.HareketTuru == "Alacak" || hareket.HareketTuru == "Giriş")
+                    {
+                        hareketTutari = hareket.Tutar;
+                    }
+                    
+                    bakiye += hareketTutari;
+                    
+                    var cariHareket = new Models.CariHareketViewModel
+                    {
+                        Tarih = hareket.Tarih,
+                        VadeTarihi = hareket.VadeTarihi,
+                        Aciklama = hareket.Aciklama,
+                        IslemTuru = hareket.HareketTuru,
+                        EvrakNo = hareket.ReferansNo,
+                        Kaynak = "Cari",
+                        // Orijinal değerler (TL cinsinden)
+                        OrijinalBorc = hareketTutari < 0 ? Math.Abs(hareketTutari) : 0,
+                        OrijinalAlacak = hareketTutari > 0 ? hareketTutari : 0,
+                        OrijinalBakiye = bakiye,
+                        HareketParaBirimi = "TRY"
+                    };
+                    
+                    // Eğer farklı bir para birimi seçilmişse değerleri dönüştür
+                    if (!model.OrijinalParaBirimi && model.DovizKuru > 0)
+                    {
+                        // Eğer cari.VarsayilanParaBirimiId ile paraBirimiId eşleşiyorsa doğrudan değerleri kullan
+                        if (cari.VarsayilanParaBirimiId.HasValue && paraBirimiId.HasValue && 
+                            cari.VarsayilanParaBirimiId.Value == paraBirimiId.Value)
+                        {
+                            decimal hareketBakiye = bakiye;
+                            if (model.Hareketler.Count > 0)
+                            {
+                                // Önceki hareketin bakiyesini al ve bu hareketi ekle
+                                hareketBakiye = model.Hareketler.Last().Bakiye + (cariHareket.OrijinalAlacak - cariHareket.OrijinalBorc);
+                            }
+                            
+                            cariHareket.Borc = cariHareket.OrijinalBorc;
+                            cariHareket.Alacak = cariHareket.OrijinalAlacak;
+                            cariHareket.Bakiye = hareketBakiye;
+                            dovizBakiye = hareketBakiye;
+                        }
+                        else
+                        {
+                            decimal dovizTutari = Math.Round(hareketTutari / model.DovizKuru, 2);
+                            dovizBakiye += dovizTutari;
+                            
+                            cariHareket.Borc = dovizTutari < 0 ? Math.Round(Math.Abs(dovizTutari), 2) : 0;
+                            cariHareket.Alacak = dovizTutari > 0 ? Math.Round(dovizTutari, 2) : 0;
+                            cariHareket.Bakiye = Math.Round(dovizBakiye, 2);
+                        }
+                    }
+                    
+                    model.Hareketler.Add(cariHareket);
+                }
+                
+                // Toplam ve bakiye hesaplamaları
+                if (model.OrijinalParaBirimi)
+                {
+                    // TL cinsinden
+                    model.ToplamBorc = model.Hareketler.Sum(h => h.OrijinalBorc);
+                    model.ToplamAlacak = model.Hareketler.Sum(h => h.OrijinalAlacak);
+                    model.Bakiye = bakiye;
+                }
+                else
+                {
+                    // Seçili para birimi cinsinden
+                    model.ToplamBorc = model.Hareketler.Sum(h => h.Borc);
+                    model.ToplamAlacak = model.Hareketler.Sum(h => h.Alacak);
+                    model.Bakiye = dovizBakiye;
+                }
+                
+                return View(model);
             }
             catch (Exception ex)
             {
-                await _logService.AddLogAsync("Hata", $"Cari silinirken hata oluştu: {ex.Message}", "CariController/Delete");
-                return Json(new { success = false, message = "Cari silinirken bir hata oluştu." });
+                _logger.LogError(ex, "Cari ekstre görüntüleme hatası. CariID: {CariID}", id);
+                TempData["ErrorMessage"] = "Ekstre görüntülenirken bir hata oluştu. Lütfen tekrar deneyin.";
+                return RedirectToAction(nameof(Details), new { id = id });
             }
+        }
+
+        // Örnek veri oluşturma action'ı
+        [HttpGet]
+        public async Task<IActionResult> AddSampleData()
+        {
+            try
+            {
+                // Veritabanında cari kaydı olup olmadığını kontrol et
+                var cariler = await _unitOfWork.CariRepository.GetAllAsync();
+                if (cariler.Any())
+                {
+                    TempData["WarningMessage"] = "Veritabanında zaten cari kayıtları bulunmaktadır.";
+                    return RedirectToAction(nameof(Index));
+                }
+                
+                // Kullanıcı ID'sini al
+                var userId = Guid.Parse(User.FindFirst(System.Security.Claims.ClaimTypes.NameIdentifier)?.Value);
+                
+                // Örnek cari verileri
+                var cariListesi = new List<Data.Entities.Cari>
+                {
+                    new Data.Entities.Cari
+                    {
+                        CariID = Guid.NewGuid(),
+                        Ad = "ABC Ticaret Ltd. Şti.",
+                        CariKodu = "CARI001",
+                        CariTipi = "Tedarikçi",
+                        VergiNo = "1234567890",
+                        VergiDairesi = "Kadıköy",
+                        Telefon = "0216 123 45 67",
+                        Email = "info@abc-ticaret.com",
+                        Yetkili = "Ali Yılmaz",
+                        BaslangicBakiye = 15000.00m,
+                        Adres = "Bağdat Cad. No: 123, Kadıköy, İstanbul",
+                        Aciklama = "Elektronik malzeme tedarikçisi",
+                        Il = "İstanbul",
+                        Ilce = "Kadıköy",
+                        PostaKodu = "34720",
+                        Ulke = "Türkiye",
+                        WebSitesi = "www.abc-ticaret.com",
+                        AktifMi = true,
+                        OlusturanKullaniciId = userId,
+                        OlusturmaTarihi = DateTime.Now
+                    },
+                    new Data.Entities.Cari
+                    {
+                        CariID = Guid.NewGuid(),
+                        Ad = "XYZ Elektronik A.Ş.",
+                        CariKodu = "CARI002",
+                        CariTipi = "Tedarikçi",
+                        VergiNo = "9876543210",
+                        VergiDairesi = "Şişli",
+                        Telefon = "0212 987 65 43",
+                        Email = "info@xyz-elektronik.com",
+                        Yetkili = "Mehmet Kaya",
+                        BaslangicBakiye = 25000.00m,
+                        Adres = "Büyükdere Cad. No: 456, Şişli, İstanbul",
+                        Aciklama = "Bilgisayar ve elektronik ürünler",
+                        Il = "İstanbul",
+                        Ilce = "Şişli",
+                        PostaKodu = "34394",
+                        Ulke = "Türkiye",
+                        WebSitesi = "www.xyz-elektronik.com",
+                        AktifMi = true,
+                        OlusturanKullaniciId = userId,
+                        OlusturmaTarihi = DateTime.Now
+                    },
+                    new Data.Entities.Cari
+                    {
+                        CariID = Guid.NewGuid(),
+                        Ad = "Akın Market",
+                        CariKodu = "CARI003",
+                        CariTipi = "Müşteri",
+                        VergiNo = "1357924680",
+                        VergiDairesi = "Beşiktaş",
+                        Telefon = "0212 456 78 90",
+                        Email = "iletisim@akinmarket.com",
+                        Yetkili = "Hakan Akın",
+                        BaslangicBakiye = -3500.00m,
+                        Adres = "Barbaros Bulvarı No: 78, Beşiktaş, İstanbul",
+                        Aciklama = "Süpermarket zinciri",
+                        Il = "İstanbul",
+                        Ilce = "Beşiktaş",
+                        PostaKodu = "34353",
+                        Ulke = "Türkiye",
+                        WebSitesi = "www.akinmarket.com",
+                        AktifMi = true,
+                        OlusturanKullaniciId = userId,
+                        OlusturmaTarihi = DateTime.Now
+                    },
+                    new Data.Entities.Cari
+                    {
+                        CariID = Guid.NewGuid(),
+                        Ad = "Birlik Nakliyat",
+                        CariKodu = "CARI004",
+                        CariTipi = "Hizmet Sağlayıcı",
+                        VergiNo = "2468013579",
+                        VergiDairesi = "Ümraniye",
+                        Telefon = "0216 789 01 23",
+                        Email = "info@birliknakliyat.com",
+                        Yetkili = "Fatih Demir",
+                        BaslangicBakiye = 0.00m,
+                        Adres = "Alemdağ Cad. No: 345, Ümraniye, İstanbul",
+                        Aciklama = "Lojistik ve taşımacılık firması",
+                        Il = "İstanbul",
+                        Ilce = "Ümraniye",
+                        PostaKodu = "34760",
+                        Ulke = "Türkiye",
+                        WebSitesi = "www.birliknakliyat.com",
+                        AktifMi = true,
+                        OlusturanKullaniciId = userId,
+                        OlusturmaTarihi = DateTime.Now
+                    },
+                    new Data.Entities.Cari
+                    {
+                        CariID = Guid.NewGuid(),
+                        Ad = "Yıldız Tekstil Ltd. Şti.",
+                        CariKodu = "CARI005",
+                        CariTipi = "Müşteri",
+                        VergiNo = "3692581470",
+                        VergiDairesi = "Merter",
+                        Telefon = "0212 345 67 89",
+                        Email = "satis@yildiztekstil.com",
+                        Yetkili = "Ayşe Yıldız",
+                        BaslangicBakiye = 8500.00m,
+                        Adres = "Keresteciler Sitesi, Merter, İstanbul",
+                        Aciklama = "Tekstil üretim ve ihracat firması",
+                        Il = "İstanbul",
+                        Ilce = "Güngören",
+                        PostaKodu = "34010",
+                        Ulke = "Türkiye",
+                        WebSitesi = "www.yildiztekstil.com",
+                        AktifMi = false,
+                        OlusturanKullaniciId = userId,
+                        OlusturmaTarihi = DateTime.Now
+                    }
+                };
+                
+                // Her bir cariyi ayrı ayrı ekle
+                foreach (var cari in cariListesi)
+                {
+                    await _unitOfWork.CariRepository.AddAsync(cari);
+                }
+                
+                // Örnek cari hareketleri
+                var cari1Id = cariListesi[0].CariID;
+                var cari2Id = cariListesi[1].CariID;
+                var cari3Id = cariListesi[2].CariID;
+                
+                // Cari 1 için hareketler
+                await _unitOfWork.CariHareketRepository.AddAsync(new Data.Entities.CariHareket 
+                { 
+                    CariHareketID = Guid.NewGuid(), 
+                    CariId = cari1Id,
+                    Tutar = 5000.00m,
+                    Tarih = DateTime.Now.AddDays(-30),
+                    HareketTuru = "Alış Faturası",
+                    Aciklama = "Elektronik malzeme alımı",
+                    OlusturmaTarihi = DateTime.Now.AddDays(-30),
+                    OlusturanKullaniciId = userId
+                });
+                
+                await _unitOfWork.CariHareketRepository.AddAsync(new Data.Entities.CariHareket 
+                { 
+                    CariHareketID = Guid.NewGuid(), 
+                    CariId = cari1Id,
+                    Tutar = 8000.00m,
+                    Tarih = DateTime.Now.AddDays(-15),
+                    HareketTuru = "Alış Faturası",
+                    Aciklama = "Aylık stok tedariki",
+                    VadeTarihi = DateTime.Now.AddDays(15),
+                    OlusturmaTarihi = DateTime.Now.AddDays(-15),
+                    OlusturanKullaniciId = userId
+                });
+                
+                // Cari 2 için hareketler
+                await _unitOfWork.CariHareketRepository.AddAsync(new Data.Entities.CariHareket 
+                { 
+                    CariHareketID = Guid.NewGuid(), 
+                    CariId = cari2Id,
+                    Tutar = 12000.00m,
+                    Tarih = DateTime.Now.AddDays(-20),
+                    HareketTuru = "Alış Faturası",
+                    Aciklama = "Bilgisayar ekipmanları",
+                    OlusturmaTarihi = DateTime.Now.AddDays(-20),
+                    OlusturanKullaniciId = userId
+                });
+                
+                // Cari 3 için hareketler
+                await _unitOfWork.CariHareketRepository.AddAsync(new Data.Entities.CariHareket 
+                { 
+                    CariHareketID = Guid.NewGuid(), 
+                    CariId = cari3Id,
+                    Tutar = 3500.00m,
+                    Tarih = DateTime.Now.AddDays(-10),
+                    HareketTuru = "Satış Faturası",
+                    Aciklama = "Toptan gıda ürünleri",
+                    VadeTarihi = DateTime.Now.AddDays(20),
+                    OlusturmaTarihi = DateTime.Now.AddDays(-10),
+                    OlusturanKullaniciId = userId
+                });
+                
+                // Değişiklikleri kaydet
+                await _unitOfWork.SaveAsync();
+                
+                // Log oluştur
+                await _logService.LogOlustur(
+                    "Örnek cari verileri eklendi", 
+                    LogTuru.Bilgi, 
+                    "Cari", 
+                    "Örnek Veriler", 
+                    Guid.Empty, 
+                    "Sistem tarafından örnek cari verileri oluşturuldu."
+                );
+                
+                TempData["SuccessMessage"] = "Örnek cari ve cari hareket verileri başarıyla oluşturuldu.";
+                return RedirectToAction(nameof(Index));
+            }
+            catch (Exception ex)
+            {
+                TempData["ErrorMessage"] = $"Örnek veri eklenirken bir hata oluştu: {ex.Message}";
+                return RedirectToAction(nameof(Index));
+            }
+        }
+
+        [HttpGet]
+        public async Task<IActionResult> Musteriler()
+        {
+            var cariler = await _unitOfWork.CariRepository.GetAsync(
+                filter: c => !c.Silindi && (c.CariTipi == "Müşteri" || c.CariTipi == "Müşteri ve Tedarikçi"));
+            
+            // Para birimi listesini view'a gönder
+            ViewBag.ParaBirimleri = await _paraBirimiService.GetAktifParaBirimleriAsync();
+            ViewBag.CariTipi = "Müşteri";
+            
+            return View("CariTipi", cariler);
+        }
+
+        [HttpGet]
+        public async Task<IActionResult> Tedarikciler()
+        {
+            var cariler = await _unitOfWork.CariRepository.GetAsync(
+                filter: c => !c.Silindi && (c.CariTipi == "Tedarikçi" || c.CariTipi == "Müşteri ve Tedarikçi"));
+            
+            // Para birimi listesini view'a gönder
+            ViewBag.ParaBirimleri = await _paraBirimiService.GetAktifParaBirimleriAsync();
+            ViewBag.CariTipi = "Tedarikçi";
+            
+            return View("CariTipi", cariler);
         }
     }
 }

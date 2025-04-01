@@ -458,5 +458,16 @@ namespace MuhasebeStokWebApp.Controllers
         {
             return await _userManager.GetUserAsync(User);
         }
+        
+        protected int GetCurrentUserNumericId()
+        {
+            var userId = User.FindFirstValue(ClaimTypes.NameIdentifier);
+            if (!string.IsNullOrEmpty(userId))
+            {
+                // Kullanıcı ID'sinden sayısal değer elde etmek için basit bir yaklaşım
+                return Math.Abs(userId.GetHashCode() % 1000); // 0-999 arası bir sayı üret
+            }
+            return 1; // Varsayılan kullanıcı ID (sistem kullanıcısı)
+        }
     }
 } 

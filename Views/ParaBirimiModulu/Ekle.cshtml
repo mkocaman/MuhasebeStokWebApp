@@ -1,0 +1,81 @@
+@model MuhasebeStokWebApp.Data.Entities.ParaBirimiModulu.ParaBirimi
+@{
+    ViewData["Title"] = "Para Birimi Ekle";
+}
+
+<div class="container-fluid">
+    <div class="card">
+        <div class="card-header bg-primary text-white">
+            <h4 class="mb-0">Yeni Para Birimi Ekle</h4>
+        </div>
+        <div class="card-body">
+            <form asp-action="Ekle" method="post">
+                <div asp-validation-summary="ModelOnly" class="text-danger"></div>
+                
+                <div class="row mb-3">
+                    <div class="col-md-6">
+                        <div class="form-group">
+                            <label asp-for="Kod" class="control-label">Para Birimi Kodu</label>
+                            <input asp-for="Kod" class="form-control" required placeholder="Örn: USD, EUR, GBP" maxlength="10" />
+                            <span asp-validation-for="Kod" class="text-danger"></span>
+                            <small class="text-muted">Para biriminin uluslararası kodu (USD, EUR, GBP, vb.)</small>
+                        </div>
+                    </div>
+                    <div class="col-md-6">
+                        <div class="form-group">
+                            <label asp-for="Ad" class="control-label">Para Birimi Adı</label>
+                            <input asp-for="Ad" class="form-control" required placeholder="Örn: Amerikan Doları" maxlength="50" />
+                            <span asp-validation-for="Ad" class="text-danger"></span>
+                        </div>
+                    </div>
+                </div>
+
+                <div class="row mb-3">
+                    <div class="col-md-6">
+                        <div class="form-group">
+                            <label asp-for="Sembol" class="control-label">Sembol</label>
+                            <input asp-for="Sembol" class="form-control" placeholder="Örn: $, €, £" maxlength="10" />
+                            <span asp-validation-for="Sembol" class="text-danger"></span>
+                        </div>
+                    </div>
+                    <div class="col-md-6">
+                        <div class="form-group">
+                            <label asp-for="OndalikHassasiyet" class="control-label">Ondalık Basamak</label>
+                            <input asp-for="OndalikHassasiyet" class="form-control" type="number" min="0" max="6" value="2" />
+                            <span asp-validation-for="OndalikHassasiyet" class="text-danger"></span>
+                            <small class="text-muted">Para birimi gösterilirken kullanılacak ondalık basamak sayısı</small>
+                        </div>
+                    </div>
+                </div>
+
+                <div class="form-group mb-3">
+                    <div class="form-check">
+                        <input class="form-check-input" asp-for="Aktif" type="checkbox" checked />
+                        <label class="form-check-label" asp-for="Aktif">Aktif</label>
+                    </div>
+                </div>
+
+                <div class="form-group mb-3">
+                    <div class="form-check">
+                        <input class="form-check-input" asp-for="AnaParaBirimiMi" type="checkbox" />
+                        <label class="form-check-label" asp-for="AnaParaBirimiMi">Ana Para Birimi</label>
+                        <small class="d-block text-muted">Bu seçenek işaretlendiğinde, mevcut ana para birimi değişecektir.</small>
+                    </div>
+                </div>
+                
+                <div class="form-group mt-4">
+                    <button type="submit" class="btn btn-primary">
+                        <i class="fas fa-save me-2"></i> Kaydet
+                    </button>
+                    <a asp-action="Index" class="btn btn-secondary">
+                        <i class="fas fa-arrow-left me-2"></i> Listeye Dön
+                    </a>
+                </div>
+            </form>
+        </div>
+    </div>
+</div>
+
+@section Scripts {
+    @{await Html.RenderPartialAsync("_ValidationScriptsPartial");}
+} 

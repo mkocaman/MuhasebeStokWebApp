@@ -61,17 +61,12 @@
                         
                         <dt class="col-sm-4">Oluşturma Tarihi:</dt>
                         <dd class="col-sm-8">@Model.OlusturmaTarihi.ToString("dd.MM.yyyy HH:mm")</dd>
-
-                        <dt class="col-sm-4">Son Güncelleme Tarihi:</dt>
-                        <dd class="col-sm-9">
-                            @(Model.GuncellemeTarihi.HasValue ? Model.GuncellemeTarihi.Value.ToString("dd.MM.yyyy HH:mm") : "-")
-                        </dd>
                     </dl>
                 </div>
             </div>
             
-            <form asp-action="Delete" asp-route-id="@Model.CariID" method="post" class="mt-4">
-                <input type="hidden" asp-for="CariID" />
+            <form asp-action="Delete" method="post" class="mt-4">
+                <input type="hidden" asp-for="Id" />
                 <div class="d-flex justify-content-between">
                     <a asp-action="Index" class="btn btn-secondary">İptal</a>
                     <button type="submit" class="btn btn-danger">Sil / Pasife Al</button>

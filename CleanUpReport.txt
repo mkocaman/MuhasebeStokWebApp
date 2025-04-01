@@ -1,0 +1,67 @@
+# Proje Temizlik Raporu
+## Silinen Dosyalar
+Fri Mar 28 16:23:11 +03 2025
+
+1. **DataSeeders Klasörü ve İçerikleri**
+   - DataSeeders/DataSeeder.cs
+   - DataSeeders/DataSeederExtensions.cs
+
+2. **Eski ve Kullanılmayan SQL Dosyaları**
+   - fix_softdelete.sql
+   - migration_fix_issues.sql
+   - Migration_Fix_Birimler_Table.sql
+   - Migration_Add_Silindi_Columns.sql
+   - fix_db_structure.sql
+   - add_fixed_applicationuserid_column.sql
+   - add_applicationuserid_column.sql
+   - add_missing_silindi_columns.sql
+   - migration_add_silindi_fields.sql
+   - migration_add_cari_fields.sql
+   - migration_cari_silindi.sql
+   - admin_user.sql
+   - migration_add_columns.sql
+   - migration_script.sql
+   - UpdateBirimlerUserIdToGuid.sql
+   - UpdateUrunBirimUserIdToGuid.sql
+   - UpdateUrunBirimUserIdToNvarchar.sql
+   - UpdateUrunBirimUserIdToString.sql
+   - run_sql_scripts.sh
+
+3. **Kullanılmayan Migration Dosyaları**
+   - Migrations/20250328074442_AddMissingColumnsToTables.cs
+   - Migrations/MigrationScript.sql
+   - Migrations/UpdateUrunBirimSonGuncelleyenKullaniciID.sql
+   - Migrations/UpdateUrunBirimUserIdToString.sql
+
+4. **Eski ve Kullanılmayan Diğer Dosyalar**
+   - Startup.cs (Program.cs yeni .NET uygulamalarında kullanılıyor)
+   - DovizKuruController.cs.txt
+   - MuhasebeStokDB.db
+   - database.db
+   - MuhasebeStokDB.db.backup
+
+5. **Kaldırılan Klasörler**
+   - DbScript/ klasörü ve içerikleri
+
+## Yapılan Değişiklikler
+
+- Program.cs dosyasından DataSeeders namespace kullanımı kaldırıldı
+- Eski log dosyaları temizlendi
+
+## Kalan Uyarılar
+
+Projede hala 172 uyarı bulunmaktadır. Bunlar genellikle şu kategorilerdedir:
+
+1. **Nullable referans türleri uyarıları (CS8632)**: nullable reference types için uygun bağlam olmadan nullable annotation kullanımı
+2. **Non-nullable özellik uyarıları (CS8618)**: Constructor'dan çıkarken non-nullable özelliklere değer atanmamış
+3. **Async metot uyarıları (CS1998)**: await operatörü kullanılmayan async metotlar
+4. **SQL injection uyarıları (EF1002)**: SQL sorgularında olası SQL injection riski
+5. **Paket uyumluluğu uyarıları**: BouncyCastle ve iTextSharp paketlerinin .NET 8.0 ile uyumluluğu
+
+## Öneriler
+
+1. Nullable reference type uyarılarını gidermek için proje dosyasında Nullable enable etmek ve gerekli yerlere ? eklemek
+2. Non-nullable property'leri ya nullable yapmak ya da constructor'da başlangıç değerleri atamak
+3. Async metotlarda await kullanmak veya async keyword'ünü kaldırmak
+4. SQL sorguları için parametreli sorgular kullanmak
+5. Eski paketleri güncel versiyonlarıyla değiştirmek (BouncyCastle ve iTextSharp)

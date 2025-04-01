@@ -54,9 +54,13 @@ namespace MuhasebeStokWebApp.Data.Entities
         // Navigation properties
         public virtual ICollection<BankaHareket> BankaHareketleri { get; set; }
         
+        // Banka hesapları koleksiyonu
+        public virtual ICollection<BankaHesap> BankaHesaplari { get; set; }
+        
         public Banka()
         {
             BankaHareketleri = new HashSet<BankaHareket>();
+            BankaHesaplari = new HashSet<BankaHesap>();
         }
     }
 } 

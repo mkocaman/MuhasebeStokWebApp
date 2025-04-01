@@ -38,7 +38,7 @@ namespace MuhasebeStokWebApp.Models
 
         public Guid? SonGuncelleyenKullaniciId { get; set; }
 
-        public bool SoftDelete { get; set; }
+        public bool Silindi { get; set; }
 
         public virtual ICollection<FaturaDetay> FaturaDetaylari { get; set; }
 

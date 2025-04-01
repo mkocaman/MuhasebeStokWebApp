@@ -250,6 +250,11 @@
                 });
             });
             
+            // Modal kapatıldığında içeriği temizle (prevent caching issues)
+            $('#createDepoModal').on('hidden.bs.modal', function (e) {
+                $('#createDepoModalContent').html('<div class="modal-body text-center"><div class="spinner-border text-primary" role="status"><span class="visually-hidden">Yükleniyor...</span></div></div>');
+            });
+            
             // Depo düzenleme modal
             $(document).on('click', '.btn-edit-depo', function () {
                 var depoId = $(this).data('id');

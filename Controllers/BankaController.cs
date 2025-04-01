@@ -26,7 +26,7 @@ namespace MuhasebeStokWebApp.Controllers
         private readonly ApplicationDbContext _context;
         private readonly IUnitOfWork _unitOfWork;
         private readonly ILogger<BankaController> _logger;
-        private readonly ILogService _logService;
+        private new readonly ILogService _logService;
 
         public BankaController(
             ApplicationDbContext context, 
@@ -410,31 +410,75 @@ namespace MuhasebeStokWebApp.Controllers
         }
 
         // GET: Banka/YeniHareket
-        public async Task<IActionResult> YeniHareket()
+        public async Task<IActionResult> YeniHareket(Guid? id = null, Guid? cariId = null)
         {
-            var bankalar = await _context.Bankalar
-                .Where(b => !b.Silindi && b.Aktif)
-                .OrderBy(b => b.BankaAdi)
-                .ToListAsync();
-            
-            var cariler = await _context.Cariler
-                .Where(c => !c.Silindi && c.AktifMi)
-                .OrderBy(c => c.Ad)
-                .ToListAsync();
+            try
+            {
+                var bankalar = await _context.Bankalar
+                    .Where(b => !b.Silindi && b.Aktif)
+                    .OrderBy(b => b.BankaAdi)
+                    .ToListAsync();
+                
+                if (!bankalar.Any())
+                {
+                    TempData["ErrorMessage"] = "Sistemde kayıtlı aktif banka hesabı bulunamadı. Lütfen önce bir banka hesabı ekleyin.";
+                    return RedirectToAction(nameof(Index));
+                }
+                
+                var cariler = await _context.Cariler
+                    .Where(c => !c.Silindi && c.AktifMi)
+                    .OrderBy(c => c.Ad)
+                    .ToListAsync();
 
-            ViewBag.Bankalar = bankalar;
-            ViewBag.Cariler = cariler;
-            ViewBag.HareketTurleri = new List<string> 
-            { 
-                "Para Yatırma", 
-                "Para Çekme", 
-                "EFT Gönderme", 
-                "EFT Alma", 
-                "Havale Gönderme", 
-                "Havale Alma" 
-            };
+                ViewBag.Bankalar = new SelectList(bankalar, "BankaID", "BankaAdi");
+                ViewBag.Cariler = new SelectList(cariler, "CariID", "Ad");
+                ViewBag.HareketTurleri = new List<string> 
+                { 
+                    "Para Yatırma", 
+                    "Para Çekme", 
+                    "EFT Gönderme", 
+                    "EFT Alma", 
+                    "Havale Gönderme", 
+                    "Havale Alma" 
+                };
 
-            return View();
+                // Model oluştur
+                var model = new BankaHareket
+                {
+                    Tarih = DateTime.Now,
+                    ReferansNo = "REF-" + DateTime.Now.ToString("yyyyMMddHHmmss")
+                };
+                
+                // Banka ID varsa
+                if (id.HasValue)
+                {
+                    var banka = await _context.Bankalar.FirstOrDefaultAsync(b => b.BankaID == id && !b.Silindi);
+                    if (banka != null)
+                    {
+                        model.BankaID = banka.BankaID;
+                        ViewBag.SecilenBanka = banka;
+                    }
+                }
+                
+                // Cari ID varsa
+                if (cariId.HasValue)
+                {
+                    var cari = await _context.Cariler.FirstOrDefaultAsync(c => c.CariID == cariId && !c.Silindi);
+                    if (cari != null)
+                    {
+                        model.CariID = cari.CariID;
+                        ViewBag.SecilenCari = cari;
+                    }
+                }
+                
+                return View(model);
+            }
+            catch (Exception ex)
+            {
+                _logger.LogError(ex, "Banka hareketi ekleme sayfası yüklenirken hata oluştu.");
+                TempData["ErrorMessage"] = "Banka hareketi ekleme sayfası yüklenirken bir hata oluştu.";
+                return RedirectToAction(nameof(Index));
+            }
         }
 
         // POST: Banka/YeniHareket
@@ -515,10 +559,15 @@ namespace MuhasebeStokWebApp.Controllers
             return _context.Bankalar.Any(e => e.BankaID == id && !e.Silindi);
         }
 
-        private Guid? GetCurrentUserId()
+        // Kullanıcı ID'sini session'dan alır
+        private new Guid? GetCurrentUserId()
         {
-            // Eğer kimlik doğrulama sistemi varsa, mevcut kullanıcının ID'sini alın
-            // Şimdilik null dönelim
+            string userId = HttpContext.Session.GetString("UserId");
+            if (!string.IsNullOrEmpty(userId))
+            {
+                if (Guid.TryParse(userId, out Guid parsedId))
+                    return parsedId;
+            }
             return null;
         }
     }

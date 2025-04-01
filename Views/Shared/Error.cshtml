@@ -1,6 +1,6 @@
 ﻿@model ErrorViewModel
 @{
-    ViewData["Title"] = "Hata";
+    ViewData["Title"] = Model?.Title ?? "Hata";
 }
 
 <div class="container-fluid">
@@ -8,7 +8,7 @@
         <div class="col-sm-12">
             <div class="card">
                 <div class="card-header">
-                    <h5>Hata</h5>
+                    <h5>@(Model?.Title ?? "Hata")</h5>
                 </div>
                 <div class="card-body">
                     <div class="row">
@@ -20,9 +20,9 @@
                                 <h2 class="headline font-danger">500</h2>
                             </div>
                             <div class="col-md-8 offset-md-2">
-                                <p class="sub-content">Üzgünüz, bir hata oluştu. Lütfen daha sonra tekrar deneyin veya yöneticinize başvurun.</p>
+                                <p class="sub-content">@(Model?.Message ?? "Üzgünüz, bir hata oluştu. Lütfen daha sonra tekrar deneyin veya yöneticinize başvurun.")</p>
                             </div>
-                            @if (Model.ShowRequestId)
+                            @if (Model != null && Model.ShowRequestId)
                             {
                                 <div class="col-md-8 offset-md-2 mt-4">
                                     <p class="sub-content">

@@ -1,45 +1,98 @@
+#nullable enable
+
 using System;
 using System.ComponentModel.DataAnnotations;
 using System.ComponentModel.DataAnnotations.Schema;
 
 namespace MuhasebeStokWebApp.Data.Entities
 {
-    public class CariHareket
+    [Table("CariHareketler")]
+    public class CariHareket : BaseEntity, ISoftDelete
     {
+        public CariHareket()
+        {
+            // Non-nullable properties için başlangıç değerleri
+            HareketTuru = string.Empty;
+            ReferansNo = string.Empty;
+            ReferansTuru = string.Empty;
+            Aciklama = string.Empty;
+            OlusturmaTarihi = DateTime.Now;
+            Tarih = DateTime.Now;
+            Borc = 0;
+            Alacak = 0;
+        }
+
         [Key]
+        [DatabaseGenerated(DatabaseGeneratedOption.Identity)]
+        [Column("CariHareketId")]
         public Guid CariHareketID { get; set; }
         
-        public Guid CariID { get; set; }
+        // Id özelliği CariHareketID'yi döndürecek şekilde
+        public Guid Id => CariHareketID;
         
         [Required]
+        [Column("CariId")]
+        public Guid CariID { get; set; }
+        
+        // CariId özelliği artık CariID.get/set'i çağırmasına gerek yok,
+        // NotMapped ile veritabanında kolonu oluşturmayı engelleyelim
+        [NotMapped]
+        public Guid CariId { get => CariID; set => CariID = value; }
+        
+        [Required]
+        [StringLength(50)]
+        public string HareketTuru { get; set; }
+        
+        [Column(TypeName = "decimal(18,2)")]
         public decimal Tutar { get; set; }
         
         [Required]
-        [StringLength(50)]
-        public string HareketTuru { get; set; } = string.Empty;
-        
-        [Required]
+        [Column(TypeName = "datetime2")]
         public DateTime Tarih { get; set; }
         
-        [StringLength(50)]
-        public string? ReferansNo { get; set; }
+        // IslemTarihi özelliği artık Tarih.get/set'i çağırmasına gerek yok,
+        // NotMapped ile veritabanında kolonu oluşturmayı engelleyelim
+        [NotMapped]
+        public DateTime IslemTarihi { get => Tarih; set => Tarih = value; }
+        
+        // Vade Tarihi özelliği
+        [Column("VadeTarihi")]
+        public DateTime? VadeTarihi { get; set; }
         
         [StringLength(50)]
-        public string? ReferansTuru { get; set; }
+        public string ReferansNo { get; set; }
         
+        [StringLength(50)]
+        public string ReferansTuru { get; set; }
+        
+        [Column("ReferansId")]
         public Guid? ReferansID { get; set; }
         
         [StringLength(500)]
-        public string? Aciklama { get; set; }
+        public string Aciklama { get; set; }
         
-        public DateTime OlusturmaTarihi { get; set; } = DateTime.Now;
+        [Required]
+        [Column(TypeName = "decimal(18,2)")]
+        public decimal Borc { get; set; }
         
-        public DateTime? GuncellemeTarihi { get; set; }
+        [Required]
+        [Column(TypeName = "decimal(18,2)")]
+        public decimal Alacak { get; set; }
         
-        public bool SoftDelete { get; set; }
+        [Column(TypeName = "datetime2")]
+        public new DateTime OlusturmaTarihi { get; set; } = DateTime.Now;
+        
+        [Column("OlusturanKullaniciId")]
+        public Guid? OlusturanKullaniciID { get; set; }
+        
+        // OlusturanKullaniciId özelliği artık NotMapped ile işaretlendi
+        [NotMapped]
+        public Guid? OlusturanKullaniciId { get => OlusturanKullaniciID; set => OlusturanKullaniciID = value; }
+        
+        public bool Silindi { get; set; } = false;
         
         // Navigation properties
         [ForeignKey("CariID")]
-        public virtual Cari? Cari { get; set; }
+        public virtual Cari Cari { get; set; } = null!;
     }
 } 

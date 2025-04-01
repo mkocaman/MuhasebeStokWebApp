@@ -3,6 +3,8 @@
     ViewData["Title"] = "Yeni Kasa Hareketi";
     var kasalar = ViewBag.Kasalar as List<MuhasebeStokWebApp.Data.Entities.Kasa> ?? new List<MuhasebeStokWebApp.Data.Entities.Kasa>();
     var cariler = ViewBag.Cariler as List<MuhasebeStokWebApp.Data.Entities.Cari> ?? new List<MuhasebeStokWebApp.Data.Entities.Cari>();
+    var secilenKasa = ViewBag.SecilenKasa as MuhasebeStokWebApp.Data.Entities.Kasa;
+    var secilenCari = ViewBag.SecilenCari as MuhasebeStokWebApp.Data.Entities.Cari;
 }
 
 <div class="container-fluid">
@@ -25,9 +27,18 @@
                                 <option value="">Kasa Seçiniz</option>
                                 @foreach (var kasa in kasalar)
                                 {
-                                    <option value="@kasa.KasaID" data-parabirimi="@kasa.ParaBirimi">
-                                        @kasa.KasaAdi (@kasa.ParaBirimi) - Bakiye: @kasa.GuncelBakiye.ToString("N2")
-                                    </option>
+                                    if (Model.KasaID == kasa.KasaID)
+                                    {
+                                        <option value="@kasa.KasaID" data-parabirimi="@kasa.ParaBirimi" selected>
+                                            @kasa.KasaAdi (@kasa.ParaBirimi) - Bakiye: @kasa.GuncelBakiye.ToString("N2")
+                                        </option>
+                                    }
+                                    else
+                                    {
+                                        <option value="@kasa.KasaID" data-parabirimi="@kasa.ParaBirimi">
+                                            @kasa.KasaAdi (@kasa.ParaBirimi) - Bakiye: @kasa.GuncelBakiye.ToString("N2")
+                                        </option>
+                                    }
                                 }
                             </select>
                             <span asp-validation-for="KasaID" class="text-danger"></span>
@@ -52,9 +63,20 @@
                             <label for="CariID" class="control-label">Cari</label>
                             <select id="CariID" name="CariID" class="form-control">
                                 <option value="">Cari Seçiniz</option>
-                                @foreach (var cari in ViewBag.Cariler)
+                                @foreach (var cari in cariler)
                                 {
-                                    <option value="@cari.CariID">@cari.Ad</option>
+                                    if (Model.CariID == cari.CariID)
+                                    {
+                                        <option value="@cari.CariID" selected>
+                                            @cari.Ad - @cari.CariTipi
+                                        </option>
+                                    }
+                                    else
+                                    {
+                                        <option value="@cari.CariID">
+                                            @cari.Ad - @cari.CariTipi
+                                        </option>
+                                    }
                                 }
                             </select>
                             <span asp-validation-for="CariID" class="text-danger"></span>
@@ -64,9 +86,12 @@
                         <div class="form-group">
                             <label for="Tutar" class="control-label">Tutar</label>
                             <div class="input-group">
-                                <input type="number" id="Tutar" name="Tutar" class="form-control" min="0.01" step="0.01" required />
+                                <input type="number" id="Tutar" name="Tutar" class="form-control" 
+                                       min="0.01" step="0.01" required value="@(Model.Tutar > 0 ? Model.Tutar : 0)" />
                                 <div class="input-group-append">
-                                    <span class="input-group-text" id="paraBirimiLabel">TRY</span>
+                                    <span class="input-group-text" id="paraBirimiLabel">
+                                        @(secilenKasa != null ? secilenKasa.ParaBirimi : "TRY")
+                                    </span>
                                 </div>
                             </div>
                             <span asp-validation-for="Tutar" class="text-danger"></span>
@@ -91,7 +116,7 @@
                     <div class="col-md-6">
                         <div class="form-group">
                             <label for="ReferansNo" class="control-label">Referans No</label>
-                            <input type="text" id="ReferansNo" name="ReferansNo" class="form-control" />
+                            <input type="text" id="ReferansNo" name="ReferansNo" class="form-control" value="@Model.ReferansNo" />
                             <span asp-validation-for="ReferansNo" class="text-danger"></span>
                         </div>
                     </div>
@@ -99,7 +124,7 @@
                 
                 <div class="form-group">
                     <label for="Aciklama" class="control-label">Açıklama</label>
-                    <textarea id="Aciklama" name="Aciklama" class="form-control" rows="3"></textarea>
+                    <textarea id="Aciklama" name="Aciklama" class="form-control" rows="3">@Model.Aciklama</textarea>
                     <span asp-validation-for="Aciklama" class="text-danger"></span>
                 </div>
                 
@@ -149,7 +174,7 @@
             // Referans türü seçildiğinde referans no oluştur
             $("#ReferansTuru").change(function() {
                 var referansTuru = $(this).val();
-                if (referansTuru) {
+                if (referansTuru && !$("#ReferansNo").val()) {
                     var prefix = "";
                     switch (referansTuru) {
                         case "Tahsilat": prefix = "TAH"; break;

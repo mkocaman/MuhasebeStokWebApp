@@ -2,7 +2,7 @@
 <html lang="tr">
 <head>
     <meta charset="utf-8" />
-    <meta name="viewport" content="width=device-width, initial-scale=1, shrink-to-fit=no">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
     <title>@ViewData["Title"] - Muhasebe Stok Web App</title>
     
     <!-- Favicon -->
@@ -31,8 +31,8 @@
     <link href="https://cdn.jsdelivr.net/npm/select2@4.1.0-rc.0/dist/css/select2.min.css" rel="stylesheet" />
     <link href="https://cdn.jsdelivr.net/npm/select2-bootstrap-5-theme@1.3.0/dist/select2-bootstrap-5-theme.min.css" rel="stylesheet" />
     
-    <!-- SweetAlert2 -->
-    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/sweetalert2@11.7.32/dist/sweetalert2.min.css">
+    <!-- SweetAlert2 CSS -->
+    <link href="https://cdn.jsdelivr.net/npm/sweetalert2@11/dist/sweetalert2.min.css" rel="stylesheet">
     
     <!-- Toastr -->
     <link rel="stylesheet" href="~/lib/toastr/toastr.min.css" />
@@ -44,8 +44,54 @@
             display: none;
         }
         
+        .dropdown > a:focus + .nav-submenu,
         .dropdown > a.active + .nav-submenu {
             display: block;
+        }
+        
+        /* Alt menüler için ek stiller */
+        .nav-submenu {
+            padding-left: 20px;
+            list-style: none;
+        }
+        
+        .nav-submenu li {
+            padding: 5px 0;
+        }
+        
+        .nav-submenu a {
+            color: #555;
+            display: block;
+            padding: 8px 15px;
+            text-decoration: none;
+            transition: all 0.2s;
+        }
+        
+        .nav-submenu a:hover, 
+        .nav-submenu a.active {
+            color: #007bff;
+            background-color: rgba(0, 123, 255, 0.1);
+            border-radius: 5px;
+        }
+        
+        /* Dropdown için ek stiller */
+        .dropdown > a {
+            position: relative;
+        }
+        
+        .dropdown > a::after {
+            content: '\f107';
+            font-family: 'Font Awesome 5 Free';
+            font-weight: 900;
+            position: absolute;
+            right: 15px;
+            top: 50%;
+            transform: translateY(-50%);
+            transition: transform 0.3s;
+        }
+        
+        .dropdown > a.active::after {
+            transform: translateY(-50%) rotate(180deg);
         }
         
         .card {
@@ -185,6 +231,22 @@
                                             <span>1 saat önce</span>
                                         </div>
                                     </div>
+                                </li>
+                                <li>
+                                    <a href="@Url.Action("Musteriler", "Cari")" class="d-flex">
+                                        <i class="fa fa-user rounded-circle me-3"></i>
+                                        <div class="flex-grow-1">
+                                            <p>Müşteriler</p>
+                                        </div>
+                                    </a>
+                                </li>
+                                <li>
+                                    <a href="@Url.Action("Tedarikciler", "Cari")" class="d-flex">
+                                        <i class="fa fa-truck rounded-circle me-3"></i>
+                                        <div class="flex-grow-1">
+                                            <p>Tedarikçiler</p>
+                                        </div>
+                                    </a>
                                 </li>
                             </ul>
                         </li>
@@ -399,25 +461,20 @@
                 @RenderBody()
             </div>
             <!-- Page content ends -->
-        </div>
-        <!-- Page body ends -->
-        
-        <!-- Footer starts -->
-        <footer class="footer fixed-bottom bg-light py-3">
-            <div class="container-fluid">
-                <div class="row">
-                    <div class="col-md-6 footer-copyright">
-                        <p class="mb-0">Copyright &copy; @DateTime.Now.Year Muhasebe Stok Web App</p>
-                    </div>
-                    <div class="col-md-6 text-end">
-                        <p class="mb-0">
-                            <i class="fa fa-heart"></i> ile geliştirildi, uykusuz gecelerin mahsülü.
-                        </p>
+            
+            <!-- footer start-->
+            <footer class="footer fixed-bottom">
+                <div class="container-fluid">
+                    <div class="row">
+                        <div class="col-md-12 footer-copyright text-center">
+                            <p class="mb-0">Copyright © @DateTime.Now.Year Muhasebe Stok Web App</p>
+                        </div>
                     </div>
                 </div>
-            </div>
-        </footer>
-        <!-- Footer ends -->
+            </footer>
+            <!-- footer end-->
+        </div>
+        <!-- Page body ends -->
     </div>
     <!-- Page wrapper ends -->
     
@@ -437,8 +494,8 @@
     <!-- Select2 -->
     <script src="https://cdn.jsdelivr.net/npm/select2@4.1.0-rc.0/dist/js/select2.min.js"></script>
     
-    <!-- SweetAlert2 -->
-    <script src="https://cdn.jsdelivr.net/npm/sweetalert2@11.7.32/dist/sweetalert2.all.min.js"></script>
+    <!-- SweetAlert2 script -->
+    <script src="https://cdn.jsdelivr.net/npm/sweetalert2@11/dist/sweetalert2.all.min.js"></script>
     
     <!-- SignalR -->
     <script src="~/lib/microsoft/signalr/dist/browser/signalr.min.js"></script>
@@ -452,5 +509,97 @@
     <script src="~/js/site.js" asp-append-version="true"></script>
     
     @await RenderSectionAsync("Scripts", required: false)
+    
+    <script>
+        // SweetAlert2 global ayarları - Türkçe karakter sorunu için
+        document.addEventListener('DOMContentLoaded', function() {
+            Swal.mixin({
+                customClass: {
+                    confirmButton: 'btn btn-success',
+                    cancelButton: 'btn btn-danger'
+                },
+                buttonsStyling: false,
+                allowOutsideClick: false,
+                allowEscapeKey: false
+            });
+        });
+    </script>
+    
+    <script>
+        // Bildirim gösterme fonksiyonu - Türkçe karakter sorunu için UTF-8 ayarı
+        function showNotification(title, message, type) {
+            const toast = document.createElement('div');
+            toast.className = `toast bg-${type === 'error' ? 'danger' : type} text-white`;
+            toast.setAttribute('role', 'alert');
+            toast.setAttribute('aria-live', 'assertive');
+            toast.setAttribute('aria-atomic', 'true');
+            toast.setAttribute('data-bs-delay', '5000');
+            
+            toast.innerHTML = `
+                <div class="toast-header bg-${type === 'error' ? 'danger' : type} text-white">
+                    <i class="material-icons me-2">${type === 'success' ? 'check_circle' : 'error'}</i>
+                    <strong class="me-auto">${title}</strong>
+                    <button type="button" class="btn-close btn-close-white" data-bs-dismiss="toast" aria-label="Kapat"></button>
+                </div>
+                <div class="toast-body">
+                    ${message}
+                </div>
+            `;
+            
+            document.getElementById('notificationContainer').appendChild(toast);
+            new bootstrap.Toast(toast).show();
+        }
+        
+        // SweetAlert2 ile bildirim gösterme - Türkçe karakter için özel ayarlar
+        function showSweetAlert(title, message, type, confirmButtonText = 'Tamam') {
+            return Swal.fire({
+                title: title,
+                html: message,
+                icon: type,
+                confirmButtonText: confirmButtonText,
+                customClass: {
+                    confirmButton: 'btn btn-' + (type === 'error' ? 'danger' : 'success'),
+                },
+                buttonsStyling: false
+            });
+        }
+    </script>
+    
+    <!-- Success ve Error mesajlarını göster -->
+    @if (TempData["SuccessMessage"] != null)
+    {
+        <script>
+            document.addEventListener('DOMContentLoaded', function() {
+                showSweetAlert('Başarılı!', '@Html.Raw(TempData["SuccessMessage"].ToString())', 'success');
+            });
+        </script>
+    }
+    
+    @if (TempData["ErrorMessage"] != null)
+    {
+        <script>
+            document.addEventListener('DOMContentLoaded', function() {
+                showSweetAlert('Hata!', '@Html.Raw(TempData["ErrorMessage"].ToString())', 'error');
+            });
+        </script>
+    }
+    
+    @if (TempData["WarningMessage"] != null)
+    {
+        <script>
+            document.addEventListener('DOMContentLoaded', function() {
+                showSweetAlert('Uyarı!', '@Html.Raw(TempData["WarningMessage"].ToString())', 'warning');
+            });
+        </script>
+    }
+    
+    @if (TempData["InfoMessage"] != null)
+    {
+        <script>
+            document.addEventListener('DOMContentLoaded', function() {
+                showSweetAlert('Bilgi!', '@Html.Raw(TempData["InfoMessage"].ToString())', 'info');
+            });
+        </script>
+    }
 </body>
 </html>

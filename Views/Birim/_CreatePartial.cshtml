@@ -1,30 +1,80 @@
 @model MuhasebeStokWebApp.ViewModels.Birim.BirimCreateViewModel
 
-<form asp-action="Create" method="post">
+<form asp-action="Create" method="post" id="createBirimForm">
+    @Html.AntiForgeryToken()
     <div class="modal-body">
+        <div id="createFormAlert" class="alert alert-danger d-none" role="alert"></div>
         <div class="mb-3">
-            <label asp-for="BirimAdi" class="form-label">Birim Adı</label>
-            <input asp-for="BirimAdi" class="form-control" required />
+            <label asp-for="BirimAdi" class="form-label"></label>
+            <input asp-for="BirimAdi" class="form-control" required maxlength="50">
             <span asp-validation-for="BirimAdi" class="text-danger"></span>
         </div>
-        
         <div class="mb-3">
-            <label asp-for="Aciklama" class="form-label">Açıklama</label>
-            <textarea asp-for="Aciklama" class="form-control" rows="3"></textarea>
+            <label asp-for="Aciklama" class="form-label"></label>
+            <textarea asp-for="Aciklama" class="form-control" rows="3" maxlength="500"></textarea>
             <span asp-validation-for="Aciklama" class="text-danger"></span>
         </div>
-        
         <div class="form-check mb-3">
-            <input asp-for="Aktif" class="form-check-input" checked />
-            <label asp-for="Aktif" class="form-check-label">Aktif</label>
+            <input type="checkbox" class="form-check-input" id="Aktif" name="Aktif" checked>
+            <label class="form-check-label" for="Aktif">Aktif</label>
         </div>
     </div>
-    
     <div class="modal-footer">
         <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">İptal</button>
         <button type="submit" class="btn btn-primary">Kaydet</button>
     </div>
 </form>
+
+<script>
+    $(document).ready(function() {
+        $("#createBirimForm").on("submit", function(e) {
+            e.preventDefault();
+            
+            var formData = {
+                BirimAdi: $("#BirimAdi").val(),
+                Aciklama: $("#Aciklama").val(),
+                Aktif: $("#Aktif").is(":checked")
+            };
+            
+            $.ajax({
+                url: '@Url.Action("Create", "Birim")',
+                type: "POST",
+                data: formData,
+                headers: {
+                    "X-CSRF-TOKEN": $('input[name="__RequestVerificationToken"]').val()
+                },
+                success: function(response) {
+                    if (response.success) {
+                        Swal.fire({
+                            icon: 'success',
+                            title: 'Başarılı!',
+                            text: 'Birim başarıyla oluşturuldu.',
+                            confirmButtonText: 'Tamam'
+                        }).then((result) => {
+                            $('#createBirimModal').modal('hide');
+                            window.location.reload();
+                        });
+                    } else {
+                        Swal.fire({
+                            icon: 'error',
+                            title: 'Hata!',
+                            text: response.message || 'Birim oluşturulurken bir hata oluştu.',
+                            confirmButtonText: 'Tamam'
+                        });
+                    }
+                },
+                error: function(xhr, status, error) {
+                    Swal.fire({
+                        icon: 'error',
+                        title: 'Hata!',
+                        text: 'İşlem sırasında bir hata oluştu: ' + error,
+                        confirmButtonText: 'Tamam'
+                    });
+                }
+            });
+        });
+    });
+</script>
 
 @section Scripts {
     @{await Html.RenderPartialAsync("_ValidationScriptsPartial");}

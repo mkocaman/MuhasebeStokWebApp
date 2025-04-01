@@ -67,4 +67,21 @@ namespace MuhasebeStokWebApp.ViewModels.Cari
         public List<Data.Entities.Fatura> Faturalar { get; set; } = new List<Data.Entities.Fatura>();
         public decimal ToplamBakiye { get; set; }
     }
+
+    public class CariViewListModel
+    {
+        // ... existing code ...
+    }
+
+    public class CariHareket
+    {
+        public Guid Id { get; set; }
+        public DateTime Tarih { get; set; }
+        public string IslemTuru { get; set; }
+        public string IslemNo { get; set; }
+        public string Aciklama { get; set; }
+        public decimal Borc { get; set; }
+        public decimal Alacak { get; set; }
+        public decimal Bakiye { get; set; }
+    }
 } 

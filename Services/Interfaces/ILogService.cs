@@ -65,7 +65,7 @@ namespace MuhasebeStokWebApp.Services.Interfaces
         
         string GetBrowserInfo(string userAgent);
         string GetOSInfo(string userAgent);
-        Task<bool> LogOlustur(string mesaj, MuhasebeStokWebApp.Enums.LogTuru logTuru, string tabloAdi, string kayitAdi, Guid? kayitID, string kullaniciAdi = null, bool basarili = true);
+        Task<bool> LogOlustur(string mesaj, MuhasebeStokWebApp.Enums.LogTuru logTuru, string tabloAdi, string kayitAdi, Guid? kayitID, string kullaniciAdi = null, bool basarili = true, string kategori = null);
         Task OturumAcmaLogEkle(string kullaniciID, string kullaniciAdi);
     }
 } 

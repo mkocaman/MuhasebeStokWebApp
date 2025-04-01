@@ -14,7 +14,7 @@
                 <div class="card-body">
                     <form asp-action="HareketEkle" method="post">
                         <div asp-validation-summary="ModelOnly" class="text-danger"></div>
-                        <input type="hidden" asp-for="CariID" />
+                        <input type="hidden" asp-for="CariId" />
                         
                         <div class="form-group">
                             <label asp-for="CariAdi" class="control-label"></label>
@@ -71,7 +71,7 @@
                         
                         <div class="form-group">
                             <button type="submit" class="btn btn-primary">Kaydet</button>
-                            <a asp-action="Details" asp-route-id="@Model.CariID" class="btn btn-secondary">İptal</a>
+                            <a asp-action="Details" asp-route-id="@Model.CariId" class="btn btn-secondary">İptal</a>
                         </div>
                     </form>
                 </div>

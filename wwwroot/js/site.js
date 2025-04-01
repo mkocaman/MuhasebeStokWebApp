@@ -148,8 +148,8 @@ document.addEventListener('DOMContentLoaded', function() {
             toggleFullScreen();
         });
         
-        // Menü tıklama olayı
-        $('.dropdown > a').on('click', function(e) {
+        // Menü tıklama olayı - Düzeltildi
+        $('.dropdown > a.nav-link.menu-title').on('click', function(e) {
             // Alt menüsü olan menüler için
             if ($(this).siblings('.nav-submenu').length) {
                 e.preventDefault();
@@ -158,56 +158,38 @@ document.addEventListener('DOMContentLoaded', function() {
                 // Eğer bu menü zaten açıksa, kapat
                 if ($(this).hasClass('active')) {
                     $(this).removeClass('active');
+                    $(this).siblings('.nav-submenu').slideUp(300);
                 } else {
                     // Diğer tüm menüleri kapat
-                    $('.dropdown > a').removeClass('active');
+                    $('.dropdown > a.nav-link.menu-title').removeClass('active');
+                    $('.nav-submenu').slideUp(300);
                     
                     // Bu menüyü aç
                     $(this).addClass('active');
+                    $(this).siblings('.nav-submenu').slideDown(300);
                 }
             }
         });
+        
+        // Sayfa yüklendiğinde aktif menüyü aç
+        setTimeout(function() {
+            // Aktif alt menü elemanı varsa, üst menüyü otomatik aç
+            var $activeSubmenuItem = $('.nav-submenu a.active');
+            if ($activeSubmenuItem.length) {
+                $activeSubmenuItem.closest('.nav-submenu').show();
+                $activeSubmenuItem.closest('.dropdown').find('> a.nav-link.menu-title').addClass('active');
+            }
+        }, 100);
         
         // Alt menü elemanlarına tıklandığında yayılımı durdur
         $('.nav-submenu a').on('click', function(e) {
             e.stopPropagation();
         });
         
-        // Sayfa dışına tıklandığında menüleri kapat
-        $(document).on('click', function(e) {
-            if (!$(e.target).closest('.dropdown').length) {
-                $('.dropdown > a').removeClass('active');
-            }
-        });
-        
-        // Aktif menü öğesini işaretle
-        var currentUrl = window.location.pathname;
-        
-        // Tam eşleşme için
-        $('.nav-menu a[href="' + currentUrl + '"]').addClass('active');
-        
-        // Kısmi eşleşme için
-        $('.nav-menu a').each(function() {
-            var menuUrl = $(this).attr('href');
-            if (menuUrl && currentUrl.startsWith(menuUrl) && menuUrl !== '/') {
-                $(this).addClass('active');
-            }
-        });
-        
-        // Eğer alt menü elemanı aktifse, üst menüyü de aktif yap
-        var $activeSubmenuItem = $('.nav-submenu a').filter(function() {
-            var href = $(this).attr('href');
-            return href === currentUrl || (href && currentUrl.startsWith(href) && href !== '/');
-        });
-        
-        if ($activeSubmenuItem.length) {
-            $activeSubmenuItem.addClass('active');
-            $activeSubmenuItem.closest('.dropdown').find('> a').addClass('active');
-        }
-
         // Mobil menü için geri butonu
         $('.mobile-back').click(function() {
             $('.dropdown > a').removeClass('active');
+            $('.nav-submenu').slideUp(300);
         });
 
         // Sayfa yüklendiğinde loader'ı kaldır

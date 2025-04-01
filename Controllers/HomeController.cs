@@ -138,7 +138,7 @@ namespace MuhasebeStokWebApp.Controllers
 
         // HTTP durum kodu sayfaları - Kimlik doğrulama gerektirmez
         [AllowAnonymous]
-        public IActionResult StatusCode(int code)
+        public new IActionResult StatusCode(int code)
         {
             try 
             {
@@ -268,26 +268,24 @@ namespace MuhasebeStokWebApp.Controllers
             {
                 foreach (var cari in cariler)
                 {
-                    if (cari.CariID != Guid.Empty)
+                    // CariID artık Guid tipinde
+                    var hareketler = cariHareketler?.Where(h => h.CariId == cari.CariID).ToList() ?? new List<CariHareket>();
+                    decimal bakiye = 0;
+                    
+                    // Her cari hareket türüne göre bakiyeyi güncelle
+                    foreach (var hareket in hareketler)
                     {
-                        var hareketler = cariHareketler?.Where(h => h.CariID == cari.CariID).ToList() ?? new List<CariHareket>();
-                        decimal bakiye = 0;
-                        
-                        // Her cari hareket türüne göre bakiyeyi güncelle
-                        foreach (var hareket in hareketler)
+                        if (hareket.HareketTuru == "Borç")
                         {
-                            if (hareket.HareketTuru == "Borç")
-                            {
-                                bakiye -= hareket.Tutar;
-                            }
-                            else if (hareket.HareketTuru == "Alacak")
-                            {
-                                bakiye += hareket.Tutar;
-                            }
+                            bakiye -= hareket.Tutar;
                         }
-                        
-                        cariBakiyeleri[cari.CariID] = bakiye;
+                        else if (hareket.HareketTuru == "Alacak")
+                        {
+                            bakiye += hareket.Tutar;
+                        }
                     }
+                    
+                    cariBakiyeleri[cari.CariID] = bakiye;
                 }
             }
             
@@ -557,6 +555,16 @@ namespace MuhasebeStokWebApp.Controllers
             {
                 return Json(new { success = false, message = "Bildirim gönderilirken hata oluştu: " + ex.Message });
             }
+        }
+
+        private async Task<string> GetCariAdiByIdAsync(Guid cariId)
+        {
+            var cari = await _unitOfWork.CariRepository.GetByIdAsync(cariId);
+            if (cari != null)
+            {
+                return cari.Ad;
+            }
+            return "Bilinmeyen Cari";
         }
     }
 }

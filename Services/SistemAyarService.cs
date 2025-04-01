@@ -183,7 +183,7 @@ namespace MuhasebeStokWebApp.Services
         {
             try
             {
-                return await _context.GenelSistemAyarlari.Where(s => !s.SoftDelete).ToListAsync();
+                return await _context.GenelSistemAyarlari.Where(s => !s.Silindi).ToListAsync();
             }
             catch (Exception ex)
             {
@@ -197,7 +197,7 @@ namespace MuhasebeStokWebApp.Services
             try
             {
                 return await _context.GenelSistemAyarlari
-                    .FirstOrDefaultAsync(s => s.Aktif && !s.SoftDelete);
+                    .FirstOrDefaultAsync(s => s.Aktif && !s.Silindi);
             }
             catch (Exception ex)
             {
@@ -211,7 +211,7 @@ namespace MuhasebeStokWebApp.Services
             try
             {
                 return await _context.GenelSistemAyarlari
-                    .FirstOrDefaultAsync(s => s.SistemAyarlariID == sistemAyariId && !s.SoftDelete);
+                    .FirstOrDefaultAsync(s => s.SistemAyarlariID == sistemAyariId && !s.Silindi);
             }
             catch (Exception ex)
             {
@@ -225,7 +225,7 @@ namespace MuhasebeStokWebApp.Services
             try
             {
                 return await _context.GenelSistemAyarlari
-                    .FirstOrDefaultAsync(s => s.AnaDovizKodu == dovizKodu && !s.SoftDelete);
+                    .FirstOrDefaultAsync(s => s.AnaDovizKodu == dovizKodu && !s.Silindi);
             }
             catch (Exception ex)
             {
@@ -273,7 +273,7 @@ namespace MuhasebeStokWebApp.Services
             {
                 // Önce mevcut aktif olan ayarların aktifliğini kaldır
                 var sistemAyarlari = await _context.GenelSistemAyarlari
-                    .Where(s => s.Aktif && !s.SoftDelete)
+                    .Where(s => s.Aktif && !s.Silindi)
                     .ToListAsync();
                     
                 foreach (var ayar in sistemAyarlari)
@@ -311,7 +311,7 @@ namespace MuhasebeStokWebApp.Services
                     if (aktif)
                     {
                         var digerAktifAyarlar = await _context.GenelSistemAyarlari
-                            .Where(s => s.Aktif && s.SistemAyarlariID != sistemAyariId && !s.SoftDelete)
+                            .Where(s => s.Aktif && s.SistemAyarlariID != sistemAyariId && !s.Silindi)
                             .ToListAsync();
                             
                         foreach (var ayar in digerAktifAyarlar)
@@ -343,7 +343,7 @@ namespace MuhasebeStokWebApp.Services
                 if (sistemAyari != null)
                 {
                     // Soft delete uygula
-                    sistemAyari.SoftDelete = true;
+                    sistemAyari.Silindi = true;
                     sistemAyari.Aktif = false;
                     sistemAyari.GuncellemeTarihi = DateTime.Now;
                     await _context.SaveChangesAsync();
@@ -363,13 +363,13 @@ namespace MuhasebeStokWebApp.Services
             try
             {
                 sistemAyari.OlusturmaTarihi = DateTime.Now;
-                sistemAyari.SoftDelete = false;
+                sistemAyari.Silindi = false;
                 
                 // Eğer bu ayar aktif olacaksa, diğer aktif ayarları deaktif yap
                 if (sistemAyari.Aktif)
                 {
                     var aktifAyarlar = await _context.GenelSistemAyarlari
-                        .Where(s => s.Aktif && !s.SoftDelete)
+                        .Where(s => s.Aktif && !s.Silindi)
                         .ToListAsync();
                         
                     foreach (var ayar in aktifAyarlar)

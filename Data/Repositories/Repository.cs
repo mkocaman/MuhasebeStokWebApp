@@ -43,6 +43,31 @@ namespace MuhasebeStokWebApp.Data.Repositories
             // Filtre varsa uygula
             if (filter != null)
             {
+                // CariHareket için özel işlem
+                if (typeof(T) == typeof(CariHareket))
+                {
+                    // Filtre içinde CariId veya CariID kontrolü var mı kontrol et
+                    var filterString = filter.ToString();
+                    if (filterString.Contains("CariId") && !filterString.Contains("CariID"))
+                    {
+                        // CariHareket'leri manuel olarak getirelim ve filtreleyelim
+                        var cariHareketler = await dbSet.ToListAsync();
+                        
+                        // Filter'ı Func<T, bool> tipine çevirelim ve uygulayalım
+                        var predicate = filter.Compile();
+                        var filteredResult = cariHareketler.Where(predicate);
+                        
+                        // Sıralama varsa uygula
+                        if (orderBy != null)
+                        {
+                            // IQueryable yerine IEnumerable üzerine sıralama yapalım
+                            // Not: Bu etkin değil, ancak bu işlemi client-side yapıyoruz
+                            return filteredResult.AsQueryable().OrderBy(ch => ch).ToList();
+                        }
+                        return filteredResult;
+                    }
+                }
+                
                 query = query.Where(filter);
             }
 
@@ -70,6 +95,17 @@ namespace MuhasebeStokWebApp.Data.Repositories
         // Belirli bir ID'ye sahip kaydı getirir
         public async Task<T> GetByIdAsync(object id)
         {
+            if (typeof(T) == typeof(Cari) && id is Guid guidId)
+            {
+                var entity = await _context.Set<Cari>().FirstOrDefaultAsync(c => c.CariID.Equals(guidId));
+                return entity as T;
+            }
+            else if (typeof(T) == typeof(CariHareket) && id is Guid guidCariHareketId)
+            {
+                var entity = await _context.Set<CariHareket>().FirstOrDefaultAsync(ch => ch.CariHareketID.Equals(guidCariHareketId));
+                return entity as T;
+            }
+            
             return await dbSet.FindAsync(id);
         }
 
@@ -114,9 +150,10 @@ namespace MuhasebeStokWebApp.Data.Repositories
         }
 
         // Entity nesnesini siler - SaveChanges çağrılmaz, UnitOfWork tarafından yönetilir
-        public async Task RemoveAsync(T entity)
+        public Task RemoveAsync(T entity)
         {
             RemoveEntity(entity);
+            return Task.CompletedTask;
         }
 
         private void RemoveEntity(T entity)
@@ -144,9 +181,10 @@ namespace MuhasebeStokWebApp.Data.Repositories
         }
 
         // Entity'yi günceller - SaveChanges çağrılmaz, UnitOfWork tarafından yönetilir
-        public async Task UpdateAsync(T entity)
+        public Task UpdateAsync(T entity)
         {
             _context.Entry(entity).State = EntityState.Modified;
+            return Task.CompletedTask;
         }
 
         // Belirli bir koşulu sağlayan entity'leri bulur

@@ -1,0 +1,101 @@
+@model MuhasebeStokWebApp.Data.Entities.ParaBirimiModulu.KurDegeri
+@{
+    ViewData["Title"] = "Kur Detayı";
+}
+
+<div class="container-fluid">
+    <div class="card">
+        <div class="card-header bg-primary text-white d-flex justify-content-between align-items-center">
+            <h4 class="mb-0">Kur Detayı</h4>
+            <div>
+                <a asp-action="KurDuzenle" asp-route-id="@Model.KurDegeriID" class="btn btn-info btn-sm">
+                    <i class="fas fa-edit"></i> Düzenle
+                </a>
+                <a asp-action="Kurlar" class="btn btn-secondary btn-sm">
+                    <i class="fas fa-arrow-left"></i> Listeye Dön
+                </a>
+            </div>
+        </div>
+        <div class="card-body">
+            <div class="row">
+                <div class="col-md-6">
+                    <dl class="row">
+                        <dt class="col-sm-4">Para Birimi:</dt>
+                        <dd class="col-sm-8">@Model.ParaBirimi.Kod (@Model.ParaBirimi.Ad)</dd>
+
+                        <dt class="col-sm-4">Tarih:</dt>
+                        <dd class="col-sm-8">@Model.Tarih.ToString("dd.MM.yyyy")</dd>
+
+                        <dt class="col-sm-4">Alış:</dt>
+                        <dd class="col-sm-8">@Model.Alis.ToString("N" + Model.ParaBirimi.OndalikHassasiyet)</dd>
+                    </dl>
+                </div>
+                <div class="col-md-6">
+                    <dl class="row">
+                        <dt class="col-sm-4">Satış:</dt>
+                        <dd class="col-sm-8">@Model.Satis.ToString("N" + Model.ParaBirimi.OndalikHassasiyet)</dd>
+
+                        <dt class="col-sm-4">Efektif Alış:</dt>
+                        <dd class="col-sm-8">@Model.Efektif_Alis.ToString("N" + Model.ParaBirimi.OndalikHassasiyet)</dd>
+
+                        <dt class="col-sm-4">Efektif Satış:</dt>
+                        <dd class="col-sm-8">@Model.Efektif_Satis.ToString("N" + Model.ParaBirimi.OndalikHassasiyet)</dd>
+                    </dl>
+                </div>
+            </div>
+            
+            <div class="row mt-3">
+                <div class="col-md-6">
+                    <dl class="row">
+                        <dt class="col-sm-4">Aktif:</dt>
+                        <dd class="col-sm-8">
+                            @if (Model.Aktif)
+                            {
+                                <span class="badge bg-success">Aktif</span>
+                            }
+                            else
+                            {
+                                <span class="badge bg-danger">Pasif</span>
+                            }
+                        </dd>
+                        
+                        <dt class="col-sm-4">Oluşturma Tarihi:</dt>
+                        <dd class="col-sm-8">@Model.OlusturmaTarihi.ToString("dd.MM.yyyy HH:mm")</dd>
+
+                        @if (Model.GuncellemeTarihi.HasValue)
+                        {
+                            <dt class="col-sm-4">Güncelleme Tarihi:</dt>
+                            <dd class="col-sm-8">@Model.GuncellemeTarihi.Value.ToString("dd.MM.yyyy HH:mm")</dd>
+                        }
+                    </dl>
+                </div>
+                <div class="col-md-6">
+                    @if (!string.IsNullOrEmpty(Model.Aciklama))
+                    {
+                        <div class="card">
+                            <div class="card-header">Açıklama</div>
+                            <div class="card-body">
+                                @Model.Aciklama
+                            </div>
+                        </div>
+                    }
+                </div>
+            </div>
+        </div>
+        <div class="card-footer">
+            <div class="d-flex justify-content-between">
+                <a asp-action="Kurlar" class="btn btn-info">
+                    <i class="fas fa-list"></i> Tüm Kurlar
+                </a>
+                <div>
+                    <a asp-action="KurDuzenle" asp-route-id="@Model.KurDegeriID" class="btn btn-primary">
+                        <i class="fas fa-edit"></i> Düzenle
+                    </a>
+                    <a asp-action="KurSil" asp-route-id="@Model.KurDegeriID" class="btn btn-danger">
+                        <i class="fas fa-trash"></i> Sil
+                    </a>
+                </div>
+            </div>
+        </div>
+    </div>
+</div> 

@@ -1,0 +1,32 @@
+@model dynamic
+
+@{
+    string title = Model.Title ?? "";
+    string buttonText = Model.ButtonText ?? "";
+    string buttonLink = Model.ButtonLink ?? "";
+    string buttonIcon = Model.ButtonIcon ?? "fa-plus";
+    string buttonTarget = Model.ButtonTarget ?? "";
+    string buttonClass = Model.ButtonClass ?? "btn-success";
+    string headerClass = Model.HeaderClass ?? "bg-primary text-white";
+}
+
+<div class="card-header @headerClass">
+    <div class="d-flex justify-content-between align-items-center">
+        <h4 class="mb-0">@title</h4>
+        @if (!string.IsNullOrEmpty(buttonText))
+        {
+            @if (!string.IsNullOrEmpty(buttonLink))
+            {
+                <a href="@buttonLink" class="btn @buttonClass">
+                    <i class="fas @buttonIcon"></i> @buttonText
+                </a>
+            }
+            else
+            {
+                <button type="button" class="btn @buttonClass" @(string.IsNullOrEmpty(buttonTarget) ? "" : $"data-bs-toggle=\"modal\" data-bs-target=\"#{buttonTarget}\"")>
+                    <i class="fas @buttonIcon"></i> @buttonText
+                </button>
+            }
+        }
+    </div>
+</div> 
