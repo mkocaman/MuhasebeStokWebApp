@@ -375,10 +375,10 @@ namespace MuhasebeStokWebApp.Services.Menu
                             "/Home/Index"
                         );
 
-                        // 2. Stok Yönetimi Menüsü (Üst menü)
-                        var stokYonetimiMenu = CreateMenu(
-                            "Stok Yönetimi", 
-                            "fas fa-boxes", 
+                        // 2. Tanımlamalar Menüsü (Üst menü)
+                        var tanimlamalarMenu = CreateMenu(
+                            "Tanımlamalar", 
+                            "fas fa-tags", 
                             "", 
                             "", 
                             2, 
@@ -386,10 +386,52 @@ namespace MuhasebeStokWebApp.Services.Menu
                             "#"
                         );
 
+                        // Tanımlamalar Alt Menüleri
+                        var birimMenu = CreateMenu(
+                            "Birimler",
+                            "fas fa-ruler",
+                            "Birim",
+                            "Index",
+                            1,
+                            tanimlamalarMenu.MenuID,
+                            "/Birim/Index"
+                        );
+
+                        var depoMenu = CreateMenu(
+                            "Depolar",
+                            "fas fa-warehouse",
+                            "Depo",
+                            "Index",
+                            2,
+                            tanimlamalarMenu.MenuID,
+                            "/Depo/Index"
+                        );
+
+                        var kategoriMenu = CreateMenu(
+                            "Ürün Kategorileri",
+                            "fas fa-sitemap",
+                            "UrunKategori",
+                            "Index",
+                            3,
+                            tanimlamalarMenu.MenuID,
+                            "/UrunKategori/Index"
+                        );
+
+                        // 3. Stok Yönetimi Menüsü (Üst menü)
+                        var stokYonetimiMenu = CreateMenu(
+                            "Stok Yönetimi", 
+                            "fas fa-boxes", 
+                            "", 
+                            "", 
+                            3, 
+                            null, 
+                            "#"
+                        );
+
                         // Stok Yönetimi Alt Menüleri
                         var urunlerMenu = CreateMenu(
                             "Ürünler", 
-                            "fas fa-box", 
+                            "fas fa-box-open", 
                             "Urun", 
                             "Index", 
                             1, 
@@ -398,8 +440,8 @@ namespace MuhasebeStokWebApp.Services.Menu
                         );
 
                         var stokHareketleriMenu = CreateMenu(
-                            "Stok Hareketleri", 
-                            "fas fa-exchange-alt", 
+                            "Stok Kartları", 
+                            "fas fa-clipboard-list", 
                             "Stok", 
                             "Index", 
                             2, 
@@ -407,37 +449,66 @@ namespace MuhasebeStokWebApp.Services.Menu
                             "/Stok/Index"
                         );
 
-                        // Gerçekten mevcut olan kategori menüsü
-                        var kategoriMenu = CreateMenu(
-                            "Kategoriler",
-                            "fas fa-tags",
-                            "UrunKategori",
-                            "Index",
-                            3,
-                            stokYonetimiMenu.MenuID,
-                            "/UrunKategori/Index"
+                        var stokDurumuMenu = CreateMenu(
+                            "Stok Durumu", 
+                            "fas fa-chart-pie", 
+                            "Stok", 
+                            "StokDurumu", 
+                            3, 
+                            stokYonetimiMenu.MenuID, 
+                            "/Stok/StokDurumu"
                         );
 
-                        // Gerçekten mevcut olan depo menüsü
-                        var depoMenu = CreateMenu(
-                            "Depolar",
-                            "fas fa-warehouse",
-                            "Depo",
-                            "Index",
-                            4,
-                            stokYonetimiMenu.MenuID,
-                            "/Depo/Index"
+                        // Stok Hareketleri alt menü
+                        var stokIslemMenu = CreateMenu(
+                            "Stok Hareketleri", 
+                            "fas fa-exchange-alt", 
+                            "", 
+                            "", 
+                            4, 
+                            stokYonetimiMenu.MenuID, 
+                            "#"
                         );
 
-                        // Birim menüsü
-                        var birimMenu = CreateMenu(
-                            "Birimler",
-                            "fas fa-ruler",
-                            "Birim",
-                            "Index",
-                            5,
-                            stokYonetimiMenu.MenuID,
-                            "/Birim/Index"
+                        // Stok Hareketleri alt menüleri
+                        var stokGirisMenu = CreateMenu(
+                            "Stok Giriş", 
+                            "fas fa-plus-circle", 
+                            "Stok", 
+                            "StokGiris", 
+                            1, 
+                            stokIslemMenu.MenuID, 
+                            "/Stok/StokGiris"
+                        );
+
+                        var stokCikisMenu = CreateMenu(
+                            "Stok Çıkış", 
+                            "fas fa-minus-circle", 
+                            "Stok", 
+                            "StokCikis", 
+                            2, 
+                            stokIslemMenu.MenuID, 
+                            "/Stok/StokCikis"
+                        );
+
+                        var stokTransferMenu = CreateMenu(
+                            "Stok Transfer", 
+                            "fas fa-random", 
+                            "Stok", 
+                            "StokTransfer", 
+                            3, 
+                            stokIslemMenu.MenuID, 
+                            "/Stok/StokTransfer"
+                        );
+
+                        var stokSayimMenu = CreateMenu(
+                            "Stok Sayım", 
+                            "fas fa-tasks", 
+                            "Stok", 
+                            "StokSayim", 
+                            4, 
+                            stokIslemMenu.MenuID, 
+                            "/Stok/StokSayim"
                         );
 
                         // Ürün Fiyat menüsü
@@ -446,26 +517,15 @@ namespace MuhasebeStokWebApp.Services.Menu
                             "fas fa-tag",
                             "UrunFiyat",
                             "Index",
-                            6,
+                            5,
                             stokYonetimiMenu.MenuID,
                             "/UrunFiyat/Index"
                         );
 
-                        // 3. Cariler Menüsü
-                        var carilerMenu = CreateMenu(
-                            "Cariler", 
+                        // 4. Cari Hesap Menüsü
+                        var cariHesapMenu = CreateMenu(
+                            "Cari Hesap", 
                             "fas fa-users", 
-                            "Cari", 
-                            "Index", 
-                            3, 
-                            null, 
-                            "/Cari/Index"
-                        );
-
-                        // 4. Faturalar Menüsü (Üst menü)
-                        var belgelerMenu = CreateMenu(
-                            "Belgeler", 
-                            "fas fa-file-invoice", 
                             "", 
                             "", 
                             4, 
@@ -473,7 +533,49 @@ namespace MuhasebeStokWebApp.Services.Menu
                             "#"
                         );
 
-                        // Faturalar alt menüsü
+                        // Cari Hesap alt menüleri
+                        var tumCarilerMenu = CreateMenu(
+                            "Tüm Cariler", 
+                            "fas fa-address-book", 
+                            "Cari", 
+                            "Index", 
+                            1, 
+                            cariHesapMenu.MenuID, 
+                            "/Cari/Index"
+                        );
+
+                        var musterilerMenu = CreateMenu(
+                            "Müşteriler", 
+                            "fas fa-user-tie", 
+                            "Cari", 
+                            "Musteriler", 
+                            2, 
+                            cariHesapMenu.MenuID, 
+                            "/Cari/Musteriler"
+                        );
+
+                        var tedarikcilerMenu = CreateMenu(
+                            "Tedarikçiler", 
+                            "fas fa-truck", 
+                            "Cari", 
+                            "Tedarikciler", 
+                            3, 
+                            cariHesapMenu.MenuID, 
+                            "/Cari/Tedarikciler"
+                        );
+
+                        // 5. Belgeler Menüsü (Üst menü)
+                        var belgelerMenu = CreateMenu(
+                            "Belgeler", 
+                            "fas fa-file-alt", 
+                            "", 
+                            "", 
+                            5, 
+                            null, 
+                            "#"
+                        );
+
+                        // Belgeler alt menüleri
                         var faturalarMenu = CreateMenu(
                             "Faturalar", 
                             "fas fa-file-invoice-dollar", 
@@ -495,20 +597,40 @@ namespace MuhasebeStokWebApp.Services.Menu
                             "/Irsaliye/Index"
                         );
 
-                        // 5. Finans Menüsü (Üst menü)
+                        var sozlesmelerMenu = CreateMenu(
+                            "Sözleşmeler",
+                            "fas fa-file-signature",
+                            "Sozlesme",
+                            "Index",
+                            3,
+                            belgelerMenu.MenuID,
+                            "/Sozlesme/Index"
+                        );
+
+                        var faturaAklamaMenu = CreateMenu(
+                            "Fatura Aklama",
+                            "fas fa-check-double",
+                            "Fatura",
+                            "Aklama",
+                            4,
+                            belgelerMenu.MenuID,
+                            "/Fatura/Aklama"
+                        );
+
+                        // 6. Finans Yönetimi (Üst menü)
                         var finansMenu = CreateMenu(
-                            "Finans", 
+                            "Finans Yönetimi", 
                             "fas fa-money-bill-wave", 
                             "", 
                             "", 
-                            5, 
+                            6, 
                             null, 
                             "#"
                         );
 
-                        // Kasa alt menüsü
+                        // Finans alt menüleri
                         var kasaMenu = CreateMenu(
-                            "Kasa", 
+                            "Kasa İşlemleri", 
                             "fas fa-cash-register", 
                             "Kasa", 
                             "Index", 
@@ -519,7 +641,7 @@ namespace MuhasebeStokWebApp.Services.Menu
 
                         // Banka alt menüsü
                         var bankaMenu = CreateMenu(
-                            "Banka", 
+                            "Banka İşlemleri", 
                             "fas fa-university", 
                             "Banka", 
                             "Index", 
@@ -528,65 +650,20 @@ namespace MuhasebeStokWebApp.Services.Menu
                             "/Banka/Index"
                         );
 
-                        // 6. Döviz Modülü (Üst menü)
-                        var dovizMenu = CreateMenu(
-                            "Döviz İşlemleri", 
-                            "fas fa-dollar-sign", 
-                            "", 
-                            "", 
-                            6, 
-                            null, 
-                            "#"
-                        );
-
-                        // Döviz işlemleri alt menüsü
-                        var dovizIslemMenu = CreateMenu(
-                            "Döviz Kurları", 
-                            "fas fa-exchange-alt", 
-                            "ParaBirimi", 
-                            "Kurlar", 
-                            1, 
-                            dovizMenu.MenuID, 
-                            "/ParaBirimi/Kurlar"
-                        );
-
-                        // Para Birimi modülü alt menüsü
-                        var paraBirimiMenu = CreateMenu(
-                            "Para Birimleri", 
-                            "fas fa-coins", 
-                            "ParaBirimi", 
-                            "Index", 
-                            2, 
-                            dovizMenu.MenuID, 
-                            "/ParaBirimi/Index"
-                        );
-
-                        // Para Birimi İlişkileri alt menüsü
-                        var paraBirimiIliskiMenu = CreateMenu(
-                            "Para Birimi İlişkileri", 
-                            "fas fa-link", 
-                            "ParaBirimi", 
-                            "Iliskiler", 
+                        var bankaHesaplarMenu = CreateMenu(
+                            "Banka Hesapları", 
+                            "fas fa-landmark", 
+                            "Banka", 
+                            "Hesaplar", 
                             3, 
-                            dovizMenu.MenuID, 
-                            "/ParaBirimi/Iliskiler"
+                            finansMenu.MenuID, 
+                            "/Banka/Hesaplar"
                         );
 
-                        // Kur Değerleri alt menüsü
-                        var kurDegeriMenu = CreateMenu(
-                            "Kur Değerleri", 
-                            "fas fa-chart-line", 
-                            "ParaBirimi", 
-                            "Kurlar", 
-                            4, 
-                            dovizMenu.MenuID, 
-                            "/ParaBirimi/Kurlar"
-                        );
-
-                        // 7. Raporlar Menüsü (Üst menü)
-                        var raporlarMenu = CreateMenu(
-                            "Raporlar", 
-                            "fas fa-chart-bar", 
+                        // 7. Para Birimi Yönetimi (Üst menü)
+                        var paraBirimiYonetimMenu = CreateMenu(
+                            "Para Birimi Yönetimi", 
+                            "fas fa-coins", 
                             "", 
                             "", 
                             7, 
@@ -594,13 +671,65 @@ namespace MuhasebeStokWebApp.Services.Menu
                             "#"
                         );
 
-                        // Stok raporu alt menüsü
+                        // Para Birimi alt menüleri
+                        var paraBirimiMenu = CreateMenu(
+                            "Para Birimleri", 
+                            "fas fa-dollar-sign", 
+                            "ParaBirimi", 
+                            "Index", 
+                            1, 
+                            paraBirimiYonetimMenu.MenuID, 
+                            "/ParaBirimi/Index"
+                        );
+
+                        var dovizKurlariMenu = CreateMenu(
+                            "Döviz Kurları", 
+                            "fas fa-exchange-alt", 
+                            "ParaBirimi", 
+                            "Kurlar", 
+                            2, 
+                            paraBirimiYonetimMenu.MenuID, 
+                            "/ParaBirimi/Kurlar"
+                        );
+
+                        var paraBirimiIliskiMenu = CreateMenu(
+                            "Para Birimi İlişkileri", 
+                            "fas fa-link", 
+                            "ParaBirimi", 
+                            "Iliskiler", 
+                            3, 
+                            paraBirimiYonetimMenu.MenuID, 
+                            "/ParaBirimi/Iliskiler"
+                        );
+
+                        // 8. Raporlar Menüsü (Üst menü)
+                        var raporlarMenu = CreateMenu(
+                            "Raporlar", 
+                            "fas fa-chart-bar", 
+                            "", 
+                            "", 
+                            8, 
+                            null, 
+                            "#"
+                        );
+
+                        // Raporlar alt menüleri
+                        var genelBakisRaporMenu = CreateMenu(
+                            "Genel Bakış", 
+                            "fas fa-chart-line", 
+                            "Rapor", 
+                            "Index", 
+                            1, 
+                            raporlarMenu.MenuID, 
+                            "/Rapor/Index"
+                        );
+
                         var stokRaporMenu = CreateMenu(
                             "Stok Raporu", 
                             "fas fa-boxes", 
                             "Stok", 
                             "StokRapor", 
-                            1, 
+                            2, 
                             raporlarMenu.MenuID, 
                             "/Stok/StokRapor"
                         );
@@ -610,26 +739,45 @@ namespace MuhasebeStokWebApp.Services.Menu
                             "Satış Raporu", 
                             "fas fa-chart-line", 
                             "Rapor", 
-                            "SatisRapor", 
-                            2, 
+                            "SatisRaporu", 
+                            3, 
                             raporlarMenu.MenuID, 
-                            "/Rapor/SatisRapor"
+                            "/Rapor/SatisRaporu"
                         );
 
-                        // 8. Kullanıcı Yönetimi Menüsü 
-                        var kullaniciMenu = CreateMenu(
-                            "Kullanıcı Yönetimi", 
-                            "fas fa-users-cog", 
-                            "Kullanici", 
-                            "Index", 
-                            8, 
-                            null, 
-                            "/Kullanici/Index"
+                        var cariRaporMenu = CreateMenu(
+                            "Cari Raporu", 
+                            "fas fa-users", 
+                            "Rapor", 
+                            "CariRaporu", 
+                            4, 
+                            raporlarMenu.MenuID, 
+                            "/Rapor/CariRaporu"
                         );
 
-                        // 9. Sistem Ayarları Menüsü (Üst menü)
-                        var sistemAyarlariMenu = CreateMenu(
-                            "Sistem Ayarları", 
+                        var kasaRaporMenu = CreateMenu(
+                            "Kasa Raporu", 
+                            "fas fa-cash-register", 
+                            "Rapor", 
+                            "KasaRaporu", 
+                            5, 
+                            raporlarMenu.MenuID, 
+                            "/Rapor/KasaRaporu"
+                        );
+
+                        var bankaRaporMenu = CreateMenu(
+                            "Banka Raporu", 
+                            "fas fa-university", 
+                            "Rapor", 
+                            "BankaRaporu", 
+                            6, 
+                            raporlarMenu.MenuID, 
+                            "/Rapor/BankaRaporu"
+                        );
+
+                        // 9. Yönetim Paneli (Üst menü)
+                        var yonetimPaneliMenu = CreateMenu(
+                            "Yönetim Paneli", 
                             "fas fa-cogs", 
                             "", 
                             "", 
@@ -638,15 +786,45 @@ namespace MuhasebeStokWebApp.Services.Menu
                             "#"
                         );
 
-                        // Sistem ayarları alt menüleri
+                        // Yönetim alt menüleri
+                        var kullaniciYonetimMenu = CreateMenu(
+                            "Kullanıcı Yönetimi", 
+                            "fas fa-users-cog", 
+                            "Kullanici", 
+                            "Index", 
+                            1, 
+                            yonetimPaneliMenu.MenuID, 
+                            "/Kullanici/Index"
+                        );
+
+                        var rolYonetimMenu = CreateMenu(
+                            "Rol Yönetimi", 
+                            "fas fa-user-tag", 
+                            "Kullanici", 
+                            "Roller", 
+                            2, 
+                            yonetimPaneliMenu.MenuID, 
+                            "/Kullanici/Roller"
+                        );
+
                         var menuYonetimMenu = CreateMenu(
                             "Menü Yönetimi", 
                             "fas fa-bars", 
                             "Menu", 
                             "Index", 
-                            1, 
-                            sistemAyarlariMenu.MenuID, 
+                            3, 
+                            yonetimPaneliMenu.MenuID, 
                             "/Menu/Index"
+                        );
+
+                        var sistemAyarlariMenu = CreateMenu(
+                            "Sistem Ayarları", 
+                            "fas fa-sliders-h", 
+                            "SistemAyar", 
+                            "Index", 
+                            4, 
+                            yonetimPaneliMenu.MenuID, 
+                            "/SistemAyar/Index"
                         );
 
                         var sistemLogMenu = CreateMenu(
@@ -654,39 +832,9 @@ namespace MuhasebeStokWebApp.Services.Menu
                             "fas fa-history", 
                             "SistemLog", 
                             "Index", 
-                            2, 
-                            sistemAyarlariMenu.MenuID, 
-                            "/SistemLog/Index"
-                        );
-
-                        var genelAyarlarMenu = CreateMenu(
-                            "Genel Ayarlar", 
-                            "fas fa-sliders-h", 
-                            "SistemAyar", 
-                            "Index", 
-                            3, 
-                            sistemAyarlariMenu.MenuID, 
-                            "/SistemAyar/Index"
-                        );
-
-                        var dilAyarlariMenu = CreateMenu(
-                            "Dil Ayarları", 
-                            "fas fa-language", 
-                            "Language", 
-                            "Index", 
-                            4, 
-                            sistemAyarlariMenu.MenuID, 
-                            "/Language/Index"
-                        );
-
-                        var bildirimAyarlariMenu = CreateMenu(
-                            "Bildirim Ayarları", 
-                            "fas fa-bell", 
-                            "SistemAyar", 
-                            "Bildirimler", 
                             5, 
-                            sistemAyarlariMenu.MenuID, 
-                            "/SistemAyar/Bildirimler"
+                            yonetimPaneliMenu.MenuID, 
+                            "/SistemLog/Index"
                         );
 
                         var dbYonetimMenu = CreateMenu(
@@ -695,43 +843,75 @@ namespace MuhasebeStokWebApp.Services.Menu
                             "DbInit", 
                             "Index", 
                             6, 
-                            sistemAyarlariMenu.MenuID, 
+                            yonetimPaneliMenu.MenuID, 
                             "/DbInit/Index"
                         );
 
                         // Tüm menüleri veritabanına ekle
                         var menuler = new List<Data.Entities.Menu>
                         {
+                            // Üst menüler
                             dashboardMenu,
+                            tanimlamalarMenu,
                             stokYonetimiMenu,
+                            cariHesapMenu,
+                            belgelerMenu,
+                            finansMenu,
+                            paraBirimiYonetimMenu,
+                            raporlarMenu,
+                            yonetimPaneliMenu,
+                            
+                            // 2. Tanımlamalar alt menüleri
+                            birimMenu,
+                            depoMenu,
+                            kategoriMenu,
+                            
+                            // 3. Stok alt menüleri
                             urunlerMenu,
                             stokHareketleriMenu,
-                            kategoriMenu,
-                            depoMenu,
-                            birimMenu,
+                            stokDurumuMenu,
+                            stokIslemMenu,
+                            stokGirisMenu,
+                            stokCikisMenu,
+                            stokTransferMenu,
+                            stokSayimMenu,
                             urunFiyatMenu,
-                            carilerMenu,
-                            belgelerMenu,
+                            
+                            // 4. Cari alt menüleri
+                            tumCarilerMenu,
+                            musterilerMenu,
+                            tedarikcilerMenu,
+                            
+                            // 5. Belgeler alt menüleri
                             faturalarMenu,
                             irsaliyeMenu,
-                            finansMenu,
+                            sozlesmelerMenu,
+                            faturaAklamaMenu,
+                            
+                            // 6. Finans alt menüleri
                             kasaMenu,
                             bankaMenu,
-                            dovizMenu,
-                            dovizIslemMenu,
+                            bankaHesaplarMenu,
+                            
+                            // 7. Para birimi alt menüleri
                             paraBirimiMenu,
+                            dovizKurlariMenu,
                             paraBirimiIliskiMenu,
-                            kurDegeriMenu,
-                            raporlarMenu,
+                            
+                            // 8. Raporlar alt menüleri
+                            genelBakisRaporMenu,
                             stokRaporMenu,
                             satisRaporMenu,
-                            kullaniciMenu,
-                            sistemAyarlariMenu,
+                            cariRaporMenu,
+                            kasaRaporMenu,
+                            bankaRaporMenu,
+                            
+                            // 9. Yönetim alt menüleri
+                            kullaniciYonetimMenu,
+                            rolYonetimMenu,
                             menuYonetimMenu,
+                            sistemAyarlariMenu,
                             sistemLogMenu,
-                            genelAyarlarMenu,
-                            dilAyarlariMenu,
-                            bildirimAyarlariMenu,
                             dbYonetimMenu
                         };
 
@@ -1846,6 +2026,128 @@ namespace MuhasebeStokWebApp.Services.Menu
             {
                 _logger.LogError(ex, "Veritabanı bağlantı kontrolü sırasında hata oluştu");
                 return false;
+            }
+        }
+
+        public async Task<List<Data.Entities.Menu>> GetAllMenusWithIncludesAsync()
+        {
+            return await _context.Menuler
+                .Include(m => m.MenuRoller)
+                .AsSplitQuery()
+                .OrderBy(m => m.Sira)
+                .ToListAsync();
+        }
+
+        public async Task<Data.Entities.Menu?> GetMenuByIdWithIncludesAsync(Guid id)
+        {
+            return await _context.Menuler
+                .Include(m => m.UstMenu)
+                .Include(m => m.AltMenuler)
+                .Include(m => m.MenuRoller)
+                .AsSplitQuery()
+                .FirstOrDefaultAsync(m => m.MenuID == id);
+        }
+
+        public async Task<List<Data.Entities.Menu>> GetMenusByRolAsync(string rolAdi)
+        {
+            return await _context.Menuler
+                .Include(m => m.AltMenuler)
+                .Include(m => m.MenuRoller)
+                .AsSplitQuery()
+                .Where(m => m.MenuRoller.Any(mr => mr.Rol.Name == rolAdi))
+                .OrderBy(m => m.Sira)
+                .ToListAsync();
+        }
+
+        public async Task<IEnumerable<Data.Entities.Menu>> GetActiveMenusByRolAsync(string rolAdi)
+        {
+            var menuler = await _context.Menuler
+                .Include(m => m.MenuRoller)
+                .AsSplitQuery()
+                .Where(m => m.AktifMi && m.MenuRoller.Any(mr => mr.Rol.Name == rolAdi))
+                .OrderBy(m => m.Sira)
+                .ToListAsync();
+
+            return menuler;
+        }
+
+        public async Task<List<MenuItem>> GetMenuItemsAsync(string rolYetki)
+        {
+            try
+            {
+                var menuItems = new List<MenuItem>();
+                
+                // Tüm menü öğelerini veritabanından çek
+                var menuler = await _context.Menuler
+                    .Include(m => m.MenuRoller)
+                        .ThenInclude(mr => mr.Rol)
+                    .Where(m => !m.Silindi)
+                    .OrderBy(m => m.Sira)  // MenuSirasi yerine Sira kullanıldı
+                    .ToListAsync();
+
+                if (menuler == null || !menuler.Any())
+                {
+                    _logger.LogWarning("Hiç menü bulunamadı");
+                    return new List<MenuItem>();
+                }
+
+                // Yetkiye göre filtreleme
+                if (!string.IsNullOrEmpty(rolYetki))
+                {
+                    menuler = menuler
+                        .Where(m => m.AktifMi && m.MenuRoller.Any(mr => mr.Rol.Name == rolYetki))  // Aktif yerine AktifMi, RolAdi yerine Rol.Name
+                        .OrderBy(m => m.Sira)  // MenuSirasi yerine Sira
+                        .ToList();
+                }
+
+                // Yalnızca üst seviye menüleri al (UstMenuID null)
+                var ustMenuler = menuler.Where(m => m.UstMenuID == null).ToList();
+
+                foreach (var menu in ustMenuler)
+                {
+                    var menuItem = new MenuItem
+                    {
+                        Id = menu.MenuID.ToString(),
+                        Text = menu.Ad,
+                        Icon = menu.Icon,
+                        Url = menu.Url,
+                        Action = menu.Action,
+                        Controller = menu.Controller
+                    };
+
+                    // Alt menüleri ekle
+                    AddSubMenuItems(menuItem, menuler, menu.MenuID);
+                    menuItems.Add(menuItem);
+                }
+
+                return menuItems;
+            }
+            catch (Exception ex)
+            {
+                _logger.LogError(ex, "GetMenuItemsAsync metodu içinde bir hata oluştu");
+                return new List<MenuItem>();
+            }
+        }
+
+        private void AddSubMenuItems(MenuItem parentItem, List<Data.Entities.Menu> allMenus, Guid parentMenuId)
+        {
+            var childMenus = allMenus.Where(m => m.UstMenuID == parentMenuId).OrderBy(m => m.Sira).ToList();
+            
+            foreach (var childMenu in childMenus)
+            {
+                var childItem = new MenuItem
+                {
+                    Id = childMenu.MenuID.ToString(),
+                    Text = childMenu.Ad,
+                    Icon = childMenu.Icon,
+                    Url = childMenu.Url,
+                    Action = childMenu.Action,
+                    Controller = childMenu.Controller
+                };
+                
+                // Recursively add sub-items
+                AddSubMenuItems(childItem, allMenus, childMenu.MenuID);
+                parentItem.Items.Add(childItem);
             }
         }
     }

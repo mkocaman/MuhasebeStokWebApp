@@ -1,4 +1,5 @@
 @model MuhasebeStokWebApp.ViewModels.Stok.StokHareketViewModel
+@using MuhasebeStokWebApp.Enums
 @{
     ViewData["Title"] = "Stok Hareketleri";
     Layout = "~/Views/Shared/_Layout.cshtml";
@@ -55,16 +56,16 @@
                         <div class="card-body">
                             <table class="table table-bordered">
                                 <tr>
-                                    <th style="width: 40%">Ortalama Maliyet (TL):</th>
-                                    <td class="text-end">@Model.OrtalamaMaliyetTL.ToString("N2") ₺</td>
+                                    <th style="width: 40%">Ortalama Maliyet (UZS):</th>
+                                    <td class="text-end">@Model.OrtalamaMaliyetUZS.ToString("N2") so'm</td>
                                 </tr>
                                 <tr>
                                     <th>Ortalama Maliyet (USD):</th>
                                     <td class="text-end">@Model.OrtalamaMaliyetUSD.ToString("N2") $</td>
                                 </tr>
                                 <tr>
-                                    <th>Toplam Stok Değeri (TL):</th>
-                                    <td class="text-end">@((Model.OrtalamaMaliyetTL * Model.StokMiktar).ToString("N2")) ₺</td>
+                                    <th>Toplam Stok Değeri (UZS):</th>
+                                    <td class="text-end">@((Model.OrtalamaMaliyetUZS * Model.StokMiktar).ToString("N2")) so'm</td>
                                 </tr>
                             </table>
                         </div>
@@ -82,8 +83,8 @@
                         <div class="card-body">
                             <table class="table table-bordered">
                                 <tr>
-                                    <th style="width: 40%">Ortalama Satış Fiyatı (TL):</th>
-                                    <td class="text-end">@(Model.OrtalamaSatisFiyatiTL > 0 ? Model.OrtalamaSatisFiyatiTL.ToString("N2") + " ₺" : "-")</td>
+                                    <th style="width: 40%">Ortalama Satış Fiyatı (UZS):</th>
+                                    <td class="text-end">@(Model.OrtalamaSatisFiyatiUZS > 0 ? Model.OrtalamaSatisFiyatiUZS.ToString("N2") + " so'm" : "-")</td>
                                 </tr>
                                 <tr>
                                     <th>Ortalama Satış Fiyatı (USD):</th>
@@ -92,9 +93,9 @@
                                 <tr>
                                     <th>Ortalama Kâr Marjı:</th>
                                     <td class="text-end">
-                                        @if (Model.OrtalamaSatisFiyatiTL > 0 && Model.OrtalamaMaliyetTL > 0)
+                                        @if (Model.OrtalamaSatisFiyatiUZS > 0 && Model.OrtalamaMaliyetUZS > 0)
                                         {
-                                            decimal karMarji = ((Model.OrtalamaSatisFiyatiTL - Model.OrtalamaMaliyetTL) / Model.OrtalamaMaliyetTL) * 100;
+                                            decimal karMarji = ((Model.OrtalamaSatisFiyatiUZS - Model.OrtalamaMaliyetUZS) / Model.OrtalamaMaliyetUZS) * 100;
                                             @karMarji.ToString("N2")@:%
                                         }
                                         else
@@ -139,23 +140,23 @@
                                     <tr>
                                         <td>@hareket.Tarih.ToString("dd.MM.yyyy HH:mm")</td>
                                         <td>
-                                            @if (hareket.HareketTuru == "Giriş")
+                                            @if (hareket.HareketTuru == StokHareketiTipi.Giris)
                                             {
                                                 <span class="badge bg-success">Giriş</span>
                                             }
-                                            else if (hareket.HareketTuru == "Çıkış")
+                                            else if (hareket.HareketTuru == StokHareketiTipi.Cikis)
                                             {
                                                 <span class="badge bg-danger">Çıkış</span>
                                             }
                                             else
                                             {
-                                                <span class="badge bg-info">@hareket.HareketTuru</span>
+                                                <span class="badge bg-secondary">@hareket.HareketTuru</span>
                                             }
                                         </td>
                                         <td>@hareket.DepoAdi</td>
                                         <td class="text-end">@hareket.Miktar.ToString("N2") @hareket.Birim</td>
-                                        <td class="text-end">@hareket.BirimFiyat.ToString("N2") ₺</td>
-                                        <td class="text-end">@((hareket.Miktar * hareket.BirimFiyat).ToString("N2")) ₺</td>
+                                        <td class="text-end">@hareket.BirimFiyat.ToString("N2") @hareket.ParaBirimiSembol</td>
+                                        <td class="text-end">@((hareket.Miktar * hareket.BirimFiyat).ToString("N2")) @hareket.ParaBirimiSembol</td>
                                         <td>
                                             @if (!string.IsNullOrEmpty(hareket.ReferansTuru))
                                             {
@@ -182,7 +183,7 @@
                                     <th>Son Çıkış</th>
                                     <th>Miktar</th>
                                     <th>Kalan</th>
-                                    <th>Birim Fiyat (TL)</th>
+                                    <th>Birim Fiyat (UZS)</th>
                                     <th>Birim Fiyat (USD)</th>
                                     <th>Döviz Kuru</th>
                                     <th>Referans</th>
@@ -206,7 +207,7 @@
                                         </td>
                                         <td class="text-end">@fifo.Miktar.ToString("N2")</td>
                                         <td class="text-end">@fifo.KalanMiktar.ToString("N2")</td>
-                                        <td class="text-end">@fifo.BirimFiyat.ToString("N2") ₺</td>
+                                        <td class="text-end">@fifo.BirimFiyat.ToString("N2") @fifo.ParaBirimiSembol</td>
                                         <td class="text-end">@fifo.BirimFiyatUSD.ToString("N2") $</td>
                                         <td class="text-end">@fifo.DovizKuru.ToString("N6")</td>
                                         <td>

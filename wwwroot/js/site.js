@@ -85,6 +85,57 @@ function showAlert(type, title, message) {
     }
 }
 
+// Numerik input için sayısal formatlama
+function formatNumericInput(input) {
+    // Input değerini al ve temizle
+    let value = input.value.replace(/[^\d.,]/g, '');
+    
+    // Türkçe lokalizasyona göre nokta ve virgül düzenlemesi
+    // Virgülden sonra en fazla 2 rakam olmalı
+    if (value.includes(',')) {
+        const parts = value.split(',');
+        if (parts[1].length > 2) {
+            parts[1] = parts[1].substring(0, 2);
+            value = parts.join(',');
+        }
+    }
+    
+    // İngilizce lokalizasyona göre nokta düzenlemesi
+    if (value.includes('.')) {
+        const parts = value.split('.');
+        if (parts[1].length > 2) {
+            parts[1] = parts[1].substring(0, 2);
+            value = parts.join('.');
+        }
+    }
+    
+    // Eğer sayısal bir değer elde edilemezse boş bırak
+    if (isNaN(parseFloat(value.replace(',', '.')))) {
+        input.value = '';
+    } else {
+        input.value = value;
+    }
+}
+
+// Input alanlarında sayısal giriş kontrolü için event listener
+document.addEventListener('DOMContentLoaded', function() {
+    // KDV alanı ve diğer sayısal alanlar için olay dinleyicileri
+    const numericInputs = document.querySelectorAll('input[type="number"], input[name="KDVOrani"]');
+    
+    numericInputs.forEach(input => {
+        input.addEventListener('input', function() {
+            formatNumericInput(this);
+        });
+        
+        input.addEventListener('blur', function() {
+            // Boşsa veya değer yoksa varsayılan değer atama
+            if (this.value === '' && this.name === 'KDVOrani') {
+                this.value = '12';
+            }
+        });
+    });
+});
+
 // DataTable yenileme işlevi
 function refreshDataTable() {
     if ($.fn.DataTable.isDataTable('.table-datatable')) {

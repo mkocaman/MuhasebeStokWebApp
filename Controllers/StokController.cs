@@ -1,21 +1,27 @@
 using System;
 using System.Collections.Generic;
+using System.IO;
 using System.Linq;
 using System.Threading.Tasks;
+using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.AspNetCore.Mvc.Rendering;
 using Microsoft.EntityFrameworkCore;
+using Microsoft.Extensions.Logging;
 using MuhasebeStokWebApp.Data;
 using MuhasebeStokWebApp.Data.Entities;
 using MuhasebeStokWebApp.Data.Repositories;
+using MuhasebeStokWebApp.Enums;
 using MuhasebeStokWebApp.Services;
-using MuhasebeStokWebApp.ViewModels.Stok;
-using Microsoft.Extensions.Logging;
 using MuhasebeStokWebApp.Services.Interfaces;
+using MuhasebeStokWebApp.ViewModels.Stok;
+using MuhasebeStokWebApp.Models;
+using System.Globalization;
 using Microsoft.AspNetCore.Identity;
 
 namespace MuhasebeStokWebApp.Controllers
 {
+    [Authorize]
     public class StokController : BaseController
     {
         private readonly IUnitOfWork _unitOfWork;
@@ -58,19 +64,29 @@ namespace MuhasebeStokWebApp.Controllers
                 includeProperties: "Birim,Kategori"
             );
             
-            var viewModel = new StokListViewModel
+            var viewModelUrunler = new List<StokKartViewModel>();
+            
+            foreach (var u in urunler)
             {
-                Urunler = urunler.Select(u => new StokKartViewModel
+                // Dinamik stok miktarını hesapla
+                decimal dinamikStokMiktari = await GetDinamikStokMiktari(u.UrunID);
+                
+                viewModelUrunler.Add(new StokKartViewModel
                 {
                     UrunID = u.UrunID,
                     UrunKodu = u.UrunKodu,
                     UrunAdi = u.UrunAdi,
                     Birim = u.Birim?.BirimAdi ?? "-",
-                    StokMiktar = u.StokMiktar,
+                    StokMiktar = dinamikStokMiktari,
                     Kategori = u.Kategori?.KategoriAdi ?? "Kategorisiz",
                     BirimID = (Guid?)(object)u.BirimID,
                     KategoriID = u.KategoriID
-                }).ToList()
+                });
+            }
+            
+            var viewModel = new StokListViewModel
+            {
+                Urunler = viewModelUrunler
             };
 
             return View(viewModel);
@@ -84,128 +100,148 @@ namespace MuhasebeStokWebApp.Controllers
                 return NotFound();
             }
 
-            // Ürün bilgilerini al
-            var urun = await _unitOfWork.Repository<Urun>().GetFirstOrDefaultAsync(
-                filter: u => u.UrunID == id && !u.Silindi,
-                includeProperties: "Kategori,Birim");
-
-            if (urun == null)
+            try
             {
-                return NotFound();
-            }
+                // Ürün bilgilerini al
+                var urun = await _unitOfWork.Repository<Urun>().GetFirstOrDefaultAsync(
+                    filter: u => u.UrunID == id && !u.Silindi,
+                    includeProperties: "Kategori,Birim");
 
-            // Stok hareketlerini al
-            var stokHareketleri = await _unitOfWork.Repository<StokHareket>().GetAsync(
-                filter: sh => sh.UrunID == id && !sh.Silindi,
-                includeProperties: "Depo",
-                orderBy: q => q.OrderByDescending(sh => sh.Tarih));
-
-            // FIFO kayıtlarını al
-            var fifoKayitlari = await _unitOfWork.Repository<StokFifo>().GetAsync(
-                filter: sf => sf.UrunID == id && sf.Aktif && !sf.Silindi,
-                orderBy: q => q.OrderByDescending(sf => sf.GirisTarihi));
-
-            // Ortalama maliyeti hesapla - KDV düşme hatası düzeltildi
-            decimal ortalamaMaliyetTL = 0;
-            decimal ortalamaMaliyetUSD = 0;
-            
-            if (fifoKayitlari != null && fifoKayitlari.Any() && fifoKayitlari.Sum(f => f.KalanMiktar) > 0)
-            {
-                decimal toplamTutar = fifoKayitlari.Sum(f => f.KalanMiktar * f.BirimFiyat);
-                decimal toplamUSDTutar = fifoKayitlari.Sum(f => f.KalanMiktar * f.USDBirimFiyat);
-                decimal toplamKalanMiktar = fifoKayitlari.Sum(f => f.KalanMiktar);
-                
-                if (toplamKalanMiktar > 0)
+                if (urun == null)
                 {
-                    ortalamaMaliyetTL = toplamTutar / toplamKalanMiktar;
-                    ortalamaMaliyetUSD = toplamUSDTutar / toplamKalanMiktar;
+                    return NotFound();
                 }
-            }
-            
-            // Ortalama satış fiyatını hesapla
-            decimal ortalamaSatisFiyatiTL = 0;
-            decimal ortalamaSatisFiyatiUSD = 0;
-            
-            // Son 3 ay içindeki satış hareketlerini al
-            var sonUcAy = DateTime.Now.AddMonths(-3);
-            var satisFaturalari = await _context.FaturaDetaylari
-                .Include(fd => fd.Fatura)
-                .Include(fd => fd.Fatura.FaturaTuru)
-                .Where(fd => fd.UrunID == id 
-                        && !fd.Silindi 
-                        && fd.Fatura.FaturaTuru.HareketTuru == "Çıkış" 
-                        && fd.Fatura.FaturaTarihi >= sonUcAy)
-                .ToListAsync();
-            
-            if (satisFaturalari != null && satisFaturalari.Any())
-            {
-                // BirimFiyat değerleri KDV hariç olduğundan doğrudan kullanabiliriz
-                decimal toplamSatisTutari = satisFaturalari.Sum(fd => fd.BirimFiyat * fd.Miktar);
-                decimal toplamSatisMiktari = satisFaturalari.Sum(fd => fd.Miktar);
+
+                // Stok hareketlerini al
+                var stokHareketleri = await _unitOfWork.Repository<StokHareket>().GetAsync(
+                    filter: sh => sh.UrunID == id && !sh.Silindi,
+                    includeProperties: "Depo",
+                    orderBy: q => q.OrderByDescending(sh => sh.Tarih));
+
+                // FIFO kayıtlarını al
+                var fifoKayitlari = await _unitOfWork.Repository<StokFifo>().GetAsync(
+                    filter: sf => sf.UrunID == id && !sf.Silindi, // Aktif filtresini kaldırdık
+                    orderBy: q => q.OrderByDescending(sf => sf.GirisTarihi));
+
+                // Ortalama maliyeti hesapla - KDV düşme hatası düzeltildi
+                decimal ortalamaMaliyetTL = 0;
+                decimal ortalamaMaliyetUSD = 0;
                 
-                if (toplamSatisMiktari > 0)
+                if (fifoKayitlari != null && fifoKayitlari.Any() && fifoKayitlari.Sum(f => f.KalanMiktar) > 0)
                 {
-                    ortalamaSatisFiyatiTL = toplamSatisTutari / toplamSatisMiktari;
+                    decimal toplamTutar = fifoKayitlari.Sum(f => f.KalanMiktar * f.BirimFiyat);
+                    decimal toplamUSDTutar = fifoKayitlari.Sum(f => f.KalanMiktar * f.USDBirimFiyat);
+                    decimal toplamKalanMiktar = fifoKayitlari.Sum(f => f.KalanMiktar);
                     
-                    // USD cinsinden ortalama satış fiyatını hesapla
-                    decimal guncelKur = 0;
-                    try 
+                    if (toplamKalanMiktar > 0)
                     {
-                        guncelKur = await _dovizKuruService.GetGuncelKurAsync("TRY", "USD");
+                        ortalamaMaliyetTL = toplamTutar / toplamKalanMiktar;
+                        ortalamaMaliyetUSD = toplamUSDTutar / toplamKalanMiktar;
                     }
-                    catch (Exception ex)
-                    {
-                        _logger.LogError(ex, "TRY/USD kur değeri alınırken hata oluştu.");
-                        guncelKur = 1/30.0m; // Default değer: 1 TL = 1/30 USD
-                    }
-                        
-                    ortalamaSatisFiyatiUSD = ortalamaSatisFiyatiTL * guncelKur;
                 }
+                
+                // Ortalama satış fiyatını hesapla
+                decimal ortalamaSatisFiyatiTL = 0;
+                decimal ortalamaSatisFiyatiUSD = 0;
+                
+                // Son 3 ay içindeki satış hareketlerini al
+                var sonUcAy = DateTime.Now.AddMonths(-3);
+                var satisFaturalari = await _context.FaturaDetaylari
+                    .Include(fd => fd.Fatura)
+                    .Include(fd => fd.Fatura.FaturaTuru)
+                    .Where(fd => fd.UrunID == id 
+                            && !fd.Silindi 
+                            && fd.Fatura.FaturaTuru.HareketTuru == "Çıkış"
+                            && fd.Fatura.FaturaTarihi >= sonUcAy)
+                    .ToListAsync();
+                
+                if (satisFaturalari != null && satisFaturalari.Any())
+                {
+                    // BirimFiyat değerleri KDV hariç olduğundan doğrudan kullanabiliriz
+                    decimal toplamSatisTutari = satisFaturalari.Sum(fd => fd.BirimFiyat * fd.Miktar);
+                    decimal toplamSatisMiktari = satisFaturalari.Sum(fd => fd.Miktar);
+                    
+                    if (toplamSatisMiktari > 0)
+                    {
+                        ortalamaSatisFiyatiTL = toplamSatisTutari / toplamSatisMiktari;
+                        
+                        // USD cinsinden ortalama satış fiyatını hesapla
+                        decimal guncelKur = 0;
+                        try 
+                        {
+                            guncelKur = await _dovizKuruService.GetGuncelKurAsync("TRY", "USD");
+                            if (guncelKur <= 0)
+                            {
+                                throw new Exception("Geçersiz kur değeri: " + guncelKur);
+                            }
+                        }
+                        catch (Exception ex)
+                        {
+                            _logger.LogError(ex, "TRY/USD kur değeri alınırken hata oluştu.");
+                            TempData["ErrorMessage"] = $"Döviz kuru alınamadı: {ex.Message}. Güncel kur değerleri hesaplanamıyor.";
+                            // Devam ediyoruz ama USD hesaplaması yapılmayacak
+                        }
+                            
+                        if (guncelKur > 0)
+                        {
+                            ortalamaSatisFiyatiUSD = ortalamaSatisFiyatiTL * guncelKur;
+                        }
+                    }
+                }
+
+                // ViewModel oluştur
+                var viewModel = new StokHareketViewModel
+                {
+                    UrunID = urun.UrunID,
+                    UrunKodu = urun.UrunKodu,
+                    UrunAdi = urun.UrunAdi,
+                    Kategori = urun.Kategori?.KategoriAdi ?? "Belirtilmemiş",
+                    Birim = urun.Birim?.BirimAdi ?? "Adet",
+                    StokMiktar = await GetDinamikStokMiktari(urun.UrunID),
+                    OrtalamaMaliyetTL = ortalamaMaliyetTL,
+                    OrtalamaMaliyetUSD = ortalamaMaliyetUSD,
+                    OrtalamaSatisFiyatiTL = ortalamaSatisFiyatiTL,
+                    OrtalamaSatisFiyatiUSD = ortalamaSatisFiyatiUSD,
+                    StokHareketleri = stokHareketleri.Select(sh => new StokHareketListItemViewModel
+                    {
+                        StokHareketID = sh.StokHareketID,
+                        Tarih = sh.Tarih,
+                        HareketTuru = sh.HareketTuru,
+                        DepoAdi = sh.Depo?.DepoAdi ?? "Merkez Depo",
+                        Miktar = sh.Miktar,
+                        BirimFiyat = sh.BirimFiyat ?? 0,
+                        Birim = sh.Birim,
+                        ParaBirimi = sh.ParaBirimi ?? "UZS",
+                        ParaBirimiSembol = GetParaBirimiSembol(sh.ParaBirimi),
+                        ReferansNo = sh.ReferansNo,
+                        ReferansTuru = sh.ReferansTuru,
+                        Aciklama = sh.Aciklama ?? ""
+                    }).ToList(),
+                    FifoKayitlari = fifoKayitlari.Select(sf => new StokFifoListItemViewModel
+                    {
+                        StokFifoID = sf.StokFifoID,
+                        GirisTarihi = sf.GirisTarihi,
+                        SonCikisTarihi = sf.SonCikisTarihi,
+                        Miktar = sf.Miktar,
+                        KalanMiktar = sf.KalanMiktar,
+                        BirimFiyat = sf.BirimFiyat,
+                        BirimFiyatUSD = sf.USDBirimFiyat,
+                        DovizKuru = sf.DovizKuru,
+                        ParaBirimi = sf.ParaBirimi ?? "UZS",
+                        ParaBirimiSembol = GetParaBirimiSembol(sf.ParaBirimi),
+                        ReferansNo = sf.ReferansNo,
+                        ReferansTuru = sf.ReferansTuru
+                    }).ToList()
+                };
+
+                return View(viewModel);
             }
-
-            // ViewModel oluştur
-            var viewModel = new StokHareketViewModel
+            catch (Exception ex)
             {
-                UrunID = urun.UrunID,
-                UrunKodu = urun.UrunKodu,
-                UrunAdi = urun.UrunAdi,
-                Kategori = urun.Kategori?.KategoriAdi ?? "Belirtilmemiş",
-                Birim = urun.Birim?.BirimAdi ?? "Adet",
-                StokMiktar = urun.StokMiktar,
-                OrtalamaMaliyetTL = ortalamaMaliyetTL,
-                OrtalamaMaliyetUSD = ortalamaMaliyetUSD,
-                OrtalamaSatisFiyatiTL = ortalamaSatisFiyatiTL,
-                OrtalamaSatisFiyatiUSD = ortalamaSatisFiyatiUSD,
-                StokHareketleri = stokHareketleri.Select(sh => new StokHareketListItemViewModel
-                {
-                    StokHareketID = sh.StokHareketID,
-                    Tarih = sh.Tarih,
-                    HareketTuru = sh.HareketTuru,
-                    DepoAdi = sh.Depo?.DepoAdi ?? "Merkez Depo",
-                    Miktar = sh.Miktar,
-                    BirimFiyat = sh.BirimFiyat ?? 0,
-                    Birim = sh.Birim,
-                    ReferansNo = sh.ReferansNo,
-                    ReferansTuru = sh.ReferansTuru,
-                    Aciklama = sh.Aciklama ?? ""
-                }).ToList(),
-                FifoKayitlari = fifoKayitlari.Select(sf => new StokFifoListItemViewModel
-                {
-                    StokFifoID = sf.StokFifoID,
-                    GirisTarihi = sf.GirisTarihi,
-                    SonCikisTarihi = sf.SonCikisTarihi,
-                    Miktar = sf.Miktar,
-                    KalanMiktar = sf.KalanMiktar,
-                    BirimFiyat = sf.BirimFiyat,
-                    BirimFiyatUSD = sf.USDBirimFiyat,
-                    DovizKuru = sf.DovizKuru,
-                    ParaBirimi = sf.ParaBirimi,
-                    ReferansNo = sf.ReferansNo,
-                    ReferansTuru = sf.ReferansTuru
-                }).ToList()
-            };
-
-            return View(viewModel);
+                _logger.LogError(ex, "Stok hareketleri görüntülenirken hata oluştu. UrunID: {UrunID}", id);
+                TempData["ErrorMessage"] = "Stok hareketleri yüklenirken bir hata oluştu. Lütfen daha sonra tekrar deneyin.";
+                return RedirectToAction("Index");
+            }
         }
 
         // GET: Stok/StokGiris
@@ -216,7 +252,7 @@ namespace MuhasebeStokWebApp.Controllers
             var viewModel = new StokGirisViewModel
             {
                 Tarih = DateTime.Now,
-                HareketTuru = "Giriş"
+                HareketTuru = StokHareketiTipi.Giris
             };
             
             return View(viewModel);
@@ -229,6 +265,8 @@ namespace MuhasebeStokWebApp.Controllers
         {
             if (ModelState.IsValid)
             {
+                // Transaction başlat
+                using var transaction = await _context.Database.BeginTransactionAsync();
                 try
                 {
                     // Ürün bilgilerini al
@@ -258,10 +296,6 @@ namespace MuhasebeStokWebApp.Controllers
                     };
 
                     await _unitOfWork.Repository<StokHareket>().AddAsync(stokHareket);
-
-                    // Ürün stok miktarını güncelle
-                    urun.StokMiktar += viewModel.Miktar;
-                    await _unitOfWork.Repository<Urun>().UpdateAsync(urun);
 
                     // FIFO stok girişi yap
                     // Döviz kurunu al
@@ -302,17 +336,22 @@ namespace MuhasebeStokWebApp.Controllers
                         );
 
                         await _unitOfWork.SaveAsync();
+                        
+                        // Transaction'ı commit et
+                        await transaction.CommitAsync();
 
                         TempData["SuccessMessage"] = "Stok girişi başarıyla kaydedildi.";
                         return RedirectToAction(nameof(Index));
                     }
                     catch (Exception ex)
                     {
+                        await transaction.RollbackAsync();
                         ModelState.AddModelError("", $"Stok girişi sırasında bir hata oluştu: {ex.Message}");
                     }
                 }
                 catch (Exception ex)
                 {
+                    await transaction.RollbackAsync();
                     ModelState.AddModelError("", $"Stok girişi sırasında bir hata oluştu: {ex.Message}");
                 }
             }
@@ -329,7 +368,7 @@ namespace MuhasebeStokWebApp.Controllers
             var viewModel = new StokCikisViewModel
             {
                 Tarih = DateTime.Now,
-                HareketTuru = "Çıkış"
+                HareketTuru = StokHareketiTipi.Cikis
             };
             
             return View(viewModel);
@@ -342,6 +381,8 @@ namespace MuhasebeStokWebApp.Controllers
         {
             if (ModelState.IsValid)
             {
+                // Transaction başlat
+                using var transaction = await _context.Database.BeginTransactionAsync();
                 try
                 {
                     // Ürün bilgilerini al
@@ -361,7 +402,7 @@ namespace MuhasebeStokWebApp.Controllers
                         DepoID = viewModel.DepoID,
                         Miktar = -viewModel.Miktar, // Çıkış işlemi için negatif değer
                         Birim = viewModel.Birim,
-                        HareketTuru = viewModel.HareketTuru,
+                        HareketTuru = StokHareketiTipi.Cikis,
                         Tarih = viewModel.Tarih,
                         ReferansNo = viewModel.ReferansNo ?? "Manuel Çıkış",
                         ReferansTuru = viewModel.ReferansTuru ?? "Manuel",
@@ -386,28 +427,30 @@ namespace MuhasebeStokWebApp.Controllers
 
                         await _unitOfWork.Repository<StokHareket>().AddAsync(stokHareket);
 
-                        // Ürün stok miktarını güncelle
-                        urun.StokMiktar -= viewModel.Miktar;
-                        await _unitOfWork.Repository<Urun>().UpdateAsync(urun);
-
                         await _unitOfWork.SaveAsync();
+                        
+                        // Transaction'ı commit et
+                        await transaction.CommitAsync();
 
                         TempData["SuccessMessage"] = "Stok çıkışı başarıyla kaydedildi.";
                         return RedirectToAction(nameof(Index));
                     }
                     catch (StokYetersizException ex)
                     {
+                        await transaction.RollbackAsync();
                         ModelState.AddModelError("", ex.Message);
                         TempData["ErrorMessage"] = ex.Message;
                         TempData["ErrorDetails"] = $"Ürün: {ex.UrunAdi} ({ex.UrunKodu}), Talep edilen: {ex.TalepEdilenMiktar}, Mevcut: {ex.MevcutMiktar}";
                     }
                     catch (Exception ex)
                     {
+                        await transaction.RollbackAsync();
                         ModelState.AddModelError("", $"Stok çıkışı sırasında bir hata oluştu: {ex.Message}");
                     }
                 }
                 catch (Exception ex)
                 {
+                    await transaction.RollbackAsync();
                     ModelState.AddModelError("", $"Stok çıkışı sırasında bir hata oluştu: {ex.Message}");
                 }
             }
@@ -465,7 +508,7 @@ namespace MuhasebeStokWebApp.Controllers
                         DepoID = viewModel.KaynakDepoID,
                         Miktar = -viewModel.Miktar, // Çıkış işlemi için negatif değer
                         Birim = viewModel.Birim,
-                        HareketTuru = "Çıkış",
+                        HareketTuru = StokHareketiTipi.Cikis,
                         Tarih = viewModel.Tarih,
                         ReferansNo = viewModel.ReferansNo ?? $"Transfer-{transferID}",
                         ReferansTuru = "Transfer-Çıkış",
@@ -482,7 +525,7 @@ namespace MuhasebeStokWebApp.Controllers
                         DepoID = viewModel.HedefDepoID,
                         Miktar = viewModel.Miktar, // Giriş işlemi için pozitif değer
                         Birim = viewModel.Birim,
-                        HareketTuru = "Giriş",
+                        HareketTuru = StokHareketiTipi.Giris,
                         Tarih = viewModel.Tarih,
                         ReferansNo = viewModel.ReferansNo ?? $"Transfer-{transferID}",
                         ReferansTuru = "Transfer-Giriş",
@@ -537,118 +580,127 @@ namespace MuhasebeStokWebApp.Controllers
                 return View(viewModel);
             }
 
-            // Sayım için her ürün için işlem yap
-            foreach (var urunSayim in viewModel.UrunListesi)
+            // Tüm işlemi transaction içinde yap
+            using var transaction = await _context.Database.BeginTransactionAsync();
+            try
             {
-                // Ürünü bul
-                var urun = await _unitOfWork.Repository<Urun>().GetByIdAsync(urunSayim.UrunID);
-                if (urun == null)
+                _logger.LogInformation("Stok sayımı işlemi başlatıldı");
+                
+                // Sayım için her ürün için işlem yap
+                foreach (var urunSayim in viewModel.UrunListesi)
                 {
-                    ModelState.AddModelError("", $"Ürün bulunamadı: {urunSayim.UrunID}");
-                    await PrepareViewBagForStokSayim();
-                    return View(viewModel);
-                }
-
-                // Mevcut stok ile sayım arasındaki farkı hesapla
-                decimal fark = urunSayim.SayimMiktari - urun.StokMiktar;
-                decimal miktar = Math.Abs(fark);
-
-                // Stok hareketi oluştur
-                var stokHareket = new StokHareket
-                {
-                    StokHareketID = Guid.NewGuid(),
-                    UrunID = urunSayim.UrunID,
-                    DepoID = viewModel.DepoID,
-                    HareketTuru = fark >= 0 ? "Giriş" : "Çıkış",
-                    Miktar = miktar,
-                    Birim = urunSayim.Birim,
-                    Tarih = viewModel.Tarih,
-                    ReferansNo = viewModel.ReferansNo,
-                    ReferansTuru = "Sayım",
-                    Aciklama = $"Stok sayımı: {viewModel.Aciklama}",
-                    OlusturmaTarihi = DateTime.Now
-                };
-
-                await _unitOfWork.Repository<StokHareket>().AddAsync(stokHareket);
-
-                // Ürün stok miktarını güncelle
-                urun.StokMiktar = urunSayim.SayimMiktari;
-                await _unitOfWork.Repository<Urun>().UpdateAsync(urun);
-
-                // Eğer fark pozitif ise (stok fazlası), FIFO girişi yap
-                if (fark > 0)
-                {
-                    // Ürünün son fiyatını al
-                    var urunFiyat = await _context.UrunFiyatlari
-                        .Where(uf => uf.UrunID == urunSayim.UrunID && !uf.Silindi && uf.FiyatTipiID == 3) // Satış fiyatı
-                        .OrderByDescending(uf => uf.GecerliTarih)
-                        .FirstOrDefaultAsync();
-                            
-                    decimal birimFiyat = urunFiyat?.Fiyat ?? 0;
-                    
-                    // Döviz kurunu al
-                    decimal kurDegeri = 1;
-                    try
+                    // Ürünü bul
+                    var urun = await _unitOfWork.Repository<Urun>().GetByIdAsync(urunSayim.UrunID);
+                    if (urun == null)
                     {
-                        // Kaynak para birimi ve dolar kuru ilişkisini belirle
-                        if (!string.IsNullOrEmpty(viewModel.ParaBirimi) && viewModel.ParaBirimi != "USD")
+                        ModelState.AddModelError("", $"Ürün bulunamadı: {urunSayim.UrunID}");
+                        throw new Exception($"Ürün bulunamadı: {urunSayim.UrunID}");
+                    }
+
+                    // Mevcut stok ile sayım arasındaki farkı hesapla
+                    var fark = urunSayim.SayimMiktari - await GetDinamikStokMiktari(urun.UrunID, viewModel.DepoID);
+                    
+                    _logger.LogInformation($"Ürün: {urun.UrunAdi}, MevcutStok: {await GetDinamikStokMiktari(urun.UrunID, viewModel.DepoID)}, SayımMiktarı: {urunSayim.SayimMiktari}, Fark: {fark}");
+                    
+                    // Fazlalık var mı kontrol et (sayım miktarı > stok miktarı)
+                    if (fark > 0)
+                    {
+                        // Artış hareketi oluştur
+                        var stokHareket = new StokHareket
                         {
-                            kurDegeri = await _dovizKuruService.GetGuncelKurAsync(viewModel.ParaBirimi, "USD");
-                        }
+                            StokHareketID = Guid.NewGuid(),
+                            UrunID = urun.UrunID,
+                            DepoID = viewModel.DepoID,
+                            Miktar = fark,
+                            BirimFiyat = GetUrunBirimFiyat(urun.UrunID),
+                            Birim = urun.Birim?.BirimAdi ?? "Adet",
+                            HareketTuru = StokHareketiTipi.Giris,
+                            Tarih = viewModel.Tarih,
+                            ReferansNo = viewModel.ReferansNo,
+                            ReferansTuru = "Stok Sayım",
+                            Aciklama = $"Sayım fazlası (Sayım: {urunSayim.SayimMiktari}, Önceki: {await GetDinamikStokMiktari(urun.UrunID, viewModel.DepoID)})",
+                            OlusturmaTarihi = DateTime.Now
+                        };
+
+                        await _unitOfWork.Repository<StokHareket>().AddAsync(stokHareket);
+                        
+                        // StokFifo kaydı oluştur
+                        await _stokFifoService.StokGirisiYap(
+                            urun.UrunID,
+                            fark,
+                            GetUrunBirimFiyat(urun.UrunID),
+                            urun.Birim?.BirimAdi ?? "Adet",
+                            viewModel.ReferansNo,
+                            "Stok Sayım",
+                            stokHareket.StokHareketID,
+                            $"Sayım fazlası: {viewModel.ReferansNo}",
+                            viewModel.ParaBirimi,
+                            1
+                        );
                     }
-                    catch (Exception ex)
+                    // Eksik var mı kontrol et (sayım miktarı < stok miktarı)
+                    else if (fark < 0)
                     {
-                        _logger.LogError(ex, "Kur değeri alınırken hata oluştu.");
+                        // Azalış hareketi oluştur (miktar negatif olacak)
+                        var stokHareket = new StokHareket
+                        {
+                            StokHareketID = Guid.NewGuid(),
+                            UrunID = urun.UrunID,
+                            DepoID = viewModel.DepoID,
+                            Miktar = fark, // Fark zaten negatif
+                            BirimFiyat = GetUrunBirimFiyat(urun.UrunID),
+                            Birim = urun.Birim?.BirimAdi ?? "Adet",
+                            HareketTuru = StokHareketiTipi.Cikis,
+                            Tarih = viewModel.Tarih,
+                            ReferansNo = viewModel.ReferansNo,
+                            ReferansTuru = "Stok Sayım",
+                            Aciklama = $"Sayım eksiği (Sayım: {urunSayim.SayimMiktari}, Önceki: {await GetDinamikStokMiktari(urun.UrunID, viewModel.DepoID)})",
+                            OlusturmaTarihi = DateTime.Now
+                        };
+                        
+                        await _unitOfWork.Repository<StokHareket>().AddAsync(stokHareket);
+                        
+                        // StokFifo çıkışı yap
+                        await _stokFifoService.StokCikisiYap(
+                            urun.UrunID,
+                            Math.Abs(fark),
+                            viewModel.ReferansNo,
+                            "Stok Sayım",
+                            stokHareket.StokHareketID,
+                            $"Sayım eksiği: {viewModel.ReferansNo}"
+                        );
                     }
                     
-                    await _stokFifoService.StokGirisiYap(
-                        urunSayim.UrunID,
-                        miktar,
-                        birimFiyat,
-                        urunSayim.Birim,
-                        "Sayım Farkı",
-                        "Sayım",
-                        stokHareket.StokHareketID,
-                        $"Sayım fazlası (Sayım: {urunSayim.SayimMiktari}, Önceki: {urun.StokMiktar})",
-                        viewModel.ParaBirimi,
-                        kurDegeri
-                    );
+            // Ürün stok miktarını güncelle - bunu kaldırıyoruz, dinamik stok kullanacağız
+            // NOT: Sayım sonucu stok miktarı doğrudan güncellenmeyecek, 
+            // Giriş/çıkış hareketleri üzerinden hesaplanacak
+            
+            _logger.LogInformation($"Ürün stok sayım işlemi yapıldı: UrunID={urun.UrunID}, SayımMiktari={urunSayim.SayimMiktari}");
                 }
-                // Eğer fark negatif ise (stok eksiği), FIFO çıkışı yap
-                else if (fark < 0)
-                {
-                    try
-                    {
-                        var result = await _stokFifoService.StokCikisiYap(
-                            urunSayim.UrunID,
-                            miktar,
-                            "Sayım Farkı",
-                            "Sayım",
-                            stokHareket.StokHareketID,
-                            $"Sayım eksiği (Sayım: {urunSayim.SayimMiktari}, Önceki: {urun.StokMiktar})"
-                        );
-                        
-                        // Birim fiyatı hesapla (toplam maliyet / miktar)
-                        stokHareket.BirimFiyat = miktar > 0 ? result.Item2 / miktar : 0;
-                        await _unitOfWork.Repository<StokHareket>().UpdateAsync(stokHareket);
-                    }
-                    catch (StokYetersizException ex)
-                    {
-                        // Sayım farkı için stok yetersizliği hatası yok sayılır ve mevcut stok sıfırlanır
-                        TempData["WarningMessage"] = $"Stok yetersizliği: {ex.Message}. Sayım kaydedildi ancak FIFO kayıtları tam olarak güncellenemedi.";
-                    }
-                }
-            }
 
-            await _unitOfWork.SaveAsync();
-            TempData["SuccessMessage"] = "Stok sayımı başarıyla kaydedildi.";
-            return RedirectToAction(nameof(Index));
+                await _unitOfWork.SaveAsync();
+                await transaction.CommitAsync();
+                
+                _logger.LogInformation("Stok sayımı başarıyla tamamlandı");
+                TempData["SuccessMessage"] = "Stok sayımı başarıyla kaydedildi.";
+                return RedirectToAction(nameof(Index));
+            }
+            catch (Exception ex)
+            {
+                await transaction.RollbackAsync();
+                _logger.LogError(ex, "Stok sayımı sırasında hata oluştu");
+                
+                ModelState.AddModelError("", $"Stok sayımı sırasında bir hata oluştu: {ex.Message}");
+                await PrepareViewBagForStokSayim();
+                TempData["ErrorMessage"] = $"Stok sayımı işlemi sırasında bir hata oluştu: {ex.Message}";
+                return View(viewModel);
+            }
         }
 
         // GET: Stok/FifoDetay/5
         public async Task<IActionResult> FifoDetay(Guid id)
         {
-            var fifoKayit = await _context.StokFifo
+            var fifoKayit = await _context.StokFifoKayitlari
                 .Include(f => f.Urun)
                 .FirstOrDefaultAsync(f => f.StokFifoID == id);
 
@@ -706,6 +758,9 @@ namespace MuhasebeStokWebApp.Controllers
                 decimal maliyet = await _stokFifoService.GetOrtalamaMaliyet(urun.UrunID);
                 decimal maliyetTL = await _stokFifoService.GetOrtalamaMaliyet(urun.UrunID, "TRY");
                 
+                // Dinamik stok miktarını hesapla
+                decimal dinamikStokMiktari = await GetDinamikStokMiktari(urun.UrunID);
+                
                 // Ürünün son fiyatını al
                 var urunFiyat = await _context.UrunFiyatlari
                     .Where(uf => uf.UrunID == urun.UrunID && !uf.Silindi && uf.FiyatTipiID == 3) // Satış fiyatı
@@ -719,7 +774,7 @@ namespace MuhasebeStokWebApp.Controllers
                     UrunAdi = urun.UrunAdi,
                     Birim = urun.Birim?.BirimAdi ?? "-",
                     Kategori = urun.Kategori?.KategoriAdi ?? "Kategorisiz",
-                    StokMiktari = urun.StokMiktar,
+                    StokMiktari = dinamikStokMiktari,
                     OrtalamaMaliyet = maliyetTL,
                     SatisFiyati = urunFiyat?.Fiyat ?? 0,
                     DepoID = Guid.Empty, // Varsayılan olarak boş, gerekirse depo bazlı filtreleme eklenebilir
@@ -728,7 +783,7 @@ namespace MuhasebeStokWebApp.Controllers
                 };
 
                 stokDurumuDetayListesi.Add(stokDurumuDetay);
-                toplamStokDegeri += maliyetTL * urun.StokMiktar;
+                toplamStokDegeri += maliyetTL * dinamikStokMiktari;
             }
 
             // Ana ViewModel
@@ -777,58 +832,51 @@ namespace MuhasebeStokWebApp.Controllers
                     urunQuery = urunQuery.Where(u => u.KategoriID == kategoriID.Value);
                 }
                 
-                // Stok durumu filtresi
-                if (!string.IsNullOrEmpty(stokDurumu))
-                {
-                    switch (stokDurumu)
-                    {
-                        case "kritik":
-                            urunQuery = urunQuery.Where(u => u.StokMiktar <= 10);
-                            break;
-                        case "dusuk":
-                            urunQuery = urunQuery.Where(u => u.StokMiktar > 10 && u.StokMiktar <= 20);
-                            break;
-                        case "normal":
-                            urunQuery = urunQuery.Where(u => u.StokMiktar > 20);
-                            break;
-                    }
-                }
-                
                 var urunler = await urunQuery.OrderBy(u => u.UrunAdi).ToListAsync();
+                var stokKartViewModels = new List<StokKartViewModel>();
                 
-                // Depo filtresi için stok hareketlerini getir
-                if (depoID.HasValue)
+                foreach (var urun in urunler)
                 {
-                    // Depo bazlı filtreleme için stok hareketlerini getir
-                    var stokHareketleri = await _context.StokHareketleri
-                        .Where(sh => !sh.Silindi && sh.DepoID == depoID.Value)
-                        .GroupBy(sh => sh.UrunID)
-                        .Select(g => new { UrunID = g.Key, ToplamMiktar = g.Sum(sh => sh.HareketTuru == "Giriş" ? sh.Miktar : -sh.Miktar) })
-                        .ToListAsync();
+                    // Dinamik stok miktarını hesapla
+                    decimal dinamikStokMiktari = await GetDinamikStokMiktari(urun.UrunID, depoID);
                     
-                    // Sadece seçili depoda stok bulunan ürünleri filtrele
-                    var depoUrunIDs = stokHareketleri.Where(sh => sh.ToplamMiktar > 0).Select(sh => sh.UrunID).ToList();
-                    urunler = urunler.Where(u => depoUrunIDs.Contains(u.UrunID)).ToList();
+                    // Stok durumu filtresi
+                    if (!string.IsNullOrEmpty(stokDurumu))
+                    {
+                        switch (stokDurumu)
+                        {
+                            case "kritik":
+                                if (dinamikStokMiktari > 10) continue;
+                                break;
+                            case "dusuk":
+                                if (dinamikStokMiktari <= 10 || dinamikStokMiktari > 20) continue;
+                                break;
+                            case "normal":
+                                if (dinamikStokMiktari <= 20) continue;
+                                break;
+                        }
+                    }
+                    
+                    stokKartViewModels.Add(new StokKartViewModel
+                    {
+                        UrunID = urun.UrunID,
+                        UrunKodu = urun.UrunKodu,
+                        UrunAdi = urun.UrunAdi,
+                        Kategori = urun.Kategori?.KategoriAdi ?? "Kategorisiz",
+                        Birim = urun.Birim?.BirimAdi ?? "Adet",
+                        StokMiktar = dinamikStokMiktari,
+                        BirimFiyat = GetUrunBirimFiyat(urun.UrunID)
+                    });
                 }
                 
                 // ViewModel oluştur
                 var model = new StokRaporViewModel
                 {
-                    ToplamUrunSayisi = urunler.Count(),
-                    ToplamStokDegeri = await HesaplaToplamStokDegeri(urunler),
-                    KritikStokUrunSayisi = urunler.Count(u => u.StokMiktar <= 10),
-                    DusukStokUrunSayisi = urunler.Count(u => u.StokMiktar > 10 && u.StokMiktar <= 20),
-                    
-                    Urunler = urunler.Select(u => new StokKartViewModel
-                    {
-                        UrunID = u.UrunID,
-                        UrunKodu = u.UrunKodu,
-                        UrunAdi = u.UrunAdi,
-                        Kategori = u.Kategori?.KategoriAdi ?? "Kategorisiz",
-                        Birim = u.Birim?.BirimAdi ?? "Adet",
-                        StokMiktar = u.StokMiktar,
-                        BirimFiyat = GetUrunBirimFiyat(u.UrunID)
-                    }).ToList()
+                    ToplamUrunSayisi = stokKartViewModels.Count,
+                    ToplamStokDegeri = stokKartViewModels.Sum(u => u.StokMiktar * u.BirimFiyat),
+                    KritikStokUrunSayisi = stokKartViewModels.Count(u => u.StokMiktar <= 10),
+                    DusukStokUrunSayisi = stokKartViewModels.Count(u => u.StokMiktar > 10 && u.StokMiktar <= 20),
+                    Urunler = stokKartViewModels
                 };
                 
                 // Kategori bazlı rapor
@@ -841,6 +889,7 @@ namespace MuhasebeStokWebApp.Controllers
             }
             catch (Exception ex)
             {
+                _logger.LogError(ex, "Stok raporu oluşturulurken hata oluştu");
                 // Hata durumunda boş model döndür
                 return View(new StokRaporViewModel());
             }
@@ -868,7 +917,8 @@ namespace MuhasebeStokWebApp.Controllers
             foreach (var urun in urunler)
             {
                 decimal birimFiyat = GetUrunBirimFiyat(urun.UrunID);
-                toplamDeger += urun.StokMiktar * birimFiyat;
+                decimal stokMiktar = await GetDinamikStokMiktari(urun.UrunID);
+                toplamDeger += stokMiktar * birimFiyat;
             }
             
             return toplamDeger;
@@ -904,57 +954,51 @@ namespace MuhasebeStokWebApp.Controllers
                 var urunQuery = _context.Urunler
                     .Where(u => !u.Silindi && u.Aktif && u.KategoriID == kategori.KategoriID);
                 
-                // Stok durumu filtresi
-                if (!string.IsNullOrEmpty(stokDurumu))
-                {
-                    switch (stokDurumu)
-                    {
-                        case "kritik":
-                            urunQuery = urunQuery.Where(u => u.StokMiktar <= 10);
-                            break;
-                        case "dusuk":
-                            urunQuery = urunQuery.Where(u => u.StokMiktar > 10 && u.StokMiktar <= 20);
-                            break;
-                        case "normal":
-                            urunQuery = urunQuery.Where(u => u.StokMiktar > 20);
-                            break;
-                    }
-                }
-                
                 var urunler = await urunQuery.ToListAsync();
+                var kategoridekiUrunler = new List<(Guid UrunID, decimal StokMiktar)>();
                 
-                // Depo filtresi için stok hareketlerini getir
-                if (depoID.HasValue)
+                foreach (var urun in urunler)
                 {
-                    // Depo bazlı filtreleme için stok hareketlerini getir
-                    var stokHareketleri = await _context.StokHareketleri
-                        .Where(sh => !sh.Silindi && sh.DepoID == depoID.Value)
-                        .GroupBy(sh => sh.UrunID)
-                        .Select(g => new { UrunID = g.Key, ToplamMiktar = g.Sum(sh => sh.HareketTuru == "Giriş" ? sh.Miktar : -sh.Miktar) })
-                        .ToListAsync();
+                    // Dinamik stok miktarını hesapla
+                    decimal dinamikStokMiktari = await GetDinamikStokMiktari(urun.UrunID, depoID);
                     
-                    // Sadece seçili depoda stok bulunan ürünleri filtrele
-                    var depoUrunIDs = stokHareketleri.Where(sh => sh.ToplamMiktar > 0).Select(sh => sh.UrunID).ToList();
-                    urunler = urunler.Where(u => depoUrunIDs.Contains(u.UrunID)).ToList();
+                    // Stok durumu filtresi
+                    if (!string.IsNullOrEmpty(stokDurumu))
+                    {
+                        switch (stokDurumu)
+                        {
+                            case "kritik":
+                                if (dinamikStokMiktari > 10) continue;
+                                break;
+                            case "dusuk":
+                                if (dinamikStokMiktari <= 10 || dinamikStokMiktari > 20) continue;
+                                break;
+                            case "normal":
+                                if (dinamikStokMiktari <= 20) continue;
+                                break;
+                        }
+                    }
+                    
+                    kategoridekiUrunler.Add((urun.UrunID, dinamikStokMiktari));
                 }
                 
-                if (urunler.Any())
+                if (kategoridekiUrunler.Any())
                 {
                     decimal toplamStokDegeri = 0;
-                    foreach (var urun in urunler)
+                    foreach (var (urunID, stokMiktar) in kategoridekiUrunler)
                     {
-                        decimal birimFiyat = GetUrunBirimFiyat(urun.UrunID);
-                        toplamStokDegeri += urun.StokMiktar * birimFiyat;
+                        decimal birimFiyat = GetUrunBirimFiyat(urunID);
+                        toplamStokDegeri += stokMiktar * birimFiyat;
                     }
                     
                     result.Add(new KategoriBazliRaporViewModel
                     {
                         KategoriID = kategori.KategoriID,
                         KategoriAdi = kategori.KategoriAdi,
-                        UrunSayisi = urunler.Count(),
+                        UrunSayisi = kategoridekiUrunler.Count,
                         ToplamStokDegeri = toplamStokDegeri,
-                        KritikStokUrunSayisi = urunler.Count(u => u.StokMiktar <= 10),
-                        DusukStokUrunSayisi = urunler.Count(u => u.StokMiktar > 10 && u.StokMiktar <= 20)
+                        KritikStokUrunSayisi = kategoridekiUrunler.Count(u => u.StokMiktar <= 10),
+                        DusukStokUrunSayisi = kategoridekiUrunler.Count(u => u.StokMiktar > 10 && u.StokMiktar <= 20)
                     });
                 }
             }
@@ -978,26 +1022,25 @@ namespace MuhasebeStokWebApp.Controllers
                 if (depoID.HasValue && depo.DepoID != depoID.Value)
                     continue;
                 
-                // Bu depodaki stok hareketlerini getir
-                var stokHareketleri = await _context.StokHareketleri
-                    .Where(sh => !sh.Silindi && sh.DepoID == depo.DepoID)
-                    .GroupBy(sh => sh.UrunID)
-                    .Select(g => new { UrunID = g.Key, ToplamMiktar = g.Sum(sh => sh.HareketTuru == "Giriş" ? sh.Miktar : -sh.Miktar) })
-                    .ToListAsync();
+                // Ürünleri getir ve kategori filtresi uygula
+                var urunQuery = _context.Urunler
+                    .Where(u => !u.Silindi && u.Aktif);
                 
-                // Stok bulunan ürün ID'lerini al
-                var depoUrunIDs = stokHareketleri.Where(sh => sh.ToplamMiktar > 0).Select(sh => sh.UrunID).ToList();
-                
-                if (depoUrunIDs.Any())
+                if (kategoriID.HasValue)
                 {
-                    var urunQuery = _context.Urunler
-                        .Where(u => !u.Silindi && u.Aktif && depoUrunIDs.Contains(u.UrunID));
+                    urunQuery = urunQuery.Where(u => u.KategoriID == kategoriID.Value);
+                }
+                
+                var urunler = await urunQuery.ToListAsync();
+                var depodakiUrunler = new List<(Guid UrunID, decimal StokMiktar)>();
+                
+                foreach (var urun in urunler)
+                {
+                    // Bu depodaki stok miktarını hesapla
+                    decimal dinamikStokMiktari = await GetDinamikStokMiktari(urun.UrunID, depo.DepoID);
                     
-                    // Kategori filtresi
-                    if (kategoriID.HasValue)
-                    {
-                        urunQuery = urunQuery.Where(u => u.KategoriID == kategoriID.Value);
-                    }
+                    // Stok yoksa atla
+                    if (dinamikStokMiktari <= 0) continue;
                     
                     // Stok durumu filtresi
                     if (!string.IsNullOrEmpty(stokDurumu))
@@ -1005,40 +1048,38 @@ namespace MuhasebeStokWebApp.Controllers
                         switch (stokDurumu)
                         {
                             case "kritik":
-                                urunQuery = urunQuery.Where(u => u.StokMiktar <= 10);
+                                if (dinamikStokMiktari > 10) continue;
                                 break;
                             case "dusuk":
-                                urunQuery = urunQuery.Where(u => u.StokMiktar > 10 && u.StokMiktar <= 20);
+                                if (dinamikStokMiktari <= 10 || dinamikStokMiktari > 20) continue;
                                 break;
                             case "normal":
-                                urunQuery = urunQuery.Where(u => u.StokMiktar > 20);
+                                if (dinamikStokMiktari <= 20) continue;
                                 break;
                         }
                     }
                     
-                    var urunler = await urunQuery.ToListAsync();
-                    
-                    if (urunler.Any())
+                    depodakiUrunler.Add((urun.UrunID, dinamikStokMiktari));
+                }
+                
+                if (depodakiUrunler.Any())
+                {
+                    decimal toplamStokDegeri = 0;
+                    foreach (var (urunID, stokMiktar) in depodakiUrunler)
                     {
-                        decimal toplamStokDegeri = 0;
-                        foreach (var urun in urunler)
-                        {
-                            decimal birimFiyat = GetUrunBirimFiyat(urun.UrunID);
-                            // Depodaki miktar
-                            var depoMiktar = stokHareketleri.FirstOrDefault(sh => sh.UrunID == urun.UrunID)?.ToplamMiktar ?? 0;
-                            toplamStokDegeri += depoMiktar * birimFiyat;
-                        }
-                        
-                        result.Add(new DepoBazliRaporViewModel
-                        {
-                            DepoID = depo.DepoID,
-                            DepoAdi = depo.DepoAdi,
-                            UrunSayisi = urunler.Count(),
-                            ToplamStokDegeri = toplamStokDegeri,
-                            KritikStokUrunSayisi = urunler.Count(u => u.StokMiktar <= 10),
-                            DusukStokUrunSayisi = urunler.Count(u => u.StokMiktar > 10 && u.StokMiktar <= 20)
-                        });
+                        decimal birimFiyat = GetUrunBirimFiyat(urunID);
+                        toplamStokDegeri += stokMiktar * birimFiyat;
                     }
+                    
+                    result.Add(new DepoBazliRaporViewModel
+                    {
+                        DepoID = depo.DepoID,
+                        DepoAdi = depo.DepoAdi,
+                        UrunSayisi = depodakiUrunler.Count,
+                        ToplamStokDegeri = toplamStokDegeri,
+                        KritikStokUrunSayisi = depodakiUrunler.Count(u => u.StokMiktar <= 10),
+                        DusukStokUrunSayisi = depodakiUrunler.Count(u => u.StokMiktar > 10 && u.StokMiktar <= 20)
+                    });
                 }
             }
             
@@ -1064,6 +1105,61 @@ namespace MuhasebeStokWebApp.Controllers
             }
 
             return View(stok);
+        }
+
+        // Ürünün stok durumunu görüntülemek için metot ekliyorum
+        public async Task<IActionResult> Durum(Guid urunId)
+        {
+            try
+            {
+                var urunRepository = _unitOfWork.Repository<Urun>();
+                var urun = await urunRepository.GetFirstOrDefaultAsync(u => u.UrunID == urunId && !u.Silindi,
+                    includeProperties: "Birim,Kategori");
+            
+                if (urun == null)
+                {
+                    return View("NotFound");
+                }
+            
+                var depoRepository = _unitOfWork.Repository<Depo>();
+                var depolar = await depoRepository.GetAsync(d => !d.Silindi && d.Aktif);
+            
+                var viewModel = new UrunStokDurumViewModel
+                {
+                    UrunID = urun.UrunID,
+                    UrunKodu = urun.UrunKodu,
+                    UrunAdi = urun.UrunAdi,
+                    BirimAdi = urun.Birim?.BirimAdi ?? "Adet",
+                    KategoriAdi = urun.Kategori?.KategoriAdi ?? "Kategorisiz",
+                    GenelStokMiktari = await GetDinamikStokMiktari(urunId),
+                    DepoStokDurumlari = new List<DepoStokDurumViewModel>()
+                };
+            
+                // Her depo için stok durumunu hesapla
+                foreach (var depo in depolar)
+                {
+                    decimal depoStokMiktari = await GetDinamikStokMiktari(urunId, depo.DepoID);
+                
+                    viewModel.DepoStokDurumlari.Add(new DepoStokDurumViewModel
+                    {
+                        DepoID = depo.DepoID,
+                        DepoAdi = depo.DepoAdi,
+                        StokMiktari = depoStokMiktari
+                    });
+                }
+            
+                return View(viewModel);
+            }
+            catch (Exception ex)
+            {
+                _logger.LogError(ex, $"Ürün stok durumu görüntülenirken hata oluştu: UrunID={urunId}");
+                return View("Error", new ErrorViewModel
+                {
+                    Title = "Stok Durumu Hatası",
+                    Message = "Ürünün stok durumu görüntülenirken bir hata oluştu.",
+                    RequestId = HttpContext.TraceIdentifier
+                });
+            }
         }
 
         #region Yardımcı Metotlar
@@ -1097,29 +1193,90 @@ namespace MuhasebeStokWebApp.Controllers
 
         private async Task PrepareViewBagForStokSayim()
         {
-            // Ürünleri getir
-            var urunler = await _unitOfWork.Repository<Urun>().GetAsync(
-                filter: u => u.Silindi == false && u.Aktif,
-                orderBy: q => q.OrderBy(u => u.UrunAdi)
-            );
-            
-            ViewBag.Urunler = new SelectList(urunler, "UrunID", "UrunAdi");
-            
             // Depoları getir
             var depolar = await _unitOfWork.Repository<Depo>().GetAsync(
                 filter: d => d.Silindi == false && d.Aktif,
                 orderBy: q => q.OrderBy(d => d.DepoAdi)
             );
-            
             ViewBag.Depolar = new SelectList(depolar, "DepoID", "DepoAdi");
             
-            // Birimleri getir
-            var birimler = await _unitOfWork.Repository<Birim>().GetAsync(
-                filter: b => b.Silindi == false && b.Aktif,
-                orderBy: q => q.OrderBy(b => b.BirimAdi)
-            );
+            // Para birimlerini getir
+            ViewBag.ParaBirimleri = new SelectList(new List<string> { "TRY", "USD", "EUR" });
+        }
+
+        private bool IsStokGirisi(StokHareket hareket)
+        {
+            return hareket.HareketTuru == StokHareketiTipi.Giris;
+        }
+
+        private async Task<decimal> GetToplamStokGirisAsync()
+        {
+            var toplamGiris = await _context.StokHareketleri
+                .Where(s => !s.Silindi && s.HareketTuru == StokHareketiTipi.Giris)
+                .SumAsync(s => s.Miktar);
             
-            ViewBag.Birimler = new SelectList(birimler, "BirimID", "BirimAdi");
+            return toplamGiris;
+        }
+
+        private async Task<decimal> GetToplamStokCikisAsync()
+        {
+            var toplamCikis = await _context.StokHareketleri
+                .Where(s => !s.Silindi && s.HareketTuru == StokHareketiTipi.Cikis)
+                .SumAsync(s => Math.Abs(s.Miktar));
+            
+            return toplamCikis;
+        }
+
+        private async Task<decimal> GetDinamikStokMiktari(Guid urunID, Guid? depoID = null)
+        {
+            try
+            {
+                var stokHareketleriQuery = _context.StokHareketleri
+                    .Where(sh => sh.UrunID == urunID && !sh.Silindi);
+
+                if (depoID.HasValue)
+                {
+                    stokHareketleriQuery = stokHareketleriQuery.Where(sh => sh.DepoID == depoID);
+                }
+
+                var girisler = await stokHareketleriQuery
+                    .Where(sh => sh.HareketTuru == StokHareketiTipi.Giris)
+                    .SumAsync(sh => sh.Miktar);
+
+                var cikislar = await stokHareketleriQuery
+                    .Where(sh => sh.HareketTuru == StokHareketiTipi.Cikis)
+                    .SumAsync(sh => Math.Abs(sh.Miktar)); // Mutlak değer olarak alıyoruz
+
+                return girisler - cikislar; // Çıkışları çıkararak hesaplıyoruz
+            }
+            catch (Exception ex)
+            {
+                _logger.LogError(ex, $"Stok miktarı hesaplanırken hata oluştu: UrunID={urunID}");
+                return 0;
+            }
+        }
+
+        /// <summary>
+        /// Para birimi koduna göre sembol döndürür
+        /// </summary>
+        private string GetParaBirimiSembol(string paraBirimiKodu)
+        {
+            if (string.IsNullOrEmpty(paraBirimiKodu))
+                return "so'm";
+                
+            switch(paraBirimiKodu.ToUpper())
+            {
+                case "USD":
+                    return "$";
+                case "EUR":
+                    return "€";
+                case "TRY":
+                    return "₺";
+                case "UZS":
+                    return "so'm";
+                default:
+                    return paraBirimiKodu;
+            }
         }
 
         #endregion

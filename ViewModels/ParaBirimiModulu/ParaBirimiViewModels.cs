@@ -3,6 +3,7 @@ using System.Collections.Generic;
 using System.ComponentModel.DataAnnotations;
 using MuhasebeStokWebApp.Data.Entities.ParaBirimiModulu;
 using Microsoft.AspNetCore.Mvc.Rendering;
+using Microsoft.EntityFrameworkCore.Metadata.Internal;
 
 namespace MuhasebeStokWebApp.ViewModels.ParaBirimiModulu
 {
@@ -216,64 +217,50 @@ namespace MuhasebeStokWebApp.ViewModels.ParaBirimiModulu
         /// <summary>
         /// Kur değeri ID
         /// </summary>
-        public Guid KurDegeriID { get; set; }
+        public Guid KurDegeriID { get; set; } = Guid.Empty;
         
         /// <summary>
         /// Para birimi ID
         /// </summary>
-        [Required(ErrorMessage = "Para birimi seçilmelidir.")]
-        [Display(Name = "Para Birimi")]
+        [Required(ErrorMessage = "Para Birimi seçimi zorunludur.")]
         public Guid ParaBirimiID { get; set; }
         
         /// <summary>
         /// Para birimi adı
         /// </summary>
-        [Display(Name = "Para Birimi Adı")]
-        public string ParaBirimiAdi { get; set; }
+        public string? ParaBirimiAdi { get; set; }
         
         /// <summary>
-        /// Para birimi kodu
+        /// Para birimi nesnesi
         /// </summary>
-        [Display(Name = "Para Birimi Kodu")]
-        public string ParaBirimiKodu { get; set; }
+        public MuhasebeStokWebApp.Data.Entities.ParaBirimiModulu.ParaBirimi? ParaBirimi { get; set; }
+        
+        /// <summary>
+        /// Para birimleri listesi
+        /// </summary>
+        public List<SelectListItem>? ParaBirimleri { get; set; }
         
         /// <summary>
         /// Tarih
         /// </summary>
-        [Required(ErrorMessage = "Tarih gereklidir.")]
-        [Display(Name = "Tarih")]
-        [DataType(DataType.Date)]
-        public DateTime Tarih { get; set; } = DateTime.Today;
+        [Required(ErrorMessage = "Tarih seçimi zorunludur.")]
+        public DateTime Tarih { get; set; } = DateTime.Now;
         
         /// <summary>
         /// Alış değeri
         /// </summary>
-        [Required(ErrorMessage = "Alış kuru gereklidir.")]
-        [Display(Name = "Alış")]
-        [Range(0.000001, double.MaxValue, ErrorMessage = "Alış kuru 0'dan büyük olmalıdır.")]
+        [Required(ErrorMessage = "Alış kuru zorunludur.")]
+        [Display(Name = "Alış Kuru")]
+        [Range(0.01, double.MaxValue, ErrorMessage = "Alış kuru 0'dan büyük olmalıdır.")]
         public decimal Alis { get; set; }
         
         /// <summary>
         /// Satış değeri
         /// </summary>
-        [Required(ErrorMessage = "Satış kuru gereklidir.")]
-        [Display(Name = "Satış")]
-        [Range(0.000001, double.MaxValue, ErrorMessage = "Satış kuru 0'dan büyük olmalıdır.")]
+        [Required(ErrorMessage = "Satış kuru zorunludur.")]
+        [Display(Name = "Satış Kuru")]
+        [Range(0.01, double.MaxValue, ErrorMessage = "Satış kuru 0'dan büyük olmalıdır.")]
         public decimal Satis { get; set; }
-        
-        /// <summary>
-        /// Efektif alış değeri
-        /// </summary>
-        [Display(Name = "Efektif Alış")]
-        [Range(0, double.MaxValue, ErrorMessage = "Efektif alış kuru negatif olamaz.")]
-        public decimal Efektif_Alis { get; set; }
-        
-        /// <summary>
-        /// Efektif satış değeri
-        /// </summary>
-        [Display(Name = "Efektif Satış")]
-        [Range(0, double.MaxValue, ErrorMessage = "Efektif satış kuru negatif olamaz.")]
-        public decimal Efektif_Satis { get; set; }
         
         /// <summary>
         /// Aktif mi
@@ -282,16 +269,40 @@ namespace MuhasebeStokWebApp.ViewModels.ParaBirimiModulu
         public bool Aktif { get; set; } = true;
         
         /// <summary>
-        /// Açıklama
+        /// Silindi mi (soft delete için)
         /// </summary>
-        [Display(Name = "Açıklama")]
-        [StringLength(500, ErrorMessage = "Açıklama en fazla 500 karakter olabilir.")]
-        public string Aciklama { get; set; }
+        [Display(Name = "Silindi")]
+        public bool Silindi { get; set; } = false;
         
         /// <summary>
-        /// Para birimleri listesi
+        /// Açıklama
         /// </summary>
-        public List<SelectListItem> ParaBirimleri { get; set; }
+        [MaxLength(500, ErrorMessage = "Açıklama en fazla 500 karakter olabilir.")]
+        public string? Aciklama { get; set; }
+        
+        /// <summary>
+        /// Oluşturulma tarihi
+        /// </summary>
+        [Display(Name = "Oluşturulma Tarihi")]
+        [DisplayFormat(DataFormatString = "{0:dd.MM.yyyy HH:mm}", ApplyFormatInEditMode = true)]
+        public DateTime OlusturmaTarihi { get; set; } = DateTime.Now;
+        
+        /// <summary>
+        /// Son güncellenme tarihi
+        /// </summary>
+        [Display(Name = "Son Güncellenme Tarihi")]
+        [DisplayFormat(DataFormatString = "{0:dd.MM.yyyy HH:mm}", ApplyFormatInEditMode = true)]
+        public DateTime? GuncellemeTarihi { get; set; }
+        
+        /// <summary>
+        /// Oluşturan kullanıcı ID'si
+        /// </summary>
+        public string? OlusturanKullaniciID { get; set; }
+        
+        /// <summary>
+        /// Son güncelleyen kullanıcı ID'si
+        /// </summary>
+        public string? SonGuncelleyenKullaniciID { get; set; }
     }
     
     /// <summary>
@@ -359,5 +370,74 @@ namespace MuhasebeStokWebApp.ViewModels.ParaBirimiModulu
         /// Para birimleri listesi
         /// </summary>
         public List<SelectListItem> ParaBirimleri { get; set; }
+    }
+    
+    /// <summary>
+    /// Kur marjı ViewModel'i
+    /// </summary>
+    public class KurMarjViewModel
+    {
+        /// <summary>
+        /// Kur marj ID
+        /// </summary>
+        public Guid KurMarjID { get; set; }
+        
+        /// <summary>
+        /// Alış-Satış kuru arasındaki marj yüzdesi
+        /// </summary>
+        [Required(ErrorMessage = "Satış marjı gereklidir.")]
+        [Display(Name = "Satış Marjı (%)")]
+        [Range(0, 100, ErrorMessage = "Satış marjı 0 ile 100 arasında olmalıdır.")]
+        public decimal SatisMarji { get; set; } = 2.00m; // Varsayılan olarak %2
+        
+        /// <summary>
+        /// Varsayılan ayar mı
+        /// </summary>
+        [Display(Name = "Varsayılan")]
+        public bool Varsayilan { get; set; } = true;
+        
+        /// <summary>
+        /// Tanım / Açıklama
+        /// </summary>
+        [Required(ErrorMessage = "Tanım gereklidir.")]
+        [Display(Name = "Tanım")]
+        [StringLength(100, ErrorMessage = "Tanım en fazla 100 karakter olabilir.")]
+        public string Tanim { get; set; } = "Varsayılan Kur Marjı";
+        
+        /// <summary>
+        /// Aktif mi
+        /// </summary>
+        [Display(Name = "Aktif")]
+        public bool Aktif { get; set; } = true;
+        
+        /// <summary>
+        /// Silindi mi (soft delete için)
+        /// </summary>
+        [Display(Name = "Silindi")]
+        public bool Silindi { get; set; } = false;
+        
+        /// <summary>
+        /// Oluşturulma tarihi
+        /// </summary>
+        [Display(Name = "Oluşturulma Tarihi")]
+        [DisplayFormat(DataFormatString = "{0:dd.MM.yyyy HH:mm}", ApplyFormatInEditMode = true)]
+        public DateTime OlusturmaTarihi { get; set; } = DateTime.Now;
+        
+        /// <summary>
+        /// Son güncellenme tarihi
+        /// </summary>
+        [Display(Name = "Son Güncellenme Tarihi")]
+        [DisplayFormat(DataFormatString = "{0:dd.MM.yyyy HH:mm}", ApplyFormatInEditMode = true)]
+        public DateTime? GuncellemeTarihi { get; set; }
+        
+        /// <summary>
+        /// Oluşturan kullanıcı ID'si
+        /// </summary>
+        public string? OlusturanKullaniciID { get; set; }
+        
+        /// <summary>
+        /// Son güncelleyen kullanıcı ID'si
+        /// </summary>
+        public string? SonGuncelleyenKullaniciID { get; set; }
     }
 } 

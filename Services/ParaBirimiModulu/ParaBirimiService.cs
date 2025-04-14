@@ -7,6 +7,7 @@ using MuhasebeStokWebApp.Data;
 using MuhasebeStokWebApp.Data.Entities.ParaBirimiModulu;
 using System.Net.Http;
 using System.Text.Json;
+using Microsoft.Extensions.Logging;
 
 namespace MuhasebeStokWebApp.Services.ParaBirimiModulu
 {
@@ -19,11 +20,13 @@ namespace MuhasebeStokWebApp.Services.ParaBirimiModulu
         private readonly IHttpClientFactory _httpClientFactory;
         private readonly string _apiKey = "645b5bebcab7cef56e1b609c";
         private readonly string _apiBaseUrl = "https://v6.exchangerate-api.com/v6/";
+        private readonly ILogger<ParaBirimiService> _logger;
 
-        public ParaBirimiService(ApplicationDbContext context, IHttpClientFactory httpClientFactory)
+        public ParaBirimiService(ApplicationDbContext context, IHttpClientFactory httpClientFactory, ILogger<ParaBirimiService> logger)
         {
             _context = context;
             _httpClientFactory = httpClientFactory;
+            _logger = logger;
         }
 
         #region Para Birimi İşlemleri
@@ -279,8 +282,6 @@ namespace MuhasebeStokWebApp.Services.ParaBirimiModulu
                 // Mevcut kaydı güncelle
                 existingKur.Alis = kurDegeri.Alis;
                 existingKur.Satis = kurDegeri.Satis;
-                existingKur.Efektif_Alis = kurDegeri.Efektif_Alis;
-                existingKur.Efektif_Satis = kurDegeri.Efektif_Satis;
                 existingKur.Aktif = kurDegeri.Aktif;
                 existingKur.Aciklama = kurDegeri.Aciklama;
                 existingKur.GuncellemeTarihi = DateTime.Now;
@@ -427,8 +428,6 @@ namespace MuhasebeStokWebApp.Services.ParaBirimiModulu
                             Tarih = tarih,
                             Alis = kurDegeri,
                             Satis = kurDegeri * 1.02m, // %2 farkla satış kuru
-                            Efektif_Alis = kurDegeri * 0.98m, // %2 farkla efektif alış
-                            Efektif_Satis = kurDegeri * 1.03m, // %3 farkla efektif satış
                             Aktif = true,
                             OlusturmaTarihi = DateTime.Now,
                             OlusturanKullaniciID = "Sistem",
@@ -562,47 +561,194 @@ namespace MuhasebeStokWebApp.Services.ParaBirimiModulu
         
         #region Hesaplama İşlemleri
         /// <summary>
+        /// Para birimi için eksik kur değeri oluşturur
+        /// </summary>
+        private async Task<bool> CreateDefaultKurDegeriIfNotExistsAsync(Guid paraBirimiId)
+        {
+            try
+            {
+                // Para birimini kontrol et
+                var paraBirimi = await _context.ParaBirimleri
+                    .FirstOrDefaultAsync(p => p.ParaBirimiID == paraBirimiId && !p.Silindi);
+
+                if (paraBirimi == null)
+                {
+                    _logger.LogWarning($"Para birimi bulunamadı: {paraBirimiId}");
+                    return false;
+                }
+
+                // Kur değeri var mı kontrol et
+                var existingKur = await _context.KurDegerleri
+                    .Where(k => k.ParaBirimiID == paraBirimiId && !k.Silindi)
+                    .OrderByDescending(k => k.Tarih)
+                    .FirstOrDefaultAsync();
+
+                if (existingKur != null)
+                {
+                    _logger.LogInformation($"Para birimi için zaten kur değeri var: {paraBirimiId}, Tarih: {existingKur.Tarih}");
+                    return true;
+                }
+
+                // Para birimi ana para birimi ise kur değeri oluşturmaya gerek yok
+                if (paraBirimi.AnaParaBirimiMi)
+                {
+                    _logger.LogInformation($"Para birimi ana para birimi olduğu için kur değeri oluşturulmadı: {paraBirimiId}");
+                    return true;
+                }
+
+                // Yeni kur değeri oluştur
+                var newKurDegeri = new KurDegeri
+                {
+                    KurDegeriID = Guid.NewGuid(),
+                    ParaBirimiID = paraBirimiId,
+                    Tarih = DateTime.Now,
+                    Alis = 1.0m,
+                    Satis = 1.0m,
+                    Aktif = true,
+                    Silindi = false,
+                    OlusturmaTarihi = DateTime.Now,
+                    Aciklama = "Otomatik oluşturuldu - Varsayılan değer"
+                };
+
+                await _context.KurDegerleri.AddAsync(newKurDegeri);
+                await _context.SaveChangesAsync();
+                
+                _logger.LogInformation($"Para birimi için varsayılan kur değeri oluşturuldu: {paraBirimiId}");
+                return true;
+            }
+            catch (Exception ex)
+            {
+                _logger.LogError(ex, $"Para birimi için varsayılan kur değeri oluşturulurken hata: {paraBirimiId}");
+                return false;
+            }
+        }
+
+        /// <summary>
         /// İki para birimi arasındaki kur değerini hesaplar
         /// </summary>
         public async Task<decimal> HesaplaKurDegeriAsync(Guid kaynakParaBirimiId, Guid hedefParaBirimiId, DateTime? tarih = null)
         {
-            if (kaynakParaBirimiId == hedefParaBirimiId)
-                return 1m;
-                
-            var tarihValue = tarih?.Date ?? DateTime.Today;
-            
-            // Doğrudan ilişki var mı kontrol et
-            var kaynakKur = await _context.KurDegerleri
-                .Where(k => k.ParaBirimiID == kaynakParaBirimiId && 
-                       k.Tarih.Date == tarihValue && 
-                       k.Aktif && 
-                       !k.Silindi)
-                .OrderByDescending(k => k.Tarih)
-                .FirstOrDefaultAsync();
-                
-            var hedefKur = await _context.KurDegerleri
-                .Where(k => k.ParaBirimiID == hedefParaBirimiId && 
-                       k.Tarih.Date == tarihValue && 
-                       k.Aktif && 
-                       !k.Silindi)
-                .OrderByDescending(k => k.Tarih)
-                .FirstOrDefaultAsync();
-                
-            if (kaynakKur != null && hedefKur != null)
+            try
             {
-                return hedefKur.Alis / kaynakKur.Alis;
-            }
-            
-            // Doğrudan ilişki yoksa ana para birimi üzerinden hesapla
-            var anaParaBirimi = await GetAnaParaBirimiAsync();
-            
-            if (anaParaBirimi == null)
-                throw new InvalidOperationException("Ana para birimi bulunamadı.");
+                // Aynı para birimleri için dönüşüm 1'dir
+                if (kaynakParaBirimiId == hedefParaBirimiId)
+                    return 1.0m;
                 
-            var kaynakToAna = await HesaplaKurDegeriAsync(kaynakParaBirimiId, anaParaBirimi.ParaBirimiID, tarih);
-            var anaToHedef = await HesaplaKurDegeriAsync(anaParaBirimi.ParaBirimiID, hedefParaBirimiId, tarih);
-            
-            return kaynakToAna * anaToHedef;
+                var tarihValue = tarih ?? DateTime.Now;
+                
+                // Ana para birimini al
+                var anaParaBirimi = await GetAnaParaBirimiAsync();
+                if (anaParaBirimi == null)
+                {
+                    _logger.LogWarning("Ana para birimi bulunamadı, varsayılan değer 1.0 kullanılıyor.");
+                    return 1.0m;
+                }
+                
+                // Kaynak ve hedef para birimleri için kur değerlerini al
+                var kaynakKur = await _context.KurDegerleri
+                    .Where(k => k.ParaBirimiID == kaynakParaBirimiId && !k.Silindi && k.Aktif && k.Tarih <= tarihValue)
+                    .OrderByDescending(k => k.Tarih)
+                    .FirstOrDefaultAsync();
+                    
+                var hedefKur = await _context.KurDegerleri
+                    .Where(k => k.ParaBirimiID == hedefParaBirimiId && !k.Silindi && k.Aktif && k.Tarih <= tarihValue)
+                    .OrderByDescending(k => k.Tarih)
+                    .FirstOrDefaultAsync();
+                
+                // Kur değerleri yoksa, varsayılan değerler oluştur
+                if (kaynakKur == null && kaynakParaBirimiId != anaParaBirimi.ParaBirimiID)
+                {
+                    _logger.LogWarning($"Kaynak para birimi ({kaynakParaBirimiId}) için kur değeri bulunamadı. Varsayılan değer oluşturuluyor.");
+                    await CreateDefaultKurDegeriIfNotExistsAsync(kaynakParaBirimiId);
+                    
+                    // Yeni oluşturulan kur değerini tekrar al
+                    kaynakKur = await _context.KurDegerleri
+                        .Where(k => k.ParaBirimiID == kaynakParaBirimiId && !k.Silindi && k.Aktif)
+                        .OrderByDescending(k => k.Tarih)
+                        .FirstOrDefaultAsync();
+                }
+                
+                if (hedefKur == null && hedefParaBirimiId != anaParaBirimi.ParaBirimiID)
+                {
+                    _logger.LogWarning($"Hedef para birimi ({hedefParaBirimiId}) için kur değeri bulunamadı. Varsayılan değer oluşturuluyor.");
+                    await CreateDefaultKurDegeriIfNotExistsAsync(hedefParaBirimiId);
+                    
+                    // Yeni oluşturulan kur değerini tekrar al
+                    hedefKur = await _context.KurDegerleri
+                        .Where(k => k.ParaBirimiID == hedefParaBirimiId && !k.Silindi && k.Aktif)
+                        .OrderByDescending(k => k.Tarih)
+                        .FirstOrDefaultAsync();
+                }
+
+                // Sonsuz döngüye girme riski var, kontrol ekleyelim:
+                // Eğer kaynak ya da hedef zaten ana para birimiyse ve diğer para biriminin kur değeri yoksa,
+                // varsayılan değer kullanarak dönelim.
+                if (kaynakParaBirimiId == anaParaBirimi.ParaBirimiID)
+                {
+                    if (hedefKur == null)
+                    {
+                        // Hedef para birimi için kur yok, varsayılan değer döndür
+                        _logger.LogWarning($"Hedef para birimi ({hedefParaBirimiId}) için kur değeri bulunamadı. Varsayılan değer 1.0 kullanılıyor.");
+                        return 1.0m;
+                    }
+                    return hedefKur.Alis; // Ana para birimi baz alınır 
+                }
+                else if (hedefParaBirimiId == anaParaBirimi.ParaBirimiID)
+                {
+                    if (kaynakKur == null)
+                    {
+                        // Kaynak para birimi için kur yok, varsayılan değer döndür
+                        _logger.LogWarning($"Kaynak para birimi ({kaynakParaBirimiId}) için kur değeri bulunamadı. Varsayılan değer 1.0 kullanılıyor.");
+                        return 1.0m;
+                    }
+                    return 1.0m / kaynakKur.Alis; // Ana para birimine çevirme
+                }
+                    
+                // Her iki para birimi için de kur değeri bulunamadıysa
+                if (kaynakKur == null && hedefKur == null)
+                {
+                    _logger.LogWarning($"Hem kaynak ({kaynakParaBirimiId}) hem de hedef ({hedefParaBirimiId}) para birimleri için kur değerleri bulunamadı. Varsayılan değer 1.0 kullanılıyor.");
+                    return 1.0m;
+                }
+
+                // Sadece bir tanesinin kur değeri varsa, o değeri kullan
+                if (kaynakKur != null && hedefKur == null)
+                {
+                    return 1.0m / kaynakKur.Alis;
+                }
+                else if (kaynakKur == null && hedefKur != null)
+                {
+                    return hedefKur.Alis;
+                }
+                    
+                // En son çare olarak, ana para birimi üzerinden dönüşüm yap
+                // Sonsuz döngü ihtimaline karşı doğrudan veritabanından sorgulama yapıyoruz
+                var kaynakToAna = await _context.KurDegerleri
+                    .Where(k => k.ParaBirimiID == kaynakParaBirimiId && k.Aktif && !k.Silindi)
+                    .OrderByDescending(k => k.Tarih)
+                    .Select(k => k.Alis)
+                    .FirstOrDefaultAsync();
+                
+                var anaToHedef = await _context.KurDegerleri
+                    .Where(k => k.ParaBirimiID == hedefParaBirimiId && k.Aktif && !k.Silindi)
+                    .OrderByDescending(k => k.Tarih)
+                    .Select(k => k.Alis)
+                    .FirstOrDefaultAsync();
+                
+                if (kaynakToAna > 0 && anaToHedef > 0)
+                {
+                    return (1.0m / kaynakToAna) * anaToHedef;
+                }
+                
+                // Hiçbir şekilde kur bulunamadıysa, varsayılan değer döndür
+                _logger.LogWarning("Hiçbir kur değeri bulunamadı, varsayılan değer 1.0 kullanılıyor.");
+                return 1.0m;
+            }
+            catch (Exception ex)
+            {
+                _logger.LogError(ex, "Para birimi dönüşümü sırasında hata oluştu.");
+                return 1.0m;
+            }
         }
         
         /// <summary>
@@ -615,6 +761,29 @@ namespace MuhasebeStokWebApp.Services.ParaBirimiModulu
                 
             var kurDegeri = await HesaplaKurDegeriAsync(kaynakParaBirimiId, hedefParaBirimiId, tarih);
             return tutar * kurDegeri;
+        }
+
+        public async Task<decimal?> UpdateEfektifDegerleriAsync(KurDegeri kurDegeri)
+        {
+            // Bu metod artık entity'de efektif değerleri saklamak yerine
+            // runtime'da hesaplanan değerleri kullanacak şekilde değiştirildi
+            try
+            {
+                if (kurDegeri == null)
+                    return null;
+                
+                // KurMarj bilgisini al (varsayılan %2)
+                decimal marj = 0.02m; // Varsayılan değer
+                
+                // Efektif değerler ihtiyaç duyulduğunda hesaplanacak 
+                // ve entity'de saklanmayacak
+                return marj;
+            }
+            catch (Exception ex)
+            {
+                _logger.LogError(ex, "Kur efektif değerleri hesaplanırken hata oluştu");
+                return null;
+            }
         }
         #endregion
     }

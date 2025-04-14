@@ -1,0 +1,112 @@
+@model MuhasebeStokWebApp.ViewModels.Banka.BankaHesapCreateViewModel
+
+@{
+    ViewData["Title"] = "Yeni Banka Hesabı";
+    Layout = "~/Views/Shared/_Layout.cshtml";
+}
+
+<div class="container-fluid">
+    <div class="card">
+        <div class="card-header bg-primary text-white">
+            <div class="d-flex justify-content-between align-items-center">
+                <h4 class="mb-0">@Model.BankaAdi - Yeni Hesap Oluştur</h4>
+                <div>
+                    <a asp-action="Hesaplar" asp-route-id="@Model.BankaID" class="btn btn-light">
+                        <i class="fas fa-arrow-left"></i> Hesaplar Listesine Dön
+                    </a>
+                </div>
+            </div>
+        </div>
+        <div class="card-body">
+            <form asp-action="HesapCreate" method="post">
+                <div asp-validation-summary="ModelOnly" class="text-danger"></div>
+                <input type="hidden" asp-for="BankaID" />
+                <input type="hidden" asp-for="BankaAdi" />
+
+                <div class="row">
+                    <div class="col-md-6">
+                        <div class="form-group">
+                            <label asp-for="HesapAdi" class="control-label"></label>
+                            <input asp-for="HesapAdi" class="form-control" />
+                            <span asp-validation-for="HesapAdi" class="text-danger"></span>
+                        </div>
+                        <div class="form-group">
+                            <label asp-for="SubeAdi" class="control-label"></label>
+                            <input asp-for="SubeAdi" class="form-control" />
+                            <span asp-validation-for="SubeAdi" class="text-danger"></span>
+                        </div>
+                        <div class="form-group">
+                            <label asp-for="SubeKodu" class="control-label"></label>
+                            <input asp-for="SubeKodu" class="form-control" />
+                            <span asp-validation-for="SubeKodu" class="text-danger"></span>
+                        </div>
+                        <div class="form-group">
+                            <label asp-for="ParaBirimi" class="control-label"></label>
+                            <select asp-for="ParaBirimi" class="form-control">
+                                <option value="TRY">Türk Lirası (TRY)</option>
+                                <option value="USD">Amerikan Doları (USD)</option>
+                                <option value="EUR">Euro (EUR)</option>
+                                <option value="GBP">İngiliz Sterlini (GBP)</option>
+                            </select>
+                            <span asp-validation-for="ParaBirimi" class="text-danger"></span>
+                        </div>
+                    </div>
+                    <div class="col-md-6">
+                        <div class="form-group">
+                            <label asp-for="HesapNo" class="control-label"></label>
+                            <input asp-for="HesapNo" class="form-control" />
+                            <span asp-validation-for="HesapNo" class="text-danger"></span>
+                        </div>
+                        <div class="form-group">
+                            <label asp-for="IBAN" class="control-label"></label>
+                            <input asp-for="IBAN" class="form-control" />
+                            <span asp-validation-for="IBAN" class="text-danger"></span>
+                        </div>
+                        <div class="form-group">
+                            <label asp-for="AcilisBakiye" class="control-label"></label>
+                            <input asp-for="AcilisBakiye" class="form-control" />
+                            <span asp-validation-for="AcilisBakiye" class="text-danger"></span>
+                        </div>
+                        <div class="form-group form-check">
+                            <label class="form-check-label">
+                                <input class="form-check-input" asp-for="Aktif" /> @Html.DisplayNameFor(model => model.Aktif)
+                            </label>
+                        </div>
+                    </div>
+                </div>
+                
+                <div class="form-group">
+                    <label asp-for="Aciklama" class="control-label"></label>
+                    <textarea asp-for="Aciklama" class="form-control" rows="3"></textarea>
+                    <span asp-validation-for="Aciklama" class="text-danger"></span>
+                </div>
+                
+                <div class="form-group text-right mt-3">
+                    <button type="submit" class="btn btn-primary">
+                        <i class="fas fa-save"></i> Kaydet
+                    </button>
+                    <a asp-action="Hesaplar" asp-route-id="@Model.BankaID" class="btn btn-secondary">
+                        <i class="fas fa-times"></i> İptal
+                    </a>
+                </div>
+            </form>
+        </div>
+    </div>
+</div>
+
+@section Scripts {
+    @{await Html.RenderPartialAsync("_ValidationScriptsPartial");}
+    
+    <script>
+        $(document).ready(function() {
+            // IBAN formatlaması
+            $("#IBAN").on("input", function() {
+                var iban = $(this).val().replace(/\s/g, "").toUpperCase();
+                if (iban.length > 0) {
+                    iban = iban.match(/.{1,4}/g).join(" ");
+                }
+                $(this).val(iban);
+            });
+        });
+    </script>
+} 

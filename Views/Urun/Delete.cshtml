@@ -2,6 +2,7 @@
 
 @{
     ViewData["Title"] = "Ürün Sil";
+    Layout = "~/Views/Shared/_Layout.cshtml";
 }
 
 <div class="container-fluid">
@@ -23,10 +24,14 @@
     <div class="row">
         <div class="col-sm-12">
             <div class="card">
-                <div class="card-header bg-danger text-white">
-                    <h5>Bu ürünü silmek istediğinizden emin misiniz?</h5>
+                <div class="card-header">
+                    <h5>Ürün Silme Onayı</h5>
                 </div>
                 <div class="card-body">
+                    <div class="alert alert-danger">
+                        <strong>Uyarı:</strong> Bu ürünü silmek istediğinizden emin misiniz? Bu işlem geri alınamaz.
+                    </div>
+                    
                     <div class="row">
                         <div class="col-md-6">
                             <dl class="row">
@@ -36,8 +41,17 @@
                                 <dt class="col-sm-4">@Html.DisplayNameFor(model => model.KategoriAdi)</dt>
                                 <dd class="col-sm-8">@Model.KategoriAdi</dd>
                                 
-                                <dt class="col-sm-4">@Html.DisplayNameFor(model => model.StokMiktar)</dt>
-                                <dd class="col-sm-8">@Model.StokMiktar</dd>
+                                <dt class="col-sm-4">@Html.DisplayNameFor(model => model.Birim)</dt>
+                                <dd class="col-sm-8">@Model.Birim</dd>
+                            </dl>
+                        </div>
+                        <div class="col-md-6">
+                            <dl class="row">
+                                <dt class="col-sm-4">@Html.DisplayNameFor(model => model.ListeFiyati)</dt>
+                                <dd class="col-sm-8">@Model.ListeFiyati.ToString("N2") ₺</dd>
+                                
+                                <dt class="col-sm-4">@Html.DisplayNameFor(model => model.SatisFiyati)</dt>
+                                <dd class="col-sm-8">@Model.SatisFiyati.ToString("N2") ₺</dd>
                                 
                                 <dt class="col-sm-4">@Html.DisplayNameFor(model => model.Aktif)</dt>
                                 <dd class="col-sm-8">
@@ -52,34 +66,21 @@
                                 </dd>
                             </dl>
                         </div>
-                        <div class="col-md-6">
-                            <dl class="row">
-                                <dt class="col-sm-4">@Html.DisplayNameFor(model => model.ListeFiyati)</dt>
-                                <dd class="col-sm-8">@Model.ListeFiyati.ToString("N2") ₺</dd>
-                                
-                                <dt class="col-sm-4">@Html.DisplayNameFor(model => model.MaliyetFiyati)</dt>
-                                <dd class="col-sm-8">@Model.MaliyetFiyati.ToString("N2") ₺</dd>
-                                
-                                <dt class="col-sm-4">@Html.DisplayNameFor(model => model.SatisFiyati)</dt>
-                                <dd class="col-sm-8">@Model.SatisFiyati.ToString("N2") ₺</dd>
-                                
-                                <dt class="col-sm-4">@Html.DisplayNameFor(model => model.OlusturmaTarihi)</dt>
-                                <dd class="col-sm-8">@(Model.OlusturmaTarihi.HasValue ? Model.OlusturmaTarihi.Value.ToString("dd.MM.yyyy HH:mm") : "-")</dd>
-                            </dl>
-                        </div>
                     </div>
                     
-                    <div class="alert alert-warning mt-3">
-                        <strong>Uyarı!</strong> Bu işlem geri alınamaz. Ürün silindiğinde ilgili tüm veriler de etkilenebilir.
-                    </div>
-                    
-                    <form asp-action="Delete" method="post" class="mt-3">
+                    <form asp-action="Delete" method="post">
                         <input type="hidden" asp-for="UrunID" />
-                        <button type="submit" class="btn btn-danger">Sil</button>
-                        <a asp-action="Index" class="btn btn-secondary">İptal</a>
+                        <div class="form-group mt-3">
+                            <button type="submit" class="btn btn-danger">Sil</button>
+                            <a asp-action="Index" class="btn btn-secondary">İptal</a>
+                        </div>
                     </form>
                 </div>
             </div>
         </div>
     </div>
-</div> 
+</div>
+
+@section Scripts {
+    @{await Html.RenderPartialAsync("_ValidationScriptsPartial");}
+} 

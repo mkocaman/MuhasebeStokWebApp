@@ -2,6 +2,26 @@
 @{
     ViewData["Title"] = "Fatura Detayı";
     Layout = "~/Views/Shared/_Layout.cshtml";
+    
+    // Para birimi sembolünü belirle
+    string GetCurrencySymbol(string currencyCode)
+    {
+        return currencyCode switch
+        {
+            "USD" => "$",
+            "UZS" => "so'm",
+            "TRY" => "₺",
+            "EUR" => "€",
+            "GBP" => "£",
+            _ => currencyCode
+        };
+    }
+    
+    string currencySymbol = GetCurrencySymbol(Model.DovizTuru);
+    string dovizSymbol = Model.DovizTuru == "USD" ? "so'm" : "$";
+    
+    // Cari silinmiş mi kontrolü - hem model hem de viewbag'den kontrol edelim
+    bool cariSilindi = (ViewBag.CariSilindi != null && (bool)ViewBag.CariSilindi) || Model.CariSilindi;
 }
 
 <div class="container-fluid">
@@ -66,7 +86,28 @@
                         <div class="col-12">
                             <div class="info-group">
                                 <h6 class="f-w-600">Cari</h6>
-                                <p><a asp-controller="Cari" asp-action="Details" asp-route-id="@Model.CariID">@Model.CariAdi</a></p>
+                                <p>
+                                    <a asp-controller="Cari" asp-action="Details" asp-route-id="@Model.CariID">@Model.CariAdi</a>
+                                    @if (cariSilindi)
+                                    {
+                                        <span class="badge bg-danger ms-1">Silindi</span>
+                                    }
+                                </p>
+                            </div>
+                        </div>
+                        <div class="col-12">
+                            <div class="info-group">
+                                <h6 class="f-w-600">Son Güncelleme</h6>
+                                <p>
+                                    @if (Model.GuncellemeTarihi.HasValue)
+                                    {
+                                        <span>@Model.GuncellemeTarihi.Value.ToString("dd.MM.yyyy HH:mm")</span>
+                                    }
+                                    else
+                                    {
+                                        <span>Güncellenmemiş</span>
+                                    }
+                                </p>
                             </div>
                         </div>
                         <div class="col-sm-6 col-md-12 col-lg-6">
@@ -91,7 +132,7 @@
                             <div class="info-group">
                                 <h6 class="f-w-600">Ödeme Durumu</h6>
                                 <p>
-                                    @switch (Model.OdemeDurumu)
+                                    @switch (ViewBag.OdemeDurumu)
                                     {
                                         case "Ödendi":
                                             <span class="badge bg-success">Ödendi</span>
@@ -103,7 +144,7 @@
                                             <span class="badge bg-primary">Kısmi Ödendi</span>
                                             break;
                                         default:
-                                            <span class="badge bg-secondary">@Model.OdemeDurumu</span>
+                                            <span class="badge bg-secondary">@ViewBag.OdemeDurumu</span>
                                             break;
                                     }
                                 </p>
@@ -113,6 +154,12 @@
                             <div class="info-group">
                                 <h6 class="f-w-600">Döviz Türü</h6>
                                 <p>@Model.DovizTuru</p>
+                            </div>
+                        </div>
+                        <div class="col-sm-6 col-md-12 col-lg-6">
+                            <div class="info-group">
+                                <h6 class="f-w-600">Döviz Kuru</h6>
+                                <p>@Model.DovizKuru.ToString("N4")</p>
                             </div>
                         </div>
                     </div>
@@ -131,25 +178,69 @@
                         <div class="col-sm-6 col-md-12 col-lg-6">
                             <div class="info-group">
                                 <h6 class="f-w-600">Ara Toplam</h6>
-                                <p>@Model.AraToplam.ToString("N2") ₺</p>
+                                <p>@Model.AraToplam.ToString("N2") @currencySymbol</p>
                             </div>
                         </div>
                         <div class="col-sm-6 col-md-12 col-lg-6">
                             <div class="info-group">
                                 <h6 class="f-w-600">KDV Tutarı</h6>
-                                <p>@Model.KdvTutari.ToString("N2") ₺</p>
+                                <p>@Model.KdvTutari.ToString("N2") @currencySymbol</p>
                             </div>
                         </div>
                         <div class="col-sm-6 col-md-12 col-lg-6">
                             <div class="info-group">
                                 <h6 class="f-w-600">İndirim Tutarı</h6>
-                                <p>@Model.IndirimTutari.ToString("N2") ₺</p>
+                                <p>@Model.IndirimTutari.ToString("N2") @currencySymbol</p>
                             </div>
                         </div>
                         <div class="col-sm-6 col-md-12 col-lg-6">
                             <div class="info-group">
                                 <h6 class="f-w-600">Genel Toplam</h6>
-                                <p class="f-w-600 text-primary">@Model.GenelToplam.ToString("N2") ₺</p>
+                                <p class="f-w-600 text-primary">@Model.GenelToplam.ToString("N2") @currencySymbol</p>
+                            </div>
+                        </div>
+                        <div class="col-sm-6 col-md-12 col-lg-6">
+                            <div class="info-group">
+                                <h6 class="f-w-600">Ödenen Tutar</h6>
+                                <p class="f-w-600 text-success">@ViewBag.OdenenTutar.ToString("N2") @currencySymbol</p>
+                            </div>
+                        </div>
+                        <div class="col-sm-6 col-md-12 col-lg-6">
+                            <div class="info-group">
+                                <h6 class="f-w-600">Ödenecek Tutar</h6>
+                                <p class="f-w-600 text-danger">@ViewBag.OdenecekTutar.ToString("N2") @currencySymbol</p>
+                            </div>
+                        </div>
+                    </div>
+                    
+                    <hr />
+                    
+                    <div class="row">
+                        <div class="col-12">
+                            <h6 class="f-w-600">Döviz Cinsinden Tutarlar (@dovizSymbol)</h6>
+                        </div>
+                        <div class="col-sm-6 col-md-12 col-lg-6">
+                            <div class="info-group">
+                                <h6 class="f-w-600">Ara Toplam (Döviz)</h6>
+                                <p>@Model.AraToplamDoviz.ToString("N2") @dovizSymbol</p>
+                            </div>
+                        </div>
+                        <div class="col-sm-6 col-md-12 col-lg-6">
+                            <div class="info-group">
+                                <h6 class="f-w-600">KDV Tutarı (Döviz)</h6>
+                                <p>@Model.KdvTutariDoviz.ToString("N2") @dovizSymbol</p>
+                            </div>
+                        </div>
+                        <div class="col-sm-6 col-md-12 col-lg-6">
+                            <div class="info-group">
+                                <h6 class="f-w-600">İndirim Tutarı (Döviz)</h6>
+                                <p>@Model.IndirimTutariDoviz.ToString("N2") @dovizSymbol</p>
+                            </div>
+                        </div>
+                        <div class="col-sm-6 col-md-12 col-lg-6">
+                            <div class="info-group">
+                                <h6 class="f-w-600">Genel Toplam (Döviz)</h6>
+                                <p class="f-w-600 text-info">@Model.GenelToplamDoviz.ToString("N2") @dovizSymbol</p>
                             </div>
                         </div>
                     </div>
@@ -185,6 +276,7 @@
                                     <th>Miktar</th>
                                     <th>Birim</th>
                                     <th>Birim Fiyat</th>
+                                    <th>Birim Fiyat (Döviz)</th>
                                     <th>KDV %</th>
                                     <th>İndirim %</th>
                                     <th>Tutar</th>
@@ -205,18 +297,19 @@
                                             </td>
                                             <td>@kalem.Miktar.ToString("N2")</td>
                                             <td>@kalem.Birim</td>
-                                            <td>@kalem.BirimFiyat.ToString("N2") ₺</td>
+                                            <td>@kalem.BirimFiyat.ToString("N2") @currencySymbol</td>
+                                            <td>@kalem.BirimFiyatDoviz.ToString("N2") @dovizSymbol</td>
                                             <td>%@kalem.KdvOrani</td>
                                             <td>%@kalem.IndirimOrani</td>
-                                            <td>@kalem.Tutar.ToString("N2") ₺</td>
-                                            <td>@kalem.NetTutar.ToString("N2") ₺</td>
+                                            <td>@kalem.Tutar.ToString("N2") @currencySymbol</td>
+                                            <td>@kalem.NetTutar.ToString("N2") @currencySymbol</td>
                                         </tr>
                                     }
                                 }
                                 else
                                 {
                                     <tr>
-                                        <td colspan="9" class="text-center">Fatura kalemi bulunamadı.</td>
+                                        <td colspan="10" class="text-center">Fatura kalemi bulunamadı.</td>
                                     </tr>
                                 }
                             </tbody>
@@ -257,9 +350,9 @@
                                     foreach (var odeme in Model.Odemeler)
                                     {
                                         <tr>
-                                            <td>@odeme.OdemeTarihi.Value.ToString("dd.MM.yyyy")</td>
+                                            <td>@odeme.OdemeTarihi.ToString("dd.MM.yyyy")</td>
                                             <td>@odeme.OdemeTuru</td>
-                                            <td>@odeme.OdemeTutari.ToString("N2") ₺</td>
+                                            <td>@odeme.OdemeTutari.ToString("N2") @currencySymbol</td>
                                             <td>@(string.IsNullOrEmpty(odeme.Aciklama) ? "-" : odeme.Aciklama)</td>
                                             <td>
                                                 <button type="button" class="btn btn-danger btn-sm" onclick="confirmDeleteOdeme('@odeme.OdemeID')">
@@ -287,27 +380,13 @@
 <div class="container-fluid mt-4">
     <div class="row">
         <div class="col-12 text-end">
-            <a asp-action="Index" class="btn btn-secondary">
-                <i class="fas fa-arrow-left"></i> Listeye Dön
-            </a>
-            <a asp-action="Edit" asp-route-id="@Model.FaturaID" class="btn btn-primary">
-                <i class="fas fa-edit"></i> Düzenle
-            </a>
-            <a asp-action="Print" asp-route-id="@Model.FaturaID" class="btn btn-info" target="_blank">
-                <i class="fas fa-print"></i> Yazdır
-            </a>
-            <a asp-action="AddOdeme" asp-route-id="@Model.FaturaID" class="btn btn-success">
-                <i class="fas fa-money-bill"></i> Ödeme Ekle
-            </a>
-            @if (Model.IrsaliyeID == null || Model.IrsaliyeID == Guid.Empty)
-            {
-                <a asp-action="CreateIrsaliye" asp-route-id="@Model.FaturaID" class="btn btn-warning">
-                    <i class="fas fa-truck"></i> İrsaliye Oluştur
-                </a>
-            }
-            <a asp-action="Delete" asp-route-id="@Model.FaturaID" class="btn btn-danger">
-                <i class="fas fa-trash"></i> Sil
-            </a>
+            <div class="text-end mb-3">
+                <a asp-action="Edit" asp-route-id="@Model.FaturaID" class="btn btn-primary"><i class="fas fa-edit"></i> Düzenle</a>
+                <a asp-action="Aklama" asp-route-id="@Model.FaturaID" class="btn btn-success"><i class="fas fa-check-circle"></i> Aklama İşlemi</a>
+                <a asp-action="Index" class="btn btn-secondary"><i class="fas fa-arrow-left"></i> Listeye Dön</a>
+                <a href="javascript:window.print()" class="btn btn-info"><i class="fas fa-print"></i> Yazdır</a>
+                <a href="#" class="btn btn-danger" data-bs-toggle="modal" data-bs-target="#deleteModal"><i class="fas fa-trash"></i> Sil</a>
+            </div>
         </div>
     </div>
 </div>

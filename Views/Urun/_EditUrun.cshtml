@@ -1,0 +1,85 @@
+@model MuhasebeStokWebApp.ViewModels.Urun.UrunEditViewModel
+
+<div class="modal-header bg-primary text-white">
+    <h5 class="modal-title">Ürün Düzenle</h5>
+    <button type="button" class="btn-close btn-close-white" data-bs-dismiss="modal" aria-label="Close"></button>
+</div>
+
+<form id="editUrunForm" asp-controller="Urun" asp-action="Edit" method="post">
+    <div class="modal-body">
+        <div id="editFormAlert" class="alert alert-danger d-none" role="alert"></div>
+        <div asp-validation-summary="ModelOnly" class="text-danger"></div>
+        
+        <input type="hidden" asp-for="UrunID" />
+        
+        <div class="mb-3">
+            <label asp-for="UrunKodu" class="form-label">Ürün Kodu</label>
+            <input asp-for="UrunKodu" class="form-control" required maxlength="50" />
+            <span asp-validation-for="UrunKodu" class="text-danger"></span>
+        </div>
+        
+        <div class="mb-3">
+            <label asp-for="UrunAdi" class="form-label">Ürün Adı</label>
+            <input asp-for="UrunAdi" class="form-control" required maxlength="200" />
+            <span asp-validation-for="UrunAdi" class="text-danger"></span>
+        </div>
+        
+        <div class="mb-3">
+            <label asp-for="KategoriID" class="form-label">Kategori</label>
+            <select asp-for="KategoriID" asp-items="ViewBag.Kategoriler" class="form-select" required>
+                <option value="">-- Kategori Seçin --</option>
+            </select>
+            <span asp-validation-for="KategoriID" class="text-danger"></span>
+        </div>
+        
+        <div class="mb-3">
+            <label asp-for="BirimID" class="form-label">Birim</label>
+            <select asp-for="BirimID" asp-items="ViewBag.Birimler" class="form-select" required>
+                <option value="">-- Birim Seçin --</option>
+            </select>
+            <span asp-validation-for="BirimID" class="text-danger"></span>
+        </div>
+        
+        <div class="mb-3">
+            <label asp-for="KDVOrani" class="form-label">KDV Oranı (%)</label>
+            <input asp-for="KDVOrani" class="form-control kdv-input" type="text" />
+            <span asp-validation-for="KDVOrani" class="text-danger"></span>
+        </div>
+        
+        <div class="mb-3">
+            <label asp-for="Aciklama" class="form-label">Açıklama</label>
+            <textarea asp-for="Aciklama" class="form-control" maxlength="500"></textarea>
+            <span asp-validation-for="Aciklama" class="text-danger"></span>
+        </div>
+        
+        <div class="form-check mb-3">
+            <input asp-for="Aktif" class="form-check-input" />
+            <label asp-for="Aktif" class="form-check-label">Aktif</label>
+        </div>
+    </div>
+    <div class="modal-footer">
+        <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">İptal</button>
+        <button type="submit" class="btn btn-primary">Kaydet</button>
+    </div>
+</form>
+
+<script>
+    $(document).ready(function() {
+        // KDV alanı için numerik input kontrolü
+        $('.kdv-input').on('input', function() {
+            var value = $(this).val().replace(/[^\d]/g, '');
+            if (value > 100) value = 100;
+            $(this).val(value);
+        });
+        
+        $('.kdv-input').on('blur', function() {
+            if (this.value === '') {
+                this.value = '12';
+            }
+        });
+    });
+</script>
+
+@section Scripts {
+    @{await Html.RenderPartialAsync("_ValidationScriptsPartial");}
+} 

@@ -1,4 +1,5 @@
-@model MuhasebeStokWebApp.Data.Entities.ParaBirimiModulu.KurDegeri
+@model MuhasebeStokWebApp.ViewModels.ParaBirimiModulu.KurDegeriViewModel
+
 @{
     ViewData["Title"] = "Kur Detayı";
 }
@@ -21,25 +22,19 @@
                 <div class="col-md-6">
                     <dl class="row">
                         <dt class="col-sm-4">Para Birimi:</dt>
-                        <dd class="col-sm-8">@Model.ParaBirimi.Kod (@Model.ParaBirimi.Ad)</dd>
+                        <dd class="col-sm-8">@Model.ParaBirimiAdi</dd>
 
                         <dt class="col-sm-4">Tarih:</dt>
                         <dd class="col-sm-8">@Model.Tarih.ToString("dd.MM.yyyy")</dd>
 
                         <dt class="col-sm-4">Alış:</dt>
-                        <dd class="col-sm-8">@Model.Alis.ToString("N" + Model.ParaBirimi.OndalikHassasiyet)</dd>
+                        <dd class="col-sm-8">@Model.Alis.ToString("N2")</dd>
                     </dl>
                 </div>
                 <div class="col-md-6">
                     <dl class="row">
                         <dt class="col-sm-4">Satış:</dt>
-                        <dd class="col-sm-8">@Model.Satis.ToString("N" + Model.ParaBirimi.OndalikHassasiyet)</dd>
-
-                        <dt class="col-sm-4">Efektif Alış:</dt>
-                        <dd class="col-sm-8">@Model.Efektif_Alis.ToString("N" + Model.ParaBirimi.OndalikHassasiyet)</dd>
-
-                        <dt class="col-sm-4">Efektif Satış:</dt>
-                        <dd class="col-sm-8">@Model.Efektif_Satis.ToString("N" + Model.ParaBirimi.OndalikHassasiyet)</dd>
+                        <dd class="col-sm-8">@Model.Satis.ToString("N2")</dd>
                     </dl>
                 </div>
             </div>

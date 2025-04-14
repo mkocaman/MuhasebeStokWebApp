@@ -1,0 +1,123 @@
+@model MuhasebeStokWebApp.ViewModels.Sozlesme.SozlesmeViewModel
+@{
+    ViewData["Title"] = "Sözleşme Detayları";
+}
+
+<div class="container-fluid">
+    <div class="card shadow mb-4">
+        <div class="card-header py-3 d-flex flex-row align-items-center justify-content-between">
+            <h6 class="m-0 font-weight-bold text-primary">Sözleşme Detayları</h6>
+            <div>
+                <a asp-action="Edit" asp-route-id="@Model.SozlesmeID" class="btn btn-primary btn-sm">
+                    <i class="fas fa-edit"></i> Düzenle
+                </a>
+                <a asp-action="Index" class="btn btn-secondary btn-sm">
+                    <i class="fas fa-arrow-left"></i> Listeye Dön
+                </a>
+            </div>
+        </div>
+        <div class="card-body">
+            <div class="row">
+                <div class="col-md-6">
+                    <div class="form-group">
+                        <label asp-for="SozlesmeNo" class="font-weight-bold"></label>
+                        <p>@Model.SozlesmeNo</p>
+                    </div>
+                </div>
+                <div class="col-md-6">
+                    <div class="form-group">
+                        <label asp-for="SozlesmeTarihi" class="font-weight-bold"></label>
+                        <p>@Model.SozlesmeTarihi.ToString("dd.MM.yyyy")</p>
+                    </div>
+                </div>
+            </div>
+
+            <div class="row">
+                <div class="col-md-6">
+                    <div class="form-group">
+                        <label asp-for="BitisTarihi" class="font-weight-bold"></label>
+                        <p>@(Model.BitisTarihi.HasValue ? Model.BitisTarihi.Value.ToString("dd.MM.yyyy") : "-")</p>
+                    </div>
+                </div>
+                <div class="col-md-6">
+                    <div class="form-group">
+                        <label asp-for="CariID" class="font-weight-bold"></label>
+                        <p>@Model.CariAdi</p>
+                    </div>
+                </div>
+            </div>
+
+            <div class="row">
+                <div class="col-md-6">
+                    <div class="form-group">
+                        <label asp-for="SozlesmeTutari" class="font-weight-bold"></label>
+                        <p>@Model.SozlesmeTutari.ToString("N2") @Model.SozlesmeDovizTuru</p>
+                    </div>
+                </div>
+                <div class="col-md-6">
+                    <div class="form-group">
+                        <label asp-for="OlusturmaTarihi" class="font-weight-bold"></label>
+                        <p>@Model.OlusturmaTarihi.ToString("dd.MM.yyyy HH:mm")</p>
+                    </div>
+                </div>
+            </div>
+
+            <div class="row">
+                <div class="col-md-6">
+                    <div class="form-group">
+                        <label asp-for="VekaletGeldiMi" class="font-weight-bold"></label>
+                        <p>@(Model.VekaletGeldiMi ? "Evet" : "Hayır")</p>
+                    </div>
+                </div>
+                <div class="col-md-6">
+                    <div class="form-group">
+                        <label asp-for="ResmiFaturaKesildiMi" class="font-weight-bold"></label>
+                        <p>@(Model.ResmiFaturaKesildiMi ? "Evet" : "Hayır")</p>
+                    </div>
+                </div>
+            </div>
+
+            <div class="row">
+                <div class="col-md-6">
+                    <div class="form-group">
+                        <label class="font-weight-bold">Sözleşme Belgesi</label>
+                        @if (!string.IsNullOrEmpty(Model.SozlesmeBelgesiYolu))
+                        {
+                            <div>
+                                <a href="@Model.SozlesmeBelgesiYolu" target="_blank" class="btn btn-sm btn-info">
+                                    <i class="fas fa-file-download"></i> Belgeyi Görüntüle
+                                </a>
+                            </div>
+                        }
+                        else
+                        {
+                            <p>Belge yüklenmemiş</p>
+                        }
+                    </div>
+                </div>
+                <div class="col-md-6">
+                    <div class="form-group">
+                        <label class="font-weight-bold">Vekaletname</label>
+                        @if (!string.IsNullOrEmpty(Model.VekaletnameYolu))
+                        {
+                            <div>
+                                <a href="@Model.VekaletnameYolu" target="_blank" class="btn btn-sm btn-info">
+                                    <i class="fas fa-file-download"></i> Vekaletnameyi Görüntüle
+                                </a>
+                            </div>
+                        }
+                        else
+                        {
+                            <p>Vekaletname yüklenmemiş</p>
+                        }
+                    </div>
+                </div>
+            </div>
+
+            <div class="form-group">
+                <label asp-for="Aciklama" class="font-weight-bold"></label>
+                <p>@(string.IsNullOrEmpty(Model.Aciklama) ? "Açıklama yok" : Model.Aciklama)</p>
+            </div>
+        </div>
+    </div>
+</div> 

@@ -1,0 +1,77 @@
+@model MuhasebeStokWebApp.Data.Entities.Fatura
+
+@{
+    ViewData["Title"] = "Fatura Sil";
+    Layout = "~/Views/Shared/_Layout.cshtml";
+}
+
+<div class="container-fluid">
+    <div class="page-header">
+        <div class="row">
+            <div class="col-sm-6">
+                <h3>Fatura Sil</h3>
+                <ol class="breadcrumb">
+                    <li class="breadcrumb-item"><a href="/">Ana Sayfa</a></li>
+                    <li class="breadcrumb-item"><a asp-action="Index">Faturalar</a></li>
+                    <li class="breadcrumb-item active">Fatura Sil</li>
+                </ol>
+            </div>
+        </div>
+    </div>
+</div>
+
+<div class="container-fluid">
+    <div class="row">
+        <div class="col-sm-12">
+            <div class="card">
+                <div class="card-header bg-danger text-white">
+                    <h5>Bu faturayı silmek istediğinizden emin misiniz?</h5>
+                </div>
+                <div class="card-body">
+                    <div class="row">
+                        <div class="col-md-6">
+                            <dl class="row">
+                                <dt class="col-sm-4">Fatura Numarası</dt>
+                                <dd class="col-sm-8">@Model.FaturaNumarasi</dd>
+                                
+                                <dt class="col-sm-4">Fatura Tarihi</dt>
+                                <dd class="col-sm-8">@(Model.FaturaTarihi.HasValue ? Model.FaturaTarihi.Value.ToString("dd.MM.yyyy") : "-")</dd>
+                                
+                                <dt class="col-sm-4">Vade Tarihi</dt>
+                                <dd class="col-sm-8">@(Model.VadeTarihi.HasValue ? Model.VadeTarihi.Value.ToString("dd.MM.yyyy") : "-")</dd>
+                                
+                                <dt class="col-sm-4">Cari</dt>
+                                <dd class="col-sm-8">@(Model.Cari?.Ad ?? "Belirtilmemiş")</dd>
+                            </dl>
+                        </div>
+                        <div class="col-md-6">
+                            <dl class="row">
+                                <dt class="col-sm-4">Fatura Türü</dt>
+                                <dd class="col-sm-8">@(Model.FaturaTuru?.FaturaTuruAdi ?? "Belirtilmemiş")</dd>
+                                
+                                <dt class="col-sm-4">Ara Toplam</dt>
+                                <dd class="col-sm-8">@((Model.AraToplam ?? 0).ToString("N2")) @(Model.DovizTuru ?? "TRY")</dd>
+                                
+                                <dt class="col-sm-4">KDV Toplamı</dt>
+                                <dd class="col-sm-8">@((Model.KDVToplam ?? 0).ToString("N2")) @(Model.DovizTuru ?? "TRY")</dd>
+                                
+                                <dt class="col-sm-4">Genel Toplam</dt>
+                                <dd class="col-sm-8">@((Model.GenelToplam ?? 0).ToString("N2")) @(Model.DovizTuru ?? "TRY")</dd>
+                            </dl>
+                        </div>
+                    </div>
+                    
+                    <div class="alert alert-warning mt-3">
+                        <strong>Uyarı!</strong> Bu işlem geri alınamaz. Fatura silindiğinde ilgili tüm veriler de etkilenebilir.
+                    </div>
+                    
+                    <form asp-action="Delete" method="post" class="mt-3">
+                        <input type="hidden" asp-for="FaturaID" />
+                        <button type="submit" class="btn btn-danger">Sil</button>
+                        <a asp-action="Index" class="btn btn-secondary">İptal</a>
+                    </form>
+                </div>
+            </div>
+        </div>
+    </div>
+</div> 

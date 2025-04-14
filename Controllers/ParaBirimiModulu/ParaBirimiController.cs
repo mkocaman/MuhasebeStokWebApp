@@ -19,6 +19,8 @@ using MuhasebeStokWebApp.Services.ParaBirimiModulu;
 using MuhasebeStokWebApp.ViewModels.ParaBirimiModulu;
 using MuhasebeStokWebApp.Services.Menu;
 using MuhasebeStokWebApp.Services.Interfaces;
+using Microsoft.Extensions.Configuration;
+using MuhasebeStokWebApp.Services.Helpers;
 
 namespace MuhasebeStokWebApp.Controllers.ParaBirimiModulu
 {
@@ -30,7 +32,8 @@ namespace MuhasebeStokWebApp.Controllers.ParaBirimiModulu
     public class ParaBirimiController : BaseController
     {
         private readonly ApplicationDbContext _context;
-        private readonly MuhasebeStokWebApp.Services.ParaBirimiModulu.IParaBirimiService _paraBirimiService;
+        private readonly Services.ParaBirimiModulu.IParaBirimiService _paraBirimiService;
+        private readonly IConfiguration _configuration;
         private readonly ILogger<ParaBirimiController> _logger;
         private readonly IHttpClientFactory _httpClientFactory;
         private const string ApiKey = "645b5bebcab7cef56e1b609c";
@@ -38,25 +41,30 @@ namespace MuhasebeStokWebApp.Controllers.ParaBirimiModulu
         private new readonly ILogService _logService;
         private new readonly UserManager<ApplicationUser> _userManager;
         private new readonly RoleManager<IdentityRole> _roleManager;
+        private readonly IKurDegeriService _kurDegeriService;
 
         public ParaBirimiController(
             ApplicationDbContext context,
-            MuhasebeStokWebApp.Services.ParaBirimiModulu.IParaBirimiService paraBirimiService,
+            Services.ParaBirimiModulu.IParaBirimiService paraBirimiService,
+            IMenuService menuService,
+            IConfiguration configuration,
             ILogger<ParaBirimiController> logger,
             IHttpClientFactory httpClientFactory,
-            IMenuService menuService,
             RoleManager<IdentityRole> roleManager,
             ILogService logService,
-            UserManager<ApplicationUser> userManager)
+            UserManager<ApplicationUser> userManager,
+            IKurDegeriService kurDegeriService)
             : base(menuService, userManager, roleManager, logService)
         {
             _context = context;
             _paraBirimiService = paraBirimiService;
+            _configuration = configuration;
             _logger = logger;
             _httpClientFactory = httpClientFactory;
             _logService = logService;
             _userManager = userManager;
             _roleManager = roleManager;
+            _kurDegeriService = kurDegeriService;
         }
 
         #region Para Birimi İşlemleri
@@ -332,9 +340,7 @@ namespace MuhasebeStokWebApp.Controllers.ParaBirimiModulu
         {
             try
             {
-                var kurDegeri = await _context.KurDegerleri
-                    .Include(d => d.ParaBirimi)
-                    .FirstOrDefaultAsync(m => m.KurDegeriID == id && !m.Silindi);
+                var kurDegeri = await _kurDegeriService.GetViewModelByIdAsync(id);
 
                 if (kurDegeri == null)
                 {
@@ -367,7 +373,8 @@ namespace MuhasebeStokWebApp.Controllers.ParaBirimiModulu
                 Text = $"{p.Kod} - {p.Ad}"
             }).ToList();
 
-            return View(new KurDegeri
+            // ViewModel oluştur
+            return View(new ViewModels.ParaBirimiModulu.KurDegeriViewModel
             {
                 Tarih = DateTime.Today,
                 Aktif = true
@@ -380,19 +387,19 @@ namespace MuhasebeStokWebApp.Controllers.ParaBirimiModulu
         [HttpPost]
         [Route("KurEkle")]
         [ValidateAntiForgeryToken]
-        public async Task<IActionResult> KurEkle(KurDegeri kurDegeri)
+        public async Task<IActionResult> KurEkle(ViewModels.ParaBirimiModulu.KurDegeriViewModel viewModel)
         {
             if (ModelState.IsValid)
             {
                 try
                 {
                     // Oluşturma bilgilerini ayarla
-                    kurDegeri.KurDegeriID = Guid.NewGuid();
-                    kurDegeri.OlusturmaTarihi = DateTime.Now;
-                    kurDegeri.OlusturanKullaniciID = User.Identity?.Name ?? "Sistem";
+                    viewModel.KurDegeriID = Guid.NewGuid();
+                    viewModel.OlusturmaTarihi = DateTime.Now;
+                    viewModel.OlusturanKullaniciID = User.Identity?.Name ?? "Sistem";
 
                     // Servisi kullanarak kur değerini ekle
-                    var result = await _paraBirimiService.AddKurDegeriAsync(kurDegeri);
+                    var result = await _kurDegeriService.AddAsync(viewModel);
 
                     TempData["Success"] = "Kur değeri başarıyla eklendi.";
                     return RedirectToAction(nameof(Kurlar));
@@ -412,7 +419,7 @@ namespace MuhasebeStokWebApp.Controllers.ParaBirimiModulu
                 Text = $"{p.Kod} - {p.Ad}"
             }).ToList();
 
-            return View(kurDegeri);
+            return View(viewModel);
         }
 
         /// <summary>
@@ -423,9 +430,7 @@ namespace MuhasebeStokWebApp.Controllers.ParaBirimiModulu
         {
             try
             {
-                var kurDegeri = await _context.KurDegerleri
-                    .Include(d => d.ParaBirimi)
-                    .FirstOrDefaultAsync(m => m.KurDegeriID == id && !m.Silindi);
+                var kurDegeri = await _kurDegeriService.GetViewModelByIdAsync(id);
 
                 if (kurDegeri == null)
                 {
@@ -458,9 +463,9 @@ namespace MuhasebeStokWebApp.Controllers.ParaBirimiModulu
         [HttpPost]
         [Route("KurDuzenle/{id:guid}")]
         [ValidateAntiForgeryToken]
-        public async Task<IActionResult> KurDuzenle(Guid id, KurDegeri kurDegeri)
+        public async Task<IActionResult> KurDuzenle(Guid id, ViewModels.ParaBirimiModulu.KurDegeriViewModel viewModel)
         {
-            if (id != kurDegeri.KurDegeriID)
+            if (id != viewModel.KurDegeriID)
             {
                 return NotFound();
             }
@@ -470,11 +475,11 @@ namespace MuhasebeStokWebApp.Controllers.ParaBirimiModulu
                 try
                 {
                     // Güncelleme bilgilerini ayarla
-                    kurDegeri.GuncellemeTarihi = DateTime.Now;
-                    kurDegeri.SonGuncelleyenKullaniciID = User.Identity?.Name ?? "Sistem";
+                    viewModel.GuncellemeTarihi = DateTime.Now;
+                    viewModel.SonGuncelleyenKullaniciID = User.Identity?.Name ?? "Sistem";
 
                     // Servisi kullanarak kur değerini güncelle
-                    var result = await _paraBirimiService.UpdateKurDegeriAsync(kurDegeri);
+                    var result = await _kurDegeriService.UpdateAsync(viewModel);
 
                     TempData["Success"] = "Kur değeri başarıyla güncellendi.";
                     return RedirectToAction(nameof(Kurlar));
@@ -494,7 +499,7 @@ namespace MuhasebeStokWebApp.Controllers.ParaBirimiModulu
                 Text = $"{p.Kod} - {p.Ad}"
             }).ToList();
 
-            return View(kurDegeri);
+            return View(viewModel);
         }
 
         /// <summary>
@@ -505,9 +510,7 @@ namespace MuhasebeStokWebApp.Controllers.ParaBirimiModulu
         {
             try
             {
-                var kurDegeri = await _context.KurDegerleri
-                    .Include(d => d.ParaBirimi)
-                    .FirstOrDefaultAsync(m => m.KurDegeriID == id && !m.Silindi);
+                var kurDegeri = await _kurDegeriService.GetViewModelByIdAsync(id);
 
                 if (kurDegeri == null)
                 {
@@ -624,69 +627,43 @@ namespace MuhasebeStokWebApp.Controllers.ParaBirimiModulu
         {
             try
             {
-                var iliskiler = await _paraBirimiService.GetAllParaBirimiIliskileriAsync();
+                var iliskiler = await _context.ParaBirimiIliskileri
+                    .Include(i => i.KaynakParaBirimi)
+                    .Include(i => i.HedefParaBirimi)
+                    .Where(i => !i.Silindi)
+                    .OrderByDescending(i => i.OlusturmaTarihi)
+                    .ToListAsync();
+
+                _logger.LogInformation($"{iliskiler.Count} adet para birimi ilişkisi listelendi.");
                 return View(iliskiler);
             }
             catch (Exception ex)
             {
-                await _logService.LogErrorAsync("Para birimi ilişkileri listelenirken", ex.Message);
-                TempData["Error"] = $"Para birimi ilişkileri listelenirken bir hata oluştu: {ex.Message}";
+                _logger.LogError(ex, "Para birimi ilişkileri listelenirken hata oluştu.");
+                TempData["Error"] = "Para birimi ilişkileri listelenirken bir hata oluştu.";
                 return View(new List<ParaBirimiIliski>());
             }
         }
 
         /// <summary>
-        /// Para birimi ilişkisi detayı
-        /// </summary>
-        [Route("IliskiDetay/{id:guid}")]
-        public async Task<IActionResult> IliskiDetay(Guid id)
-        {
-            try
-            {
-                var iliski = await _paraBirimiService.GetParaBirimiIliskiByIdAsync(id);
-
-                if (iliski == null)
-                {
-                    return NotFound();
-                }
-
-                return View(iliski);
-            }
-            catch (Exception ex)
-            {
-                await _logService.LogErrorAsync($"ID: {id} olan para birimi ilişkisi yükleme", ex.Message);
-                TempData["Error"] = "Para birimi ilişkisi yüklenirken bir hata oluştu: " + ex.Message;
-                return RedirectToAction(nameof(Iliskiler));
-            }
-        }
-
-        /// <summary>
-        /// Para birimi ilişkisi ekleme formu
+        /// Para birimi ilişkisi ekleme sayfası
         /// </summary>
         [Route("IliskiEkle")]
         public async Task<IActionResult> IliskiEkle()
         {
-            // Para birimleri listesini getir
-            var paraBirimleri = await _paraBirimiService.GetAllParaBirimleriAsync();
-
-            // Dropdown için ViewBag'e ekle
-            ViewBag.KaynakParaBirimleri = paraBirimleri.Select(p => new SelectListItem
-            {
-                Value = p.ParaBirimiID.ToString(),
-                Text = $"{p.Kod} - {p.Ad}"
+            // Para birimleri listesini hazırla
+            var paraBirimleri = await _paraBirimiService.GetAllParaBirimleriAsync(true);
+            
+            var paraBirimiListesi = paraBirimleri.Select(p => new SelectListItem 
+            { 
+                Value = p.ParaBirimiID.ToString(), 
+                Text = $"{p.Kod} - {p.Ad}" 
             }).ToList();
-
-            ViewBag.HedefParaBirimleri = paraBirimleri.Select(p => new SelectListItem
-            {
-                Value = p.ParaBirimiID.ToString(),
-                Text = $"{p.Kod} - {p.Ad}"
-            }).ToList();
-
-            return View(new ParaBirimiIliski
-            {
-                ParaBirimiIliskiID = Guid.NewGuid(),
-                Aktif = true
-            });
+            
+            ViewBag.KaynakParaBirimleri = paraBirimiListesi;
+            ViewBag.HedefParaBirimleri = paraBirimiListesi;
+            
+            return View(new ParaBirimiIliski());
         }
 
         /// <summary>
@@ -695,101 +672,142 @@ namespace MuhasebeStokWebApp.Controllers.ParaBirimiModulu
         [HttpPost]
         [Route("IliskiEkle")]
         [ValidateAntiForgeryToken]
-        public async Task<IActionResult> IliskiEkle(ParaBirimiIliski iliski)
+        public async Task<IActionResult> IliskiEkle([Bind("KaynakParaBirimiID,HedefParaBirimiID,Aciklama,Aktif")] ParaBirimiIliski model)
         {
             if (ModelState.IsValid)
             {
                 try
                 {
-                    if (iliski.KaynakParaBirimiID == iliski.HedefParaBirimiID)
+                    // Aynı kaynak ve hedef para birimi kontrolü
+                    if (model.KaynakParaBirimiID == model.HedefParaBirimiID)
                     {
-                        ModelState.AddModelError("", "Kaynak ve hedef para birimi aynı olamaz.");
+                        ModelState.AddModelError("HedefParaBirimiID", "Kaynak ve hedef para birimi aynı olamaz.");
                         
-                        // Para birimleri listesini yeniden getir
-                        var paraBirimleri = await _paraBirimiService.GetAllParaBirimleriAsync();
-                        ViewBag.KaynakParaBirimleri = paraBirimleri.Select(p => new SelectListItem
-                        {
-                            Value = p.ParaBirimiID.ToString(),
-                            Text = $"{p.Kod} - {p.Ad}"
-                        }).ToList();
-                        ViewBag.HedefParaBirimleri = paraBirimleri.Select(p => new SelectListItem
-                        {
-                            Value = p.ParaBirimiID.ToString(),
-                            Text = $"{p.Kod} - {p.Ad}"
-                        }).ToList();
+                        var paraBirimleri = await _paraBirimiService.GetAllParaBirimleriAsync(true);
+                        ViewBag.KaynakParaBirimleri = paraBirimleri.Select(p => new SelectListItem { Value = p.ParaBirimiID.ToString(), Text = $"{p.Kod} - {p.Ad}" }).ToList();
+                        ViewBag.HedefParaBirimleri = ViewBag.KaynakParaBirimleri;
                         
-                        return View(iliski);
+                        return View(model);
                     }
-
-                    // Oluşturma bilgilerini ayarla
-                    iliski.OlusturmaTarihi = DateTime.Now;
-                    iliski.OlusturanKullaniciID = User.Identity?.Name ?? "Sistem";
-
-                    // Servisi kullanarak ilişkiyi ekle
-                    var result = await _paraBirimiService.AddParaBirimiIliskiAsync(iliski);
-
+                    
+                    // İlişki zaten var mı kontrolü - QueryHelper kullanarak
+                    bool iliskiVarMi = await _context.ParaBirimiIliskileri
+                        .Where(i => i.KaynakParaBirimiID == model.KaynakParaBirimiID && 
+                                 i.HedefParaBirimiID == model.HedefParaBirimiID && 
+                                 !i.Silindi)
+                        .OrderBy(i => i.ParaBirimiIliskiID)
+                        .AnyAsync();
+                                       
+                    if (iliskiVarMi)
+                    {
+                        ModelState.AddModelError("", "Bu para birimleri arasında zaten bir ilişki mevcut.");
+                        
+                        var paraBirimleri = await _paraBirimiService.GetAllParaBirimleriAsync(true);
+                        ViewBag.KaynakParaBirimleri = paraBirimleri.Select(p => new SelectListItem { Value = p.ParaBirimiID.ToString(), Text = $"{p.Kod} - {p.Ad}" }).ToList();
+                        ViewBag.HedefParaBirimleri = ViewBag.KaynakParaBirimleri;
+                        
+                        return View(model);
+                    }
+                    
+                    // Model hazırlanıyor
+                    model.ParaBirimiIliskiID = Guid.NewGuid();
+                    model.OlusturmaTarihi = DateTime.Now;
+                    model.OlusturanKullaniciID = User.Identity?.Name ?? "Sistem";
+                    model.Silindi = false;
+                    
+                    // İlişki ekleniyor
+                    _context.ParaBirimiIliskileri.Add(model);
+                    await _context.SaveChangesAsync();
+                    
                     TempData["Success"] = "Para birimi ilişkisi başarıyla eklendi.";
                     return RedirectToAction(nameof(Iliskiler));
                 }
                 catch (Exception ex)
                 {
-                    ModelState.AddModelError("", $"Bir hata oluştu: {ex.Message}");
+                    _logger.LogError(ex, "Para birimi ilişkisi eklenirken hata oluştu.");
+                    ModelState.AddModelError("", $"Para birimi ilişkisi eklenirken bir hata oluştu: {ex.Message}");
                 }
             }
-
-            // Para birimleri listesini yeniden getir
-            var paraBirimleriList = await _paraBirimiService.GetAllParaBirimleriAsync();
-            ViewBag.KaynakParaBirimleri = paraBirimleriList.Select(p => new SelectListItem
-            {
-                Value = p.ParaBirimiID.ToString(),
-                Text = $"{p.Kod} - {p.Ad}"
-            }).ToList();
-            ViewBag.HedefParaBirimleri = paraBirimleriList.Select(p => new SelectListItem
-            {
-                Value = p.ParaBirimiID.ToString(),
-                Text = $"{p.Kod} - {p.Ad}"
-            }).ToList();
-
-            return View(iliski);
+            
+            // ModelState geçerli değilse, formda kullanılacak listeleri yeniden hazırla
+            var paraBirimleriListesi = await _paraBirimiService.GetAllParaBirimleriAsync(true);
+            ViewBag.KaynakParaBirimleri = paraBirimleriListesi.Select(p => new SelectListItem { Value = p.ParaBirimiID.ToString(), Text = $"{p.Kod} - {p.Ad}" }).ToList();
+            ViewBag.HedefParaBirimleri = ViewBag.KaynakParaBirimleri;
+            
+            return View(model);
         }
 
         /// <summary>
-        /// Para birimi ilişkisi düzenleme formu
+        /// Para birimi ilişkisi detay sayfası
+        /// </summary>
+        [Route("IliskiDetay/{id:guid}")]
+        public async Task<IActionResult> IliskiDetay(Guid id)
+        {
+            try
+            {
+                var iliski = await _context.ParaBirimiIliskileri
+                    .Include(i => i.KaynakParaBirimi)
+                    .Include(i => i.HedefParaBirimi)
+                    .Where(i => i.ParaBirimiIliskiID == id && !i.Silindi)
+                    .OrderBy(i => i.ParaBirimiIliskiID)
+                    .FirstOrDefaultAsync();
+                    
+                if (iliski == null)
+                {
+                    TempData["Error"] = "İlişki bulunamadı.";
+                    return RedirectToAction(nameof(Iliskiler));
+                }
+                
+                return View(iliski);
+            }
+            catch (Exception ex)
+            {
+                _logger.LogError(ex, $"Para birimi ilişkisi (ID: {id}) görüntülenirken hata oluştu.");
+                TempData["Error"] = "Para birimi ilişkisi görüntülenirken bir hata oluştu.";
+                return RedirectToAction(nameof(Iliskiler));
+            }
+        }
+
+        /// <summary>
+        /// Para birimi ilişkisi düzenleme sayfası
         /// </summary>
         [Route("IliskiDuzenle/{id:guid}")]
         public async Task<IActionResult> IliskiDuzenle(Guid id)
         {
             try
             {
-                var iliski = await _paraBirimiService.GetParaBirimiIliskiByIdAsync(id);
-
+                var iliski = await _context.ParaBirimiIliskileri
+                    .Where(i => i.ParaBirimiIliskiID == id && !i.Silindi)
+                    .OrderBy(i => i.ParaBirimiIliskiID)
+                    .FirstOrDefaultAsync();
+                    
                 if (iliski == null)
                 {
-                    return NotFound();
+                    TempData["Error"] = "İlişki bulunamadı.";
+                    return RedirectToAction(nameof(Iliskiler));
                 }
-
-                // Para birimleri listesini getir
-                var paraBirimleri = await _paraBirimiService.GetAllParaBirimleriAsync();
-
-                // Dropdown için ViewBag'e ekle
-                ViewBag.KaynakParaBirimleri = paraBirimleri.Select(p => new SelectListItem
-                {
-                    Value = p.ParaBirimiID.ToString(),
-                    Text = $"{p.Kod} - {p.Ad}"
+                
+                var paraBirimleri = await _paraBirimiService.GetAllParaBirimleriAsync(true);
+                ViewBag.KaynakParaBirimleri = paraBirimleri.Select(p => new SelectListItem 
+                { 
+                    Value = p.ParaBirimiID.ToString(), 
+                    Text = $"{p.Kod} - {p.Ad}",
+                    Selected = p.ParaBirimiID == iliski.KaynakParaBirimiID
                 }).ToList();
-
-                ViewBag.HedefParaBirimleri = paraBirimleri.Select(p => new SelectListItem
-                {
-                    Value = p.ParaBirimiID.ToString(),
-                    Text = $"{p.Kod} - {p.Ad}"
+                
+                ViewBag.HedefParaBirimleri = paraBirimleri.Select(p => new SelectListItem 
+                { 
+                    Value = p.ParaBirimiID.ToString(), 
+                    Text = $"{p.Kod} - {p.Ad}",
+                    Selected = p.ParaBirimiID == iliski.HedefParaBirimiID
                 }).ToList();
-
+                
                 return View(iliski);
             }
             catch (Exception ex)
             {
-                await _logService.LogErrorAsync($"ID: {id} olan para birimi ilişkisi yükleme", ex.Message);
-                TempData["Error"] = "Para birimi ilişkisi yüklenirken bir hata oluştu: " + ex.Message;
+                _logger.LogError(ex, $"Para birimi ilişkisi (ID: {id}) düzenleme formunda hata oluştu.");
+                TempData["Error"] = "Para birimi ilişkisi görüntülenirken bir hata oluştu.";
                 return RedirectToAction(nameof(Iliskiler));
             }
         }
@@ -800,124 +818,127 @@ namespace MuhasebeStokWebApp.Controllers.ParaBirimiModulu
         [HttpPost]
         [Route("IliskiDuzenle/{id:guid}")]
         [ValidateAntiForgeryToken]
-        public async Task<IActionResult> IliskiDuzenle(Guid id, ParaBirimiIliski iliski)
+        public async Task<IActionResult> IliskiDuzenle(Guid id, [Bind("ParaBirimiIliskiID,KaynakParaBirimiID,HedefParaBirimiID,Aciklama,Aktif")] ParaBirimiIliski model)
         {
-            if (id != iliski.ParaBirimiIliskiID)
+            if (id != model.ParaBirimiIliskiID)
             {
-                return NotFound();
+                TempData["Error"] = "Geçersiz işlem.";
+                return RedirectToAction(nameof(Iliskiler));
             }
-
+            
             if (ModelState.IsValid)
             {
                 try
                 {
-                    if (iliski.KaynakParaBirimiID == iliski.HedefParaBirimiID)
+                    // Aynı kaynak ve hedef para birimi kontrolü
+                    if (model.KaynakParaBirimiID == model.HedefParaBirimiID)
                     {
-                        ModelState.AddModelError("", "Kaynak ve hedef para birimi aynı olamaz.");
+                        ModelState.AddModelError("HedefParaBirimiID", "Kaynak ve hedef para birimi aynı olamaz.");
                         
-                        // Para birimleri listesini yeniden getir
-                        var paraBirimleri = await _paraBirimiService.GetAllParaBirimleriAsync();
-                        ViewBag.KaynakParaBirimleri = paraBirimleri.Select(p => new SelectListItem
-                        {
-                            Value = p.ParaBirimiID.ToString(),
-                            Text = $"{p.Kod} - {p.Ad}"
-                        }).ToList();
-                        ViewBag.HedefParaBirimleri = paraBirimleri.Select(p => new SelectListItem
-                        {
-                            Value = p.ParaBirimiID.ToString(),
-                            Text = $"{p.Kod} - {p.Ad}"
-                        }).ToList();
+                        var paraBirimleri = await _paraBirimiService.GetAllParaBirimleriAsync(true);
+                        ViewBag.KaynakParaBirimleri = paraBirimleri.Select(p => new SelectListItem { Value = p.ParaBirimiID.ToString(), Text = $"{p.Kod} - {p.Ad}" }).ToList();
+                        ViewBag.HedefParaBirimleri = ViewBag.KaynakParaBirimleri;
                         
-                        return View(iliski);
+                        return View(model);
                     }
-
-                    // Güncelleme bilgilerini ayarla
+                    
+                    // İlişki zaten var mı kontrolü - QueryHelper kullanarak (kendisi hariç)
+                    bool iliskiVarMi = await _context.ParaBirimiIliskileri
+                        .Where(i => i.KaynakParaBirimiID == model.KaynakParaBirimiID && 
+                                 i.HedefParaBirimiID == model.HedefParaBirimiID && 
+                                 i.ParaBirimiIliskiID != model.ParaBirimiIliskiID &&
+                                 !i.Silindi)
+                        .OrderBy(i => i.ParaBirimiIliskiID)
+                        .AnyAsync();
+                                       
+                    if (iliskiVarMi)
+                    {
+                        ModelState.AddModelError("", "Bu para birimleri arasında zaten bir ilişki mevcut.");
+                        
+                        var paraBirimleri = await _paraBirimiService.GetAllParaBirimleriAsync(true);
+                        ViewBag.KaynakParaBirimleri = paraBirimleri.Select(p => new SelectListItem { Value = p.ParaBirimiID.ToString(), Text = $"{p.Kod} - {p.Ad}" }).ToList();
+                        ViewBag.HedefParaBirimleri = ViewBag.KaynakParaBirimleri;
+                        
+                        return View(model);
+                    }
+                    
+                    // Mevcut ilişkiyi bul
+                    var iliski = await _context.ParaBirimiIliskileri
+                        .Where(i => i.ParaBirimiIliskiID == id)
+                        .OrderBy(i => i.ParaBirimiIliskiID)
+                        .FirstOrDefaultAsync();
+                    if (iliski == null || iliski.Silindi)
+                    {
+                        TempData["Error"] = "İlişki bulunamadı.";
+                        return RedirectToAction(nameof(Iliskiler));
+                    }
+                    
+                    // İlişkiyi güncelle
+                    iliski.KaynakParaBirimiID = model.KaynakParaBirimiID;
+                    iliski.HedefParaBirimiID = model.HedefParaBirimiID;
+                    iliski.Aciklama = model.Aciklama;
+                    iliski.Aktif = model.Aktif;
                     iliski.GuncellemeTarihi = DateTime.Now;
                     iliski.SonGuncelleyenKullaniciID = User.Identity?.Name ?? "Sistem";
-
-                    // Servisi kullanarak ilişkiyi güncelle
-                    var result = await _paraBirimiService.UpdateParaBirimiIliskiAsync(iliski);
-
+                    
+                    _context.Update(iliski);
+                    await _context.SaveChangesAsync();
+                    
                     TempData["Success"] = "Para birimi ilişkisi başarıyla güncellendi.";
                     return RedirectToAction(nameof(Iliskiler));
                 }
                 catch (Exception ex)
                 {
-                    ModelState.AddModelError("", $"Bir hata oluştu: {ex.Message}");
+                    _logger.LogError(ex, $"Para birimi ilişkisi (ID: {id}) güncellenirken hata oluştu.");
+                    ModelState.AddModelError("", $"Para birimi ilişkisi güncellenirken bir hata oluştu: {ex.Message}");
                 }
             }
-
-            // Para birimleri listesini yeniden getir
-            var paraBirimleriList = await _paraBirimiService.GetAllParaBirimleriAsync();
-            ViewBag.KaynakParaBirimleri = paraBirimleriList.Select(p => new SelectListItem
-            {
-                Value = p.ParaBirimiID.ToString(),
-                Text = $"{p.Kod} - {p.Ad}"
-            }).ToList();
-            ViewBag.HedefParaBirimleri = paraBirimleriList.Select(p => new SelectListItem
-            {
-                Value = p.ParaBirimiID.ToString(),
-                Text = $"{p.Kod} - {p.Ad}"
-            }).ToList();
-
-            return View(iliski);
-        }
-
-        /// <summary>
-        /// Para birimi ilişkisi silme onayı
-        /// </summary>
-        [Route("IliskiSil/{id:guid}")]
-        public async Task<IActionResult> IliskiSil(Guid id)
-        {
-            try
-            {
-                var iliski = await _paraBirimiService.GetParaBirimiIliskiByIdAsync(id);
-
-                if (iliski == null)
-                {
-                    return NotFound();
-                }
-
-                return View(iliski);
-            }
-            catch (Exception ex)
-            {
-                await _logService.LogErrorAsync($"ID: {id} olan para birimi ilişkisi yükleme", ex.Message);
-                TempData["Error"] = "Para birimi ilişkisi yüklenirken bir hata oluştu: " + ex.Message;
-                return RedirectToAction(nameof(Iliskiler));
-            }
+            
+            // ModelState geçerli değilse, formda kullanılacak listeleri yeniden hazırla
+            var paraBirimleriListesi = await _paraBirimiService.GetAllParaBirimleriAsync(true);
+            ViewBag.KaynakParaBirimleri = paraBirimleriListesi.Select(p => new SelectListItem { Value = p.ParaBirimiID.ToString(), Text = $"{p.Kod} - {p.Ad}" }).ToList();
+            ViewBag.HedefParaBirimleri = ViewBag.KaynakParaBirimleri;
+            
+            return View(model);
         }
 
         /// <summary>
         /// Para birimi ilişkisi silme işlemi
         /// </summary>
         [HttpPost]
-        [Route("IliskiSil/{id:guid}")]
+        [Route("IliskiSil")]
         [ValidateAntiForgeryToken]
-        [ActionName("IliskiSil")]
-        public async Task<IActionResult> IliskiSilOnay(Guid id)
+        public async Task<IActionResult> IliskiSil(Guid id)
         {
             try
             {
-                var result = await _paraBirimiService.DeleteParaBirimiIliskiAsync(id);
-
-                if (result)
+                var iliski = await _context.ParaBirimiIliskileri
+                    .Where(i => i.ParaBirimiIliskiID == id)
+                    .OrderBy(i => i.ParaBirimiIliskiID)
+                    .FirstOrDefaultAsync();
+                if (iliski == null)
                 {
-                    TempData["Success"] = "Para birimi ilişkisi başarıyla silindi.";
+                    TempData["Error"] = "İlişki bulunamadı.";
+                    return RedirectToAction(nameof(Iliskiler));
                 }
-                else
-                {
-                    TempData["Error"] = "Para birimi ilişkisi silinirken bir sorun oluştu.";
-                }
-
-                return RedirectToAction(nameof(Iliskiler));
+                
+                // Soft delete
+                iliski.Silindi = true;
+                iliski.GuncellemeTarihi = DateTime.Now;
+                iliski.SonGuncelleyenKullaniciID = User.Identity?.Name ?? "Sistem";
+                
+                _context.Update(iliski);
+                await _context.SaveChangesAsync();
+                
+                TempData["Success"] = "Para birimi ilişkisi başarıyla silindi.";
             }
             catch (Exception ex)
             {
-                await _logService.LogErrorAsync($"ID: {id} olan para birimi ilişkisi silinirken", ex.Message);
-                TempData["Error"] = "Para birimi ilişkisi silinirken bir hata oluştu: " + ex.Message;
-                return RedirectToAction(nameof(Iliskiler));
+                _logger.LogError(ex, $"Para birimi ilişkisi (ID: {id}) silinirken hata oluştu.");
+                TempData["Error"] = "Para birimi ilişkisi silinirken bir hata oluştu.";
             }
+            
+            return RedirectToAction(nameof(Iliskiler));
         }
         #endregion
     }

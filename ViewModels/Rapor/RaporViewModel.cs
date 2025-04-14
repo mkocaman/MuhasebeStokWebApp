@@ -32,7 +32,7 @@ namespace MuhasebeStokWebApp.ViewModels.Rapor
         public Guid? BankaID { get; set; }
 
         [Display(Name = "Cari")]
-        public int? CariID { get; set; }
+        public Guid? CariID { get; set; }
 
         [Display(Name = "Ürün")]
         public Guid? UrunID { get; set; }

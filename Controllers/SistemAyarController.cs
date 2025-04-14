@@ -80,8 +80,8 @@ namespace MuhasebeStokWebApp.Controllers
             catch (Exception ex)
             {
                 _logger.LogError(ex, "E-posta ayarları görüntülenirken hata oluştu");
-                _logService.LogHata("E-posta ayarları görüntülenirken hata oluştu", ex.Message, User.Identity.Name);
-                TempData["ErrorMessage"] = "E-posta ayarları yüklenirken bir hata oluştu: " + ex.Message;
+                _logService.LogHata("E-posta ayarları görüntülenirken hata oluştu", ex.Message, User.Identity?.Name ?? "Anonim");
+                TempData["ErrorMessage"] = "Ayarlar yüklenirken bir hata oluştu: " + ex.Message;
                 return View(new EmailAyarlariViewModel());
             }
         }
@@ -136,8 +136,9 @@ namespace MuhasebeStokWebApp.Controllers
             catch (Exception ex)
             {
                 _logger.LogError(ex, "Test e-postası gönderilirken hata oluştu");
-                _logService.LogHata("Test e-postası gönderilirken hata oluştu", ex.Message, User.Identity.Name);
-                return Json(new { success = false, message = "E-posta gönderilirken bir hata oluştu: " + ex.Message });
+                _logService.LogHata("Test e-postası gönderilirken hata oluştu", ex.Message, User.Identity?.Name ?? "Anonim");
+                TempData["ErrorMessage"] = "Test e-postası gönderilirken bir hata oluştu: " + ex.Message;
+                return View("Email");
             }
         }
 
@@ -179,7 +180,7 @@ namespace MuhasebeStokWebApp.Controllers
             catch (Exception ex)
             {
                 _logger.LogError(ex, "Bildirim ayarları görüntülenirken hata oluştu");
-                _logService.LogHata("Bildirim ayarları görüntülenirken hata oluştu", ex.Message, User.Identity.Name);
+                _logService.LogHata("Bildirim ayarları görüntülenirken hata oluştu", ex.Message, User.Identity?.Name ?? "Anonim");
                 TempData["ErrorMessage"] = "Bildirim ayarları yüklenirken bir hata oluştu: " + ex.Message;
                 return View(new BildirimAyarlariViewModel());
             }
@@ -237,7 +238,7 @@ namespace MuhasebeStokWebApp.Controllers
             catch (Exception ex)
             {
                 _logger.LogError(ex, "Dil ayarları görüntülenirken hata oluştu");
-                _logService.LogHata("Dil ayarları görüntülenirken hata oluştu", ex.Message, User.Identity.Name);
+                _logService.LogHata("Dil ayarları görüntülenirken hata oluştu", ex.Message, User.Identity?.Name ?? "Anonim");
                 TempData["ErrorMessage"] = "Dil ayarları yüklenirken bir hata oluştu: " + ex.Message;
                 return View(new DilAyarlariViewModel());
             }

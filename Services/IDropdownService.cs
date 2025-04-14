@@ -13,6 +13,8 @@ namespace MuhasebeStokWebApp.Services
         Task<SelectList> GetDepoSelectListAsync(Guid? selectedDepoId = null);
         SelectList GetIrsaliyeTuruSelectList(string selectedTur = null);
         SelectList GetDurumSelectList(string selectedDurum = null);
+        Task<SelectList> GetCariSelectList(Guid? selectedCariId = null);
+        Task<SelectList> GetSozlesmeSelectListByCariId(Guid cariId, Guid? selectedSozlesmeId = null);
         
         // Yeni eklenen metodlar
         Task<Dictionary<string, SelectList>> PrepareCommonDropdownsAsync(Guid? selectedCariId = null, Guid? selectedUrunId = null);

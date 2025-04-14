@@ -1,0 +1,133 @@
+@model MuhasebeStokWebApp.ViewModels.Banka.BankaHareketEditViewModel
+@{
+    ViewData["Title"] = "Hareket Düzenle";
+    Layout = "~/Views/Shared/_Layout.cshtml";
+    var bankaHesap = ViewBag.BankaHesap as MuhasebeStokWebApp.Data.Entities.BankaHesap;
+}
+
+<div class="container-fluid px-4">
+    <div class="row mt-4">
+        <div class="col-md-12">
+            <div class="card">
+                <div class="card-header bg-primary text-white">
+                    <div class="d-flex justify-content-between align-items-center">
+                        <h5 class="mb-0">Banka Hareketi Düzenle</h5>
+                        <a asp-action="HesapHareketler" asp-route-id="@Model.BankaHesapID" class="btn btn-sm btn-light">
+                            <i class="fas fa-arrow-left"></i> Hareketlere Dön
+                        </a>
+                    </div>
+                </div>
+                <div class="card-body">
+                    <div class="alert alert-info mb-4">
+                        <div class="row">
+                            <div class="col-md-4">
+                                <strong>Banka:</strong> @bankaHesap.Banka.BankaAdi
+                            </div>
+                            <div class="col-md-4">
+                                <strong>Hesap:</strong> @bankaHesap.HesapAdi
+                            </div>
+                            <div class="col-md-4">
+                                <strong>Bakiye:</strong> @bankaHesap.GuncelBakiye.ToString("N2") @bankaHesap.ParaBirimi
+                            </div>
+                        </div>
+                    </div>
+
+                    <form asp-action="HareketDuzenle" method="post">
+                        <input type="hidden" asp-for="BankaHareketID" />
+                        <input type="hidden" asp-for="BankaHesapID" />
+                        <div asp-validation-summary="ModelOnly" class="text-danger"></div>
+
+                        <div class="row">
+                            <div class="col-md-6">
+                                <div class="form-group mb-3">
+                                    <label asp-for="HareketTipi" class="control-label"></label>
+                                    <select asp-for="HareketTipi" asp-items="Html.GetEnumSelectList<MuhasebeStokWebApp.Enums.BankaHareketTipi>()" class="form-select">
+                                    </select>
+                                    <span asp-validation-for="HareketTipi" class="text-danger"></span>
+                                </div>
+                                
+                                <div class="form-group mb-3">
+                                    <label asp-for="Tarih" class="control-label"></label>
+                                    <input asp-for="Tarih" type="date" class="form-control" />
+                                    <span asp-validation-for="Tarih" class="text-danger"></span>
+                                </div>
+                                
+                                <div class="form-group mb-3">
+                                    <label asp-for="Tutar" class="control-label"></label>
+                                    <div class="input-group">
+                                        <input asp-for="Tutar" type="number" step="0.01" min="0.01" class="form-control" />
+                                        <span class="input-group-text">@bankaHesap.ParaBirimi</span>
+                                    </div>
+                                    <span asp-validation-for="Tutar" class="text-danger"></span>
+                                </div>
+                                
+                                <div class="form-group mb-3">
+                                    <label asp-for="ReferansNo" class="control-label"></label>
+                                    <input asp-for="ReferansNo" class="form-control" />
+                                    <span asp-validation-for="ReferansNo" class="text-danger"></span>
+                                </div>
+                            </div>
+                            
+                            <div class="col-md-6">
+                                <div class="form-group mb-3">
+                                    <label asp-for="ReferansTuru" class="control-label"></label>
+                                    <select asp-for="ReferansTuru" asp-items="ViewBag.ReferansTurleri" class="form-select">
+                                    </select>
+                                    <span asp-validation-for="ReferansTuru" class="text-danger"></span>
+                                </div>
+                                
+                                <div class="form-group mb-3">
+                                    <label asp-for="DekontNo" class="control-label"></label>
+                                    <input asp-for="DekontNo" class="form-control" />
+                                    <span asp-validation-for="DekontNo" class="text-danger"></span>
+                                </div>
+                                
+                                <div class="form-check mb-3">
+                                    <input asp-for="CariIleDengelensin" class="form-check-input" />
+                                    <label asp-for="CariIleDengelensin" class="form-check-label"></label>
+                                </div>
+                                
+                                <div id="cariSecimDiv" class="form-group mb-3" style="display: @(Model.CariIleDengelensin ? "block" : "none");">
+                                    <label asp-for="CariID" class="control-label"></label>
+                                    <select asp-for="CariID" asp-items="ViewBag.Cariler" class="form-select">
+                                        <option value="">-- Cari Seçiniz --</option>
+                                    </select>
+                                    <span asp-validation-for="CariID" class="text-danger"></span>
+                                </div>
+                            </div>
+                        </div>
+                        
+                        <div class="form-group mb-3">
+                            <label asp-for="Aciklama" class="control-label"></label>
+                            <textarea asp-for="Aciklama" class="form-control" rows="3"></textarea>
+                            <span asp-validation-for="Aciklama" class="text-danger"></span>
+                        </div>
+                        
+                        <div class="form-group text-end">
+                            <button type="submit" class="btn btn-primary"><i class="fas fa-save"></i> Kaydet</button>
+                            <a asp-action="HesapHareketler" asp-route-id="@Model.BankaHesapID" class="btn btn-secondary"><i class="fas fa-times"></i> İptal</a>
+                        </div>
+                    </form>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+
+@section Scripts {
+    @{await Html.RenderPartialAsync("_ValidationScriptsPartial");}
+    
+    <script>
+        $(document).ready(function () {
+            // Cari ile dengelensin checkbox'ına tıklandığında cari seçim alanını göster/gizle
+            $('#CariIleDengelensin').change(function () {
+                if ($(this).is(':checked')) {
+                    $('#cariSecimDiv').show();
+                } else {
+                    $('#cariSecimDiv').hide();
+                    $('#CariID').val('');
+                }
+            });
+        });
+    </script>
+} 

@@ -67,8 +67,8 @@ namespace MuhasebeStokWebApp.Services.Auth
                     var user = await _userManager.FindByEmailAsync(model.Email);
                     var claims = new List<Claim>
                     {
-                        new Claim(ClaimTypes.Name, user.UserName),
-                        new Claim(ClaimTypes.Email, user.Email),
+                        new Claim(ClaimTypes.Name, user.UserName ?? string.Empty),
+                        new Claim(ClaimTypes.Email, user.Email ?? string.Empty),
                         new Claim(ClaimTypes.NameIdentifier, user.Id)
                     };
 
@@ -89,12 +89,12 @@ namespace MuhasebeStokWebApp.Services.Auth
                     : "Geçersiz giriş denemesi.";
                 
                 await _logService.LogWarningAsync("AuthService.LoginAsync", $"Giriş başarısız: {model.Email}. Hata: {errorMessage}");
-                return (false, new[] { errorMessage }, null);
+                return (false, new[] { errorMessage }, null!);
             }
             catch (Exception ex)
             {
                 await _logService.LogErrorAsync("AuthService.LoginAsync", $"Hata: {ex.Message}");
-                return (false, new[] { "Bir hata oluştu. Lütfen daha sonra tekrar deneyin." }, null);
+                return (false, new[] { "Bir hata oluştu. Lütfen daha sonra tekrar deneyin." }, null!);
             }
         }
 

@@ -18,18 +18,32 @@ namespace MuhasebeStokWebApp.Data.Entities
         [StringLength(200)]
         public string UrunAdi { get; set; } = string.Empty;
         
+        [StringLength(500)]
+        public string Aciklama { get; set; } = string.Empty;
+        
         // Birim ilişkisi
         public Guid? BirimID { get; set; }
         
         [ForeignKey("BirimID")]
         public virtual Birim? Birim { get; set; }
         
-        public decimal StokMiktar { get; set; }
-        
         public bool Aktif { get; set; }
         
         // KDV Oranı
-        public int KDVOrani { get; set; } = 18; // Varsayılan %18
+        public int KDVOrani { get; set; } = 12; // Varsayılan %12
+        
+        // Dövizli Fiyat Alanları (USD)
+        public decimal? DovizliListeFiyati { get; set; }
+        public decimal? DovizliMaliyetFiyati { get; set; }
+        public decimal? DovizliSatisFiyati { get; set; }
+        
+        // StokMiktar property'si eklendi
+        [NotMapped] // Veritabanında saklanmaması için
+        public decimal StokMiktar { get; set; } = 0;
+        
+        // NOT: StokMiktar alanı statik olarak tutulmamaktadır. 
+        // Stok miktarı StokService.GetDinamikStokMiktari metodu ile dinamik olarak hesaplanmaktadır.
+        // Olası kullanımlar için: var stokMiktar = await _stokService.GetDinamikStokMiktari(urun.UrunID);
         
         public Guid? OlusturanKullaniciID { get; set; }
         

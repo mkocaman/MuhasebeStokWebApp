@@ -85,6 +85,10 @@ namespace MuhasebeStokWebApp.Data.Entities
         [Required]
         public bool Silindi { get; set; } = false;
         
+        // Concurrency kontrolü için RowVersion alanı
+        [Timestamp]
+        public byte[]? RowVersion { get; set; }
+        
         // Navigation properties
         [ForeignKey("UrunID")]
         public virtual Urun? Urun { get; set; }

@@ -16,6 +16,9 @@ namespace MuhasebeStokWebApp.Data.Entities
         [StringLength(50)]
         public string HareketTuru { get; set; }
         
+        [Required]
+        public bool Silindi { get; set; } = false;
+        
         // Navigation properties
         public virtual ICollection<Fatura> Faturalar { get; set; }
         

@@ -1,0 +1,149 @@
+@model MuhasebeStokWebApp.ViewModels.Urun.UrunImportListViewModel
+
+@{
+    ViewData["Title"] = "Excel İçe Aktarma Önizlemesi";
+    Layout = "~/Views/Shared/_Layout.cshtml";
+}
+
+<div class="container-fluid">
+    <div class="card">
+        <div class="card-header bg-warning text-dark">
+            <div class="d-flex justify-content-between align-items-center">
+                <h4 class="mb-0"><i class="fas fa-file-import"></i> Excel'den Ürün İçe Aktarma Önizlemesi</h4>
+                <div>
+                    <a asp-action="Index" class="btn btn-outline-dark">
+                        <i class="fas fa-arrow-left"></i> Listeye Dön
+                    </a>
+                </div>
+            </div>
+        </div>
+        <div class="card-body">
+            @if (Model.Urunler == null || !Model.Urunler.Any())
+            {
+                <div class="alert alert-warning">
+                    <i class="fas fa-exclamation-triangle"></i> İçe aktarılacak ürün bulunamadı.
+                </div>
+            }
+            else
+            {
+                <div class="alert alert-info">
+                    <i class="fas fa-info-circle"></i> Excel dosyasından @Model.Urunler.Count ürün yüklendi. İçe aktarmak istediğiniz ürünleri seçin ve "Seçili Ürünleri İçe Aktar" butonuna tıklayın.
+                </div>
+                
+                <form asp-action="ConfirmImport" method="post">
+                    <div class="table-responsive">
+                        <table class="table table-hover table-bordered" id="importPreviewTable">
+                            <thead class="table-primary">
+                                <tr>
+                                    <th>
+                                        <div class="form-check">
+                                            <input type="checkbox" class="form-check-input" id="selectAll">
+                                            <label class="form-check-label" for="selectAll">Tümünü Seç</label>
+                                        </div>
+                                    </th>
+                                    <th>Ürün Kodu</th>
+                                    <th>Ürün Adı</th>
+                                    <th>Kategori</th>
+                                    <th>Birim</th>
+                                    <th>KDV %</th>
+                                    <th>Liste Fiyatı</th>
+                                    <th>Satış Fiyatı</th>
+                                    <th>Durum</th>
+                                </tr>
+                            </thead>
+                            <tbody>
+                                @for (int i = 0; i < Model.Urunler.Count; i++)
+                                {
+                                    var urun = Model.Urunler[i];
+                                    string rowClass = urun.MevcutMu ? "table-warning" : "";
+                                    
+                                    <tr class="@rowClass">
+                                        <td>
+                                            <div class="form-check">
+                                                <input type="checkbox" class="form-check-input select-item" 
+                                                       name="urunler[@i].Secili" id="Secili_@i" 
+                                                       value="true" @(urun.Secili ? "checked" : "")>
+                                                <input type="hidden" name="urunler[@i].UrunKodu" value="@urun.UrunKodu" />
+                                                <input type="hidden" name="urunler[@i].UrunAdi" value="@urun.UrunAdi" />
+                                                <input type="hidden" name="urunler[@i].KategoriAdi" value="@urun.KategoriAdi" />
+                                                <input type="hidden" name="urunler[@i].BirimAdi" value="@urun.BirimAdi" />
+                                                <input type="hidden" name="urunler[@i].KDVOrani" value="@urun.KDVOrani" />
+                                                <input type="hidden" name="urunler[@i].ListeFiyati" value="@urun.ListeFiyati" />
+                                                <input type="hidden" name="urunler[@i].MaliyetFiyati" value="@urun.MaliyetFiyati" />
+                                                <input type="hidden" name="urunler[@i].SatisFiyati" value="@urun.SatisFiyati" />
+                                                <input type="hidden" name="urunler[@i].Aktif" value="@urun.Aktif" />
+                                            </div>
+                                        </td>
+                                        <td>@urun.UrunKodu</td>
+                                        <td>@urun.UrunAdi</td>
+                                        <td>@urun.KategoriAdi</td>
+                                        <td>@urun.BirimAdi</td>
+                                        <td>@urun.KDVOrani</td>
+                                        <td class="text-end">@urun.ListeFiyati.ToString("N2") ₺</td>
+                                        <td class="text-end">@urun.SatisFiyati.ToString("N2") ₺</td>
+                                        <td>
+                                            @if (urun.MevcutMu)
+                                            {
+                                                <span class="badge bg-warning">Mevcut</span>
+                                                <small class="text-muted d-block">@urun.MevcutUrunBilgisi</small>
+                                            }
+                                            else
+                                            {
+                                                <span class="badge bg-success">Yeni</span>
+                                            }
+                                        </td>
+                                    </tr>
+                                }
+                            </tbody>
+                        </table>
+                    </div>
+                    
+                    <div class="mt-3 d-flex justify-content-end">
+                        <a asp-action="Index" class="btn btn-secondary me-2">
+                            <i class="fas fa-times"></i> İptal
+                        </a>
+                        <button type="submit" class="btn btn-success">
+                            <i class="fas fa-check"></i> Seçili Ürünleri İçe Aktar
+                        </button>
+                    </div>
+                </form>
+            }
+        </div>
+    </div>
+</div>
+
+@section Scripts {
+    <script>
+        $(document).ready(function () {
+            // Tümünü seç/kaldır
+            $("#selectAll").change(function () {
+                $(".select-item").prop('checked', $(this).prop('checked'));
+            });
+            
+            // Bireysel seçimler değiştiğinde tümünü seç durumunu güncelle
+            $(".select-item").change(function () {
+                if (!$(this).prop('checked')) {
+                    $("#selectAll").prop('checked', false);
+                } else {
+                    var allChecked = true;
+                    $(".select-item").each(function () {
+                        if (!$(this).prop('checked')) {
+                            allChecked = false;
+                            return false;
+                        }
+                    });
+                    $("#selectAll").prop('checked', allChecked);
+                }
+            });
+            
+            // DataTable başlat
+            $("#importPreviewTable").DataTable({
+                "language": {
+                    "url": "//cdn.datatables.net/plug-ins/1.10.25/i18n/Turkish.json"
+                },
+                "pageLength": 25,
+                "ordering": true
+            });
+        });
+    </script>
+} 

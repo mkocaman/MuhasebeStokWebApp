@@ -50,8 +50,27 @@
                     <div class="col-md-6">
                         <div class="input-group input-group-static mb-4">
                             <label asp-for="Tarih" class="ms-0"></label>
-                            <input asp-for="Tarih" class="form-control" type="date" />
+                            <input asp-for="Tarih" class="form-control" type="date" value="@DateTime.Now.ToString("yyyy-MM-dd")" />
                             <span asp-validation-for="Tarih" class="text-danger"></span>
+                        </div>
+                    </div>
+                </div>
+                
+                <div class="row mb-4">
+                    <div class="col-md-6">
+                        <div class="input-group input-group-static mb-4">
+                            <label asp-for="ReferansNo" class="ms-0"></label>
+                            <input asp-for="ReferansNo" class="form-control" placeholder="Sayım referans no giriniz" />
+                            <span asp-validation-for="ReferansNo" class="text-danger"></span>
+                        </div>
+                    </div>
+                    <div class="col-md-6">
+                        <div class="input-group input-group-static mb-4">
+                            <label asp-for="ParaBirimi" class="ms-0"></label>
+                            <select asp-for="ParaBirimi" class="form-control" asp-items="ViewBag.ParaBirimleri">
+                                <option value="">Para Birimi Seçiniz</option>
+                            </select>
+                            <span asp-validation-for="ParaBirimi" class="text-danger"></span>
                         </div>
                     </div>
                 </div>

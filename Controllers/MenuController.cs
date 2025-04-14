@@ -312,7 +312,7 @@ namespace MuhasebeStokWebApp.Controllers
                 await _logService.LogInfoAsync("MenuController.Edit", $"Menü başarıyla güncellendi. MenuID: {menu.MenuID}");
                 
                 // Mevcut rol-menü ilişkilerini sil ve yenilerini ekle
-                await _context.Database.ExecuteSqlRawAsync($"DELETE FROM \"MenuRoller\" WHERE \"MenuID\" = '{id}'");
+                await _context.Database.ExecuteSqlAsync($"DELETE FROM \"MenuRoller\" WHERE \"MenuID\" = {id}");
                 await _logService.AddLogAsync("Bilgi", $"Menü ID: {id} için mevcut tüm rol ilişkileri silindi.", "MenuController/Edit");
                 
                 // Yeni rol-menü ilişkilerini ekle

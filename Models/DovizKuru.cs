@@ -61,7 +61,16 @@ namespace MuhasebeStokWebApp.Models
         [Column(TypeName = "decimal(18, 6)")]
         [Display(Name = "Efektif Alış")]
         [DisplayFormat(DataFormatString = "{0:N6}", ApplyFormatInEditMode = false)]
-        public decimal EfektifAlis { get; set; }
+        public decimal EfektifAlis 
+        { 
+            get
+            {
+                // Varsayılan olarak %2 marj kullanılıyor
+                decimal marj = 0.02m;
+                return Math.Round(Alis * (1 - marj), 6);
+            }
+            set { } // Set metodu gerekliydi, boş bırakıldı
+        }
 
         /// <summary>
         /// Efektif satış fiyatı
@@ -70,7 +79,16 @@ namespace MuhasebeStokWebApp.Models
         [Column(TypeName = "decimal(18, 6)")]
         [Display(Name = "Efektif Satış")]
         [DisplayFormat(DataFormatString = "{0:N6}", ApplyFormatInEditMode = false)]
-        public decimal EfektifSatis { get; set; }
+        public decimal EfektifSatis 
+        { 
+            get
+            {
+                // Varsayılan olarak %2 marj kullanılıyor
+                decimal marj = 0.02m;
+                return Math.Round(Satis * (1 + marj), 6);
+            }
+            set { } // Set metodu gerekliydi, boş bırakıldı
+        }
 
         /// <summary>
         /// Kurun geçerli olduğu tarih

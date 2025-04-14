@@ -1,4 +1,5 @@
-@model MuhasebeStokWebApp.Data.Entities.ParaBirimiModulu.KurDegeri
+@model MuhasebeStokWebApp.ViewModels.ParaBirimiModulu.KurDegeriViewModel
+
 @{
     ViewData["Title"] = "Kur Sil";
 }
@@ -6,7 +7,7 @@
 <div class="container-fluid">
     <div class="card">
         <div class="card-header bg-danger text-white d-flex justify-content-between align-items-center">
-            <h4 class="mb-0">Kur Silme Onayı</h4>
+            <h4 class="mb-0">Kur Sil</h4>
             <div>
                 <a asp-action="Kurlar" class="btn btn-secondary btn-sm">
                     <i class="fas fa-arrow-left"></i> Listeye Dön
@@ -15,50 +16,45 @@
         </div>
         <div class="card-body">
             <div class="alert alert-warning">
-                <h5><i class="fas fa-exclamation-triangle"></i> Uyarı</h5>
-                <p>Aşağıdaki kur değerini silmek istediğinize emin misiniz?</p>
+                <i class="fas fa-exclamation-triangle"></i> 
+                <strong>Uyarı:</strong> Bu kur değerini silmek istediğinizden emin misiniz? Bu işlem geri alınamaz.
             </div>
-            
             <div class="row">
                 <div class="col-md-6">
                     <dl class="row">
                         <dt class="col-sm-4">Para Birimi:</dt>
-                        <dd class="col-sm-8">@Model.ParaBirimi.Kod (@Model.ParaBirimi.Ad)</dd>
+                        <dd class="col-sm-8">@Model.ParaBirimiAdi</dd>
 
                         <dt class="col-sm-4">Tarih:</dt>
                         <dd class="col-sm-8">@Model.Tarih.ToString("dd.MM.yyyy")</dd>
 
                         <dt class="col-sm-4">Alış:</dt>
-                        <dd class="col-sm-8">@Model.Alis.ToString("N" + Model.ParaBirimi.OndalikHassasiyet)</dd>
+                        <dd class="col-sm-8">@Model.Alis.ToString("N4")</dd>
                     </dl>
                 </div>
                 <div class="col-md-6">
                     <dl class="row">
                         <dt class="col-sm-4">Satış:</dt>
-                        <dd class="col-sm-8">@Model.Satis.ToString("N" + Model.ParaBirimi.OndalikHassasiyet)</dd>
+                        <dd class="col-sm-8">@Model.Satis.ToString("N4")</dd>
 
-                        <dt class="col-sm-4">Efektif Alış:</dt>
-                        <dd class="col-sm-8">@Model.Efektif_Alis.ToString("N" + Model.ParaBirimi.OndalikHassasiyet)</dd>
-
-                        <dt class="col-sm-4">Efektif Satış:</dt>
-                        <dd class="col-sm-8">@Model.Efektif_Satis.ToString("N" + Model.ParaBirimi.OndalikHassasiyet)</dd>
+                        <dt class="col-sm-4">Oluşturma Tarihi:</dt>
+                        <dd class="col-sm-8">@Model.OlusturmaTarihi.ToString("dd.MM.yyyy HH:mm")</dd>
                     </dl>
                 </div>
             </div>
-
-            <div class="mt-4">
-                <form asp-action="KurSil" method="post">
-                    <input type="hidden" asp-for="KurDegeriID" />
-                    <div class="d-flex justify-content-between">
-                        <a asp-action="Kurlar" class="btn btn-secondary">
-                            <i class="fas fa-times"></i> İptal
-                        </a>
-                        <button type="submit" class="btn btn-danger">
-                            <i class="fas fa-trash"></i> Sil
-                        </button>
-                    </div>
-                </form>
-            </div>
+        </div>
+        <div class="card-footer">
+            <form asp-action="KurSil" method="post">
+                <input type="hidden" asp-for="KurDegeriID" />
+                <div class="d-flex justify-content-between">
+                    <a asp-action="Kurlar" class="btn btn-secondary">
+                        <i class="fas fa-arrow-left"></i> İptal
+                    </a>
+                    <button type="submit" class="btn btn-danger">
+                        <i class="fas fa-trash"></i> Sil
+                    </button>
+                </div>
+            </form>
         </div>
     </div>
 </div> 

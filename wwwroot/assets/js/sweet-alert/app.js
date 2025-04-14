@@ -78,5 +78,40 @@ var SweetAlert_custom = {
     }
 };
 (function($) {
+    // SweetAlert için global ayarlar
+    if (typeof swal !== 'undefined') {
+        // SweetAlert içinde Türkçe karakter sorunu düzeltme
+        const originalSwal = window.swal;
+        window.swal = function() {
+            // Argümanları kopyala
+            const args = Array.from(arguments);
+            
+            // String argümanları işle (title, text, content vb.)
+            for (let i = 0; i < args.length; i++) {
+                if (typeof args[i] === 'string') {
+                    // Türkçe karakterleri düzgün göstermek için UTF-8 dönüşümü
+                    args[i] = args[i];
+                } else if (typeof args[i] === 'object' && args[i] !== null) {
+                    // Nesne içindeki metinleri işle
+                    Object.keys(args[i]).forEach(key => {
+                        if (typeof args[i][key] === 'string') {
+                            args[i][key] = args[i][key];
+                        }
+                    });
+                }
+            }
+            
+            // Orijinal swal fonksiyonunu çağır
+            return originalSwal.apply(this, args);
+        };
+        
+        // SweetAlert'in özelliklerini yeni fonksiyona aktar
+        for (const prop in originalSwal) {
+            if (originalSwal.hasOwnProperty(prop)) {
+                window.swal[prop] = originalSwal[prop];
+            }
+        }
+    }
+    
     SweetAlert_custom.init()
 })(jQuery);

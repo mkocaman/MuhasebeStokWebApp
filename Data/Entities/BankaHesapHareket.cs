@@ -64,13 +64,16 @@ namespace MuhasebeStokWebApp.Data.Entities
         
         // Karşı taraf bilgisi
         [StringLength(200)]
-        public string KarsiUnvan { get; set; }
+        public string? KarsiUnvan { get; set; }
         
         [StringLength(50)]
-        public string KarsiBankaAdi { get; set; }
+        public string? KarsiBankaAdi { get; set; }
         
         [StringLength(50)]
-        public string KarsiIBAN { get; set; }
+        public string? KarsiIBAN { get; set; }
+        
+        [StringLength(10)]
+        public string KarsiParaBirimi { get; set; } = string.Empty;
         
         // Navigation properties
         [ForeignKey("BankaHesapID")]

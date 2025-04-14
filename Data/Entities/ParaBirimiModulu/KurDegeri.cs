@@ -16,14 +16,14 @@ namespace MuhasebeStokWebApp.Data.Entities.ParaBirimiModulu
         /// Kur değeri benzersiz kimliği
         /// </summary>
         [Key]
-        public Guid KurDegeriID { get; set; }
+        public Guid KurDegeriID { get; set; } = Guid.NewGuid();
         
         /// <summary>
         /// Para birimi ID'si
         /// </summary>
         [Required(ErrorMessage = "Para birimi ID gereklidir.")]
         [Display(Name = "Para Birimi")]
-        public Guid ParaBirimiID { get; set; }
+        public Guid? ParaBirimiID { get; set; }
         
         /// <summary>
         /// Kurun geçerli olduğu tarih
@@ -31,7 +31,7 @@ namespace MuhasebeStokWebApp.Data.Entities.ParaBirimiModulu
         [Required(ErrorMessage = "Tarih gereklidir.")]
         [Display(Name = "Tarih")]
         [DataType(DataType.Date)]
-        public DateTime Tarih { get; set; }
+        public DateTime Tarih { get; set; } = DateTime.Now;
         
         /// <summary>
         /// Alış değeri
@@ -48,20 +48,6 @@ namespace MuhasebeStokWebApp.Data.Entities.ParaBirimiModulu
         [Display(Name = "Satış")]
         [Column(TypeName = "decimal(18,6)")]
         public decimal Satis { get; set; }
-        
-        /// <summary>
-        /// Efektif alış değeri
-        /// </summary>
-        [Display(Name = "Efektif Alış")]
-        [Column(TypeName = "decimal(18,6)")]
-        public decimal Efektif_Alis { get; set; }
-        
-        /// <summary>
-        /// Efektif satış değeri
-        /// </summary>
-        [Display(Name = "Efektif Satış")]
-        [Column(TypeName = "decimal(18,6)")]
-        public decimal Efektif_Satis { get; set; }
         
         /// <summary>
         /// Aktif mi
@@ -103,6 +89,13 @@ namespace MuhasebeStokWebApp.Data.Entities.ParaBirimiModulu
         /// Son güncelleyen kullanıcı ID'si
         /// </summary>
         public string? SonGuncelleyenKullaniciID { get; set; }
+        
+        /// <summary>
+        /// Dekont numarası
+        /// </summary>
+        [Display(Name = "Dekont No")]
+        [StringLength(50, ErrorMessage = "Dekont numarası en fazla 50 karakter olabilir.")]
+        public string? DekontNo { get; set; }
         
         /// <summary>
         /// İlişkili para birimi

@@ -36,6 +36,7 @@ namespace MuhasebeStokWebApp.Services
                 var kullaniciAdi = _httpContextAccessor.HttpContext?.User?.Identity?.Name ?? "Sistem";
                 var ipAdresi = _httpContextAccessor.HttpContext?.Connection?.RemoteIpAddress?.ToString() ?? "Bilinmiyor";
                 var userAgent = _httpContextAccessor.HttpContext?.Request?.Headers["User-Agent"].ToString() ?? "Bilinmiyor";
+                var sayfaAdresi = _httpContextAccessor.HttpContext?.Request?.Path.ToString() ?? string.Empty;
 
                 // Tarayıcı bilgisini maksimum 1000 karakter ile sınırla
                 if (userAgent.Length > 1000)
@@ -56,14 +57,15 @@ namespace MuhasebeStokWebApp.Services
                         IslemTuru = logTuru.ToString(),
                         LogTuruInt = (int)logTuru,
                         Aciklama = mesaj,
-                        HataMesaji = detay,
+                        HataMesaji = detay ?? "İşlem başarılı",
                         KullaniciAdi = kullaniciAdi,
                         IPAdresi = ipAdresi,
                         IslemTarihi = DateTime.Now,
                         Basarili = true,
                         TabloAdi = string.Empty,
                         KayitAdi = string.Empty,
-                        Mesaj = mesaj // Mesaj alanını dolduruyoruz
+                        Mesaj = mesaj, // Mesaj alanını dolduruyoruz
+                        Sayfa = sayfaAdresi // Sayfa alanını Request Path ile dolduruyoruz
                     };
 
                     _context.SistemLoglar.Add(log);
@@ -82,14 +84,15 @@ namespace MuhasebeStokWebApp.Services
                             IslemTuru = logTuru.ToString(),
                             // LogTuruInt alanını atlıyoruz
                             Aciklama = mesaj,
-                            HataMesaji = detay,
+                            HataMesaji = detay ?? "İşlem başarılı",
                             KullaniciAdi = kullaniciAdi,
                             IPAdresi = ipAdresi,
                             IslemTarihi = DateTime.Now,
                             Basarili = true,
                             TabloAdi = string.Empty,
                             KayitAdi = string.Empty,
-                            Mesaj = mesaj // Mesaj alanını dolduruyoruz
+                            Mesaj = mesaj, // Mesaj alanını dolduruyoruz
+                            Sayfa = sayfaAdresi // Sayfa alanını Request Path ile dolduruyoruz
                         };
 
                         _context.SistemLoglar.Add(log);
@@ -250,7 +253,8 @@ namespace MuhasebeStokWebApp.Services
                     IPAdresi = ipAdresi,
                     IslemTarihi = DateTime.Now,
                     Basarili = basarili,
-                    Mesaj = mesaj // Mesaj alanını dolduruyoruz
+                    Mesaj = mesaj, // Mesaj alanını dolduruyoruz
+                    Sayfa = string.Empty // Sayfa alanını boş string ile dolduruyoruz
                 };
 
                 _context.SistemLoglar.Add(log);
@@ -332,7 +336,8 @@ namespace MuhasebeStokWebApp.Services
                     KullaniciAdi = kullaniciAdi,
                     IPAdresi = ipAdresi,
                     IslemTarihi = DateTime.Now,
-                    Basarili = true
+                    Basarili = true,
+                    Sayfa = string.Empty // Sayfa alanını boş string ile dolduruyoruz
                 };
 
                 _context.SistemLoglar.Add(log);
@@ -459,7 +464,8 @@ namespace MuhasebeStokWebApp.Services
                     IPAdresi = ipAdresi,
                     IslemTarihi = DateTime.Now,
                     KullaniciID = !string.IsNullOrEmpty(kullaniciID) ? Guid.Parse(kullaniciID) : (Guid?)null,
-                    Basarili = true
+                    Basarili = true,
+                    Sayfa = string.Empty // Sayfa alanını boş string ile dolduruyoruz
                 };
 
                 await _context.SistemLoglar.AddAsync(log);
@@ -491,7 +497,8 @@ namespace MuhasebeStokWebApp.Services
                     IPAdresi = ipAdresi,
                     IslemTarihi = DateTime.Now,
                     KullaniciID = !string.IsNullOrEmpty(kullaniciID) ? Guid.Parse(kullaniciID) : (Guid?)null,
-                    Basarili = true
+                    Basarili = true,
+                    Sayfa = string.Empty // Sayfa alanını boş string ile dolduruyoruz
                 };
 
                 await _context.SistemLoglar.AddAsync(log);
@@ -523,7 +530,8 @@ namespace MuhasebeStokWebApp.Services
                     IPAdresi = ipAdresi,
                     IslemTarihi = DateTime.Now,
                     KullaniciID = !string.IsNullOrEmpty(kullaniciID) ? Guid.Parse(kullaniciID) : (Guid?)null,
-                    Basarili = true
+                    Basarili = true,
+                    Sayfa = string.Empty // Sayfa alanını boş string ile dolduruyoruz
                 };
 
                 await _context.SistemLoglar.AddAsync(log);
@@ -555,7 +563,8 @@ namespace MuhasebeStokWebApp.Services
                     IPAdresi = ipAdresi,
                     IslemTarihi = DateTime.Now,
                     KullaniciID = !string.IsNullOrEmpty(kullaniciID) ? Guid.Parse(kullaniciID) : (Guid?)null,
-                    Basarili = true
+                    Basarili = true,
+                    Sayfa = string.Empty // Sayfa alanını boş string ile dolduruyoruz
                 };
 
                 await _context.SistemLoglar.AddAsync(log);
@@ -587,7 +596,8 @@ namespace MuhasebeStokWebApp.Services
                     IPAdresi = ipAdresi,
                     IslemTarihi = DateTime.Now,
                     KullaniciID = !string.IsNullOrEmpty(kullaniciID) ? Guid.Parse(kullaniciID) : (Guid?)null,
-                    Basarili = true
+                    Basarili = true,
+                    Sayfa = string.Empty // Sayfa alanını boş string ile dolduruyoruz
                 };
 
                 await _context.SistemLoglar.AddAsync(log);
@@ -621,7 +631,8 @@ namespace MuhasebeStokWebApp.Services
                     KullaniciAdi = kullaniciAdi,
                     IPAdresi = ipAdresi,
                     KullaniciID = !string.IsNullOrEmpty(kullaniciID) ? Guid.Parse(kullaniciID) : (Guid?)null,
-                    Basarili = true
+                    Basarili = true,
+                    Sayfa = string.Empty // Sayfa alanını boş string ile dolduruyoruz
                 };
 
                 await _context.SistemLoglar.AddAsync(log);
@@ -650,7 +661,8 @@ namespace MuhasebeStokWebApp.Services
                     IslemTarihi = DateTime.Now,
                     TabloAdi = "Urunler",
                     KayitAdi = urunAdi,
-                    KayitID = urunID // Doğrudan GUID kullanımı
+                    KayitID = urunID, // Doğrudan GUID kullanımı
+                    Sayfa = string.Empty // Sayfa alanını boş string ile dolduruyoruz
                 };
 
                 _context.SistemLoglar.Add(log);
@@ -680,7 +692,8 @@ namespace MuhasebeStokWebApp.Services
                     IslemTarihi = DateTime.Now,
                     TabloAdi = "Urunler",
                     KayitAdi = urunAdi,
-                    KayitID = urunID // Doğrudan GUID kullanımı
+                    KayitID = urunID, // Doğrudan GUID kullanımı
+                    Sayfa = string.Empty // Sayfa alanını boş string ile dolduruyoruz
                 };
 
                 _context.SistemLoglar.Add(log);
@@ -710,7 +723,8 @@ namespace MuhasebeStokWebApp.Services
                     IslemTarihi = DateTime.Now,
                     TabloAdi = "Urunler",
                     KayitAdi = urunAdi,
-                    KayitID = urunID // Doğrudan GUID kullanımı
+                    KayitID = urunID, // Doğrudan GUID kullanımı
+                    Sayfa = string.Empty // Sayfa alanını boş string ile dolduruyoruz
                 };
 
                 _context.SistemLoglar.Add(log);
@@ -743,7 +757,8 @@ namespace MuhasebeStokWebApp.Services
                     KullaniciAdi = kullaniciAdi,
                     IPAdresi = ipAdresi,
                     IslemTarihi = DateTime.Now,
-                    Basarili = true
+                    Basarili = true,
+                    Sayfa = string.Empty // Sayfa alanını boş string ile dolduruyoruz
                 };
                 
                 // Veritabanına kaydet
@@ -776,7 +791,8 @@ namespace MuhasebeStokWebApp.Services
                     KullaniciAdi = kullaniciAdi,
                     IPAdresi = ipAdresi,
                     IslemTarihi = DateTime.Now,
-                    Basarili = true
+                    Basarili = true,
+                    Sayfa = string.Empty // Sayfa alanını boş string ile dolduruyoruz
                 };
                 
                 // Veritabanına kaydet
@@ -817,17 +833,28 @@ namespace MuhasebeStokWebApp.Services
         
         public async Task<bool> LogErrorAsync(string message, Exception ex)
         {
-            string detail = ex.ToString();
-            return await LogEkleAsync(message, MuhasebeStokWebApp.Enums.LogTuru.Hata, detail);
+            try
+            {
+                string exceptionDetail = ex.ToString();
+                _logger.LogError(ex, "{Message}: {ExceptionDetail}", message, exceptionDetail);
+                return await LogEkleAsync(message, MuhasebeStokWebApp.Enums.LogTuru.Hata, exceptionDetail);
+            }
+            catch (Exception innerEx)
+            {
+                _logger.LogError(innerEx, "LogErrorAsync metodu çalışırken hata oluştu");
+                return false;
+            }
         }
-
+        
         public async Task<bool> LogErrorAsync(string operation, string message)
         {
             return await LogEkleAsync(operation + ": " + message, MuhasebeStokWebApp.Enums.LogTuru.Hata);
         }
 
-        public async Task LogErrorAsync(string operation, string stackTrace, Exception ex)
+        public async Task LogErrorAsync(string operation, string? stackTrace, Exception ex)
         {
+            // stackTrace null olabilir, kontrol edelim
+            stackTrace = stackTrace ?? "Stack trace not available";
             await LogEkleAsync(operation + ": " + ex.Message, MuhasebeStokWebApp.Enums.LogTuru.Hata, stackTrace);
         }
 
@@ -848,7 +875,8 @@ namespace MuhasebeStokWebApp.Services
                     IslemTarihi = DateTime.Now,
                     TabloAdi = "Faturalar",
                     KayitAdi = faturaNo,
-                    KayitID = faturaID // Doğrudan GUID kullanımı
+                    KayitID = faturaID, // Doğrudan GUID kullanımı
+                    Sayfa = string.Empty // Sayfa alanını boş string ile dolduruyoruz
                 };
 
                 _context.SistemLoglar.Add(log);
@@ -974,7 +1002,8 @@ namespace MuhasebeStokWebApp.Services
                     IslemTarihi = DateTime.Now,
                     TabloAdi = "Faturalar",
                     KayitAdi = faturaNo,
-                    KayitID = faturaID // Doğrudan GUID kullanımı
+                    KayitID = faturaID, // Doğrudan GUID kullanımı
+                    Sayfa = string.Empty // Sayfa alanını boş string ile dolduruyoruz
                 };
 
                 _context.SistemLoglar.Add(log);
@@ -1004,7 +1033,8 @@ namespace MuhasebeStokWebApp.Services
                     IslemTarihi = DateTime.Now,
                     TabloAdi = "Faturalar",
                     KayitAdi = faturaNo,
-                    KayitID = faturaID // Doğrudan GUID kullanımı
+                    KayitID = faturaID, // Doğrudan GUID kullanımı
+                    Sayfa = string.Empty // Sayfa alanını boş string ile dolduruyoruz
                 };
 
                 _context.SistemLoglar.Add(log);
@@ -1047,7 +1077,8 @@ namespace MuhasebeStokWebApp.Services
                     KullaniciAdi = kullaniciAdi,
                     IPAdresi = ipAdresi,
                     IslemTarihi = DateTime.Now,
-                    Basarili = true
+                    Basarili = true,
+                    Sayfa = string.Empty // Sayfa alanını boş string ile dolduruyoruz
                 };
 
                 _context.SistemLoglar.Add(log);
@@ -1097,7 +1128,8 @@ namespace MuhasebeStokWebApp.Services
                     IslemTarihi = DateTime.Now,
                     Basarili = true,
                     KayitAdi = string.Empty, // Eksik zorunlu alan
-                    Mesaj = details // Mesaj alanını dolduruyoruz
+                    Mesaj = details, // Mesaj alanını dolduruyoruz
+                    Sayfa = string.Empty // Sayfa alanını boş string ile dolduruyoruz
                 };
                 
                 _context.SistemLoglar.Add(log);
@@ -1139,13 +1171,14 @@ namespace MuhasebeStokWebApp.Services
                     LogTuruInt = (int)logTuru,
                     IslemTuru = logTuru.ToString(),
                     Aciklama = mesaj,
-                    HataMesaji = detay,
+                    HataMesaji = detay ?? "İşlem başarılı",
                     KullaniciAdi = kullaniciAdi,
                     IPAdresi = ipAdresi,
                     IslemTarihi = DateTime.Now,
                     TabloAdi = string.Empty,
                     KayitAdi = string.Empty,
-                    Mesaj = mesaj // Mesaj alanını dolduruyoruz
+                    Mesaj = mesaj, // Mesaj alanını dolduruyoruz
+                    Sayfa = string.Empty // Sayfa alanını boş string ile dolduruyoruz
                 };
                 
                 _context.SistemLoglar.Add(log);
@@ -1164,11 +1197,18 @@ namespace MuhasebeStokWebApp.Services
         {
             var log = new ESistemLog
             {
+                LogID = Guid.NewGuid(),
                 LogTuru = logTuru,
                 LogTuruInt = 0,
                 Mesaj = mesaj,
                 Sayfa = sayfa,
-                OlusturmaTarihi = DateTime.Now
+                OlusturmaTarihi = DateTime.Now,
+                HataMesaji = "Sistem log kaydı", // Null olmasını engelle
+                IslemTarihi = DateTime.Now,
+                KullaniciAdi = "Sistem",
+                IPAdresi = "127.0.0.1",
+                TabloAdi = string.Empty,
+                KayitAdi = string.Empty
             };
 
             await _context.SistemLoglar.AddAsync(log);
@@ -1179,13 +1219,37 @@ namespace MuhasebeStokWebApp.Services
         {
             try
             {
-                _logger.LogInformation($"{baslik} - {detay} - Kullanıcı: {kullanici}");
-                // Uygulamaya uygun şekilde asenkron loglamayı çağır
-                _ = LogEkleAsync(baslik, LogTuru.Bilgi, detay);
+                using (var scope = new DbContextScope(_context))
+                {
+                    var ipAdresi = _httpContextAccessor.HttpContext?.Connection?.RemoteIpAddress?.ToString() ?? "Bilinmiyor";
+                    var sayfaAdresi = _httpContextAccessor.HttpContext?.Request?.Path.ToString() ?? string.Empty;
+
+                    var log = new ESistemLog
+                    {
+                        LogID = Guid.NewGuid(),
+                        LogTuru = "Bilgi",
+                        IslemTuru = baslik,
+                        LogTuruInt = (int)MuhasebeStokWebApp.Enums.LogTuru.Bilgi,
+                        Aciklama = detay,
+                        HataMesaji = "",
+                        KullaniciAdi = kullanici ?? "Sistem",
+                        IPAdresi = ipAdresi,
+                        IslemTarihi = DateTime.Now,
+                        Basarili = true,
+                        TabloAdi = "",
+                        KayitAdi = "",
+                        Mesaj = baslik,
+                        Sayfa = sayfaAdresi
+                    };
+
+                    scope.Context.SistemLoglar.Add(log);
+                    scope.Context.SaveChanges();
+                }
             }
             catch (Exception ex)
             {
-                _logger.LogError(ex, "LogBilgi metodu çalışırken hata oluştu");
+                // Log eklerken oluşan hatayı sadece logla, uygulamanın çalışmasını etkilemesin
+                _logger.LogError(ex, $"Log ekleme hatası: {baslik} - {ex.Message}");
             }
         }
 
@@ -1193,13 +1257,37 @@ namespace MuhasebeStokWebApp.Services
         {
             try
             {
-                _logger.LogWarning($"{baslik} - {detay} - Kullanıcı: {kullanici}");
-                // Uygulamaya uygun şekilde asenkron loglamayı çağır
-                _ = LogEkleAsync(baslik, LogTuru.Uyari, detay);
+                using (var scope = new DbContextScope(_context))
+                {
+                    var ipAdresi = _httpContextAccessor.HttpContext?.Connection?.RemoteIpAddress?.ToString() ?? "Bilinmiyor";
+                    var sayfaAdresi = _httpContextAccessor.HttpContext?.Request?.Path.ToString() ?? string.Empty;
+
+                    var log = new ESistemLog
+                    {
+                        LogID = Guid.NewGuid(),
+                        LogTuru = "Uyari",
+                        IslemTuru = baslik,
+                        LogTuruInt = (int)MuhasebeStokWebApp.Enums.LogTuru.Uyari,
+                        Aciklama = detay,
+                        HataMesaji = "",
+                        KullaniciAdi = kullanici ?? "Sistem",
+                        IPAdresi = ipAdresi,
+                        IslemTarihi = DateTime.Now,
+                        Basarili = false,
+                        TabloAdi = "",
+                        KayitAdi = "",
+                        Mesaj = baslik,
+                        Sayfa = sayfaAdresi
+                    };
+
+                    scope.Context.SistemLoglar.Add(log);
+                    scope.Context.SaveChanges();
+                }
             }
             catch (Exception ex)
             {
-                _logger.LogError(ex, "LogUyari metodu çalışırken hata oluştu");
+                // Log eklerken oluşan hatayı sadece logla, uygulamanın çalışmasını etkilemesin
+                _logger.LogError(ex, $"Log ekleme hatası: {baslik} - {ex.Message}");
             }
         }
 
@@ -1207,13 +1295,37 @@ namespace MuhasebeStokWebApp.Services
         {
             try
             {
-                _logger.LogError($"{baslik} - {detay} - Kullanıcı: {kullanici}");
-                // Uygulamaya uygun şekilde asenkron loglamayı çağır
-                _ = LogEkleAsync(baslik, LogTuru.Hata, detay);
+                using (var scope = new DbContextScope(_context))
+                {
+                    var ipAdresi = _httpContextAccessor.HttpContext?.Connection?.RemoteIpAddress?.ToString() ?? "Bilinmiyor";
+                    var sayfaAdresi = _httpContextAccessor.HttpContext?.Request?.Path.ToString() ?? string.Empty;
+
+                    var log = new ESistemLog
+                    {
+                        LogID = Guid.NewGuid(),
+                        LogTuru = "Hata",
+                        IslemTuru = baslik,
+                        LogTuruInt = (int)MuhasebeStokWebApp.Enums.LogTuru.Hata,
+                        Aciklama = detay,
+                        HataMesaji = detay,
+                        KullaniciAdi = kullanici ?? "Sistem",
+                        IPAdresi = ipAdresi,
+                        IslemTarihi = DateTime.Now,
+                        Basarili = false,
+                        TabloAdi = "",
+                        KayitAdi = "",
+                        Mesaj = baslik,
+                        Sayfa = sayfaAdresi
+                    };
+
+                    scope.Context.SistemLoglar.Add(log);
+                    scope.Context.SaveChanges();
+                }
             }
             catch (Exception ex)
             {
-                _logger.LogError(ex, "LogHata metodu çalışırken hata oluştu");
+                // Log eklerken oluşan hatayı sadece logla, uygulamanın çalışmasını etkilemesin
+                _logger.LogError(ex, $"Log ekleme hatası: {baslik} - {ex.Message}");
             }
         }
 
@@ -1251,6 +1363,42 @@ namespace MuhasebeStokWebApp.Services
             {
                 _logger.LogError(ex, "AddLogAsync metodu çalışırken hata oluştu");
                 return false;
+            }
+        }
+
+        // DbContext'i yeni bir scope'a taşımak için yardımcı sınıf
+        private class DbContextScope : IDisposable
+        {
+            private readonly bool _disposeContext;
+            public readonly ApplicationDbContext Context;
+
+            public DbContextScope(ApplicationDbContext existingContext)
+            {
+                if (existingContext == null)
+                {
+                    throw new ArgumentNullException(nameof(existingContext));
+                }
+
+                try
+                {
+                    // Var olan context'i kullan, ancak yeni bir bağlantı oluşturulduğundan emin ol
+                    Context = new ApplicationDbContext(existingContext.GetDbContextOptions());
+                    _disposeContext = true;
+                }
+                catch
+                {
+                    // Eğer yeni context oluşturulamazsa, var olanı kullan (düşük güvenilirlik)
+                    Context = existingContext;
+                    _disposeContext = false;
+                }
+            }
+
+            public void Dispose()
+            {
+                if (_disposeContext)
+                {
+                    Context.Dispose();
+                }
             }
         }
     }

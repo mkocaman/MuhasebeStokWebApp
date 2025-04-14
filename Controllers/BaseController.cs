@@ -12,6 +12,12 @@ using Microsoft.AspNetCore.Authorization;
 using MuhasebeStokWebApp.Data.Entities;
 using MuhasebeStokWebApp.Models;
 using MuhasebeStokWebApp.Services.Interfaces;
+using System.Net;
+using Microsoft.Extensions.Logging;
+using Microsoft.Extensions.Localization;
+using MuhasebeStokWebApp.ViewModels;
+using MuhasebeStokWebApp.Data;
+using MuhasebeStokWebApp.Services.Menu;
 
 namespace MuhasebeStokWebApp.Controllers
 {
@@ -22,18 +28,24 @@ namespace MuhasebeStokWebApp.Controllers
         protected readonly UserManager<ApplicationUser> _userManager;
         protected readonly RoleManager<IdentityRole> _roleManager;
         protected readonly ILogService _logService;
+        private readonly IStringLocalizer<BaseController> _localizer;
+        private readonly ILanguageService _languageService;
         
         // Constructor: Tüm controller'ların ihtiyaç duyduğu temel servisleri alır
-        protected BaseController(
+        public BaseController(
             IMenuService menuService = null,
             UserManager<ApplicationUser> userManager = null,
             RoleManager<IdentityRole> roleManager = null,
-            ILogService logService = null)
+            ILogService logService = null,
+            IStringLocalizer<BaseController> localizer = null,
+            ILanguageService languageService = null)
         {
             _menuService = menuService;
             _userManager = userManager;
             _roleManager = roleManager;
             _logService = logService;
+            _localizer = localizer;
+            _languageService = languageService;
         }
         
         // Action çalıştırılmadan önce devreye giren metot - Menü ve yetkilendirme işlemleri burada yapılır
@@ -140,334 +152,637 @@ namespace MuhasebeStokWebApp.Controllers
         // Varsayılan menüleri oluşturan yardımcı metot
         private List<MenuViewModel> CreateDefaultMenuItems()
         {
-            var result = new List<MenuViewModel>();
-            
-            // Dashboard menüsü
-            result.Add(new MenuViewModel
+            var menuItems = new List<MenuViewModel>();
+
+            // 1. Dashboard
+            menuItems.Add(new MenuViewModel
             {
                 MenuID = Guid.NewGuid(),
-                Ad = "Dashboard",
-                Icon = "material-icons",
+                MenuAdi = "Dashboard",
+                Icon = "fas fa-tachometer-alt",
                 Controller = "Home",
                 Action = "Index",
-                AktifMi = true,
                 Sira = 1,
-                Url = "/Home/Index",
                 AltMenuler = new List<MenuViewModel>()
             });
-            
-            // Cariler menüsü
-            result.Add(new MenuViewModel
+
+            // 2. Tanımlamalar (Üst Menü)
+            var tanimlamalarMenu = new MenuViewModel
             {
                 MenuID = Guid.NewGuid(),
-                Ad = "Cariler",
-                Icon = "material-icons",
-                Controller = "Cari",
-                Action = "Index",
-                AktifMi = true,
+                MenuAdi = "Tanımlamalar",
+                Icon = "fas fa-tags",
                 Sira = 2,
-                Url = "/Cari/Index",
                 AltMenuler = new List<MenuViewModel>()
+            };
+            menuItems.Add(tanimlamalarMenu);
+
+            tanimlamalarMenu.AltMenuler.Add(new MenuViewModel
+            {
+                MenuID = Guid.NewGuid(),
+                MenuAdi = "Birimler",
+                Icon = "fas fa-ruler",
+                Controller = "Birim",
+                Action = "Index",
+                Sira = 1
             });
-            
-            // Stok Yönetimi menüsü (üst menü)
+
+            tanimlamalarMenu.AltMenuler.Add(new MenuViewModel
+            {
+                MenuID = Guid.NewGuid(),
+                MenuAdi = "Depolar",
+                Icon = "fas fa-warehouse",
+                Controller = "Depo",
+                Action = "Index",
+                Sira = 2
+            });
+
+            tanimlamalarMenu.AltMenuler.Add(new MenuViewModel
+            {
+                MenuID = Guid.NewGuid(),
+                MenuAdi = "Ürün Kategorileri",
+                Icon = "fas fa-sitemap",
+                Controller = "UrunKategori",
+                Action = "Index",
+                Sira = 3
+            });
+
+            // 3. Stok Yönetimi (Üst Menü)
             var stokYonetimiMenu = new MenuViewModel
             {
                 MenuID = Guid.NewGuid(),
-                Ad = "Stok Yönetimi",
-                Icon = "material-icons",
-                AktifMi = true,
+                MenuAdi = "Stok Yönetimi",
+                Icon = "fas fa-boxes",
                 Sira = 3,
-                Url = "#",
-                AltMenuler = new List<MenuViewModel>() // Alt menü listesini başlat
+                AltMenuler = new List<MenuViewModel>()
             };
-            
-            // Stok alt menüleri
+            menuItems.Add(stokYonetimiMenu);
+
             stokYonetimiMenu.AltMenuler.Add(new MenuViewModel
             {
                 MenuID = Guid.NewGuid(),
-                Ad = "Ürünler",
+                MenuAdi = "Ürünler",
+                Icon = "fas fa-box-open",
                 Controller = "Urun",
                 Action = "Index",
-                AktifMi = true,
-                Sira = 1,
-                UstMenuID = stokYonetimiMenu.MenuID,
-                Url = "/Urun/Index",
-                AltMenuler = new List<MenuViewModel>()
+                Sira = 1
             });
-            
+
             stokYonetimiMenu.AltMenuler.Add(new MenuViewModel
             {
                 MenuID = Guid.NewGuid(),
-                Ad = "Kategoriler",
-                Controller = "UrunKategori",
+                MenuAdi = "Stok Kartları",
+                Icon = "fas fa-clipboard-list",
+                Controller = "Stok",
                 Action = "Index",
-                AktifMi = true,
-                Sira = 2,
-                UstMenuID = stokYonetimiMenu.MenuID,
-                Url = "/UrunKategori/Index",
-                AltMenuler = new List<MenuViewModel>()
+                Sira = 2
             });
-            
+
             stokYonetimiMenu.AltMenuler.Add(new MenuViewModel
             {
                 MenuID = Guid.NewGuid(),
-                Ad = "Stok Durumu",
+                MenuAdi = "Stok Durumu",
+                Icon = "fas fa-chart-pie",
                 Controller = "Stok",
                 Action = "StokDurumu",
-                AktifMi = true,
-                Sira = 3,
-                UstMenuID = stokYonetimiMenu.MenuID,
-                Url = "/Stok/StokDurumu",
-                AltMenuler = new List<MenuViewModel>()
+                Sira = 3
             });
-            
-            result.Add(stokYonetimiMenu);
-            
-            // Döviz İşlemleri menüsü (üst menü)
-            var dovizIslemleriMenu = new MenuViewModel
+
+            var stokHareketleriMenu = new MenuViewModel
             {
                 MenuID = Guid.NewGuid(),
-                Ad = "Döviz İşlemleri",
-                Icon = "fas fa-money-bill-wave",
-                AktifMi = true,
+                MenuAdi = "Stok Hareketleri",
+                Icon = "fas fa-exchange-alt",
                 Sira = 4,
-                Url = "#",
-                AltMenuler = new List<MenuViewModel>() // Alt menü listesini başlat
+                AltMenuler = new List<MenuViewModel>()
             };
-            
-            // Döviz alt menüleri
-            dovizIslemleriMenu.AltMenuler.Add(new MenuViewModel
+            stokYonetimiMenu.AltMenuler.Add(stokHareketleriMenu);
+
+            stokHareketleriMenu.AltMenuler.Add(new MenuViewModel
             {
                 MenuID = Guid.NewGuid(),
-                Ad = "Para Birimleri",
-                Controller = "Doviz",
+                MenuAdi = "Stok Giriş",
+                Icon = "fas fa-plus-circle",
+                Controller = "Stok",
+                Action = "StokGiris",
+                Sira = 1
+            });
+
+            stokHareketleriMenu.AltMenuler.Add(new MenuViewModel
+            {
+                MenuID = Guid.NewGuid(),
+                MenuAdi = "Stok Çıkış",
+                Icon = "fas fa-minus-circle",
+                Controller = "Stok",
+                Action = "StokCikis",
+                Sira = 2
+            });
+
+            stokHareketleriMenu.AltMenuler.Add(new MenuViewModel
+            {
+                MenuID = Guid.NewGuid(),
+                MenuAdi = "Stok Transfer",
+                Icon = "fas fa-random",
+                Controller = "Stok",
+                Action = "StokTransfer",
+                Sira = 3
+            });
+
+            stokHareketleriMenu.AltMenuler.Add(new MenuViewModel
+            {
+                MenuID = Guid.NewGuid(),
+                MenuAdi = "Stok Sayım",
+                Icon = "fas fa-tasks",
+                Controller = "Stok",
+                Action = "StokSayim",
+                Sira = 4
+            });
+
+            stokYonetimiMenu.AltMenuler.Add(new MenuViewModel
+            {
+                MenuID = Guid.NewGuid(),
+                MenuAdi = "Ürün Fiyatları",
+                Icon = "fas fa-tags",
+                Controller = "UrunFiyat",
                 Action = "Index",
-                AktifMi = true,
-                Sira = 1,
-                UstMenuID = dovizIslemleriMenu.MenuID,
-                Url = "/Doviz/Index",
-                AltMenuler = new List<MenuViewModel>()
+                Sira = 5
             });
-            
-            dovizIslemleriMenu.AltMenuler.Add(new MenuViewModel
+
+            // 4. Cari Hesap (Üst Menü)
+            var cariHesapMenu = new MenuViewModel
             {
                 MenuID = Guid.NewGuid(),
-                Ad = "Döviz Kurları",
-                Controller = "Kur",
-                Action = "Liste",
-                AktifMi = true,
-                Sira = 2,
-                UstMenuID = dovizIslemleriMenu.MenuID,
-                Url = "/Kur/Liste",
+                MenuAdi = "Cari Hesap",
+                Icon = "fas fa-users",
+                Sira = 4,
                 AltMenuler = new List<MenuViewModel>()
-            });
-            
-            dovizIslemleriMenu.AltMenuler.Add(new MenuViewModel
+            };
+            menuItems.Add(cariHesapMenu);
+
+            cariHesapMenu.AltMenuler.Add(new MenuViewModel
             {
                 MenuID = Guid.NewGuid(),
-                Ad = "Kur Güncelleme",
-                Controller = "DovizKuru",
-                Action = "KurlariGuncelle",
-                AktifMi = true,
-                Sira = 3,
-                UstMenuID = dovizIslemleriMenu.MenuID,
-                Url = "/DovizKuru/KurlariGuncelle",
-                AltMenuler = new List<MenuViewModel>()
+                MenuAdi = "Tüm Cariler",
+                Icon = "fas fa-address-book",
+                Controller = "Cari",
+                Action = "Index",
+                Sira = 1
             });
-            
-            result.Add(dovizIslemleriMenu);
-            
-            // Faturalar menüsü
-            result.Add(new MenuViewModel
+
+            cariHesapMenu.AltMenuler.Add(new MenuViewModel
             {
                 MenuID = Guid.NewGuid(),
-                Ad = "Faturalar",
-                Icon = "material-icons",
+                MenuAdi = "Müşteriler",
+                Icon = "fas fa-user-tie",
+                Controller = "Cari",
+                Action = "Musteriler",
+                Sira = 2
+            });
+
+            cariHesapMenu.AltMenuler.Add(new MenuViewModel
+            {
+                MenuID = Guid.NewGuid(),
+                MenuAdi = "Tedarikçiler",
+                Icon = "fas fa-truck",
+                Controller = "Cari",
+                Action = "Tedarikciler",
+                Sira = 3
+            });
+
+            // 5. Belgeler (Üst Menü)
+            var belgelerMenu = new MenuViewModel
+            {
+                MenuID = Guid.NewGuid(),
+                MenuAdi = "Belgeler",
+                Icon = "fas fa-file-alt",
+                Sira = 5,
+                AltMenuler = new List<MenuViewModel>()
+            };
+            menuItems.Add(belgelerMenu);
+
+            belgelerMenu.AltMenuler.Add(new MenuViewModel
+            {
+                MenuID = Guid.NewGuid(),
+                MenuAdi = "Faturalar",
+                Icon = "fas fa-file-invoice-dollar",
                 Controller = "Fatura",
                 Action = "Index",
-                AktifMi = true,
-                Sira = 5,
-                Url = "/Fatura/Index",
-                AltMenuler = new List<MenuViewModel>()
+                Sira = 1
             });
-            
-            // İrsaliyeler menüsü
-            result.Add(new MenuViewModel
+
+            belgelerMenu.AltMenuler.Add(new MenuViewModel
             {
                 MenuID = Guid.NewGuid(),
-                Ad = "İrsaliyeler",
-                Icon = "material-icons",
+                MenuAdi = "İrsaliyeler",
+                Icon = "fas fa-truck-loading",
                 Controller = "Irsaliye",
                 Action = "Index",
-                AktifMi = true,
-                Sira = 6,
-                Url = "/Irsaliye/Index",
-                AltMenuler = new List<MenuViewModel>()
+                Sira = 2
             });
-            
-            // Finans menüsü
+
+            belgelerMenu.AltMenuler.Add(new MenuViewModel
+            {
+                MenuID = Guid.NewGuid(),
+                MenuAdi = "Sözleşmeler",
+                Icon = "fas fa-file-signature",
+                Controller = "Sozlesme",
+                Action = "Index",
+                Sira = 3
+            });
+
+            belgelerMenu.AltMenuler.Add(new MenuViewModel
+            {
+                MenuID = Guid.NewGuid(),
+                MenuAdi = "Fatura Aklama",
+                Icon = "fas fa-check-double",
+                Controller = "Fatura",
+                Action = "Aklama",
+                Sira = 4
+            });
+
+            // 6. Finans Yönetimi (Üst Menü)
             var finansMenu = new MenuViewModel
             {
                 MenuID = Guid.NewGuid(),
-                Ad = "Finans",
-                Icon = "material-icons",
-                AktifMi = true,
-                Sira = 7,
-                Url = "#",
+                MenuAdi = "Finans Yönetimi",
+                Icon = "fas fa-money-bill-wave",
+                Sira = 6,
                 AltMenuler = new List<MenuViewModel>()
             };
-            
-            // Finans Alt Menüleri
+            menuItems.Add(finansMenu);
+
             finansMenu.AltMenuler.Add(new MenuViewModel
             {
                 MenuID = Guid.NewGuid(),
-                Ad = "Kasa İşlemleri",
+                MenuAdi = "Kasa İşlemleri",
+                Icon = "fas fa-cash-register",
                 Controller = "Kasa",
                 Action = "Index",
-                AktifMi = true,
-                Sira = 1,
-                UstMenuID = finansMenu.MenuID,
-                Url = "/Kasa/Index",
-                AltMenuler = new List<MenuViewModel>()
+                Sira = 1
             });
-            
+
             finansMenu.AltMenuler.Add(new MenuViewModel
             {
                 MenuID = Guid.NewGuid(),
-                Ad = "Banka İşlemleri",
+                MenuAdi = "Banka İşlemleri",
+                Icon = "fas fa-university",
                 Controller = "Banka",
                 Action = "Index",
-                AktifMi = true,
-                Sira = 2,
-                UstMenuID = finansMenu.MenuID,
-                Url = "/Banka/Index",
-                AltMenuler = new List<MenuViewModel>()
+                Sira = 2
             });
-            
+
             finansMenu.AltMenuler.Add(new MenuViewModel
             {
                 MenuID = Guid.NewGuid(),
-                Ad = "Döviz Kurları",
-                Controller = "DovizKuru",
-                Action = "Index",
-                AktifMi = true,
-                Sira = 3,
-                UstMenuID = finansMenu.MenuID,
-                Url = "/DovizKuru/Index",
-                AltMenuler = new List<MenuViewModel>()
+                MenuAdi = "Banka Hesapları",
+                Icon = "fas fa-landmark",
+                Controller = "Banka",
+                Action = "Hesaplar",
+                Sira = 3
             });
-            
-            finansMenu.AltMenuler.Add(new MenuViewModel
+
+            // 7. Para Birimi Yönetimi (Üst Menü)
+            var paraBirimiMenu = new MenuViewModel
             {
                 MenuID = Guid.NewGuid(),
-                Ad = "Para Birimleri",
-                Controller = "ParaBirimi",
-                Action = "Index",
-                AktifMi = true,
-                Sira = 4,
-                UstMenuID = finansMenu.MenuID,
-                Url = "/ParaBirimi/Index",
-                AltMenuler = new List<MenuViewModel>()
-            });
-            
-            result.Add(finansMenu);
-            
-            // Sistem Ayarları menüsü
-            var sistemMenu = new MenuViewModel
-            {
-                MenuID = Guid.NewGuid(),
-                Ad = "Sistem Ayarları",
-                Icon = "material-icons",
-                AktifMi = true,
-                Sira = 8,
-                Url = "#",
+                MenuAdi = "Para Birimi Yönetimi",
+                Icon = "fas fa-coins",
+                Sira = 7,
                 AltMenuler = new List<MenuViewModel>()
             };
-            
-            // Sistem Alt Menüleri
-            sistemMenu.AltMenuler.Add(new MenuViewModel
+            menuItems.Add(paraBirimiMenu);
+
+            paraBirimiMenu.AltMenuler.Add(new MenuViewModel
             {
                 MenuID = Guid.NewGuid(),
-                Ad = "Depolar",
-                Controller = "Depo",
+                MenuAdi = "Para Birimleri",
+                Icon = "fas fa-dollar-sign",
+                Controller = "ParaBirimi",
                 Action = "Index",
-                AktifMi = true,
-                Sira = 1,
-                UstMenuID = sistemMenu.MenuID,
-                Url = "/Depo/Index",
-                AltMenuler = new List<MenuViewModel>()
+                Sira = 1
             });
-            
-            sistemMenu.AltMenuler.Add(new MenuViewModel
+
+            paraBirimiMenu.AltMenuler.Add(new MenuViewModel
             {
                 MenuID = Guid.NewGuid(),
-                Ad = "Sistem Logları",
-                Controller = "SistemLog",
+                MenuAdi = "Döviz Kurları",
+                Icon = "fas fa-exchange-alt",
+                Controller = "ParaBirimi",
+                Action = "Kurlar",
+                Sira = 2
+            });
+
+            paraBirimiMenu.AltMenuler.Add(new MenuViewModel
+            {
+                MenuID = Guid.NewGuid(),
+                MenuAdi = "Para Birimi İlişkileri",
+                Icon = "fas fa-link",
+                Controller = "ParaBirimi",
+                Action = "Iliskiler",
+                Sira = 3
+            });
+
+            // 8. Raporlar (Üst Menü)
+            var raporlarMenu = new MenuViewModel
+            {
+                MenuID = Guid.NewGuid(),
+                MenuAdi = "Raporlar",
+                Icon = "fas fa-chart-bar",
+                Sira = 8,
+                AltMenuler = new List<MenuViewModel>()
+            };
+            menuItems.Add(raporlarMenu);
+
+            raporlarMenu.AltMenuler.Add(new MenuViewModel
+            {
+                MenuID = Guid.NewGuid(),
+                MenuAdi = "Genel Bakış",
+                Icon = "fas fa-chart-line",
+                Controller = "Rapor",
                 Action = "Index",
-                AktifMi = true,
-                Sira = 2,
-                UstMenuID = sistemMenu.MenuID,
-                Url = "/SistemLog/Index",
-                AltMenuler = new List<MenuViewModel>()
+                Sira = 1
             });
-            
-            sistemMenu.AltMenuler.Add(new MenuViewModel
+
+            raporlarMenu.AltMenuler.Add(new MenuViewModel
             {
                 MenuID = Guid.NewGuid(),
-                Ad = "Menü Yönetimi",
+                MenuAdi = "Stok Raporu",
+                Icon = "fas fa-boxes",
+                Controller = "Stok",
+                Action = "StokRapor",
+                Sira = 2
+            });
+
+            raporlarMenu.AltMenuler.Add(new MenuViewModel
+            {
+                MenuID = Guid.NewGuid(),
+                MenuAdi = "Satış Raporu",
+                Icon = "fas fa-chart-line",
+                Controller = "Rapor",
+                Action = "SatisRaporu",
+                Sira = 3
+            });
+
+            raporlarMenu.AltMenuler.Add(new MenuViewModel
+            {
+                MenuID = Guid.NewGuid(),
+                MenuAdi = "Cari Raporu",
+                Icon = "fas fa-users",
+                Controller = "Rapor",
+                Action = "CariRaporu",
+                Sira = 4
+            });
+
+            raporlarMenu.AltMenuler.Add(new MenuViewModel
+            {
+                MenuID = Guid.NewGuid(),
+                MenuAdi = "Kasa Raporu",
+                Icon = "fas fa-cash-register",
+                Controller = "Rapor",
+                Action = "KasaRaporu",
+                Sira = 5
+            });
+
+            raporlarMenu.AltMenuler.Add(new MenuViewModel
+            {
+                MenuID = Guid.NewGuid(),
+                MenuAdi = "Banka Raporu",
+                Icon = "fas fa-university",
+                Controller = "Rapor",
+                Action = "BankaRaporu",
+                Sira = 6
+            });
+
+            // 9. Yönetim Paneli (Üst Menü)
+            var yonetimMenu = new MenuViewModel
+            {
+                MenuID = Guid.NewGuid(),
+                MenuAdi = "Yönetim Paneli",
+                Icon = "fas fa-cogs",
+                Sira = 9,
+                AltMenuler = new List<MenuViewModel>()
+            };
+            menuItems.Add(yonetimMenu);
+
+            yonetimMenu.AltMenuler.Add(new MenuViewModel
+            {
+                MenuID = Guid.NewGuid(),
+                MenuAdi = "Kullanıcı Yönetimi",
+                Icon = "fas fa-users-cog",
+                Controller = "Kullanici",
+                Action = "Index",
+                Sira = 1
+            });
+
+            yonetimMenu.AltMenuler.Add(new MenuViewModel
+            {
+                MenuID = Guid.NewGuid(),
+                MenuAdi = "Rol Yönetimi",
+                Icon = "fas fa-user-tag",
+                Controller = "Kullanici",
+                Action = "Roller",
+                Sira = 2
+            });
+
+            yonetimMenu.AltMenuler.Add(new MenuViewModel
+            {
+                MenuID = Guid.NewGuid(),
+                MenuAdi = "Menü Yönetimi",
+                Icon = "fas fa-bars",
                 Controller = "Menu",
                 Action = "Index",
-                AktifMi = true,
-                Sira = 3,
-                UstMenuID = sistemMenu.MenuID,
-                Url = "/Menu/Index",
-                AltMenuler = new List<MenuViewModel>()
+                Sira = 3
             });
-            
-            result.Add(sistemMenu);
-            
-            // Kullanıcı Yönetimi menüsü
-            result.Add(new MenuViewModel
+
+            yonetimMenu.AltMenuler.Add(new MenuViewModel
             {
                 MenuID = Guid.NewGuid(),
-                Ad = "Kullanıcı Yönetimi",
-                Icon = "material-icons",
-                Controller = "Account",
-                Action = "UserManagement",
-                AktifMi = true,
-                Sira = 9,
-                Url = "/Account/UserManagement",
-                AltMenuler = new List<MenuViewModel>()
+                MenuAdi = "Sistem Ayarları",
+                Icon = "fas fa-sliders-h",
+                Controller = "SistemAyar",
+                Action = "Index",
+                Sira = 4
             });
-            
-            return result;
-        }
 
-        protected Guid GetCurrentUserId()
-        {
-            var userId = User.FindFirstValue(ClaimTypes.NameIdentifier);
-            if (!string.IsNullOrEmpty(userId))
+            yonetimMenu.AltMenuler.Add(new MenuViewModel
             {
-                return Guid.Parse(userId);
-            }
-            return Guid.Empty;
-        }
+                MenuID = Guid.NewGuid(),
+                MenuAdi = "Sistem Logları",
+                Icon = "fas fa-history",
+                Controller = "SistemLog",
+                Action = "Index",
+                Sira = 5
+            });
 
-        protected async Task<ApplicationUser> GetCurrentUserAsync()
-        {
-            return await _userManager.GetUserAsync(User);
+            yonetimMenu.AltMenuler.Add(new MenuViewModel
+            {
+                MenuID = Guid.NewGuid(),
+                MenuAdi = "Veritabanı Yönetimi",
+                Icon = "fas fa-database",
+                Controller = "DbInit",
+                Action = "Index",
+                Sira = 6
+            });
+                
+            return menuItems;
         }
         
-        protected int GetCurrentUserNumericId()
+        /// <summary>
+        /// Başarılı işlem sonucunda mesajları göstermek için kullanılan yardımcı metot
+        /// </summary>
+        protected IActionResult SuccessResult(string message, object data = null, string url = null)
+        {
+            if (Request.Headers["X-Requested-With"] == "XMLHttpRequest")
+            {
+                return Json(new { success = true, message, data, url });
+            }
+            
+            TempData["SuccessMessage"] = message;
+            
+            if (!string.IsNullOrEmpty(url))
+            {
+                return Redirect(url);
+            }
+            
+            return RedirectToAction(nameof(Index));
+        }
+        
+        /// <summary>
+        /// Hata durumunda mesajları göstermek için kullanılan yardımcı metot
+        /// </summary>
+        protected IActionResult ErrorResult(string message, Exception ex = null, HttpStatusCode statusCode = HttpStatusCode.BadRequest)
+        {
+            if (ex != null && _logService != null)
+            {
+                _logService.LogErrorAsync($"{this.GetType().Name}.ErrorResult", $"{message} Exception: {ex.Message}").Wait();
+            }
+            
+            if (Request.Headers["X-Requested-With"] == "XMLHttpRequest")
+            {
+                Response.StatusCode = (int)statusCode;
+                return Json(new { success = false, message });
+            }
+            
+            TempData["ErrorMessage"] = message;
+            
+            return RedirectToAction(nameof(Index));
+        }
+        
+        /// <summary>
+        /// ModelState hatalarını birleştirerek tek bir metin haline getirir
+        /// </summary>
+        protected string GetModelStateErrors()
+        {
+            var errors = ModelState.Values
+                .SelectMany(v => v.Errors)
+                .Select(e => e.ErrorMessage);
+                
+            return string.Join(", ", errors);
+        }
+        
+        /// <summary>
+        /// API isteklerinde başarılı sonuçları JSON formatında döndürür
+        /// </summary>
+        protected IActionResult ApiOk(object data = null, string message = "İşlem başarılı")
+        {
+            return Ok(new { success = true, message, data });
+        }
+        
+        /// <summary>
+        /// API isteklerinde hatalı sonuçları JSON formatında döndürür
+        /// </summary>
+        protected IActionResult ApiBadRequest(string message = "İşlem sırasında bir hata oluştu", object errors = null)
+        {
+            return BadRequest(new { success = false, message, errors });
+        }
+        
+        /// <summary>
+        /// Mevcut kullanıcının ID'sini döndürür
+        /// </summary>
+        protected Guid? GetCurrentUserId()
         {
             var userId = User.FindFirstValue(ClaimTypes.NameIdentifier);
-            if (!string.IsNullOrEmpty(userId))
+            return Guid.TryParse(userId, out Guid id) ? id : null;
+        }
+
+        protected async Task<BaseViewModel> GetBaseViewModel()
+        {
+            var controllerName = ControllerContext.RouteData.Values["controller"]?.ToString();
+            var actionName = ControllerContext.RouteData.Values["action"]?.ToString();
+
+            var baseViewModel = new BaseViewModel
             {
-                // Kullanıcı ID'sinden sayısal değer elde etmek için basit bir yaklaşım
-                return Math.Abs(userId.GetHashCode() % 1000); // 0-999 arası bir sayı üret
+                AppLanguages = await _languageService.GetAllLanguagesAsync(),
+            };
+            
+            // Anasayfa özel ayarları
+            if (controllerName == "Home" && actionName == "Index")
+            {
+                baseViewModel.PageTitle = _localizer["Anasayfa"].ToString();
+                baseViewModel.MenuInfo = new MenuViewModel 
+                { 
+                    Ad = _localizer["Anasayfa"].ToString(),
+                    Url = Url.Action("Index", "Home") ?? "#"
+                };
+                baseViewModel.MenuTitle = _localizer["Anasayfa"].ToString();
             }
-            return 1; // Varsayılan kullanıcı ID (sistem kullanıcısı)
+            // Cari özel ayarları
+            else if (controllerName == "Cari" && actionName == "Index")
+            {
+                baseViewModel.PageTitle = _localizer["Cari Liste"].ToString();
+                baseViewModel.MenuInfo = new MenuViewModel 
+                { 
+                    Ad = _localizer["Cari Liste"].ToString(),
+                    Url = Url.Action("Index", "Cari") ?? "#" 
+                };
+                baseViewModel.MenuTitle = _localizer["Cari Liste"].ToString();
+            }
+            // Ürün özel ayarları
+            else if (controllerName == "Urun" && actionName == "Index")
+            {
+                baseViewModel.PageTitle = _localizer["Ürün Liste"].ToString();
+                baseViewModel.MenuInfo = new MenuViewModel 
+                { 
+                    Ad = _localizer["Ürün Liste"].ToString(),
+                    Url = Url.Action("Index", "Urun") ?? "#"
+                };
+                baseViewModel.MenuTitle = _localizer["Ürün Liste"].ToString();
+            }
+            // Stok özel ayarları
+            else if (controllerName == "Stok" && (actionName == "Index" || actionName == "StokListesi"))
+            {
+                baseViewModel.PageTitle = _localizer["Stok Listesi"].ToString();
+                baseViewModel.MenuInfo = new MenuViewModel 
+                { 
+                    Ad = _localizer["Stok Listesi"].ToString(),
+                    Url = Url.Action("Index", "Stok") ?? "#"
+                };
+                baseViewModel.MenuTitle = _localizer["Stok Listesi"].ToString();
+            }
+            // Fatura özel ayarları
+            else if (controllerName == "Fatura" && actionName == "Index")
+            {
+                baseViewModel.PageTitle = _localizer["Fatura Listesi"].ToString();
+                baseViewModel.MenuInfo = new MenuViewModel 
+                { 
+                    Ad = _localizer["Fatura Listesi"].ToString(),
+                    Url = Url.Action("Index", "Fatura") ?? "#"
+                };
+                baseViewModel.MenuTitle = _localizer["Fatura Listesi"].ToString();
+            }
+            // İrsaliye özel ayarları
+            else if (controllerName == "Irsaliye" && actionName == "Index")
+            {
+                baseViewModel.PageTitle = _localizer["İrsaliye Listesi"].ToString();
+                baseViewModel.MenuInfo = new MenuViewModel 
+                { 
+                    Ad = _localizer["İrsaliye Listesi"].ToString(),
+                    Url = Url.Action("Index", "Irsaliye") ?? "#" 
+                };
+                baseViewModel.MenuTitle = _localizer["İrsaliye Listesi"].ToString();
+            }
+
+            return baseViewModel;
         }
     }
 } 

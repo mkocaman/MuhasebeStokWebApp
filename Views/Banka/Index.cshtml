@@ -10,7 +10,7 @@
             <div class="d-flex justify-content-between align-items-center">
                 <h4 class="mb-0">Banka Listesi</h4>
                 <a asp-action="Create" class="btn btn-success">
-                    <i class="fas fa-plus"></i> Yeni Banka Hesabı
+                    <i class="fas fa-plus"></i> Yeni Banka
                 </a>
             </div>
         </div>
@@ -23,17 +23,21 @@
                 </div>
             }
             
+            @if (TempData["ErrorMessage"] != null)
+            {
+                <div class="alert alert-danger alert-dismissible fade show" role="alert">
+                    @TempData["ErrorMessage"]
+                    <button type="button" class="btn-close" data-bs-dismiss="alert" aria-label="Close"></button>
+                </div>
+            }
+            
             <div class="table-responsive">
                 <table class="table table-bordered table-hover" id="bankaTable">
                     <thead class="table-light">
                         <tr>
                             <th>Banka Adı</th>
-                            <th>Şube</th>
-                            <th>Hesap No</th>
-                            <th>IBAN</th>
-                            <th>Para Birimi</th>
-                            <th>Güncel Bakiye</th>
                             <th>Durum</th>
+                            <th>Oluşturma Tarihi</th>
                             <th>İşlemler</th>
                         </tr>
                     </thead>
@@ -42,11 +46,6 @@
                         {
                             <tr>
                                 <td>@item.BankaAdi</td>
-                                <td>@item.SubeAdi (@item.SubeKodu)</td>
-                                <td>@item.HesapNo</td>
-                                <td>@item.IBAN</td>
-                                <td>@item.ParaBirimi</td>
-                                <td class="text-end">@item.GuncelBakiye.ToString("N2")</td>
                                 <td>
                                     @if (item.Aktif)
                                     {
@@ -57,6 +56,7 @@
                                         <span class="badge bg-danger">Pasif</span>
                                     }
                                 </td>
+                                <td>@item.OlusturmaTarihi.ToString("dd.MM.yyyy HH:mm")</td>
                                 <td>
                                     <div class="btn-group" role="group">
                                         <a asp-action="Details" asp-route-id="@item.BankaID" class="btn btn-sm btn-info" title="Detay">
@@ -65,8 +65,8 @@
                                         <a asp-action="Edit" asp-route-id="@item.BankaID" class="btn btn-sm btn-warning" title="Düzenle">
                                             <i class="fas fa-edit"></i>
                                         </a>
-                                        <a asp-action="Hareketler" asp-route-id="@item.BankaID" class="btn btn-sm btn-primary" title="Hareketler">
-                                            <i class="fas fa-exchange-alt"></i>
+                                        <a asp-action="Hesaplar" asp-route-id="@item.BankaID" class="btn btn-sm btn-primary" title="Hesaplar">
+                                            <i class="fas fa-university"></i>
                                         </a>
                                         <a href="javascript:void(0);" onclick="showDeleteModal('@item.BankaID')" class="btn btn-sm btn-danger" title="Sil">
                                             <i class="fas fa-trash"></i>
@@ -87,11 +87,11 @@
     <div class="modal-dialog" role="document">
         <div class="modal-content">
             <div class="modal-header">
-                <h5 class="modal-title" id="deleteModalLabel">Banka Hesabı Sil</h5>
+                <h5 class="modal-title" id="deleteModalLabel">Banka Sil</h5>
                 <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
             </div>
             <div class="modal-body">
-                <p>Bu banka hesabını silmek istediğinize emin misiniz?</p>
+                <p>Bu bankayı silmek istediğinize emin misiniz?</p>
             </div>
             <div class="modal-footer">
                 <form id="deleteForm" asp-action="Delete" method="post">

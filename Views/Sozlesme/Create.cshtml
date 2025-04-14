@@ -1,0 +1,128 @@
+@model MuhasebeStokWebApp.ViewModels.Sozlesme.SozlesmeViewModel
+@{
+    ViewData["Title"] = "Sözleşme Oluştur";
+}
+
+<div class="container-fluid">
+    <div class="card shadow mb-4">
+        <div class="card-header py-3">
+            <h6 class="m-0 font-weight-bold text-primary">Yeni Sözleşme Oluştur</h6>
+        </div>
+        <div class="card-body">
+            <form asp-action="Create" method="post" enctype="multipart/form-data">
+                <div asp-validation-summary="ModelOnly" class="text-danger"></div>
+                
+                <div class="row">
+                    <div class="col-md-6">
+                        <div class="form-group">
+                            <label asp-for="SozlesmeNo" class="control-label"></label>
+                            <input asp-for="SozlesmeNo" class="form-control" />
+                            <span asp-validation-for="SozlesmeNo" class="text-danger"></span>
+                        </div>
+                    </div>
+                    <div class="col-md-6">
+                        <div class="form-group">
+                            <label asp-for="SozlesmeTarihi" class="control-label"></label>
+                            <input asp-for="SozlesmeTarihi" class="form-control" type="date" value="@DateTime.Now.ToString("yyyy-MM-dd")" />
+                            <span asp-validation-for="SozlesmeTarihi" class="text-danger"></span>
+                        </div>
+                    </div>
+                </div>
+                
+                <div class="row">
+                    <div class="col-md-6">
+                        <div class="form-group">
+                            <label asp-for="BitisTarihi" class="control-label"></label>
+                            <input asp-for="BitisTarihi" class="form-control" type="date" />
+                            <span asp-validation-for="BitisTarihi" class="text-danger"></span>
+                        </div>
+                    </div>
+                    <div class="col-md-6">
+                        <div class="form-group">
+                            <label asp-for="CariID" class="control-label"></label>
+                            <select asp-for="CariID" class="form-control selectpicker" asp-items="ViewBag.Cariler" data-live-search="true">
+                                <option value="">Seçiniz</option>
+                            </select>
+                            <span asp-validation-for="CariID" class="text-danger"></span>
+                        </div>
+                    </div>
+                </div>
+                
+                <div class="row">
+                    <div class="col-md-6">
+                        <div class="form-group">
+                            <label asp-for="SozlesmeTutari" class="control-label"></label>
+                            <input asp-for="SozlesmeTutari" class="form-control" type="number" step="0.01" />
+                            <span asp-validation-for="SozlesmeTutari" class="text-danger"></span>
+                        </div>
+                    </div>
+                    <div class="col-md-6">
+                        <div class="form-group">
+                            <label asp-for="SozlesmeDovizTuru" class="control-label"></label>
+                            <select asp-for="SozlesmeDovizTuru" class="form-control">
+                                <option value="TL">TL</option>
+                                <option value="USD">USD</option>
+                                <option value="EUR">EUR</option>
+                                <option value="GBP">GBP</option>
+                            </select>
+                            <span asp-validation-for="SozlesmeDovizTuru" class="text-danger"></span>
+                        </div>
+                    </div>
+                </div>
+                
+                <div class="row">
+                    <div class="col-md-6">
+                        <div class="form-group form-check">
+                            <input type="checkbox" asp-for="VekaletGeldiMi" class="form-check-input" />
+                            <label asp-for="VekaletGeldiMi" class="form-check-label"></label>
+                        </div>
+                    </div>
+                    <div class="col-md-6">
+                        <div class="form-group form-check">
+                            <input type="checkbox" asp-for="ResmiFaturaKesildiMi" class="form-check-input" />
+                            <label asp-for="ResmiFaturaKesildiMi" class="form-check-label"></label>
+                        </div>
+                    </div>
+                </div>
+                
+                <div class="row">
+                    <div class="col-md-6">
+                        <div class="form-group">
+                            <label asp-for="SozlesmeBelgesi" class="control-label"></label>
+                            <input asp-for="SozlesmeBelgesi" type="file" class="form-control" />
+                            <span asp-validation-for="SozlesmeBelgesi" class="text-danger"></span>
+                        </div>
+                    </div>
+                    <div class="col-md-6">
+                        <div class="form-group">
+                            <label asp-for="Vekaletname" class="control-label"></label>
+                            <input asp-for="Vekaletname" type="file" class="form-control" />
+                            <span asp-validation-for="Vekaletname" class="text-danger"></span>
+                        </div>
+                    </div>
+                </div>
+                
+                <div class="form-group">
+                    <label asp-for="Aciklama" class="control-label"></label>
+                    <textarea asp-for="Aciklama" class="form-control" rows="3"></textarea>
+                    <span asp-validation-for="Aciklama" class="text-danger"></span>
+                </div>
+                
+                <div class="form-group">
+                    <a asp-action="Index" class="btn btn-secondary">İptal</a>
+                    <input type="submit" value="Oluştur" class="btn btn-primary" />
+                </div>
+            </form>
+        </div>
+    </div>
+</div>
+
+@section Scripts {
+    @{await Html.RenderPartialAsync("_ValidationScriptsPartial");}
+    
+    <script>
+        $(document).ready(function() {
+            $('.selectpicker').selectpicker();
+        });
+    </script>
+} 

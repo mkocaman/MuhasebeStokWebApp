@@ -3,6 +3,7 @@
 using System;
 using System.ComponentModel.DataAnnotations;
 using System.ComponentModel.DataAnnotations.Schema;
+using System.Text.Json.Serialization;
 
 namespace MuhasebeStokWebApp.Data.Entities
 {
@@ -37,6 +38,7 @@ namespace MuhasebeStokWebApp.Data.Entities
         // CariId özelliği artık CariID.get/set'i çağırmasına gerek yok,
         // NotMapped ile veritabanında kolonu oluşturmayı engelleyelim
         [NotMapped]
+        [JsonPropertyName("cariIdentifier")] // JSON çakışmasını önlemek için özel ad
         public Guid CariId { get => CariID; set => CariID = value; }
         
         [Required]
@@ -87,6 +89,7 @@ namespace MuhasebeStokWebApp.Data.Entities
         
         // OlusturanKullaniciId özelliği artık NotMapped ile işaretlendi
         [NotMapped]
+        [JsonPropertyName("olusturanKullaniciIdentifier")] // JSON çakışmasını önlemek için özel ad
         public Guid? OlusturanKullaniciId { get => OlusturanKullaniciID; set => OlusturanKullaniciID = value; }
         
         public bool Silindi { get; set; } = false;

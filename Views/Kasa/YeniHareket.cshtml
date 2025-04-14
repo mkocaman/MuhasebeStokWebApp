@@ -1,4 +1,4 @@
-@model MuhasebeStokWebApp.Data.Entities.KasaHareket
+@model MuhasebeStokWebApp.ViewModels.Kasa.KasaHareketViewModel
 @{
     ViewData["Title"] = "Yeni Kasa Hareketi";
     var kasalar = ViewBag.Kasalar as List<MuhasebeStokWebApp.Data.Entities.Kasa> ?? new List<MuhasebeStokWebApp.Data.Entities.Kasa>();
@@ -81,6 +81,15 @@
                             </select>
                             <span asp-validation-for="CariID" class="text-danger"></span>
                         </div>
+                        <div class="form-check mb-3">
+                            <input type="checkbox" id="CariIleDengelensin" name="CariIleDengelensin" class="form-check-input" @(Model.CariIleDengelensin ? "checked" : "") />
+                            <label class="form-check-label" for="CariIleDengelensin">Cari ile Dengelensin</label>
+                        </div>
+                        
+                        <div class="form-check mb-3">
+                            <input type="checkbox" id="HesabaKaydet" name="HesabaKaydet" class="form-check-input" checked />
+                            <label class="form-check-label" for="HesabaKaydet">Hesap Modülüne Kaydet</label>
+                        </div>
                     </div>
                     <div class="col-md-6">
                         <div class="form-group">
@@ -122,6 +131,24 @@
                     </div>
                 </div>
                 
+                <div class="row">
+                    <div class="col-md-6">
+                        <div class="form-group">
+                            <label for="ReferansNo" class="control-label">İşlem Numarası</label>
+                            <input type="text" id="ReferansNo" name="ReferansNo" class="form-control" value="@Model.ReferansNo" readonly />
+                            <span asp-validation-for="ReferansNo" class="text-danger"></span>
+                            <small class="form-text text-muted">İşlem numarası otomatik olarak oluşturulur (Format: KAS-YYMMDD-000)</small>
+                        </div>
+                    </div>
+                    <div class="col-md-6">
+                        <div class="form-group">
+                            <label for="KarsiParaBirimi" class="control-label">Karşı Para Birimi</label>
+                            <input type="text" id="KarsiParaBirimi" name="KarsiParaBirimi" class="form-control" value="@(Model.KarsiParaBirimi ?? secilenKasa?.ParaBirimi ?? "TRY")" required />
+                            <span asp-validation-for="KarsiParaBirimi" class="text-danger"></span>
+                        </div>
+                    </div>
+                </div>
+                
                 <div class="form-group">
                     <label for="Aciklama" class="control-label">Açıklama</label>
                     <textarea id="Aciklama" name="Aciklama" class="form-control" rows="3">@Model.Aciklama</textarea>
@@ -150,6 +177,7 @@
                 var selectedOption = $(this).find("option:selected");
                 var paraBirimi = selectedOption.data("parabirimi") || "TRY";
                 $("#paraBirimiLabel").text(paraBirimi);
+                $("#KarsiParaBirimi").val(paraBirimi);
             });
             
             // Hareket türü değiştiğinde referans türlerini güncelle
@@ -169,6 +197,9 @@
                     referansTuruSelect.append('<option value="Nakit">Nakit</option>');
                     referansTuruSelect.append('<option value="Diğer">Diğer</option>');
                 }
+                
+                // İşlem numarası oluştur
+                generateReferenceNumber(hareketTuru);
             });
             
             // Referans türü seçildiğinde referans no oluştur
@@ -193,11 +224,34 @@
                 }
             });
             
+            // Hareket türü değiştiğinde işlem numarasını güncelle
+            $("#HareketTuru").change(function() {
+                var hareketTuru = $(this).val();
+                
+                // İşlem numarası oluştur
+                generateReferenceNumber(hareketTuru);
+            });
+            
+            // İşlem numarası oluşturma fonksiyonu
+            function generateReferenceNumber(hareketTuru) {
+                var today = new Date();
+                var year = today.getFullYear().toString().substr(-2);
+                var month = (today.getMonth() + 1).toString().padStart(2, '0');
+                var day = today.getDate().toString().padStart(2, '0');
+                var random = Math.floor(Math.random() * 1000).toString().padStart(3, '0');
+                
+                $("#ReferansNo").val("KAS-" + year + month + day + "-" + random);
+            }
+            
+            // Sayfa yüklendiğinde işlem numarası oluştur
+            generateReferenceNumber();
+            
             // Form gönderilmeden önce kontrol
             $("#kasaHareketForm").submit(function(e) {
                 var kasaID = $("#KasaID").val();
                 var hareketTuru = $("#HareketTuru").val();
                 var tutar = parseFloat($("#Tutar").val()) || 0;
+                var karsiParaBirimi = $("#KarsiParaBirimi").val();
                 
                 if (!kasaID) {
                     e.preventDefault();
@@ -214,6 +268,12 @@
                 if (tutar <= 0) {
                     e.preventDefault();
                     alert("Lütfen geçerli bir tutar girin!");
+                    return false;
+                }
+                
+                if (!karsiParaBirimi) {
+                    e.preventDefault();
+                    alert("Karşı para birimi alanı boş bırakılamaz!");
                     return false;
                 }
                 

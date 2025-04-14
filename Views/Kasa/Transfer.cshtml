@@ -3,7 +3,7 @@
     ViewData["Title"] = "Kasa Transfer";
     var kasalar = ViewBag.Kasalar as List<MuhasebeStokWebApp.Data.Entities.Kasa> ?? new List<MuhasebeStokWebApp.Data.Entities.Kasa>();
     var kurlar = ViewBag.Kurlar as List<MuhasebeStokWebApp.ViewModels.Doviz.DovizKuruViewModel> ?? new List<MuhasebeStokWebApp.ViewModels.Doviz.DovizKuruViewModel>();
-    var bankalar = ViewBag.Bankalar as List<MuhasebeStokWebApp.Data.Entities.Banka> ?? new List<MuhasebeStokWebApp.Data.Entities.Banka>();
+    var bankaHesaplari = ViewBag.BankaHesaplari as List<MuhasebeStokWebApp.Data.Entities.BankaHesap> ?? new List<MuhasebeStokWebApp.Data.Entities.BankaHesap>();
 }
 
 <div class="container-fluid">
@@ -59,13 +59,13 @@
                         
                         <!-- Kaynak Banka -->
                         <div class="form-group d-none" id="kaynakBankaGroup">
-                            <label asp-for="KaynakBankaID" class="control-label">Kaynak Banka</label>
+                            <label asp-for="KaynakBankaID" class="control-label">Kaynak Banka Hesabı</label>
                             <select asp-for="KaynakBankaID" class="form-control" id="kaynakBankaSelect">
-                                <option value="">Banka Seçiniz</option>
-                                @foreach (var banka in bankalar)
+                                <option value="">Banka Hesabı Seçiniz</option>
+                                @foreach (var hesap in bankaHesaplari)
                                 {
-                                    <option value="@banka.BankaID" data-parabirimi="@(banka.ParaBirimi ?? "TRY")" data-bakiye="@banka.GuncelBakiye">
-                                        @banka.BankaAdi (@(banka.ParaBirimi ?? "TRY")) - Bakiye: @banka.GuncelBakiye.ToString("N2")
+                                    <option value="@hesap.BankaHesapID" data-parabirimi="@hesap.ParaBirimi" data-bakiye="@hesap.GuncelBakiye">
+                                        @hesap.Banka.BankaAdi - @hesap.HesapAdi (@hesap.ParaBirimi) - Bakiye: @hesap.GuncelBakiye.ToString("N2")
                                     </option>
                                 }
                             </select>
@@ -105,13 +105,13 @@
                         
                         <!-- Hedef Banka -->
                         <div class="form-group d-none" id="hedefBankaGroup">
-                            <label asp-for="HedefBankaID" class="control-label">Hedef Banka</label>
+                            <label asp-for="HedefBankaID" class="control-label">Hedef Banka Hesabı</label>
                             <select asp-for="HedefBankaID" class="form-control" id="hedefBankaSelect">
-                                <option value="">Banka Seçiniz</option>
-                                @foreach (var banka in bankalar)
+                                <option value="">Banka Hesabı Seçiniz</option>
+                                @foreach (var hesap in bankaHesaplari)
                                 {
-                                    <option value="@banka.BankaID" data-parabirimi="@(banka.ParaBirimi ?? "TRY")">
-                                        @banka.BankaAdi (@(banka.ParaBirimi ?? "TRY")) - Bakiye: @banka.GuncelBakiye.ToString("N2")
+                                    <option value="@hesap.BankaHesapID" data-parabirimi="@hesap.ParaBirimi">
+                                        @hesap.Banka.BankaAdi - @hesap.HesapAdi (@hesap.ParaBirimi) - Bakiye: @hesap.GuncelBakiye.ToString("N2")
                                     </option>
                                 }
                             </select>

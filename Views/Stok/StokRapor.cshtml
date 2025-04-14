@@ -175,8 +175,8 @@
                                         <td>@urun.Kategori</td>
                                         <td>@urun.Birim</td>
                                         <td class="text-end">@urun.StokMiktar.ToString("N2") @urun.Birim</td>
-                                        <td class="text-end">@urun.BirimFiyat.ToString("N2") ₺</td>
-                                        <td class="text-end">@((urun.StokMiktar * urun.BirimFiyat).ToString("N2")) ₺</td>
+                                        <td class="text-end">@urun.BirimFiyat.ToString("N2") so'm</td>
+                                        <td class="text-end">@((urun.StokMiktar * urun.BirimFiyat).ToString("N2")) so'm</td>
                                         <td>
                                             @if (urun.StokMiktar <= 10)
                                             {

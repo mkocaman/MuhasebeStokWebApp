@@ -7,22 +7,32 @@ using MuhasebeStokWebApp.Data.Entities;
 
 namespace MuhasebeStokWebApp.Data.Repositories
 {
-    public interface IRepository<T> where T : class
+    public interface IRepository<TEntity> where TEntity : class
     {
-        Task<IEnumerable<T>> GetAllAsync();
-        Task<IEnumerable<T>> GetAsync(Expression<Func<T, bool>> filter = null, 
-            Func<IQueryable<T>, IOrderedQueryable<T>> orderBy = null, 
+        Task<IEnumerable<TEntity>> GetAllAsync(Expression<Func<TEntity, bool>> filter = null,
+            Func<IQueryable<TEntity>, IOrderedQueryable<TEntity>> orderBy = null,
             string includeProperties = "");
-        Task<T> GetByIdAsync(object id);
-        Task<T> GetFirstOrDefaultAsync(Expression<Func<T, bool>> filter = null, string includeProperties = "");
-        Task<T> GetFirstAsync();
-        Task AddAsync(T entity);
-        Task UpdateAsync(T entity);
+        Task<TEntity> GetByIdAsync(object id);
+        Task<TEntity> GetFirstOrDefaultAsync(Expression<Func<TEntity, bool>> filter = null, string includeProperties = "");
+        Task<TEntity> GetFirstAsync();
+        Task<IEnumerable<TEntity>> GetAsync(
+            Expression<Func<TEntity, bool>> filter = null, 
+            Func<IQueryable<TEntity>, IOrderedQueryable<TEntity>> orderBy = null, 
+            string includeProperties = "");
+        IQueryable<TEntity> GetAll();
+        IQueryable<TEntity> Find(Expression<Func<TEntity, bool>> expression);
+        Task<IEnumerable<TEntity>> FindAsync(Expression<Func<TEntity, bool>> predicate);
+        Task<List<TEntity>> GetAllByPredicateAsync(Expression<Func<TEntity, bool>> predicate);
+        Task AddAsync(TEntity entity);
+        Task AddOrUpdateAsync(TEntity entity);
+        Task AddRangeAsync(IEnumerable<TEntity> entities);
+        void Update(TEntity entity);
+        void UpdateRange(IEnumerable<TEntity> entities);
+        void Remove(TEntity entity);
+        Task UpdateAsync(TEntity entity);
         Task RemoveAsync(object id);
-        Task RemoveAsync(T entity);
-        Task RemoveRangeAsync(IEnumerable<T> entities);
-        Task<IEnumerable<T>> FindAsync(Expression<Func<T, bool>> predicate);
-        Task AddOrUpdateAsync(T entity);
+        Task RemoveAsync(TEntity entity);
+        Task RemoveRangeAsync(IEnumerable<TEntity> entities);
         Task<Irsaliye> GetIrsaliyeWithDetailsAsync(Guid id);
     }
 } 

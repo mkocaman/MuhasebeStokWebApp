@@ -15,6 +15,7 @@ using Microsoft.Extensions.Logging;
 using Microsoft.AspNetCore.Identity;
 using MuhasebeStokWebApp.Services.Interfaces;
 using System.Security.Claims;
+using MuhasebeStokWebApp.ViewModels.Doviz;
 
 namespace MuhasebeStokWebApp.Controllers
 {
@@ -32,6 +33,7 @@ namespace MuhasebeStokWebApp.Controllers
         private readonly IParaBirimiService _paraBirimiService;
         protected new readonly UserManager<ApplicationUser> _userManager;
         protected new readonly RoleManager<IdentityRole> _roleManager;
+        private readonly ICariHareketService _cariHareketService;
 
         /// <summary>
         /// Dependency Injection ile gerekli servislerin constructor üzerinden alınması
@@ -45,7 +47,8 @@ namespace MuhasebeStokWebApp.Controllers
             ILogService logService,
             IParaBirimiService paraBirimiService,
             UserManager<ApplicationUser> userManager,
-            RoleManager<IdentityRole> roleManager) : base(menuService, userManager, roleManager, logService)
+            RoleManager<IdentityRole> roleManager,
+            ICariHareketService cariHareketService) : base(menuService, userManager, roleManager, logService)
         {
             _unitOfWork = unitOfWork;
             _logger = logger;
@@ -55,6 +58,7 @@ namespace MuhasebeStokWebApp.Controllers
             _paraBirimiService = paraBirimiService;
             _userManager = userManager;
             _roleManager = roleManager;
+            _cariHareketService = cariHareketService;
         }
 
         // GET: Kasa
@@ -118,7 +122,21 @@ namespace MuhasebeStokWebApp.Controllers
                     return NotFound();
                 }
 
-                return View(kasa);
+                // Entity'yi ViewModel'e dönüştür
+                var viewModel = new KasaViewModel
+                {
+                    KasaID = kasa.KasaID,
+                    KasaAdi = kasa.KasaAdi ?? string.Empty,
+                    KasaTuru = kasa.KasaTuru ?? "Genel",
+                    ParaBirimi = kasa.ParaBirimi ?? "TRY",
+                    AcilisBakiye = kasa.AcilisBakiye,
+                    GuncelBakiye = kasa.GuncelBakiye,
+                    Aciklama = kasa.Aciklama ?? string.Empty,
+                    Aktif = kasa.Aktif,
+                    OlusturmaTarihi = kasa.OlusturmaTarihi
+                };
+
+                return View(viewModel);
             }
             catch (Exception ex)
             {
@@ -131,8 +149,15 @@ namespace MuhasebeStokWebApp.Controllers
         /// <summary>
         /// Yeni kasa oluşturma formunu gösterir
         /// </summary>
-        public IActionResult Create()
+        public async Task<IActionResult> Create()
         {
+            // Para birimi listesini veritabanından al
+            ViewBag.ParaBirimleri = await _context.ParaBirimleri
+                .Where(p => p.Aktif)
+                .OrderBy(p => p.Sira)
+                .Select(p => new SelectListItem { Value = p.Kod, Text = $"{p.Ad} ({p.Kod})" })
+                .ToListAsync();
+
             return View();
         }
 
@@ -142,7 +167,7 @@ namespace MuhasebeStokWebApp.Controllers
         /// </summary>
         [HttpPost]
         [ValidateAntiForgeryToken]
-        public async Task<IActionResult> Create(KasaViewModel viewModel)
+        public async Task<IActionResult> Create(KasaCreateViewModel viewModel)
         {
             if (ModelState.IsValid)
             {
@@ -153,10 +178,11 @@ namespace MuhasebeStokWebApp.Controllers
                     {
                         KasaID = Guid.NewGuid(),
                         KasaAdi = viewModel.KasaAdi,
+                        KasaTuru = "Standart", // Varsayılan kasa türü
                         ParaBirimi = viewModel.ParaBirimi,
                         Aciklama = viewModel.Aciklama,
                         GuncelBakiye = viewModel.AcilisBakiye,
-                        Aktif = true,
+                        Aktif = viewModel.Aktif,
                         Silindi = false,
                         OlusturmaTarihi = DateTime.Now,
                         OlusturanKullaniciID = GetCurrentUserId(),
@@ -182,6 +208,14 @@ namespace MuhasebeStokWebApp.Controllers
                     ModelState.AddModelError("", "Kasa kaydı oluşturulurken bir hata oluştu. Lütfen tekrar deneyin.");
                 }
             }
+            
+            // Hata durumunda para birimi listesini tekrar yükle
+            ViewBag.ParaBirimleri = await _context.ParaBirimleri
+                .Where(p => p.Aktif)
+                .OrderBy(p => p.Sira)
+                .Select(p => new SelectListItem { Value = p.Kod, Text = $"{p.Ad} ({p.Kod})" })
+                .ToListAsync();
+                
             return View(viewModel);
         }
 
@@ -206,13 +240,15 @@ namespace MuhasebeStokWebApp.Controllers
                 }
 
                 // Kasa verisini view model'e aktar
-                var viewModel = new KasaViewModel
+                var viewModel = new KasaEditViewModel
                 {
                     KasaID = kasa.KasaID,
-                    KasaAdi = kasa.KasaAdi,
-                    ParaBirimi = kasa.ParaBirimi,
-                    Aciklama = kasa.Aciklama,
-                    AcilisBakiye = kasa.GuncelBakiye,
+                    KasaAdi = kasa.KasaAdi ?? string.Empty,
+                    KasaTuru = kasa.KasaTuru ?? "Genel",
+                    ParaBirimi = kasa.ParaBirimi ?? "TRY",
+                    AcilisBakiye = kasa.AcilisBakiye,
+                    GuncelBakiye = kasa.GuncelBakiye,
+                    Aciklama = kasa.Aciklama ?? string.Empty,
                     Aktif = kasa.Aktif
                 };
 
@@ -309,7 +345,21 @@ namespace MuhasebeStokWebApp.Controllers
                     return NotFound();
                 }
 
-                return View(kasa);
+                // Entity'yi ViewModel'e dönüştür
+                var viewModel = new KasaViewModel
+                {
+                    KasaID = kasa.KasaID,
+                    KasaAdi = kasa.KasaAdi ?? string.Empty,
+                    KasaTuru = kasa.KasaTuru ?? "Genel",
+                    ParaBirimi = kasa.ParaBirimi ?? "TRY",
+                    AcilisBakiye = kasa.AcilisBakiye,
+                    GuncelBakiye = kasa.GuncelBakiye,
+                    Aciklama = kasa.Aciklama ?? string.Empty,
+                    Aktif = kasa.Aktif,
+                    OlusturmaTarihi = kasa.OlusturmaTarihi
+                };
+
+                return View(viewModel);
             }
             catch (Exception ex)
             {
@@ -404,8 +454,42 @@ namespace MuhasebeStokWebApp.Controllers
                     orderBy: q => q.OrderByDescending(h => h.Tarih)
                 );
 
-                ViewBag.Kasa = kasa;
-                return View(hareketler.ToList());
+                // Entity'leri ViewModel'e dönüştür
+                var viewModel = hareketler.Select(h => new KasaHareketViewModel
+                {
+                    KasaHareketID = h.KasaHareketID,
+                    KasaID = h.KasaID,
+                    KasaAdi = kasa.KasaAdi ?? string.Empty,
+                    Tutar = h.Tutar,
+                    HareketTuru = h.HareketTuru ?? string.Empty,
+                    Tarih = h.Tarih,
+                    ReferansNo = h.ReferansNo ?? string.Empty,
+                    ReferansTuru = h.ReferansTuru ?? string.Empty,
+                    Aciklama = h.Aciklama ?? string.Empty,
+                    ParaBirimi = kasa.ParaBirimi ?? "TRY",
+                    CariID = h.CariID,
+                    CariAdi = h.Cari?.CariUnvani ?? string.Empty,
+                    IslemTuru = h.IslemTuru ?? string.Empty,
+                    TransferID = h.TransferID,
+                    HedefKasaID = h.HedefKasaID
+                }).ToList();
+
+                // Kasa bilgisini ViewBag üzerinden gönder
+                var kasaViewModel = new KasaViewModel
+                {
+                    KasaID = kasa.KasaID,
+                    KasaAdi = kasa.KasaAdi ?? string.Empty,
+                    KasaTuru = kasa.KasaTuru ?? "Genel",
+                    ParaBirimi = kasa.ParaBirimi ?? "TRY",
+                    AcilisBakiye = kasa.AcilisBakiye,
+                    GuncelBakiye = kasa.GuncelBakiye,
+                    Aciklama = kasa.Aciklama ?? string.Empty,
+                    Aktif = kasa.Aktif,
+                    OlusturmaTarihi = kasa.OlusturmaTarihi
+                };
+                
+                ViewBag.Kasa = kasaViewModel;
+                return View(viewModel);
             }
             catch (Exception ex)
             {
@@ -450,11 +534,22 @@ namespace MuhasebeStokWebApp.Controllers
                 };
 
                 // Model oluştur
-                var model = new KasaHareket
+                var kasaHareket = new KasaHareket
                 {
                     KasaHareketID = Guid.NewGuid(),
                     Tarih = DateTime.Now,
                     ReferansNo = "REF-" + DateTime.Now.ToString("yyyyMMddHHmmss")
+                };
+
+                // KasaHareket modelini ViewModel'e dönüştür
+                var viewModel = new KasaHareketViewModel
+                {
+                    KasaHareketID = kasaHareket.KasaHareketID,
+                    Tarih = kasaHareket.Tarih,
+                    ReferansNo = kasaHareket.ReferansNo,
+                    HareketTuru = "Giriş", // Varsayılan değer
+                    Tutar = 0,
+                    CariIleDengelensin = false
                 };
 
                 // Kasa ID varsa
@@ -463,7 +558,7 @@ namespace MuhasebeStokWebApp.Controllers
                     var kasa = await _unitOfWork.Repository<Kasa>().GetByIdAsync(id.Value);
                     if (kasa != null && !kasa.Silindi)
                     {
-                        model.KasaID = kasa.KasaID;
+                        viewModel.KasaID = kasa.KasaID;
                         ViewBag.SecilenKasa = kasa;
                     }
                 }
@@ -474,12 +569,12 @@ namespace MuhasebeStokWebApp.Controllers
                     var cari = await _unitOfWork.Repository<Cari>().GetByIdAsync(cariId.Value);
                     if (cari != null && !cari.Silindi)
                     {
-                        model.CariID = cari.CariID;
+                        viewModel.CariID = cari.CariID;
                         ViewBag.SecilenCari = cari;
                     }
                 }
 
-                return View(model);
+                return View(viewModel);
             }
             catch (Exception ex)
             {
@@ -500,52 +595,83 @@ namespace MuhasebeStokWebApp.Controllers
             {
                 try
                 {
-                    // Mevcut kasayı getir
-                    var kasa = await _unitOfWork.Repository<Kasa>().GetByIdAsync(viewModel.KasaID);
-                    if (kasa == null || kasa.Silindi)
-                    {
-                        return NotFound();
+                    // Veritabanı işlemleri için transaction başlat
+                    using var transaction = await _context.Database.BeginTransactionAsync();
+
+                    try {
+                        // Mevcut kasayı getir
+                        var kasa = await _unitOfWork.Repository<Kasa>().GetByIdAsync(viewModel.KasaID);
+                        if (kasa == null || kasa.Silindi)
+                        {
+                            return NotFound();
+                        }
+
+                        // Yeni hareket oluştur
+                        var hareket = new KasaHareket
+                        {
+                            KasaHareketID = Guid.NewGuid(),
+                            KasaID = viewModel.KasaID,
+                            Tarih = viewModel.Tarih,
+                            IslemTuru = viewModel.IslemTuru ?? "Normal",
+                            HareketTuru = viewModel.HareketTuru,
+                            Tutar = viewModel.Tutar,
+                            Aciklama = viewModel.Aciklama,
+                            ReferansNo = viewModel.ReferansNo ?? $"KAS-{DateTime.Now:yyMMdd}-{new Random().Next(100, 999)}",
+                            ReferansTuru = viewModel.ReferansTuru ?? (viewModel.HareketTuru == "Giriş" ? "Tahsilat" : "Ödeme"),
+                            CariID = viewModel.CariID,
+                            OlusturmaTarihi = DateTime.Now,
+                            IslemYapanKullaniciID = GetCurrentUserId(),
+                            KarsiParaBirimi = viewModel.KarsiParaBirimi ?? kasa.ParaBirimi ?? "TRY",
+                            Silindi = false
+                        };
+
+                        // Kasa bakiyesini güncelle
+                        if (viewModel.HareketTuru == "Giriş")
+                        {
+                            kasa.GuncelBakiye += viewModel.Tutar;
+                        }
+                        else
+                        {
+                            kasa.GuncelBakiye -= viewModel.Tutar;
+                        }
+
+                        kasa.GuncellemeTarihi = DateTime.Now;
+                        kasa.SonGuncelleyenKullaniciID = GetCurrentUserId();
+
+                        // Değişiklikleri kaydet
+                        await _unitOfWork.Repository<KasaHareket>().AddAsync(hareket);
+                        await _unitOfWork.CompleteAsync();
+
+                        // Cari hareketi oluştur (eğer CariIleDengelensin işaretlenmişse ve CariID mevcutsa)
+                        if (viewModel.CariIleDengelensin && viewModel.CariID.HasValue && viewModel.CariID != Guid.Empty)
+                        {
+                            bool borcMu = viewModel.HareketTuru == "Giriş" ? false : true;
+                            await _cariHareketService.CreateFromKasaHareketAsync(hareket, borcMu);
+                        }
+                        // Hesap modülüne kaydetme seçeneği işaretlenmişse ve henüz Cari hareketi oluşturulmadıysa
+                        else if (viewModel.HesabaKaydet && viewModel.CariID.HasValue && viewModel.CariID != Guid.Empty)
+                        {
+                            bool borcMu = viewModel.HareketTuru == "Giriş" ? false : true;
+                            await _cariHareketService.CreateFromKasaHareketAsync(hareket, borcMu);
+                        }
+
+                        // Transaction'ı tamamla
+                        await transaction.CommitAsync();
+                        
+                        // İşlemi logla
+                        await _logService.Log(
+                            $"Yeni kasa hareketi oluşturuldu: Kasa: {kasa.KasaAdi}, İşlem: {viewModel.HareketTuru}, Tutar: {viewModel.Tutar} {kasa.ParaBirimi}",
+                            Enums.LogTuru.Bilgi
+                        );
+
+                        return RedirectToAction(nameof(Hareketler), new { id = viewModel.KasaID });
                     }
-
-                    // Yeni hareket oluştur
-                    var hareket = new KasaHareket
+                    catch (Exception ex)
                     {
-                        KasaHareketID = Guid.NewGuid(),
-                        KasaID = viewModel.KasaID,
-                        Tarih = viewModel.Tarih,
-                        IslemTuru = viewModel.IslemTuru,
-                        HareketTuru = viewModel.HareketTuru,
-                        Tutar = viewModel.Tutar,
-                        Aciklama = viewModel.Aciklama,
-                        OlusturmaTarihi = DateTime.Now,
-                        IslemYapanKullaniciID = GetCurrentUserId(),
-                        Silindi = false
-                    };
-
-                    // Kasa bakiyesini güncelle
-                    if (viewModel.HareketTuru == "Giriş")
-                    {
-                        kasa.GuncelBakiye += viewModel.Tutar;
+                        // Hata durumunda transaction'ı geri al
+                        await transaction.RollbackAsync();
+                        throw ex;
                     }
-                    else
-                    {
-                        kasa.GuncelBakiye -= viewModel.Tutar;
-                    }
-
-                    kasa.GuncellemeTarihi = DateTime.Now;
-                    kasa.SonGuncelleyenKullaniciID = GetCurrentUserId();
-
-                    // Değişiklikleri kaydet
-                    await _unitOfWork.Repository<KasaHareket>().AddAsync(hareket);
-                    await _unitOfWork.CompleteAsync();
-                    
-                    // İşlemi logla
-                    await _logService.Log(
-                        $"Yeni kasa hareketi oluşturuldu: Kasa: {kasa.KasaAdi}, İşlem: {viewModel.HareketTuru}, Tutar: {viewModel.Tutar} {kasa.ParaBirimi}",
-                        Enums.LogTuru.Bilgi
-                    );
-
-                    return RedirectToAction(nameof(Hareketler), new { id = viewModel.KasaID });
                 }
                 catch (Exception ex)
                 {
@@ -720,20 +846,28 @@ namespace MuhasebeStokWebApp.Controllers
         private async Task PrepareTransferViewBag()
         {
             // Aktif kasaları getir
-            var kasalar = await _unitOfWork.Repository<Kasa>().GetAsync(
-                filter: k => !k.Silindi,
-                orderBy: q => q.OrderBy(k => k.KasaAdi)
-            );
+            ViewBag.Kasalar = await _context.Kasalar
+                .Where(k => !k.Silindi && k.Aktif)
+                .ToListAsync();
+            
+            // Aktif banka hesaplarını getir
+            ViewBag.BankaHesaplari = await _context.BankaHesaplari
+                .Include(bh => bh.Banka)
+                .Where(bh => !bh.Silindi && bh.Aktif)
+                .ToListAsync();
 
-            // Dropdown için hazırla
-            ViewBag.Kasalar = kasalar.Select(k => new SelectListItem
-            {
-                Value = k.KasaID.ToString(),
-                Text = $"{k.KasaAdi} ({k.ParaBirimi}) - {k.GuncelBakiye:N2}"
-            }).ToList();
-
-            // Para birimleri listesi
-            ViewBag.ParaBirimleri = new List<string> { "TRY", "USD", "EUR", "GBP" };
+            // Döviz kurları
+            ViewBag.Kurlar = await _context.KurDegerleri
+                .Include(k => k.ParaBirimi)
+                .Where(k => k.ParaBirimi.Aktif && !k.ParaBirimi.Silindi)
+                .Where(k => k.Tarih.Date == DateTime.Today.Date)
+                .Select(k => new MuhasebeStokWebApp.ViewModels.Doviz.DovizKuruViewModel
+                {
+                    DovizKodu = k.ParaBirimi.Kod,
+                    AlisFiyati = k.Alis,
+                    SatisFiyati = k.Satis
+                })
+                .ToListAsync();
         }
 
         /// <summary>
@@ -800,6 +934,125 @@ namespace MuhasebeStokWebApp.Controllers
                 }
             }
             return View(viewModel);
+        }
+
+        // GET: Kasa/HesapHareketler/5
+        [HttpPost]
+        public async Task<IActionResult> GetKasaHareketler(Guid id)
+        {
+            try
+            {
+                // Kasa bilgisini bul
+                var kasa = await _unitOfWork.Repository<Kasa>().GetByIdAsync(id);
+
+                if (kasa == null || kasa.Silindi)
+                {
+                    return Json(new { error = "Kasa bulunamadı." });
+                }
+
+                // Hareketleri getir
+                var hareketler = _context.KasaHareketleri
+                    .Include(h => h.Kasa)
+                    .Include(h => h.Cari)
+                    .Where(h => h.KasaID == id && !h.Silindi)
+                    .AsQueryable();
+
+                // Arama yapılmışsa filtreleme
+                var search = Request.Query["search[value]"].FirstOrDefault();
+                if (!string.IsNullOrEmpty(search))
+                {
+                    hareketler = hareketler.Where(h =>
+                        (h.ReferansNo != null && h.ReferansNo.Contains(search)) ||
+                        h.Tarih.ToString().Contains(search) ||
+                        (h.HareketTuru != null && h.HareketTuru.Contains(search)) ||
+                        (h.ReferansTuru != null && h.ReferansTuru.Contains(search)) ||
+                        (h.Aciklama != null && h.Aciklama.Contains(search)) ||
+                        (h.Cari != null && h.Cari.CariUnvani != null && h.Cari.CariUnvani.Contains(search))
+                    );
+                }
+                
+                // Toplam kayıt sayısı
+                int totalRecords = await hareketler.CountAsync();
+                
+                // Filtrelenmiş kayıt sayısı
+                int recordsFiltered = totalRecords;
+                
+                // Sıralama
+                var order = Request.Query["order[0][column]"].FirstOrDefault();
+                var sortDir = Request.Query["order[0][dir]"].FirstOrDefault();
+                if (!string.IsNullOrEmpty(order) && !string.IsNullOrEmpty(sortDir))
+                {
+                    int columnIndex = int.Parse(order);
+                    bool isAscending = sortDir.ToLower() == "asc";
+                    
+                    switch (columnIndex)
+                    {
+                        case 0:
+                            hareketler = isAscending ? hareketler.OrderBy(h => h.Tarih) : hareketler.OrderByDescending(h => h.Tarih);
+                            break;
+                        case 1:
+                            hareketler = isAscending ? hareketler.OrderBy(h => h.HareketTuru) : hareketler.OrderByDescending(h => h.HareketTuru);
+                            break;
+                        case 2:
+                            hareketler = isAscending ? hareketler.OrderBy(h => h.ReferansNo) : hareketler.OrderByDescending(h => h.ReferansNo);
+                            break;
+                        case 3:
+                            hareketler = isAscending ? hareketler.OrderBy(h => h.ReferansTuru) : hareketler.OrderByDescending(h => h.ReferansTuru);
+                            break;
+                        case 4:
+                            hareketler = isAscending ? hareketler.OrderBy(h => h.Aciklama) : hareketler.OrderByDescending(h => h.Aciklama);
+                            break;
+                        case 5:
+                            hareketler = isAscending ? hareketler.OrderBy(h => h.Tutar) : hareketler.OrderByDescending(h => h.Tutar);
+                            break;
+                        default:
+                            hareketler = hareketler.OrderByDescending(h => h.Tarih);
+                            break;
+                    }
+                }
+                else
+                {
+                    // Varsayılan sıralama
+                    hareketler = hareketler.OrderByDescending(h => h.Tarih);
+                }
+                
+                // Sayfalama
+                var start = Request.Query["start"].FirstOrDefault();
+                var length = Request.Query["length"].FirstOrDefault();
+                int skip = start != null ? Convert.ToInt32(start) : 0;
+                int take = length != null ? Convert.ToInt32(length) : 10;
+                
+                var data = await hareketler.Skip(skip).Take(take).ToListAsync();
+                
+                var result = data.Select(h => new {
+                    kasaHareketID = h.KasaHareketID,
+                    tarih = h.Tarih.ToString("dd.MM.yyyy HH:mm"),
+                    hareketTuru = h.HareketTuru ?? string.Empty,
+                    referansNo = h.ReferansNo ?? string.Empty,
+                    referansTuru = h.ReferansTuru ?? string.Empty,
+                    aciklama = h.Aciklama ?? string.Empty,
+                    tutar = h.Tutar,
+                    cariUnvani = h.Cari?.CariUnvani ?? string.Empty
+                }).ToList();
+                
+                return Json(new
+                {
+                    draw = Request.Query["draw"].FirstOrDefault() ?? "1",
+                    recordsFiltered = recordsFiltered,
+                    recordsTotal = totalRecords,
+                    data = result
+                });
+            }
+            catch (Exception ex)
+            {
+                _logger.LogError(ex, "GetKasaHareketler çağrılırken hata oluştu. KasaID: {Id}", id);
+                return Json(new { 
+                    draw = Request.Query["draw"].FirstOrDefault() ?? "1",
+                    recordsFiltered = 0,
+                    recordsTotal = 0,
+                    data = new List<object>() 
+                });
+            }
         }
     }
 } 

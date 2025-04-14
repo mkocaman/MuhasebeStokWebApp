@@ -13,17 +13,17 @@ namespace MuhasebeStokWebApp.ViewModels.Kasa
         [Required(ErrorMessage = "Kasa adı zorunludur.")]
         [StringLength(100, ErrorMessage = "Kasa adı en fazla 100 karakter olabilir.")]
         [Display(Name = "Kasa Adı")]
-        public string KasaAdi { get; set; }
+        public string KasaAdi { get; set; } = string.Empty;
         
         [Required(ErrorMessage = "Kasa türü zorunludur.")]
         [StringLength(50, ErrorMessage = "Kasa türü en fazla 50 karakter olabilir.")]
         [Display(Name = "Kasa Türü")]
-        public string KasaTuru { get; set; }
+        public string KasaTuru { get; set; } = string.Empty;
         
         [Required(ErrorMessage = "Para birimi zorunludur.")]
         [StringLength(3, ErrorMessage = "Para birimi en fazla 3 karakter olabilir.")]
         [Display(Name = "Para Birimi")]
-        public string ParaBirimi { get; set; }
+        public string ParaBirimi { get; set; } = "TRY";
         
         [Display(Name = "Açılış Bakiye")]
         [DisplayFormat(DataFormatString = "{0:N2}", ApplyFormatInEditMode = true)]
@@ -35,7 +35,7 @@ namespace MuhasebeStokWebApp.ViewModels.Kasa
         
         [StringLength(500, ErrorMessage = "Açıklama en fazla 500 karakter olabilir.")]
         [Display(Name = "Açıklama")]
-        public string Aciklama { get; set; }
+        public string Aciklama { get; set; } = string.Empty;
         
         [Display(Name = "Aktif")]
         public bool Aktif { get; set; }
@@ -59,7 +59,7 @@ namespace MuhasebeStokWebApp.ViewModels.Kasa
         [Required(ErrorMessage = "Kasa adı zorunludur.")]
         [StringLength(100, ErrorMessage = "Kasa adı en fazla 100 karakter olabilir.")]
         [Display(Name = "Kasa Adı")]
-        public string KasaAdi { get; set; }
+        public string KasaAdi { get; set; } = string.Empty;
         
         [Required(ErrorMessage = "Para birimi zorunludur.")]
         [StringLength(3, ErrorMessage = "Para birimi en fazla 3 karakter olabilir.")]
@@ -72,7 +72,7 @@ namespace MuhasebeStokWebApp.ViewModels.Kasa
         
         [StringLength(500, ErrorMessage = "Açıklama en fazla 500 karakter olabilir.")]
         [Display(Name = "Açıklama")]
-        public string Aciklama { get; set; }
+        public string Aciklama { get; set; } = string.Empty;
         
         [Display(Name = "Aktif")]
         public bool Aktif { get; set; } = true;
@@ -85,17 +85,17 @@ namespace MuhasebeStokWebApp.ViewModels.Kasa
         [Required(ErrorMessage = "Kasa adı zorunludur.")]
         [StringLength(100, ErrorMessage = "Kasa adı en fazla 100 karakter olabilir.")]
         [Display(Name = "Kasa Adı")]
-        public string KasaAdi { get; set; }
+        public string KasaAdi { get; set; } = string.Empty;
         
         [Required(ErrorMessage = "Kasa türü zorunludur.")]
         [StringLength(50, ErrorMessage = "Kasa türü en fazla 50 karakter olabilir.")]
         [Display(Name = "Kasa Türü")]
-        public string KasaTuru { get; set; }
+        public string KasaTuru { get; set; } = string.Empty;
         
         [Required(ErrorMessage = "Para birimi zorunludur.")]
         [StringLength(3, ErrorMessage = "Para birimi en fazla 3 karakter olabilir.")]
         [Display(Name = "Para Birimi")]
-        public string ParaBirimi { get; set; }
+        public string ParaBirimi { get; set; } = "TRY";
         
         [Display(Name = "Açılış Bakiye")]
         [DisplayFormat(DataFormatString = "{0:N2}", ApplyFormatInEditMode = true)]
@@ -107,7 +107,7 @@ namespace MuhasebeStokWebApp.ViewModels.Kasa
         
         [StringLength(500, ErrorMessage = "Açıklama en fazla 500 karakter olabilir.")]
         [Display(Name = "Açıklama")]
-        public string Aciklama { get; set; }
+        public string Aciklama { get; set; } = string.Empty;
         
         [Display(Name = "Aktif")]
         public bool Aktif { get; set; }
@@ -120,36 +120,36 @@ namespace MuhasebeStokWebApp.ViewModels.Kasa
         public Guid KasaID { get; set; }
         
         [Display(Name = "Kasa Adı")]
-        public string KasaAdi { get; set; }
+        public string KasaAdi { get; set; } = string.Empty;
         
         [Display(Name = "Tutar")]
         [DisplayFormat(DataFormatString = "{0:N2}", ApplyFormatInEditMode = false)]
         public decimal Tutar { get; set; }
         
         [Display(Name = "Hareket Türü")]
-        public string HareketTuru { get; set; }
+        public string HareketTuru { get; set; } = string.Empty;
         
         [Display(Name = "Tarih")]
         [DisplayFormat(DataFormatString = "{0:dd.MM.yyyy HH:mm}", ApplyFormatInEditMode = false)]
         public DateTime Tarih { get; set; }
         
         [Display(Name = "Referans No")]
-        public string ReferansNo { get; set; }
+        public string ReferansNo { get; set; } = string.Empty;
         
         [Display(Name = "Referans Türü")]
-        public string ReferansTuru { get; set; }
+        public string ReferansTuru { get; set; } = string.Empty;
         
         [Display(Name = "Açıklama")]
-        public string Aciklama { get; set; }
+        public string Aciklama { get; set; } = string.Empty;
         
         [Display(Name = "Kur Değeri")]
         public decimal? DovizKuru { get; set; }
         
         [Display(Name = "Para Birimi")]
-        public string ParaBirimi { get; set; }
+        public string ParaBirimi { get; set; } = "TRY";
         
         [Display(Name = "Karşı Para Birimi")]
-        public string KarsiParaBirimi { get; set; }
+        public string KarsiParaBirimi { get; set; } = string.Empty;
         
         [Display(Name = "Transfer ID")]
         public Guid? TransferID { get; set; }
@@ -158,28 +158,34 @@ namespace MuhasebeStokWebApp.ViewModels.Kasa
         public Guid? HedefKasaID { get; set; }
         
         [Display(Name = "Hedef Kasa Adı")]
-        public string HedefKasaAdi { get; set; }
+        public string HedefKasaAdi { get; set; } = string.Empty;
         
         [Display(Name = "İşlem Türü")]
-        public string IslemTuru { get; set; }
+        public string IslemTuru { get; set; } = string.Empty;
         
         [Display(Name = "Cari ID")]
         public Guid? CariID { get; set; }
         
         [Display(Name = "Cari Adı")]
-        public string CariAdi { get; set; }
+        public string CariAdi { get; set; } = string.Empty;
+        
+        [Display(Name = "Cari ile Dengelensin")]
+        public bool CariIleDengelensin { get; set; }
+        
+        [Display(Name = "Hesap Modülüne Kaydet")]
+        public bool HesabaKaydet { get; set; }
         
         [Display(Name = "Hedef Banka ID")]
         public Guid? HedefBankaID { get; set; }
         
         [Display(Name = "Hedef Banka Adı")]
-        public string HedefBankaAdi { get; set; }
+        public string HedefBankaAdi { get; set; } = string.Empty;
         
         [Display(Name = "Kaynak Banka ID")]
         public Guid? KaynakBankaID { get; set; }
         
         [Display(Name = "Kaynak Banka Adı")]
-        public string KaynakBankaAdi { get; set; }
+        public string KaynakBankaAdi { get; set; } = string.Empty;
     }
     
     public class KasaTransferViewModel
@@ -213,14 +219,14 @@ namespace MuhasebeStokWebApp.ViewModels.Kasa
         public decimal KurDegeri { get; set; } = 1;
         
         [Display(Name = "Kaynak Para Birimi")]
-        public string KaynakParaBirimi { get; set; }
+        public string KaynakParaBirimi { get; set; } = "TRY";
         
         [Display(Name = "Hedef Para Birimi")]
-        public string HedefParaBirimi { get; set; }
+        public string HedefParaBirimi { get; set; } = "TRY";
         
         [StringLength(500, ErrorMessage = "Açıklama en fazla 500 karakter olabilir.")]
         [Display(Name = "Açıklama")]
-        public string Aciklama { get; set; }
+        public string Aciklama { get; set; } = string.Empty;
         
         [Display(Name = "İşlem Tarihi")]
         [DisplayFormat(DataFormatString = "{0:dd.MM.yyyy HH:mm}", ApplyFormatInEditMode = false)]
@@ -233,7 +239,7 @@ namespace MuhasebeStokWebApp.ViewModels.Kasa
         public Guid? KaynakBankaID { get; set; }
         
         [Display(Name = "Transfer Tipi")]
-        public string TransferTipi { get; set; } // "KasaToKasa", "KasaToBanka", "BankaToKasa"
+        public string TransferTipi { get; set; } = "KasaToKasa";
     }
     
     public class KasaHareketFilterViewModel
@@ -242,8 +248,8 @@ namespace MuhasebeStokWebApp.ViewModels.Kasa
         public Guid? CariID { get; set; }
         public DateTime? BaslangicTarihi { get; set; }
         public DateTime? BitisTarihi { get; set; }
-        public string HareketTuru { get; set; }
-        public string ReferansTuru { get; set; }
+        public string? HareketTuru { get; set; }
+        public string? ReferansTuru { get; set; }
     }
     
     public class KasaHareketTarihViewModel
@@ -283,10 +289,10 @@ namespace MuhasebeStokWebApp.ViewModels.Kasa
         public Guid KasaID { get; set; }
         
         [Display(Name = "Kasa Adı")]
-        public string KasaAdi { get; set; }
+        public string KasaAdi { get; set; } = string.Empty;
         
         [Display(Name = "Para Birimi")]
-        public string ParaBirimi { get; set; }
+        public string ParaBirimi { get; set; } = "TRY";
         
         [Display(Name = "Toplam Giriş")]
         [DisplayFormat(DataFormatString = "{0:N2}", ApplyFormatInEditMode = false)]

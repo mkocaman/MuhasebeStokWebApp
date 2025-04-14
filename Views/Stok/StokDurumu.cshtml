@@ -123,9 +123,9 @@
                                 <td>@stokDurumu.Birim</td>
                                 <td>@stokDurumu.DepoAdi</td>
                                 <td>@stokDurumu.StokMiktari.ToString("N2") @stokDurumu.Birim</td>
-                                <td>@stokDurumu.OrtalamaMaliyet.ToString("N2") ₺</td>
-                                <td>@((stokDurumu.OrtalamaMaliyet * stokDurumu.StokMiktari).ToString("N2")) ₺</td>
-                                <td>@stokDurumu.SatisFiyati.ToString("N2") ₺</td>
+                                <td>@stokDurumu.OrtalamaMaliyet.ToString("N2") so'm</td>
+                                <td>@((stokDurumu.OrtalamaMaliyet * stokDurumu.StokMiktari).ToString("N2")) so'm</td>
+                                <td>@stokDurumu.SatisFiyati.ToString("N2") so'm</td>
                                 <td>
                                     @if (stokDurumu.StokMiktari <= stokDurumu.KritikStokSeviyesi)
                                     {
@@ -147,7 +147,7 @@
                                     <a asp-action="StokCikis" asp-route-urunID="@stokDurumu.UrunID" asp-route-depoID="@stokDurumu.DepoID" class="btn btn-sm btn-danger">
                                         <i class="material-icons">remove</i>
                                     </a>
-                                    <a asp-action="Hareketler" asp-route-urunID="@stokDurumu.UrunID" class="btn btn-sm btn-info">
+                                    <a asp-action="Hareketler" asp-route-id="@stokDurumu.UrunID" class="btn btn-sm btn-info">
                                         <i class="material-icons">history</i>
                                     </a>
                                 </td>

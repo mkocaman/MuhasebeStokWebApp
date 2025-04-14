@@ -9,41 +9,63 @@ namespace MuhasebeStokWebApp.Models
     public class Fatura
     {
         [Key]
-        public Guid FaturaId { get; set; }
-
-        public virtual Cari Cari { get; set; }
-
+        public Guid FaturaID { get; set; }
+        
         [Required]
-        public Guid CariId { get; set; }
-
+        [StringLength(50)]
+        public string FaturaNumarasi { get; set; } = "";
+        
         [Required]
-        [StringLength(20)]
-        public string FaturaNumarasi { get; set; }
-
+        public DateTime FaturaTarihi { get; set; } = DateTime.Now;
+        
         [Required]
-        public DateTime FaturaTarihi { get; set; }
-
+        public Guid CariID { get; set; }
+        
+        [Required]
+        public decimal AraToplam { get; set; }
+        
+        [Required]
+        public decimal KDVToplam { get; set; }
+        
+        [Required]
+        public decimal GenelToplam { get; set; }
+        
+        [Required]
+        public DateTime VadeTarihi { get; set; } = DateTime.Now.AddDays(30);
+        
+        [Required]
+        public bool Odendi { get; set; } = false;
+        
         [StringLength(500)]
-        public string Aciklama { get; set; }
-
-        public decimal ToplamTutar { get; set; }
-
-        public bool Aktif { get; set; } = true;
-
+        public string Aciklama { get; set; } = "";
+        
+        [Required]
         public DateTime OlusturmaTarihi { get; set; } = DateTime.Now;
-
-        public Guid OlusturanKullaniciId { get; set; }
-
+        
         public DateTime? GuncellemeTarihi { get; set; }
-
-        public Guid? SonGuncelleyenKullaniciId { get; set; }
-
-        public bool Silindi { get; set; }
-
+        
+        public Guid? OlusturanKullaniciID { get; set; }
+        
+        public Guid? GuncelleyenKullaniciID { get; set; }
+        
+        public bool Silindi { get; set; } = false;
+        
+        [ForeignKey("CariID")]
+        public virtual Cari Cari { get; set; }
+        
         public virtual ICollection<FaturaDetay> FaturaDetaylari { get; set; }
-
+        
         public Fatura()
         {
+            FaturaID = Guid.NewGuid();
+            FaturaTarihi = DateTime.Now;
+            VadeTarihi = DateTime.Now.AddDays(30);
+            Odendi = false;
+            OlusturmaTarihi = DateTime.Now;
+            Silindi = false;
+            FaturaNumarasi = "";
+            Aciklama = "";
+            Cari = new Cari();
             FaturaDetaylari = new List<FaturaDetay>();
         }
     }

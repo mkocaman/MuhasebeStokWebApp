@@ -2,6 +2,7 @@ using System;
 using System.Collections.Generic;
 using System.ComponentModel.DataAnnotations;
 using System.ComponentModel.DataAnnotations.Schema;
+using MuhasebeStokWebApp.Data.Entities.ParaBirimiModulu;
 
 namespace MuhasebeStokWebApp.Data.Entities.DovizModulu
 {
@@ -110,12 +111,12 @@ namespace MuhasebeStokWebApp.Data.Entities.DovizModulu
         /// Para birimi ilişkileri - Bu para birimi kaynak olarak
         /// </summary>
         [InverseProperty("KaynakParaBirimi")]
-        public virtual ICollection<DovizIliski> KaynakDovizIliskileri { get; set; }
+        public virtual ICollection<ParaBirimiIliski> KaynakParaBirimiIliskileri { get; set; }
         
         /// <summary>
         /// Para birimi ilişkileri - Bu para birimi hedef olarak
         /// </summary>
         [InverseProperty("HedefParaBirimi")]
-        public virtual ICollection<DovizIliski> HedefDovizIliskileri { get; set; }
+        public virtual ICollection<ParaBirimiIliski> HedefParaBirimiIliskileri { get; set; }
     }
 } 

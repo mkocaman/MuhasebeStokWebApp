@@ -13,6 +13,10 @@ using Microsoft.AspNetCore.Mvc.Rendering;
 using Microsoft.AspNetCore.Identity;
 using MuhasebeStokWebApp.Services;
 using MuhasebeStokWebApp.Services.Interfaces;
+using MuhasebeStokWebApp.Enums;
+using Microsoft.Extensions.Logging;
+using ClosedXML.Excel;
+using System.IO;
 
 namespace MuhasebeStokWebApp.Controllers
 {
@@ -22,6 +26,7 @@ namespace MuhasebeStokWebApp.Controllers
     {
         private readonly IUnitOfWork _unitOfWork;
         private readonly ApplicationDbContext _context;
+        private readonly ILogger<UrunController> _logger;
 
         // Constructor: Repository ve veritabanı bağlantısını DI ile alır
         public UrunController(
@@ -30,27 +35,38 @@ namespace MuhasebeStokWebApp.Controllers
             IMenuService menuService,
             UserManager<ApplicationUser> userManager,
             RoleManager<IdentityRole> roleManager,
-            ILogService logService)
+            ILogService logService,
+            ILogger<UrunController> logger)
             : base(menuService, userManager, roleManager, logService)
         {
             _unitOfWork = unitOfWork;
             _context = context;
+            _logger = logger;
         }
 
         // Ürünlerin listelendiği ana sayfa
-        public async Task<IActionResult> Index()
+        public async Task<IActionResult> Index(Guid? kategoriID = null)
         {
             var urunRepository = _unitOfWork.Repository<Urun>();
             var urunFiyatRepository = _unitOfWork.Repository<UrunFiyat>();
             var kategoriRepository = _unitOfWork.Repository<UrunKategori>();
+            var birimRepository = _unitOfWork.Repository<Birim>();
 
-            // Silinmemiş tüm ürünleri getir
-            var urunler = await urunRepository.GetAllAsync();
-            urunler = urunler.Where(u => u.Silindi == false).ToList();
+            // Tüm ürünleri getir (silinen ve pasif ürünler dahil), birim bilgisiyle birlikte
+            var urunler = await urunRepository.GetAsync(
+                filter: null, // filter parametresi kaldırıldı, tüm ürünleri getir
+                includeProperties: "Birim"
+            );
 
             // Silinmemiş tüm kategorileri getir
-            var kategoriler = await kategoriRepository.GetAllAsync();
-            kategoriler = kategoriler.Where(k => k.Silindi == false).ToList();
+            var kategoriler = await kategoriRepository.GetAsync(
+                filter: k => k.Silindi == false,
+                orderBy: q => q.OrderBy(k => k.KategoriAdi)
+            );
+            
+            // Kategorileri ViewBag'e ekle
+            ViewBag.Kategoriler = new SelectList(kategoriler, "KategoriID", "KategoriAdi", kategoriID);
+            ViewBag.CurrentKategori = kategoriID;
 
             // Ürün listesi görünüm modeli oluştur
             var viewModel = new UrunListViewModel
@@ -61,7 +77,7 @@ namespace MuhasebeStokWebApp.Controllers
                     UrunKodu = u.UrunKodu,
                     UrunAdi = u.UrunAdi,
                     Birim = u.Birim != null ? u.Birim.BirimAdi : string.Empty,
-                    StokMiktar = u.StokMiktar,
+                    Miktar = u.StokMiktar,
                     // Her ürün için en güncel liste fiyatını getir
                     ListeFiyati = urunFiyatRepository.GetAllAsync().Result
                         .Where(uf => uf.UrunID == u.UrunID && uf.FiyatTipiID == 1 && uf.Silindi == false)
@@ -78,13 +94,20 @@ namespace MuhasebeStokWebApp.Controllers
                         .OrderByDescending(uf => uf.GecerliTarih)
                         .FirstOrDefault()?.Fiyat ?? 0m,
                     Aktif = u.Aktif,
+                    Silindi = u.Silindi,
                     OlusturmaTarihi = u.OlusturmaTarihi,
                     KategoriID = u.KategoriID,
                     // Ürün kategorisinin adını bul
                     KategoriAdi = u.KategoriID.HasValue ? 
-                        kategoriler.FirstOrDefault(k => k.KategoriID.ToString() == u.KategoriID.ToString())?.KategoriAdi : "Kategorisiz"
+                        kategoriler.FirstOrDefault(k => k.KategoriID == u.KategoriID)?.KategoriAdi : "Kategorisiz"
                 }).ToList()
             };
+
+            // Kategori filtresi varsa uygula
+            if (kategoriID.HasValue)
+            {
+                viewModel.Urunler = viewModel.Urunler.Where(u => u.KategoriID == kategoriID.Value).ToList();
+            }
 
             return View(viewModel);
         }
@@ -114,7 +137,7 @@ namespace MuhasebeStokWebApp.Controllers
                 UrunKodu = urun.UrunKodu,
                 UrunAdi = urun.UrunAdi,
                 Birim = urun.Birim != null ? urun.Birim.BirimAdi : string.Empty,
-                StokMiktar = urun.StokMiktar,
+                Miktar = urun.StokMiktar,
                 // Ürün için en güncel liste fiyatını getir
                 ListeFiyati = urunFiyatRepository.GetAllAsync().Result
                     .Where(uf => uf.UrunID == urun.UrunID && uf.FiyatTipiID == 1 && uf.Silindi == false)
@@ -179,98 +202,115 @@ namespace MuhasebeStokWebApp.Controllers
         [ValidateAntiForgeryToken]
         public async Task<IActionResult> Create(UrunCreateViewModel model)
         {
-            try
+            // Birim ve kategori zorunlu alanlar - Guid için null kontrolü
+            if (model.BirimID == Guid.Empty)
             {
-                // Birim seçimi zorunlu
-                if (!model.BirimID.HasValue)
-                {
-                    ModelState.AddModelError("BirimID", "Birim seçimi zorunludur.");
-                }
-                
-                // Gereksiz validasyon alanlarını kaldır
-                ModelState.Remove("BirimListesi");
-                ModelState.Remove("KategoriListesi");
-                ModelState.Remove("Birim");
-                
-                // Validasyon hatalarını Türkçeleştir
-                if (!ModelState.IsValid)
-                {
-                    TurkceHataEkle();
-                }
-                
-                if (ModelState.IsValid)
-                {
-                    var urunRepository = _unitOfWork.Repository<Urun>();
+                ModelState.AddModelError("BirimID", "Birim seçimi zorunludur.");
+            }
             
-                    // Yeni ürün nesnesi oluştur
-                    var urun = new Urun
-                    {
-                        UrunID = Guid.NewGuid(),
-                        UrunKodu = model.UrunKodu,
-                        UrunAdi = model.UrunAdi,
-                        BirimID = model.BirimID,
-                        KategoriID = model.KategoriID,
-                        KDVOrani = (int)model.KDVOrani,
-                        StokMiktar = model.StokMiktar,
-                        Aktif = model.Aktif,
-                        OlusturmaTarihi = DateTime.Now,
-                        OlusturanKullaniciID = GetCurrentUserId()
-                    };
-                    
-                    // Ürünü veritabanına ekle
-                    await urunRepository.AddAsync(urun);
-                    await _unitOfWork.SaveAsync();
-                    
-                    // Başarı durumunu don
-                    if (Request.Headers["X-Requested-With"] == "XMLHttpRequest")
-                    {
-                        return Json(new { success = true, message = "Ürün başarıyla oluşturuldu." });
-                    }
-                    
-                    TempData["SuccessMessage"] = "Ürün başarıyla oluşturuldu.";
-                    return RedirectToAction(nameof(Index));
-                }
-                
-                // Hata durumunda dropdown listelerini tekrar doldur
-                await ListeleriDoldur(model.KategoriID, model.BirimID);
-                
-                // AJAX isteği için hata mesajlarını döndür
+            if (model.KategoriID == Guid.Empty)
+            {
+                ModelState.AddModelError("KategoriID", "Kategori seçimi zorunludur.");
+            }
+            
+            // Gereksiz validasyon alanlarını kaldır
+            ModelState.Remove("BirimListesi");
+            ModelState.Remove("KategoriListesi");
+            ModelState.Remove("Aciklama"); // Açıklamayı zorunlu olmaktan çıkar
+            
+            if (!ModelState.IsValid)
+            {
+                // Eğer AJAX isteği ise hata mesajlarını döndür
                 if (Request.Headers["X-Requested-With"] == "XMLHttpRequest")
                 {
-                    return Json(new { 
-                        success = false, 
-                        message = "Ürün oluşturulurken hatalar oluştu.", 
-                        errors = ModelState.Values.SelectMany(v => v.Errors).Select(e => e.ErrorMessage).ToList() 
-                    });
+                    return Json(new { success = false, message = "Validasyon hatası", errors = ModelState.Values.SelectMany(v => v.Errors).Select(e => e.ErrorMessage).ToList() });
                 }
                 
-                return PartialView("_CreateUrun", model);
+                // Dropdown list verilerini hazırla
+                await ListeleriDoldur();
+                return View(model);
+            }
+
+            try
+            {
+                var urunRepository = _unitOfWork.Repository<Urun>();
+
+                // Ürün kodu kontrol et
+                var existingUrun = await urunRepository.GetFirstOrDefaultAsync(u => u.UrunKodu == model.UrunKodu && !u.Silindi);
+                if (existingUrun != null)
+                {
+                    ModelState.AddModelError("UrunKodu", "Bu ürün kodu zaten kullanılıyor.");
+                    
+                    // Eğer AJAX isteği ise hata mesajı döndür
+                    if (Request.Headers["X-Requested-With"] == "XMLHttpRequest")
+                    {
+                        return Json(new { success = false, message = "Bu ürün kodu zaten kullanılıyor.", errors = new List<string> { "Bu ürün kodu zaten kullanılıyor." } });
+                    }
+                    
+                    // Dropdown list verilerini hazırla
+                    await ListeleriDoldur();
+                    return View(model);
+                }
+                
+                // Yeni ürün oluştur
+                var yeniUrun = new Urun
+                {
+                    UrunID = Guid.NewGuid(),
+                    UrunKodu = model.UrunKodu,
+                    UrunAdi = model.UrunAdi,
+                    Aciklama = model.Aciklama ?? string.Empty,
+                    BirimID = model.BirimID,
+                    KategoriID = model.KategoriID,
+                    KDVOrani = (int)model.KDVOrani,
+                    Aktif = model.Aktif,
+                    OlusturmaTarihi = DateTime.Now,
+                    OlusturanKullaniciID = GetCurrentUserId()
+                };
+                
+                await urunRepository.AddAsync(yeniUrun);
+                
+                // Veritabanına kaydet
+                await _unitOfWork.SaveAsync();
+                
+                // Log oluştur
+                await _logService.LogInfoAsync(
+                    "UrunController.Create",
+                    $"Yeni ürün oluşturuldu: {yeniUrun.UrunAdi}, ID: {yeniUrun.UrunID}"
+                );
+                
+                // Eğer AJAX isteği ise başarı mesajı döndür
+                if (Request.Headers["X-Requested-With"] == "XMLHttpRequest")
+                {
+                    return Json(new { success = true, message = "Ürün başarıyla oluşturuldu.", id = yeniUrun.UrunID });
+                }
+                
+                // Normal post ise, başarı mesajını ekleyip Index sayfasına yönlendir
+                TempData["SuccessMessage"] = $"{yeniUrun.UrunAdi} ürünü başarıyla oluşturuldu.";
+                return RedirectToAction(nameof(Index));
             }
             catch (Exception ex)
             {
-                // Hata log'u
-                await _logService.LogErrorAsync("UrunController.Create", $"Ürün oluşturulurken hata: {ex.Message}");
+                _logger.LogError(ex, "Ürün oluşturma hatası: {Message}", ex.Message);
                 
-                // Hata durumunda dropdown listelerini tekrar doldur
-                await ListeleriDoldur(model.KategoriID, model.BirimID);
-                
-                // AJAX isteği için hata mesajı döndür
+                // Eğer AJAX isteği ise hata mesajı döndür
                 if (Request.Headers["X-Requested-With"] == "XMLHttpRequest")
                 {
-                    return Json(new { success = false, message = "Ürün oluşturulurken bir hata oluştu: " + ex.Message });
+                    return Json(new { success = false, message = $"Ürün oluşturulurken bir hata oluştu: {ex.Message}" });
                 }
                 
-                ModelState.AddModelError("", "Ürün oluşturulurken beklenmeyen bir hata oluştu.");
-                return PartialView("_CreateUrun", model);
+                // Normal post ise, hata mesajını ekleyip dropdown list verilerini hazırla
+                TempData["ErrorMessage"] = $"Ürün oluşturulurken bir hata oluştu: {ex.Message}";
+                await ListeleriDoldur();
+                return View(model);
             }
         }
 
         // Ürün düzenleme formu
-        [HttpGet]
         public async Task<IActionResult> Edit(Guid id)
         {
             var urunRepository = _unitOfWork.Repository<Urun>();
             var kategoriRepository = _unitOfWork.Repository<UrunKategori>();
+            var birimRepository = _unitOfWork.Repository<Birim>();
 
             // Ürün bilgisini getir
             var urun = await urunRepository.GetFirstOrDefaultAsync(u => u.UrunID == id && u.Silindi == false);
@@ -279,26 +319,39 @@ namespace MuhasebeStokWebApp.Controllers
                 return NotFound();
             }
 
-            // Düzenleme görünüm modeli oluştur
+            // Aktif kategorileri getir
+            var kategoriler = await kategoriRepository.GetAsync(
+                filter: k => k.Silindi == false && k.Aktif,
+                orderBy: q => q.OrderBy(k => k.KategoriAdi)
+            );
+            
+            // Aktif birimleri getir
+            var birimler = await birimRepository.GetAsync(
+                filter: b => b.Silindi == false && b.Aktif,
+                orderBy: q => q.OrderBy(b => b.BirimAdi)
+            );
+            
+            // Dropdown listelerini hazırla
+            ViewBag.Kategoriler = new SelectList(kategoriler, "KategoriID", "KategoriAdi", urun.KategoriID);
+            ViewBag.Birimler = new SelectList(birimler, "BirimID", "BirimAdi", urun.BirimID);
+
+            // ViewModel oluştur
             var viewModel = new UrunEditViewModel
             {
                 UrunID = urun.UrunID,
                 UrunKodu = urun.UrunKodu,
                 UrunAdi = urun.UrunAdi,
-                BirimID = urun.BirimID,
-                StokMiktar = urun.StokMiktar,
-                Aktif = urun.Aktif,
+                Aciklama = urun.Aciklama,
                 KategoriID = urun.KategoriID,
-                KDVOrani = urun.KDVOrani
+                BirimID = urun.BirimID,
+                KDVOrani = urun.KDVOrani,
+                Aktif = urun.Aktif
             };
-
-            // Dropdown listelerini hazırla
-            await ListeleriDoldur(viewModel.KategoriID, viewModel.BirimID);
             
-            // AJAX isteğiyse partial view döndür
+            // AJAX isteği ise partial view döndür
             if (Request.Headers["X-Requested-With"] == "XMLHttpRequest")
             {
-                return PartialView("_EditPartial", viewModel);
+                return PartialView("_EditUrun", viewModel);
             }
             
             return View(viewModel);
@@ -306,70 +359,132 @@ namespace MuhasebeStokWebApp.Controllers
 
         // Ürün düzenleme işlemi
         [HttpPost]
-        public async Task<IActionResult> Edit(Guid id, UrunEditViewModel model)
+        [ValidateAntiForgeryToken]
+        public async Task<IActionResult> Edit(UrunEditViewModel model)
         {
-            if (id != model.UrunID)
+            // Birim seçimi kontrolü - Guid için null kontrolü
+            if (model.BirimID == Guid.Empty)
             {
-                return NotFound();
+                ModelState.AddModelError("BirimID", "Birim seçimi zorunludur.");
             }
-
+            
             // Gereksiz validasyon alanlarını kaldır
             ModelState.Remove("BirimListesi");
             ModelState.Remove("KategoriListesi");
             ModelState.Remove("Birim");
+            ModelState.Remove("Aciklama"); // Açıklamayı zorunlu olmaktan çıkar
             
-            // Validasyon hatalarını Türkçeleştir
             if (!ModelState.IsValid)
             {
-                TurkceHataEkle();
+                // AJAX isteği ise hata mesajı döndür
+                if (Request.Headers["X-Requested-With"] == "XMLHttpRequest")
+                {
+                    return Json(new { success = false, message = "Validasyon hatası", errors = ModelState.Values.SelectMany(v => v.Errors).Select(e => e.ErrorMessage).ToList() });
+                }
+                
+                // Tekrar dropdown verilerini hazırla
+                var kategoriRepository = _unitOfWork.Repository<UrunKategori>();
+                var birimRepository = _unitOfWork.Repository<Birim>();
+                
+                var kategoriler = await kategoriRepository.GetAsync(
+                    filter: k => k.Silindi == false && k.Aktif,
+                    orderBy: q => q.OrderBy(k => k.KategoriAdi)
+                );
+                
+                var birimler = await birimRepository.GetAsync(
+                    filter: b => b.Silindi == false && b.Aktif,
+                    orderBy: q => q.OrderBy(b => b.BirimAdi)
+                );
+                
+                ViewBag.Kategoriler = new SelectList(kategoriler, "KategoriID", "KategoriAdi", model.KategoriID);
+                ViewBag.Birimler = new SelectList(birimler, "BirimID", "BirimAdi", model.BirimID);
+                
+                return View(model);
             }
 
-            if (ModelState.IsValid)
+            try
             {
                 var urunRepository = _unitOfWork.Repository<Urun>();
-
+                
                 // Ürün bilgisini getir
-                var urun = await urunRepository.GetFirstOrDefaultAsync(u => u.UrunID == id && u.Silindi == false);
+                var urun = await urunRepository.GetFirstOrDefaultAsync(u => u.UrunID == model.UrunID && !u.Silindi);
                 if (urun == null)
                 {
+                    // AJAX isteği ise hata mesajı döndür
+                    if (Request.Headers["X-Requested-With"] == "XMLHttpRequest")
+                    {
+                        return Json(new { success = false, message = "Ürün bulunamadı." });
+                    }
+                    
                     return NotFound();
                 }
 
                 // Ürün bilgilerini güncelle
                 urun.UrunKodu = model.UrunKodu;
                 urun.UrunAdi = model.UrunAdi;
-                urun.BirimID = model.BirimID;
-                urun.StokMiktar = model.StokMiktar;
-                urun.Aktif = model.Aktif;
+                urun.Aciklama = model.Aciklama ?? string.Empty;
                 urun.KategoriID = model.KategoriID;
-                urun.KDVOrani = model.KDVOrani;
+                urun.BirimID = model.BirimID;
+                urun.KDVOrani = (int)model.KDVOrani;
+                urun.Aktif = model.Aktif;
                 urun.GuncellemeTarihi = DateTime.Now;
-
-                // Ürünü güncelle
+                
+                // Kullanıcı ID'sini guid olarak ayarla
+                if (Guid.TryParse(User.Identity.Name, out Guid kullaniciID))
+                {
+                    urun.SonGuncelleyenKullaniciID = kullaniciID;
+                }
+                
                 await urunRepository.UpdateAsync(urun);
+                
                 await _unitOfWork.SaveAsync();
-
-                TempData["SuccessMessage"] = $"{model.UrunAdi} ürünü başarıyla güncellendi.";
-
-                // AJAX isteği için başarılı sonuç döndür
+                
+                // Log oluştur
+                await _logService.LogInfoAsync(
+                    "UrunController.Edit",
+                    $"Ürün güncellendi: {urun.UrunAdi}, ID: {urun.UrunID}"
+                );
+                
+                // AJAX isteği ise başarı mesajı döndür
                 if (Request.Headers["X-Requested-With"] == "XMLHttpRequest")
                 {
-                    return Json(new { success = true });
+                    return Json(new { success = true, message = "Ürün başarıyla güncellendi." });
                 }
-
+                
+                TempData["SuccessMessage"] = $"{urun.UrunAdi} ürünü başarıyla güncellendi.";
                 return RedirectToAction(nameof(Index));
             }
-            
-            // ModelState geçersizse dropdown listelerini tekrar doldur
-            await ListeleriDoldur(model.KategoriID, model.BirimID);
-            
-            // AJAX isteği için başarısız sonuç döndür
-            if (Request.Headers["X-Requested-With"] == "XMLHttpRequest")
+            catch (Exception ex)
             {
-                return PartialView("_EditPartial", model);
+                _logger.LogError(ex, "Ürün güncelleme hatası: {Message}", ex.Message);
+                
+                // AJAX isteği ise hata mesajı döndür
+                if (Request.Headers["X-Requested-With"] == "XMLHttpRequest")
+                {
+                    return Json(new { success = false, message = $"Ürün güncellenirken bir hata oluştu: {ex.Message}" });
+                }
+                
+                TempData["ErrorMessage"] = $"Ürün güncellenirken bir hata oluştu: {ex.Message}";
+                
+                // Tekrar dropdown verilerini hazırla
+                var kategoriRepository = _unitOfWork.Repository<UrunKategori>();
+                var birimRepository = _unitOfWork.Repository<Birim>();
+                
+                var kategoriler = await kategoriRepository.GetAsync(
+                    filter: k => k.Silindi == false && k.Aktif,
+                    orderBy: q => q.OrderBy(k => k.KategoriAdi)
+                );
+                
+                var birimler = await birimRepository.GetAsync(
+                    filter: b => b.Silindi == false && b.Aktif,
+                    orderBy: q => q.OrderBy(b => b.BirimAdi)
+                );
+                
+                ViewBag.Kategoriler = new SelectList(kategoriler, "KategoriID", "KategoriAdi", model.KategoriID);
+                ViewBag.Birimler = new SelectList(birimler, "BirimID", "BirimAdi", model.BirimID);
+                
+                return View(model);
             }
-            
-            return View(model);
         }
 
         // Ürün silme onay sayfası
@@ -397,7 +512,7 @@ namespace MuhasebeStokWebApp.Controllers
                 UrunKodu = urun.UrunKodu,
                 UrunAdi = urun.UrunAdi,
                 Birim = urun.Birim != null ? urun.Birim.BirimAdi : string.Empty,
-                StokMiktar = urun.StokMiktar,
+                Miktar = urun.StokMiktar,
                 ListeFiyati = urunFiyatRepository.GetAllAsync().Result
                     .Where(uf => uf.UrunID == urun.UrunID && uf.FiyatTipiID == 1 && uf.Silindi == false)
                     .OrderByDescending(uf => uf.GecerliTarih)
@@ -569,7 +684,7 @@ namespace MuhasebeStokWebApp.Controllers
                 UrunKodu = urun.UrunKodu,
                 UrunAdi = urun.UrunAdi,
                 Birim = urun.Birim != null ? urun.Birim.BirimAdi : string.Empty,
-                StokMiktar = urun.StokMiktar,
+                Miktar = urun.StokMiktar,
                 Aktif = urun.Aktif,
                 ListeFiyati = listeFiyati ?? 0m,
                 MaliyetFiyati = maliyetFiyati ?? 0m,
@@ -611,7 +726,7 @@ namespace MuhasebeStokWebApp.Controllers
 
             if (urun == null)
             {
-                return NotFound();
+                return Json(new { success = false, message = "Ürün bulunamadı" });
             }
 
             return Json(new
@@ -664,5 +779,751 @@ namespace MuhasebeStokWebApp.Controllers
         }
         
         #endregion
+        
+        private async Task<decimal> GetDinamikStokMiktari(Guid urunID, Guid? depoID = null)
+        {
+            try
+            {
+                var stokHareketleriQuery = _context.StokHareketleri
+                    .Where(sh => sh.UrunID == urunID && !sh.Silindi);
+
+                if (depoID.HasValue)
+                {
+                    stokHareketleriQuery = stokHareketleriQuery.Where(sh => sh.DepoID == depoID);
+                }
+
+                var girisler = await stokHareketleriQuery
+                    .Where(sh => sh.HareketTuru == StokHareketiTipi.Giris)
+                    .SumAsync(sh => sh.Miktar);
+
+                var cikislar = await stokHareketleriQuery
+                    .Where(sh => sh.HareketTuru == StokHareketiTipi.Cikis)
+                    .SumAsync(sh => Math.Abs(sh.Miktar)); // Mutlak değer olarak alıyoruz
+
+                return girisler - cikislar; // Çıkışları çıkararak hesaplıyoruz
+            }
+            catch (Exception ex)
+            {
+                _logger.LogError(ex, $"Stok miktarı hesaplanırken hata oluştu: UrunID={urunID}");
+                return 0;
+            }
+        }
+
+        // Ürünün silinmesi (soft delete) için ajax endpointi
+        [HttpPost]
+        public async Task<IActionResult> SetDelete(Guid id)
+        {
+            try
+            {
+                var urunRepository = _unitOfWork.Repository<Urun>();
+                var stokHareketRepository = _unitOfWork.Repository<StokHareket>();
+                var urunFiyatRepository = _unitOfWork.Repository<UrunFiyat>();
+                var faturaDetayRepository = _unitOfWork.Repository<FaturaDetay>();
+
+                // Ürün bilgisini getir
+                var urun = await urunRepository.GetFirstOrDefaultAsync(u => u.UrunID == id && u.Silindi == false);
+                if (urun == null)
+                {
+                    return Json(new { success = false, message = "Ürün bulunamadı." });
+                }
+
+                try
+                {
+                    // Fatura detaylarında kullanılıp kullanılmadığını kontrol et
+                    var faturaDetayVarMi = await _context.FaturaDetaylari
+                        .AnyAsync(fd => fd.UrunID == id && fd.Silindi == false);
+                    
+                    // Eğer ürün herhangi bir faturada kullanılmışsa, sadece pasife al
+                    if (faturaDetayVarMi)
+                    {
+                        urun.Aktif = false;
+                        urun.GuncellemeTarihi = DateTime.Now;
+                        
+                        await urunRepository.UpdateAsync(urun);
+                        await _unitOfWork.SaveAsync();
+                        
+                        // Log oluştur
+                        await _logService.UrunSilmeLogOlustur(
+                            urun.UrunID, 
+                            urun.UrunAdi, 
+                            $"Ürün faturalarda kullanıldığı için silinemedi, sadece pasife alındı."
+                        );
+                        
+                        return Json(new { 
+                            success = true, 
+                            message = $"'{urun.UrunAdi}' ürünü faturalarda kullanıldığı için silinemedi, sadece pasife alındı." 
+                        });
+                    }
+                    
+                    // Stok hareketlerini soft delete yap
+                    var stokHareketleri = await stokHareketRepository.GetAsync(h => h.UrunID == id && h.Silindi == false);
+                    foreach (var hareket in stokHareketleri)
+                    {
+                        hareket.Silindi = true;
+                        hareket.GuncellemeTarihi = DateTime.Now;
+                        await stokHareketRepository.UpdateAsync(hareket);
+                    }
+                    
+                    // Ürün fiyatlarını soft delete yap
+                    var urunFiyatlari = await urunFiyatRepository.GetAsync(uf => uf.UrunID == id && uf.Silindi == false);
+                    foreach (var fiyat in urunFiyatlari)
+                    {
+                        fiyat.Silindi = true;
+                        await urunFiyatRepository.UpdateAsync(fiyat);
+                    }
+
+                    // Ürünü soft delete yap
+                    urun.Silindi = true;
+                    urun.Aktif = false;
+                    urun.GuncellemeTarihi = DateTime.Now;
+                    
+                    await urunRepository.UpdateAsync(urun);
+                    await _unitOfWork.SaveAsync();
+                    
+                    // Log oluştur
+                    await _logService.UrunSilmeLogOlustur(
+                        urun.UrunID, 
+                        urun.UrunAdi, 
+                        $"Ürün ve ilişkili kayıtlar başarıyla silindi."
+                    );
+                    
+                    return Json(new { 
+                        success = true, 
+                        message = $"'{urun.UrunAdi}' ürünü ve ilişkili tüm kayıtları başarıyla silindi." 
+                    });
+                }
+                catch (Exception ex)
+                {
+                    // Hata logla
+                    _logger.LogError(ex, "Ürün silme işlemi sırasında hata: {Message}", ex.Message);
+                    
+                    return Json(new { 
+                        success = false, 
+                        message = $"Ürün silinirken bir hata oluştu: {ex.Message}" 
+                    });
+                }
+            }
+            catch (Exception ex)
+            {
+                // Hata logla
+                _logger.LogError(ex, "Ürün silme işlemi sırasında hata: {Message}", ex.Message);
+                return Json(new { success = false, message = $"Ürün silinirken bir hata oluştu: {ex.Message}" });
+            }
+        }
+        
+        // Silinmiş ürünü geri getirme için ajax endpointi
+        [HttpPost]
+        public async Task<IActionResult> RestoreDeleted(Guid id)
+        {
+            try
+            {
+                var urunRepository = _unitOfWork.Repository<Urun>();
+                var stokHareketRepository = _unitOfWork.Repository<StokHareket>();
+                var urunFiyatRepository = _unitOfWork.Repository<UrunFiyat>();
+
+                // Silinmiş ürünü bul
+                var urun = await urunRepository.GetFirstOrDefaultAsync(u => u.UrunID == id && u.Silindi == true);
+                if (urun == null)
+                {
+                    return Json(new { success = false, message = "Silinmiş ürün bulunamadı." });
+                }
+
+                try
+                {
+                    // Ürünü geri getir
+                    urun.Silindi = false;
+                    urun.Aktif = true; // Aktif olarak geri getir
+                    urun.GuncellemeTarihi = DateTime.Now;
+                    
+                    await urunRepository.UpdateAsync(urun);
+                    
+                    // Ürünün stok hareketlerini geri getir
+                    var stokHareketleri = await _context.StokHareketleri
+                        .Where(sh => sh.UrunID == id && sh.Silindi == true)
+                        .ToListAsync();
+                        
+                    foreach (var hareket in stokHareketleri)
+                    {
+                        hareket.Silindi = false;
+                        hareket.GuncellemeTarihi = DateTime.Now;
+                    }
+                    
+                    // Ürünün fiyat bilgilerini geri getir
+                    var urunFiyatlari = await _context.UrunFiyatlari
+                        .Where(uf => uf.UrunID == id && uf.Silindi == true)
+                        .ToListAsync();
+                        
+                    foreach (var fiyat in urunFiyatlari)
+                    {
+                        fiyat.Silindi = false;
+                    }
+                    
+                    await _unitOfWork.SaveAsync();
+                    
+                    // Log oluştur
+                    await _logService.UrunGuncellemeLogOlustur(
+                        urun.UrunID, 
+                        urun.UrunAdi, 
+                        $"'{urun.UrunAdi}' ürünü ve ilişkili kayıtlar başarıyla geri getirildi."
+                    );
+                    
+                    return Json(new { 
+                        success = true, 
+                        message = $"'{urun.UrunAdi}' ürünü ve ilişkili tüm kayıtları başarıyla geri getirildi." 
+                    });
+                }
+                catch (Exception ex)
+                {
+                    _logger.LogError(ex, "Ürün geri getirme işlemi sırasında hata: {Message}", ex.Message);
+                    return Json(new { 
+                        success = false, 
+                        message = $"Ürün geri getirilirken bir hata oluştu: {ex.Message}" 
+                    });
+                }
+            }
+            catch (Exception ex)
+            {
+                _logger.LogError(ex, "Ürün geri getirme işlemi sırasında hata: {Message}", ex.Message);
+                return Json(new { success = false, message = $"Ürün geri getirilirken bir hata oluştu: {ex.Message}" });
+            }
+        }
+
+        // Ürün pasife alma metodu
+        [HttpPost]
+        public async Task<IActionResult> SetInactive(Guid id)
+        {
+            try
+            {
+                var urunRepository = _unitOfWork.Repository<Urun>();
+                var urun = await urunRepository.GetFirstOrDefaultAsync(u => u.UrunID == id && !u.Silindi);
+                
+                if (urun == null)
+                {
+                    return Json(new { success = false, message = "Ürün bulunamadı." });
+                }
+                
+                urun.Aktif = false;
+                urun.GuncellemeTarihi = DateTime.Now;
+                
+                await urunRepository.UpdateAsync(urun);
+                await _unitOfWork.SaveAsync();
+                
+                return Json(new { 
+                    success = true, 
+                    message = $"{urun.UrunAdi} ürünü başarıyla pasife alındı." 
+                });
+            }
+            catch (Exception ex)
+            {
+                _logger.LogError(ex, "Ürün pasife alınırken hata: {Message}", ex.Message);
+                return Json(new { success = false, message = $"Ürün pasife alınırken bir hata oluştu: {ex.Message}" });
+            }
+        }
+        
+        // Ürün aktife alma metodu
+        [HttpPost]
+        public async Task<IActionResult> SetActive(Guid id)
+        {
+            try
+            {
+                var urunRepository = _unitOfWork.Repository<Urun>();
+                var urun = await urunRepository.GetFirstOrDefaultAsync(u => u.UrunID == id && !u.Silindi);
+                
+                if (urun == null)
+                {
+                    return Json(new { success = false, message = "Ürün bulunamadı." });
+                }
+                
+                urun.Aktif = true;
+                urun.GuncellemeTarihi = DateTime.Now;
+                
+                await urunRepository.UpdateAsync(urun);
+                await _unitOfWork.SaveAsync();
+                
+                return Json(new { 
+                    success = true, 
+                    message = $"{urun.UrunAdi} ürünü başarıyla aktifleştirildi." 
+                });
+            }
+            catch (Exception ex)
+            {
+                _logger.LogError(ex, "Ürün aktifleştirilirken hata: {Message}", ex.Message);
+                return Json(new { success = false, message = $"Ürün aktifleştirilirken bir hata oluştu: {ex.Message}" });
+            }
+        }
+        
+        // Excel'e aktarma işlemi
+        public async Task<IActionResult> ExportToExcel()
+        {
+            try
+            {
+                var urunRepository = _unitOfWork.Repository<Urun>();
+                var urunFiyatRepository = _unitOfWork.Repository<UrunFiyat>();
+                var kategoriRepository = _unitOfWork.Repository<UrunKategori>();
+                
+                // Ürünleri getir (silinen ürünler hariç)
+                var urunler = await urunRepository.GetAsync(
+                    filter: u => !u.Silindi,
+                    includeProperties: "Birim"
+                );
+                
+                // Silinmemiş tüm kategorileri getir
+                var kategoriler = await kategoriRepository.GetAsync(
+                    filter: k => k.Silindi == false
+                );
+                
+                // Verileri Excel formatında hazırla
+                using (var workbook = new ClosedXML.Excel.XLWorkbook())
+                {
+                    var worksheet = workbook.Worksheets.Add("Ürünler");
+                    
+                    // Başlık satırı
+                    worksheet.Cell(1, 1).Value = "Ürün Kodu";
+                    worksheet.Cell(1, 2).Value = "Ürün Adı";
+                    worksheet.Cell(1, 3).Value = "Kategori";
+                    worksheet.Cell(1, 4).Value = "Birim";
+                    worksheet.Cell(1, 5).Value = "Liste Fiyatı";
+                    worksheet.Cell(1, 6).Value = "Satış Fiyatı";
+                    worksheet.Cell(1, 7).Value = "Stok Miktarı";
+                    worksheet.Cell(1, 8).Value = "Durumu";
+                    
+                    // Başlık formatları
+                    var headerRow = worksheet.Row(1);
+                    headerRow.Style.Font.Bold = true;
+                    headerRow.Style.Fill.BackgroundColor = ClosedXML.Excel.XLColor.LightBlue;
+                    
+                    // Veri satırları
+                    int row = 2;
+                    foreach (var urun in urunler)
+                    {
+                        // Kategori adını bul
+                        var kategoriAdi = urun.KategoriID.HasValue ? 
+                            kategoriler.FirstOrDefault(k => k.KategoriID == urun.KategoriID)?.KategoriAdi : "Kategorisiz";
+                        
+                        // Fiyatları bul
+                        var listeFiyati = urunFiyatRepository.GetAllAsync().Result
+                            .Where(uf => uf.UrunID == urun.UrunID && uf.FiyatTipiID == 1 && uf.Silindi == false)
+                            .OrderByDescending(uf => uf.GecerliTarih)
+                            .FirstOrDefault()?.Fiyat ?? 0m;
+                            
+                        var satisFiyati = urunFiyatRepository.GetAllAsync().Result
+                            .Where(uf => uf.UrunID == urun.UrunID && uf.FiyatTipiID == 3 && uf.Silindi == false)
+                            .OrderByDescending(uf => uf.GecerliTarih)
+                            .FirstOrDefault()?.Fiyat ?? 0m;
+                        
+                        // Veri doldur
+                        worksheet.Cell(row, 1).Value = urun.UrunKodu;
+                        worksheet.Cell(row, 2).Value = urun.UrunAdi;
+                        worksheet.Cell(row, 3).Value = kategoriAdi;
+                        worksheet.Cell(row, 4).Value = urun.Birim?.BirimAdi ?? "";
+                        worksheet.Cell(row, 5).Value = listeFiyati;
+                        worksheet.Cell(row, 6).Value = satisFiyati;
+                        worksheet.Cell(row, 7).Value = urun.StokMiktar;
+                        worksheet.Cell(row, 8).Value = urun.Aktif ? "Aktif" : "Pasif";
+                        
+                        row++;
+                    }
+                    
+                    // Kolon genişliklerini ayarla
+                    worksheet.Columns().AdjustToContents();
+                    
+                    // Excel dosyasını oluştur
+                    using (var stream = new MemoryStream())
+                    {
+                        workbook.SaveAs(stream);
+                        var content = stream.ToArray();
+                        
+                        return File(
+                            content,
+                            "application/vnd.openxmlformats-officedocument.spreadsheetml.sheet",
+                            $"Urunler_{DateTime.Now:yyyyMMdd}.xlsx"
+                        );
+                    }
+                }
+            }
+            catch (Exception ex)
+            {
+                _logger.LogError(ex, "Excel'e aktarma işlemi sırasında hata: {Message}", ex.Message);
+                TempData["ErrorMessage"] = $"Excel'e aktarma işlemi sırasında bir hata oluştu: {ex.Message}";
+                return RedirectToAction(nameof(Index));
+            }
+        }
+        
+        // Excel'den içe aktarma önizleme
+        [HttpPost]
+        public async Task<IActionResult> ImportPreview(IFormFile excelFile)
+        {
+            if (excelFile == null || excelFile.Length == 0)
+            {
+                TempData["ErrorMessage"] = "Lütfen bir Excel dosyası seçin.";
+                return RedirectToAction(nameof(Index));
+            }
+            
+            try
+            {
+                var urunRepository = _unitOfWork.Repository<Urun>();
+                var kategoriRepository = _unitOfWork.Repository<UrunKategori>();
+                var birimRepository = _unitOfWork.Repository<Birim>();
+                
+                // Mevcut ürünleri getir
+                var mevcutUrunler = await urunRepository.GetAllAsync();
+                
+                // Kategorileri getir
+                var kategoriler = await kategoriRepository.GetAsync(
+                    filter: k => k.Silindi == false && k.Aktif
+                );
+                
+                // Birimleri getir
+                var birimler = await birimRepository.GetAsync(
+                    filter: b => b.Silindi == false && b.Aktif
+                );
+                
+                var urunListesi = new List<UrunImportViewModel>();
+                
+                using (var stream = new MemoryStream())
+                {
+                    await excelFile.CopyToAsync(stream);
+                    using (var workbook = new ClosedXML.Excel.XLWorkbook(stream))
+                    {
+                        var worksheet = workbook.Worksheets.FirstOrDefault();
+                        if (worksheet == null)
+                        {
+                            TempData["ErrorMessage"] = "Excel dosyasında çalışma sayfası bulunamadı.";
+                            return RedirectToAction(nameof(Index));
+                        }
+                        
+                        // Başlık satırını atla, 2. satırdan başla
+                        var rows = worksheet.RowsUsed().Skip(1);
+                        
+                        foreach (var row in rows)
+                        {
+                            try
+                            {
+                                var urunKodu = row.Cell(1).GetString().Trim();
+                                var urunAdi = row.Cell(2).GetString().Trim();
+                                var kategoriAdi = row.Cell(3).GetString().Trim();
+                                var birimAdi = row.Cell(4).GetString().Trim();
+                                
+                                // KDV ve fiyat bilgilerini decimal olarak çek
+                                decimal kdvOrani = 0;
+                                decimal.TryParse(row.Cell(5).GetString().Replace("%", "").Trim(), out kdvOrani);
+                                
+                                decimal listeFiyati = 0;
+                                decimal.TryParse(row.Cell(6).GetString().Replace("₺", "").Trim(), out listeFiyati);
+                                
+                                decimal satisFiyati = 0;
+                                decimal.TryParse(row.Cell(7).GetString().Replace("₺", "").Trim(), out satisFiyati);
+                                
+                                // Aktif durumu
+                                var aktifStr = row.Cell(8).GetString().Trim().ToLower();
+                                var aktif = aktifStr == "aktif" || aktifStr == "evet" || aktifStr == "1";
+                                
+                                // Boş ürün kodu ve adı kontrolü
+                                if (string.IsNullOrWhiteSpace(urunKodu) || string.IsNullOrWhiteSpace(urunAdi))
+                                {
+                                    continue;
+                                }
+                                
+                                // Mevcut ürün kontrolü
+                                var mevcutUrun = mevcutUrunler.FirstOrDefault(u => u.UrunKodu == urunKodu && !u.Silindi);
+                                
+                                var viewModel = new UrunImportViewModel
+                                {
+                                    UrunKodu = urunKodu,
+                                    UrunAdi = urunAdi,
+                                    KategoriAdi = kategoriAdi,
+                                    BirimAdi = birimAdi,
+                                    KDVOrani = (int)kdvOrani,
+                                    ListeFiyati = listeFiyati,
+                                    SatisFiyati = satisFiyati,
+                                    Aktif = aktif,
+                                    Secili = true,
+                                    MevcutMu = mevcutUrun != null
+                                };
+                                
+                                if (mevcutUrun != null)
+                                {
+                                    viewModel.MevcutUrunBilgisi = $"{mevcutUrun.UrunAdi} (Mevcut kod: {mevcutUrun.UrunKodu})";
+                                }
+                                
+                                urunListesi.Add(viewModel);
+                            }
+                            catch (Exception ex)
+                            {
+                                _logger.LogWarning(ex, "Excel satırı okunurken hata oluştu: {Message}", ex.Message);
+                                continue; // Hatalı satırı atla
+                            }
+                        }
+                    }
+                }
+                
+                var model = new UrunImportListViewModel
+                {
+                    Urunler = urunListesi
+                };
+                
+                return View("ImportPreview", model);
+            }
+            catch (Exception ex)
+            {
+                _logger.LogError(ex, "Excel'den içe aktarma önizlemesi sırasında hata: {Message}", ex.Message);
+                TempData["ErrorMessage"] = $"Excel'den içe aktarma sırasında bir hata oluştu: {ex.Message}";
+                return RedirectToAction(nameof(Index));
+            }
+        }
+        
+        // Excel'den içe aktarma onaylama
+        [HttpPost]
+        public async Task<IActionResult> ConfirmImport(UrunImportListViewModel model)
+        {
+            if (model?.Urunler == null || !model.Urunler.Any(u => u.Secili))
+            {
+                TempData["ErrorMessage"] = "İçe aktarılacak ürün seçilmedi.";
+                return RedirectToAction(nameof(Index));
+            }
+            
+            try
+            {
+                var urunRepository = _unitOfWork.Repository<Urun>();
+                var kategoriRepository = _unitOfWork.Repository<UrunKategori>();
+                var birimRepository = _unitOfWork.Repository<Birim>();
+                var urunFiyatRepository = _unitOfWork.Repository<UrunFiyat>();
+                
+                // Sadece seçili ürünleri al
+                var seciliUrunler = model.Urunler.Where(u => u.Secili).ToList();
+                
+                // Toplu işlem için sayaçlar
+                int eklenenCount = 0;
+                int guncellenenCount = 0;
+                
+                foreach (var urunModel in seciliUrunler)
+                {
+                    try
+                    {
+                        // Kategori kontrolü ve eklemesi
+                        var kategori = await kategoriRepository.GetFirstOrDefaultAsync(
+                            k => k.KategoriAdi.ToLower() == urunModel.KategoriAdi.ToLower() && !k.Silindi
+                        );
+                        
+                        if (kategori == null && !string.IsNullOrWhiteSpace(urunModel.KategoriAdi))
+                        {
+                            // Yeni kategori oluştur
+                            kategori = new UrunKategori
+                            {
+                                KategoriID = Guid.NewGuid(),
+                                KategoriAdi = urunModel.KategoriAdi,
+                                Aktif = true,
+                                OlusturmaTarihi = DateTime.Now,
+                                OlusturanKullaniciID = GetCurrentUserId()
+                            };
+                            
+                            await kategoriRepository.AddAsync(kategori);
+                        }
+                        
+                        // Birim kontrolü ve eklemesi
+                        var birim = await birimRepository.GetFirstOrDefaultAsync(
+                            b => b.BirimAdi.ToLower() == urunModel.BirimAdi.ToLower() && !b.Silindi
+                        );
+                        
+                        if (birim == null && !string.IsNullOrWhiteSpace(urunModel.BirimAdi))
+                        {
+                            // Yeni birim oluştur
+                            birim = new Birim
+                            {
+                                BirimID = Guid.NewGuid(),
+                                BirimAdi = urunModel.BirimAdi,
+                                Aktif = true,
+                                OlusturmaTarihi = DateTime.Now,
+                                OlusturanKullaniciID = GetCurrentUserId().ToString()
+                            };
+                            
+                            await birimRepository.AddAsync(birim);
+                        }
+                        
+                        // Mevcut ürün kontrolü
+                        var mevcutUrun = await urunRepository.GetFirstOrDefaultAsync(
+                            u => u.UrunKodu == urunModel.UrunKodu && !u.Silindi
+                        );
+                        
+                        if (mevcutUrun != null)
+                        {
+                            // Ürünü güncelle
+                            mevcutUrun.UrunAdi = urunModel.UrunAdi;
+                            mevcutUrun.KategoriID = kategori?.KategoriID;
+                            mevcutUrun.BirimID = birim?.BirimID;
+                            mevcutUrun.KDVOrani = urunModel.KDVOrani;
+                            mevcutUrun.Aktif = urunModel.Aktif;
+                            mevcutUrun.GuncellemeTarihi = DateTime.Now;
+                            mevcutUrun.SonGuncelleyenKullaniciID = GetCurrentUserId();
+                            
+                            await urunRepository.UpdateAsync(mevcutUrun);
+                            
+                            // Fiyat ekle - Liste Fiyatı
+                            if (urunModel.ListeFiyati > 0)
+                            {
+                                var yeniListeFiyat = new UrunFiyat
+                                {
+                                    UrunID = mevcutUrun.UrunID,
+                                    FiyatTipiID = 1, // Liste fiyatı
+                                    Fiyat = urunModel.ListeFiyati,
+                                    GecerliTarih = DateTime.Now,
+                                    OlusturmaTarihi = DateTime.Now,
+                                    OlusturanKullaniciID = GetCurrentUserId()
+                                };
+                                
+                                await urunFiyatRepository.AddAsync(yeniListeFiyat);
+                            }
+                            
+                            // Fiyat ekle - Satış Fiyatı
+                            if (urunModel.SatisFiyati > 0)
+                            {
+                                var yeniSatisFiyat = new UrunFiyat
+                                {
+                                    UrunID = mevcutUrun.UrunID,
+                                    FiyatTipiID = 3, // Satış fiyatı
+                                    Fiyat = urunModel.SatisFiyati,
+                                    GecerliTarih = DateTime.Now,
+                                    OlusturmaTarihi = DateTime.Now,
+                                    OlusturanKullaniciID = GetCurrentUserId()
+                                };
+                                
+                                await urunFiyatRepository.AddAsync(yeniSatisFiyat);
+                            }
+                            
+                            guncellenenCount++;
+                        }
+                        else
+                        {
+                            // Yeni ürün oluştur
+                            var yeniUrun = new Urun
+                            {
+                                UrunID = Guid.NewGuid(),
+                                UrunKodu = urunModel.UrunKodu,
+                                UrunAdi = urunModel.UrunAdi,
+                                KategoriID = kategori?.KategoriID,
+                                BirimID = birim?.BirimID,
+                                KDVOrani = urunModel.KDVOrani,
+                                StokMiktar = 0, // Başlangıç stok miktarı 0
+                                Aktif = urunModel.Aktif,
+                                OlusturmaTarihi = DateTime.Now,
+                                OlusturanKullaniciID = GetCurrentUserId()
+                            };
+                            
+                            await urunRepository.AddAsync(yeniUrun);
+                            
+                            // Fiyat ekle - Liste Fiyatı
+                            if (urunModel.ListeFiyati > 0)
+                            {
+                                var yeniListeFiyat = new UrunFiyat
+                                {
+                                    UrunID = yeniUrun.UrunID,
+                                    FiyatTipiID = 1, // Liste fiyatı
+                                    Fiyat = urunModel.ListeFiyati,
+                                    GecerliTarih = DateTime.Now,
+                                    OlusturmaTarihi = DateTime.Now,
+                                    OlusturanKullaniciID = GetCurrentUserId()
+                                };
+                                
+                                await urunFiyatRepository.AddAsync(yeniListeFiyat);
+                            }
+                            
+                            // Fiyat ekle - Satış Fiyatı
+                            if (urunModel.SatisFiyati > 0)
+                            {
+                                var yeniSatisFiyat = new UrunFiyat
+                                {
+                                    UrunID = yeniUrun.UrunID,
+                                    FiyatTipiID = 3, // Satış fiyatı
+                                    Fiyat = urunModel.SatisFiyati,
+                                    GecerliTarih = DateTime.Now,
+                                    OlusturmaTarihi = DateTime.Now,
+                                    OlusturanKullaniciID = GetCurrentUserId()
+                                };
+                                
+                                await urunFiyatRepository.AddAsync(yeniSatisFiyat);
+                            }
+                            
+                            eklenenCount++;
+                        }
+                    }
+                    catch (Exception ex)
+                    {
+                        _logger.LogError(ex, "Ürün içe aktarılırken hata: {UrunKodu} - {Hata}", 
+                            urunModel.UrunKodu, ex.Message);
+                    }
+                }
+                
+                await _unitOfWork.SaveAsync();
+                
+                TempData["SuccessMessage"] = $"Excel içe aktarma işlemi tamamlandı. {eklenenCount} adet ürün eklendi, {guncellenenCount} adet ürün güncellendi.";
+                
+                return RedirectToAction(nameof(Index));
+            }
+            catch (Exception ex)
+            {
+                _logger.LogError(ex, "Excel'den içe aktarma onaylama sırasında hata: {Message}", ex.Message);
+                TempData["ErrorMessage"] = $"Excel'den içe aktarma sırasında bir hata oluştu: {ex.Message}";
+                return RedirectToAction(nameof(Index));
+            }
+        }
+        
+        // Excel şablonu indirme
+        public IActionResult DownloadExcelTemplate()
+        {
+            try
+            {
+                using (var workbook = new ClosedXML.Excel.XLWorkbook())
+                {
+                    var worksheet = workbook.Worksheets.Add("Ürünler");
+                    
+                    // Başlık satırı
+                    worksheet.Cell(1, 1).Value = "Ürün Kodu";
+                    worksheet.Cell(1, 2).Value = "Ürün Adı";
+                    worksheet.Cell(1, 3).Value = "Kategori";
+                    worksheet.Cell(1, 4).Value = "Birim";
+                    worksheet.Cell(1, 5).Value = "KDV %";
+                    worksheet.Cell(1, 6).Value = "Liste Fiyatı";
+                    worksheet.Cell(1, 7).Value = "Satış Fiyatı";
+                    worksheet.Cell(1, 8).Value = "Durum";
+                    
+                    // Başlık formatları
+                    var headerRow = worksheet.Row(1);
+                    headerRow.Style.Font.Bold = true;
+                    headerRow.Style.Fill.BackgroundColor = ClosedXML.Excel.XLColor.LightBlue;
+                    
+                    // Örnek satır
+                    worksheet.Cell(2, 1).Value = "U001";
+                    worksheet.Cell(2, 2).Value = "Örnek Ürün";
+                    worksheet.Cell(2, 3).Value = "Genel";
+                    worksheet.Cell(2, 4).Value = "Adet";
+                    worksheet.Cell(2, 5).Value = "12";
+                    worksheet.Cell(2, 6).Value = "100.00";
+                    worksheet.Cell(2, 7).Value = "120.00";
+                    worksheet.Cell(2, 8).Value = "Aktif";
+                    
+                    // Kolon genişliklerini ayarla
+                    worksheet.Columns().AdjustToContents();
+                    
+                    // Excel dosyasını oluştur
+                    using (var stream = new MemoryStream())
+                    {
+                        workbook.SaveAs(stream);
+                        var content = stream.ToArray();
+                        
+                        return File(
+                            content,
+                            "application/vnd.openxmlformats-officedocument.spreadsheetml.sheet",
+                            "UrunSablonu.xlsx"
+                        );
+                    }
+                }
+            }
+            catch (Exception ex)
+            {
+                _logger.LogError(ex, "Excel şablonu indirme işlemi sırasında hata: {Message}", ex.Message);
+                TempData["ErrorMessage"] = $"Excel şablonu oluşturulurken bir hata oluştu: {ex.Message}";
+                return RedirectToAction(nameof(Index));
+            }
+        }
     }
 } 

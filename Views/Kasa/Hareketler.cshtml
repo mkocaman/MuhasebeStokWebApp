@@ -34,7 +34,22 @@
         <div class="col-md-12">
             <div class="card">
                 <div class="card-header bg-primary text-white">
-                    <h5 class="mb-0">@(kasa?.KasaAdi ?? "Kasa Bilgisi Bulunamadı")</h5>
+                    <div class="row">
+                        <div class="col-md-6">
+                            <h5 class="mb-0">@(kasa?.KasaAdi ?? "Kasa Bilgisi Bulunamadı")</h5>
+                        </div>
+                        <div class="col-md-6 text-end">
+                            <a asp-action="YeniHareket" asp-route-id="@kasa?.KasaID" class="btn btn-sm btn-light">
+                                <i class="fas fa-plus"></i> Yeni Hareket
+                            </a>
+                            <a asp-action="Edit" asp-route-id="@(kasa?.KasaID ?? Guid.Empty)" class="btn btn-sm btn-light">
+                                <i class="fas fa-edit"></i> Kasayı Düzenle
+                            </a>
+                            <a asp-action="Index" class="btn btn-sm btn-light">
+                                <i class="fas fa-arrow-left"></i> Kasalara Dön
+                            </a>
+                        </div>
+                    </div>
                 </div>
                 <div class="card-body">
                     <div class="row">
@@ -47,29 +62,17 @@
                         <div class="col-md-4">
                             <div class="info-box bg-light p-3">
                                 <h6>Açılış Bakiyesi</h6>
-                                <h4>@(kasa?.AcilisBakiye.ToString("N2") ?? "0.00") ₺</h4>
+                                <h4>@(kasa?.AcilisBakiye.ToString("N2") ?? "0.00") @(kasa?.ParaBirimi ?? "TRY")</h4>
                             </div>
                         </div>
                         <div class="col-md-4">
                             <div class="info-box bg-light p-3">
                                 <h6>Güncel Bakiye</h6>
                                 <h4 class="@(kasa != null && kasa.GuncelBakiye >= 0 ? "text-success" : "text-danger")">
-                                    @(kasa?.GuncelBakiye.ToString("N2") ?? "0.00") ₺
+                                    @(kasa?.GuncelBakiye.ToString("N2") ?? "0.00") @(kasa?.ParaBirimi ?? "TRY")
                                 </h4>
                             </div>
                         </div>
-                    </div>
-                    
-                    <div class="mt-3 text-end">
-                        <a asp-action="Create" asp-route-kasaId="@kasa?.KasaID" class="btn btn-primary">
-                            <i class="fa fa-plus"></i> Yeni Hareket
-                        </a>
-                        <a asp-action="Edit" asp-route-id="@(kasa?.KasaID ?? Guid.Empty)" class="btn btn-warning">
-                            <i class="fa fa-edit"></i> Kasayı Düzenle
-                        </a>
-                        <a asp-action="Index" class="btn btn-secondary">
-                            <i class="fa fa-arrow-left"></i> Kasalara Dön
-                        </a>
                     </div>
                 </div>
             </div>
@@ -84,64 +87,22 @@
                 </div>
                 <div class="card-body">
                     <div class="table-responsive">
-                        <table class="table table-hover table-striped">
+                        <table id="hareketlerTable" class="table table-bordered table-striped table-hover">
                             <thead>
                                 <tr>
+                                    <th>İşlem No</th>
                                     <th>Tarih</th>
                                     <th>Hareket Türü</th>
+                                    <th>Tutar</th>
                                     <th>Referans No</th>
                                     <th>Referans Türü</th>
                                     <th>Açıklama</th>
-                                    <th class="text-right">Tutar</th>
+                                    <th>Cari</th>
+                                    <th width="150">İşlemler</th>
                                 </tr>
                             </thead>
                             <tbody>
-                                @if (Model.Count == 0)
-                                {
-                                    <tr>
-                                        <td colspan="6" class="text-center">Kayıt bulunamadı.</td>
-                                    </tr>
-                                }
-                                else
-                                {
-                                    @foreach (var hareket in Model)
-                                    {
-                                        <tr>
-                                            <td>@hareket.Tarih.ToString("dd.MM.yyyy HH:mm")</td>
-                                            <td>
-                                                @if (hareket.HareketTuru == "Giriş" || hareket.HareketTuru == "Açılış Bakiyesi" || hareket.HareketTuru == "Bakiye Artışı")
-                                                {
-                                                    <span class="badge badge-success">@hareket.HareketTuru</span>
-                                                }
-                                                else if (hareket.HareketTuru == "Çıkış" || hareket.HareketTuru == "Bakiye Azalışı")
-                                                {
-                                                    <span class="badge badge-danger">@hareket.HareketTuru</span>
-                                                }
-                                                else
-                                                {
-                                                    <span class="badge badge-info">@hareket.HareketTuru</span>
-                                                }
-                                            </td>
-                                            <td>@hareket.ReferansNo</td>
-                                            <td>@hareket.ReferansTuru</td>
-                                            <td>@hareket.Aciklama</td>
-                                            <td class="text-right">
-                                                @if (hareket.HareketTuru == "Giriş" || hareket.HareketTuru == "Açılış Bakiyesi" || hareket.HareketTuru == "Bakiye Artışı")
-                                                {
-                                                    <span class="text-success">+@hareket.Tutar.ToString("N2") ₺</span>
-                                                }
-                                                else if (hareket.HareketTuru == "Çıkış" || hareket.HareketTuru == "Bakiye Azalışı")
-                                                {
-                                                    <span class="text-danger">-@hareket.Tutar.ToString("N2") ₺</span>
-                                                }
-                                                else
-                                                {
-                                                    @hareket.Tutar.ToString("N2") <span>₺</span>
-                                                }
-                                            </td>
-                                        </tr>
-                                    }
-                                }
+                                <!-- Hareketler DataTables tarafından doldurulacak -->
                             </tbody>
                         </table>
                     </div>
@@ -154,24 +115,65 @@
 @section Scripts {
     <script>
         $(document).ready(function () {
-            // DataTable uyarılarını gizle
-            $.fn.dataTable.ext.errMode = 'none';
-            
-            // Tablonun sıralanabilir olmasını sağlar
-            if ($.fn.DataTable) {
-                try {
-                    $('.table').DataTable({
-                        "order": [[0, "desc"]], // Tarihe göre tersten sıralama
-                        "language": {
-                            "url": "//cdn.datatables.net/plug-ins/1.10.25/i18n/Turkish.json",
-                            "info": "" // Bilgilendirme yazısını kaldır (çift görünme sorununu çözmek için)
-                        },
-                        "retrieve": true
-                    });
-                } catch (e) {
-                    console.log("DataTable başlatılırken bir hata oluştu, ancak işlem devam ediyor.");
-                }
-            }
+            var table = $('#hareketlerTable').DataTable({
+                "processing": true,
+                "serverSide": true,
+                "filter": true,
+                "orderMulti": false,
+                "pageLength": 10,
+                "language": {
+                    "url": "/lib/datatables/tr.json"
+                },
+                "ajax": {
+                    "url": "@Url.Action("GetKasaHareketler", "Kasa", new { id = kasa?.KasaID })",
+                    "type": "POST",
+                    "datatype": "json"
+                },
+                "columnDefs": [
+                    {
+                        "targets": 3,
+                        "className": "text-end",
+                        "render": function (data, type, row) {
+                            var islemTuru = row.hareketTuru;
+                            var tutar = parseFloat(data).toLocaleString('tr-TR', { minimumFractionDigits: 2, maximumFractionDigits: 2 });
+                            var paraBirimi = '@(kasa?.ParaBirimi ?? "TRY")';
+                            
+                            if (islemTuru === "Giriş" || islemTuru === "Açılış Bakiyesi" || islemTuru === "Bakiye Artışı") {
+                                return `<span class="text-success">+${tutar} ${paraBirimi}</span>`;
+                            } else {
+                                return `<span class="text-danger">-${tutar} ${paraBirimi}</span>`;
+                            }
+                        }
+                    },
+                    {
+                        "targets": -1,
+                        "data": null,
+                        "orderable": false,
+                        "searchable": false,
+                        "render": function (data, type, row) {
+                            var referansTuru = row.referansTuru;
+                            var isManuel = referansTuru === "Normal";
+                            var detayBtn = `<a href="/Kasa/HareketDetay/${row.kasaHareketID}" class="btn btn-sm btn-info me-1" title="Detay"><i class="fas fa-info-circle"></i></a>`;
+                            var duzenleBtn = isManuel ? `<a href="/Kasa/HareketDuzenle/${row.kasaHareketID}" class="btn btn-sm btn-warning me-1" title="Düzenle"><i class="fas fa-edit"></i></a>` : '';
+                            var silBtn = isManuel ? `<a href="/Kasa/HareketSil/${row.kasaHareketID}" class="btn btn-sm btn-danger" title="Sil"><i class="fas fa-trash"></i></a>` : '';
+                            
+                            return detayBtn + duzenleBtn + silBtn;
+                        }
+                    }
+                ],
+                "columns": [
+                    { "data": "kasaHareketID", "name": "KasaHareketID", "autoWidth": true },
+                    { "data": "tarih", "name": "Tarih", "autoWidth": true },
+                    { "data": "hareketTuru", "name": "HareketTuru", "autoWidth": true },
+                    { "data": "tutar", "name": "Tutar", "autoWidth": true },
+                    { "data": "referansNo", "name": "ReferansNo", "autoWidth": true },
+                    { "data": "referansTuru", "name": "ReferansTuru", "autoWidth": true },
+                    { "data": "aciklama", "name": "Aciklama", "autoWidth": true },
+                    { "data": "cariUnvani", "name": "CariUnvani", "autoWidth": true },
+                    { "data": null, "name": "İşlemler", "autoWidth": true }
+                ],
+                "order": [[1, "desc"]]
+            });
             
             // Otomatik kapanan alertler
             window.setTimeout(function() {

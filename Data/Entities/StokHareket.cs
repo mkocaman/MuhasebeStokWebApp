@@ -1,6 +1,9 @@
+#nullable enable
+
 using System;
 using System.ComponentModel.DataAnnotations;
 using System.ComponentModel.DataAnnotations.Schema;
+using MuhasebeStokWebApp.Enums;
 
 namespace MuhasebeStokWebApp.Data.Entities
 {
@@ -16,6 +19,7 @@ namespace MuhasebeStokWebApp.Data.Entities
         [Required]
         public decimal Miktar { get; set; }
         
+        [Required]
         [StringLength(50)]
         public string Birim { get; set; } = string.Empty;
         
@@ -23,8 +27,7 @@ namespace MuhasebeStokWebApp.Data.Entities
         public DateTime Tarih { get; set; } = DateTime.Now;
         
         [Required]
-        [StringLength(50)]
-        public string HareketTuru { get; set; } = string.Empty;
+        public StokHareketiTipi HareketTuru { get; set; } = StokHareketiTipi.Giris;
         
         [StringLength(50)]
         public string ReferansNo { get; set; } = string.Empty;
@@ -52,6 +55,12 @@ namespace MuhasebeStokWebApp.Data.Entities
         public Guid? FaturaID { get; set; }
         
         public Guid? IrsaliyeID { get; set; }
+        
+        [StringLength(50)]
+        public string? IrsaliyeTuru { get; set; }
+        
+        [StringLength(10)]
+        public string? ParaBirimi { get; set; }
         
         // Navigation properties
         [ForeignKey("UrunID")]

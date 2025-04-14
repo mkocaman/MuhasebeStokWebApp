@@ -141,9 +141,9 @@ namespace MuhasebeStokWebApp.Services.ParaBirimiModulu
             {
                 ParaBirimiIliskiID = iliski.ParaBirimiIliskiID,
                 KaynakParaBirimiID = iliski.KaynakParaBirimiID,
+                HedefParaBirimiID = iliski.HedefParaBirimiID,
                 KaynakParaBirimiAdi = iliski.KaynakParaBirimi?.Ad,
                 KaynakParaBirimiKodu = iliski.KaynakParaBirimi?.Kod,
-                HedefParaBirimiID = iliski.HedefParaBirimiID,
                 HedefParaBirimiAdi = iliski.HedefParaBirimi?.Ad,
                 HedefParaBirimiKodu = iliski.HedefParaBirimi?.Kod,
                 Aktif = iliski.Aktif
@@ -159,9 +159,9 @@ namespace MuhasebeStokWebApp.Services.ParaBirimiModulu
             {
                 ParaBirimiIliskiID = i.ParaBirimiIliskiID,
                 KaynakParaBirimiID = i.KaynakParaBirimiID,
+                HedefParaBirimiID = i.HedefParaBirimiID,
                 KaynakParaBirimiAdi = i.KaynakParaBirimi?.Ad,
                 KaynakParaBirimiKodu = i.KaynakParaBirimi?.Kod,
-                HedefParaBirimiID = i.HedefParaBirimiID,
                 HedefParaBirimiAdi = i.HedefParaBirimi?.Ad,
                 HedefParaBirimiKodu = i.HedefParaBirimi?.Kod,
                 Aktif = i.Aktif

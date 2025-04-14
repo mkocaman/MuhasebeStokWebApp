@@ -1,3 +1,5 @@
+#nullable enable
+
 using Microsoft.EntityFrameworkCore;
 using System;
 using System.Collections.Generic;
@@ -9,79 +11,44 @@ using MuhasebeStokWebApp.Data.Entities;
 namespace MuhasebeStokWebApp.Data.Repositories
 {
     // Generic Repository Pattern uygulaması - Tüm entity'ler için ortak CRUD işlemleri sağlar
-    public class Repository<T> : IRepository<T> where T : class
+    public class Repository<TEntity> : IRepository<TEntity> where TEntity : class
     {
-        private readonly ApplicationDbContext _context;
-        internal DbSet<T> dbSet;
+        protected readonly ApplicationDbContext _context;
+        internal DbSet<TEntity> _dbSet;
 
         // Constructor: Veritabanı bağlantısını alır ve ilgili entity set'ini hazırlar
         public Repository(ApplicationDbContext context)
         {
             _context = context;
-            this.dbSet = _context.Set<T>();
+            _dbSet = context.Set<TEntity>();
         }
 
-        // Yeni bir kayıt ekler - SaveChanges çağrılmaz, UnitOfWork tarafından yönetilir
-        public async Task AddAsync(T entity)
+        public virtual IQueryable<TEntity> GetAll()
         {
-            await dbSet.AddAsync(entity);
+            return _dbSet.AsNoTracking();
         }
 
-        // Tüm kayıtları liste olarak döndürür
-        public async Task<IEnumerable<T>> GetAllAsync()
-        {
-            return await dbSet.ToListAsync();
-        }
-
-        // Filtreleme, sıralama ve ilişkili entity'leri dahil etme özelliklerini sunar
-        public async Task<IEnumerable<T>> GetAsync(Expression<Func<T, bool>> filter = null, 
-            Func<IQueryable<T>, IOrderedQueryable<T>> orderBy = null, 
+        public virtual async Task<IEnumerable<TEntity>> GetAllAsync(
+            Expression<Func<TEntity, bool>> filter = null,
+            Func<IQueryable<TEntity>, IOrderedQueryable<TEntity>> orderBy = null,
             string includeProperties = "")
         {
-            IQueryable<T> query = dbSet;
+            IQueryable<TEntity> query = _dbSet;
 
-            // Filtre varsa uygula
             if (filter != null)
             {
-                // CariHareket için özel işlem
-                if (typeof(T) == typeof(CariHareket))
-                {
-                    // Filtre içinde CariId veya CariID kontrolü var mı kontrol et
-                    var filterString = filter.ToString();
-                    if (filterString.Contains("CariId") && !filterString.Contains("CariID"))
-                    {
-                        // CariHareket'leri manuel olarak getirelim ve filtreleyelim
-                        var cariHareketler = await dbSet.ToListAsync();
-                        
-                        // Filter'ı Func<T, bool> tipine çevirelim ve uygulayalım
-                        var predicate = filter.Compile();
-                        var filteredResult = cariHareketler.Where(predicate);
-                        
-                        // Sıralama varsa uygula
-                        if (orderBy != null)
-                        {
-                            // IQueryable yerine IEnumerable üzerine sıralama yapalım
-                            // Not: Bu etkin değil, ancak bu işlemi client-side yapıyoruz
-                            return filteredResult.AsQueryable().OrderBy(ch => ch).ToList();
-                        }
-                        return filteredResult;
-                    }
-                }
-                
                 query = query.Where(filter);
             }
 
-            // İlişkili entity'leri dahil et (Include)
             if (!string.IsNullOrEmpty(includeProperties))
             {
                 foreach (var includeProperty in includeProperties.Split
                     (new char[] { ',' }, StringSplitOptions.RemoveEmptyEntries))
                 {
-                    query = query.Include(includeProperty.Trim());
+                    query = query.Include(includeProperty);
                 }
             }
 
-            // Sıralama varsa uygula, yoksa normal listeyi döndür
             if (orderBy != null)
             {
                 return await orderBy(query).ToListAsync();
@@ -92,139 +59,162 @@ namespace MuhasebeStokWebApp.Data.Repositories
             }
         }
 
-        // Belirli bir ID'ye sahip kaydı getirir
-        public async Task<T> GetByIdAsync(object id)
+        public virtual IQueryable<TEntity> Find(Expression<Func<TEntity, bool>> expression)
         {
-            if (typeof(T) == typeof(Cari) && id is Guid guidId)
-            {
-                var entity = await _context.Set<Cari>().FirstOrDefaultAsync(c => c.CariID.Equals(guidId));
-                return entity as T;
-            }
-            else if (typeof(T) == typeof(CariHareket) && id is Guid guidCariHareketId)
-            {
-                var entity = await _context.Set<CariHareket>().FirstOrDefaultAsync(ch => ch.CariHareketID.Equals(guidCariHareketId));
-                return entity as T;
-            }
-            
-            return await dbSet.FindAsync(id);
+            return _dbSet.Where(expression);
         }
 
-        // Filtreleme ve ilişkili entity'leri dahil ederek ilk kaydı getirir
-        public async Task<T> GetFirstOrDefaultAsync(Expression<Func<T, bool>> filter = null, string includeProperties = "")
+        public virtual async Task<IEnumerable<TEntity>> FindAsync(Expression<Func<TEntity, bool>> predicate)
         {
-            IQueryable<T> query = dbSet;
+            return await _dbSet.Where(predicate).ToListAsync();
+        }
 
-            // Filtre varsa uygula
+        public virtual async Task<TEntity> GetByIdAsync(object id)
+        {
+            return await _dbSet.FindAsync(id);
+        }
+
+        public virtual async Task<TEntity> GetFirstOrDefaultAsync(
+            Expression<Func<TEntity, bool>> filter = null,
+            string includeProperties = "")
+        {
+            IQueryable<TEntity> query = _dbSet;
+
             if (filter != null)
             {
                 query = query.Where(filter);
             }
 
-            // İlişkili entity'leri dahil et (Include)
             if (!string.IsNullOrEmpty(includeProperties))
             {
                 foreach (var includeProperty in includeProperties.Split
                     (new char[] { ',' }, StringSplitOptions.RemoveEmptyEntries))
                 {
-                    query = query.Include(includeProperty.Trim());
+                    query = query.Include(includeProperty);
                 }
             }
 
             return await query.FirstOrDefaultAsync();
         }
-        
-        // Tablodaki ilk kaydı getirir
-        public async Task<T> GetFirstAsync()
+
+        public virtual async Task<TEntity> GetFirstAsync()
         {
-            return await dbSet.FirstOrDefaultAsync();
+            return await _dbSet.FirstOrDefaultAsync();
         }
 
-        // ID kullanarak kayıt siler - SaveChanges çağrılmaz, UnitOfWork tarafından yönetilir
-        public async Task RemoveAsync(object id)
+        public virtual async Task AddAsync(TEntity entity)
         {
-            T entity = await dbSet.FindAsync(id);
-            if (entity != null)
+            await _dbSet.AddAsync(entity);
+        }
+
+        public virtual async Task AddOrUpdateAsync(TEntity entity)
+        {
+            var entry = _context.Entry(entity);
+            if (entry.State == EntityState.Detached)
             {
-                RemoveEntity(entity);
-            }
-        }
-
-        // Entity nesnesini siler - SaveChanges çağrılmaz, UnitOfWork tarafından yönetilir
-        public Task RemoveAsync(T entity)
-        {
-            RemoveEntity(entity);
-            return Task.CompletedTask;
-        }
-
-        private void RemoveEntity(T entity)
-        {
-            // Soft Delete desteği
-            if (entity is ISoftDelete softDeleteEntity)
-            {
-                softDeleteEntity.Silindi = true;
-                dbSet.Update(entity);
+                _dbSet.Add(entity);
             }
             else
             {
-                dbSet.Remove(entity);
+                _dbSet.Update(entity);
             }
+            await Task.CompletedTask;
         }
 
-        // Birden fazla entity'yi toplu olarak siler - SaveChanges çağrılmaz, UnitOfWork tarafından yönetilir
-        public async Task RemoveRangeAsync(IEnumerable<T> entities)
+        public virtual async Task RemoveAsync(object id)
         {
-            // Soft Delete desteğini kontrol edelim
-            foreach (var entity in entities)
+            TEntity entityToRemove = await _dbSet.FindAsync(id);
+            if (entityToRemove != null)
             {
-                await RemoveAsync(entity);
+                _dbSet.Remove(entityToRemove);
             }
         }
 
-        // Entity'yi günceller - SaveChanges çağrılmaz, UnitOfWork tarafından yönetilir
-        public Task UpdateAsync(T entity)
+        public virtual async Task RemoveAsync(TEntity entity)
         {
-            _context.Entry(entity).State = EntityState.Modified;
-            return Task.CompletedTask;
-        }
-
-        // Belirli bir koşulu sağlayan entity'leri bulur
-        public async Task<IEnumerable<T>> FindAsync(Expression<Func<T, bool>> predicate)
-        {
-            return await dbSet.Where(predicate).ToListAsync();
-        }
-
-        // Entity'yi ekler veya günceller (varsa günceller, yoksa ekler) - SaveChanges çağrılmaz, UnitOfWork tarafından yönetilir
-        public async Task AddOrUpdateAsync(T entity)
-        {
-            // Entity'nin primary key değerini reflection ile al
-            var keyName = _context.Model.FindEntityType(typeof(T)).FindPrimaryKey().Properties
-                .Select(x => x.Name).Single();
-            var keyProperty = entity.GetType().GetProperty(keyName);
-            var keyValue = keyProperty.GetValue(entity);
-            var defaultValue = keyProperty.PropertyType.IsValueType ? Activator.CreateInstance(keyProperty.PropertyType) : null;
-            
-            // Key değeri varsayılan değer ise (Guid.Empty, 0, null, vb.) veya
-            // veritabanında bu key ile kayıt yoksa, entity'yi ekle
-            if (keyValue == null || keyValue.Equals(defaultValue) || await dbSet.FindAsync(keyValue) == null)
+            if (_context.Entry(entity).State == EntityState.Detached)
             {
-                await dbSet.AddAsync(entity);
+                _dbSet.Attach(entity);
             }
-            else
-            {
-                // Aksi halde entity'yi güncelle
-                _context.Entry(entity).State = EntityState.Modified;
-            }
+            _dbSet.Remove(entity);
+            await Task.CompletedTask;
         }
 
-        public virtual async Task<Irsaliye> GetIrsaliyeWithDetailsAsync(Guid id)
+        public virtual async Task RemoveRangeAsync(IEnumerable<TEntity> entities)
         {
-            if (typeof(T) != typeof(Irsaliye))
-                throw new InvalidOperationException("This method can only be called on Irsaliye repository");
+            _dbSet.RemoveRange(entities);
+            await Task.CompletedTask;
+        }
 
-            return await _context.Set<Irsaliye>()
-                .Include(i => i.IrsaliyeDetaylari)
+        public async Task<Irsaliye> GetIrsaliyeWithDetailsAsync(Guid id)
+        {
+            return await _context.Irsaliyeler
                 .Include(i => i.Cari)
+                .Include(i => i.IrsaliyeDetaylari)
+                    .ThenInclude(id => id.Urun)
                 .FirstOrDefaultAsync(i => i.IrsaliyeID.Equals(id) && !i.Silindi);
+        }
+
+        public async Task AddRangeAsync(IEnumerable<TEntity> entities)
+        {
+            await _dbSet.AddRangeAsync(entities);
+        }
+        
+        public void Update(TEntity entity)
+        {
+            _dbSet.Update(entity);
+        }
+        
+        public void UpdateRange(IEnumerable<TEntity> entities)
+        {
+            _dbSet.UpdateRange(entities);
+        }
+        
+        public void Remove(TEntity entity)
+        {
+            _dbSet.Remove(entity);
+        }
+        
+        public async Task<IEnumerable<TEntity>> GetAsync(
+            Expression<Func<TEntity, bool>> filter = null, 
+            Func<IQueryable<TEntity>, IOrderedQueryable<TEntity>> orderBy = null, 
+            string includeProperties = "")
+        {
+            IQueryable<TEntity> query = _dbSet;
+
+            if (filter != null)
+            {
+                query = query.Where(filter);
+            }
+
+            if (!string.IsNullOrEmpty(includeProperties))
+            {
+                foreach (var includeProperty in includeProperties.Split
+                    (new char[] { ',' }, StringSplitOptions.RemoveEmptyEntries))
+                {
+                    query = query.Include(includeProperty);
+                }
+            }
+
+            if (orderBy != null)
+            {
+                return await orderBy(query).ToListAsync();
+            }
+            else
+            {
+                return await query.ToListAsync();
+            }
+        }
+        
+        public async Task UpdateAsync(TEntity entity)
+        {
+            _dbSet.Update(entity);
+            await Task.CompletedTask;
+        }
+
+        public async Task<List<TEntity>> GetAllByPredicateAsync(Expression<Func<TEntity, bool>> predicate)
+        {
+            return await _context.Set<TEntity>().Where(predicate).ToListAsync();
         }
     }
 } 

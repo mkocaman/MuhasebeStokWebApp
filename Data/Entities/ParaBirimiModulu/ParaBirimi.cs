@@ -24,7 +24,7 @@ namespace MuhasebeStokWebApp.Data.Entities.ParaBirimiModulu
         /// </summary>
         [Required(ErrorMessage = "Para birimi adı gereklidir.")]
         [StringLength(50, ErrorMessage = "Para birimi adı en fazla 50 karakter olabilir.")]
-        [Display(Name = "Ad")]
+        [Display(Name = "Para Birimi Adı")]
         public string Ad { get; set; }
         
         /// <summary>
@@ -122,13 +122,15 @@ namespace MuhasebeStokWebApp.Data.Entities.ParaBirimiModulu
         public virtual ICollection<KurDegeri> KurDegerleri { get; set; }
         
         /// <summary>
-        /// Bu para biriminin kaynak olduğu para birimi ilişkileri
+        /// Para birimi ilişkileri - Bu para birimi kaynak olarak
         /// </summary>
+        [InverseProperty("KaynakParaBirimi")]
         public virtual ICollection<ParaBirimiIliski> KaynakParaBirimiIliskileri { get; set; }
         
         /// <summary>
-        /// Bu para biriminin hedef olduğu para birimi ilişkileri
+        /// Para birimi ilişkileri - Bu para birimi hedef olarak
         /// </summary>
+        [InverseProperty("HedefParaBirimi")]
         public virtual ICollection<ParaBirimiIliski> HedefParaBirimiIliskileri { get; set; }
         
         public ParaBirimi()

@@ -9,11 +9,11 @@ namespace MuhasebeStokWebApp.ViewModels.Fatura
         
         public Guid FaturaID { get; set; }
 
-        [Display(Name = "Fatura No")]
-        public string FaturaNumarasi { get; set; }
+        [Display(Name = "Fatura Numarası")]
+        public string FaturaNumarasi { get; set; } = "";
 
         [Display(Name = "Cari Adı")]
-        public string CariAdi { get; set; }
+        public string CariAdi { get; set; } = "";
 
         [Display(Name = "Genel Toplam")]
         [DisplayFormat(DataFormatString = "{0:N2}", ApplyFormatInEditMode = false)]
@@ -24,7 +24,7 @@ namespace MuhasebeStokWebApp.ViewModels.Fatura
         public decimal OdenenTutar { get; set; }
 
         [Display(Name = "Kalan Tutar")]
-        [DisplayFormat(DataFormatString = "{0:N2}", ApplyFormatInEditMode = false)]
+        [Range(0.01, double.MaxValue, ErrorMessage = "Tutar 0'dan büyük olmalıdır.")]
         public decimal KalanTutar { get; set; }
 
         [Required(ErrorMessage = "Ödeme türü seçilmelidir.")]
@@ -33,7 +33,7 @@ namespace MuhasebeStokWebApp.ViewModels.Fatura
         public int OdemeTuruID { get; set; }
         
         [Display(Name = "Ödeme Türü")]
-        public string OdemeTuru { get; set; }
+        public string OdemeTuru { get; set; } = "";
 
         [Required(ErrorMessage = "Ödeme tutarı girilmelidir.")]
         [Range(0.01, double.MaxValue, ErrorMessage = "Ödeme tutarı 0'dan büyük olmalıdır.")]
@@ -48,10 +48,22 @@ namespace MuhasebeStokWebApp.ViewModels.Fatura
         [Required(ErrorMessage = "Ödeme tarihi girilmelidir.")]
         [Display(Name = "Ödeme Tarihi")]
         [DisplayFormat(DataFormatString = "{0:dd.MM.yyyy}", ApplyFormatInEditMode = true)]
-        public DateTime OdemeTarihi { get; set; }
+        public DateTime OdemeTarihi { get; set; } = DateTime.Now;
+
+        [Display(Name = "Fatura Tarihi")]
+        public DateTime? FaturaTarihi { get; set; }
+
+        [Display(Name = "Döviz Kodu")]
+        public string? DovizKodu { get; set; }
+
+        [Display(Name = "Döviz Kuru")]
+        public decimal? DovizKuru { get; set; }
+
+        [Display(Name = "TL Karşılığı")]
+        public decimal? TLKarsiligi { get; set; }
 
         [Display(Name = "Açıklama")]
         [StringLength(500, ErrorMessage = "Açıklama en fazla 500 karakter olabilir.")]
-        public string Aciklama { get; set; }
+        public string Aciklama { get; set; } = "";
     }
 } 

@@ -2,7 +2,7 @@
 @{
     ViewData["Title"] = "Yeni Banka Hareketi";
     Layout = "~/Views/Shared/_Layout.cshtml";
-    var banka = ViewBag.Banka as MuhasebeStokWebApp.ViewModels.Banka.BankaViewModel;
+    var bankaHesap = ViewBag.BankaHesap as MuhasebeStokWebApp.Data.Entities.BankaHesap;
 }
 
 <div class="container-fluid">
@@ -10,57 +10,64 @@
         <div class="card-header bg-primary text-white">
             <div class="d-flex justify-content-between align-items-center">
                 <h4 class="mb-0">Yeni Banka Hareketi</h4>
-                <a asp-action="Hareketler" asp-route-id="@banka.BankaID" class="btn btn-light">
+                <a asp-action="HesapHareketler" asp-route-id="@Model.BankaHesapID" class="btn btn-light">
                     <i class="fas fa-arrow-left"></i> Hareketlere Dön
                 </a>
             </div>
         </div>
         <div class="card-body">
             <!-- Banka Bilgileri -->
-            <div class="row mb-4">
-                <div class="col-md-6">
-                    <div class="info-group">
-                        <h6 class="f-w-600">Banka Hesabı</h6>
-                        <p>@banka.BankaAdi - @banka.SubeAdi (@banka.HesapNo)</p>
-                        <p class="text-muted">@banka.IBAN</p>
-                    </div>
+            <div class="row mb-4 bg-light p-3 rounded">
+                <div class="col-md-8">
+                    <h5>@bankaHesap.Banka?.BankaAdi - @bankaHesap.HesapAdi</h5>
+                    <p class="mb-1"><strong>Şube:</strong> @bankaHesap.SubeAdi / <strong>Hesap No:</strong> @bankaHesap.HesapNo</p>
+                    <p class="mb-1"><strong>IBAN:</strong> @bankaHesap.IBAN</p>
                 </div>
-                <div class="col-md-6 text-end">
-                    <div class="info-group">
-                        <h6 class="f-w-600">Güncel Bakiye</h6>
-                        <p class="@(banka.GuncelBakiye >= 0 ? "text-success" : "text-danger") fw-bold">
-                            @banka.GuncelBakiye.ToString("N2") @banka.ParaBirimi
-                        </p>
-                    </div>
+                <div class="col-md-4 text-end">
+                    <h6>Güncel Bakiye</h6>
+                    <h3 class="text-primary mb-0">
+                        @bankaHesap.GuncelBakiye.ToString("N2") @bankaHesap.ParaBirimi
+                    </h3>
                 </div>
             </div>
 
-            <form asp-action="YeniHareket">
+            <form asp-action="YeniHareket" method="post">
                 <div asp-validation-summary="ModelOnly" class="text-danger"></div>
-                <input type="hidden" asp-for="BankaID" value="@banka.BankaID" />
+                <input type="hidden" asp-for="BankaHesapID" value="@Model.BankaHesapID" />
 
                 <div class="row">
                     <div class="col-md-6">
-                        <div class="form-group mb-3">
-                            <label asp-for="HareketTuru" class="control-label"></label>
-                            <select asp-for="HareketTuru" class="form-control select2">
-                                <option value="">-- Hareket Türü Seçiniz --</option>
-                                <option value="Para Yatırma">Para Yatırma</option>
-                                <option value="Para Çekme">Para Çekme</option>
-                                <option value="EFT Gönderme">EFT Gönderme</option>
-                                <option value="EFT Alma">EFT Alma</option>
-                                <option value="Havale Gönderme">Havale Gönderme</option>
-                                <option value="Havale Alma">Havale Alma</option>
+                        <div class="mb-3">
+                            <label asp-for="HareketTipi" class="form-label">İşlem Türü</label>
+                            <select asp-for="HareketTipi" class="form-select" asp-items="Html.GetEnumSelectList<MuhasebeStokWebApp.Enums.BankaHareketTipi>()">
                             </select>
-                            <span asp-validation-for="HareketTuru" class="text-danger"></span>
+                            <span asp-validation-for="HareketTipi" class="text-danger"></span>
                         </div>
                     </div>
                     <div class="col-md-6">
-                        <div class="form-group mb-3">
-                            <label asp-for="Tutar" class="control-label"></label>
+                        <div class="mb-3">
+                            <label asp-for="ReferansTuru" class="form-label">Referans Türü</label>
+                            <select asp-for="ReferansTuru" class="form-select" asp-items="ViewBag.ReferansTurleri">
+                            </select>
+                            <span asp-validation-for="ReferansTuru" class="text-danger"></span>
+                        </div>
+                    </div>
+                </div>
+
+                <div class="row">
+                    <div class="col-md-6">
+                        <div class="mb-3">
+                            <label asp-for="Tarih" class="form-label">Tarih</label>
+                            <input asp-for="Tarih" class="form-control" type="datetime-local" />
+                            <span asp-validation-for="Tarih" class="text-danger"></span>
+                        </div>
+                    </div>
+                    <div class="col-md-6">
+                        <div class="mb-3">
+                            <label asp-for="Tutar" class="form-label">Tutar</label>
                             <div class="input-group">
-                                <input asp-for="Tutar" class="form-control" type="number" step="0.01" />
-                                <span class="input-group-text">@banka.ParaBirimi</span>
+                                <input asp-for="Tutar" class="form-control" />
+                                <span class="input-group-text">@bankaHesap.ParaBirimi</span>
                             </div>
                             <span asp-validation-for="Tutar" class="text-danger"></span>
                         </div>
@@ -69,51 +76,15 @@
 
                 <div class="row">
                     <div class="col-md-6">
-                        <div class="form-group mb-3">
-                            <label asp-for="CariID" class="control-label">Cari</label>
-                            <select asp-for="CariID" class="form-control select2" asp-items="ViewBag.Cariler">
-                                <option value="">-- Cari Seçiniz --</option>
-                            </select>
-                            <span asp-validation-for="CariID" class="text-danger"></span>
-                        </div>
-                    </div>
-                    <div class="col-md-6">
-                        <div class="form-group mb-3">
-                            <label asp-for="KarsiUnvan" class="control-label"></label>
-                            <input asp-for="KarsiUnvan" class="form-control" />
-                            <span asp-validation-for="KarsiUnvan" class="text-danger"></span>
-                        </div>
-                    </div>
-                </div>
-
-                <div class="row">
-                    <div class="col-md-6">
-                        <div class="form-group mb-3">
-                            <label asp-for="KarsiBankaAdi" class="control-label"></label>
-                            <input asp-for="KarsiBankaAdi" class="form-control" />
-                            <span asp-validation-for="KarsiBankaAdi" class="text-danger"></span>
-                        </div>
-                    </div>
-                    <div class="col-md-6">
-                        <div class="form-group mb-3">
-                            <label asp-for="KarsiIBAN" class="control-label"></label>
-                            <input asp-for="KarsiIBAN" class="form-control" />
-                            <span asp-validation-for="KarsiIBAN" class="text-danger"></span>
-                        </div>
-                    </div>
-                </div>
-
-                <div class="row">
-                    <div class="col-md-6">
-                        <div class="form-group mb-3">
-                            <label asp-for="DekontNo" class="control-label"></label>
+                        <div class="mb-3">
+                            <label asp-for="DekontNo" class="form-label">Dekont No</label>
                             <input asp-for="DekontNo" class="form-control" />
                             <span asp-validation-for="DekontNo" class="text-danger"></span>
                         </div>
                     </div>
                     <div class="col-md-6">
-                        <div class="form-group mb-3">
-                            <label asp-for="ReferansNo" class="control-label"></label>
+                        <div class="mb-3">
+                            <label asp-for="ReferansNo" class="form-label">Referans No</label>
                             <input asp-for="ReferansNo" class="form-control" />
                             <span asp-validation-for="ReferansNo" class="text-danger"></span>
                         </div>
@@ -122,16 +93,71 @@
 
                 <div class="row">
                     <div class="col-md-12">
-                        <div class="form-group mb-3">
-                            <label asp-for="Aciklama" class="control-label"></label>
+                        <div class="mb-3">
+                            <label asp-for="Aciklama" class="form-label">Açıklama</label>
                             <textarea asp-for="Aciklama" class="form-control" rows="3"></textarea>
                             <span asp-validation-for="Aciklama" class="text-danger"></span>
                         </div>
                     </div>
                 </div>
 
-                <div class="form-group mt-4 text-end">
-                    <a asp-action="Hareketler" asp-route-id="@banka.BankaID" class="btn btn-secondary">
+                <div class="row mb-3">
+                    <div class="col-md-6">
+                        <div class="form-group">
+                            <div class="form-check">
+                                <input class="form-check-input" asp-for="CariIleDengelensin" />
+                                <label class="form-check-label" asp-for="CariIleDengelensin"></label>
+                            </div>
+                        </div>
+                    </div>
+                    <div class="col-md-6">
+                        <div class="form-group">
+                            <div class="form-check">
+                                <input class="form-check-input" asp-for="HesabaKaydet" />
+                                <label class="form-check-label" asp-for="HesabaKaydet"></label>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+
+                <div class="row mb-3">
+                    <div class="col-md-6">
+                        <div class="form-group">
+                            <label asp-for="CariID">Cari</label>
+                            <select asp-for="CariID" class="form-control select2">
+                                <option value="">-- Cari Seçiniz --</option>
+                                @foreach (var cari in ViewBag.Cariler)
+                                {
+                                    <option value="@cari.CariID">@cari.CariUnvani</option>
+                                }
+                            </select>
+                        </div>
+                    </div>
+                    <div class="col-md-6">
+                        <div class="form-group">
+                            <label asp-for="KarsiParaBirimi">Karşı Para Birimi</label>
+                            <select asp-for="KarsiParaBirimi" class="form-control" required>
+                                <option value="">-- Para Birimi Seçiniz --</option>
+                                @foreach (var item in ViewBag.ParaBirimleri)
+                                {
+                                    if (item.Value == bankaHesap.ParaBirimi)
+                                    {
+                                        <option value="@item.Value" selected>@item.Text</option>
+                                    }
+                                    else
+                                    {
+                                        <option value="@item.Value">@item.Text</option>
+                                    }
+                                }
+                            </select>
+                            <span asp-validation-for="KarsiParaBirimi" class="text-danger"></span>
+                            <small class="form-text text-muted">Karşı para birimi zorunludur, varsayılan olarak hesap para birimi seçilidir.</small>
+                        </div>
+                    </div>
+                </div>
+
+                <div class="mt-4 text-end">
+                    <a asp-action="HesapHareketler" asp-route-id="@Model.BankaHesapID" class="btn btn-secondary">
                         <i class="fas fa-times"></i> İptal
                     </a>
                     <button type="submit" class="btn btn-primary">
@@ -145,27 +171,32 @@
 
 @section Scripts {
     @{await Html.RenderPartialAsync("_ValidationScriptsPartial");}
-    
     <script>
         $(document).ready(function() {
-            $('.select2').select2();
-
-            // Hareket türü değiştiğinde karşı banka ve IBAN alanlarını göster/gizle
-            $('#HareketTuru').change(function() {
-                var selectedValue = $(this).val();
-                var isTransfer = selectedValue.includes('EFT') || selectedValue.includes('Havale');
-                
-                if (isTransfer) {
-                    $('#KarsiBankaAdi').closest('.form-group').show();
-                    $('#KarsiIBAN').closest('.form-group').show();
+            // Cari dengesi checkbox'ı değiştiğinde
+            $('#cariDenge').change(function() {
+                if ($(this).is(':checked')) {
+                    $('#cariSecimFormu').removeClass('d-none');
                 } else {
-                    $('#KarsiBankaAdi').closest('.form-group').hide();
-                    $('#KarsiIBAN').closest('.form-group').hide();
+                    $('#cariSecimFormu').addClass('d-none');
                 }
             });
-
-            // Sayfa yüklendiğinde de kontrol et
-            $('#HareketTuru').trigger('change');
+            
+            // Sayfa yüklendiğinde checkbox durumuna göre cari seçim formunu göster/gizle
+            if ($('#cariDenge').is(':checked')) {
+                $('#cariSecimFormu').removeClass('d-none');
+            }
+            
+            // Form gönderilmeden önce doğrulama
+            $("form").submit(function(e) {
+                if ($("#KarsiParaBirimi").val() === "") {
+                    e.preventDefault();
+                    alert("Karşı para birimi seçilmelidir!");
+                    $("#KarsiParaBirimi").focus();
+                    return false;
+                }
+                return true;
+            });
         });
     </script>
 } 

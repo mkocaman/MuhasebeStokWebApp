@@ -1,0 +1,57 @@
+            // Kalem Ekle
+            $("#btnAddKalem").click(function () {
+                addKalemRow(false);
+            });
+
+            // İlk kalem satırını ekle
+            setTimeout(function() {
+                addKalemRow(true);
+            }, 500);
+
+            // Kalem satırı ekleme fonksiyonu
+            function addKalemRow(isFirstRow) {
+                try {
+                    console.log("Kalem satırı ekleniyor... İlk satır mı:", isFirstRow);
+                    
+                    var template = $("#kalemTemplate").html();
+                    template = template.replace(/{index}/g, kalemIndex);
+                    $("#kalemlerBody").append(template);
+                    
+                    // Yeni eklenen satırın olaylarını bağla
+                    var $row = $(".kalem-row").last();
+                    
+                    // Select2'yi bağla
+                    try {
+                        var $urunSelect = $row.find('.urun-select');
+                        $urunSelect.select2({
+                            dropdownParent: $('#faturaForm'),
+                            width: '100%'
+                        });
+                        
+                        bindEventsToRow($row);
+                        
+                        // İlk satır için özel işlem
+                        if (isFirstRow) {
+                            // İlk satır için biraz daha bekle ve sonra ürün seç
+                            setTimeout(function() {
+                                if ($urunSelect.find("option").length > 1) {
+                                    console.log("İlk satır için otomatik ürün seçimi yapılıyor...");
+                                    $urunSelect.val($urunSelect.find("option:eq(1)").val()).trigger('change');
+                                }
+                            }, 800);
+                        }
+                        else if ($urunSelect.find("option").length > 1) {
+                            // Diğer satırlar için hemen ürün seç
+                            $urunSelect.val($urunSelect.find("option:eq(1)").val()).trigger('change');
+                        }
+                    } catch (e) {
+                        console.error("Select2 veya ürün seçimi hatası:", e);
+                        bindEventsToRow($row);
+                    }
+                    
+                    kalemIndex++;
+                    console.log("Kalem satırı eklendi, index:", kalemIndex-1);
+                } catch (e) {
+                    console.error("Kalem satırı eklenirken hata:", e);
+                }
+            } 

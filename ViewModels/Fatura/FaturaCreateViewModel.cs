@@ -1,133 +1,104 @@
 using System;
 using System.Collections.Generic;
 using System.ComponentModel.DataAnnotations;
+using MuhasebeStokWebApp.ViewModels.Fatura;
 using Microsoft.AspNetCore.Mvc.Rendering;
+using MuhasebeStokWebApp.Data.Entities;
 
 namespace MuhasebeStokWebApp.ViewModels.Fatura
 {
     public class FaturaCreateViewModel
     {
-        [StringLength(20, ErrorMessage = "Fatura numarası en fazla 20 karakter olabilir.")]
-        [Display(Name = "Fatura No")]
-        public string? FaturaNumarasi { get; set; }
+        public FaturaCreateViewModel()
+        {
+            FaturaKalemleri = new List<FaturaKalemViewModel>();
+            CariListesi = new List<SelectListItem>();
+            FaturaTuruListesi = new List<SelectListItem>();
+            DovizListesi = new List<SelectListItem>();
+        }
 
+        public Guid FaturaID { get; set; }
+
+        [Required(ErrorMessage = "Fatura numarası girilmelidir.")]
+        [StringLength(20, ErrorMessage = "Fatura numarası en fazla 20 karakter olabilir.")]
+        [Display(Name = "Fatura Numarası")]
+        public string FaturaNumarasi { get; set; }
+
+        [Required(ErrorMessage = "Sipariş numarası girilmelidir.")]
         [StringLength(20, ErrorMessage = "Sipariş numarası en fazla 20 karakter olabilir.")]
         [Display(Name = "Sipariş Numarası")]
-        public string? SiparisNumarasi { get; set; }
+        public string SiparisNumarasi { get; set; }
 
-        [Required(ErrorMessage = "Fatura tarihi zorunludur.")]
+        [Required(ErrorMessage = "Fatura tarihi girilmelidir.")]
         [Display(Name = "Fatura Tarihi")]
-        [DataType(DataType.Date)]
-        [DisplayFormat(DataFormatString = "{0:yyyy-MM-dd}", ApplyFormatInEditMode = true)]
-        public DateTime FaturaTarihi { get; set; } = DateTime.Today;
+        public DateTime? FaturaTarihi { get; set; }
 
         [Display(Name = "Vade Tarihi")]
-        [DataType(DataType.Date)]
-        [DisplayFormat(DataFormatString = "{0:yyyy-MM-dd}", ApplyFormatInEditMode = true)]
-        public DateTime? VadeTarihi { get; set; } = DateTime.Today.AddDays(30);
+        public DateTime? VadeTarihi { get; set; }
 
         [Required(ErrorMessage = "Cari seçilmelidir.")]
         [Display(Name = "Cari")]
         public Guid CariID { get; set; }
 
+        [Required(ErrorMessage = "Cari adı girilmelidir.")]
+        [Display(Name = "Cari Adı")]
+        public string CariAdi { get; set; }
+
         [Display(Name = "Fatura Türü")]
         public int? FaturaTuruID { get; set; }
 
+        [Required(ErrorMessage = "Fatura türü seçilmelidir.")]
         [Display(Name = "Fatura Türü")]
-        public string? FaturaTuru { get; set; }
+        public string FaturaTuru { get; set; }
 
         [Display(Name = "Resmi")]
-        public bool Resmi { get; set; } = true;
+        public bool ResmiMi { get; set; } = true;
 
         [StringLength(500, ErrorMessage = "Açıklama en fazla 500 karakter olabilir.")]
         [Display(Name = "Açıklama")]
         public string? Aciklama { get; set; }
 
+        [Required(ErrorMessage = "Ödeme durumu seçilmelidir.")]
         [Display(Name = "Ödeme Durumu")]
-        public string? OdemeDurumu { get; set; } = "Beklemede";
+        public string OdemeDurumu { get; set; }
 
         [Display(Name = "Döviz Türü")]
-        public string? DovizTuru { get; set; } = "TRY";
+        public string DovizTuru { get; set; } = "USD";
 
         [Display(Name = "Döviz Kuru")]
-        [DisplayFormat(DataFormatString = "{0:N4}", ApplyFormatInEditMode = false)]
         public decimal? DovizKuru { get; set; } = 1;
-        
+
         [Display(Name = "Aktif")]
         public bool Aktif { get; set; } = true;
+
+        public Guid? IrsaliyeID { get; set; }
+        public Guid? SozlesmeID { get; set; }
 
         [Display(Name = "Otomatik İrsaliye Oluştur")]
         public bool OtomatikIrsaliyeOlustur { get; set; } = false;
 
-        [Display(Name = "İrsaliye")]
-        public Guid? IrsaliyeID { get; set; }
+        [Display(Name = "Ara Toplam")]
+        public decimal AraToplam { get; set; }
 
-        public List<FaturaKalemViewModel> FaturaKalemleri { get; set; } = new List<FaturaKalemViewModel>();
+        [Display(Name = "KDV Toplam")]
+        public decimal KdvToplam { get; set; }
+
+        [Display(Name = "Genel Toplam")]
+        public decimal GenelToplam { get; set; }
         
-        // Dropdown listeler için - sadece UI'da kullanılır
-        [Display(Name = "Cari Listesi")]
-        public List<SelectListItem> CariListesi { get; set; } = new List<SelectListItem>();
-        
-        [Display(Name = "Fatura Türü Listesi")]
-        public List<SelectListItem> FaturaTuruListesi { get; set; } = new List<SelectListItem>();
-        
-        [Display(Name = "Döviz Listesi")]
-        public List<SelectListItem> DovizListesi { get; set; } = new List<SelectListItem>();
-    }
+        // Dövizli toplam değerler
+        [Display(Name = "Ara Toplam (Döviz)")]
+        public decimal AraToplamDoviz { get; set; }
 
-    public class FaturaKalemViewModel
-    {
-        public Guid? KalemID { get; set; }
+        [Display(Name = "KDV Toplam (Döviz)")]
+        public decimal KdvToplamDoviz { get; set; }
 
-        [Required(ErrorMessage = "Ürün seçimi zorunludur.")]
-        [Display(Name = "Ürün")]
-        public Guid UrunID { get; set; }
+        [Display(Name = "Genel Toplam (Döviz)")]
+        public decimal GenelToplamDoviz { get; set; }
 
-        [Display(Name = "Ürün Adı")]
-        public string UrunAdi { get; set; } = string.Empty;
-        
-        [Display(Name = "Ürün Kodu")]
-        public string UrunKodu { get; set; } = string.Empty;
-
-        [Required(ErrorMessage = "Miktar zorunludur.")]
-        [Range(0.01, 9999999, ErrorMessage = "Miktar 0'dan büyük olmalıdır.")]
-        [Display(Name = "Miktar")]
-        public decimal Miktar { get; set; }
-
-        [Display(Name = "Birim")]
-        public string Birim { get; set; } = string.Empty;
-
-        [Required(ErrorMessage = "Birim fiyat zorunludur.")]
-        [Range(0.01, 9999999, ErrorMessage = "Birim fiyat 0'dan büyük olmalıdır.")]
-        [Display(Name = "Birim Fiyat")]
-        [DisplayFormat(DataFormatString = "{0:N2}", ApplyFormatInEditMode = false)]
-        public decimal BirimFiyat { get; set; }
-        
-        [Display(Name = "Açıklama")]
-        public string Aciklama { get; set; } = string.Empty;
-
-        [Display(Name = "KDV Oranı (%)")]
-        [Range(0, 100, ErrorMessage = "KDV oranı 0-100 arasında olmalıdır.")]
-        public int KdvOrani { get; set; } = 18;
-
-        [Display(Name = "İndirim Oranı (%)")]
-        [Range(0, 100, ErrorMessage = "İndirim oranı 0-100 arasında olmalıdır.")]
-        public int IndirimOrani { get; set; } = 0;
-
-        [Display(Name = "Tutar")]
-        [DisplayFormat(DataFormatString = "{0:N2}", ApplyFormatInEditMode = false)]
-        public decimal Tutar { get; set; }
-
-        [Display(Name = "KDV Tutarı")]
-        [DisplayFormat(DataFormatString = "{0:N2}", ApplyFormatInEditMode = false)]
-        public decimal KdvTutari { get; set; }
-
-        [Display(Name = "İndirim Tutarı")]
-        [DisplayFormat(DataFormatString = "{0:N2}", ApplyFormatInEditMode = false)]
-        public decimal IndirimTutari { get; set; }
-
-        [Display(Name = "Net Tutar")]
-        [DisplayFormat(DataFormatString = "{0:N2}", ApplyFormatInEditMode = false)]
-        public decimal NetTutar { get; set; }
+        public List<FaturaKalemViewModel> FaturaKalemleri { get; set; }
+        public List<SelectListItem> CariListesi { get; set; }
+        public List<SelectListItem> FaturaTuruListesi { get; set; }
+        public List<SelectListItem> DovizListesi { get; set; }
     }
 } 

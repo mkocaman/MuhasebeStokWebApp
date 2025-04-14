@@ -32,6 +32,14 @@ using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.Hosting;
 using MuhasebeStokWebApp.Data.EfCore;
 using MuhasebeStokWebApp; // AdminCreator için gerekli
+using AutoMapper;
+using Microsoft.Extensions.Options;
+using Microsoft.AspNetCore.Mvc.Razor;
+using Microsoft.AspNetCore.Http.Features;
+using System.Reflection;
+using FluentValidation;
+using FluentValidation.AspNetCore;
+using MuhasebeStokWebApp.Validators;
 
 var builder = WebApplication.CreateBuilder(args);
 
@@ -49,24 +57,27 @@ Log.Logger = new LoggerConfiguration()
 builder.Host.UseSerilog();
 
 // Add services to the container.
-var connectionString = builder.Configuration.GetConnectionString("DefaultConnection");
+var connectionString = builder.Configuration.GetConnectionString("DefaultConnection") ??
+                       throw new InvalidOperationException("Connection string 'DefaultConnection' not found.");
 
 // SQL Server kullanımı
 builder.Services.AddDbContext<ApplicationDbContext>(options =>
-    options.UseSqlServer(
-        connectionString, 
-        b => b.MigrationsAssembly("MuhasebeStokWebApp")
-    ));
+    options.UseSqlServer(connectionString, sqlServerOptions => 
+    {
+        sqlServerOptions.MigrationsAssembly("MuhasebeStokWebApp");
+        sqlServerOptions.CommandTimeout(120);
+        sqlServerOptions.UseQuerySplittingBehavior(QuerySplittingBehavior.SplitQuery);
+    }));
 
 // Identity servislerini ekliyoruz
 builder.Services.AddIdentity<ApplicationUser, IdentityRole>(options => 
 {
-    // Şifre politikaları - Geliştirme için basitleştirildi
-    options.Password.RequireDigit = false;  
-    options.Password.RequireLowercase = false;
-    options.Password.RequireUppercase = false;
-    options.Password.RequireNonAlphanumeric = false;
-    options.Password.RequiredLength = 6;
+    // Şifre politikaları güçlendirildi
+    options.Password.RequireDigit = true;  
+    options.Password.RequireLowercase = true;
+    options.Password.RequireUppercase = true;
+    options.Password.RequireNonAlphanumeric = true;
+    options.Password.RequiredLength = 8;
     
     // Kullanıcı politikaları
     options.User.RequireUniqueEmail = true;
@@ -134,6 +145,9 @@ builder.Services.AddHttpClient();
 // LogService bağımlılığını ekliyoruz
 builder.Services.AddScoped<ILogService, LogService>();
 
+// AutoMapper'ı ekliyoruz
+builder.Services.AddAutoMapper(typeof(MappingProfiles));
+
 // ValidationService'i ekliyoruz
 builder.Services.AddScoped<IValidationService, ValidationService>();
 
@@ -150,14 +164,23 @@ builder.Services.AddScoped<UserManager>();
 // StokFifoService'i ekliyoruz
 builder.Services.AddScoped<StokFifoService>();
 
+// MaliyetHesaplamaService'i ekliyoruz
+builder.Services.AddScoped<IMaliyetHesaplamaService, MaliyetHesaplamaService>();
+
 // DropdownService'i ekliyoruz
 builder.Services.AddScoped<IDropdownService, DropdownService>();
 
 // CariService'i ekliyoruz
 builder.Services.AddScoped<ICariService, CariService>();
 
+// CariHareketService'i ekliyoruz
+builder.Services.AddScoped<ICariHareketService, CariHareketService>();
+
 // SistemAyarService'i ekliyoruz
 builder.Services.AddScoped<ISistemAyarService, SistemAyarService>();
+
+// IStokService'i ekliyoruz
+builder.Services.AddScoped<IStokService, StokService>();
 
 // AuthService'i ekliyoruz
 builder.Services.AddScoped<IAuthService, AuthService>();
@@ -185,7 +208,10 @@ builder.Services.AddScoped<ICurrencyService, CurrencyService>();
 // ReportService'i ekliyoruz
 builder.Services.AddScoped<IReportService, ReportService>();
 
-builder.Services.AddMemoryCache();
+// SozlesmeService ve FaturaAklamaService'i ekliyoruz
+builder.Services.AddScoped<ISozlesmeService, SozlesmeService>();
+builder.Services.AddScoped<IMerkeziAklamaService, MerkeziAklamaService>();
+builder.Services.AddScoped<IStokFifoService, StokFifoService>();
 
 builder.Services.AddSignalR();
 builder.Services.Configure<EmailSettings>(builder.Configuration.GetSection("EmailSettings"));
@@ -199,6 +225,11 @@ builder.Services.AddLocalization(options => options.ResourcesPath = "Resources")
 builder.Services.AddMvc()
     .AddViewLocalization()
     .AddDataAnnotationsLocalization();
+
+// FluentValidation servisleri
+builder.Services.AddFluentValidationAutoValidation();
+builder.Services.AddFluentValidationClientsideAdapters();
+builder.Services.AddValidatorsFromAssemblyContaining<CariHareketValidator>();
 
 // IMemoryCache servisi ekle (önbellek için)
 builder.Services.AddMemoryCache();
@@ -242,20 +273,25 @@ else
     app.UseHsts();
 }
 
-// Veritabanı migration'larını uygula (sadece migration uygula, temizleme ve örnek veri oluşturma yapma)
+// Veritabanını otomatik oluşturma ve migrationları uygulama
 using (var scope = app.Services.CreateScope())
 {
     var services = scope.ServiceProvider;
     try
     {
         var context = services.GetRequiredService<ApplicationDbContext>();
-        // Sadece migration'ları uygula
+        
+        // Veritabanını oluştur
         context.Database.Migrate();
+        
+        // Gerekli başlangıç verilerini ekle
+        await AppDbInitializer.SeedData(services, context);
+        
+        Log.Information("Veritabanı başarıyla oluşturuldu ve migrationlar uygulandı.");
     }
     catch (Exception ex)
     {
-        var logger = services.GetRequiredService<ILogger<Program>>();
-        logger.LogError(ex, "Veritabanı migration uygulanırken hata oluştu.");
+        Log.Error(ex, "Veritabanı oluşturulurken veya migrationlar uygulanırken bir hata oluştu.");
     }
 }
 
@@ -268,7 +304,11 @@ app.UseStaticFiles();
 app.UseRouting();
 
 // CORS middleware'ini ekle - UseRouting'den sonra, UseAuthorization'dan önce olmalı
-app.UseCors("AllowAll");
+app.UseCors(x => x
+    .WithOrigins("https://localhost:5001", "https://yourdomain.com") // Sadece bu domainlere izin ver
+    .AllowAnyMethod()
+    .AllowAnyHeader()
+    .AllowCredentials());
 
 // Session middleware'i önce kullanılmalı
 app.UseSession();

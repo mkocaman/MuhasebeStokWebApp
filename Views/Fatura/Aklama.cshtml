@@ -1,0 +1,181 @@
+@model MuhasebeStokWebApp.Models.ViewModels.FaturaAklamaViewModel
+
+@{
+    ViewData["Title"] = "Fatura Aklama";
+    Layout = "~/Views/Shared/_Layout.cshtml";
+}
+
+<div class="container-fluid">
+    <div class="card">
+        <div class="card-header bg-primary text-white">
+            <h5 class="mb-0">Fatura Aklama İşlemi</h5>
+        </div>
+        <div class="card-body">
+            <div class="row mb-3">
+                <div class="col-md-6">
+                    <div class="card">
+                        <div class="card-header bg-light">
+                            <h6 class="mb-0">Fatura Bilgileri</h6>
+                        </div>
+                        <div class="card-body">
+                            <div class="row mb-2">
+                                <div class="col-md-4 fw-bold">Fatura No:</div>
+                                <div class="col-md-8">@Model.FaturaNumarasi</div>
+                            </div>
+                            <div class="row mb-2">
+                                <div class="col-md-4 fw-bold">Fatura Tarihi:</div>
+                                <div class="col-md-8">@(Model.FaturaTarihi.HasValue ? Model.FaturaTarihi.Value.ToShortDateString() : "-")</div>
+                            </div>
+                            <div class="row mb-2">
+                                <div class="col-md-4 fw-bold">Cari:</div>
+                                <div class="col-md-8">@Model.CariAdi</div>
+                            </div>
+                            <div class="row mb-2">
+                                <div class="col-md-4 fw-bold">Ara Toplam:</div>
+                                <div class="col-md-8">@Model.AraToplam?.ToString("N2") @Model.DovizTuru</div>
+                            </div>
+                            <div class="row mb-2">
+                                <div class="col-md-4 fw-bold">KDV Toplam:</div>
+                                <div class="col-md-8">@Model.KDVToplam?.ToString("N2") @Model.DovizTuru</div>
+                            </div>
+                            <div class="row mb-2">
+                                <div class="col-md-4 fw-bold">Genel Toplam:</div>
+                                <div class="col-md-8">@Model.GenelToplam?.ToString("N2") @Model.DovizTuru</div>
+                            </div>
+                            <div class="row mb-2">
+                                <div class="col-md-4 fw-bold">Resmi:</div>
+                                <div class="col-md-8">@(Model.ResmiMi == true ? "Evet" : "Hayır")</div>
+                            </div>
+                            <div class="row mb-2">
+                                <div class="col-md-4 fw-bold">Ödeme Durumu:</div>
+                                <div class="col-md-8">@Model.OdemeDurumu</div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+                
+                <div class="col-md-6">
+                    <form asp-action="Aklama" method="post">
+                        <input type="hidden" asp-for="FaturaID" />
+                        
+                        <div class="form-group mb-3">
+                            <label asp-for="SecilenSozlesmeID" class="form-label">Sözleşme Seçin:</label>
+                            <select asp-for="SecilenSozlesmeID" class="form-select">
+                                <option value="">Sözleşme Seçin</option>
+                                @foreach (var sozlesme in Model.KullanilabilirSozlesmeler)
+                                {
+                                    <option value="@sozlesme.SozlesmeID">@sozlesme.SozlesmeNo (@sozlesme.SozlesmeTarihi.ToShortDateString())</option>
+                                }
+                            </select>
+                        </div>
+                        
+                        <div class="form-group mb-3">
+                            <label asp-for="AklamaNotu" class="form-label">Aklama Notu:</label>
+                            <textarea asp-for="AklamaNotu" class="form-control" rows="3" required></textarea>
+                            <span asp-validation-for="AklamaNotu" class="text-danger"></span>
+                        </div>
+                        
+                        <h6 class="mb-3">Aklanacak Kalemler</h6>
+                        
+                        <div class="table-responsive">
+                            <table class="table table-bordered table-hover">
+                                <thead class="table-light">
+                                    <tr>
+                                        <th style="width: 50px;">
+                                            <div class="form-check form-check-inline">
+                                                <input type="checkbox" class="form-check-input" id="tumunuSec" checked>
+                                                <label class="form-check-label" for="tumunuSec">Tümü</label>
+                                            </div>
+                                        </th>
+                                        <th>Ürün</th>
+                                        <th>Miktar</th>
+                                        <th>Aklanmış</th>
+                                        <th>Kalan</th>
+                                        <th>Aklanacak</th>
+                                        <th>Birim</th>
+                                    </tr>
+                                </thead>
+                                <tbody>
+                                    @for (int i = 0; i < Model.FaturaKalemleri.Count; i++)
+                                    {
+                                        var kalem = Model.FaturaKalemleri[i];
+                                        <tr>
+                                            <td>
+                                                <input type="hidden" asp-for="FaturaKalemleri[i].FaturaKalemID" />
+                                                <input type="hidden" asp-for="FaturaKalemleri[i].UrunID" />
+                                                <input type="hidden" asp-for="FaturaKalemleri[i].UrunAdi" />
+                                                <input type="hidden" asp-for="FaturaKalemleri[i].UrunKodu" />
+                                                <input type="hidden" asp-for="FaturaKalemleri[i].Miktar" />
+                                                <input type="hidden" asp-for="FaturaKalemleri[i].BirimAdi" />
+                                                <input type="hidden" asp-for="FaturaKalemleri[i].BirimFiyat" />
+                                                <input type="hidden" asp-for="FaturaKalemleri[i].AklananMiktar" />
+                                                <input type="hidden" asp-for="FaturaKalemleri[i].KalanMiktar" />
+                                                <input type="hidden" asp-for="FaturaKalemleri[i].ToplamTutar" />
+                                                
+                                                <div class="form-check">
+                                                    @if (kalem.KalanMiktar > 0)
+                                                    {
+                                                        <input type="checkbox" class="form-check-input kalem-sec" asp-for="FaturaKalemleri[i].Secildi" checked />
+                                                    }
+                                                    else
+                                                    {
+                                                        <input type="checkbox" class="form-check-input kalem-sec" asp-for="FaturaKalemleri[i].Secildi" disabled />
+                                                    }
+                                                </div>
+                                            </td>
+                                            <td>@kalem.UrunAdi (@kalem.UrunKodu)</td>
+                                            <td>@kalem.Miktar?.ToString("N3")</td>
+                                            <td>@kalem.AklananMiktar?.ToString("N3")</td>
+                                            <td>@kalem.KalanMiktar?.ToString("N3")</td>
+                                            <td>
+                                                <div class="input-group">
+                                                    @if (kalem.KalanMiktar <= 0)
+                                                    {
+                                                        <input type="number" class="form-control" asp-for="FaturaKalemleri[i].YeniAklanacakMiktar" step="0.001" min="0.001" max="@kalem.KalanMiktar" disabled />
+                                                    }
+                                                    else
+                                                    {
+                                                        <input type="number" class="form-control" asp-for="FaturaKalemleri[i].YeniAklanacakMiktar" step="0.001" min="0.001" max="@kalem.KalanMiktar" />
+                                                    }
+                                                    <button type="button" class="btn btn-outline-secondary tamamini-akla" data-kalan="@kalem.KalanMiktar">Tamamı</button>
+                                                </div>
+                                                <span asp-validation-for="FaturaKalemleri[i].YeniAklanacakMiktar" class="text-danger"></span>
+                                            </td>
+                                            <td>@kalem.BirimAdi</td>
+                                        </tr>
+                                    }
+                                </tbody>
+                            </table>
+                        </div>
+                        
+                        <div class="text-end mt-3">
+                            <a asp-action="Details" asp-route-id="@Model.FaturaID" class="btn btn-secondary">İptal</a>
+                            <button type="submit" class="btn btn-primary">Aklama İşlemini Kaydet</button>
+                        </div>
+                    </form>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+
+@section Scripts {
+    @{await Html.RenderPartialAsync("_ValidationScriptsPartial");}
+    
+    <script>
+        $(document).ready(function() {
+            // Tümünü seç/kaldır
+            $('#tumunuSec').change(function() {
+                var secildi = $(this).prop('checked');
+                $('.kalem-sec:not(:disabled)').prop('checked', secildi);
+            });
+            
+            // Tamamını akla butonu
+            $('.tamamini-akla').click(function() {
+                var kalan = parseFloat($(this).data('kalan'));
+                var input = $(this).closest('.input-group').find('input');
+                input.val(kalan.toFixed(3));
+            });
+        });
+    </script>
+} 

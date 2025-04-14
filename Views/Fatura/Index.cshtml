@@ -53,9 +53,27 @@
                                 <td>@item.FaturaNumarasi</td>
                                 <td>@(item.FaturaTarihi.HasValue ? item.FaturaTarihi.Value.ToString("dd.MM.yyyy") : "-")</td>
                                 <td>@(item.VadeTarihi.HasValue ? item.VadeTarihi.Value.ToString("dd.MM.yyyy") : "-")</td>
-                                <td>@item.CariAdi</td>
+                                <td>
+                                    @item.CariAdi
+                                    @if(item.CariSilindi)
+                                    {
+                                        <span class="badge bg-danger ms-1">Silindi</span>
+                                    }
+                                </td>
                                 <td>@item.FaturaTuru</td>
-                                <td class="text-end">@item.GenelToplam.ToString("N2") ₺</td>
+                                <td class="text-end">
+                                    @{
+                                        string currencySymbol = item.DovizTuru switch
+                                        {
+                                            "USD" => "$",
+                                            "EUR" => "€",
+                                            "GBP" => "£",
+                                            "TRY" => "₺",
+                                            _ => item.DovizTuru
+                                        };
+                                    }
+                                    @((item.GenelToplam / 100).ToString("N2")) @currencySymbol
+                                </td>
                                 <td>
                                     @if (item.OdemeDurumu == "Ödendi")
                                     {

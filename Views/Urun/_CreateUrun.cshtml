@@ -1,76 +1,57 @@
 @model MuhasebeStokWebApp.ViewModels.Urun.UrunCreateViewModel
 
-<div class="modal-header">
-    <h5 class="modal-title">Yeni Ürün Ekle</h5>
-    <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+<div class="modal-header bg-primary text-white">
+    <button type="button" class="btn-close btn-close-white" data-bs-dismiss="modal" aria-label="Close"></button>
 </div>
 
 <form id="createUrunForm" asp-controller="Urun" asp-action="Create" method="post">
     <div class="modal-body">
+        <div id="createFormAlert" class="alert alert-danger d-none" role="alert"></div>
         <div asp-validation-summary="ModelOnly" class="text-danger"></div>
         
-        <div class="row mb-3">
-            <div class="col-md-6">
-                <div class="form-group">
-                    <label asp-for="UrunKodu" class="control-label">Ürün Kodu</label>
-                    <input asp-for="UrunKodu" class="form-control" />
-                    <span asp-validation-for="UrunKodu" class="text-danger"></span>
-                </div>
-            </div>
-            <div class="col-md-6">
-                <div class="form-group">
-                    <label asp-for="UrunAdi" class="control-label">Ürün Adı</label>
-                    <input asp-for="UrunAdi" class="form-control" />
-                    <span asp-validation-for="UrunAdi" class="text-danger"></span>
-                </div>
-            </div>
+        <div class="mb-3">
+            <label asp-for="UrunKodu" class="form-label">Ürün Kodu</label>
+            <input asp-for="UrunKodu" class="form-control" required maxlength="50" />
+            <span asp-validation-for="UrunKodu" class="text-danger"></span>
         </div>
         
-        <div class="row mb-3">
-            <div class="col-md-6">
-                <div class="form-group">
-                    <label asp-for="KategoriID" class="control-label">Kategori</label>
-                    <select asp-for="KategoriID" asp-items="ViewBag.Kategoriler" class="form-select">
-                        <option value="">-- Kategori Seçin --</option>
-                    </select>
-                    <span asp-validation-for="KategoriID" class="text-danger"></span>
-                </div>
-            </div>
-            <div class="col-md-6">
-                <div class="form-group">
-                    <label asp-for="BirimID" class="control-label">Birim</label>
-                    <select asp-for="BirimID" asp-items="ViewBag.Birimler" class="form-select">
-                        <option value="">-- Birim Seçin --</option>
-                    </select>
-                    <span asp-validation-for="BirimID" class="text-danger"></span>
-                </div>
-            </div>
+        <div class="mb-3">
+            <label asp-for="UrunAdi" class="form-label">Ürün Adı</label>
+            <input asp-for="UrunAdi" class="form-control" required maxlength="200" />
+            <span asp-validation-for="UrunAdi" class="text-danger"></span>
         </div>
         
-        <div class="row mb-3">
-            <div class="col-md-6">
-                <div class="form-group">
-                    <label asp-for="KDVOrani" class="control-label">KDV Oranı (%)</label>
-                    <input asp-for="KDVOrani" class="form-control" type="number" min="0" max="100" value="18" />
-                    <span asp-validation-for="KDVOrani" class="text-danger"></span>
-                </div>
-            </div>
-            <div class="col-md-6">
-                <div class="form-group">
-                    <label asp-for="StokMiktar" class="control-label">Stok Miktarı</label>
-                    <input asp-for="StokMiktar" class="form-control" type="number" min="0" value="0" />
-                    <span asp-validation-for="StokMiktar" class="text-danger"></span>
-                </div>
-            </div>
+        <div class="mb-3">
+            <label asp-for="KategoriID" class="form-label">Kategori</label>
+            <select asp-for="KategoriID" asp-items="ViewBag.Kategoriler" class="form-select" required>
+                <option value="">-- Kategori Seçin --</option>
+            </select>
+            <span asp-validation-for="KategoriID" class="text-danger"></span>
         </div>
         
-        <div class="row mb-3">
-            <div class="col-md-6">
-                <div class="form-check mt-2">
-                    <input asp-for="Aktif" class="form-check-input" checked />
-                    <label asp-for="Aktif" class="form-check-label">Aktif</label>
-                </div>
-            </div>
+        <div class="mb-3">
+            <label asp-for="BirimID" class="form-label">Birim</label>
+            <select asp-for="BirimID" asp-items="ViewBag.Birimler" class="form-select" required>
+                <option value="">-- Birim Seçin --</option>
+            </select>
+            <span asp-validation-for="BirimID" class="text-danger"></span>
+        </div>
+        
+        <div class="mb-3">
+            <label asp-for="KDVOrani" class="form-label">KDV Oranı (%)</label>
+            <input asp-for="KDVOrani" class="form-control kdv-input" type="text" value="12" />
+            <span asp-validation-for="KDVOrani" class="text-danger"></span>
+        </div>
+        
+        <div class="mb-3">
+            <label asp-for="Aciklama" class="form-label">Açıklama</label>
+            <textarea asp-for="Aciklama" class="form-control" maxlength="500"></textarea>
+            <span asp-validation-for="Aciklama" class="text-danger"></span>
+        </div>
+        
+        <div class="form-check mb-3">
+            <input asp-for="Aktif" class="form-check-input" checked />
+            <label asp-for="Aktif" class="form-check-label">Aktif</label>
         </div>
     </div>
     <div class="modal-footer">
@@ -78,6 +59,42 @@
         <button type="submit" class="btn btn-primary">Kaydet</button>
     </div>
 </form>
+
+<script>
+    $(document).ready(function() {
+        // KDV alanı için numerik input kontrolü
+        $('.kdv-input').on('input', function() {
+            var value = $(this).val().replace(/[^\d]/g, '');
+            if (value > 100) value = 100;
+            $(this).val(value);
+        });
+        
+        $('.kdv-input').on('blur', function() {
+            if (this.value === '') {
+                this.value = '12';
+            }
+        });
+        
+        // Numerik alanlar için ondalık format
+        $('.numeric-input').on('input', function() {
+            formatNumericInput(this, 2); // 2 ondalık basamak
+        });
+    });
+    
+    // Numerik input formatı (ondalık için)
+    function formatNumericInput(input, decimalPlaces) {
+        var value = $(input).val().replace(/[^\d.,]/g, '').replace(/,/g, '.');
+        var parts = value.split('.');
+        
+        if (parts.length > 1) {
+            // Sadece bir ondalık nokta olsun
+            parts[1] = parts[1].slice(0, decimalPlaces);
+            value = parts[0] + '.' + parts[1];
+        }
+        
+        $(input).val(value);
+    }
+</script>
 
 @section Scripts {
     @{await Html.RenderPartialAsync("_ValidationScriptsPartial");}

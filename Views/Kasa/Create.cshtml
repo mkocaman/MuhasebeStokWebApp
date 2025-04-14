@@ -1,7 +1,6 @@
 @model MuhasebeStokWebApp.ViewModels.Kasa.KasaCreateViewModel
 @{
     ViewData["Title"] = "Kasa Ekle";
-    var kurlar = ViewBag.Kurlar as List<MuhasebeStokWebApp.ViewModels.Doviz.DovizKuruViewModel> ?? new List<MuhasebeStokWebApp.ViewModels.Doviz.DovizKuruViewModel>();
 }
 
 <div class="container-fluid">
@@ -43,12 +42,8 @@
                             <div class="col-md-6">
                                 <div class="form-group mb-3">
                                     <label asp-for="ParaBirimi" class="control-label">Para Birimi</label>
-                                    <select asp-for="ParaBirimi" class="form-control">
-                                        <option value="TRY">Türk Lirası (TRY)</option>
-                                        @foreach (var doviz in kurlar.Select(d => d.ParaBirimiKodu).Distinct())
-                                        {
-                                            <option value="@doviz">@doviz</option>
-                                        }
+                                    <select asp-for="ParaBirimi" class="form-control" asp-items="ViewBag.ParaBirimleri">
+                                        <option value="">-- Para Birimi Seçiniz --</option>
                                     </select>
                                     <span asp-validation-for="ParaBirimi" class="text-danger"></span>
                                 </div>

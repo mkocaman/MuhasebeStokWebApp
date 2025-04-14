@@ -1,29 +1,26 @@
 @model MuhasebeStokWebApp.ViewModels.Stok.StokListViewModel
 @{
-    ViewData["Title"] = "Stok Yönetimi";
+    ViewData["Title"] = "Stok İzleme ve Kontrol Merkezi";
     Layout = "~/Views/Shared/_Layout.cshtml";
 }
 
 <div class="container-fluid">
     <div class="card">
-        <div class="card-header bg-primary text-white">
+        <div class="card-header bg-success text-white">
             <div class="d-flex justify-content-between align-items-center">
-                <h4 class="mb-0">Stok Kartları</h4>
+                <h4 class="mb-0"><i class="fas fa-boxes"></i> Stok Yönetimi</h4>
                 <div>
-                    <a asp-controller="Urun" asp-action="Create" class="btn btn-success">
-                        <i class="fas fa-plus"></i> Yeni Ürün
-                    </a>
-                    <a asp-action="StokGiris" class="btn btn-light">
+                    <a asp-controller="StokGiris" asp-action="Create" class="btn btn-light">
                         <i class="fas fa-arrow-down"></i> Stok Girişi
                     </a>
-                    <a asp-action="StokCikis" class="btn btn-light">
+                    <a asp-controller="StokCikis" asp-action="Create" class="btn btn-light">
                         <i class="fas fa-arrow-up"></i> Stok Çıkışı
                     </a>
-                    <a asp-action="StokTransfer" class="btn btn-light">
+                    <a asp-controller="StokTransfer" asp-action="Create" class="btn btn-light">
                         <i class="fas fa-exchange-alt"></i> Stok Transferi
                     </a>
-                    <a asp-action="StokRapor" class="btn btn-info">
-                        <i class="fas fa-chart-bar"></i> Stok Raporu
+                    <a href="#" class="btn btn-warning" id="excelExportBtn">
+                        <i class="fas fa-file-export"></i> Excel'e Aktar
                     </a>
                 </div>
             </div>
@@ -44,84 +41,181 @@
                     <button type="button" class="btn-close" data-bs-dismiss="alert" aria-label="Close"></button>
                 </div>
             }
-            
-            @if (TempData["WarningMessage"] != null)
-            {
-                <div class="alert alert-warning alert-dismissible fade show" role="alert">
-                    @TempData["WarningMessage"]
-                    <button type="button" class="btn-close" data-bs-dismiss="alert" aria-label="Close"></button>
-                </div>
-            }
 
             <form asp-action="Index" method="get" class="mb-4">
-                <div class="input-group">
-                    <input type="text" name="searchString" class="form-control" placeholder="Ürün adı veya kodu ara...">
-                    <button type="submit" class="btn btn-primary">
-                        <i class="fas fa-search"></i> Ara
-                    </button>
-                </div>
-            </form>
-            
-            <!-- Stok Tablosu -->
-            <div class="table-responsive">
-                <table class="table table-bordered table-hover" id="stokKartlariTablosu">
-                    <thead class="table-light">
-                        <tr>
-                            <th>Ürün Kodu</th>
-                            <th>Ürün Adı</th>
-                            <th>Kategori</th>
-                            <th>Birim</th>
-                            <th>Stok Miktarı</th>
-                            <th>Durum</th>
-                            <th>İşlemler</th>
-                        </tr>
-                    </thead>
-                    <tbody>
-                        @foreach (var urun in Model.Urunler)
-                        {
-                            <tr>
-                                <td>@urun.UrunKodu</td>
-                                <td>@urun.UrunAdi</td>
-                                <td>@urun.Kategori</td>
-                                <td>@urun.Birim</td>
-                                <td class="text-end">@urun.StokMiktar.ToString("N2") @urun.Birim</td>
-                                <td>
-                                    @if (urun.StokMiktar <= 10)
+                <div class="row">
+                    <div class="col-md-5">
+                        <div class="input-group">
+                            <input type="text" name="searchString" class="form-control" placeholder="Ürün adı veya kodu ara..." value="@ViewBag.CurrentFilter">
+                            <button type="submit" class="btn btn-success">
+                                <i class="fas fa-search"></i> Ara
+                            </button>
+                        </div>
+                    </div>
+                    <div class="col-md-4">
+                        <div class="form-group">
+                            <select name="depoID" class="form-select" id="depoFilter">
+                                <option value="">-- Tüm Depolar --</option>
+                                @foreach (var depo in ViewBag.Depolar ?? new List<MuhasebeStokWebApp.Data.Entities.Depo>())
+                                {
+                                    if (ViewBag.CurrentDepo != null && ViewBag.CurrentDepo.ToString() == depo.DepoID.ToString())
                                     {
-                                        <span class="badge bg-danger">Kritik</span>
-                                    }
-                                    else if (urun.StokMiktar <= 20)
-                                    {
-                                        <span class="badge bg-warning">Düşük</span>
+                                        <option value="@depo.DepoID" selected>@depo.DepoAdi</option>
                                     }
                                     else
                                     {
-                                        <span class="badge bg-success">Normal</span>
+                                        <option value="@depo.DepoID">@depo.DepoAdi</option>
                                     }
-                                </td>
-                                <td>
-                                    <div class="btn-group" role="group">
-                                        <a asp-controller="Urun" asp-action="Details" asp-route-id="@urun.UrunID" class="btn btn-sm btn-info" title="Detaylar">
-                                            <i class="fas fa-eye"></i>
-                                        </a>
-                                        <a asp-controller="Urun" asp-action="Edit" asp-route-id="@urun.UrunID" class="btn btn-sm btn-warning" title="Düzenle">
-                                            <i class="fas fa-edit"></i>
-                                        </a>
-                                        <a asp-action="StokGiris" asp-route-urunID="@urun.UrunID" class="btn btn-sm btn-success" title="Stok Girişi">
-                                            <i class="fas fa-plus"></i>
-                                        </a>
-                                        <a asp-action="StokCikis" asp-route-urunID="@urun.UrunID" class="btn btn-sm btn-danger" title="Stok Çıkışı">
-                                            <i class="fas fa-minus"></i>
-                                        </a>
-                                        <a asp-action="Hareketler" asp-route-id="@urun.UrunID" class="btn btn-sm btn-secondary stok-hareketleri-btn" title="Stok Hareketleri" data-urun-id="@urun.UrunID">
-                                            <i class="fas fa-history"></i>
-                                        </a>
-                                    </div>
-                                </td>
-                            </tr>
-                        }
-                    </tbody>
-                </table>
+                                }
+                            </select>
+                        </div>
+                    </div>
+                    <div class="col-md-3">
+                        <div class="form-group">
+                            <select name="kategoriID" class="form-select" id="kategoriFilter">
+                                <option value="">-- Tüm Kategoriler --</option>
+                                @foreach (var kategori in ViewBag.Kategoriler ?? new List<MuhasebeStokWebApp.Data.Entities.UrunKategori>())
+                                {
+                                    if (ViewBag.CurrentKategori != null && ViewBag.CurrentKategori.ToString() == kategori.KategoriID.ToString())
+                                    {
+                                        <option value="@kategori.KategoriID" selected>@kategori.KategoriAdi</option>
+                                    }
+                                    else
+                                    {
+                                        <option value="@kategori.KategoriID">@kategori.KategoriAdi</option>
+                                    }
+                                }
+                            </select>
+                        </div>
+                    </div>
+                </div>
+            </form>
+
+            <!-- Stok Sekmeleri -->
+            <ul class="nav nav-tabs" id="stokTabs" role="tablist">
+                <li class="nav-item" role="presentation">
+                    <button class="nav-link active" id="tum-stoklar-tab" data-bs-toggle="tab" data-bs-target="#tum-stoklar" type="button" role="tab" aria-controls="tum-stoklar" aria-selected="true">
+                        <i class="fas fa-boxes text-success"></i> Tüm Stoklar
+                    </button>
+                </li>
+                <li class="nav-item" role="presentation">
+                    <button class="nav-link" id="kritik-stoklar-tab" data-bs-toggle="tab" data-bs-target="#kritik-stoklar" type="button" role="tab" aria-controls="kritik-stoklar" aria-selected="false">
+                        <i class="fas fa-exclamation-triangle text-danger"></i> Kritik Stoklar
+                    </button>
+                </li>
+            </ul>
+            
+            <!-- Sekme İçerikleri -->
+            <div class="tab-content" id="stokTabsContent">
+                <!-- Tüm Stoklar Sekmesi -->
+                <div class="tab-pane fade show active" id="tum-stoklar" role="tabpanel" aria-labelledby="tum-stoklar-tab">
+                    <div class="table-responsive mt-3">
+                        <table class="table table-bordered table-hover" id="tumStoklarTablosu">
+                            <thead class="table-success">
+                                <tr>
+                                    <th>Ürün Kodu</th>
+                                    <th>Ürün Adı</th>
+                                    <th>Kategori</th>
+                                    <th>Depo</th>
+                                    <th>Birim</th>
+                                    <th>Stok Miktarı</th>
+                                    <th>Durum</th>
+                                    <th>İşlemler</th>
+                                </tr>
+                            </thead>
+                            <tbody>
+                                @foreach (var item in Model.Urunler)
+                                {
+                                    <tr>
+                                        <td>@item.UrunKodu</td>
+                                        <td>@item.UrunAdi</td>
+                                        <td>@item.Kategori</td>
+                                        <td>@item.DepoAdi</td>
+                                        <td>@item.Birim</td>
+                                        <td class="text-end">@item.StokMiktar.ToString("N2") @item.Birim</td>
+                                        <td>
+                                            @if (item.StokMiktar <= item.KritikStokSeviyesi)
+                                            {
+                                                <span class="badge bg-danger">Kritik</span>
+                                            }
+                                            else if (item.StokMiktar <= item.KritikStokSeviyesi * 1.5m)
+                                            {
+                                                <span class="badge bg-warning">Düşük</span>
+                                            }
+                                            else
+                                            {
+                                                <span class="badge bg-success">Normal</span>
+                                            }
+                                        </td>
+                                        <td>
+                                            <div class="btn-group">
+                                                <a asp-action="Hareketler" asp-route-id="@item.UrunID" class="btn btn-sm btn-info" title="Stok Hareketleri">
+                                                    <i class="fas fa-history"></i>
+                                                </a>
+                                                <a asp-controller="StokGiris" asp-action="Create" asp-route-urunId="@item.UrunID" class="btn btn-sm btn-success" title="Stok Girişi">
+                                                    <i class="fas fa-arrow-down"></i>
+                                                </a>
+                                                <a asp-controller="StokCikis" asp-action="Create" asp-route-urunId="@item.UrunID" class="btn btn-sm btn-danger" title="Stok Çıkışı">
+                                                    <i class="fas fa-arrow-up"></i>
+                                                </a>
+                                                <a asp-controller="Urun" asp-action="Details" asp-route-id="@item.UrunID" class="btn btn-sm btn-secondary" title="Ürün Detayları">
+                                                    <i class="fas fa-box-open"></i>
+                                                </a>
+                                            </div>
+                                        </td>
+                                    </tr>
+                                }
+                            </tbody>
+                        </table>
+                    </div>
+                </div>
+                
+                <!-- Kritik Stoklar Sekmesi -->
+                <div class="tab-pane fade" id="kritik-stoklar" role="tabpanel" aria-labelledby="kritik-stoklar-tab">
+                    <div class="table-responsive mt-3">
+                        <table class="table table-bordered table-hover" id="kritikStoklarTablosu">
+                            <thead class="table-danger">
+                                <tr>
+                                    <th>Ürün Kodu</th>
+                                    <th>Ürün Adı</th>
+                                    <th>Kategori</th>
+                                    <th>Depo</th>
+                                    <th>Birim</th>
+                                    <th>Stok Miktarı</th>
+                                    <th>Kritik Seviye</th>
+                                    <th>İşlemler</th>
+                                </tr>
+                            </thead>
+                            <tbody>
+                                @foreach (var item in Model.Urunler.Where(s => s.StokMiktar <= s.KritikStokSeviyesi))
+                                {
+                                    <tr>
+                                        <td>@item.UrunKodu</td>
+                                        <td>@item.UrunAdi</td>
+                                        <td>@item.Kategori</td>
+                                        <td>@item.DepoAdi</td>
+                                        <td>@item.Birim</td>
+                                        <td class="text-end text-danger fw-bold">@item.StokMiktar.ToString("N2") @item.Birim</td>
+                                        <td class="text-end">@item.KritikStokSeviyesi.ToString("N2") @item.Birim</td>
+                                        <td>
+                                            <div class="btn-group">
+                                                <a asp-controller="StokGiris" asp-action="Create" asp-route-urunId="@item.UrunID" class="btn btn-sm btn-success" title="Acil Stok Girişi">
+                                                    <i class="fas fa-arrow-down"></i>
+                                                </a>
+                                                <a asp-action="Hareketler" asp-route-id="@item.UrunID" class="btn btn-sm btn-info" title="Stok Hareketleri">
+                                                    <i class="fas fa-history"></i>
+                                                </a>
+                                                <a asp-controller="Urun" asp-action="Details" asp-route-id="@item.UrunID" class="btn btn-sm btn-secondary" title="Ürün Detayları">
+                                                    <i class="fas fa-box-open"></i>
+                                                </a>
+                                            </div>
+                                        </td>
+                                    </tr>
+                                }
+                            </tbody>
+                        </table>
+                    </div>
+                </div>
             </div>
         </div>
     </div>
@@ -129,49 +223,43 @@
 
 @section Scripts {
     <script>
-        $(document).ready(function () {
-            // DataTable başlatma
-            try {
-                $('#stokKartlariTablosu').DataTable({
-                    language: {
-                        url: '//cdn.datatables.net/plug-ins/1.13.7/i18n/tr.json',
-                        info: "" // Bilgilendirme yazısını kaldır (çift görünme sorununu çözmek için)
-                    },
-                    responsive: true,
-                    retrieve: true,
-                    order: [[1, 'asc']] // Ürün adına göre artan sıralama
-                });
-            } catch (e) {
-                console.log("DataTable başlatılırken bir hata oluştu, ancak işlem devam ediyor.");
-            }
+        $(document).ready(function() {
+            // DataTables başlatma
+            $('#tumStoklarTablosu').DataTable({
+                language: {
+                    url: '//cdn.datatables.net/plug-ins/1.13.7/i18n/tr.json'
+                },
+                responsive: true,
+                retrieve: true,
+                order: [[1, 'asc']] // Ürün adına göre artan sıralama
+            });
+            
+            $('#kritikStoklarTablosu').DataTable({
+                language: {
+                    url: '//cdn.datatables.net/plug-ins/1.13.7/i18n/tr.json'
+                },
+                responsive: true,
+                retrieve: true,
+                order: [[1, 'asc']] // Ürün adına göre artan sıralama
+            });
 
+            // Filtreler değiştiğinde sayfayı yenile
+            $('#depoFilter, #kategoriFilter').change(function() {
+                $(this).closest('form').submit();
+            });
+            
+            // Excel'e Aktar butonu
+            $('#excelExportBtn').click(function(e) {
+                e.preventDefault();
+                window.location.href = '@Url.Action("ExportToExcel", "Stok")';
+            });
+            
             // Otomatik kapanan alertler
             window.setTimeout(function() {
                 $(".alert").fadeTo(500, 0).slideUp(500, function() {
                     $(this).remove();
                 });
             }, 4000);
-
-            // Stok Hareketleri butonları tıklama olayı
-            $(document).on('click', '.stok-hareketleri-btn', function(e) {
-                var urunId = $(this).data('urun-id');
-                console.log("Stok hareketleri için ürün ID:", urunId);
-                window.location.href = '@Url.Action("Hareketler", "Stok")/' + urunId;
-                e.preventDefault();
-            });
-            
-            // SweetAlert ile başarı mesajı göster
-            @if (TempData["SuccessMessage"] != null)
-            {
-                <text>
-                Swal.fire({
-                    title: 'Başarılı!',
-                    text: '@TempData["SuccessMessage"]',
-                    icon: 'success',
-                    confirmButtonText: 'Tamam'
-                });
-                </text>
-            }
         });
     </script>
 } 

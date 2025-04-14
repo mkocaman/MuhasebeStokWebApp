@@ -19,7 +19,7 @@ namespace MuhasebeStokWebApp.Data.Entities
         public string Mesaj { get; set; }
         
         [StringLength(255)]
-        public string Sayfa { get; set; }
+        public string Sayfa { get; set; } = string.Empty;
         
         public DateTime OlusturmaTarihi { get; set; } = DateTime.Now;
         

@@ -1,19 +1,23 @@
 using System;
 using System.Collections.Generic;
+using System.Globalization;
 using System.Linq;
+using System.Text;
 using System.Threading.Tasks;
 using Microsoft.AspNetCore.Authorization;
+using Microsoft.AspNetCore.Identity;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.AspNetCore.Mvc.Rendering;
 using Microsoft.EntityFrameworkCore;
+using Microsoft.Extensions.Logging;
 using MuhasebeStokWebApp.Data;
 using MuhasebeStokWebApp.Data.Entities;
-using MuhasebeStokWebApp.ViewModels.Rapor;
-using System.Security.Claims;
-using Microsoft.Extensions.Logging;
+using MuhasebeStokWebApp.Data.Repositories;
+using MuhasebeStokWebApp.Enums;
 using MuhasebeStokWebApp.Services;
-using Microsoft.AspNetCore.Identity;
 using MuhasebeStokWebApp.Services.Interfaces;
+using MuhasebeStokWebApp.ViewModels.Rapor;
+using MuhasebeStokWebApp.ViewModels.Stok;
 
 namespace MuhasebeStokWebApp.Controllers
 {
@@ -21,18 +25,21 @@ namespace MuhasebeStokWebApp.Controllers
     public class RaporController : BaseController
     {
         private readonly ApplicationDbContext _context;
+        private readonly IUnitOfWork _unitOfWork;
         private readonly ILogger<RaporController> _logger;
 
         public RaporController(
-            ApplicationDbContext context, 
-            ILogger<RaporController> logger,
+            ApplicationDbContext context,
+            IUnitOfWork unitOfWork,
             IMenuService menuService,
             UserManager<ApplicationUser> userManager,
             RoleManager<IdentityRole> roleManager,
-            ILogService logService)
+            ILogService logService,
+            ILogger<RaporController> logger)
             : base(menuService, userManager, roleManager, logService)
         {
             _context = context;
+            _unitOfWork = unitOfWork;
             _logger = logger;
         }
 
@@ -105,12 +112,13 @@ namespace MuhasebeStokWebApp.Controllers
         // Banka Raporu
         public async Task<IActionResult> Banka()
         {
-            ViewBag.Bankalar = await _context.Bankalar
+            ViewBag.Bankalar = await _context.BankaHesaplari
+                .Include(b => b.Banka)
                 .Where(b => !b.Silindi && b.Aktif)
                 .Select(b => new SelectListItem
                 {
-                    Value = b.BankaID.ToString(),
-                    Text = $"{b.BankaAdi} - {b.HesapNo} ({b.ParaBirimi})"
+                    Value = b.BankaHesapID.ToString(),
+                    Text = $"{b.Banka.BankaAdi} - {b.HesapNo} ({b.ParaBirimi})"
                 }).ToListAsync();
 
             var model = new RaporFiltreViewModel();
@@ -122,20 +130,21 @@ namespace MuhasebeStokWebApp.Controllers
         {
             var model = new BankaRaporViewModel
             {
-                RaporAdi = "Banka Hareket Raporu",
+                RaporAdi = "Banka Hesap Hareket Raporu",
                 RaporTarihi = DateTime.Now,
                 KullaniciAdi = User.Identity?.Name ?? "Kullanıcı",
                 Aciklama = $"{filtre.BaslangicTarihi:dd.MM.yyyy} - {filtre.BitisTarihi:dd.MM.yyyy} tarihleri arası banka hareketleri"
             };
 
-            var query = _context.BankaHareketleri
-                .Include(b => b.Banka)
+            var query = _context.BankaHesapHareketleri
+                .Include(b => b.BankaHesap)
+                    .ThenInclude(bh => bh.Banka)
                 .Where(b => !b.Silindi)
                 .Where(b => b.Tarih >= filtre.BaslangicTarihi && b.Tarih <= filtre.BitisTarihi.AddDays(1).AddSeconds(-1));
 
             if (filtre.BankaID.HasValue)
             {
-                query = query.Where(b => b.BankaID == filtre.BankaID.Value);
+                query = query.Where(b => b.BankaHesapID == filtre.BankaID.Value);
             }
 
             if (!string.IsNullOrEmpty(filtre.HareketTuru))
@@ -147,11 +156,11 @@ namespace MuhasebeStokWebApp.Controllers
 
             model.BankaHareketleri = hareketler.Select(h => new BankaHareketRaporViewModel
             {
-                BankaAdi = h.Banka?.BankaAdi ?? "Bilinmeyen Banka",
+                BankaAdi = h.BankaHesap?.Banka?.BankaAdi ?? "Bilinmeyen Banka",
                 Tarih = h.Tarih,
                 HareketTuru = h.HareketTuru,
                 Tutar = h.Tutar,
-                ParaBirimi = h.Banka?.ParaBirimi ?? "TL",
+                ParaBirimi = h.BankaHesap?.ParaBirimi ?? "TL",
                 ReferansNo = h.ReferansNo,
                 ReferansTuru = h.ReferansTuru,
                 DekontNo = h.DekontNo,
@@ -163,7 +172,7 @@ namespace MuhasebeStokWebApp.Controllers
 
             // Para birimine göre toplamları hesapla
             var paraBirimiGruplari = hareketler
-                .GroupBy(h => h.Banka?.ParaBirimi ?? "TL")
+                .GroupBy(h => h.BankaHesap?.ParaBirimi ?? "TL")
                 .Select(g => new
                 {
                     ParaBirimi = g.Key,
@@ -182,30 +191,13 @@ namespace MuhasebeStokWebApp.Controllers
         // Cari Raporu
         public async Task<IActionResult> Cari()
         {
-            try
-            {
-                ViewBag.Cariler = await _context.Cariler
-                    .Where(c => !c.Silindi && c.AktifMi)
-                    .Select(c => new SelectListItem
-                    {
-                        Value = c.CariID.ToString(),
-                        Text = c.Ad
-                    }).ToListAsync();
-            }
-            catch (Exception ex)
-            {
-                // Hata durumunda boş liste ata
-                ViewBag.Cariler = new List<SelectListItem>();
-                // Hatayı loglayabilirsiniz
-                _logger.LogError(ex, "Cariler yüklenirken hata oluştu: {Message}", ex.Message);
-                ViewBag.Cariler = await _context.Cariler
-                    .Where(c => !c.Silindi && c.AktifMi)
-                    .Select(c => new SelectListItem
-                    {
-                        Value = c.CariID.ToString(),
-                        Text = c.Ad
-                    }).ToListAsync();
-            }
+            ViewBag.Cariler = await _context.Cariler
+                .Where(c => !c.Silindi && c.AktifMi)
+                .Select(c => new SelectListItem
+                {
+                    Value = c.CariID.ToString(),
+                    Text = c.Ad
+                }).ToListAsync();
 
             var model = new RaporFiltreViewModel();
             return View(model);
@@ -229,8 +221,7 @@ namespace MuhasebeStokWebApp.Controllers
 
             if (filtre.CariID.HasValue)
             {
-                var cariId = filtre.CariID.Value;
-                query = query.Where(c => c.CariId.ToString().Contains(cariId.ToString()));
+                query = query.Where(c => c.CariID == filtre.CariID.Value);
             }
 
             if (!string.IsNullOrEmpty(filtre.HareketTuru))
@@ -286,7 +277,7 @@ namespace MuhasebeStokWebApp.Controllers
         [HttpPost]
         public async Task<IActionResult> StokRaporu(RaporFiltreViewModel filtre)
         {
-            var model = new StokRaporViewModel
+            var model = new RaporStokViewModel
             {
                 RaporAdi = "Stok Hareket Raporu",
                 RaporTarihi = DateTime.Now,
@@ -306,20 +297,24 @@ namespace MuhasebeStokWebApp.Controllers
 
             if (!string.IsNullOrEmpty(filtre.HareketTuru))
             {
-                query = query.Where(s => s.HareketTuru == filtre.HareketTuru);
+                // String'i enum'a dönüştür
+                if (Enum.TryParse<StokHareketiTipi>(filtre.HareketTuru, out var hareketTipi))
+                {
+                    query = query.Where(s => s.HareketTuru == hareketTipi);
+                }
             }
 
             var hareketler = await query.OrderBy(s => s.Tarih).ToListAsync();
 
-            model.StokHareketleri = hareketler.Select(h => new StokHareketRaporViewModel
+            model.StokHareketleri = hareketler.Select(h => new RaporStokHareketViewModel
             {
                 UrunAdi = h.Urun?.UrunAdi ?? "Bilinmeyen Ürün",
                 Tarih = h.Tarih,
-                HareketTuru = h.HareketTuru,
-                Miktar = h.Miktar,
+                HareketTuru = h.HareketTuru.ToString(),
+                Miktar = Math.Abs(h.Miktar),
                 Birim = h.Birim ?? "Adet",
                 BirimFiyat = h.BirimFiyat ?? 0,
-                ToplamTutar = h.Miktar * (h.BirimFiyat ?? 0),
+                ToplamTutar = Math.Abs(h.Miktar) * (h.BirimFiyat ?? 0),
                 ReferansNo = h.ReferansNo,
                 ReferansTuru = h.ReferansTuru,
                 Aciklama = h.Aciklama
@@ -331,13 +326,13 @@ namespace MuhasebeStokWebApp.Controllers
 
             foreach (var hareket in hareketler)
             {
-                if (hareket.HareketTuru == "Giriş")
+                if (hareket.HareketTuru == StokHareketiTipi.Giris)
                 {
                     toplamGiris += hareket.Miktar;
                 }
-                else if (hareket.HareketTuru == "Çıkış")
+                else if (hareket.HareketTuru == StokHareketiTipi.Cikis)
                 {
-                    toplamCikis += hareket.Miktar;
+                    toplamCikis += Math.Abs(hareket.Miktar);
                 }
             }
 
@@ -566,6 +561,98 @@ namespace MuhasebeStokWebApp.Controllers
             }
 
             return View(model);
+        }
+
+        private async Task<List<StokHareketModel>> GetStokHareketleriAsync(DateTime? baslangicTarihi = null, DateTime? bitisTarihi = null)
+        {
+            var query = _context.StokHareketleri
+                .Include(sh => sh.Urun)
+                .Where(sh => !sh.Silindi);
+            
+            if (baslangicTarihi.HasValue)
+            {
+                query = query.Where(sh => sh.Tarih >= baslangicTarihi.Value);
+            }
+            
+            if (bitisTarihi.HasValue)
+            {
+                query = query.Where(sh => sh.Tarih <= bitisTarihi.Value);
+            }
+            
+            var hareketler = await query
+                .OrderByDescending(sh => sh.Tarih)
+                .ToListAsync();
+            
+            var model = hareketler.Select(sh => new StokHareketModel
+            {
+                StokHareketID = sh.StokHareketID,
+                UrunID = sh.UrunID,
+                UrunKodu = sh.Urun?.UrunKodu ?? "",
+                UrunAdi = sh.Urun?.UrunAdi ?? "",
+                Tarih = sh.Tarih,
+                HareketTuru = sh.HareketTuru,
+                HareketTuruAdi = sh.HareketTuru == StokHareketiTipi.Giris ? "Giriş" : "Çıkış",
+                Miktar = Math.Abs(sh.Miktar),
+                BirimFiyat = sh.BirimFiyat ?? 0,
+                ToplamTutar = Math.Abs(sh.Miktar) * (sh.BirimFiyat ?? 0),
+                Birim = sh.Birim,
+                ReferansNo = sh.ReferansNo,
+                ReferansTuru = sh.ReferansTuru
+            }).ToList();
+            
+            return model;
+        }
+
+        private async Task<StokHareketRaporModel> GetStokHareketRaporModelAsync(
+            DateTime? baslangicTarihi = null, DateTime? bitisTarihi = null, Guid? urunID = null, 
+            Guid? kategoriID = null, string hareketTuruFilter = null)
+        {
+            var hareketler = await GetStokHareketleriAsync(baslangicTarihi, bitisTarihi);
+            
+            // Filtreleme işlemleri
+            if (urunID.HasValue)
+            {
+                hareketler = hareketler.Where(h => h.UrunID == urunID.Value).ToList();
+            }
+            
+            if (kategoriID.HasValue)
+            {
+                // Kategori filtreleme işlemi
+                var urunIDs = await _context.Urunler
+                    .Where(u => u.KategoriID == kategoriID.Value)
+                    .Select(u => u.UrunID)
+                    .ToListAsync();
+                
+                hareketler = hareketler.Where(h => urunIDs.Contains(h.UrunID)).ToList();
+            }
+            
+            if (!string.IsNullOrEmpty(hareketTuruFilter))
+            {
+                if (hareketTuruFilter == "Giris")
+                {
+                    hareketler = hareketler.Where(h => h.HareketTuru == StokHareketiTipi.Giris).ToList();
+                }
+                else if (hareketTuruFilter == "Cikis")
+                {
+                    hareketler = hareketler.Where(h => h.HareketTuru == StokHareketiTipi.Cikis).ToList();
+                }
+            }
+            
+            var model = new StokHareketRaporModel
+            {
+                BaslangicTarihi = baslangicTarihi ?? DateTime.Now.AddMonths(-1),
+                BitisTarihi = bitisTarihi ?? DateTime.Now,
+                UrunID = urunID,
+                KategoriID = kategoriID,
+                HareketTuru = hareketTuruFilter,
+                Hareketler = hareketler,
+                ToplamGirisMiktari = hareketler.Where(h => h.HareketTuru == StokHareketiTipi.Giris).Sum(h => h.Miktar),
+                ToplamCikisMiktari = hareketler.Where(h => h.HareketTuru == StokHareketiTipi.Cikis).Sum(h => h.Miktar),
+                ToplamGirisTutari = hareketler.Where(h => h.HareketTuru == StokHareketiTipi.Giris).Sum(h => h.ToplamTutar),
+                ToplamCikisTutari = hareketler.Where(h => h.HareketTuru == StokHareketiTipi.Cikis).Sum(h => h.ToplamTutar)
+            };
+            
+            return model;
         }
     }
 } 

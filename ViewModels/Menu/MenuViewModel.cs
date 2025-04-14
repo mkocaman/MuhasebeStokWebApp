@@ -10,27 +10,27 @@ namespace MuhasebeStokWebApp.ViewModels.Menu
         public Guid MenuID { get; set; }
         
         [Display(Name = "Menü Adı")]
-        public string Ad { get; set; }
+        public string Ad { get; set; } = string.Empty;
         
         // MenuAdi Ad'ın alternatif adıdır
         [Display(Name = "Menü Adı")]
-        public string MenuAdi => Ad;
+        public string MenuAdi { get; set; } = string.Empty;
         
         [Display(Name = "Icon")]
-        public string Icon { get; set; }
+        public string Icon { get; set; } = string.Empty;
         
         [Display(Name = "URL")]
-        public string Url { get; set; }
+        public string Url { get; set; } = string.Empty;
         
         // URL'nin alternatif adı
         [Display(Name = "URL")]
         public string URL => Url;
         
         [Display(Name = "Controller")]
-        public string Controller { get; set; }
+        public string Controller { get; set; } = string.Empty;
         
         [Display(Name = "Action")]
-        public string Action { get; set; }
+        public string Action { get; set; } = string.Empty;
         
         [Display(Name = "Aktif Mi?")]
         public bool AktifMi { get; set; }
@@ -53,7 +53,7 @@ namespace MuhasebeStokWebApp.ViewModels.Menu
         
         // Navigation properties için kullanılan ekstra özellikler
         [Display(Name = "Üst Menü Adı")]
-        public string UstMenuAdi { get; set; }
+        public string UstMenuAdi { get; set; } = string.Empty;
         
         // Menü Tipi
         [Display(Name = "Menü Tipi")]

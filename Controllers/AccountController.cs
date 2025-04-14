@@ -248,7 +248,7 @@ namespace MuhasebeStokWebApp.Controllers
                     Id = user.Id,
                     UserName = user.UserName,
                     Email = user.Email,
-                    Roles = roles
+                    Roles = roles.ToList()
                 });
             }
             
@@ -271,14 +271,12 @@ namespace MuhasebeStokWebApp.Controllers
             var roles = await _userManager.GetRolesAsync(user);
             var allRoles = _roleManager.Roles.ToList();
             
-            var model = new EditUserViewModel
-            {
-                Id = user.Id,
-                UserName = user.UserName,
-                Email = user.Email,
-                UserRoles = roles,
-                AllRoles = allRoles
-            };
+            var model = new EditUserViewModel();
+            model.Id = user.Id;
+            model.UserName = user.UserName;
+            model.Email = user.Email;
+            model.UserRoles = roles;
+            model.AllRoles = allRoles;
             
             return View(model);
         }

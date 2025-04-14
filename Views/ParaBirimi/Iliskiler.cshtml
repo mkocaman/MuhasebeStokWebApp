@@ -6,10 +6,10 @@
 
 <div class="container-fluid">
     <div class="card">
-        <div class="card-header bg-primary text-white">
-            <div class="d-flex justify-content-between align-items-center">
-                <h4 class="mb-0">Para Birimi İlişkileri Listesi</h4>
-                <a asp-action="IliskiEkle" class="btn btn-success">
+        <div class="card-header bg-primary text-white d-flex justify-content-between align-items-center">
+            <h4 class="mb-0">Para Birimi İlişkileri</h4>
+            <div>
+                <a asp-action="IliskiEkle" class="btn btn-light">
                     <i class="fas fa-plus"></i> Yeni İlişki Ekle
                 </a>
             </div>
@@ -32,13 +32,21 @@
             }
 
             <div class="table-responsive">
-                <table class="table table-bordered table-hover" id="iliskilerTable">
-                    <thead class="table-light">
+                <table class="table table-striped table-hover" id="iliskilerTable">
+                    <thead>
                         <tr>
-                            <th>Kaynak Para Birimi</th>
-                            <th>Hedef Para Birimi</th>
-                            <th>Durum</th>
-                            <th>Oluşturma Tarihi</th>
+                            <th>
+                                Kaynak Para Birimi
+                            </th>
+                            <th>
+                                Hedef Para Birimi
+                            </th>
+                            <th>
+                                Oluşturma Tarihi
+                            </th>
+                            <th>
+                                Durum
+                            </th>
                             <th>İşlemler</th>
                         </tr>
                     </thead>
@@ -46,8 +54,15 @@
                         @foreach (var item in Model)
                         {
                             <tr>
-                                <td>@item.KaynakParaBirimi?.Kod (@item.KaynakParaBirimi?.Sembol)</td>
-                                <td>@item.HedefParaBirimi?.Kod (@item.HedefParaBirimi?.Sembol)</td>
+                                <td>
+                                    @(item.KaynakParaBirimi?.Ad ?? "Belirtilmemiş")
+                                </td>
+                                <td>
+                                    @(item.HedefParaBirimi?.Ad ?? "Belirtilmemiş")
+                                </td>
+                                <td>
+                                    @(item.OlusturmaTarihi != default(DateTime) ? item.OlusturmaTarihi.ToString("dd.MM.yyyy HH:mm") : "-")
+                                </td>
                                 <td>
                                     @if (item.Aktif)
                                     {
@@ -58,19 +73,17 @@
                                         <span class="badge bg-danger">Pasif</span>
                                     }
                                 </td>
-                                <td>@item.OlusturmaTarihi.ToString("dd.MM.yyyy HH:mm")</td>
-                                <td class="text-center">
-                                    <div class="btn-group" role="group">
-                                        <a asp-action="IliskiDetay" asp-route-id="@item.ParaBirimiIliskiID" class="btn btn-sm btn-info">
-                                            <i class="fas fa-eye"></i>
-                                        </a>
-                                        <a asp-action="IliskiDuzenle" asp-route-id="@item.ParaBirimiIliskiID" class="btn btn-sm btn-primary">
-                                            <i class="fas fa-edit"></i>
-                                        </a>
-                                        <a asp-action="IliskiSil" asp-route-id="@item.ParaBirimiIliskiID" class="btn btn-sm btn-danger">
-                                            <i class="fas fa-trash"></i>
-                                        </a>
-                                    </div>
+                                <td>
+                                    <a asp-action="IliskiDetay" asp-route-id="@item.ParaBirimiIliskiID" class="btn btn-info btn-sm">
+                                        <i class="fas fa-info-circle"></i>
+                                    </a>
+                                    <a asp-action="IliskiDuzenle" asp-route-id="@item.ParaBirimiIliskiID" class="btn btn-primary btn-sm">
+                                        <i class="fas fa-edit"></i>
+                                    </a>
+                                    <a href="javascript:void(0);" class="btn btn-danger btn-sm" 
+                                       onclick="confirmDelete('@item.ParaBirimiIliskiID', '@item.KaynakParaBirimi?.Ad - @item.HedefParaBirimi?.Ad')">
+                                        <i class="fas fa-trash"></i>
+                                    </a>
                                 </td>
                             </tr>
                         }
@@ -81,23 +94,44 @@
     </div>
 </div>
 
+<!-- Delete Confirmation Modal -->
+<div class="modal fade" id="deleteModal" tabindex="-1" aria-labelledby="deleteModalLabel" aria-hidden="true">
+    <div class="modal-dialog">
+        <div class="modal-content">
+            <div class="modal-header bg-danger text-white">
+                <h5 class="modal-title" id="deleteModalLabel">İlişkiyi Sil</h5>
+                <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+            </div>
+            <div class="modal-body">
+                <p id="deleteConfirmationText">Bu para birimi ilişkisini silmek istediğinizden emin misiniz?</p>
+            </div>
+            <div class="modal-footer">
+                <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">İptal</button>
+                <form id="deleteForm" asp-action="IliskiSil" method="post">
+                    <input type="hidden" id="deleteId" name="id" />
+                    <button type="submit" class="btn btn-danger">Sil</button>
+                </form>
+            </div>
+        </div>
+    </div>
+</div>
+
 @section Scripts {
     <script>
-        $(document).ready(function() {
+        $(document).ready(function () {
             $('#iliskilerTable').DataTable({
-                language: {
-                    url: '/js/dataTables.turkish.json'
+                "language": {
+                    "url": "//cdn.datatables.net/plug-ins/1.10.25/i18n/Turkish.json"
                 },
-                responsive: true,
-                "pageLength": 25
+                "responsive": true
             });
-            
-            // Otomatik kapanan alertler
-            window.setTimeout(function() {
-                $('.alert').fadeTo(500, 0).slideUp(500, function() {
-                    $(this).remove();
-                });
-            }, 4000);
         });
+
+        function confirmDelete(id, name) {
+            $('#deleteId').val(id);
+            $('#deleteConfirmationText').text(`"${name}" ilişkisini silmek istediğinizden emin misiniz?`);
+            var deleteModal = new bootstrap.Modal(document.getElementById('deleteModal'));
+            deleteModal.show();
+        }
     </script>
 }

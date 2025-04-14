@@ -25,8 +25,8 @@ namespace MuhasebeStokWebApp.ViewModels.Urun
         [Display(Name = "Birim ID")]
         public Guid? BirimID { get; set; }
         
-        [Display(Name = "Stok Miktarı")]
-        public decimal StokMiktar { get; set; }
+        [Display(Name = "Birim Adı")]
+        public string BirimAdi { get; set; }
         
         [Display(Name = "Liste Fiyatı")]
         public decimal ListeFiyati { get; set; }
@@ -37,14 +37,33 @@ namespace MuhasebeStokWebApp.ViewModels.Urun
         [Display(Name = "Satış Fiyatı")]
         public decimal SatisFiyati { get; set; }
         
+        [Display(Name = "Liste Fiyatı (USD)")]
+        public decimal? DovizliListeFiyati { get; set; }
+        
+        [Display(Name = "Maliyet Fiyatı (USD)")]
+        public decimal? DovizliMaliyetFiyati { get; set; }
+        
+        [Display(Name = "Satış Fiyatı (USD)")]
+        public decimal? DovizliSatisFiyati { get; set; }
+        
         [Display(Name = "Aktif")]
         public bool Aktif { get; set; }
+        
+        [Display(Name = "Silindi")]
+        public bool Silindi { get; set; }
         
         [Display(Name = "Kategori")]
         public Guid? KategoriID { get; set; }
         
         [Display(Name = "Kategori Adı")]
         public string KategoriAdi { get; set; }
+        
+        // Stok miktarı
+        public decimal StokMiktari { get; set; }
+        
+        // Miktar, geriye dönük uyumluluk için eklendi
+        [Display(Name = "Miktar")]
+        public decimal Miktar { get; set; }
         
         [Display(Name = "Oluşturma Tarihi")]
         public DateTime? OlusturmaTarihi { get; set; }
@@ -55,6 +74,6 @@ namespace MuhasebeStokWebApp.ViewModels.Urun
     
     public class UrunListViewModel
     {
-        public List<UrunViewModel> Urunler { get; set; }
+        public List<UrunViewModel> Urunler { get; set; } = new List<UrunViewModel>();
     }
 } 

@@ -26,6 +26,10 @@ namespace MuhasebeStokWebApp.ViewModels.Cari
         [DataType(DataType.Date)]
         public DateTime Tarih { get; set; } = DateTime.Now.Date;
         
+        [Display(Name = "Vade Tarihi")]
+        [DataType(DataType.Date)]
+        public DateTime? VadeTarihi { get; set; }
+        
         [Display(Name = "Referans No")]
         public string ReferansNo { get; set; }
         

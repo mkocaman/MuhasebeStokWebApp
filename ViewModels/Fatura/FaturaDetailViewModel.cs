@@ -27,9 +27,15 @@ namespace MuhasebeStokWebApp.ViewModels.Fatura
 
         [Display(Name = "Cari Adı")]
         public required string CariAdi { get; set; }
+        
+        [Display(Name = "Cari Silindi")]
+        public bool CariSilindi { get; set; }
 
         [Display(Name = "Vergi No")]
         public required string CariVergiNo { get; set; }
+
+        [Display(Name = "Vergi Dairesi")]
+        public string? CariVergiDairesi { get; set; }
 
         [Display(Name = "Adres")]
         public required string CariAdres { get; set; }
@@ -39,6 +45,18 @@ namespace MuhasebeStokWebApp.ViewModels.Fatura
 
         [Display(Name = "Fatura Türü")]
         public required string FaturaTuru { get; set; }
+
+        [Display(Name = "Fatura Türü ID")]
+        public int? FaturaTuruID { get; set; }
+
+        [Display(Name = "Sipariş Numarası")]
+        public string? SiparisNumarasi { get; set; }
+
+        [Display(Name = "İrsaliye Numarası")]
+        public string? IrsaliyeNumarasi { get; set; }
+
+        [Display(Name = "Resmi Fatura")]
+        public bool ResmiMi { get; set; }
 
         [Display(Name = "Ara Toplam")]
         [DisplayFormat(DataFormatString = "{0:N2}", ApplyFormatInEditMode = false)]
@@ -55,6 +73,23 @@ namespace MuhasebeStokWebApp.ViewModels.Fatura
         [Display(Name = "Genel Toplam")]
         [DisplayFormat(DataFormatString = "{0:N2}", ApplyFormatInEditMode = false)]
         public decimal GenelToplam { get; set; }
+        
+        // Dövizli toplam değerler
+        [Display(Name = "Ara Toplam (Döviz)")]
+        [DisplayFormat(DataFormatString = "{0:N2}", ApplyFormatInEditMode = false)]
+        public decimal AraToplamDoviz { get; set; }
+
+        [Display(Name = "KDV Tutarı (Döviz)")]
+        [DisplayFormat(DataFormatString = "{0:N2}", ApplyFormatInEditMode = false)]
+        public decimal KdvTutariDoviz { get; set; }
+
+        [Display(Name = "İndirim Tutarı (Döviz)")]
+        [DisplayFormat(DataFormatString = "{0:N2}", ApplyFormatInEditMode = false)]
+        public decimal IndirimTutariDoviz { get; set; }
+
+        [Display(Name = "Genel Toplam (Döviz)")]
+        [DisplayFormat(DataFormatString = "{0:N2}", ApplyFormatInEditMode = false)]
+        public decimal GenelToplamDoviz { get; set; }
 
         [Display(Name = "Ödenecek Tutar")]
         [DisplayFormat(DataFormatString = "{0:N2}", ApplyFormatInEditMode = false)]
@@ -64,6 +99,9 @@ namespace MuhasebeStokWebApp.ViewModels.Fatura
         [DisplayFormat(DataFormatString = "{0:N2}", ApplyFormatInEditMode = false)]
         public decimal? OdenenTutar { get; set; }
 
+        [Display(Name = "Kalan Tutar")]
+        public decimal KalanTutar => OdenecekTutar - (OdenenTutar ?? 0);
+
         [Display(Name = "Açıklama")]
         public string? Aciklama { get; set; }
 
@@ -71,7 +109,11 @@ namespace MuhasebeStokWebApp.ViewModels.Fatura
         public required string OdemeDurumu { get; set; }
         
         [Display(Name = "Döviz Türü")]
-        public string DovizTuru { get; set; } = "TRY";
+        public string DovizTuru { get; set; } = "USD";
+        
+        [Display(Name = "Döviz Kuru")]
+        [DisplayFormat(DataFormatString = "{0:N6}", ApplyFormatInEditMode = false)]
+        public decimal DovizKuru { get; set; } = 1m;
         
         [Display(Name = "Aktif")]
         public bool Aktif { get; set; }
@@ -133,24 +175,45 @@ namespace MuhasebeStokWebApp.ViewModels.Fatura
         [Display(Name = "Net Tutar")]
         [DisplayFormat(DataFormatString = "{0:N2}", ApplyFormatInEditMode = false)]
         public decimal NetTutar { get; set; }
+        
+        // Dövizli değerler
+        [Display(Name = "Birim Fiyat (Döviz)")]
+        [DisplayFormat(DataFormatString = "{0:N2}", ApplyFormatInEditMode = false)]
+        public decimal BirimFiyatDoviz { get; set; }
+        
+        [Display(Name = "Tutar (Döviz)")]
+        [DisplayFormat(DataFormatString = "{0:N2}", ApplyFormatInEditMode = false)]
+        public decimal TutarDoviz { get; set; }
+        
+        [Display(Name = "KDV Tutarı (Döviz)")]
+        [DisplayFormat(DataFormatString = "{0:N2}", ApplyFormatInEditMode = false)]
+        public decimal KdvTutariDoviz { get; set; }
+        
+        [Display(Name = "İndirim Tutarı (Döviz)")]
+        [DisplayFormat(DataFormatString = "{0:N2}", ApplyFormatInEditMode = false)]
+        public decimal IndirimTutariDoviz { get; set; }
+        
+        [Display(Name = "Net Tutar (Döviz)")]
+        [DisplayFormat(DataFormatString = "{0:N2}", ApplyFormatInEditMode = false)]
+        public decimal NetTutarDoviz { get; set; }
     }
 
     public class OdemeViewModel
     {
         public Guid OdemeID { get; set; }
-
+        
         [Display(Name = "Ödeme Tarihi")]
         [DisplayFormat(DataFormatString = "{0:dd.MM.yyyy}", ApplyFormatInEditMode = false)]
-        public DateTime? OdemeTarihi { get; set; }
-
+        public DateTime OdemeTarihi { get; set; }
+        
+        [Display(Name = "Ödeme Türü")]
+        public string OdemeTuru { get; set; } = string.Empty;
+        
         [Display(Name = "Ödeme Tutarı")]
         [DisplayFormat(DataFormatString = "{0:N2}", ApplyFormatInEditMode = false)]
         public decimal OdemeTutari { get; set; }
-
-        [Display(Name = "Ödeme Türü")]
-        public required string OdemeTuru { get; set; }
-
+        
         [Display(Name = "Açıklama")]
-        public string? Aciklama { get; set; }
+        public string Aciklama { get; set; } = string.Empty;
     }
 } 

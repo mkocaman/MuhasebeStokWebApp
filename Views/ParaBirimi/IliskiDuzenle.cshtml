@@ -1,0 +1,84 @@
+@model MuhasebeStokWebApp.Data.Entities.ParaBirimiModulu.ParaBirimiIliski
+
+@{
+    ViewData["Title"] = "Para Birimi İlişkisi Düzenle";
+}
+
+<div class="container-fluid">
+    <div class="card">
+        <div class="card-header bg-primary text-white">
+            <h4 class="mb-0">Para Birimi İlişkisi Düzenle</h4>
+        </div>
+        <div class="card-body">
+            <form asp-action="IliskiDuzenle" method="post">
+                <div asp-validation-summary="ModelOnly" class="text-danger"></div>
+                
+                <input type="hidden" asp-for="ParaBirimiIliskiID" />
+                
+                <div class="row mb-3">
+                    <div class="col-md-6">
+                        <div class="form-group">
+                            <label asp-for="KaynakParaBirimiID" class="control-label">Kaynak Para Birimi</label>
+                            <select asp-for="KaynakParaBirimiID" class="form-select" 
+                                    asp-items="ViewBag.KaynakParaBirimleri">
+                                <option value="">-- Para Birimi Seçin --</option>
+                            </select>
+                            <span asp-validation-for="KaynakParaBirimiID" class="text-danger"></span>
+                        </div>
+                    </div>
+                    
+                    <div class="col-md-6">
+                        <div class="form-group">
+                            <label asp-for="HedefParaBirimiID" class="control-label">Hedef Para Birimi</label>
+                            <select asp-for="HedefParaBirimiID" class="form-select" 
+                                    asp-items="ViewBag.HedefParaBirimleri">
+                                <option value="">-- Para Birimi Seçin --</option>
+                            </select>
+                            <span asp-validation-for="HedefParaBirimiID" class="text-danger"></span>
+                        </div>
+                    </div>
+                </div>
+                
+                <div class="form-group mb-3">
+                    <label asp-for="Aciklama" class="control-label"></label>
+                    <textarea asp-for="Aciklama" class="form-control" rows="3"></textarea>
+                    <span asp-validation-for="Aciklama" class="text-danger"></span>
+                </div>
+                
+                <div class="form-check mb-3">
+                    <input asp-for="Aktif" class="form-check-input" />
+                    <label asp-for="Aktif" class="form-check-label"></label>
+                </div>
+                
+                <!-- Bilgi alanları -->
+                <div class="row mb-3">
+                    <div class="col-md-6">
+                        <div class="form-group">
+                            <label class="control-label">Oluşturma Tarihi</label>
+                            <input type="text" value="@(Model.OlusturmaTarihi != default(DateTime) ? Model.OlusturmaTarihi.ToString("dd.MM.yyyy HH:mm") : "-")" class="form-control" readonly />
+                        </div>
+                    </div>
+                    <div class="col-md-6">
+                        <div class="form-group">
+                            <label class="control-label">Son Güncelleme</label>
+                            <input type="text" value="@(Model.GuncellemeTarihi.HasValue ? Model.GuncellemeTarihi.Value.ToString("dd.MM.yyyy HH:mm") : "-")" class="form-control" readonly />
+                        </div>
+                    </div>
+                </div>
+                
+                <div class="form-group">
+                    <button type="submit" class="btn btn-primary">
+                        <i class="fas fa-save"></i> Kaydet
+                    </button>
+                    <a asp-action="Iliskiler" class="btn btn-secondary">
+                        <i class="fas fa-arrow-left"></i> Listeye Dön
+                    </a>
+                </div>
+            </form>
+        </div>
+    </div>
+</div>
+
+@section Scripts {
+    @{await Html.RenderPartialAsync("_ValidationScriptsPartial");}
+} 

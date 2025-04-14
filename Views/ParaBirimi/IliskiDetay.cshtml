@@ -1,0 +1,107 @@
+@model MuhasebeStokWebApp.Data.Entities.ParaBirimiModulu.ParaBirimiIliski
+
+@{
+    ViewData["Title"] = "Para Birimi İlişki Detayı";
+}
+
+<div class="container-fluid">
+    <div class="card">
+        <div class="card-header bg-primary text-white">
+            <h4 class="mb-0">Para Birimi İlişki Detayı</h4>
+        </div>
+        <div class="card-body">
+            <div class="row">
+                <div class="col-md-12 mb-4">
+                    <div class="d-flex justify-content-between align-items-center">
+                        <h5 class="text-primary">Temel Bilgiler</h5>
+                        <div>
+                            <a asp-action="IliskiDuzenle" asp-route-id="@Model.ParaBirimiIliskiID" class="btn btn-primary">
+                                <i class="fas fa-edit"></i> Düzenle
+                            </a>
+                            <a asp-action="Iliskiler" class="btn btn-secondary">
+                                <i class="fas fa-arrow-left"></i> Listeye Dön
+                            </a>
+                        </div>
+                    </div>
+                    <hr />
+                </div>
+            </div>
+
+            <div class="row mb-4">
+                <div class="col-md-6">
+                    <div class="card bg-light">
+                        <div class="card-header">
+                            <h5 class="mb-0">Kaynak Para Birimi</h5>
+                        </div>
+                        <div class="card-body">
+                            <dl class="row">
+                                <dt class="col-sm-4">Para Birimi Adı</dt>
+                                <dd class="col-sm-8">@(Model.KaynakParaBirimi?.Ad ?? "Belirtilmemiş")</dd>
+                                
+                                <dt class="col-sm-4">Kodu</dt>
+                                <dd class="col-sm-8">@(Model.KaynakParaBirimi?.Kod ?? "Belirtilmemiş")</dd>
+                                
+                                <dt class="col-sm-4">Sembol</dt>
+                                <dd class="col-sm-8">@(Model.KaynakParaBirimi?.Sembol ?? "Belirtilmemiş")</dd>
+                            </dl>
+                        </div>
+                    </div>
+                </div>
+                
+                <div class="col-md-6">
+                    <div class="card bg-light">
+                        <div class="card-header">
+                            <h5 class="mb-0">Hedef Para Birimi</h5>
+                        </div>
+                        <div class="card-body">
+                            <dl class="row">
+                                <dt class="col-sm-4">Para Birimi Adı</dt>
+                                <dd class="col-sm-8">@(Model.HedefParaBirimi?.Ad ?? "Belirtilmemiş")</dd>
+                                
+                                <dt class="col-sm-4">Kodu</dt>
+                                <dd class="col-sm-8">@(Model.HedefParaBirimi?.Kod ?? "Belirtilmemiş")</dd>
+                                
+                                <dt class="col-sm-4">Sembol</dt>
+                                <dd class="col-sm-8">@(Model.HedefParaBirimi?.Sembol ?? "Belirtilmemiş")</dd>
+                            </dl>
+                        </div>
+                    </div>
+                </div>
+            </div>
+            
+            <div class="row mb-4">
+                <div class="col-md-12">
+                    <div class="card bg-light">
+                        <div class="card-header">
+                            <h5 class="mb-0">İlişki Bilgileri</h5>
+                        </div>
+                        <div class="card-body">
+                            <dl class="row">
+                                <dt class="col-sm-3">Durum</dt>
+                                <dd class="col-sm-9">
+                                    @if (Model.Aktif)
+                                    {
+                                        <span class="badge bg-success">Aktif</span>
+                                    }
+                                    else
+                                    {
+                                        <span class="badge bg-danger">Pasif</span>
+                                    }
+                                </dd>
+                                
+                                <dt class="col-sm-3">Açıklama</dt>
+                                <dd class="col-sm-9">@(string.IsNullOrEmpty(Model.Aciklama) ? "Açıklama yok" : Model.Aciklama)</dd>
+                                
+                                <dt class="col-sm-3">Oluşturma Tarihi</dt>
+                                <dd class="col-sm-9">@(Model.OlusturmaTarihi != default(DateTime) ? Model.OlusturmaTarihi.ToString("dd.MM.yyyy HH:mm") : "-")</dd>
+                                
+                                <dt class="col-sm-3">Son Güncelleme</dt>
+                                <dd class="col-sm-9">@(Model.GuncellemeTarihi.HasValue ? Model.GuncellemeTarihi.Value.ToString("dd.MM.yyyy HH:mm") : "-")</dd>
+                            </dl>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</div> 

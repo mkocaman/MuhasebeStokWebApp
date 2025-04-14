@@ -38,7 +38,7 @@ namespace MuhasebeStokWebApp.Services.Interfaces
         Task<bool> LogWarningAsync(string message, string detail = null);
         Task<bool> LogErrorAsync(string message, Exception ex);
         Task<bool> LogErrorAsync(string operation, string message);
-        Task LogErrorAsync(string operation, string stackTrace, Exception ex);
+        Task LogErrorAsync(string operation, string? stackTrace, Exception ex);
         
         Task CariOlusturmaLogOlustur(Guid cariID, string ad, string aciklama);
         Task CariGuncellemeLogOlustur(Guid cariID, string ad, string aciklama);

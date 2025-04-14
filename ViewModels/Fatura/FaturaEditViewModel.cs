@@ -43,7 +43,7 @@ namespace MuhasebeStokWebApp.ViewModels.Fatura
         public required string FaturaTuru { get; set; }
 
         [Display(Name = "Resmi")]
-        public bool Resmi { get; set; } = true;
+        public bool ResmiMi { get; set; } = true;
 
         [StringLength(500, ErrorMessage = "Açıklama en fazla 500 karakter olabilir.")]
         [Display(Name = "Açıklama")]
@@ -53,24 +53,64 @@ namespace MuhasebeStokWebApp.ViewModels.Fatura
         public required string OdemeDurumu { get; set; }
 
         [Display(Name = "Döviz Türü")]
-        public string DovizTuru { get; set; } = "TRY";
+        public string DovizTuru { get; set; } = "USD";
 
         [Display(Name = "Döviz Kuru")]
         [DisplayFormat(DataFormatString = "{0:N4}", ApplyFormatInEditMode = false)]
         public decimal? DovizKuru { get; set; } = 1;
         
+        [Display(Name = "İndirim Tutarı")]
+        [DisplayFormat(DataFormatString = "{0:N2}", ApplyFormatInEditMode = false)]
+        public decimal? IndirimTutari { get; set; } = 0m;
+
+        [Display(Name = "Ara Toplam")]
+        [DisplayFormat(DataFormatString = "{0:N2}", ApplyFormatInEditMode = false)]
+        public decimal AraToplam { get; set; }
+
+        [Display(Name = "KDV Toplam")]
+        [DisplayFormat(DataFormatString = "{0:N2}", ApplyFormatInEditMode = false)]
+        public decimal KdvToplam { get; set; }
+
+        [Display(Name = "Genel Toplam")]
+        [DisplayFormat(DataFormatString = "{0:N2}", ApplyFormatInEditMode = false)]
+        public decimal GenelToplam { get; set; }
+
+        [Display(Name = "İndirim Toplam")]
+        [DisplayFormat(DataFormatString = "{0:N2}", ApplyFormatInEditMode = false)]
+        public decimal IndirimToplam { get; set; }
+        
+        // Dövizli toplam değerler
+        [Display(Name = "Ara Toplam (Döviz)")]
+        [DisplayFormat(DataFormatString = "{0:N2}", ApplyFormatInEditMode = false)]
+        public decimal AraToplamDoviz { get; set; }
+
+        [Display(Name = "KDV Toplam (Döviz)")]
+        [DisplayFormat(DataFormatString = "{0:N2}", ApplyFormatInEditMode = false)]
+        public decimal KdvToplamDoviz { get; set; }
+
+        [Display(Name = "Genel Toplam (Döviz)")]
+        [DisplayFormat(DataFormatString = "{0:N2}", ApplyFormatInEditMode = false)]
+        public decimal GenelToplamDoviz { get; set; }
+
+        [Display(Name = "İndirim Toplam (Döviz)")]
+        [DisplayFormat(DataFormatString = "{0:N2}", ApplyFormatInEditMode = false)]
+        public decimal IndirimToplamDoviz { get; set; }
+
         [Display(Name = "Aktif")]
         public bool Aktif { get; set; } = true;
 
         [Display(Name = "İrsaliye")]
         public Guid? IrsaliyeID { get; set; }
+        
+        [Display(Name = "Sözleşme")]
+        public Guid? SozlesmeID { get; set; }
 
         public List<FaturaKalemViewModel> FaturaKalemleri { get; set; } = new List<FaturaKalemViewModel>();
         
         // Dropdown listeler için
-        public required List<SelectListItem> CariListesi { get; set; }
-        public required List<SelectListItem> FaturaTuruListesi { get; set; }
-        public required List<SelectListItem> DovizListesi { get; set; }
+        public List<SelectListItem> CariListesi { get; set; }
+        public List<SelectListItem> FaturaTuruListesi { get; set; }
+        public List<SelectListItem> DovizListesi { get; set; }
         
         public FaturaEditViewModel()
         {

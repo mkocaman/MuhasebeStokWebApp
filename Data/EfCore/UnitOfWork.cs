@@ -1,143 +1,135 @@
 using System;
-using System.Collections.Generic;
 using System.Threading.Tasks;
+using Microsoft.EntityFrameworkCore;
+using Microsoft.EntityFrameworkCore.Storage;
 using MuhasebeStokWebApp.Data.Entities;
 using MuhasebeStokWebApp.Data.Repositories;
-using Microsoft.EntityFrameworkCore.Storage;
-using System.Data;
 
 namespace MuhasebeStokWebApp.Data.EfCore
 {
     public class UnitOfWork : IUnitOfWork
     {
         private readonly ApplicationDbContext _context;
-        private Dictionary<Type, object> _repositories;
-        private bool disposed = false;
         private IDbContextTransaction? _transaction;
-
-        // Özel repository'ler
-        private IRepository<Urun>? _urunRepository;
-        private IRepository<Cari>? _cariRepository;
+        
         private IRepository<Fatura>? _faturaRepository;
         private IRepository<FaturaDetay>? _faturaDetayRepository;
-        private IRepository<StokHareket>? _stokHareketRepository;
+        private IRepository<Cari>? _cariRepository;
         private IRepository<CariHareket>? _cariHareketRepository;
+        private IRepository<Urun>? _urunRepository;
+        private IRepository<UrunBirim>? _urunBirimRepository;
+        private IRepository<UrunKategori>? _urunKategoriRepository;
+        private IRepository<UrunFiyat>? _urunFiyatRepository;
+        private IRepository<StokFifo>? _stokFifoRepository;
+        private IRepository<Kasa>? _kasaRepository;
+        private IRepository<KasaHareket>? _kasaHareketRepository;
         private IRepository<Irsaliye>? _irsaliyeRepository;
         private IRepository<IrsaliyeDetay>? _irsaliyeDetayRepository;
-        private IRepository<Birim>? _birimRepository;
-        private IRepository<Depo>? _depoRepository;
-        private IRepository<FaturaTuru>? _faturaTuruRepository;
-        private IRepository<IrsaliyeTuru>? _irsaliyeTuruRepository;
-        private IRepository<OdemeTuru>? _odemeTuruRepository;
-        private IRepository<UrunFiyat>? _urunFiyatRepository;
-        private IRepository<FiyatTipi>? _fiyatTipiRepository;
         private IRepository<Menu>? _menuRepository;
-        private IRepository<MenuRol>? _menuRolRepository;
-        private IIrsaliyeRepository? _customIrsaliyeRepository;
-        private IIrsaliyeDetayRepository? _customIrsaliyeDetayRepository;
-
+        private IRepository<Sozlesme>? _sozlesmeRepository;
+        private IRepository<SistemAyarlari>? _sistemAyarlariRepository;
+        private IRepository<StokHareket>? _stokHareketRepository;
+        
         public UnitOfWork(ApplicationDbContext context)
         {
             _context = context;
-            _repositories = new Dictionary<Type, object>();
         }
-
+        
+        // Repository Properties
+        public IRepository<Fatura> FaturaRepository => _faturaRepository ??= new Repository<Fatura>(_context);
+        public IRepository<FaturaDetay> FaturaDetayRepository => _faturaDetayRepository ??= new Repository<FaturaDetay>(_context);
+        public IRepository<Cari> CariRepository => _cariRepository ??= new Repository<Cari>(_context);
+        public IRepository<CariHareket> CariHareketRepository => _cariHareketRepository ??= new Repository<CariHareket>(_context);
+        public IRepository<Urun> UrunRepository => _urunRepository ??= new Repository<Urun>(_context);
+        public IRepository<UrunBirim> UrunBirimRepository => _urunBirimRepository ??= new Repository<UrunBirim>(_context);
+        public IRepository<UrunKategori> UrunKategoriRepository => _urunKategoriRepository ??= new Repository<UrunKategori>(_context);
+        public IRepository<UrunFiyat> UrunFiyatRepository => _urunFiyatRepository ??= new Repository<UrunFiyat>(_context);
+        public IRepository<StokFifo> StokFifoRepository => _stokFifoRepository ??= new Repository<StokFifo>(_context);
+        public IRepository<Kasa> KasaRepository => _kasaRepository ??= new Repository<Kasa>(_context);
+        public IRepository<KasaHareket> KasaHareketRepository => _kasaHareketRepository ??= new Repository<KasaHareket>(_context);
+        public IRepository<Irsaliye> IrsaliyeRepository => _irsaliyeRepository ??= new Repository<Irsaliye>(_context);
+        public IRepository<IrsaliyeDetay> IrsaliyeDetayRepository => _irsaliyeDetayRepository ??= new Repository<IrsaliyeDetay>(_context);
+        public IRepository<Menu> MenuRepository => _menuRepository ??= new Repository<Menu>(_context);
+        public IRepository<Sozlesme> SozlesmeRepository => _sozlesmeRepository ??= new Repository<Sozlesme>(_context);
+        public IRepository<SistemAyarlari> SistemAyarlariRepository => _sistemAyarlariRepository ??= new Repository<SistemAyarlari>(_context);
+        public IRepository<StokHareket> StokHareketRepository => _stokHareketRepository ??= new Repository<StokHareket>(_context);
+        
         public IRepository<TEntity> Repository<TEntity>() where TEntity : class
         {
-            if (_repositories.ContainsKey(typeof(TEntity)))
-            {
-                return (IRepository<TEntity>)_repositories[typeof(TEntity)];
-            }
-
-            var repository = new Repository<TEntity>(_context);
-            _repositories.Add(typeof(TEntity), repository);
-            return repository;
+            return new Repository<TEntity>(_context);
         }
-
-        // Özel repository'ler için property'ler
-        public IRepository<Urun> UrunRepository => _urunRepository ??= Repository<Urun>();
-        public IRepository<Cari> CariRepository => _cariRepository ??= Repository<Cari>();
-        public IRepository<Fatura> FaturaRepository => _faturaRepository ??= Repository<Fatura>();
-        public IRepository<FaturaDetay> FaturaDetayRepository => _faturaDetayRepository ??= Repository<FaturaDetay>();
-        public IRepository<StokHareket> StokHareketRepository => _stokHareketRepository ??= Repository<StokHareket>();
-        public IRepository<CariHareket> CariHareketRepository => _cariHareketRepository ??= Repository<CariHareket>();
-        public IRepository<Irsaliye> IrsaliyeRepository => _irsaliyeRepository ??= Repository<Irsaliye>();
-        public IRepository<IrsaliyeDetay> IrsaliyeDetayRepository => _irsaliyeDetayRepository ??= Repository<IrsaliyeDetay>();
-        public IRepository<Birim> BirimRepository => _birimRepository ??= Repository<Birim>();
-        public IRepository<Depo> DepoRepository => _depoRepository ??= Repository<Depo>();
-        public IRepository<FaturaTuru> FaturaTuruRepository => _faturaTuruRepository ??= Repository<FaturaTuru>();
-        public IRepository<IrsaliyeTuru> IrsaliyeTuruRepository => _irsaliyeTuruRepository ??= Repository<IrsaliyeTuru>();
-        public IRepository<OdemeTuru> OdemeTuruRepository => _odemeTuruRepository ??= Repository<OdemeTuru>();
-        public IRepository<UrunFiyat> UrunFiyatRepository => _urunFiyatRepository ??= Repository<UrunFiyat>();
-        public IRepository<FiyatTipi> FiyatTipiRepository => _fiyatTipiRepository ??= Repository<FiyatTipi>();
-        public IRepository<Menu> MenuRepository => _menuRepository ??= Repository<Menu>();
-        public IRepository<MenuRol> MenuRolRepository => _menuRolRepository ??= Repository<MenuRol>();
-        public IIrsaliyeRepository IrsaliyeCustomRepository => _customIrsaliyeRepository ??= new IrsaliyeRepository(_context);
-        public IIrsaliyeDetayRepository IrsaliyeDetayCustomRepository => _customIrsaliyeDetayRepository ??= new IrsaliyeDetayRepository(_context);
-
-        public async Task<IDbContextTransaction> BeginTransactionAsync()
+        
+        // Transaction methods
+        public async Task BeginTransactionAsync()
         {
+            if (_transaction != null)
+            {
+                return;
+            }
+            
             _transaction = await _context.Database.BeginTransactionAsync();
-            return _transaction;
         }
-
+        
         public async Task CommitTransactionAsync()
         {
             try
             {
-                await SaveAsync();
+                await _context.SaveChangesAsync();
                 
                 if (_transaction != null)
                 {
                     await _transaction.CommitAsync();
+                }
+            }
+            finally
+            {
+                if (_transaction != null)
+                {
                     await _transaction.DisposeAsync();
                     _transaction = null;
                 }
             }
-            catch
-            {
-                await RollbackTransactionAsync();
-                throw;
-            }
         }
-
+        
         public async Task RollbackTransactionAsync()
         {
-            if (_transaction != null)
+            try
             {
-                await _transaction.RollbackAsync();
-                await _transaction.DisposeAsync();
-                _transaction = null;
+                if (_transaction != null)
+                {
+                    await _transaction.RollbackAsync();
+                }
+            }
+            finally
+            {
+                if (_transaction != null)
+                {
+                    await _transaction.DisposeAsync();
+                    _transaction = null;
+                }
             }
         }
-
+        
+        public async Task SaveChangesAsync()
+        {
+            await _context.SaveChangesAsync();
+        }
+        
+        // SozlesmeService için SaveAsync metodu ekleniyor
         public async Task SaveAsync()
         {
             await _context.SaveChangesAsync();
         }
-
-        // CompleteAsync metodu ekledik
+        
         public async Task CompleteAsync()
         {
             await _context.SaveChangesAsync();
         }
-
-        protected virtual void Dispose(bool disposing)
-        {
-            if (!this.disposed)
-            {
-                if (disposing)
-                {
-                    _context.Dispose();
-                }
-            }
-            this.disposed = true;
-        }
-
+        
         public void Dispose()
         {
-            Dispose(true);
-            GC.SuppressFinalize(this);
+            _context.Dispose();
+            _transaction?.Dispose();
         }
     }
 } 

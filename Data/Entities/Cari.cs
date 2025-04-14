@@ -19,6 +19,9 @@ namespace MuhasebeStokWebApp.Data.Entities
         [StringLength(100)]
         public string Ad { get; set; }
         
+        [StringLength(100)]
+        public string? CariUnvani { get; set; }
+        
         [StringLength(50)]
         [Required]
         public string CariKodu { get; set; }
@@ -27,10 +30,10 @@ namespace MuhasebeStokWebApp.Data.Entities
         public string CariTipi { get; set; } = "Müşteri";
         
         [StringLength(11)]
-        public string VergiNo { get; set; }
+        public string? VergiNo { get; set; }
         
         [StringLength(50)]
-        public string VergiDairesi { get; set; }
+        public string? VergiDairesi { get; set; }
         
         [StringLength(15)]
         public string Telefon { get; set; }
@@ -47,7 +50,7 @@ namespace MuhasebeStokWebApp.Data.Entities
         public string Adres { get; set; }
         
         [StringLength(500)]
-        public string Aciklama { get; set; }
+        public string? Aciklama { get; set; }
         
         [StringLength(50)]
         public string Il { get; set; }
@@ -62,7 +65,7 @@ namespace MuhasebeStokWebApp.Data.Entities
         public string Ulke { get; set; }
         
         [StringLength(100)]
-        public string WebSitesi { get; set; }
+        public string? WebSitesi { get; set; }
         
         [StringLength(1000)]
         public string Notlar { get; set; }
@@ -93,12 +96,12 @@ namespace MuhasebeStokWebApp.Data.Entities
         // Navigation properties
         public virtual ICollection<Fatura> Faturalar { get; set; } = new List<Fatura>();
         public virtual ICollection<Irsaliye> Irsaliyeler { get; set; } = new List<Irsaliye>();
-        public virtual ICollection<CariHareket> CariHareketler { get; set; }
+        public virtual ICollection<CariHareket> CariHareketler { get; set; } = null!;
         
         // Aşağıdaki koleksiyon DB'de var mı kontrol edip ekleyebilirsiniz
         // Bu koleksiyon sadece detay view'inde kullanılabilir
         [NotMapped]
-        public virtual ICollection<object> SonFaturalar { get; set; }
+        public virtual ICollection<object> SonFaturalar { get; set; } = null!;
 
         public Cari()
         {

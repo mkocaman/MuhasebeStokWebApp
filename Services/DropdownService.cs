@@ -70,6 +70,26 @@ namespace MuhasebeStokWebApp.Services
             return new SelectList(durumlar, selectedDurum);
         }
 
+        public async Task<SelectList> GetCariSelectList(Guid? selectedCariId = null)
+        {
+            var cariler = await _context.Cariler
+                .Where(c => c.AktifMi && !c.Silindi)
+                .OrderBy(c => c.Ad)
+                .ToListAsync();
+
+            return new SelectList(cariler, "CariID", "Ad", selectedCariId);
+        }
+        
+        public async Task<SelectList> GetSozlesmeSelectListByCariId(Guid cariId, Guid? selectedSozlesmeId = null)
+        {
+            var sozlesmeler = await _context.Sozlesmeler
+                .Where(s => s.CariID == cariId && s.AktifMi && !s.Silindi)
+                .OrderByDescending(s => s.SozlesmeTarihi)
+                .ToListAsync();
+
+            return new SelectList(sozlesmeler, "SozlesmeID", "SozlesmeNo", selectedSozlesmeId);
+        }
+
         public async Task<Dictionary<string, SelectList>> PrepareCommonDropdownsAsync(Guid? selectedCariId = null, Guid? selectedUrunId = null)
         {
             var dropdowns = new Dictionary<string, SelectList>

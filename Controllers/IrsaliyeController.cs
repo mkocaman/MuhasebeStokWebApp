@@ -98,76 +98,115 @@ namespace MuhasebeStokWebApp.Controllers
         // İrsaliyelerin listelendiği ana sayfa
         public async Task<IActionResult> Index(int page = 1, int pageSize = 10, string sortOrder = "date_desc", string searchString = "")
         {
-            var query = _context.Irsaliyeler
-                .Include(i => i.Cari)
-                .Include(i => i.Fatura)
-                .Include(i => i.IrsaliyeDetaylari)
-                .AsNoTracking();
-
-            if (!string.IsNullOrEmpty(searchString))
+            try
             {
-                query = query.Where(i =>
-                    i.IrsaliyeNumarasi.Contains(searchString) ||
-                    i.Cari.Ad.Contains(searchString) ||
-                    (i.Fatura != null && i.Fatura.FaturaNumarasi.Contains(searchString)));
-            }
+                var query = _context.Irsaliyeler
+                    .Include(i => i.Cari)
+                    .Include(i => i.Fatura)
+                    .Include(i => i.IrsaliyeDetaylari)
+                    .AsSplitQuery()
+                    .Where(i => !i.Silindi);
+                
+                // Sonraki adımlar için OrderBy ile sıralama yaparak
+                // IOrderedQueryable<Irsaliye> tipine dönüştür
+                IQueryable<Irsaliye> orderedQuery;
+                
+                if (!string.IsNullOrEmpty(searchString))
+                {
+                    query = query.Where(i =>
+                        i.IrsaliyeNumarasi.Contains(searchString) ||
+                        i.Cari.Ad.Contains(searchString) ||
+                        (i.Fatura != null && i.Fatura.FaturaNumarasi.Contains(searchString)));
+                }
+                
+                switch (sortOrder)
+                {
+                    case "date":
+                        orderedQuery = query.OrderBy(i => i.IrsaliyeTarihi);
+                        break;
+                    case "date_desc":
+                        orderedQuery = query.OrderByDescending(i => i.IrsaliyeTarihi);
+                        break;
+                    case "number":
+                        orderedQuery = query.OrderBy(i => i.IrsaliyeNumarasi);
+                        break;
+                    case "number_desc":
+                        orderedQuery = query.OrderByDescending(i => i.IrsaliyeNumarasi);
+                        break;
+                    case "customer":
+                        orderedQuery = query.OrderBy(i => i.Cari.Ad);
+                        break;
+                    case "customer_desc":
+                        orderedQuery = query.OrderByDescending(i => i.Cari.Ad);
+                        break;
+                    default:
+                        orderedQuery = query.OrderByDescending(i => i.IrsaliyeTarihi);
+                        break;
+                }
 
-            switch (sortOrder)
-            {
-                case "date":
-                    query = query.OrderBy(i => i.IrsaliyeTarihi);
-                    break;
-                case "date_desc":
-                    query = query.OrderByDescending(i => i.IrsaliyeTarihi);
-                    break;
-                case "number":
-                    query = query.OrderBy(i => i.IrsaliyeNumarasi);
-                    break;
-                case "number_desc":
-                    query = query.OrderByDescending(i => i.IrsaliyeNumarasi);
-                    break;
-                case "customer":
-                    query = query.OrderBy(i => i.Cari.Ad);
-                    break;
-                case "customer_desc":
-                    query = query.OrderByDescending(i => i.Cari.Ad);
-                    break;
-                default:
-                    query = query.OrderByDescending(i => i.IrsaliyeTarihi);
-                    break;
-            }
+                var count = await query.CountAsync();
+                var items = await orderedQuery
+                    .Skip((page - 1) * pageSize)
+                    .Take(pageSize)
+                    .ToListAsync();
+                
+                // Varsa fatura türünü kontrol et ve güncelle
+                foreach (var irsaliye in items.Where(i => i.FaturaID.HasValue))
+                {
+                    if (irsaliye.Fatura?.FaturaTuru != null)
+                    {
+                        // İrsaliye türünü fatura türüne göre güncelle (sadece görünüm için)
+                        if (irsaliye.Fatura.FaturaTuru.HareketTuru == "Giriş")
+                            irsaliye.IrsaliyeTuru = "Giriş";
+                        else if (irsaliye.Fatura.FaturaTuru.HareketTuru == "Çıkış")
+                            irsaliye.IrsaliyeTuru = "Çıkış";
+                    }
+                }
 
-            var count = await query.CountAsync();
-            var items = await query
-                .Skip((page - 1) * pageSize)
-                .Take(pageSize)
-                .Select(i => new IrsaliyeViewModel
+                // Entity'leri ViewModel'e dönüştür
+                var irsaliyeViewModels = items.Select(i => new IrsaliyeViewModel
                 {
                     IrsaliyeID = i.IrsaliyeID,
-                    IrsaliyeNumarasi = i.IrsaliyeNumarasi,
+                    IrsaliyeNumarasi = i.IrsaliyeNumarasi ?? string.Empty,
                     IrsaliyeTarihi = i.IrsaliyeTarihi,
                     CariID = i.CariID,
-                    CariAdi = i.Cari.Ad,
+                    CariAdi = i.Cari?.Ad ?? "Belirtilmemiş",
                     FaturaID = i.FaturaID,
-                    FaturaNumarasi = i.Fatura != null ? i.Fatura.FaturaNumarasi : "",
-                    IrsaliyeTuru = i.IrsaliyeTuru,
-                    Aciklama = i.Aciklama,
-                    ToplamTutar = i.IrsaliyeDetaylari.Sum(d => d.BirimFiyat * d.Miktar),
-                    Aktif = i.Aktif,
+                    FaturaNumarasi = i.Fatura?.FaturaNumarasi ?? string.Empty,
+                    IrsaliyeTuru = i.IrsaliyeTuru ?? string.Empty,
+                    Aciklama = i.Aciklama ?? string.Empty,
+                    ToplamTutar = i.IrsaliyeDetaylari?.Sum(d => d.Miktar * d.BirimFiyat) ?? 0,
                     OlusturmaTarihi = i.OlusturmaTarihi,
-                    GuncellemeTarihi = i.GuncellemeTarihi
-                })
-                .ToListAsync();
+                    GuncellemeTarihi = i.GuncellemeTarihi,
+                    Aktif = i.Aktif,
+                    IrsaliyeDetaylari = i.IrsaliyeDetaylari?.Select(d => new IrsaliyeKalemViewModel
+                    {
+                        IrsaliyeID = d.IrsaliyeID,
+                        UrunID = d.UrunID,
+                        UrunAdi = d.Urun?.UrunAdi,
+                        Miktar = d.Miktar,
+                        BirimFiyat = d.BirimFiyat,
+                        Birim = d.Birim,
+                        Aciklama = d.Aciklama
+                    }).ToList() ?? new List<IrsaliyeKalemViewModel>()
+                }).ToList();
 
-            var model = new PaginatedList<IrsaliyeViewModel>(items, count, page, pageSize);
+                var model = new PaginatedList<IrsaliyeViewModel>(irsaliyeViewModels, count, page, pageSize);
 
-            ViewBag.CurrentSort = sortOrder;
-            ViewBag.DateSortParm = sortOrder == "date" ? "date_desc" : "date";
-            ViewBag.NumberSortParm = sortOrder == "number" ? "number_desc" : "number";
-            ViewBag.CustomerSortParm = sortOrder == "customer" ? "customer_desc" : "customer";
-            ViewBag.CurrentFilter = searchString;
+                ViewBag.CurrentSort = sortOrder;
+                ViewBag.DateSortParm = sortOrder == "date" ? "date_desc" : "date";
+                ViewBag.NumberSortParm = sortOrder == "number" ? "number_desc" : "number";
+                ViewBag.CustomerSortParm = sortOrder == "customer" ? "customer_desc" : "customer";
+                ViewBag.CurrentFilter = searchString;
 
-            return View(model);
+                return View(model);
+            }
+            catch (Exception ex)
+            {
+                _logger.LogError("İrsaliye Listesi Görüntüleme Hatası: {Message}", ex.ToString());
+                TempData["ErrorMessage"] = "İrsaliye listesi yüklenirken bir hata oluştu.";
+                return View(new List<IrsaliyeViewModel>());
+            }
         }
 
         // İrsaliye detaylarını gösterir
@@ -183,12 +222,12 @@ namespace MuhasebeStokWebApp.Controllers
             var model = new IrsaliyeDetailViewModel
             {
                 IrsaliyeID = irsaliye.IrsaliyeID,
-                IrsaliyeNumarasi = irsaliye.IrsaliyeNumarasi,
+                IrsaliyeNumarasi = irsaliye.IrsaliyeNumarasi ?? string.Empty,
                 IrsaliyeTarihi = irsaliye.IrsaliyeTarihi,
                 CariID = irsaliye.CariID,
                 FaturaID = irsaliye.FaturaID,
-                Aciklama = irsaliye.Aciklama,
-                CariAdi = irsaliye.Cari?.Ad,
+                Aciklama = irsaliye.Aciklama ?? string.Empty,
+                CariAdi = irsaliye.Cari?.Ad ?? "Belirtilmemiş",
                 IrsaliyeDetaylari = irsaliye.IrsaliyeDetaylari?.Select(d => new IrsaliyeKalemViewModel
                 {
                     KalemID = d.IrsaliyeDetayID,
@@ -215,13 +254,9 @@ namespace MuhasebeStokWebApp.Controllers
                 Aktif = true
             };
 
-            var viewBagData = await _dropdownService.PrepareViewBagAsync("Irsaliye", "Create");
-            foreach (var item in viewBagData)
-            {
-                dynamic viewBag = ViewBag;
-                viewBag[item.Key] = item.Value;
-            }
-
+            // ViewBag'i direkt doldur
+            await PrepareViewBagForCreate();
+            
             return View(model);
         }
 
@@ -232,23 +267,26 @@ namespace MuhasebeStokWebApp.Controllers
         {
             if (ModelState.IsValid)
             {
+                // Transaction başlat
+                await _unitOfWork.BeginTransactionAsync();
+                
                 try
                 {
                     var userId = User.FindFirstValue(ClaimTypes.NameIdentifier);
                     var irsaliye = new DEntityIrsaliye
                     {
                         IrsaliyeID = Guid.NewGuid(),
-                        IrsaliyeNumarasi = model.IrsaliyeNumarasi,
+                        IrsaliyeNumarasi = model.IrsaliyeNumarasi ?? string.Empty,
                         IrsaliyeTarihi = model.IrsaliyeTarihi,
                         CariID = model.CariID,
                         FaturaID = model.FaturaID,
-                        Aciklama = model.Aciklama,
-                        IrsaliyeTuru = model.IrsaliyeTuru,
+                        Aciklama = model.Aciklama ?? string.Empty,
+                        IrsaliyeTuru = model.IrsaliyeTuru ?? string.Empty,
                         Aktif = true,
                         OlusturmaTarihi = DateTime.Now,
-                        OlusturanKullaniciId = Guid.Parse(userId),
+                        OlusturanKullaniciId = !string.IsNullOrEmpty(userId) ? Guid.Parse(userId) : Guid.Empty,
                         GuncellemeTarihi = DateTime.Now,
-                        SonGuncelleyenKullaniciId = Guid.Parse(userId)
+                        SonGuncelleyenKullaniciId = !string.IsNullOrEmpty(userId) ? Guid.Parse(userId) : Guid.Empty
                     };
 
                     await _unitOfWork.IrsaliyeRepository.AddAsync(irsaliye);
@@ -257,6 +295,9 @@ namespace MuhasebeStokWebApp.Controllers
                     await UpdateIrsaliyeDetaylarAsync(irsaliye.IrsaliyeID, filteredDetaylar);
                     
                     await _unitOfWork.CompleteAsync();
+                    
+                    // Transaction commit
+                    await _unitOfWork.CommitTransactionAsync();
 
                     await _logService.Log(
                         $"Yeni irsaliye oluşturuldu: İrsaliye ID: {irsaliye.IrsaliyeID}, İrsaliye No: {irsaliye.IrsaliyeNumarasi}",
@@ -267,6 +308,9 @@ namespace MuhasebeStokWebApp.Controllers
                 }
                 catch (Exception ex)
                 {
+                    // Transaction rollback
+                    await _unitOfWork.RollbackTransactionAsync();
+                    
                     await _logService.Log(
                         $"İrsaliye oluşturulurken hata: {ex.Message}",
                         LogTuru.Hata
@@ -292,11 +336,11 @@ namespace MuhasebeStokWebApp.Controllers
             var model = new IrsaliyeEditViewModel
             {
                 IrsaliyeID = irsaliye.IrsaliyeID,
-                IrsaliyeNumarasi = irsaliye.IrsaliyeNumarasi,
+                IrsaliyeNumarasi = irsaliye.IrsaliyeNumarasi ?? string.Empty,
                 IrsaliyeTarihi = irsaliye.IrsaliyeTarihi,
                 CariID = irsaliye.CariID,
                 FaturaID = irsaliye.FaturaID,
-                Aciklama = irsaliye.Aciklama
+                Aciklama = irsaliye.Aciklama ?? string.Empty
             };
 
             await _dropdownService.PrepareViewBagAsync("Irsaliye", "Edit");
@@ -320,21 +364,54 @@ namespace MuhasebeStokWebApp.Controllers
                 return NotFound();
             }
 
-            irsaliye.IrsaliyeNumarasi = model.IrsaliyeNumarasi;
-            irsaliye.IrsaliyeTarihi = model.IrsaliyeTarihi;
-            irsaliye.CariID = model.CariID;
-            irsaliye.FaturaID = model.FaturaID;
-            irsaliye.Aciklama = model.Aciklama;
-
             try
             {
+                // Transaction başlat
+                await _unitOfWork.BeginTransactionAsync();
+                
+                // İrsaliye bilgilerini güncelle
+                irsaliye.IrsaliyeNumarasi = model.IrsaliyeNumarasi ?? string.Empty;
+                irsaliye.IrsaliyeTarihi = model.IrsaliyeTarihi;
+                irsaliye.CariID = model.CariID;
+                irsaliye.FaturaID = model.FaturaID;
+                irsaliye.Aciklama = model.Aciklama ?? string.Empty;
+                irsaliye.GuncellemeTarihi = DateTime.Now;
+                irsaliye.SonGuncelleyenKullaniciId = GetCurrentUserId();
+                
+                // İrsaliye güncelleme
+                _unitOfWork.IrsaliyeRepository.Update(irsaliye);
+                
+                // İrsaliye detaylarını güncelle
+                if (model.IrsaliyeDetaylari != null && model.IrsaliyeDetaylari.Any())
+                {
+                    var filteredDetaylar = model.IrsaliyeDetaylari.Where(d => d.UrunID != Guid.Empty).ToList();
+                    await UpdateIrsaliyeDetaylarAsync(irsaliye.IrsaliyeID, filteredDetaylar);
+                }
+                
                 await _unitOfWork.CompleteAsync();
-                _logger.LogInformation($"İrsaliye güncellendi: {irsaliye.IrsaliyeID}");
+                
+                // Transaction commit
+                await _unitOfWork.CommitTransactionAsync();
+                
+                await _logService.Log(
+                    $"İrsaliye güncellendi: İrsaliye ID: {irsaliye.IrsaliyeID}, İrsaliye No: {irsaliye.IrsaliyeNumarasi}",
+                    LogTuru.Bilgi
+                );
+                
+                TempData["SuccessMessage"] = "İrsaliye başarıyla güncellendi.";
                 return RedirectToAction(nameof(Index));
             }
             catch (Exception ex)
             {
-                _logger.LogError($"İrsaliye güncellenirken hata oluştu: {ex.Message}");
+                // Transaction rollback
+                await _unitOfWork.RollbackTransactionAsync();
+                
+                await _logService.Log(
+                    $"İrsaliye güncellenirken hata: {ex.Message}",
+                    LogTuru.Hata
+                );
+                
+                _logger.LogError($"İrsaliye güncellenirken hata oluştu: {ex.Message}", ex);
                 ModelState.AddModelError("", "İrsaliye güncellenirken bir hata oluştu.");
                 await _dropdownService.PrepareViewBagAsync("Irsaliye", "Edit");
                 return View(model);
@@ -362,14 +439,14 @@ namespace MuhasebeStokWebApp.Controllers
             var viewModel = new IrsaliyeViewModel
             {
                 IrsaliyeID = irsaliye.IrsaliyeID,
-                IrsaliyeNumarasi = irsaliye.IrsaliyeNumarasi,
+                IrsaliyeNumarasi = irsaliye.IrsaliyeNumarasi ?? string.Empty,
                 IrsaliyeTarihi = irsaliye.IrsaliyeTarihi,
                 CariID = irsaliye.CariID,
-                CariAdi = irsaliye.Cari.Ad,
-                IrsaliyeTuru = irsaliye.IrsaliyeTuru,
+                CariAdi = irsaliye.Cari.Ad ?? string.Empty,
+                IrsaliyeTuru = irsaliye.IrsaliyeTuru ?? string.Empty,
                 FaturaID = irsaliye.FaturaID,
-                FaturaNumarasi = irsaliye.Fatura != null ? irsaliye.Fatura.FaturaNumarasi : "",
-                Aciklama = irsaliye.Aciklama,
+                FaturaNumarasi = irsaliye.Fatura != null ? irsaliye.Fatura.FaturaNumarasi ?? string.Empty : string.Empty,
+                Aciklama = irsaliye.Aciklama ?? string.Empty,
                 Aktif = irsaliye.Aktif,
                 OlusturmaTarihi = irsaliye.OlusturmaTarihi,
                 GuncellemeTarihi = irsaliye.GuncellemeTarihi
@@ -388,34 +465,48 @@ namespace MuhasebeStokWebApp.Controllers
                 return Problem("Entity set 'ApplicationDbContext.Irsaliyeler' is null.");
             }
 
-            // İrsaliyeyi bul
-            var irsaliye = await _context.Irsaliyeler
-                .Include(i => i.IrsaliyeDetaylari)
-                .FirstOrDefaultAsync(i => i.IrsaliyeID.Equals(id) && i.Aktif);
-
-            if (irsaliye == null)
+            // Transaction başlat
+            using var transaction = await _context.Database.BeginTransactionAsync();
+            try
             {
-                return NotFound();
+                // İrsaliyeyi bul
+                var irsaliye = await _context.Irsaliyeler
+                    .Include(i => i.IrsaliyeDetaylari)
+                    .FirstOrDefaultAsync(i => i.IrsaliyeID.Equals(id) && i.Aktif);
+
+                if (irsaliye == null)
+                {
+                    return NotFound();
+                }
+
+                // İrsaliyeyi pasife al
+                irsaliye.Aktif = false;
+                irsaliye.GuncellemeTarihi = DateTime.Now;
+                irsaliye.SonGuncelleyenKullaniciId = GetCurrentUserId();
+                _context.Update(irsaliye);
+
+                // İrsaliye detaylarını pasife al
+                foreach (var detay in irsaliye.IrsaliyeDetaylari.Where(d => d.Aktif))
+                {
+                    detay.Aktif = false;
+                    detay.GuncellemeTarihi = DateTime.Now;
+                    detay.SonGuncelleyenKullaniciId = GetCurrentUserId();
+                    _context.Update(detay);
+                }
+
+                await _context.SaveChangesAsync();
+                await transaction.CommitAsync();
+                
+                TempData["SuccessMessage"] = "İrsaliye başarıyla pasife alındı.";
+                return RedirectToAction(nameof(Index));
             }
-
-            // İrsaliyeyi pasife al
-            irsaliye.Aktif = false;
-            irsaliye.GuncellemeTarihi = DateTime.Now;
-            irsaliye.SonGuncelleyenKullaniciId = GetCurrentUserId();
-            _context.Update(irsaliye);
-
-            // İrsaliye detaylarını pasife al
-            foreach (var detay in irsaliye.IrsaliyeDetaylari.Where(d => d.Aktif))
+            catch (Exception ex)
             {
-                detay.Aktif = false;
-                detay.GuncellemeTarihi = DateTime.Now;
-                detay.SonGuncelleyenKullaniciId = GetCurrentUserId();
-                _context.Update(detay);
+                await transaction.RollbackAsync();
+                _logger.LogError(ex, "İrsaliye silme işlemi sırasında hata oluştu: {Id}", id);
+                TempData["ErrorMessage"] = "İrsaliye silinirken bir hata oluştu.";
+                return RedirectToAction(nameof(Index));
             }
-
-            await _context.SaveChangesAsync();
-            TempData["SuccessMessage"] = "İrsaliye başarıyla pasife alındı.";
-            return RedirectToAction(nameof(Index));
         }
 
         // AJAX: Ürün Bilgilerini Getir
@@ -508,11 +599,11 @@ namespace MuhasebeStokWebApp.Controllers
                         viewModel.IrsaliyeDetaylari.Add(new IrsaliyeVM.IrsaliyeDetayViewModel
                         {
                             UrunID = fd.UrunID,
-                            UrunAdi = fd.Urun.UrunAdi,
-                            UrunKodu = fd.Urun.UrunKodu,
+                            UrunAdi = fd.Urun.UrunAdi ?? "Belirtilmemiş",
+                            UrunKodu = fd.Urun.UrunKodu ?? string.Empty,
                             Miktar = fd.Miktar,
-                            Birim = fd.Birim,
-                            Aciklama = fd.Aciklama
+                            Birim = fd.Birim ?? string.Empty,
+                            Aciklama = fd.Aciklama ?? string.Empty
                         });
                     }
                 }
@@ -594,32 +685,33 @@ namespace MuhasebeStokWebApp.Controllers
             return Guid.Empty;
         }
 
-        // ViewBag değerlerini hazırlama metodu
+        // ViewBag hazırlama yardımcı metodu
         private async Task PrepareViewBagForCreate()
         {
-            var cariler = await _context.Cariler
-                .Where(c => c.AktifMi && !c.Silindi)
+            // Cari listesini hazırla
+            ViewBag.Cariler = new SelectList(await _context.Cariler
+                .Where(c => !c.Silindi)
                 .OrderBy(c => c.Ad)
-                .Select(c => new SelectListItem
-                {
-                    Value = c.CariID.ToString(),
-                    Text = $"{c.CariKodu} - {c.Ad}"
-                })
-                .ToListAsync();
-
-            var urunler = await _context.Urunler
-                .Where(u => u.Aktif)
+                .ToListAsync(), "CariID", "Ad");
+                
+            // Fatura listesini hazırla
+            ViewBag.Faturalar = new SelectList(await _context.Faturalar
+                .Where(f => !f.Silindi)
+                .OrderByDescending(f => f.FaturaTarihi)
+                .ToListAsync(), "FaturaID", "FaturaNumarasi");
+                
+            // İrsaliye türleri
+            ViewBag.IrsaliyeTurleri = new List<SelectListItem>
+            {
+                new SelectListItem { Value = "Giriş", Text = "Giriş İrsaliyesi" },
+                new SelectListItem { Value = "Çıkış", Text = "Çıkış İrsaliyesi" }
+            };
+                
+            // Ürünler listesini hazırla 
+            ViewBag.Urunler = new SelectList(await _context.Urunler
+                .Where(u => !u.Silindi)
                 .OrderBy(u => u.UrunAdi)
-                .Select(u => new SelectListItem
-                {
-                    Value = u.UrunID.ToString(),
-                    Text = $"{u.UrunKodu} - {u.UrunAdi}"
-                })
-                .ToListAsync();
-
-            ViewBag.Cariler = new SelectList(cariler, "Value", "Text");
-            ViewBag.Urunler = new SelectList(urunler, "Value", "Text");
-            ViewBag.IrsaliyeTurleri = new SelectList(new List<string> { "Giriş", "Çıkış" }, "Çıkış");
+                .ToListAsync(), "UrunID", "UrunAdi");
         }
         
         // GET: Irsaliye/Print/5
@@ -642,17 +734,17 @@ namespace MuhasebeStokWebApp.Controllers
             var viewModel = new IrsaliyeDetailViewModel
             {
                 IrsaliyeID = irsaliye.IrsaliyeID,
-                IrsaliyeNumarasi = irsaliye.IrsaliyeNumarasi,
+                IrsaliyeNumarasi = irsaliye.IrsaliyeNumarasi ?? string.Empty,
                 IrsaliyeTarihi = irsaliye.IrsaliyeTarihi,
                 CariID = irsaliye.CariID,
-                CariAdi = irsaliye.Cari.Ad,
+                CariAdi = irsaliye.Cari.Ad ?? string.Empty,
                 CariVergiNo = irsaliye.Cari.VergiNo,
                 CariTelefon = irsaliye.Cari.Telefon,
                 CariAdres = irsaliye.Cari.Adres,
-                IrsaliyeTuru = irsaliye.IrsaliyeTuru,
+                IrsaliyeTuru = irsaliye.IrsaliyeTuru ?? string.Empty,
                 FaturaID = irsaliye.FaturaID,
-                FaturaNumarasi = irsaliye.Fatura.FaturaNumarasi,
-                Aciklama = irsaliye.Aciklama,
+                FaturaNumarasi = irsaliye.Fatura.FaturaNumarasi ?? string.Empty,
+                Aciklama = irsaliye.Aciklama ?? string.Empty,
                 Aktif = irsaliye.Aktif,
                 OlusturmaTarihi = irsaliye.OlusturmaTarihi,
                 GuncellemeTarihi = irsaliye.GuncellemeTarihi,
@@ -660,11 +752,11 @@ namespace MuhasebeStokWebApp.Controllers
                 {
                     KalemID = id.IrsaliyeDetayID,
                     UrunID = id.UrunID,
-                    UrunAdi = id.Urun.UrunAdi,
-                    UrunKodu = id.Urun.UrunKodu,
+                    UrunAdi = id.Urun.UrunAdi ?? string.Empty,
+                    UrunKodu = id.Urun.UrunKodu ?? string.Empty,
                     Miktar = id.Miktar,
-                    Birim = id.Birim,
-                    Aciklama = id.Aciklama
+                    Birim = id.Birim ?? string.Empty,
+                    Aciklama = id.Aciklama ?? string.Empty
                 }).ToList()
             };
 
@@ -717,20 +809,13 @@ namespace MuhasebeStokWebApp.Controllers
             {
                 model = new IrsaliyeCreateViewModel
                 {
-                    IrsaliyeTarihi = DateTime.Now,
+                    IrsaliyeNumarasi = string.Empty,
+                    Aciklama = string.Empty,
+                    IrsaliyeTuru = string.Empty,
                     IrsaliyeDetaylari = new List<IrsaliyeVM.IrsaliyeDetayViewModel>()
                 };
-                
-                // İlk boş satırı ekle
-                model.IrsaliyeDetaylari.Add(new IrsaliyeVM.IrsaliyeDetayViewModel
-                {
-                    IrsaliyeDetayID = Guid.NewGuid()
-                });
             }
-            
-            // Dropdown listeleri doldur
-            PrepareDropdownLists(model);
-            
+            await Task.CompletedTask; // Async metodu düzeltmek için
             return model;
         }
 

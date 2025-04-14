@@ -16,8 +16,8 @@ namespace MuhasebeStokWebApp.Data
             await SeedFiyatTipleri(context);
             
             // Identity rolleri ve kullanıcılar
-            var roleManager = serviceProvider.GetService<RoleManager<IdentityRole>>();
-            var userManager = serviceProvider.GetService<UserManager<ApplicationUser>>();
+            var roleManager = serviceProvider.GetRequiredService<RoleManager<IdentityRole>>();
+            var userManager = serviceProvider.GetRequiredService<UserManager<ApplicationUser>>();
             
             if (roleManager != null && userManager != null)
             {
@@ -68,7 +68,7 @@ namespace MuhasebeStokWebApp.Data
                 await userManager.ResetAccessFailedCountAsync(existingAdmin);
                 
                 // Şifreyi sıfırla ve basit bir şifre kullan
-                string newPassword = "admin123";
+                string newPassword = "Test1234_";
                 
                 // Password validator'ı geçici olarak devre dışı bırak
                 var passwordValidators = userManager.PasswordValidators.ToList();
@@ -104,7 +104,7 @@ namespace MuhasebeStokWebApp.Data
                 var passwordValidators = userManager.PasswordValidators.ToList();
                 userManager.PasswordValidators.Clear();
                 
-                var result = await userManager.CreateAsync(adminUser, "admin123");
+                var result = await userManager.CreateAsync(adminUser, "Test1234_");
                 
                 // Password validator'ları geri yükle
                 foreach (var validator in passwordValidators)

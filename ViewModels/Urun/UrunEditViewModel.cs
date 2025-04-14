@@ -26,19 +26,42 @@ namespace MuhasebeStokWebApp.ViewModels.Urun
         [Display(Name = "Birim")]
         public string Birim { get; set; }
         
-        [Display(Name = "Stok Miktarı")]
-        [Range(0, double.MaxValue, ErrorMessage = "Stok miktarı 0'dan küçük olamaz.")]
-        public decimal StokMiktar { get; set; }
+        [Display(Name = "Açıklama")]
+        public string Aciklama { get; set; }
+        
+        [Display(Name = "Liste Fiyatı")]
+        public decimal ListeFiyati { get; set; }
+        
+        [Display(Name = "Maliyet Fiyatı")]
+        public decimal MaliyetFiyati { get; set; }
+        
+        [Display(Name = "Satış Fiyatı")]
+        public decimal SatisFiyati { get; set; }
+        
+        [Display(Name = "Liste Fiyatı (USD)")]
+        public decimal? DovizliListeFiyati { get; set; }
+        
+        [Display(Name = "Maliyet Fiyatı (USD)")]
+        public decimal? DovizliMaliyetFiyati { get; set; }
+        
+        [Display(Name = "Satış Fiyatı (USD)")]
+        public decimal? DovizliSatisFiyati { get; set; }
+        
+        [Display(Name = "KDV Oranı")]
+        [Range(0, 100, ErrorMessage = "KDV oranı 0-100 arasında bir değer olmalıdır")]
+        public decimal KDVOrani { get; set; }
         
         [Display(Name = "Aktif")]
         public bool Aktif { get; set; }
         
-        [Display(Name = "KDV Oranı (%)")]
-        [Range(0, 100, ErrorMessage = "KDV oranı 0-100 arasında olmalıdır.")]
-        public int KDVOrani { get; set; } = 18;
-        
         [Display(Name = "Kategori")]
         public Guid? KategoriID { get; set; }
+        
+        [Display(Name = "Oluşturma Tarihi")]
+        public DateTime? OlusturmaTarihi { get; set; }
+        
+        [Display(Name = "Güncelleme Tarihi")]
+        public DateTime? GuncellemeTarihi { get; set; }
         
         // Dropdown listeler için - zorunlu değil
         public List<SelectListItem> BirimListesi { get; set; }

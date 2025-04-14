@@ -9,6 +9,7 @@ using MuhasebeStokWebApp.Data.Entities;
 using MuhasebeStokWebApp.Models;
 using MuhasebeStokWebApp.Data.Entities.ParaBirimiModulu;
 using Microsoft.Extensions.Configuration;
+using MuhasebeStokWebApp.Enums;
 
 namespace MuhasebeStokWebApp.Data
 {
@@ -31,11 +32,13 @@ namespace MuhasebeStokWebApp.Data
         public virtual DbSet<Entities.Irsaliye> Irsaliyeler { get; set; }
         public virtual DbSet<Entities.IrsaliyeDetay> IrsaliyeDetaylari { get; set; }
         public virtual DbSet<Entities.IrsaliyeTuru> IrsaliyeTurleri { get; set; }
+        public virtual DbSet<Entities.Sozlesme> Sozlesmeler { get; set; }
         
         // Para Birimi Modülü Entity'leri
         public virtual DbSet<Entities.ParaBirimiModulu.ParaBirimi> ParaBirimleri { get; set; }
         public virtual DbSet<Entities.ParaBirimiModulu.KurDegeri> KurDegerleri { get; set; }
         public virtual DbSet<Entities.ParaBirimiModulu.ParaBirimiIliski> ParaBirimiIliskileri { get; set; }
+        public virtual DbSet<Entities.ParaBirimiModulu.KurMarj> KurMarjlari { get; set; }
 
         // Menu entity'leri
         public virtual DbSet<Entities.Menu> Menuler { get; set; }
@@ -53,6 +56,7 @@ namespace MuhasebeStokWebApp.Data
         // Stok entity'leri
         public virtual DbSet<Entities.StokFifo> StokFifoKayitlari { get; set; }
         public virtual DbSet<Entities.StokHareket> StokHareketleri { get; set; }
+        public virtual DbSet<Entities.StokCikisDetay> StokCikisDetaylari { get; set; }
         public virtual DbSet<Entities.Urun> Urunler { get; set; }
         public virtual DbSet<Entities.UrunFiyat> UrunFiyatlari { get; set; }
         public virtual DbSet<Entities.UrunKategori> UrunKategorileri { get; set; }
@@ -64,12 +68,15 @@ namespace MuhasebeStokWebApp.Data
         public virtual DbSet<Entities.SistemAyar> SistemAyarlari { get; set; }
         public virtual DbSet<Entities.SistemAyarlari> GenelSistemAyarlari { get; set; }
 
-        public DbSet<StokFifo> StokFifo { get; set; }
         public DbSet<CariHareket> CariHareketler { get; set; }
 
-        // Banka ve hareketleri
+        // Banka hesapları
         public DbSet<BankaHesap> BankaHesaplari { get; set; }
         public DbSet<BankaHesapHareket> BankaHesapHareketleri { get; set; }
+        
+        // Merkezi aklama veritabanı nesneleri
+
+        public virtual DbSet<FaturaAklamaKuyruk> FaturaAklamaKuyrugu { get; set; }
 
         protected override void OnConfiguring(DbContextOptionsBuilder optionsBuilder)
         {
@@ -82,7 +89,12 @@ namespace MuhasebeStokWebApp.Data
                     .AddJsonFile("appsettings.json")
                     .Build();
                 var connectionString = configuration.GetConnectionString("DefaultConnection");
-                optionsBuilder.UseSqlServer(connectionString);
+                optionsBuilder.UseSqlServer(connectionString, options => options.CommandTimeout(120));
+            }
+            else
+            {
+                // Zaten yapılandırılmış olsa bile command timeout'u ayarla
+                optionsBuilder.UseSqlServer(optionsBuilder.Options.FindExtension<Microsoft.EntityFrameworkCore.SqlServer.Infrastructure.Internal.SqlServerOptionsExtension>().ConnectionString, options => options.CommandTimeout(120));
             }
         }
 
@@ -108,17 +120,13 @@ namespace MuhasebeStokWebApp.Data
             modelBuilder.Entity<IdentityUserLogin<string>>().Property(p => p.UserId).HasColumnType("varchar(128)");
             modelBuilder.Entity<IdentityRoleClaim<string>>().Property(p => p.RoleId).HasColumnType("varchar(128)");
             modelBuilder.Entity<IdentityUserToken<string>>().Property(p => p.UserId).HasColumnType("varchar(128)");
-
+            
             // Burada Entity Framework ile ilgili özel konfigürasyonlar yapılabilir
             // Örneğin, cascade delete davranışlarını değiştirmek veya unique indeksler eklemek gibi
             
             // KurDegeri ilişkilerini tanımla - döviz modülü yeniden tasarlandığı için kaldırıldı
             
             // Urun
-            modelBuilder.Entity<Entities.Urun>()
-                .Property(u => u.StokMiktar)
-                .HasDefaultValue(0);
-
             modelBuilder.Entity<Entities.Urun>()
                 .Property(u => u.Aktif)
                 .HasDefaultValue(true);
@@ -192,7 +200,7 @@ namespace MuhasebeStokWebApp.Data
                 .HasDefaultValue(false);
 
             modelBuilder.Entity<Entities.Fatura>()
-                .Property(f => f.Resmi)
+                .Property(f => f.ResmiMi)
                 .HasDefaultValue(true);
 
             // Irsaliye
@@ -245,15 +253,16 @@ namespace MuhasebeStokWebApp.Data
                 .Property(b => b.Silindi)
                 .HasDefaultValue(false);
 
-            modelBuilder.Entity<Entities.Banka>()
+            // BankaHesap entity'si için konfigürasyon
+            modelBuilder.Entity<Entities.BankaHesap>()
                 .Property(b => b.AcilisBakiye)
                 .HasDefaultValue(0);
 
-            modelBuilder.Entity<Entities.Banka>()
+            modelBuilder.Entity<Entities.BankaHesap>()
                 .Property(b => b.GuncelBakiye)
                 .HasDefaultValue(0);
                 
-            modelBuilder.Entity<Entities.Banka>()
+            modelBuilder.Entity<Entities.BankaHesap>()
                 .Property(b => b.ParaBirimi)
                 .HasDefaultValue("TRY");
                 
@@ -284,13 +293,18 @@ namespace MuhasebeStokWebApp.Data
                 .HasDefaultValue(false);
             
             // KurDegeri tablosu konfigürasyonu
-            modelBuilder.Entity<Entities.ParaBirimiModulu.KurDegeri>()
-                .HasIndex(k => new { k.ParaBirimiID, k.Tarih })
-                .HasDatabaseName("IX_KurDegeri_ParaBirimiID_Tarih");
+            modelBuilder.Entity<Entities.ParaBirimiModulu.KurDegeri>(entity =>
+            {
+                entity.HasKey(e => e.KurDegeriID);
+                entity.Property(e => e.KurDegeriID).ValueGeneratedOnAdd();
+                entity.Property(e => e.Alis).HasColumnType("decimal(18,6)");
+                entity.Property(e => e.Satis).HasColumnType("decimal(18,6)");
                 
-            modelBuilder.Entity<Entities.ParaBirimiModulu.KurDegeri>()
-                .Property(k => k.Aktif)
-                .HasDefaultValue(true);
+                entity.HasOne(d => d.ParaBirimi)
+                    .WithMany(p => p.KurDegerleri)
+                    .HasForeignKey(d => d.ParaBirimiID)
+                    .OnDelete(DeleteBehavior.ClientSetNull);
+            });
             
             // DovizIliski tablosu konfigürasyonu
             modelBuilder.Entity<Entities.ParaBirimiModulu.ParaBirimiIliski>()
@@ -336,7 +350,9 @@ namespace MuhasebeStokWebApp.Data
                 .Property(c => c.BaslangicBakiye)
                 .HasColumnType("decimal(18,2)");
 
-            modelBuilder.Entity<Cari>().HasQueryFilter(x => !x.Silindi && x.AktifMi);
+            // Global query filtre uygulamasını kaldırıyoruz
+            // Sadece yeni kayıt oluşturma veya listeleme ekranlarında filtreleme yapacağız
+            // modelBuilder.Entity<Cari>().HasQueryFilter(x => !x.Silindi && x.AktifMi);
 
             modelBuilder.Entity<SistemAyar>().ToTable("SistemAyarlari");
 
@@ -350,12 +366,12 @@ namespace MuhasebeStokWebApp.Data
                 .HasDefaultValue(true);
 
             // Decimal türleri için doğru SQL veri tiplerini belirtelim
-            // Banka Entity
-            modelBuilder.Entity<Entities.Banka>()
+            // BankaHesap Entity
+            modelBuilder.Entity<Entities.BankaHesap>()
                 .Property(b => b.AcilisBakiye)
                 .HasColumnType("decimal(18,2)");
                 
-            modelBuilder.Entity<Entities.Banka>()
+            modelBuilder.Entity<Entities.BankaHesap>()
                 .Property(b => b.GuncelBakiye)
                 .HasColumnType("decimal(18,2)");
                 
@@ -376,14 +392,6 @@ namespace MuhasebeStokWebApp.Data
                 
             modelBuilder.Entity<Entities.ParaBirimiModulu.KurDegeri>()
                 .Property(k => k.Satis)
-                .HasColumnType("decimal(18,6)");
-                
-            modelBuilder.Entity<Entities.ParaBirimiModulu.KurDegeri>()
-                .Property(k => k.Efektif_Alis)
-                .HasColumnType("decimal(18,6)");
-                
-            modelBuilder.Entity<Entities.ParaBirimiModulu.KurDegeri>()
-                .Property(k => k.Efektif_Satis)
                 .HasColumnType("decimal(18,6)");
                 
             // Kasa Entity
@@ -433,10 +441,23 @@ namespace MuhasebeStokWebApp.Data
                 .Property(s => s.BirimFiyat)
                 .HasColumnType("decimal(18,2)");
                 
-            // Urun Entity
+            // Urun - StokHareket ilişkisi için filtreler
+            modelBuilder.Entity<Entities.Urun>().HasQueryFilter(u => u.Silindi == false && u.Aktif == true);
+            
+            // Urun decimal alanlarını yapılandır
             modelBuilder.Entity<Entities.Urun>()
-                .Property(u => u.StokMiktar)
-                .HasColumnType("decimal(18,3)");
+                .Property(u => u.DovizliListeFiyati)
+                .HasColumnType("decimal(18,2)");
+                
+            modelBuilder.Entity<Entities.Urun>()
+                .Property(u => u.DovizliMaliyetFiyati)
+                .HasColumnType("decimal(18,2)");
+                
+            modelBuilder.Entity<Entities.Urun>()
+                .Property(u => u.DovizliSatisFiyati)
+                .HasColumnType("decimal(18,2)");
+                
+            modelBuilder.Entity<Entities.StokHareket>().HasQueryFilter(sh => sh.Silindi == false);
                 
             // UrunFiyat Entity
             modelBuilder.Entity<Entities.UrunFiyat>()
@@ -550,6 +571,7 @@ namespace MuhasebeStokWebApp.Data
             modelBuilder.Entity<Entities.Kasa>().HasQueryFilter(k => k.Silindi == false && k.Aktif == true);
             modelBuilder.Entity<Entities.KasaHareket>().HasQueryFilter(k => k.Silindi == false);
             modelBuilder.Entity<Entities.StokFifo>().HasQueryFilter(s => s.Silindi == false && s.Aktif == true && s.Iptal == false);
+            modelBuilder.Entity<Entities.StokCikisDetay>().HasQueryFilter(s => !s.Iptal && (!s.StokFifoID.HasValue || (s.StokFifo != null && !s.StokFifo.Silindi && s.StokFifo.Aktif && !s.StokFifo.Iptal)));
             modelBuilder.Entity<Entities.UrunKategori>().HasQueryFilter(k => k.Silindi == false && k.Aktif == true);
             modelBuilder.Entity<Entities.UrunFiyat>().HasQueryFilter(uf => uf.Silindi == false);
 
@@ -616,6 +638,76 @@ namespace MuhasebeStokWebApp.Data
             // Sorgu filtreleri
             modelBuilder.Entity<Entities.BankaHesapHareket>()
                 .HasQueryFilter(b => !b.Silindi);
+
+            // Fatura - Sozlesme ilişkisini yapılandır - tek yönlü
+            modelBuilder.Entity<Entities.Fatura>()
+                .HasOne(f => f.Sozlesme)
+                .WithMany(s => s.Faturalar)
+                .HasForeignKey(f => f.SozlesmeID)
+                .OnDelete(DeleteBehavior.SetNull);
+                
+            // FaturaAklamaKuyruk konfigürasyonu
+            modelBuilder.Entity<FaturaAklamaKuyruk>()
+                .HasOne(a => a.FaturaDetay)
+                .WithMany()
+                .HasForeignKey(a => a.FaturaKalemID)
+                .OnDelete(DeleteBehavior.NoAction)
+                .IsRequired(false);
+                
+            modelBuilder.Entity<FaturaAklamaKuyruk>()
+                .HasOne(a => a.Urun)
+                .WithMany()
+                .HasForeignKey(a => a.UrunID)
+                .OnDelete(DeleteBehavior.NoAction)
+                .IsRequired(false);
+                
+            modelBuilder.Entity<FaturaAklamaKuyruk>()
+                .HasOne(a => a.Sozlesme)
+                .WithMany(s => s.AklamaKayitlari)
+                .HasForeignKey(a => a.SozlesmeID)
+                .OnDelete(DeleteBehavior.NoAction)
+                .IsRequired(false);
+                
+            // FaturaAklamaKuyruk için diğer yapılandırmalar
+            modelBuilder.Entity<FaturaAklamaKuyruk>()
+                .Property(a => a.Silindi)
+                .HasDefaultValue(false);
+                
+            modelBuilder.Entity<FaturaAklamaKuyruk>()
+                .Property(a => a.Durum)
+                .HasDefaultValue(AklamaDurumu.Bekliyor);
+                
+            modelBuilder.Entity<FaturaAklamaKuyruk>()
+                .Property(a => a.DovizKuru)
+                .HasDefaultValue(1);
+                
+            modelBuilder.Entity<FaturaAklamaKuyruk>()
+                .Property(a => a.ParaBirimi)
+                .HasDefaultValue("TL");
+                
+            // Cari - Sozlesme ilişkisi için IsRequired(false) ayarla
+            modelBuilder.Entity<Entities.Sozlesme>()
+                .HasOne(s => s.Cari)
+                .WithMany()
+                .HasForeignKey(s => s.CariID)
+                .OnDelete(DeleteBehavior.Cascade)
+                .IsRequired(false);
+
+            // StokCikisDetay - StokFifo ilişkisini opsiyonel hale getirme
+            modelBuilder.Entity<Entities.StokCikisDetay>()
+                .HasOne(s => s.StokFifo)
+                .WithMany()
+                .HasForeignKey(s => s.StokFifoID)
+                .OnDelete(DeleteBehavior.SetNull)
+                .IsRequired(false);
+        }
+
+        // GetDbContextOptions metodunu ekle
+        public DbContextOptions<ApplicationDbContext> GetDbContextOptions()
+        {
+            return (DbContextOptions<ApplicationDbContext>)this.GetType()
+                .GetProperty("ContextOptions", System.Reflection.BindingFlags.NonPublic | System.Reflection.BindingFlags.Instance)
+                ?.GetValue(this);
         }
     }
 } 
