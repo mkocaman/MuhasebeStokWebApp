@@ -1979,3 +1979,12 @@ System.InvalidOperationException: Failed to compare two elements in the array.
 2025-04-14 13:35:41.122 +03:00 [INF] Kimlik doğrulanmış kullanıcı: admin
 2025-04-14 13:35:57.207 +03:00 [WRN] Session bulunamadı, kullanıcı giriş yapmamış olabilir
 2025-04-14 13:35:57.207 +03:00 [INF] Kimlik doğrulanmış kullanıcı: admin
+2025-04-14 13:48:25.112 +03:00 [INF] Giriş denemesi: admin
+2025-04-14 13:48:25.241 +03:00 [INF] Kullanıcı başarıyla giriş yaptı: admin
+2025-04-14 13:48:25.243 +03:00 [INF] Session oluşturuldu: UserID=55aa630f-d7c7-4b49-8c13-e87358c90915, UserName=admin
+2025-04-14 13:48:25.243 +03:00 [INF] Yönlendirme adresi: /
+2025-04-14 13:48:25.243 +03:00 [INF] Kullanıcı / adresine yönlendiriliyor
+2025-04-14 13:48:25.319 +03:00 [INF] Aktif session bulundu: UserID=55aa630f-d7c7-4b49-8c13-e87358c90915, UserName=admin
+2025-04-14 13:48:25.319 +03:00 [INF] Kimlik doğrulanmış kullanıcı: admin
+2025-04-14 13:48:38.517 +03:00 [INF] Aktif session bulundu: UserID=55aa630f-d7c7-4b49-8c13-e87358c90915, UserName=admin
+2025-04-14 13:48:38.518 +03:00 [INF] Kimlik doğrulanmış kullanıcı: admin
