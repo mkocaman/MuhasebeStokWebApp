@@ -33,9 +33,8 @@ namespace MuhasebeStokWebApp.Controllers
         // Kategorilerin listelendiği ana sayfa
         public async Task<IActionResult> Index()
         {
-            // Silinmemiş tüm kategorileri getir
+            // Tüm kategorileri getir (silindi=false filtresi kaldırıldı)
             var kategoriler = await _context.UrunKategorileri
-                .Where(k => !k.Silindi)
                 .OrderByDescending(k => k.OlusturmaTarihi)
                 .ToListAsync();
 
@@ -48,7 +47,8 @@ namespace MuhasebeStokWebApp.Controllers
                     KategoriAdi = k.KategoriAdi,
                     Aciklama = k.Aciklama,
                     Aktif = k.Aktif,
-                    OlusturmaTarihi = k.OlusturmaTarihi,
+                    Silindi = k.Silindi,
+                    OlusturmaTarihi = k.OlusturmaTarihi ?? DateTime.MinValue,
                     GuncellemeTarihi = k.GuncellemeTarihi
                 }).ToList()
             };
@@ -82,16 +82,32 @@ namespace MuhasebeStokWebApp.Controllers
                     // Kategoriyi veritabanına ekle ve değişiklikleri kaydet
                     _context.Add(kategori);
                     await _context.SaveChangesAsync();
+            
+                    if (Request.Headers["X-Requested-With"] == "XMLHttpRequest")
+                    {
+                        return Json(new { success = true, message = "Kategori başarıyla oluşturuldu." });
+                    }
+            
                     TempData["Success"] = "Kategori başarıyla oluşturuldu.";
                     return RedirectToAction(nameof(Index));
                 }
                 catch (Exception ex)
                 {
+                    if (Request.Headers["X-Requested-With"] == "XMLHttpRequest")
+                    {
+                        return Json(new { success = false, message = $"Kategori oluşturulurken bir hata oluştu: {ex.Message}" });
+                    }
+            
                     TempData["Error"] = $"Kategori oluşturulurken bir hata oluştu: {ex.Message}";
                 }
             }
             else
             {
+                if (Request.Headers["X-Requested-With"] == "XMLHttpRequest")
+                {
+                    return Json(new { success = false, message = "Kategori oluşturulurken bir hata oluştu: Kategori adı zorunludur." });
+                }
+            
                 TempData["Error"] = "Kategori oluşturulurken bir hata oluştu: Kategori adı zorunludur.";
             }
             return RedirectToAction(nameof(Index));
@@ -118,7 +134,7 @@ namespace MuhasebeStokWebApp.Controllers
                 KategoriAdi = kategori.KategoriAdi,
                 Aciklama = kategori.Aciklama,
                 Aktif = kategori.Aktif,
-                OlusturmaTarihi = kategori.OlusturmaTarihi,
+                OlusturmaTarihi = kategori.OlusturmaTarihi ?? DateTime.MinValue,
                 GuncellemeTarihi = kategori.GuncellemeTarihi
             };
 #pragma warning restore CS8601 // Possible null reference assignment.
@@ -169,6 +185,11 @@ namespace MuhasebeStokWebApp.Controllers
                         
                     if (existingKategori == null)
                     {
+                        if (Request.Headers["X-Requested-With"] == "XMLHttpRequest")
+                        {
+                            return Json(new { success = false, message = "Kategori bulunamadı." });
+                        }
+                        
                         return NotFound();
                     }
 
@@ -180,12 +201,24 @@ namespace MuhasebeStokWebApp.Controllers
 
                     // Değişiklikleri kaydet
                     await _context.SaveChangesAsync();
+            
+                    if (Request.Headers["X-Requested-With"] == "XMLHttpRequest")
+                    {
+                        return Json(new { success = true, message = "Kategori başarıyla güncellendi." });
+                    }
+            
                     TempData["Success"] = "Kategori başarıyla güncellendi.";
+                    return RedirectToAction(nameof(Index));
                 }
                 catch (DbUpdateConcurrencyException)
                 {
                     if (!KategoriExists(model.KategoriID))
                     {
+                        if (Request.Headers["X-Requested-With"] == "XMLHttpRequest")
+                        {
+                            return Json(new { success = false, message = "Kategori bulunamadı." });
+                        }
+                        
                         return NotFound();
                     }
                     else
@@ -195,95 +228,177 @@ namespace MuhasebeStokWebApp.Controllers
                 }
                 catch (Exception ex)
                 {
+                    if (Request.Headers["X-Requested-With"] == "XMLHttpRequest")
+                    {
+                        return Json(new { success = false, message = $"Kategori güncellenirken bir hata oluştu: {ex.Message}" });
+                    }
+            
                     TempData["Error"] = $"Kategori güncellenirken bir hata oluştu: {ex.Message}";
                     return RedirectToAction(nameof(Index));
                 }
-                return RedirectToAction(nameof(Index));
+            }
+
+            if (Request.Headers["X-Requested-With"] == "XMLHttpRequest")
+            {
+                return Json(new { success = false, message = "Geçersiz veri girişi, lütfen formu kontrol ediniz." });
             }
             
-            // Validasyon hataları
-            var errors = ModelState.Values.SelectMany(v => v.Errors).Select(e => e.ErrorMessage);
-            TempData["Error"] = $"Kategori güncellenirken bir hata oluştu: {string.Join(", ", errors)}";
-            return RedirectToAction(nameof(Index));
+            return View(model);
         }
 
-        // Kategori silme işlemi (soft delete)
+        // Kategori silme işlemi
         [HttpPost]
         [ValidateAntiForgeryToken]
         public async Task<IActionResult> Delete(Guid id)
         {
-            // Kategori ve bağlı ürünleri getir
-            var kategori = await _context.UrunKategorileri
-                .Include(k => k.Urunler)
-                .FirstOrDefaultAsync(k => k.KategoriID == id && !k.Silindi);
-                
-            if (kategori == null)
-            {
-                return NotFound();
-            }
-
             try
             {
-                // Eğer kategoriye bağlı ürün varsa, kategoriyi silme, sadece pasife al
-                if (kategori.Urunler.Any())
-                {
-                    // Kategoriyi pasife al
-                    kategori.Aktif = false;
-                    _context.Update(kategori);
-                    await _context.SaveChangesAsync();
+                var kategori = await _context.UrunKategorileri
+                    .FirstOrDefaultAsync(k => k.KategoriID == id && !k.Silindi);
                     
-                    TempData["Warning"] = $"'{kategori.KategoriAdi}' kategorisi pasife alındı. Bu kategori ürünlerde kullanıldığı için tamamen silinemez.";
-                }
-                else
+                if (kategori == null)
                 {
-                    // Eğer kategoriye bağlı ürün yoksa, soft delete yap
-                    kategori.Silindi = true;
-                    kategori.Aktif = false;
-                    _context.Update(kategori);
-                    await _context.SaveChangesAsync();
+                    if (Request.Headers["X-Requested-With"] == "XMLHttpRequest")
+                    {
+                        return Json(new { success = false, message = "Kategori bulunamadı." });
+                    }
                     
-                    TempData["Success"] = $"'{kategori.KategoriAdi}' kategorisi başarıyla silindi.";
+                    return NotFound();
                 }
+
+                // İlişkili ürünler var mı kontrol et
+                var iliskiliUrunSayisi = await _context.Urunler
+                    .CountAsync(u => u.KategoriID == id && !u.Silindi);
+                    
+                if (iliskiliUrunSayisi > 0)
+                {
+                    if (Request.Headers["X-Requested-With"] == "XMLHttpRequest")
+                    {
+                        return Json(new { success = false, message = "Bu kategoriye bağlı ürünler olduğu için silinemez. Önce bu ürünleri başka bir kategoriye taşıyın veya silin." });
+                    }
+                    
+                    TempData["Error"] = "Bu kategoriye bağlı ürünler olduğu için silinemez. Önce bu ürünleri başka bir kategoriye taşıyın veya silin.";
+                    return RedirectToAction(nameof(Index));
+                }
+
+                // Soft delete: Kategorinin 'Silindi' alanını true yap
+                kategori.Silindi = true;
+                kategori.Aktif = false;
+                kategori.GuncellemeTarihi = DateTime.Now;
+                
+                await _context.SaveChangesAsync();
+                
+                if (Request.Headers["X-Requested-With"] == "XMLHttpRequest")
+                {
+                    return Json(new { success = true, message = "Kategori başarıyla silindi." });
+                }
+                
+                TempData["Success"] = "Kategori başarıyla silindi.";
+                return RedirectToAction(nameof(Index));
             }
             catch (Exception ex)
             {
+                if (Request.Headers["X-Requested-With"] == "XMLHttpRequest")
+                {
+                    return Json(new { success = false, message = $"Kategori silinirken bir hata oluştu: {ex.Message}" });
+                }
+                
                 TempData["Error"] = $"Kategori silinirken bir hata oluştu: {ex.Message}";
+                return RedirectToAction(nameof(Index));
             }
-
-            return RedirectToAction(nameof(Index));
         }
 
-        // Pasif kategoriyi aktifleştirme
+        // Kategori aktifleştirme işlemi
         [HttpPost]
         [ValidateAntiForgeryToken]
         public async Task<IActionResult> Activate(Guid id)
         {
-            // Kategori bilgisini getir
-            var kategori = await _context.UrunKategorileri
-                .FirstOrDefaultAsync(k => k.KategoriID == id && !k.Silindi);
-                
-            if (kategori == null)
-            {
-                return NotFound();
-            }
-
             try
             {
-                // Kategoriyi aktif yap
+                var kategori = await _context.UrunKategorileri
+                    .FirstOrDefaultAsync(k => k.KategoriID == id);
+                    
+                if (kategori == null)
+                {
+                    if (Request.Headers["X-Requested-With"] == "XMLHttpRequest")
+                    {
+                        return Json(new { success = false, message = "Kategori bulunamadı." });
+                    }
+                    
+                    return NotFound();
+                }
+
+                // Kategoriyi aktifleştir
                 kategori.Aktif = true;
                 kategori.GuncellemeTarihi = DateTime.Now;
                 
-                _context.Update(kategori);
                 await _context.SaveChangesAsync();
                 
-                TempData["Success"] = $"'{kategori.KategoriAdi}' kategorisi başarıyla aktifleştirildi.";
+                if (Request.Headers["X-Requested-With"] == "XMLHttpRequest")
+                {
+                    return Json(new { success = true, message = "Kategori başarıyla aktifleştirildi." });
+                }
+                
+                TempData["Success"] = "Kategori başarıyla aktifleştirildi.";
+                return RedirectToAction(nameof(Index));
             }
             catch (Exception ex)
             {
+                if (Request.Headers["X-Requested-With"] == "XMLHttpRequest")
+                {
+                    return Json(new { success = false, message = $"Kategori aktifleştirilirken bir hata oluştu: {ex.Message}" });
+                }
+                
                 TempData["Error"] = $"Kategori aktifleştirilirken bir hata oluştu: {ex.Message}";
+                return RedirectToAction(nameof(Index));
             }
+        }
 
-            return RedirectToAction(nameof(Index));
+        // Silinen kategorileri geri getirme işlemi
+        [HttpPost]
+        [ValidateAntiForgeryToken]
+        public async Task<IActionResult> Restore(Guid id)
+        {
+            try
+            {
+                var kategori = await _context.UrunKategorileri
+                    .FirstOrDefaultAsync(k => k.KategoriID == id && k.Silindi);
+                    
+                if (kategori == null)
+                {
+                    if (Request.Headers["X-Requested-With"] == "XMLHttpRequest")
+                    {
+                        return Json(new { success = false, message = "Silinmiş kategori bulunamadı." });
+                    }
+                    
+                    return NotFound();
+                }
+
+                // Kategoriyi geri getir
+                kategori.Silindi = false;
+                kategori.Aktif = true;
+                kategori.GuncellemeTarihi = DateTime.Now;
+                
+                await _context.SaveChangesAsync();
+                
+                if (Request.Headers["X-Requested-With"] == "XMLHttpRequest")
+                {
+                    return Json(new { success = true, message = "Kategori başarıyla geri getirildi." });
+                }
+                
+                TempData["Success"] = "Kategori başarıyla geri getirildi.";
+                return RedirectToAction(nameof(Index));
+            }
+            catch (Exception ex)
+            {
+                if (Request.Headers["X-Requested-With"] == "XMLHttpRequest")
+                {
+                    return Json(new { success = false, message = $"Kategori geri getirilirken bir hata oluştu: {ex.Message}" });
+                }
+                
+                TempData["Error"] = $"Kategori geri getirilirken bir hata oluştu: {ex.Message}";
+                return RedirectToAction(nameof(Index));
+            }
         }
 
         // Kategori mevcut mu kontrolü

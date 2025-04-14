@@ -7,7 +7,7 @@ namespace MuhasebeStokWebApp.Validators
     {
         public CariHareketValidator()
         {
-            RuleFor(x => x.CariId)
+            RuleFor(x => x.CariID)
                 .NotEmpty().WithMessage("Cari seçimi zorunludur.");
                 
             RuleFor(x => x.Tutar)

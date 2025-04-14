@@ -29,24 +29,24 @@ namespace MuhasebeStokWebApp.Services
             {
                 var sistemLogRepository = _unitOfWork.Repository<SistemLog>();
 
-                var ipAdresi = _httpContextAccessor.HttpContext?.Connection?.RemoteIpAddress?.ToString();
+                var ipAdresi = _httpContextAccessor.HttpContext?.Connection?.RemoteIpAddress?.ToString() ?? "Bilinmiyor";
 
                 var log = new SistemLog
                 {
                     LogID = Guid.NewGuid(),
                     LogTuru = "Sistem",
-                    Mesaj = aciklama,
+                    Mesaj = aciklama ?? "Sistem log kaydı",
                     IslemTuru = islemTuru,
                     KayitID = kayitID,
-                    TabloAdi = tabloAdi,
-                    KayitAdi = kayitAdi,
+                    TabloAdi = tabloAdi ?? string.Empty,
+                    KayitAdi = kayitAdi ?? string.Empty,
                     IslemTarihi = DateTime.Now,
-                    Aciklama = aciklama,
+                    Aciklama = aciklama ?? "Sistem log kaydı",
                     KullaniciID = kullaniciID,
-                    KullaniciAdi = kullaniciAdi,
+                    KullaniciAdi = kullaniciAdi ?? "Sistem",
                     IPAdresi = ipAdresi,
                     Basarili = basarili,
-                    HataMesaji = hataMesaji
+                    HataMesaji = hataMesaji ?? (basarili ? "İşlem başarılı" : "İşlem başarısız")
                 };
 
                 await sistemLogRepository.AddAsync(log);
@@ -71,15 +71,16 @@ namespace MuhasebeStokWebApp.Services
                 {
                     LogID = Guid.NewGuid(),
                     LogTuru = "Bilgi",
-                    Mesaj = mesaj,
-                    HataMesaji = detay,
+                    Mesaj = mesaj ?? "Sistem log kaydı",
+                    HataMesaji = detay ?? "İşlem başarılı",
+                    Aciklama = mesaj ?? "Sistem log kaydı",
                     KullaniciAdi = kullaniciAdi,
                     IPAdresi = ipAdresi,
                     IslemTarihi = DateTime.Now,
                     IslemTuru = "Bilgi",
                     Basarili = true,
-                    TabloAdi = "",
-                    KayitAdi = ""
+                    TabloAdi = string.Empty,
+                    KayitAdi = string.Empty
                 };
 
                 var sistemLogRepository = _unitOfWork.Repository<SistemLog>();
@@ -106,15 +107,16 @@ namespace MuhasebeStokWebApp.Services
                 {
                     LogID = Guid.NewGuid(),
                     LogTuru = "Hata",
-                    Mesaj = mesaj,
-                    HataMesaji = detay,
+                    Mesaj = mesaj ?? "Sistem hatası",
+                    HataMesaji = detay ?? "Hata detayı bulunmuyor",
+                    Aciklama = mesaj ?? "Sistem hatası",
                     KullaniciAdi = kullaniciAdi,
                     IPAdresi = ipAdresi,
                     IslemTarihi = DateTime.Now,
                     IslemTuru = "Hata",
                     Basarili = false,
-                    TabloAdi = "",
-                    KayitAdi = ""
+                    TabloAdi = string.Empty,
+                    KayitAdi = string.Empty
                 };
 
                 var sistemLogRepository = _unitOfWork.Repository<SistemLog>();
@@ -136,9 +138,9 @@ namespace MuhasebeStokWebApp.Services
                 kayitID: cariID,
                 tabloAdi: "Cariler",
                 kayitAdi: ad,
-                aciklama: aciklama,
+                aciklama: aciklama ?? $"{ad} adlı cari pasife alındı",
                 kullaniciID: kullaniciID,
-                kullaniciAdi: kullaniciAdi
+                kullaniciAdi: kullaniciAdi ?? "Sistem"
             );
         }
 
@@ -149,9 +151,9 @@ namespace MuhasebeStokWebApp.Services
                 kayitID: cariID,
                 tabloAdi: "Cariler",
                 kayitAdi: ad,
-                aciklama: aciklama,
+                aciklama: aciklama ?? $"{ad} adlı cari aktifleştirildi",
                 kullaniciID: kullaniciID,
-                kullaniciAdi: kullaniciAdi
+                kullaniciAdi: kullaniciAdi ?? "Sistem"
             );
         }
     }

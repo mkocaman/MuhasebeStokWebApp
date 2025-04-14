@@ -772,8 +772,11 @@ namespace MuhasebeStokWebApp.Services.ParaBirimiModulu
                 if (kurDegeri == null)
                     return null;
                 
-                // KurMarj bilgisini al (varsayılan %2)
-                decimal marj = 0.02m; // Varsayılan değer
+                // KurMarj bilgisini al (varsayılan %0.5)
+                decimal marj = 0.005m; // Varsayılan değer
+                
+                // async metod için bir await işlemi ekliyoruz
+                await Task.CompletedTask;
                 
                 // Efektif değerler ihtiyaç duyulduğunda hesaplanacak 
                 // ve entity'de saklanmayacak

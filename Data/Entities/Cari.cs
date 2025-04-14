@@ -17,58 +17,68 @@ namespace MuhasebeStokWebApp.Data.Entities
 
         [Required]
         [StringLength(100)]
-        public string Ad { get; set; }
+        public string Ad { get; set; } = string.Empty;
         
         [StringLength(100)]
         public string? CariUnvani { get; set; }
         
-        [StringLength(50)]
         [Required]
-        public string CariKodu { get; set; }
+        [StringLength(20)]
+        public string CariKodu { get; set; } = string.Empty;
         
+        [Required]
         [StringLength(50)]
         public string CariTipi { get; set; } = "Müşteri";
         
-        [StringLength(11)]
+        [StringLength(20)]
         public string? VergiNo { get; set; }
         
         [StringLength(50)]
         public string? VergiDairesi { get; set; }
         
+        [Required]
         [StringLength(15)]
-        public string Telefon { get; set; }
+        public string Telefon { get; set; } = string.Empty;
         
+        [Required]
         [StringLength(100)]
-        public string Email { get; set; }
+        public string Email { get; set; } = string.Empty;
         
+        [Required]
         [StringLength(50)]
-        public string Yetkili { get; set; }
+        public string Yetkili { get; set; } = string.Empty;
         
         public decimal BaslangicBakiye { get; set; }
         
+        [Required]
         [StringLength(250)]
-        public string Adres { get; set; }
+        public string Adres { get; set; } = string.Empty;
         
         [StringLength(500)]
         public string? Aciklama { get; set; }
         
+        [Required]
         [StringLength(50)]
-        public string Il { get; set; }
+        public string Il { get; set; } = string.Empty;
         
+        [Required]
         [StringLength(50)]
-        public string Ilce { get; set; }
+        public string Ilce { get; set; } = string.Empty;
         
+        [Required]
         [StringLength(10)]
-        public string PostaKodu { get; set; }
+        public string PostaKodu { get; set; } = string.Empty;
         
+        [Required]
         [StringLength(50)]
-        public string Ulke { get; set; }
+        public string Ulke { get; set; } = string.Empty;
         
         [StringLength(100)]
         public string? WebSitesi { get; set; }
         
+        [Required]
         [StringLength(1000)]
-        public string Notlar { get; set; }
+        public string Notlar { get; set; } = string.Empty;
         
         // Cari para birimi alanları
         public Guid? VarsayilanParaBirimiId { get; set; }
@@ -96,35 +106,16 @@ namespace MuhasebeStokWebApp.Data.Entities
         // Navigation properties
         public virtual ICollection<Fatura> Faturalar { get; set; } = new List<Fatura>();
         public virtual ICollection<Irsaliye> Irsaliyeler { get; set; } = new List<Irsaliye>();
-        public virtual ICollection<CariHareket> CariHareketler { get; set; } = null!;
+        public virtual ICollection<CariHareket> CariHareketler { get; set; } = new List<CariHareket>();
         
         // Aşağıdaki koleksiyon DB'de var mı kontrol edip ekleyebilirsiniz
         // Bu koleksiyon sadece detay view'inde kullanılabilir
         [NotMapped]
-        public virtual ICollection<object> SonFaturalar { get; set; } = null!;
+        public virtual ICollection<object> SonFaturalar { get; set; } = new List<object>();
 
         public Cari()
         {
-            // Non-nullable properties için başlangıç değerleri
-            Ad = string.Empty;
-            CariKodu = string.Empty;
-            CariTipi = "Müşteri";
-            VergiNo = string.Empty;
-            VergiDairesi = string.Empty;
-            Telefon = string.Empty;
-            Email = string.Empty;
-            Yetkili = string.Empty;
-            Adres = string.Empty;
-            Aciklama = string.Empty;
-            Il = string.Empty;
-            Ilce = string.Empty;
-            PostaKodu = string.Empty;
-            Ulke = string.Empty;
-            WebSitesi = string.Empty;
-            Notlar = string.Empty;
-            CariHareketler = new List<CariHareket>();
-            SonFaturalar = new List<object>();
-            OlusturmaTarihi = DateTime.Now;
+            // Constructor'ı temizledim çünkü property'lere zaten default değerler atanmış
         }
     }
 

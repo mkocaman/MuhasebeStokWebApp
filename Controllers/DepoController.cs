@@ -51,7 +51,8 @@ namespace MuhasebeStokWebApp.Controllers
                     DepoAdi = d.DepoAdi,
                     Adres = d.Adres,
                     Aktif = d.Aktif,
-                    OlusturmaTarihi = d.OlusturmaTarihi ?? DateTime.MinValue
+                    OlusturmaTarihi = d.OlusturmaTarihi ?? DateTime.MinValue,
+                    Silindi = d.Silindi
                 })
                 .ToListAsync();
 
@@ -127,13 +128,7 @@ namespace MuhasebeStokWebApp.Controllers
                     await _context.SaveChangesAsync();
                     
                     // AJAX isteği için başarılı sonuç döndür
-                    if (Request.Headers["X-Requested-With"] == "XMLHttpRequest")
-                    {
-                        return Json(new { success = true, message = "Depo başarıyla oluşturuldu." });
-                    }
-                    
-                    TempData["SuccessMessage"] = "Depo başarıyla oluşturuldu.";
-                    return RedirectToAction(nameof(Index));
+                    return Json(new { success = true, message = "Depo başarıyla oluşturuldu." });
                 }
 
                 foreach (var state in ModelState)
@@ -145,12 +140,7 @@ namespace MuhasebeStokWebApp.Controllers
                 }
                 
                 // AJAX isteği için hata sonucu döndür
-                if (Request.Headers["X-Requested-With"] == "XMLHttpRequest")
-                {
-                    return Json(new { success = false, message = "Depo oluşturulurken hatalar oluştu.", errors = ModelState.Values.SelectMany(v => v.Errors).Select(e => e.ErrorMessage) });
-                }
-                
-                return PartialView("_CreatePartial", model);
+                return Json(new { success = false, message = "Depo oluşturulurken hatalar oluştu.", errors = ModelState.Values.SelectMany(v => v.Errors).Select(e => e.ErrorMessage) });
             }
             catch (Exception ex)
             {
@@ -158,12 +148,7 @@ namespace MuhasebeStokWebApp.Controllers
                 ModelState.AddModelError("", "Depo oluşturulurken bir hata oluştu. Lütfen tekrar deneyin.");
                 
                 // AJAX isteği için hata sonucu döndür
-                if (Request.Headers["X-Requested-With"] == "XMLHttpRequest")
-                {
-                    return Json(new { success = false, message = "Depo oluşturulurken bir hata oluştu: " + ex.Message });
-                }
-                
-                return PartialView("_CreatePartial", model);
+                return Json(new { success = false, message = "Depo oluşturulurken bir hata oluştu: " + ex.Message });
             }
         }
 
@@ -294,6 +279,38 @@ namespace MuhasebeStokWebApp.Controllers
             
             TempData["SuccessMessage"] = "Depo başarıyla silindi.";
             return RedirectToAction(nameof(Index));
+        }
+
+        // POST: Depo/RestoreDepo
+        [HttpPost]
+        public async Task<IActionResult> RestoreDepo(Guid id)
+        {
+            try
+            {
+                var depo = await _context.Depolar.FindAsync(id);
+                if (depo == null)
+                {
+                    return Json(new { success = false, message = "Depo bulunamadı." });
+                }
+
+                // Depoyu aktif et
+                depo.Aktif = true;
+                depo.GuncellemeTarihi = DateTime.Now;
+                
+                // Güncelleyen kullanıcı ID'sini al
+                var updateUserId = GetCurrentUserId();
+                depo.SonGuncelleyenKullaniciID = updateUserId;
+
+                await _context.SaveChangesAsync();
+                
+                return Json(new { success = true, message = "Depo başarıyla aktif edildi." });
+            }
+            catch (Exception ex)
+            {
+                var message = "Depo aktif edilirken bir hata oluştu.";
+                await _logService.LogErrorAsync(message, ex);
+                return Json(new { success = false, message = message });
+            }
         }
 
         // Depo var mı kontrolü

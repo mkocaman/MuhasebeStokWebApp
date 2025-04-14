@@ -51,7 +51,8 @@ namespace MuhasebeStokWebApp.Controllers
                     BirimID = b.BirimID,
                     BirimAdi = b.BirimAdi,
                     Aciklama = b.Aciklama,
-                    Aktif = b.Aktif
+                    Aktif = b.Aktif,
+                    Silindi = b.Silindi
                 })
                 .ToListAsync();
 
@@ -348,6 +349,38 @@ namespace MuhasebeStokWebApp.Controllers
         {
             // Stub metod, gerçek implementasyona göre doldurulacak
             return Json(new { inUse = false });
+        }
+
+        // Pasife alınan birimleri geri alma işlemi
+        [HttpPost]
+        public async Task<IActionResult> RestoreUnit(Guid id)
+        {
+            try
+            {
+                var birim = await _context.Birimler.FindAsync(id);
+                if (birim == null)
+                {
+                    return Json(new { success = false, message = "Birim bulunamadı." });
+                }
+
+                // Birimi aktif et
+                birim.Aktif = true;
+                birim.GuncellemeTarihi = DateTime.Now;
+                
+                // Güncelleyen kullanıcı ID'sini al
+                var updateUserId = User.FindFirst(System.Security.Claims.ClaimTypes.NameIdentifier)?.Value;
+                birim.SonGuncelleyenKullaniciID = !string.IsNullOrEmpty(updateUserId) ? Guid.Parse(updateUserId) : null;
+
+                await _context.SaveChangesAsync();
+                
+                return Json(new { success = true, message = "Birim başarıyla aktif edildi." });
+            }
+            catch (Exception ex)
+            {
+                var message = "Birim aktif edilirken bir hata oluştu.";
+                await _logService.LogErrorAsync(message, ex);
+                return Json(new { success = false, message = message });
+            }
         }
 
         private bool BirimExists(Guid id)

@@ -15,29 +15,31 @@
             </div>
         </div>
         <div class="card-body">
-            @if (TempData["Success"] != null)
-            {
-                <div class="alert alert-success alert-dismissible fade show" role="alert">
-                    @TempData["Success"]
-                    <button type="button" class="btn-close" data-bs-dismiss="alert" aria-label="Close"></button>
-                </div>
-            }
-            
-            @if (TempData["Error"] != null)
-            {
-                <div class="alert alert-danger alert-dismissible fade show" role="alert">
-                    @TempData["Error"]
-                    <button type="button" class="btn-close" data-bs-dismiss="alert" aria-label="Close"></button>
-                </div>
-            }
-            
-            @if (TempData["Warning"] != null)
-            {
-                <div class="alert alert-warning alert-dismissible fade show" role="alert">
-                    @TempData["Warning"]
-                    <button type="button" class="btn-close" data-bs-dismiss="alert" aria-label="Close"></button>
-                </div>
-            }
+            <div id="alertContainer">
+                @if (TempData["Success"] != null)
+                {
+                    <div class="alert alert-success alert-dismissible fade show" role="alert">
+                        @TempData["Success"]
+                        <button type="button" class="btn-close" data-bs-dismiss="alert" aria-label="Close"></button>
+                    </div>
+                }
+                
+                @if (TempData["Error"] != null)
+                {
+                    <div class="alert alert-danger alert-dismissible fade show" role="alert">
+                        @TempData["Error"]
+                        <button type="button" class="btn-close" data-bs-dismiss="alert" aria-label="Close"></button>
+                    </div>
+                }
+                
+                @if (TempData["Warning"] != null)
+                {
+                    <div class="alert alert-warning alert-dismissible fade show" role="alert">
+                        @TempData["Warning"]
+                        <button type="button" class="btn-close" data-bs-dismiss="alert" aria-label="Close"></button>
+                    </div>
+                }
+            </div>
             
             <!-- Sekme Başlıkları -->
             <ul class="nav nav-tabs mb-3" id="kategoriTabs" role="tablist">
@@ -68,12 +70,12 @@
                                 </tr>
                             </thead>
                             <tbody>
-                                @foreach (var item in Model.Kategoriler.Where(k => k.Aktif))
+                                @foreach (var item in Model.Kategoriler.Where(k => k.Aktif && !k.Silindi))
                                 {
                                     <tr>
                                         <td>@item.KategoriAdi</td>
                                         <td>@item.Aciklama</td>
-                                        <td>@(item.OlusturmaTarihi.HasValue ? item.OlusturmaTarihi.Value.ToString("dd.MM.yyyy HH:mm") : "-")</td>
+                                        <td>@item.OlusturmaTarihi.ToString("dd.MM.yyyy HH:mm")</td>
                                         <td class="text-center">
                                             <div class="btn-group" role="group">
                                                 <button type="button" class="btn btn-sm btn-info" onclick="getEditDetails('@item.KategoriID')">
@@ -103,16 +105,27 @@
                                     <th>Kategori Adı</th>
                                     <th>Açıklama</th>
                                     <th>Oluşturma Tarihi</th>
+                                    <th>Durum</th>
                                     <th>İşlemler</th>
                                 </tr>
                             </thead>
                             <tbody>
-                                @foreach (var item in Model.Kategoriler.Where(k => !k.Aktif))
+                                @foreach (var item in Model.Kategoriler.Where(k => !k.Aktif || k.Silindi))
                                 {
                                     <tr>
                                         <td>@item.KategoriAdi</td>
                                         <td>@item.Aciklama</td>
-                                        <td>@(item.OlusturmaTarihi.HasValue ? item.OlusturmaTarihi.Value.ToString("dd.MM.yyyy HH:mm") : "-")</td>
+                                        <td>@item.OlusturmaTarihi.ToString("dd.MM.yyyy HH:mm")</td>
+                                        <td>
+                                            @if (item.Silindi)
+                                            {
+                                                <span class="badge bg-danger">Silinmiş</span>
+                                            }
+                                            else if (!item.Aktif)
+                                            {
+                                                <span class="badge bg-warning">Pasif</span>
+                                            }
+                                        </td>
                                         <td class="text-center">
                                             <div class="btn-group" role="group">
                                                 <button type="button" class="btn btn-sm btn-info" onclick="getEditDetails('@item.KategoriID')">
@@ -121,12 +134,18 @@
                                                 <button type="button" class="btn btn-sm btn-primary" onclick="getDetails('@item.KategoriID')">
                                                     <i class="fas fa-info-circle"></i>
                                                 </button>
-                                                <button type="button" class="btn btn-sm btn-success" onclick="confirmActivate('@item.KategoriID', '@item.KategoriAdi')">
-                                                    <i class="fas fa-check"></i>
-                                                </button>
-                                                <button type="button" class="btn btn-sm btn-danger" onclick="confirmDelete('@item.KategoriID', '@item.KategoriAdi')">
-                                                    <i class="fas fa-trash"></i>
-                                                </button>
+                                                @if (item.Silindi)
+                                                {
+                                                    <button type="button" class="btn btn-sm btn-success" onclick="confirmRestore('@item.KategoriID', '@item.KategoriAdi')">
+                                                        <i class="fas fa-trash-restore"></i>
+                                                    </button>
+                                                }
+                                                else
+                                                {
+                                                    <button type="button" class="btn btn-sm btn-success" onclick="confirmActivate('@item.KategoriID', '@item.KategoriAdi')">
+                                                        <i class="fas fa-check"></i>
+                                                    </button>
+                                                }
                                             </div>
                                         </td>
                                     </tr>
@@ -167,44 +186,22 @@
     </div>
 </div>
 
-<!-- Silme Onay Modal -->
-<div class="modal fade" id="deleteKategoriModal" tabindex="-1" aria-labelledby="deleteKategoriModalLabel" aria-hidden="true">
-    <div class="modal-dialog">
-        <div class="modal-content">
-            <div class="modal-header bg-danger text-white">
-                <h5 class="modal-title" id="deleteKategoriModalLabel">Kategori Silme Onayı</h5>
-                <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
-            </div>
-            <div class="modal-body">
-                <p id="deleteKategoriMessage"></p>
-            </div>
-            <div class="modal-footer">
-                <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">İptal</button>
-                <form id="deleteKategoriForm" asp-action="Delete" method="post">
-                    <input type="hidden" id="deleteKategoriId" name="id" />
-                    <button type="submit" class="btn btn-danger">Sil</button>
-                </form>
-            </div>
-        </div>
-    </div>
-</div>
-
-<!-- Aktifleştirme Onay Modal -->
-<div class="modal fade" id="activateKategoriModal" tabindex="-1" aria-labelledby="activateKategoriModalLabel" aria-hidden="true">
+<!-- Geri Getirme Onay Modal -->
+<div class="modal fade" id="restoreKategoriModal" tabindex="-1" aria-labelledby="restoreKategoriModalLabel" aria-hidden="true">
     <div class="modal-dialog">
         <div class="modal-content">
             <div class="modal-header bg-success text-white">
-                <h5 class="modal-title" id="activateKategoriModalLabel">Kategori Aktifleştirme Onayı</h5>
+                <h5 class="modal-title" id="restoreKategoriModalLabel">Kategori Geri Getirme Onayı</h5>
                 <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
             </div>
             <div class="modal-body">
-                <p id="activateKategoriMessage"></p>
+                <p id="restoreKategoriMessage"></p>
             </div>
             <div class="modal-footer">
                 <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">İptal</button>
-                <form id="activateKategoriForm" asp-action="Activate" method="post">
-                    <input type="hidden" id="activateKategoriId" name="id" />
-                    <button type="submit" class="btn btn-success">Aktifleştir</button>
+                <form id="restoreKategoriForm" asp-action="Restore" method="post">
+                    <input type="hidden" id="restoreKategoriId" name="id" />
+                    <button type="submit" class="btn btn-success">Geri Getir</button>
                 </form>
             </div>
         </div>
@@ -220,7 +217,7 @@
                     url: '/js/dataTables.turkish.json'
                 },
                 responsive: true,
-                order: [[0, 'asc']]
+                order: [[2, 'desc']] // Oluşturma tarihine göre sırala
             });
             
             $('#pasifKategoriTable').DataTable({
@@ -228,42 +225,178 @@
                     url: '/js/dataTables.turkish.json'
                 },
                 responsive: true,
-                order: [[0, 'asc']]
+                order: [[2, 'desc']] // Oluşturma tarihine göre sırala
             });
             
-            // Form submit işlemleri
+            // Auto-disappearing alerts
+            setTimeout(function () {
+                $('.alert').fadeOut('slow');
+            }, 5000);
+            
+            // Form gönderimlerini AJAX ile yap
             $('#createKategoriForm').on('submit', function (e) {
                 e.preventDefault();
                 
                 $.ajax({
                     url: $(this).attr('action'),
-                    type: $(this).attr('method'),
+                    type: 'POST',
                     data: $(this).serialize(),
-                    success: function (result) {
-                        $('#createKategoriModal').modal('hide');
-                        location.reload();
+                    success: function (data) {
+                        if (data.success) {
+                            // Başarılı sonuç
+                            Swal.fire({
+                                icon: 'success',
+                                title: 'Başarılı!',
+                                text: data.message,
+                                confirmButtonText: 'Tamam'
+                            }).then(() => {
+                                // Modal'ı kapat ve sayfayı yenile
+                                $('#createKategoriModal').modal('hide');
+                                location.reload();
+                            });
+                        } else {
+                            // Hata mesajı
+                            Swal.fire({
+                                icon: 'error',
+                                title: 'Hata!',
+                                text: data.message,
+                                confirmButtonText: 'Tamam'
+                            });
+                        }
                     },
-                    error: function (xhr, status, error) {
-                        console.error(error);
-                        alert('Kategori eklenirken bir hata oluştu.');
+                    error: function () {
+                        Swal.fire({
+                            icon: 'error',
+                            title: 'Hata!',
+                            text: 'İşlem sırasında bir hata oluştu.',
+                            confirmButtonText: 'Tamam'
+                        });
                     }
                 });
             });
             
-            $('#editKategoriForm').on('submit', function (e) {
+            // Silme formları için AJAX
+            $('#deleteKategoriForm').on('submit', function (e) {
                 e.preventDefault();
                 
                 $.ajax({
                     url: $(this).attr('action'),
-                    type: $(this).attr('method'),
+                    type: 'POST',
                     data: $(this).serialize(),
-                    success: function (result) {
-                        $('#editKategoriModal').modal('hide');
-                        location.reload();
+                    success: function (data) {
+                        if (data.success) {
+                            // Başarılı sonuç
+                            Swal.fire({
+                                icon: 'success',
+                                title: 'Başarılı!',
+                                text: data.message,
+                                confirmButtonText: 'Tamam'
+                            }).then(() => {
+                                // Modal'ı kapat ve sayfayı yenile
+                                $('#deleteKategoriModal').modal('hide');
+                                location.reload();
+                            });
+                        } else {
+                            // Hata mesajı
+                            Swal.fire({
+                                icon: 'error',
+                                title: 'Hata!',
+                                text: data.message,
+                                confirmButtonText: 'Tamam'
+                            });
+                        }
                     },
-                    error: function (xhr, status, error) {
-                        console.error(error);
-                        alert('Kategori güncellenirken bir hata oluştu.');
+                    error: function () {
+                        Swal.fire({
+                            icon: 'error',
+                            title: 'Hata!',
+                            text: 'İşlem sırasında bir hata oluştu.',
+                            confirmButtonText: 'Tamam'
+                        });
+                    }
+                });
+            });
+            
+            // Aktifleştirme formları için AJAX
+            $('#activateKategoriForm').on('submit', function (e) {
+                e.preventDefault();
+                
+                $.ajax({
+                    url: $(this).attr('action'),
+                    type: 'POST',
+                    data: $(this).serialize(),
+                    success: function (data) {
+                        if (data.success) {
+                            // Başarılı sonuç
+                            Swal.fire({
+                                icon: 'success',
+                                title: 'Başarılı!',
+                                text: data.message,
+                                confirmButtonText: 'Tamam'
+                            }).then(() => {
+                                // Modal'ı kapat ve sayfayı yenile
+                                $('#activateKategoriModal').modal('hide');
+                                location.reload();
+                            });
+                        } else {
+                            // Hata mesajı
+                            Swal.fire({
+                                icon: 'error',
+                                title: 'Hata!',
+                                text: data.message,
+                                confirmButtonText: 'Tamam'
+                            });
+                        }
+                    },
+                    error: function () {
+                        Swal.fire({
+                            icon: 'error',
+                            title: 'Hata!',
+                            text: 'İşlem sırasında bir hata oluştu.',
+                            confirmButtonText: 'Tamam'
+                        });
+                    }
+                });
+            });
+            
+            // Geri getirme formları için AJAX
+            $('#restoreKategoriForm').on('submit', function (e) {
+                e.preventDefault();
+                
+                $.ajax({
+                    url: $(this).attr('action'),
+                    type: 'POST',
+                    data: $(this).serialize(),
+                    success: function (data) {
+                        if (data.success) {
+                            // Başarılı sonuç
+                            Swal.fire({
+                                icon: 'success',
+                                title: 'Başarılı!',
+                                text: data.message,
+                                confirmButtonText: 'Tamam'
+                            }).then(() => {
+                                // Modal'ı kapat ve sayfayı yenile
+                                $('#restoreKategoriModal').modal('hide');
+                                location.reload();
+                            });
+                        } else {
+                            // Hata mesajı
+                            Swal.fire({
+                                icon: 'error',
+                                title: 'Hata!',
+                                text: data.message,
+                                confirmButtonText: 'Tamam'
+                            });
+                        }
+                    },
+                    error: function () {
+                        Swal.fire({
+                            icon: 'error',
+                            title: 'Hata!',
+                            text: 'İşlem sırasında bir hata oluştu.',
+                            confirmButtonText: 'Tamam'
+                        });
                     }
                 });
             });
@@ -274,79 +407,119 @@
             $.ajax({
                 url: '@Url.Action("Details", "UrunKategori")/' + id,
                 type: 'GET',
-                success: function (result) {
-                    $('#detailsKategoriContent').html(
-                        `<div class="modal-header">
-                            <h5 class="modal-title">Kategori Detayları</h5>
-                            <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
-                        </div>
-                        <div class="modal-body">
-                            <div class="row mb-2">
-                                <div class="col-md-4 fw-bold">Kategori Adı:</div>
-                                <div class="col-md-8">${result.kategoriAdi}</div>
-                            </div>
-                            <div class="row mb-2">
-                                <div class="col-md-4 fw-bold">Açıklama:</div>
-                                <div class="col-md-8">${result.aciklama || '-'}</div>
-                            </div>
-                            <div class="row mb-2">
-                                <div class="col-md-4 fw-bold">Durum:</div>
-                                <div class="col-md-8">
-                                    ${result.aktif 
-                                        ? '<span class="badge bg-success">Aktif</span>' 
-                                        : '<span class="badge bg-danger">Pasif</span>'}
-                                </div>
-                            </div>
-                            <div class="row mb-2">
-                                <div class="col-md-4 fw-bold">Oluşturma Tarihi:</div>
-                                <div class="col-md-8">${result.olusturmaTarihi ? new Date(result.olusturmaTarihi).toLocaleString('tr-TR') : '-'}</div>
-                            </div>
-                            <div class="row mb-2">
-                                <div class="col-md-4 fw-bold">Güncelleme Tarihi:</div>
-                                <div class="col-md-8">${result.guncellemeTarihi ? new Date(result.guncellemeTarihi).toLocaleString('tr-TR') : '-'}</div>
-                            </div>
-                        </div>
-                        <div class="modal-footer">
-                            <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Kapat</button>
-                        </div>`
-                    );
+                success: function (data) {
+                    var html = '<div class="modal-header bg-primary text-white">';
+                    html += '<h5 class="modal-title">Kategori Detayları</h5>';
+                    html += '<button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>';
+                    html += '</div>';
+                    html += '<div class="modal-body">';
+                    html += '<div class="mb-3"><strong>Kategori Adı:</strong> ' + data.kategoriAdi + '</div>';
+                    html += '<div class="mb-3"><strong>Açıklama:</strong> ' + (data.aciklama || '-') + '</div>';
+                    html += '<div class="mb-3"><strong>Durum:</strong> ' + (data.aktif ? '<span class="badge bg-success">Aktif</span>' : '<span class="badge bg-danger">Pasif</span>') + '</div>';
+                    html += '<div class="mb-3"><strong>Oluşturma Tarihi:</strong> ' + new Date(data.olusturmaTarihi).toLocaleString() + '</div>';
+                    if (data.guncellemeTarihi) {
+                        html += '<div class="mb-3"><strong>Güncelleme Tarihi:</strong> ' + new Date(data.guncellemeTarihi).toLocaleString() + '</div>';
+                    }
+                    html += '</div>';
+                    html += '<div class="modal-footer">';
+                    html += '<button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Kapat</button>';
+                    html += '</div>';
+                    
+                    $('#detailsKategoriContent').html(html);
                     $('#detailsKategoriModal').modal('show');
                 },
-                error: function (xhr, status, error) {
-                    console.error(error);
-                    alert('Kategori detayları alınırken bir hata oluştu.');
+                error: function () {
+                    Swal.fire({
+                        icon: 'error',
+                        title: 'Hata!',
+                        text: 'Kategori detayları yüklenirken bir hata oluştu.',
+                        confirmButtonText: 'Tamam'
+                    });
                 }
             });
         }
         
-        // Kategori düzenleme formunu getir
+        // Kategori düzenleme detaylarını getir
         function getEditDetails(id) {
             $.ajax({
                 url: '@Url.Action("Edit", "UrunKategori")/' + id,
                 type: 'GET',
-                success: function (result) {
-                    $('#editKategoriContent').html(result);
+                success: function (data) {
+                    $('#editKategoriContent').html(data);
                     $('#editKategoriModal').modal('show');
+                    
+                    // Form gönderimini AJAX ile yap
+                    $('#editKategoriForm').on('submit', function (e) {
+                        e.preventDefault();
+                        
+                        $.ajax({
+                            url: $(this).attr('action'),
+                            type: 'POST',
+                            data: $(this).serialize(),
+                            success: function (data) {
+                                if (data.success) {
+                                    // Başarılı sonuç
+                                    Swal.fire({
+                                        icon: 'success',
+                                        title: 'Başarılı!',
+                                        text: data.message,
+                                        confirmButtonText: 'Tamam'
+                                    }).then(() => {
+                                        // Modal'ı kapat ve sayfayı yenile
+                                        $('#editKategoriModal').modal('hide');
+                                        location.reload();
+                                    });
+                                } else {
+                                    // Hata mesajı
+                                    Swal.fire({
+                                        icon: 'error',
+                                        title: 'Hata!',
+                                        text: data.message,
+                                        confirmButtonText: 'Tamam'
+                                    });
+                                }
+                            },
+                            error: function () {
+                                Swal.fire({
+                                    icon: 'error',
+                                    title: 'Hata!',
+                                    text: 'İşlem sırasında bir hata oluştu.',
+                                    confirmButtonText: 'Tamam'
+                                });
+                            }
+                        });
+                    });
                 },
-                error: function (xhr, status, error) {
-                    console.error(error);
-                    alert('Kategori düzenleme formu alınırken bir hata oluştu.');
+                error: function () {
+                    Swal.fire({
+                        icon: 'error',
+                        title: 'Hata!',
+                        text: 'Kategori düzenleme formu yüklenirken bir hata oluştu.',
+                        confirmButtonText: 'Tamam'
+                    });
                 }
             });
         }
         
-        // Silme onayı
+        // Silme onayı göster
         function confirmDelete(id, name) {
             $('#deleteKategoriId').val(id);
-            $('#deleteKategoriMessage').text(`"${name}" kategorisini silmek istediğinize emin misiniz? Bu işlem geri alınamaz.`);
+            $('#deleteKategoriMessage').text(`"${name}" kategorisini silmek istediğinize emin misiniz?`);
             $('#deleteKategoriModal').modal('show');
         }
         
-        // Aktifleştirme onayı
+        // Aktifleştirme onayı göster
         function confirmActivate(id, name) {
             $('#activateKategoriId').val(id);
             $('#activateKategoriMessage').text(`"${name}" kategorisini aktifleştirmek istediğinize emin misiniz?`);
             $('#activateKategoriModal').modal('show');
+        }
+        
+        // Geri getirme onayı göster
+        function confirmRestore(id, name) {
+            $('#restoreKategoriId').val(id);
+            $('#restoreKategoriMessage').text(`"${name}" kategorisini geri getirmek istediğinize emin misiniz?`);
+            $('#restoreKategoriModal').modal('show');
         }
     </script>
 } 

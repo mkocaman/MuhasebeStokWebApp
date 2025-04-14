@@ -41,6 +41,9 @@ namespace MuhasebeStokWebApp.Data.Entities
         [Column(TypeName = "decimal(18,2)")]
         public decimal? GenelToplam { get; set; }
         
+        [Column(TypeName = "decimal(18,2)")]
+        public decimal? OdenenTutar { get; set; } = 0;
+        
         // Dövizli toplam değerler (seçilen para biriminde)
         [Column(TypeName = "decimal(18,2)")]
         public decimal? AraToplamDoviz { get; set; }
@@ -69,6 +72,10 @@ namespace MuhasebeStokWebApp.Data.Entities
         
         [StringLength(10)]
         public string DovizTuru { get; set; } = "USD";
+        
+        // Para birimi
+        [StringLength(10)]
+        public string ParaBirimi { get; set; } = "USD";
         
         [Column(TypeName = "decimal(18,4)")]
         public decimal? DovizKuru { get; set; } = 1;
@@ -115,6 +122,7 @@ namespace MuhasebeStokWebApp.Data.Entities
             OdemeDurumu = "";
             FaturaNotu = "";
             DovizTuru = "USD";
+            ParaBirimi = "USD";
             DovizKuru = 1;
             OlusturmaTarihi = DateTime.Now;
             Silindi = false;

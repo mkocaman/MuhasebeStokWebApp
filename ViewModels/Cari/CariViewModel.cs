@@ -11,31 +11,31 @@ namespace MuhasebeStokWebApp.ViewModels.Cari
         
         [Display(Name = "Cari Adı")]
         [Required(ErrorMessage = "Cari adı zorunludur.")]
-        public string CariAdi { get; set; }
+        public required string CariAdi { get; set; }
         
         [Display(Name = "Vergi No")]
         [Required(ErrorMessage = "Vergi numarası zorunludur.")]
-        public string VergiNo { get; set; }
+        public required string VergiNo { get; set; }
         
         [Display(Name = "Telefon")]
         [Required(ErrorMessage = "Telefon numarası zorunludur.")]
-        public string Telefon { get; set; }
+        public required string Telefon { get; set; }
         
         [Display(Name = "E-posta")]
         [Required(ErrorMessage = "E-posta adresi zorunludur.")]
-        public string Email { get; set; }
+        public required string Email { get; set; }
         
         [Display(Name = "Adres")]
         [Required(ErrorMessage = "Adres zorunludur.")]
-        public string Adres { get; set; }
+        public required string Adres { get; set; }
         
         [Display(Name = "Yetkili")]
         [Required(ErrorMessage = "Yetkili adı zorunludur.")]
-        public string Yetkili { get; set; }
+        public required string Yetkili { get; set; }
         
         [Display(Name = "Açıklama")]
         [Required(ErrorMessage = "Açıklama zorunludur.")]
-        public string Aciklama { get; set; }
+        public required string Aciklama { get; set; }
         
         [Display(Name = "Aktif")]
         public bool Aktif { get; set; }

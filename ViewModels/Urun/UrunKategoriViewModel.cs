@@ -11,11 +11,11 @@ namespace MuhasebeStokWebApp.ViewModels.Urun
         [Required(ErrorMessage = "Kategori adı zorunludur.")]
         [StringLength(100, ErrorMessage = "Kategori adı en fazla 100 karakter olabilir.")]
         [Display(Name = "Kategori Adı")]
-        public string KategoriAdi { get; set; }
+        public required string KategoriAdi { get; set; }
         
         [StringLength(500, ErrorMessage = "Açıklama en fazla 500 karakter olabilir.")]
         [Display(Name = "Açıklama")]
-        public string Aciklama { get; set; }
+        public string? Aciklama { get; set; }
         
         [Display(Name = "Aktif")]
         public bool Aktif { get; set; }
@@ -29,7 +29,7 @@ namespace MuhasebeStokWebApp.ViewModels.Urun
     
     public class UrunKategoriListViewModel
     {
-        public List<UrunKategoriViewModel> Kategoriler { get; set; }
+        public List<UrunKategoriViewModel> Kategoriler { get; set; } = new List<UrunKategoriViewModel>();
     }
     
     public class UrunKategoriCreateViewModel
@@ -37,11 +37,11 @@ namespace MuhasebeStokWebApp.ViewModels.Urun
         [Required(ErrorMessage = "Kategori adı zorunludur.")]
         [StringLength(100, ErrorMessage = "Kategori adı en fazla 100 karakter olabilir.")]
         [Display(Name = "Kategori Adı")]
-        public string KategoriAdi { get; set; }
+        public required string KategoriAdi { get; set; }
         
         [StringLength(500, ErrorMessage = "Açıklama en fazla 500 karakter olabilir.")]
         [Display(Name = "Açıklama")]
-        public string Aciklama { get; set; }
+        public string? Aciklama { get; set; }
         
         [Display(Name = "Aktif")]
         public bool Aktif { get; set; } = true;
@@ -54,11 +54,11 @@ namespace MuhasebeStokWebApp.ViewModels.Urun
         [Required(ErrorMessage = "Kategori adı zorunludur.")]
         [StringLength(100, ErrorMessage = "Kategori adı en fazla 100 karakter olabilir.")]
         [Display(Name = "Kategori Adı")]
-        public string KategoriAdi { get; set; }
+        public required string KategoriAdi { get; set; }
         
         [StringLength(500, ErrorMessage = "Açıklama en fazla 500 karakter olabilir.")]
         [Display(Name = "Açıklama")]
-        public string Aciklama { get; set; }
+        public string? Aciklama { get; set; }
         
         [Display(Name = "Aktif")]
         public bool Aktif { get; set; }

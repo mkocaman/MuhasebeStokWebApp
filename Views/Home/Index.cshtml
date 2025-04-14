@@ -2,6 +2,7 @@
 @{
     ViewData["Title"] = "Anasayfa";
     ViewData["ActiveMenu"] = "Anasayfa";
+    string paraBirimi = ViewBag.ParaBirimi ?? "TL"; // Varsayılan para birimi
 }
 
 @if (!string.IsNullOrEmpty(ViewBag.ErrorMessage))
@@ -20,7 +21,7 @@
                     <div class="d-flex align-items-center">
                         <div class="flex-grow-1">
                             <h6 class="text-muted mb-2">Toplam Gelir</h6>
-                            <h4 class="mb-0">@((ViewBag.TotalRevenue != null ? Convert.ToDecimal(ViewBag.TotalRevenue) : 0).ToString("N2")) TL</h4>
+                            <h4 class="mb-0">@((ViewBag.TotalRevenue != null ? Convert.ToDecimal(ViewBag.TotalRevenue) : 0).ToString("N2")) $</h4>
                         </div>
                         <div class="avatar">
                             <div class="avatar-title rounded bg-light-primary">
@@ -37,7 +38,7 @@
                     <div class="d-flex align-items-center">
                         <div class="flex-grow-1">
                             <h6 class="text-muted mb-2">Toplam Gider</h6>
-                            <h4 class="mb-0">@((ViewBag.TotalExpense != null ? Convert.ToDecimal(ViewBag.TotalExpense) : 0).ToString("N2")) TL</h4>
+                            <h4 class="mb-0">@((ViewBag.TotalExpense != null ? Convert.ToDecimal(ViewBag.TotalExpense) : 0).ToString("N2")) $</h4>
                         </div>
                         <div class="avatar">
                             <div class="avatar-title rounded bg-light-danger">
@@ -54,7 +55,7 @@
                     <div class="d-flex align-items-center">
                         <div class="flex-grow-1">
                             <h6 class="text-muted mb-2">Net Kar</h6>
-                            <h4 class="mb-0">@(((ViewBag.TotalRevenue != null ? Convert.ToDecimal(ViewBag.TotalRevenue) : 0) - (ViewBag.TotalExpense != null ? Convert.ToDecimal(ViewBag.TotalExpense) : 0)).ToString("N2")) TL</h4>
+                            <h4 class="mb-0">@(((ViewBag.TotalRevenue != null ? Convert.ToDecimal(ViewBag.TotalRevenue) : 0) - (ViewBag.TotalExpense != null ? Convert.ToDecimal(ViewBag.TotalExpense) : 0)).ToString("N2")) $</h4>
                         </div>
                         <div class="avatar">
                             <div class="avatar-title rounded bg-light-success">
@@ -84,7 +85,35 @@
         </div>
     </div>
 
-    <!-- Grafikler -->
+    <!-- Kur Bilgisi Kartı -->
+    <div class="row mb-4">
+        <div class="col-12">
+            <div class="card">
+                <div class="card-header">
+                    <h5>Güncel Döviz Kurları</h5>
+                </div>
+                <div class="card-body">
+                    <div class="alert alert-info">
+                        <div class="row">
+                            <div class="col-md-6">
+                                <p class="mb-0"><strong>Not:</strong> Tüm finansal veriler USD ($) cinsinden gösterilmektedir.</p>
+                            </div>
+                            <div class="col-md-6 text-end">
+                                <p class="mb-0">
+                                    Güncel Kurlar: 1 $ = 
+                                    <strong>@((1/Convert.ToDecimal(ViewBag.TryToUsdKur)).ToString("N2")) TL</strong>, 
+                                    1 $ = 
+                                    <strong>@((1/Convert.ToDecimal(ViewBag.UzsToUsdKur)).ToString("N4")) UZS</strong>
+                                </p>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- Grafik Kartları - 1. Satır -->
     <div class="row">
         <!-- Aylık Gelir-Gider Grafiği -->
         <div class="col-xl-8">
@@ -111,6 +140,7 @@
         </div>
     </div>
 
+    <!-- Grafik Kartları - 2. Satır -->
     <div class="row">
         <!-- Son 6 Ay Trendi -->
         <div class="col-xl-8">
@@ -147,7 +177,7 @@
                                     {
                                         <tr>
                                             <td>@product.ProductName</td>
-                                            <td>@product.TotalSales.ToString("N2") TL</td>
+                                            <td>@product.TotalSales.ToString("N2") $</td>
                                             <td>@product.TotalQuantity.ToString("N2")</td>
                                         </tr>
                                     }
@@ -161,6 +191,80 @@
                             </tbody>
                         </table>
                     </div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- Grafik Kartları - 3. Satır (Yeni Eklenen) -->
+    <div class="row">
+        <!-- Kasa ve Banka Hesapları Toplam Bakiye -->
+        <div class="col-xl-6">
+            <div class="card">
+                <div class="card-header">
+                    <h5>Kasa ve Banka Hesapları Bakiyeleri</h5>
+                </div>
+                <div class="card-body">
+                    <canvas id="kasaBankaChart"></canvas>
+                </div>
+            </div>
+        </div>
+
+        <!-- Açık Alacak ve Borç Tutarları -->
+        <div class="col-xl-6">
+            <div class="card">
+                <div class="card-header">
+                    <h5>Açık Alacak ve Borç Tutarları</h5>
+                </div>
+                <div class="card-body">
+                    <div class="row">
+                        <div class="col-md-6">
+                            <div class="card bg-light-primary border-0">
+                                <div class="card-body text-center">
+                                    <h6 class="text-muted">Açık Alacak</h6>
+                                    <h3>@((ViewBag.AcikAlacakTutari != null ? Convert.ToDecimal(ViewBag.AcikAlacakTutari) : 0).ToString("N2")) $</h3>
+                                </div>
+                            </div>
+                        </div>
+                        <div class="col-md-6">
+                            <div class="card bg-light-danger border-0">
+                                <div class="card-body text-center">
+                                    <h6 class="text-muted">Açık Borç</h6>
+                                    <h3>@((ViewBag.AcikBorcTutari != null ? Convert.ToDecimal(ViewBag.AcikBorcTutari) : 0).ToString("N2")) $</h3>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                    <div class="mt-4">
+                        <canvas id="alacakYaslandirmaChart"></canvas>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- Grafik Kartları - 4. Satır (Yeni Eklenen) -->
+    <div class="row">
+        <!-- Nakit Akış Projeksiyonu -->
+        <div class="col-xl-6">
+            <div class="card">
+                <div class="card-header">
+                    <h5>Nakit Akış Projeksiyonu (Gelecek 3 Ay)</h5>
+                </div>
+                <div class="card-body">
+                    <canvas id="nakitAkisChart"></canvas>
+                </div>
+            </div>
+        </div>
+
+        <!-- En Çok Satılan Ürünler Grafiği -->
+        <div class="col-xl-6">
+            <div class="card">
+                <div class="card-header">
+                    <h5>En Çok Satılan Ürünler (Son 30 Gün)</h5>
+                </div>
+                <div class="card-body">
+                    <canvas id="enCokSatilanChart"></canvas>
                 </div>
             </div>
         </div>
@@ -190,6 +294,48 @@
         var trendRevenues = safeJsonParse('@Html.Raw(Json.Serialize(ViewBag.TrendRevenues))', []);
         var trendExpenses = safeJsonParse('@Html.Raw(Json.Serialize(ViewBag.TrendExpenses))', []);
         
+        // Yeni grafik verilerini al
+        var kasaBankaLabels = safeJsonParse('@Html.Raw(Json.Serialize(ViewBag.KasaBankaLabels))', []);
+        var kasaBankaBakiyeleri = safeJsonParse('@Html.Raw(Json.Serialize(ViewBag.KasaBankaBakiyeleri))', []);
+        var alacakYaslari = safeJsonParse('@Html.Raw(Json.Serialize(ViewBag.AlacakYaslari))', []);
+        var alacakYaslariMiktarlari = safeJsonParse('@Html.Raw(Json.Serialize(ViewBag.AlacakYaslariMiktarlari))', []);
+        var nakitAkisProjAylar = safeJsonParse('@Html.Raw(Json.Serialize(ViewBag.NakitAkisProjAylar))', []);
+        var nakitAkisProj = safeJsonParse('@Html.Raw(Json.Serialize(ViewBag.NakitAkisProj))', []);
+        var enCokSatilanUrunler = safeJsonParse('@Html.Raw(Json.Serialize(ViewBag.EnCokSatilanUrunler))', []);
+        var enCokSatilanUrunMiktarlari = safeJsonParse('@Html.Raw(Json.Serialize(ViewBag.EnCokSatilanUrunMiktarlari))', []);
+        
+        // CHART.JS RENKLERİ
+        const chartColors = {
+            primary: '#4CAF50',
+            secondary: '#2196F3',
+            success: '#00C851',
+            danger: '#F44336',
+            warning: '#FFC107',
+            info: '#33B5E5',
+            purple: '#9C27B0',
+            pink: '#E91E63',
+            indigo: '#3F51B5',
+            teal: '#009688',
+            orange: '#FF5722',
+            brown: '#795548',
+            gray: '#607D8B'
+        };
+        
+        // Bir renk paleti oluşturma fonksiyonu
+        function generateColorPalette(count) {
+            const colors = Object.values(chartColors);
+            let palette = [];
+            for (let i = 0; i < count; i++) {
+                palette.push(colors[i % colors.length]);
+            }
+            return palette;
+        }
+        
+        // Para birimi formatı
+        function formatCurrency(value) {
+            return value.toLocaleString('tr-TR', { style: 'currency', currency: 'USD' });
+        }
+        
         // Aylık Gelir-Gider Grafiği
         var monthlyCtx = document.getElementById('monthlyChart').getContext('2d');
         new Chart(monthlyCtx, {
@@ -199,13 +345,17 @@
                 datasets: [{
                     label: 'Gelir',
                     data: revenues,
-                    borderColor: '#4CAF50',
-                    tension: 0.1
+                    borderColor: chartColors.primary,
+                    backgroundColor: chartColors.primary + '33',
+                    tension: 0.1,
+                    fill: true
                 }, {
                     label: 'Gider',
                     data: expenses,
-                    borderColor: '#F44336',
-                    tension: 0.1
+                    borderColor: chartColors.danger,
+                    backgroundColor: chartColors.danger + '33',
+                    tension: 0.1,
+                    fill: true
                 }]
             },
             options: {
@@ -220,7 +370,7 @@
                         beginAtZero: true,
                         ticks: {
                             callback: function(value) {
-                                return value.toLocaleString('tr-TR', { style: 'currency', currency: 'TRY' });
+                                return formatCurrency(value);
                             }
                         }
                     }
@@ -236,15 +386,7 @@
                 labels: categories,
                 datasets: [{
                     data: categoryRevenues,
-                    backgroundColor: [
-                        '#4CAF50',
-                        '#2196F3',
-                        '#FFC107',
-                        '#9C27B0',
-                        '#FF5722',
-                        '#795548',
-                        '#607D8B'
-                    ]
+                    backgroundColor: generateColorPalette(categories.length)
                 }]
             },
             options: {
@@ -252,6 +394,15 @@
                 plugins: {
                     legend: {
                         position: 'right',
+                    },
+                    tooltip: {
+                        callbacks: {
+                            label: function(context) {
+                                let label = context.label || '';
+                                let value = context.raw || 0;
+                                return label + ': ' + formatCurrency(value);
+                            }
+                        }
                     }
                 }
             }
@@ -266,11 +417,11 @@
                 datasets: [{
                     label: 'Gelir',
                     data: trendRevenues,
-                    backgroundColor: '#4CAF50'
+                    backgroundColor: chartColors.primary
                 }, {
                     label: 'Gider',
                     data: trendExpenses,
-                    backgroundColor: '#F44336'
+                    backgroundColor: chartColors.danger
                 }]
             },
             options: {
@@ -285,9 +436,166 @@
                         beginAtZero: true,
                         ticks: {
                             callback: function(value) {
-                                return value.toLocaleString('tr-TR', { style: 'currency', currency: 'TRY' });
+                                return formatCurrency(value);
                             }
                         }
+                    }
+                }
+            }
+        });
+        
+        // Kasa ve Banka Bakiyeleri Grafiği
+        var kasaBankaCtx = document.getElementById('kasaBankaChart').getContext('2d');
+        new Chart(kasaBankaCtx, {
+            type: 'bar',
+            data: {
+                labels: kasaBankaLabels,
+                datasets: [{
+                    label: 'Bakiye',
+                    data: kasaBankaBakiyeleri,
+                    backgroundColor: generateColorPalette(kasaBankaLabels.length)
+                }]
+            },
+            options: {
+                responsive: true,
+                indexAxis: 'y',
+                plugins: {
+                    legend: {
+                        display: false
+                    },
+                    tooltip: {
+                        callbacks: {
+                            label: function(context) {
+                                let value = context.raw || 0;
+                                return formatCurrency(value);
+                            }
+                        }
+                    }
+                },
+                scales: {
+                    x: {
+                        beginAtZero: true,
+                        ticks: {
+                            callback: function(value) {
+                                return formatCurrency(value);
+                            }
+                        }
+                    }
+                }
+            }
+        });
+        
+        // Alacak Yaşlandırma Grafiği
+        var alacakYaslandirmaCtx = document.getElementById('alacakYaslandirmaChart').getContext('2d');
+        new Chart(alacakYaslandirmaCtx, {
+            type: 'bar',
+            data: {
+                labels: alacakYaslari,
+                datasets: [{
+                    label: 'Vadesi Geçmiş Alacaklar',
+                    data: alacakYaslariMiktarlari,
+                    backgroundColor: [
+                        chartColors.success,
+                        chartColors.warning,
+                        chartColors.orange,
+                        chartColors.danger
+                    ]
+                }]
+            },
+            options: {
+                responsive: true,
+                plugins: {
+                    legend: {
+                        display: false
+                    },
+                    tooltip: {
+                        callbacks: {
+                            label: function(context) {
+                                let value = context.raw || 0;
+                                return 'Tutar: ' + formatCurrency(value);
+                            }
+                        }
+                    }
+                },
+                scales: {
+                    y: {
+                        beginAtZero: true,
+                        ticks: {
+                            callback: function(value) {
+                                return formatCurrency(value);
+                            }
+                        }
+                    }
+                }
+            }
+        });
+        
+        // Nakit Akış Projeksiyonu Grafiği
+        var nakitAkisCtx = document.getElementById('nakitAkisChart').getContext('2d');
+        new Chart(nakitAkisCtx, {
+            type: 'line',
+            data: {
+                labels: nakitAkisProjAylar,
+                datasets: [{
+                    label: 'Nakit Akışı',
+                    data: nakitAkisProj,
+                    borderColor: chartColors.indigo,
+                    backgroundColor: chartColors.indigo + '33',
+                    fill: true,
+                    tension: 0.4
+                }]
+            },
+            options: {
+                responsive: true,
+                plugins: {
+                    legend: {
+                        display: false
+                    },
+                    tooltip: {
+                        callbacks: {
+                            label: function(context) {
+                                let value = context.raw || 0;
+                                return 'Nakit Akışı: ' + formatCurrency(value);
+                            }
+                        }
+                    }
+                },
+                scales: {
+                    y: {
+                        beginAtZero: false,
+                        ticks: {
+                            callback: function(value) {
+                                return formatCurrency(value);
+                            }
+                        }
+                    }
+                }
+            }
+        });
+        
+        // En Çok Satılan Ürünler Grafiği
+        var enCokSatilanCtx = document.getElementById('enCokSatilanChart').getContext('2d');
+        new Chart(enCokSatilanCtx, {
+            type: 'horizontalBar',
+            data: {
+                labels: enCokSatilanUrunler,
+                datasets: [{
+                    label: 'Satış Miktarı',
+                    data: enCokSatilanUrunMiktarlari,
+                    backgroundColor: generateColorPalette(enCokSatilanUrunler.length)
+                }]
+            },
+            options: {
+                responsive: true,
+                indexAxis: 'y',
+                plugins: {
+                    legend: {
+                        display: false
+                    }
+                },
+                scales: {
+                    x: {
+                        beginAtZero: true
                     }
                 }
             }

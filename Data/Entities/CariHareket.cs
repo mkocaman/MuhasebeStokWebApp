@@ -14,13 +14,14 @@ namespace MuhasebeStokWebApp.Data.Entities
         {
             // Non-nullable properties için başlangıç değerleri
             HareketTuru = string.Empty;
-            ReferansNo = string.Empty;
-            ReferansTuru = string.Empty;
-            Aciklama = string.Empty;
             OlusturmaTarihi = DateTime.Now;
             Tarih = DateTime.Now;
             Borc = 0;
             Alacak = 0;
+            // Required string alanlar için boş değerler
+            ReferansNo = string.Empty;
+            ReferansTuru = string.Empty;
+            Aciklama = string.Empty;
         }
 
         [Key]
@@ -34,12 +35,6 @@ namespace MuhasebeStokWebApp.Data.Entities
         [Required]
         [Column("CariId")]
         public Guid CariID { get; set; }
-        
-        // CariId özelliği artık CariID.get/set'i çağırmasına gerek yok,
-        // NotMapped ile veritabanında kolonu oluşturmayı engelleyelim
-        [NotMapped]
-        [JsonPropertyName("cariIdentifier")] // JSON çakışmasını önlemek için özel ad
-        public Guid CariId { get => CariID; set => CariID = value; }
         
         [Required]
         [StringLength(50)]
@@ -61,15 +56,18 @@ namespace MuhasebeStokWebApp.Data.Entities
         [Column("VadeTarihi")]
         public DateTime? VadeTarihi { get; set; }
         
+        [Required]
         [StringLength(50)]
         public string ReferansNo { get; set; }
         
+        [Required]
         [StringLength(50)]
         public string ReferansTuru { get; set; }
         
         [Column("ReferansId")]
         public Guid? ReferansID { get; set; }
         
+        [Required]
         [StringLength(500)]
         public string Aciklama { get; set; }
         
@@ -94,7 +92,7 @@ namespace MuhasebeStokWebApp.Data.Entities
         
         public bool Silindi { get; set; } = false;
         
-        // Navigation properties
+        // Navigation property
         [ForeignKey("CariID")]
         public virtual Cari Cari { get; set; } = null!;
     }

@@ -384,6 +384,13 @@ namespace MuhasebeStokWebApp.Data
             modelBuilder.Entity<Entities.CariHareket>()
                 .Property(c => c.Tutar)
                 .HasColumnType("decimal(18,2)");
+            modelBuilder.Entity<Entities.CariHareket>().HasQueryFilter(c => c.Silindi == false);
+            modelBuilder.Entity<Entities.CariHareket>()
+                .HasOne(ch => ch.Cari)
+                .WithMany(c => c.CariHareketler)
+                .HasForeignKey(ch => ch.CariID)
+                .OnDelete(DeleteBehavior.Restrict)
+                .IsRequired(true);
                 
             // KurDegeri Entity
             modelBuilder.Entity<Entities.ParaBirimiModulu.KurDegeri>()
@@ -543,7 +550,6 @@ namespace MuhasebeStokWebApp.Data
             // Global query filtreleri - İlişkili entity'ler için uyumlu şekilde ayarlanıyor
             // Cari - CariHareket ilişkisi için filtreler
             modelBuilder.Entity<Entities.Cari>().HasQueryFilter(c => c.Silindi == false && c.AktifMi == true);
-            modelBuilder.Entity<Entities.CariHareket>().HasQueryFilter(ch => ch.Silindi == false);
 
             // Fatura - FaturaDetay ilişkisi için filtreler
             modelBuilder.Entity<Entities.Fatura>().HasQueryFilter(f => f.Silindi == false && f.Aktif == true);

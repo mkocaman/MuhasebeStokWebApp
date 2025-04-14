@@ -20,6 +20,9 @@ namespace MuhasebeStokWebApp.ViewModels.Birim
         public bool Aktif { get; set; }
         
         public DateTime OlusturmaTarihi { get; set; }
+        
+        // Silindi bilgisi eklenmiştir
+        public bool Silindi { get; set; }
     }
     
     public class BirimCreateViewModel

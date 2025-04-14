@@ -43,6 +43,9 @@ namespace MuhasebeStokWebApp.Data.Entities
         [Required]
         public decimal GuncelBakiye { get; set; } = 0;
         
+        [NotMapped]
+        public decimal Bakiye => GuncelBakiye;
+        
         [StringLength(500)]
         public string Aciklama { get; set; }
         

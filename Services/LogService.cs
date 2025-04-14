@@ -33,46 +33,46 @@ namespace MuhasebeStokWebApp.Services
         {
             try
             {
+                var sayfaAdresi = _httpContextAccessor.HttpContext?.Request?.Path.ToString() ?? string.Empty;
                 var kullaniciAdi = _httpContextAccessor.HttpContext?.User?.Identity?.Name ?? "Sistem";
                 var ipAdresi = _httpContextAccessor.HttpContext?.Connection?.RemoteIpAddress?.ToString() ?? "Bilinmiyor";
                 var userAgent = _httpContextAccessor.HttpContext?.Request?.Headers["User-Agent"].ToString() ?? "Bilinmiyor";
-                var sayfaAdresi = _httpContextAccessor.HttpContext?.Request?.Path.ToString() ?? string.Empty;
-
-                // Tarayıcı bilgisini maksimum 1000 karakter ile sınırla
-                if (userAgent.Length > 1000)
+                
+                var tarayici = GetBrowserInfo(userAgent);
+                var isletimSistemi = GetOSInfo(userAgent);
+                
+                // Kullanıcı ID'sini al
+                string kullaniciID = null;
+                if (_httpContextAccessor.HttpContext?.User?.Identity?.IsAuthenticated == true)
                 {
-                    userAgent = userAgent.Substring(0, 1000);
+                    kullaniciID = _httpContextAccessor.HttpContext.User.FindFirstValue(ClaimTypes.NameIdentifier);
                 }
 
-                // Mesaj null ise boş string ata
-                mesaj = mesaj ?? "Sistem işlemi";
-
-                // SQLite Error 1: 'table SistemLoglar has no column named LogTuruInt' hatasına karşı önlem
                 try
                 {
                     var log = new ESistemLog
                     {
                         LogID = Guid.NewGuid(),
                         LogTuru = logTuru.ToString(),
-                        IslemTuru = logTuru.ToString(),
                         LogTuruInt = (int)logTuru,
-                        Aciklama = mesaj,
-                        HataMesaji = detay ?? "İşlem başarılı",
-                        KullaniciAdi = kullaniciAdi,
+                        IslemTuru = logTuru.ToString(),
+                        Aciklama = mesaj ?? "Sistem log kaydı", // Null kontrolü eklendi
+                        HataMesaji = detay ?? "İşlem başarılı", // Null kontrolü eklendi
+                        KullaniciAdi = kullaniciAdi, // Bu zaten null değil
                         IPAdresi = ipAdresi,
                         IslemTarihi = DateTime.Now,
-                        Basarili = true,
                         TabloAdi = string.Empty,
                         KayitAdi = string.Empty,
-                        Mesaj = mesaj, // Mesaj alanını dolduruyoruz
-                        Sayfa = sayfaAdresi // Sayfa alanını Request Path ile dolduruyoruz
+                        Mesaj = mesaj ?? "Sistem log kaydı", // Null kontrolü eklendi
+                        Sayfa = sayfaAdresi
                     };
-
+                    
                     _context.SistemLoglar.Add(log);
                     await _context.SaveChangesAsync();
+                    
                     return true;
                 }
-                catch (Exception ex)
+                catch (DbUpdateException ex)
                 {
                     // Eğer LogTuruInt alanı ile ilgili bir hata oluşursa, bu alanı kullanmadan tekrar deneyelim
                     if (ex.InnerException != null && ex.InnerException.Message.Contains("LogTuruInt"))
@@ -83,15 +83,15 @@ namespace MuhasebeStokWebApp.Services
                             LogTuru = logTuru.ToString(),
                             IslemTuru = logTuru.ToString(),
                             // LogTuruInt alanını atlıyoruz
-                            Aciklama = mesaj,
-                            HataMesaji = detay ?? "İşlem başarılı",
-                            KullaniciAdi = kullaniciAdi,
+                            Aciklama = mesaj ?? "Sistem log kaydı", // Null kontrolü eklendi
+                            HataMesaji = detay ?? "İşlem başarılı", // Null kontrolü eklendi
+                            KullaniciAdi = kullaniciAdi, // Bu zaten null değil
                             IPAdresi = ipAdresi,
                             IslemTarihi = DateTime.Now,
                             Basarili = true,
                             TabloAdi = string.Empty,
                             KayitAdi = string.Empty,
-                            Mesaj = mesaj, // Mesaj alanını dolduruyoruz
+                            Mesaj = mesaj ?? "Sistem log kaydı", // Null kontrolü eklendi
                             Sayfa = sayfaAdresi // Sayfa alanını Request Path ile dolduruyoruz
                         };
 
@@ -249,6 +249,7 @@ namespace MuhasebeStokWebApp.Services
                     KayitAdi = kayitAdi,
                     KayitID = kayitID,
                     Aciklama = string.IsNullOrEmpty(kategori) ? string.Empty : $"[{kategori}] ",
+                    HataMesaji = "İşlem başarılı", // HataMesaji alanını ekliyoruz
                     KullaniciAdi = kullaniciAdi,
                     IPAdresi = ipAdresi,
                     IslemTarihi = DateTime.Now,
@@ -333,6 +334,7 @@ namespace MuhasebeStokWebApp.Services
                     KayitAdi = kullaniciAdi,
                     KayitID = Guid.TryParse(kullaniciID, out Guid guidResult) ? guidResult : (Guid?)null,
                     Aciklama = $"{kullaniciAdi} kullanıcısı sisteme giriş yaptı.",
+                    HataMesaji = "İşlem başarılı", // HataMesaji alanını ekliyoruz
                     KullaniciAdi = kullaniciAdi,
                     IPAdresi = ipAdresi,
                     IslemTarihi = DateTime.Now,
@@ -443,7 +445,7 @@ namespace MuhasebeStokWebApp.Services
             }
             return false;
         }
-
+        
         public async Task CariOlusturmaLogOlustur(Guid cariID, string ad, string aciklama)
         {
             try
@@ -460,12 +462,14 @@ namespace MuhasebeStokWebApp.Services
                     TabloAdi = "Cariler",
                     KayitAdi = ad,
                     Aciklama = aciklama,
+                    HataMesaji = "İşlem başarılı", // HataMesaji alanını ekliyoruz
                     KullaniciAdi = kullaniciAdi,
                     IPAdresi = ipAdresi,
                     IslemTarihi = DateTime.Now,
                     KullaniciID = !string.IsNullOrEmpty(kullaniciID) ? Guid.Parse(kullaniciID) : (Guid?)null,
                     Basarili = true,
-                    Sayfa = string.Empty // Sayfa alanını boş string ile dolduruyoruz
+                    Sayfa = string.Empty, // Sayfa alanını boş string ile dolduruyoruz
+                    Mesaj = $"{ad} adlı cari oluşturuldu" // Mesaj eklendi
                 };
 
                 await _context.SistemLoglar.AddAsync(log);
@@ -489,16 +493,19 @@ namespace MuhasebeStokWebApp.Services
                 {
                     LogID = Guid.NewGuid(),
                     IslemTuru = "Cari Güncelleme",
+                    LogTuru = "Guncelleme",
                     KayitID = cariID,
                     TabloAdi = "Cariler",
                     KayitAdi = ad,
                     Aciklama = aciklama,
-                    KullaniciAdi = kullaniciAdi,
+                    HataMesaji = "İşlem başarılı", // HataMesaji alanını ekliyoruz
+                    KullaniciAdi = kullaniciAdi, // Bu zaten null değil
                     IPAdresi = ipAdresi,
                     IslemTarihi = DateTime.Now,
                     KullaniciID = !string.IsNullOrEmpty(kullaniciID) ? Guid.Parse(kullaniciID) : (Guid?)null,
                     Basarili = true,
-                    Sayfa = string.Empty // Sayfa alanını boş string ile dolduruyoruz
+                    Sayfa = string.Empty, // Sayfa alanını boş string ile dolduruyoruz
+                    Mesaj = $"{ad} adlı cari güncellendi" // Mesaj eklendi
                 };
 
                 await _context.SistemLoglar.AddAsync(log);
@@ -526,6 +533,7 @@ namespace MuhasebeStokWebApp.Services
                     TabloAdi = "Cariler",
                     KayitAdi = ad,
                     Aciklama = aciklama,
+                    HataMesaji = "İşlem başarılı", // HataMesaji alanını ekliyoruz
                     KullaniciAdi = kullaniciAdi,
                     IPAdresi = ipAdresi,
                     IslemTarihi = DateTime.Now,
@@ -559,6 +567,7 @@ namespace MuhasebeStokWebApp.Services
                     TabloAdi = "Cariler",
                     KayitAdi = ad,
                     Aciklama = aciklama,
+                    HataMesaji = "İşlem başarılı", // HataMesaji alanını ekliyoruz
                     KullaniciAdi = kullaniciAdi,
                     IPAdresi = ipAdresi,
                     IslemTarihi = DateTime.Now,
@@ -592,6 +601,7 @@ namespace MuhasebeStokWebApp.Services
                     TabloAdi = "Cariler",
                     KayitAdi = ad,
                     Aciklama = aciklama,
+                    HataMesaji = "İşlem başarılı", // HataMesaji alanını ekliyoruz
                     KullaniciAdi = kullaniciAdi,
                     IPAdresi = ipAdresi,
                     IslemTarihi = DateTime.Now,
@@ -627,6 +637,7 @@ namespace MuhasebeStokWebApp.Services
                     TabloAdi = "CariHareketler",
                     KayitAdi = ad,
                     Aciklama = logAciklama,
+                    HataMesaji = "İşlem başarılı", // HataMesaji alanını ekliyoruz
                     IslemTarihi = DateTime.Now,
                     KullaniciAdi = kullaniciAdi,
                     IPAdresi = ipAdresi,
@@ -656,6 +667,7 @@ namespace MuhasebeStokWebApp.Services
                     LogID = Guid.NewGuid(),
                     IslemTuru = "Ürün Oluşturma",
                     Aciklama = aciklama,
+                    HataMesaji = "İşlem başarılı", // HataMesaji alanını ekliyoruz
                     KullaniciAdi = kullaniciAdi,
                     IPAdresi = ipAdresi,
                     IslemTarihi = DateTime.Now,
@@ -687,6 +699,7 @@ namespace MuhasebeStokWebApp.Services
                     LogID = Guid.NewGuid(),
                     IslemTuru = "Ürün Güncelleme",
                     Aciklama = aciklama,
+                    HataMesaji = "İşlem başarılı", // HataMesaji alanını ekliyoruz
                     KullaniciAdi = kullaniciAdi,
                     IPAdresi = ipAdresi,
                     IslemTarihi = DateTime.Now,
@@ -718,6 +731,7 @@ namespace MuhasebeStokWebApp.Services
                     LogID = Guid.NewGuid(),
                     IslemTuru = "Ürün Silme",
                     Aciklama = aciklama,
+                    HataMesaji = "İşlem başarılı", // HataMesaji alanını ekliyoruz
                     KullaniciAdi = kullaniciAdi,
                     IPAdresi = ipAdresi,
                     IslemTarihi = DateTime.Now,
@@ -754,6 +768,7 @@ namespace MuhasebeStokWebApp.Services
                     TabloAdi = "StokHareketler",
                     KayitAdi = urunAdi,
                     Aciklama = $"{urunAdi} ürününe {miktar} adet giriş yapıldı. Açıklama: {aciklama}",
+                    HataMesaji = "İşlem başarılı",
                     KullaniciAdi = kullaniciAdi,
                     IPAdresi = ipAdresi,
                     IslemTarihi = DateTime.Now,
@@ -788,6 +803,7 @@ namespace MuhasebeStokWebApp.Services
                     TabloAdi = "StokHareketler",
                     KayitAdi = urunAdi,
                     Aciklama = $"{urunAdi} ürününden {miktar} adet çıkış yapıldı. Açıklama: {aciklama}",
+                    HataMesaji = "İşlem başarılı",
                     KullaniciAdi = kullaniciAdi,
                     IPAdresi = ipAdresi,
                     IslemTarihi = DateTime.Now,
@@ -870,6 +886,7 @@ namespace MuhasebeStokWebApp.Services
                     LogID = Guid.NewGuid(),
                     IslemTuru = "Fatura Oluşturma",
                     Aciklama = aciklama,
+                    HataMesaji = "İşlem başarılı", // HataMesaji alanını ekliyoruz
                     KullaniciAdi = kullaniciAdi,
                     IPAdresi = ipAdresi,
                     IslemTarihi = DateTime.Now,
@@ -997,6 +1014,7 @@ namespace MuhasebeStokWebApp.Services
                     LogID = Guid.NewGuid(),
                     IslemTuru = "Fatura Güncelleme",
                     Aciklama = aciklama,
+                    HataMesaji = "İşlem başarılı", // HataMesaji alanını ekliyoruz
                     KullaniciAdi = kullaniciAdi,
                     IPAdresi = ipAdresi,
                     IslemTarihi = DateTime.Now,
@@ -1028,6 +1046,7 @@ namespace MuhasebeStokWebApp.Services
                     LogID = Guid.NewGuid(),
                     IslemTuru = "Fatura Silme",
                     Aciklama = aciklama,
+                    HataMesaji = "İşlem başarılı", // HataMesaji alanını ekliyoruz
                     KullaniciAdi = kullaniciAdi,
                     IPAdresi = ipAdresi,
                     IslemTarihi = DateTime.Now,
@@ -1074,6 +1093,7 @@ namespace MuhasebeStokWebApp.Services
                     KayitAdi = kayitAdi,
                     KayitID = kayitID,
                     Aciklama = detay ?? string.Empty,
+                    HataMesaji = "İşlem başarılı", // HataMesaji alanını ekliyoruz
                     KullaniciAdi = kullaniciAdi,
                     IPAdresi = ipAdresi,
                     IslemTarihi = DateTime.Now,
@@ -1123,6 +1143,7 @@ namespace MuhasebeStokWebApp.Services
                     Aciklama = details,
                     TabloAdi = tableName,
                     KayitID = string.IsNullOrEmpty(entityId) ? null : new Guid?(Guid.Parse(entityId)),
+                    HataMesaji = "İşlem başarılı", // HataMesaji alanını ekliyoruz
                     KullaniciAdi = kullaniciAdi,
                     IPAdresi = ipAdresi,
                     IslemTarihi = DateTime.Now,
@@ -1177,8 +1198,8 @@ namespace MuhasebeStokWebApp.Services
                     IslemTarihi = DateTime.Now,
                     TabloAdi = string.Empty,
                     KayitAdi = string.Empty,
-                    Mesaj = mesaj, // Mesaj alanını dolduruyoruz
-                    Sayfa = string.Empty // Sayfa alanını boş string ile dolduruyoruz
+                    Mesaj = mesaj,
+                    Sayfa = string.Empty
                 };
                 
                 _context.SistemLoglar.Add(log);
@@ -1198,17 +1219,19 @@ namespace MuhasebeStokWebApp.Services
             var log = new ESistemLog
             {
                 LogID = Guid.NewGuid(),
-                LogTuru = logTuru,
+                LogTuru = logTuru ?? "Bilgi",
                 LogTuruInt = 0,
-                Mesaj = mesaj,
-                Sayfa = sayfa,
+                Mesaj = mesaj ?? "Sistem log kaydı",
+                Sayfa = sayfa ?? string.Empty,
                 OlusturmaTarihi = DateTime.Now,
-                HataMesaji = "Sistem log kaydı", // Null olmasını engelle
-                IslemTarihi = DateTime.Now,
+                Aciklama = mesaj ?? "Sistem log kaydı",
+                HataMesaji = "Sistem log kaydı",
                 KullaniciAdi = "Sistem",
+                IslemTarihi = DateTime.Now,
                 IPAdresi = "127.0.0.1",
                 TabloAdi = string.Empty,
-                KayitAdi = string.Empty
+                KayitAdi = string.Empty,
+                IslemTuru = logTuru ?? "Bilgi"
             };
 
             await _context.SistemLoglar.AddAsync(log);

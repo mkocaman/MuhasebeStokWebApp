@@ -29,7 +29,7 @@
     </div>
     <div class="row mb-2">
         <div class="col-md-4 fw-bold">Oluşturma Tarihi:</div>
-        <div class="col-md-8">@(Model.OlusturmaTarihi.HasValue ? Model.OlusturmaTarihi.Value.ToString("dd.MM.yyyy HH:mm") : "-")</div>
+        <div class="col-md-8">@(Model.OlusturmaTarihi.ToString("dd.MM.yyyy HH:mm"))</div>
     </div>
     <div class="row mb-2">
         <div class="col-md-4 fw-bold">Güncelleme Tarihi:</div>

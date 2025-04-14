@@ -64,6 +64,9 @@ namespace MuhasebeStokWebApp.Controllers
                 orderBy: q => q.OrderBy(k => k.KategoriAdi)
             );
             
+            // Ürün fiyatlarını getir
+            var urunFiyatlar = await urunFiyatRepository.GetAllAsync();
+            
             // Kategorileri ViewBag'e ekle
             ViewBag.Kategoriler = new SelectList(kategoriler, "KategoriID", "KategoriAdi", kategoriID);
             ViewBag.CurrentKategori = kategoriID;
@@ -79,17 +82,17 @@ namespace MuhasebeStokWebApp.Controllers
                     Birim = u.Birim != null ? u.Birim.BirimAdi : string.Empty,
                     Miktar = u.StokMiktar,
                     // Her ürün için en güncel liste fiyatını getir
-                    ListeFiyati = urunFiyatRepository.GetAllAsync().Result
+                    ListeFiyati = urunFiyatlar
                         .Where(uf => uf.UrunID == u.UrunID && uf.FiyatTipiID == 1 && uf.Silindi == false)
                         .OrderByDescending(uf => uf.GecerliTarih)
                         .FirstOrDefault()?.Fiyat ?? 0m,
                     // Her ürün için en güncel maliyet fiyatını getir
-                    MaliyetFiyati = urunFiyatRepository.GetAllAsync().Result
+                    MaliyetFiyati = urunFiyatlar
                         .Where(uf => uf.UrunID == u.UrunID && uf.FiyatTipiID == 2 && uf.Silindi == false)
                         .OrderByDescending(uf => uf.GecerliTarih)
                         .FirstOrDefault()?.Fiyat ?? 0m,
                     // Her ürün için en güncel satış fiyatını getir
-                    SatisFiyati = urunFiyatRepository.GetAllAsync().Result
+                    SatisFiyati = urunFiyatlar
                         .Where(uf => uf.UrunID == u.UrunID && uf.FiyatTipiID == 3 && uf.Silindi == false)
                         .OrderByDescending(uf => uf.GecerliTarih)
                         .FirstOrDefault()?.Fiyat ?? 0m,
@@ -113,24 +116,25 @@ namespace MuhasebeStokWebApp.Controllers
         }
 
         // Ürün detaylarını gösterir
-        public async Task<IActionResult> Details(Guid id)
+        public async Task<IActionResult> Details(Guid id, bool returnView = true)
         {
             var urunRepository = _unitOfWork.Repository<Urun>();
-            var urunFiyatRepository = _unitOfWork.Repository<UrunFiyat>();
             var kategoriRepository = _unitOfWork.Repository<UrunKategori>();
-
-            // Ürün bilgisini getir
-            var urun = await urunRepository.GetFirstOrDefaultAsync(u => u.UrunID == id && u.Silindi == false);
+            var urunFiyatRepository = _unitOfWork.Repository<UrunFiyat>();
+            
+            var urun = await urunRepository.GetFirstOrDefaultAsync(u => u.UrunID == id && u.Silindi == false, includeProperties: "Birim");
             if (urun == null)
             {
                 return NotFound();
             }
-
-            // Kategori bilgisini getir
-            var kategori = urun.KategoriID.HasValue ? 
-                await kategoriRepository.GetFirstOrDefaultAsync(k => k.KategoriID.ToString() == urun.KategoriID.ToString()) : null;
-
-            // Ürün detay görünüm modeli oluştur
+            
+            // Kategori bilgisi
+            UrunKategori? kategori = null;
+            if (urun.KategoriID.HasValue)
+            {
+                kategori = await kategoriRepository.GetByIdAsync(urun.KategoriID.Value);
+            }
+            
             var viewModel = new UrunViewModel
             {
                 UrunID = urun.UrunID,
@@ -159,7 +163,14 @@ namespace MuhasebeStokWebApp.Controllers
                 KategoriAdi = kategori?.KategoriAdi ?? "Kategorisiz"
             };
 
-            return View(viewModel);
+            if (returnView)
+            {
+                return View(viewModel);
+            }
+            else
+            {
+                return Json(viewModel);
+            }
         }
 
         // Yeni ürün oluşturma formu

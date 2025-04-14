@@ -6,10 +6,11 @@ namespace MuhasebeStokWebApp.ViewModels.Cari
     public class CariHareketCreateViewModel
     {
         [Required]
-        public Guid CariId { get; set; }
+        public Guid CariID { get; set; } = Guid.Empty;
         
         [Display(Name = "Cari Adı")]
-        public string CariAdi { get; set; }
+        [Required(ErrorMessage = "Cari adı zorunludur")]
+        public string CariAdi { get; set; } = string.Empty;
         
         [Required(ErrorMessage = "Tutar girilmelidir")]
         [Range(0.01, double.MaxValue, ErrorMessage = "Tutar 0'dan büyük olmalıdır")]
@@ -17,9 +18,9 @@ namespace MuhasebeStokWebApp.ViewModels.Cari
         [DisplayFormat(DataFormatString = "{0:N2}", ApplyFormatInEditMode = false)]
         public decimal Tutar { get; set; }
         
-        [Required(ErrorMessage = "Hareket türü seçilmelidir")]
+        [Required(ErrorMessage = "Hareket türü zorunludur.")]
         [Display(Name = "Hareket Türü")]
-        public string HareketTuru { get; set; }
+        public string HareketTuru { get; set; } = string.Empty;
         
         [Required(ErrorMessage = "Tarih seçilmelidir")]
         [Display(Name = "Tarih")]
@@ -31,16 +32,16 @@ namespace MuhasebeStokWebApp.ViewModels.Cari
         public DateTime? VadeTarihi { get; set; }
         
         [Display(Name = "Referans No")]
-        public string ReferansNo { get; set; }
+        public string? ReferansNo { get; set; }
         
         [Display(Name = "Referans Türü")]
-        public string ReferansTuru { get; set; }
+        public string? ReferansTuru { get; set; }
         
         [Display(Name = "Referans ID")]
         public Guid? ReferansID { get; set; }
         
         [StringLength(500, ErrorMessage = "Açıklama en fazla 500 karakter olabilir.")]
         [Display(Name = "Açıklama")]
-        public string Aciklama { get; set; }
+        public string? Aciklama { get; set; }
     }
-} 
+}

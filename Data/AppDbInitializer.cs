@@ -15,6 +15,9 @@ namespace MuhasebeStokWebApp.Data
             // Fiyat Tipleri
             await SeedFiyatTipleri(context);
             
+            // Fatura Türleri
+            await SeedFaturaTurleri(context);
+            
             // Identity rolleri ve kullanıcılar
             var roleManager = serviceProvider.GetRequiredService<RoleManager<IdentityRole>>();
             var userManager = serviceProvider.GetRequiredService<UserManager<ApplicationUser>>();
@@ -38,6 +41,21 @@ namespace MuhasebeStokWebApp.Data
                 };
                 
                 await context.FiyatTipleri.AddRangeAsync(fiyatTipleri);
+                await context.SaveChangesAsync();
+            }
+        }
+        
+        private static async Task SeedFaturaTurleri(ApplicationDbContext context)
+        {
+            if (!await context.FaturaTurleri.AnyAsync())
+            {
+                var faturaTurleri = new List<FaturaTuru>
+                {
+                    new FaturaTuru { FaturaTuruAdi = "Satış Faturası", HareketTuru = "Çıkış", Silindi = false },
+                    new FaturaTuru { FaturaTuruAdi = "Alış Faturası", HareketTuru = "Giriş", Silindi = false }
+                };
+                
+                await context.FaturaTurleri.AddRangeAsync(faturaTurleri);
                 await context.SaveChangesAsync();
             }
         }

@@ -201,6 +201,18 @@ namespace MuhasebeStokWebApp.Controllers
             ViewBag.Last6MonthLabels = JsonConvert.SerializeObject(new string[0]);
             ViewBag.TrendRevenues = JsonConvert.SerializeObject(new decimal[0]);
             ViewBag.TrendExpenses = JsonConvert.SerializeObject(new decimal[0]);
+            
+            // Yeni grafik verileri için varsayılan değerler
+            ViewBag.KasaBankaBakiyeleri = JsonConvert.SerializeObject(new decimal[0]);
+            ViewBag.KasaBankaLabels = JsonConvert.SerializeObject(new string[0]);
+            ViewBag.AcikAlacakTutari = 0m;
+            ViewBag.AcikBorcTutari = 0m;
+            ViewBag.EnCokSatilanUrunler = JsonConvert.SerializeObject(new string[0]);
+            ViewBag.EnCokSatilanUrunMiktarlari = JsonConvert.SerializeObject(new decimal[0]);
+            ViewBag.AlacakYaslari = JsonConvert.SerializeObject(new string[] { "0-30 Gün", "31-60 Gün", "61-90 Gün", "91+ Gün" });
+            ViewBag.AlacakYaslariMiktarlari = JsonConvert.SerializeObject(new decimal[4]);
+            ViewBag.NakitAkisProj = JsonConvert.SerializeObject(new decimal[3]);
+            ViewBag.NakitAkisProjAylar = JsonConvert.SerializeObject(new string[3]);
         }
 
         // Dashboard verilerini yükler
@@ -218,10 +230,60 @@ namespace MuhasebeStokWebApp.Controllers
             var faturalar = await _unitOfWork.Repository<Data.Entities.Fatura>().GetAllAsync();
             ViewBag.ToplamFaturaSayisi = faturalar?.Count() ?? 0;
             
-            // Toplam ciro hesaplama (sadece satış faturalarının toplamı)
+            // USD kur değerini al
+            decimal tryToUsdKur = 1;
+            decimal uzsToUsdKur = 1;
+            try 
+            {
+                // TRY -> USD kur
+                tryToUsdKur = await _dovizKuruService.GetGuncelKurAsync("TRY", "USD");
+                // UZS -> USD kur
+                uzsToUsdKur = await _dovizKuruService.GetGuncelKurAsync("UZS", "USD");
+            }
+            catch (Exception ex)
+            {
+                _logger.LogError(ex, "Döviz kuru alınırken hata oluştu. Varsayılan değerler kullanılacak.");
+            }
+            
+            // Toplam ciro hesaplama (sadece satış faturalarının toplamı - USD cinsinden)
             var satisFaturalari = faturalar?.Where(f => f.FaturaTuru?.FaturaTuruAdi == "Satış").ToList() ?? new List<Data.Entities.Fatura>();
-            decimal toplamCiro = satisFaturalari.Sum(f => f.GenelToplam ?? 0);
+            decimal toplamCiro = 0;
+            
+            foreach (var fatura in satisFaturalari)
+            {
+                decimal tutarUSD = 0;
+                
+                // Para birimi türüne göre USD'ye çevir
+                if (fatura.ParaBirimi == "TRY" && fatura.GenelToplam.HasValue)
+                {
+                    tutarUSD = fatura.GenelToplam.Value * tryToUsdKur;
+                }
+                else if (fatura.ParaBirimi == "UZS" && fatura.GenelToplam.HasValue)
+                {
+                    tutarUSD = fatura.GenelToplam.Value * uzsToUsdKur;
+                }
+                else if (fatura.ParaBirimi == "USD" && fatura.GenelToplam.HasValue)
+                {
+                    tutarUSD = fatura.GenelToplam.Value;
+                }
+                else if (fatura.GenelToplam.HasValue)
+                {
+                    // Diğer para birimleri için doğrudan çevir
+                    try 
+                    {
+                        tutarUSD = await _dovizKuruService.CevirmeTutarByKodAsync(fatura.GenelToplam.Value, fatura.ParaBirimi ?? "TRY", "USD");
+                    }
+                    catch
+                    {
+                        tutarUSD = fatura.GenelToplam.Value;
+                    }
+                }
+                
+                toplamCiro += tutarUSD;
+            }
+            
             ViewBag.ToplamCiro = toplamCiro;
+            ViewBag.ParaBirimi = "USD";
             
             // Son döviz kurlarını getir (son 5 güne ait)
             var sonKurlar = await _dovizKuruService.GetLatestRatesAsync(5);
@@ -246,13 +308,79 @@ namespace MuhasebeStokWebApp.Controllers
             // Her ay için satış ve gider toplamlarını hesapla
             for (int ay = 1; ay <= 12; ay++)
             {
-                aylikSatisVerileri[ay - 1] = yillikSatisFaturalari
-                    .Where(f => f.FaturaTarihi?.Month == ay)
-                    .Sum(f => f.GenelToplam ?? 0);
+                // O aydaki faturalar
+                var aydakiSatislar = yillikSatisFaturalari.Where(f => f.FaturaTarihi?.Month == ay).ToList();
+                var aydakiAlislar = yillikAlisFaturalari.Where(f => f.FaturaTarihi?.Month == ay).ToList();
                 
-                aylikGiderVerileri[ay - 1] = yillikAlisFaturalari
-                    .Where(f => f.FaturaTarihi?.Month == ay)
-                    .Sum(f => f.GenelToplam ?? 0);
+                decimal aylikSatisToplam = 0;
+                decimal aylikAlisToplam = 0;
+                
+                // Satışları USD'ye çevir
+                foreach (var fatura in aydakiSatislar)
+                {
+                    decimal tutarUSD = 0;
+                    
+                    if (fatura.ParaBirimi == "TRY" && fatura.GenelToplam.HasValue)
+                    {
+                        tutarUSD = fatura.GenelToplam.Value * tryToUsdKur;
+                    }
+                    else if (fatura.ParaBirimi == "UZS" && fatura.GenelToplam.HasValue)
+                    {
+                        tutarUSD = fatura.GenelToplam.Value * uzsToUsdKur;
+                    }
+                    else if (fatura.ParaBirimi == "USD" && fatura.GenelToplam.HasValue)
+                    {
+                        tutarUSD = fatura.GenelToplam.Value;
+                    }
+                    else if (fatura.GenelToplam.HasValue)
+                    {
+                        try 
+                        {
+                            tutarUSD = await _dovizKuruService.CevirmeTutarByKodAsync(fatura.GenelToplam.Value, fatura.ParaBirimi ?? "TRY", "USD");
+                        }
+                        catch
+                        {
+                            tutarUSD = fatura.GenelToplam.Value;
+                        }
+                    }
+                    
+                    aylikSatisToplam += tutarUSD;
+                }
+                
+                // Alışları USD'ye çevir
+                foreach (var fatura in aydakiAlislar)
+                {
+                    decimal tutarUSD = 0;
+                    
+                    if (fatura.ParaBirimi == "TRY" && fatura.GenelToplam.HasValue)
+                    {
+                        tutarUSD = fatura.GenelToplam.Value * tryToUsdKur;
+                    }
+                    else if (fatura.ParaBirimi == "UZS" && fatura.GenelToplam.HasValue)
+                    {
+                        tutarUSD = fatura.GenelToplam.Value * uzsToUsdKur;
+                    }
+                    else if (fatura.ParaBirimi == "USD" && fatura.GenelToplam.HasValue)
+                    {
+                        tutarUSD = fatura.GenelToplam.Value;
+                    }
+                    else if (fatura.GenelToplam.HasValue)
+                    {
+                        try 
+                        {
+                            tutarUSD = await _dovizKuruService.CevirmeTutarByKodAsync(fatura.GenelToplam.Value, fatura.ParaBirimi ?? "TRY", "USD");
+                        }
+                        catch
+                        {
+                            tutarUSD = fatura.GenelToplam.Value;
+                        }
+                    }
+                    
+                    aylikAlisToplam += tutarUSD;
+                }
+                
+                aylikSatisVerileri[ay - 1] = aylikSatisToplam;
+                aylikGiderVerileri[ay - 1] = aylikAlisToplam;
             }
             
             // Grafik için JSON formatına dönüştür
@@ -268,44 +396,37 @@ namespace MuhasebeStokWebApp.Controllers
             {
                 foreach (var cari in cariler)
                 {
-                    // CariID artık Guid tipinde
-                    var hareketler = cariHareketler?.Where(h => h.CariId == cari.CariID).ToList() ?? new List<CariHareket>();
-                    decimal bakiye = 0;
+                    if (cari.Silindi) continue;
                     
-                    // Her cari hareket türüne göre bakiyeyi güncelle
-                    foreach (var hareket in hareketler)
-                    {
-                        if (hareket.HareketTuru == "Borç")
-                        {
-                            bakiye -= hareket.Tutar;
-                        }
-                        else if (hareket.HareketTuru == "Alacak")
-                        {
-                            bakiye += hareket.Tutar;
-                        }
-                    }
+                    // Cari id'ye göre hareketleri filtrele
+                    var caridekiHareketler = cariHareketler?.Where(h => h.CariID == cari.CariID && !h.Silindi).ToList();
                     
+                    // Alacak ve borç toplamlarını hesapla
+                    decimal toplamAlacak = caridekiHareketler?.Where(h => h.HareketTuru == "Alacak").Sum(h => h.Tutar) ?? 0;
+                    decimal toplamBorc = caridekiHareketler?.Where(h => h.HareketTuru == "Borç").Sum(h => h.Tutar) ?? 0;
+                    decimal bakiye = toplamAlacak - toplamBorc;
+                    
+                    // Cari bakiyeyi kaydet
                     cariBakiyeleri[cari.CariID] = bakiye;
                 }
             }
             
-            // Borçlu, alacaklı ve sıfır bakiyeli cari sayılarını hesapla
-            int borcluCariSayisi = cariBakiyeleri.Count(c => c.Value < 0);
-            int alacakliCariSayisi = cariBakiyeleri.Count(c => c.Value > 0);
-            int sifirBakiyeCariSayisi = cariBakiyeleri.Count(c => c.Value == 0);
+            // Bakiye durumlarına göre sayıları hesapla
+            int borcluCariSayisi = cariBakiyeleri.Count(p => p.Value < 0);
+            int alacakliCariSayisi = cariBakiyeleri.Count(p => p.Value > 0);
+            int sifirBakiyeliCariSayisi = cariBakiyeleri.Count(p => p.Value == 0);
             
-            // Pasta grafik için verileri hazırla
-            ViewBag.CariBakiyeTipleri = JsonConvert.SerializeObject(new[] { "Borçlu", "Alacaklı", "Sıfır Bakiye" });
-            ViewBag.CariBakiyeDagilimi = JsonConvert.SerializeObject(new[] { borcluCariSayisi, alacakliCariSayisi, sifirBakiyeCariSayisi });
+            var cariBakiyeTipleri = new[] { "Borçlu", "Alacaklı", "Sıfır Bakiye" };
+            var cariBakiyeDagilimi = new[] { borcluCariSayisi, alacakliCariSayisi, sifirBakiyeliCariSayisi };
             
-            // Stok kategorileri ve miktarlarını hesapla
-            var kategoriRepository = _unitOfWork.Repository<UrunKategori>();
-            var kategoriler = await kategoriRepository.GetAllAsync();
+            ViewBag.CariBakiyeTipleri = JsonConvert.SerializeObject(cariBakiyeTipleri);
+            ViewBag.CariBakiyeDagilimi = JsonConvert.SerializeObject(cariBakiyeDagilimi);
             
+            // Stok kategorilerine göre ürün miktarları hesaplama
             var kategoriAdlari = new List<string>();
             var stokMiktarlari = new List<decimal>();
             
-            // Her kategori için toplam stok miktarını hesapla
+            var kategoriler = await _unitOfWork.Repository<Data.Entities.UrunKategori>().GetAllAsync();
             if (kategoriler != null)
             {
                 foreach (var kategori in kategoriler)
@@ -320,6 +441,320 @@ namespace MuhasebeStokWebApp.Controllers
             // Stok grafiği için verileri JSON formatına dönüştür
             ViewBag.StokKategorileri = JsonConvert.SerializeObject(kategoriAdlari);
             ViewBag.StokMiktarlari = JsonConvert.SerializeObject(stokMiktarlari);
+            
+            // 1. Kasa ve Banka Bakiyeleri için veri hazırlama
+            var kasalar = await _unitOfWork.Repository<Data.Entities.Kasa>().GetAllAsync();
+            var bankalar = await _unitOfWork.Repository<Data.Entities.Banka>().GetAllAsync();
+            var bankaHesaplar = await _unitOfWork.Repository<Data.Entities.BankaHesap>().GetAllAsync();
+            
+            var kasaBankaLabels = new List<string>();
+            var kasaBankaBakiyeleri = new List<decimal>();
+            
+            // Kasa bakiyeleri
+            foreach (var kasa in kasalar.Where(k => !k.Silindi && k.Aktif))
+            {
+                kasaBankaLabels.Add($"Kasa: {kasa.KasaAdi}");
+                decimal bakiyeUSD = kasa.GuncelBakiye;
+                try
+                {
+                    // Kasa para birimi USD değilse çevir
+                    if (kasa.ParaBirimi != "USD")
+                    {
+                        bakiyeUSD = await _dovizKuruService.CevirmeTutarByKodAsync(
+                            kasa.GuncelBakiye, 
+                            kasa.ParaBirimi, 
+                            "USD");
+                    }
+                }
+                catch (Exception ex)
+                {
+                    _logger.LogError(ex, $"Kasa bakiyesi {kasa.ParaBirimi} -> USD dönüşümünde hata: {ex.Message}");
+                    if (kasa.ParaBirimi == "TRY" && tryToUsdKur > 0)
+                        bakiyeUSD = kasa.GuncelBakiye * tryToUsdKur;
+                    else if (kasa.ParaBirimi == "UZS" && uzsToUsdKur > 0)
+                        bakiyeUSD = kasa.GuncelBakiye * uzsToUsdKur;
+                }
+                kasaBankaBakiyeleri.Add(bakiyeUSD);
+            }
+            
+            // Banka bakiyeleri
+            foreach (var hesap in bankaHesaplar.Where(h => !h.Silindi && h.Aktif))
+            {
+                var banka = bankalar.FirstOrDefault(b => b.BankaID == hesap.BankaID);
+                string bankaAdi = banka?.BankaAdi ?? "Bilinmeyen Banka";
+                kasaBankaLabels.Add($"{bankaAdi}: {hesap.HesapAdi}");
+                
+                decimal bakiyeUSD = hesap.GuncelBakiye;
+                try
+                {
+                    // Banka hesap para birimi USD değilse çevir
+                    if (hesap.ParaBirimi != "USD")
+                    {
+                        bakiyeUSD = await _dovizKuruService.CevirmeTutarByKodAsync(
+                            hesap.GuncelBakiye, 
+                            hesap.ParaBirimi, 
+                            "USD");
+                    }
+                }
+                catch (Exception ex)
+                {
+                    _logger.LogError(ex, $"Banka bakiyesi {hesap.ParaBirimi} -> USD dönüşümünde hata: {ex.Message}");
+                    if (hesap.ParaBirimi == "TRY" && tryToUsdKur > 0)
+                        bakiyeUSD = hesap.GuncelBakiye * tryToUsdKur;
+                    else if (hesap.ParaBirimi == "UZS" && uzsToUsdKur > 0)
+                        bakiyeUSD = hesap.GuncelBakiye * uzsToUsdKur;
+                }
+                kasaBankaBakiyeleri.Add(bakiyeUSD);
+            }
+            
+            ViewBag.KasaBankaLabels = JsonConvert.SerializeObject(kasaBankaLabels);
+            ViewBag.KasaBankaBakiyeleri = JsonConvert.SerializeObject(kasaBankaBakiyeleri);
+            
+            // 2. Açık Alacak ve Borç Tutarları
+            decimal acikAlacakTutari = 0;
+            decimal acikBorcTutari = 0;
+            
+            // Vadesi geçmiş veya ödenmemiş faturaları bul
+            var bugun = DateTime.Today;
+            var acikSatisFaturalari = satisFaturalari
+                .Where(f => (f.OdemeDurumu == "Ödenmedi" || f.OdemeDurumu == "Kısmi Ödeme") && (f.VadeTarihi <= bugun))
+                .ToList();
+            
+            var acikAlisFaturalari = yillikAlisFaturalari
+                .Where(f => (f.OdemeDurumu == "Ödenmedi" || f.OdemeDurumu == "Kısmi Ödeme") && (f.VadeTarihi <= bugun))
+                .ToList();
+            
+            acikAlacakTutari = acikSatisFaturalari.Sum(f => f.GenelToplam ?? 0) - 
+                               acikSatisFaturalari.Sum(f => f.OdenenTutar ?? 0);
+            
+            acikBorcTutari = acikAlisFaturalari.Sum(f => f.GenelToplam ?? 0) - 
+                             acikAlisFaturalari.Sum(f => f.OdenenTutar ?? 0);
+            
+            ViewBag.AcikAlacakTutari = acikAlacakTutari;
+            ViewBag.AcikBorcTutari = acikBorcTutari;
+            
+            // 3. En Çok Satılan 5 Ürün (Son 30 Gün)
+            var sonOtuzGun = DateTime.Now.AddDays(-30);
+            var faturaDetaylar = await _unitOfWork.Repository<Data.Entities.FaturaDetay>().GetAllAsync();
+            
+            // Son 30 günlük faturaları bul
+            var sonOtuzGunSatisFaturalari = faturalar?
+                .Where(f => f.FaturaTuru?.FaturaTuruAdi == "Satış" && f.FaturaTarihi >= sonOtuzGun && !f.Silindi)
+                .ToList() ?? new List<Data.Entities.Fatura>();
+            
+            // Bu faturaların detaylarını topla
+            var sonOtuzGunDetaylar = faturaDetaylar?
+                .Where(d => !d.Silindi && sonOtuzGunSatisFaturalari.Any(f => f.FaturaID == d.FaturaID))
+                .ToList() ?? new List<Data.Entities.FaturaDetay>();
+            
+            // Ürün bazında satış miktarlarını hesapla
+            var urunSatislar = sonOtuzGunDetaylar
+                .GroupBy(d => d.UrunID)
+                .Select(g => new { 
+                    UrunID = g.Key,
+                    ToplamMiktar = g.Sum(d => d.Miktar),
+                    ToplamTutar = g.Sum(d => (d.BirimFiyat * d.Miktar) * (1 - d.IndirimOrani / 100))
+                })
+                .OrderByDescending(x => x.ToplamTutar)
+                .Take(5)
+                .ToList();
+            
+            var enCokSatilanUrunler = new List<string>();
+            var enCokSatilanMiktarlar = new List<decimal>();
+            var topProducts = new List<dynamic>();
+            
+            foreach (var urunSatis in urunSatislar)
+            {
+                var urun = urunler?.FirstOrDefault(u => u.UrunID == urunSatis.UrunID);
+                if (urun != null)
+                {
+                    enCokSatilanUrunler.Add(urun.UrunAdi);
+                    enCokSatilanMiktarlar.Add(urunSatis.ToplamMiktar);
+                    
+                    topProducts.Add(new { 
+                        ProductName = urun.UrunAdi, 
+                        TotalSales = urunSatis.ToplamTutar, 
+                        TotalQuantity = urunSatis.ToplamMiktar 
+                    });
+                }
+            }
+            
+            ViewBag.EnCokSatilanUrunler = JsonConvert.SerializeObject(enCokSatilanUrunler);
+            ViewBag.EnCokSatilanUrunMiktarlari = JsonConvert.SerializeObject(enCokSatilanMiktarlar);
+            ViewBag.TopProducts = topProducts;
+            
+            // 4. Alacak Yaşlandırma Analizi
+            var alacakYaslari = new decimal[4] { 0, 0, 0, 0 }; // 0-30, 31-60, 61-90, 91+
+            
+            // Sadece satış faturalarını ve ödenmemiş olanları al
+            var odenmemisSatisFaturalari = satisFaturalari.Where(f => 
+                (f.OdemeDurumu == "Ödenmedi" || f.OdemeDurumu == "Kısmi Ödeme") && 
+                f.VadeTarihi.HasValue).ToList();
+            
+            foreach (var fatura in odenmemisSatisFaturalari)
+            {
+                decimal kalanTutar = (fatura.GenelToplam ?? 0) - (fatura.OdenenTutar ?? 0);
+                if (kalanTutar <= 0) continue;
+                
+                TimeSpan fark = bugun - fatura.VadeTarihi.Value;
+                int gunFarki = fark.Days;
+                
+                if (gunFarki <= 30)
+                    alacakYaslari[0] += kalanTutar;
+                else if (gunFarki <= 60)
+                    alacakYaslari[1] += kalanTutar;
+                else if (gunFarki <= 90)
+                    alacakYaslari[2] += kalanTutar;
+                else
+                    alacakYaslari[3] += kalanTutar;
+            }
+            
+            ViewBag.AlacakYaslariMiktarlari = JsonConvert.SerializeObject(alacakYaslari);
+            
+            // 5. Nakit Akış Projeksiyonu (Gelecek 3 Ay)
+            var gelecekUcAy = new decimal[3];
+            var gelecekUcAyLabels = new string[3];
+            
+            for (int i = 0; i < 3; i++)
+            {
+                var ayBasi = DateTime.Today.AddMonths(i).AddDays(1 - DateTime.Today.Day);
+                var aySonu = ayBasi.AddMonths(1).AddDays(-1);
+                
+                // Ay adını belirle
+                gelecekUcAyLabels[i] = ayBasi.ToString("MMMM yyyy", new CultureInfo("tr-TR"));
+                
+                // Bu ay içinde vadesi gelecek satışları topla (tahsilat)
+                decimal tahsilat = satisFaturalari
+                    .Where(f => f.VadeTarihi >= ayBasi && f.VadeTarihi <= aySonu && 
+                           (f.OdemeDurumu == "Ödenmedi" || f.OdemeDurumu == "Kısmi Ödeme"))
+                    .Sum(f => (f.GenelToplam ?? 0) - (f.OdenenTutar ?? 0));
+                
+                // Bu ay içinde vadesi gelecek alışları topla (ödeme)
+                decimal odeme = yillikAlisFaturalari
+                    .Where(f => f.VadeTarihi >= ayBasi && f.VadeTarihi <= aySonu && 
+                          (f.OdemeDurumu == "Ödenmedi" || f.OdemeDurumu == "Kısmi Ödeme"))
+                    .Sum(f => (f.GenelToplam ?? 0) - (f.OdenenTutar ?? 0));
+                
+                // Net nakit akışı hesapla (tahsilat - ödeme)
+                gelecekUcAy[i] = tahsilat - odeme;
+            }
+            
+            ViewBag.NakitAkisProj = JsonConvert.SerializeObject(gelecekUcAy);
+            ViewBag.NakitAkisProjAylar = JsonConvert.SerializeObject(gelecekUcAyLabels);
+            
+            // Temel veri modelini oluştur
+            var buAy = DateTime.Now;
+            var buAyBasi = new DateTime(buAy.Year, buAy.Month, 1);
+            var buAySonu = buAyBasi.AddMonths(1).AddDays(-1);
+            
+            // Günlük satış ve gider verileri
+            var buAyGunler = Enumerable.Range(1, buAySonu.Day)
+                .Select(gun => new DateTime(buAy.Year, buAy.Month, gun).ToString("dd MMM"))
+                .ToArray();
+            
+            var buAySatislar = new decimal[buAySonu.Day];
+            var buAyGiderler = new decimal[buAySonu.Day];
+            
+            // Bu ay içindeki satış faturaları
+            var buAySatisFaturalari = faturalar?
+                .Where(f => f.FaturaTuru?.FaturaTuruAdi == "Satış" && 
+                      f.FaturaTarihi >= buAyBasi && f.FaturaTarihi <= buAySonu && !f.Silindi)
+                .ToList() ?? new List<Data.Entities.Fatura>();
+            
+            // Bu ay içindeki alış faturaları
+            var buAyAlisFaturalari = faturalar?
+                .Where(f => f.FaturaTuru?.FaturaTuruAdi == "Alış" && 
+                      f.FaturaTarihi >= buAyBasi && f.FaturaTarihi <= buAySonu && !f.Silindi)
+                .ToList() ?? new List<Data.Entities.Fatura>();
+            
+            // Günlük satış ve gider toplamlarını hesapla
+            for (int gun = 1; gun <= buAySonu.Day; gun++)
+            {
+                var tarih = new DateTime(buAy.Year, buAy.Month, gun);
+                
+                buAySatislar[gun - 1] = buAySatisFaturalari
+                    .Where(f => f.FaturaTarihi?.Day == gun)
+                    .Sum(f => f.GenelToplam ?? 0);
+                
+                buAyGiderler[gun - 1] = buAyAlisFaturalari
+                    .Where(f => f.FaturaTarihi?.Day == gun)
+                    .Sum(f => f.GenelToplam ?? 0);
+            }
+            
+            ViewBag.Days = JsonConvert.SerializeObject(buAyGunler);
+            ViewBag.Revenues = JsonConvert.SerializeObject(buAySatislar);
+            ViewBag.Expenses = JsonConvert.SerializeObject(buAyGiderler);
+            
+            // Kategori bazında satış dağılımı
+            var kategoriSatislar = new Dictionary<Guid, decimal>();
+            
+            foreach (var detay in sonOtuzGunDetaylar)
+            {
+                var urun = urunler?.FirstOrDefault(u => u.UrunID == detay.UrunID);
+                if (urun != null && urun.KategoriID.HasValue)
+                {
+                    decimal satisTutari = detay.BirimFiyat * detay.Miktar * (1 - detay.IndirimOrani / 100);
+                    
+                    if (kategoriSatislar.ContainsKey(urun.KategoriID.Value))
+                        kategoriSatislar[urun.KategoriID.Value] += satisTutari;
+                    else
+                        kategoriSatislar[urun.KategoriID.Value] = satisTutari;
+                }
+            }
+            
+            var kategorilerSatisDagilimi = new List<string>();
+            var kategoriSatisTutarlari = new List<decimal>();
+            
+            foreach (var kategoriSatis in kategoriSatislar.OrderByDescending(ks => ks.Value).Take(5))
+            {
+                var kategori = kategoriler?.FirstOrDefault(k => k.KategoriID == kategoriSatis.Key);
+                if (kategori != null)
+                {
+                    kategorilerSatisDagilimi.Add(kategori.KategoriAdi ?? "İsimsiz Kategori");
+                    kategoriSatisTutarlari.Add(kategoriSatis.Value);
+                }
+            }
+            
+            ViewBag.Categories = JsonConvert.SerializeObject(kategorilerSatisDagilimi);
+            ViewBag.CategoryRevenues = JsonConvert.SerializeObject(kategoriSatisTutarlari);
+            
+            // Son 6 aylık trend verileri
+            var son6Ay = Enumerable.Range(0, 6)
+                .Select(i => DateTime.Now.AddMonths(-i))
+                .OrderBy(d => d.Year)
+                .ThenBy(d => d.Month)
+                .ToList();
+            
+            var son6AyLabels = son6Ay.Select(d => d.ToString("MMM yyyy", new CultureInfo("tr-TR"))).ToArray();
+            var son6AySatislar = new decimal[6];
+            var son6AyGiderler = new decimal[6];
+            
+            for (int i = 0; i < 6; i++)
+            {
+                var ay = son6Ay[i];
+                var ayBasi = new DateTime(ay.Year, ay.Month, 1);
+                var aySonu = ayBasi.AddMonths(1).AddDays(-1);
+                
+                son6AySatislar[i] = satisFaturalari
+                    .Where(f => f.FaturaTarihi >= ayBasi && f.FaturaTarihi <= aySonu)
+                    .Sum(f => f.GenelToplam ?? 0);
+                
+                son6AyGiderler[i] = yillikAlisFaturalari
+                    .Where(f => f.FaturaTarihi >= ayBasi && f.FaturaTarihi <= aySonu)
+                    .Sum(f => f.GenelToplam ?? 0);
+            }
+            
+            ViewBag.Last6MonthLabels = JsonConvert.SerializeObject(son6AyLabels);
+            ViewBag.TrendRevenues = JsonConvert.SerializeObject(son6AySatislar);
+            ViewBag.TrendExpenses = JsonConvert.SerializeObject(son6AyGiderler);
+            
+            ViewBag.TotalRevenue = son6AySatislar.Sum();
+            ViewBag.TotalExpense = son6AyGiderler.Sum();
+            
+            // Para birimi bilgisini tüm view'larda kullanılabilmesi için ViewBag'e ekle
+            ViewBag.ParaBirimi = "USD";
+            ViewBag.TryToUsdKur = tryToUsdKur;
+            ViewBag.UzsToUsdKur = uzsToUsdKur;
         }
 
         // Varsayılan menüleri oluşturan yardımcı metot

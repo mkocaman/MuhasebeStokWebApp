@@ -1,7 +1,9 @@
 @model MuhasebeStokWebApp.ViewModels.Depo.DepoCreateViewModel
 
-<form asp-action="Create" method="post">
+<form id="createDepoForm" asp-action="Create" method="post" onsubmit="return createDepo(event)">
     <div class="modal-body">
+        <div id="createFormAlert" class="alert alert-danger d-none" role="alert"></div>
+        
         <div class="mb-3">
             <label asp-for="DepoAdi" class="form-label">Depo Adı</label>
             <input asp-for="DepoAdi" class="form-control" required />
@@ -15,7 +17,7 @@
         </div>
         
         <div class="form-check mb-3">
-            <input asp-for="Aktif" class="form-check-input" data-val="true" data-val-required="The Aktif field is required." />
+            <input asp-for="Aktif" class="form-check-input" data-val="true" data-val-required="The Aktif field is required." checked />
             <label asp-for="Aktif" class="form-check-label">Aktif</label>
         </div>
     </div>
@@ -25,6 +27,53 @@
         <button type="submit" class="btn btn-primary">Kaydet</button>
     </div>
 </form>
+
+<script>
+    function createDepo(event) {
+        event.preventDefault();
+        
+        var form = $('#createDepoForm');
+        var formData = form.serialize();
+        
+        $.ajax({
+            url: form.attr('action'),
+            type: 'POST',
+            data: formData,
+            success: function(response) {
+                if (response.success) {
+                    // Başarılı ise Sweet Alert göster
+                    Swal.fire({
+                        icon: 'success',
+                        title: 'Başarılı!',
+                        text: response.message || 'Depo başarıyla oluşturuldu.',
+                        confirmButtonText: 'Tamam'
+                    }).then(() => {
+                        // Modalı kapat ve sayfayı yenile
+                        $('#createDepoModal').modal('hide');
+                        location.reload();
+                    });
+                } else {
+                    // Hata mesajlarını göster
+                    $('#createFormAlert').removeClass('d-none').html(response.message);
+                    
+                    if (response.errors && response.errors.length > 0) {
+                        var errorList = '<ul>';
+                        $.each(response.errors, function(index, error) {
+                            errorList += '<li>' + error + '</li>';
+                        });
+                        errorList += '</ul>';
+                        $('#createFormAlert').append(errorList);
+                    }
+                }
+            },
+            error: function(xhr, status, error) {
+                $('#createFormAlert').removeClass('d-none').text('Bir hata oluştu: ' + error);
+            }
+        });
+        
+        return false;
+    }
+</script>
 
 @section Scripts {
     @{await Html.RenderPartialAsync("_ValidationScriptsPartial");}

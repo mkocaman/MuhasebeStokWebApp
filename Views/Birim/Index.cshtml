@@ -59,7 +59,7 @@
                                 </tr>
                             </thead>
                             <tbody>
-                                @foreach (var item in Model.Where(b => b.Aktif))
+                                @foreach (var item in Model.Where(b => b.Aktif && !b.Silindi))
                                 {
                                     <tr>
                                         <td>@item.BirimAdi</td>
@@ -92,15 +92,26 @@
                                 <tr>
                                     <th>Birim Adı</th>
                                     <th>Açıklama</th>
+                                    <th>Durum</th>
                                     <th>İşlemler</th>
                                 </tr>
                             </thead>
                             <tbody>
-                                @foreach (var item in Model.Where(b => !b.Aktif))
+                                @foreach (var item in Model.Where(b => !b.Aktif || b.Silindi))
                                 {
                                     <tr>
                                         <td>@item.BirimAdi</td>
                                         <td>@item.Aciklama</td>
+                                        <td>
+                                            @if (item.Silindi)
+                                            {
+                                                <span class="badge bg-danger">Silinmiş</span>
+                                            }
+                                            else if (!item.Aktif)
+                                            {
+                                                <span class="badge bg-warning">Pasif</span>
+                                            }
+                                        </td>
                                         <td class="text-center">
                                             <div class="btn-group" role="group">
                                                 <button type="button" class="btn btn-sm btn-info btn-edit-birim" data-id="@item.BirimID">
@@ -109,9 +120,9 @@
                                                 <a asp-action="Details" asp-route-id="@item.BirimID" class="btn btn-sm btn-primary">
                                                     <i class="fas fa-info-circle"></i>
                                                 </a>
-                                                <a asp-action="Delete" asp-route-id="@item.BirimID" class="btn btn-sm btn-danger">
-                                                    <i class="fas fa-trash"></i>
-                                                </a>
+                                                <button type="button" class="btn btn-sm btn-success btn-restore-birim" data-id="@item.BirimID">
+                                                    <i class="fas fa-undo"></i>
+                                                </button>
                                             </div>
                                         </td>
                                     </tr>
@@ -249,104 +260,93 @@
                         // AJAX hatası olursa Sweet Alert göster
                         Swal.fire({
                             icon: 'error',
-                            title: 'AJAX Hatası!',
-                            text: 'Birim oluşturulurken bir hata oluştu: ' + error,
+                            title: 'Hata!',
+                            text: 'Birim oluşturulurken bir hata oluştu. Lütfen tekrar deneyin.',
                             confirmButtonText: 'Tamam'
                         });
                     }
                 });
             });
             
-            // Birim düzenleme modalı açma
+            // Birim düzenleme modal'ını aç
             $('.btn-edit-birim').on('click', function() {
-                var birimId = $(this).data('id');
+                var birimID = $(this).data('id');
                 
-                // Modalın içeriğini temizle ve loading göster
-                $('#editBirimModalContent').html('<div class="modal-body text-center"><div class="spinner-border text-primary" role="status"><span class="visually-hidden">Yükleniyor...</span></div></div>');
-                
-                // Modalı aç
-                $('#editBirimModal').modal('show');
-                
-                // AJAX ile düzenleme formunu yükle
+                // Modal içeriğini yükle
                 $.ajax({
-                    url: '/Birim/Edit/' + birimId,
+                    url: '@Url.Action("Edit", "Birim")/' + birimID,
                     type: 'GET',
                     headers: {
                         'X-Requested-With': 'XMLHttpRequest'
                     },
                     success: function(data) {
                         $('#editBirimModalContent').html(data);
-                        
-                        // Düzenleme formunun gönderimini ele al
-                        $('#editBirimForm').on('submit', function(e) {
-                            e.preventDefault();
-                            
-                            var formData = {
-                                BirimID: $('#BirimID').val(),
-                                BirimAdi: $('#BirimAdi').val(),
-                                Aciklama: $('#Aciklama').val(),
-                                Aktif: $('#Aktif').is(':checked')
-                            };
-                            
-                            $.ajax({
-                                url: $(this).attr('action'),
-                                type: 'POST',
-                                data: formData,
-                                headers: {
-                                    'X-Requested-With': 'XMLHttpRequest',
-                                    'X-CSRF-TOKEN': $('input[name="__RequestVerificationToken"]').val()
-                                },
-                                success: function(response) {
-                                    if (response.success) {
-                                        Swal.fire({
-                                            icon: 'success',
-                                            title: 'Başarılı!',
-                                            text: response.message || 'Birim başarıyla güncellendi.',
-                                            confirmButtonText: 'Tamam'
-                                        }).then((result) => {
-                                            $('#editBirimModal').modal('hide');
-                                            location.reload();
-                                        });
-                                    } else {
-                                        Swal.fire({
-                                            icon: 'error',
-                                            title: 'Hata!',
-                                            text: response.message || 'Birim güncellenirken bir hata oluştu.',
-                                            confirmButtonText: 'Tamam'
-                                        });
-                                    }
-                                },
-                                error: function(xhr, status, error) {
-                                    Swal.fire({
-                                        icon: 'error',
-                                        title: 'AJAX Hatası!',
-                                        text: 'Birim güncellenirken bir hata oluştu: ' + error,
-                                        confirmButtonText: 'Tamam'
-                                    });
-                                }
-                            });
-                        });
+                        $('#editBirimModal').modal('show');
                     },
                     error: function(xhr, status, error) {
-                        $('#editBirimModalContent').html('<div class="modal-body"><div class="alert alert-danger">Birim düzenleme formu yüklenirken bir hata oluştu: ' + error + '</div></div>');
+                        Swal.fire({
+                            icon: 'error',
+                            title: 'Hata!',
+                            text: 'Birim bilgileri yüklenirken bir hata oluştu.',
+                            confirmButtonText: 'Tamam'
+                        });
                     }
                 });
             });
             
-            // Yeni Birim Ekleme modalı açıldığında formun içini temizle
-            $('#createBirimModal').on('show.bs.modal', function() {
-                $('#BirimAdi').val('');
-                $('#Aciklama').val('');
-                $('#Aktif').prop('checked', true);
-                $('#createFormAlert').addClass('d-none');
-            });
-            
-            // Otomatik kapanan alertler
-            window.setTimeout(function() {
-                $('.alert:not(#createFormAlert, #editFormAlert)').fadeTo(500, 0).slideUp(500, function() {
-                    $(this).remove();
+            // Geri alma butonu işlemleri
+            $(document).on('click', '.btn-restore-birim', function() {
+                var birimID = $(this).data('id');
+                
+                // Onay dialogu göster
+                Swal.fire({
+                    title: 'Emin misiniz?',
+                    text: 'Bu birimi aktif duruma getirmek istediğinize emin misiniz?',
+                    icon: 'question',
+                    showCancelButton: true,
+                    confirmButtonText: 'Evet, Aktif Yap',
+                    cancelButtonText: 'İptal'
+                }).then((result) => {
+                    if (result.isConfirmed) {
+                        // AJAX isteği ile birimi aktif yap
+                        $.ajax({
+                            url: '@Url.Action("RestoreUnit", "Birim")',
+                            type: 'POST',
+                            data: { id: birimID },
+                            headers: {
+                                'RequestVerificationToken': $('input[name="__RequestVerificationToken"]').val()
+                            },
+                            success: function(response) {
+                                if (response.success) {
+                                    Swal.fire({
+                                        icon: 'success',
+                                        title: 'Başarılı!',
+                                        text: response.message || 'Birim başarıyla aktif edildi.',
+                                        confirmButtonText: 'Tamam'
+                                    }).then(() => {
+                                        location.reload();
+                                    });
+                                } else {
+                                    Swal.fire({
+                                        icon: 'error',
+                                        title: 'Hata!',
+                                        text: response.message || 'Birim aktif edilirken bir hata oluştu.',
+                                        confirmButtonText: 'Tamam'
+                                    });
+                                }
+                            },
+                            error: function() {
+                                Swal.fire({
+                                    icon: 'error',
+                                    title: 'Hata!',
+                                    text: 'İşlem sırasında bir hata oluştu.',
+                                    confirmButtonText: 'Tamam'
+                                });
+                            }
+                        });
+                    }
                 });
-            }, 4000);
+            });
         });
     </script>
 } 

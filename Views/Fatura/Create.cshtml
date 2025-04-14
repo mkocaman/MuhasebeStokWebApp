@@ -30,6 +30,16 @@
     #kalemlerTable th, #kalemlerTable td {
         white-space: nowrap;
     }
+    
+    /* Uyarı mesajı stilini düzenleyelim */
+    .performance-warning {
+        background-color: #fff3cd;
+        color: #856404;
+        padding: 10px;
+        margin-bottom: 15px;
+        border-radius: 4px;
+        border: 1px solid #ffeeba;
+    }
 </style>
 
 <div class="container-fluid">
@@ -43,6 +53,12 @@
             </div>
         </div>
         <div class="card-body">
+            <!-- Performans uyarısı ekleyelim -->
+            <div class="alert alert-warning performance-warning">
+                <strong><i class="fas fa-exclamation-triangle"></i> Önemli Bilgilendirme</strong>
+                <p class="mb-0">Fatura kaydetme işlemi, özellikle çok sayıda kalem içeren faturalarda uzun sürebilir. Lütfen işlem tamamlanana kadar bekleyin ve sayfayı yenilemeyin. Kaydetme işlemi arka planda devam edecektir.</p>
+            </div>
+            
             @if (ViewBag.UrunListesiBosMu != null && ViewBag.UrunListesiBosMu)
             {
                 <div class="alert alert-warning">
@@ -308,7 +324,10 @@
     <link href="https://cdn.jsdelivr.net/npm/select2@4.1.0-rc.0/dist/css/select2.min.css" rel="stylesheet" />
     <script src="https://cdn.jsdelivr.net/npm/select2@4.1.0-rc.0/dist/js/select2.min.js"></script>
     
-    <script>
+    <script type="text/javascript">
+        // Cari - Para Birimi ilişkilerini JavaScript değişkenine aktar
+        var cariParaBirimleri = @Html.Raw(Json.Serialize(ViewBag.CariParaBirimleri));
+        
         $(document).ready(function () {
             var kalemIndex = 0;
             
@@ -347,71 +366,85 @@
                 console.error("Select2 yüklenemedi:", e);
             }
 
-            // Cari seçildiğinde döviz türünü ve kurunu güncelle
-            $("#CariID").change(function() {
-                var cariID = $(this).val();
-                if (cariID) {
-                    console.log("Cari değişti, ID:", cariID, "para birimi bilgisi getiriliyor...");
+            // Cari değiştiğinde
+            $('#CariID').on('change', function() {
+                var cariId = $(this).val();
+                
+                // Eğer bir cari seçildiyse ve bu carinin varsayılan para birimi varsa
+                if (cariId && cariParaBirimleri && cariParaBirimleri[cariId]) {
+                    // Döviz türünü otomatik güncelle
+                    var dovizKodu = cariParaBirimleri[cariId];
+                    $('#DovizTuru').val(dovizKodu).trigger('change');
                     
-                    $.ajax({
-                        url: "/Cari/GetCariParaBirimi",
-                        type: "GET",
-                        data: { id: cariID },
-                        dataType: "json",
-                        success: function(data) {
-                            if (data && data.success && data.paraBirimiKodu) {
-                                console.log("Cari para birimi bilgisi alındı:", data.paraBirimiKodu);
-                                
-                                // Doğrudan değer atama ve tetikleme
-                                $("#dovizTuruSelect").val(data.paraBirimiKodu);
-                                $("#dovizTuruSelect").trigger('change');
-                                
-                                console.log("Döviz türü güncellendi:", data.paraBirimiKodu);
-                            } else {
-                                console.warn("Cari para birimi bilgisi alınamadı veya eksik");
-                                $("#dovizTuruSelect").val("TRY").trigger('change');
-                            }
-                        },
-                        error: function(xhr, status, error) {
-                            console.error("Cari para birimi bilgisi alınamadı:", error);
-                            $("#dovizTuruSelect").val("TRY").trigger('change');
-                        }
-                    });
+                    // Kur bilgisini getir
+                    kurGetir(dovizKodu);
                 }
             });
 
-            // Güncel kur getir
-            $("#btnGetirKur").click(function() {
-                var dovizKodu = $("#dovizTuruSelect").val();
-                if (dovizKodu === "TRY") {
-                    $("#DovizKuru").val(1);
+            // Kur Getir butonuna tıklanınca
+            $(document).on('click', '.btn-kur-getir', function() {
+                var dovizKodu = $('#DovizTuru').val();
+                var faturaTarihi = $('#FaturaTarihi').val();
+                
+                kurGetir(dovizKodu, faturaTarihi);
+            });
+            
+            // Kur bilgisi getir
+            function kurGetir(dovizKodu, tarih = null) {
+                // Eğer TRY seçildiyse, kur 1 olarak ayarla
+                if (dovizKodu === 'TRY') {
+                    $('#DovizKuru').val('1');
                     return;
                 }
                 
-                try {
-                    $.ajax({
-                        url: "/ParaBirimi/GetLatestExchangeRateByKod",
-                        type: "GET",
-                        data: { kod: dovizKodu },
-                        success: function(data) {
-                            if (data && data.kur) {
-                                $("#DovizKuru").val(data.kur.toFixed(4));
-                            } else {
-                                alert("Kur bilgisi bulunamadı. Lütfen manuel olarak giriniz.");
-                                $("#DovizKuru").val(1);
-                            }
-                        },
-                        error: function(xhr, status, error) {
-                            console.error("Kur bilgisi alınırken hata:", error);
-                            alert("Kur bilgisi alınırken bir hata oluştu. Varsayılan değer 1 olarak ayarlandı.");
-                            $("#DovizKuru").val(1);
-                        }
-                    });
-                } catch (e) {
-                    console.error("Kur getirme işleminde hata:", e);
-                    $("#DovizKuru").val(1);
+                // Parametreleri hazırla
+                var params = { dovizKodu: dovizKodu };
+                if (tarih) {
+                    params.tarih = tarih;
                 }
-            });
+                
+                // Kur bilgisini getir
+                $.ajax({
+                    url: '@Url.Action("GetKurBilgisi", "Fatura")',
+                    type: 'GET',
+                    data: params,
+                    success: function(data) {
+                        if (data.success) {
+                            $('#DovizKuru').val(data.kurDegeri);
+                            
+                            if (data.message) {
+                                // Eğer mesaj varsa kullanıcıya bilgi ver
+                                Swal.fire({
+                                    title: 'Bilgi',
+                                    text: data.message,
+                                    icon: 'info'
+                                });
+                            }
+                        } else {
+                            // Kur bilgisi bulunamadı
+                            Swal.fire({
+                                title: 'Uyarı',
+                                text: data.message || 'Kur bilgisi bulunamadı. Lütfen manuel olarak giriniz.',
+                                icon: 'warning'
+                            });
+                            
+                            // Varsayılan değer
+                            if (data.kurDegeri) {
+                                $('#DovizKuru').val(data.kurDegeri);
+                            } else {
+                                $('#DovizKuru').val('0');
+                            }
+                        }
+                    },
+                    error: function() {
+                        Swal.fire({
+                            title: 'Hata',
+                            text: 'Kur bilgisi alınırken bir hata oluştu.',
+                            icon: 'error'
+                        });
+                    }
+                });
+            }
             
             // Resmi Fatura mı? checkbox değişiminde
             $("#resmiMiCheck").change(function() {
@@ -715,6 +748,14 @@
                     return false;
                 }
                 
+                // Boş satırları kaldıralım (performans için)
+                var validRows = $(".kalem-row").filter(function() {
+                    var urunID = $(this).find(".urun-select").val();
+                    var miktar = parseFloat($(this).find(".miktar").val()) || 0;
+                    return urunID && miktar > 0; // Ürün seçili ve miktar > 0 olan satırlar geçerli
+                });
+                $(".kalem-row").not(validRows).remove();
+                
                 // UrunAdi değerlerini kontrol et ve doldur
                 var isValid = true;
                 $(".kalem-row").each(function(index) {
@@ -764,7 +805,7 @@
                 $("#submitBtn").prop("disabled", true).html('<i class="fas fa-spinner fa-spin"></i> Kaydediliyor...');
                 console.log("Form gönderiliyor...");
                 
-                // 60 saniye sonra işlem tamamlanmadıysa kullanıcıya bilgi ver
+                // 3 dakika (180 saniye) sonra işlem tamamlanmadıysa kullanıcıya bilgi ver (süre uzatıldı)
                 setTimeout(function() {
                     if ($("#submitBtn").prop("disabled")) {
                         console.log("İşlem uzun sürüyor, kullanıcıya bilgi veriliyor...");
@@ -774,8 +815,8 @@
                             title: 'İşlem Devam Ediyor',
                             html: 'Fatura kaydediliyor, ancak işlem normalden uzun sürüyor. Bu, büyük faturaların kaydedilmesi sırasında olağan bir durumdur.<br><br>' +
                                   'Seçenekleriniz:<br>' +
-                                  '1. <b>Bekleyin</b>: İşlem tamamlanana kadar bekleyin.<br>' +
-                                  '2. <b>Listeleye Dönün</b>: İşlem arka planda devam edecektir. Tamamlandığında fatura listesinde görünecektir.',
+                                  '1. <b>Bekleyin</b>: İşlem tamamlanana kadar bekleyin (2-3 dakika sürebilir).<br>' +
+                                  '2. <b>Listeleye Dön</b>: İşlem arka planda devam edecektir. Tamamlandığında fatura listesinde görünecektir.',
                             icon: 'info',
                             showCancelButton: true,
                             confirmButtonText: 'Bekle',
@@ -787,11 +828,14 @@
                             }
                         });
                     }
-                }, 60000);
+                }, 180000);
                 
                 // Normal form gönderimi için true döndür
                 return true;
             });
+
+            // Sayfanın ilk yüklenişinde ilk fatura kalemini hazırla
+            addFirstItemIfEmpty();
         });
     </script>
 } 

@@ -510,6 +510,8 @@ namespace MuhasebeStokWebApp.Services
         public async Task<bool> ManuelAklamaYapAsync(Guid resmiFaturaKalemId, List<Guid> secilenKayitIdleri, decimal toplamMiktar, string aklamaNotu)
         {
             _logger.LogInformation("ManuelAklamaYapAsync metodu çağrıldı, fakat şu anda etkin değil");
+            // Async metot için await ekliyoruz
+            await Task.CompletedTask;
             // Geçici olarak başarılı olduğumuzu söylüyoruz
             return true;
         }
@@ -517,6 +519,8 @@ namespace MuhasebeStokWebApp.Services
         public async Task<bool> AklamaIptalEtAsync(Guid aklamaId)
         {
             _logger.LogInformation("AklamaIptalEtAsync metodu çağrıldı, fakat şu anda etkin değil");
+            // Async metot için await ekliyoruz
+            await Task.CompletedTask;
             // Geçici olarak başarılı olduğumuzu söylüyoruz
             return true;
         }
@@ -524,6 +528,8 @@ namespace MuhasebeStokWebApp.Services
         public async Task<bool> ResmiFaturaIptalAsync(Guid resmiFaturaId)
         {
             _logger.LogInformation("ResmiFaturaIptalAsync metodu çağrıldı, fakat şu anda etkin değil");
+            // Async metot için await ekliyoruz
+            await Task.CompletedTask;
             // Geçici olarak başarılı olduğumuzu söylüyoruz
             return true;
         }
