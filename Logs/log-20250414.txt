@@ -2576,3 +2576,23 @@ Error Number:207,State:1,Class:16
 2025-04-14 14:47:56.792 +03:00 [INF] Received HTTP response headers after 459.4523ms - 200
 2025-04-14 14:47:56.801 +03:00 [INF] End processing HTTP request after 479.7372ms - 200
 2025-04-14 14:48:09.713 +03:00 [INF] 0 adet para birimi ilişkisi listelendi.
+2025-04-14 15:02:31.769 +03:00 [INF] Veritabanına bağlantı başarılı. Migrationlar uygulanıyor...
+2025-04-14 15:02:32.119 +03:00 [INF] Veritabanı işlemleri başarıyla tamamlandı.
+2025-04-14 15:02:36.694 +03:00 [INF] Giriş denemesi: admin
+2025-04-14 15:02:36.787 +03:00 [INF] Admin kullanıcısı başarıyla giriş yaptı: admin
+2025-04-14 15:02:36.788 +03:00 [INF] Admin session oluşturuldu: UserID=ef485e54-df92-4418-ab3d-843fbb715fe1, UserName=admin
+2025-04-14 15:02:36.788 +03:00 [INF] Yönlendirme adresi: /
+2025-04-14 15:02:36.788 +03:00 [INF] Admin kullanıcısı / adresine yönlendiriliyor
+2025-04-14 15:02:36.887 +03:00 [INF] Aktif session bulundu: UserID=ef485e54-df92-4418-ab3d-843fbb715fe1, UserName=admin
+2025-04-14 15:02:36.888 +03:00 [INF] Admin kullanıcısı tespit edildi
+2025-04-14 15:02:36.888 +03:00 [INF] Kimlik doğrulanmış kullanıcı: admin
+2025-04-14 15:02:58.071 +03:00 [INF] Cari listesi yüklendi, toplam 0 adet cari bulundu.
+2025-04-14 15:02:58.096 +03:00 [INF] Sözleşme listesi yüklendi, toplam 0 adet sözleşme bulundu.
+2025-04-14 15:02:58.124 +03:00 [INF] Ürün listesi yüklendi, toplam 0 adet ürün bulundu.
+2025-04-14 15:02:58.124 +03:00 [WRN] Ürün listesi boş! Veritabanında aktif ürün bulunamadı.
+2025-04-14 15:02:58.141 +03:00 [INF] Para birimi listesi yüklendi, toplam 2 adet para birimi bulundu.
+2025-04-14 15:04:40.485 +03:00 [WRN] Hata - Adres: The Adres field is required.
+2025-04-14 15:04:44.152 +03:00 [WRN] Hata - Adres: The Adres field is required.
+2025-04-14 15:05:18.253 +03:00 [INF] Aktif session bulundu: UserID=ef485e54-df92-4418-ab3d-843fbb715fe1, UserName=admin
+2025-04-14 15:05:18.253 +03:00 [INF] Admin kullanıcısı tespit edildi
+2025-04-14 15:05:18.253 +03:00 [INF] Kimlik doğrulanmış kullanıcı: admin
