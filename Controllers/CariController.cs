@@ -93,23 +93,33 @@ namespace MuhasebeStokWebApp.Controllers
                     .Where(c => !c.Silindi && c.CariID == id)
                     .ToListAsync();
                 
-                // Açılış bakiyesi hareketlerini ayrı al 
-                var acilisBakiyeHareketleri = tumHareketler.Where(h => h.HareketTuru == "Açılış bakiyesi").OrderBy(h => h.Tarih).ToList();
+                // Önce listeyi alalım, sonra bellekte sıralama yapalım
+                var acilisBakiyeHareketleri = tumHareketler
+                    .Where(h => h.HareketTuru == "Açılış bakiyesi")
+                    .ToList()
+                    .OrderBy(h => h.Tarih)
+                    .ToList();
                 
                 // Diğer hareketleri al
-                var digerHareketler = tumHareketler.Where(h => h.HareketTuru != "Açılış bakiyesi").OrderBy(h => h.Tarih).ToList();
+                var digerHareketler = tumHareketler
+                    .Where(h => h.HareketTuru != "Açılış bakiyesi")
+                    .ToList()
+                    .OrderBy(h => h.Tarih)
+                    .ToList();
                     
                 cari.CariHareketler = acilisBakiyeHareketleri.Concat(digerHareketler).ToList();
 
                 // Son faturaları getir - veritabanı seviyesinde filtreleme
                 var faturalar = await _unitOfWork.FaturaRepository.GetAll()
                     .Where(f => !f.Silindi && f.CariID == id)
+                    .ToListAsync();
+                    
+                // Bellekte sıralama
+                cari.SonFaturalar = faturalar
                     .OrderByDescending(f => f.FaturaTarihi)
                     .Take(5)
                     .Cast<object>()
-                    .ToListAsync();
-                    
-                cari.SonFaturalar = faturalar;
+                    .ToList();
             }
             catch (Exception ex)
             {
@@ -156,7 +166,7 @@ namespace MuhasebeStokWebApp.Controllers
                         Ad = model.Ad,
                         CariKodu = !string.IsNullOrEmpty(model.CariKodu) ? model.CariKodu : GenerateCariKodu(),
                         CariTipi = model.CariTipi,
-                        VergiNo = model.VergiNo,
+                        VergiNo = string.IsNullOrEmpty(model.VergiNo) ? "00000000000" : model.VergiNo,
                         VergiDairesi = model.VergiDairesi,
                         Telefon = model.Telefon,
                         Email = model.Email,
