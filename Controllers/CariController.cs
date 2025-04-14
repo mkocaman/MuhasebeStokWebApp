@@ -71,32 +71,42 @@ namespace MuhasebeStokWebApp.Controllers
             // Para birimi listesini view'a gönder
             ViewBag.ParaBirimleri = await _paraBirimiService.GetAktifParaBirimleriAsync();
 
-            // Cari hareketlerini yükle
-            cari.CariHareketler = (await _unitOfWork.CariHareketRepository
-                .GetAsync(filter: ch => ch.CariId == id && !ch.Silindi, 
-                         orderBy: q => q.OrderByDescending(ch => ch.Tarih))).ToList();
+            try
+            {
+                // Son 10 cari hareketini getir
+                var cariHareketler = await _unitOfWork.CariHareketRepository.GetAsync(
+                    filter: ch => ch.CariId == id && !ch.Silindi);
+                    
+                // ToList() çağırmadan önce sıralama yapalım
+                var siraliHareketler = cariHareketler.ToList();
+                // Sonra bellek içinde sıralayalım
+                cari.CariHareketler = siraliHareketler
+                    .OrderByDescending(h => h.Tarih)
+                    .Take(10)
+                    .ToList();
 
-            // Son 10 cari hareketi getir - orderBy kısmı düzeltildi
-            var cariHareketler = await _unitOfWork.CariHareketRepository.GetAsync(
-                filter: ch => ch.CariId == id);
-                
-            // Sorgu sonucunu uygulama tarafında sıralayalım (OrderBy sorunu)
-            cari.CariHareketler = cariHareketler
-                .OrderByDescending(h => h.Tarih)
-                .Take(10)
-                .ToList();
-
-            // Son faturaları getir - orderBy kısmı düzeltildi
-            var sonFaturalar = await _unitOfWork.FaturaRepository.GetAsync(
-                filter: f => f.CariID == id);
-                
-            // Sorgu sonucunu uygulama tarafında sıralayalım
-            cari.SonFaturalar = sonFaturalar
-                .OrderByDescending(f => f.FaturaTarihi)
-                .Take(5)
-                .Cast<object>()
-                .ToList();
-
+                // Son faturaları getir
+                var sonFaturalar = await _unitOfWork.FaturaRepository.GetAsync(
+                    filter: f => f.CariID == id);
+                    
+                // Önce listeye çevirelim
+                var faturalarListesi = sonFaturalar.ToList();
+                // Sonra bellek içinde sıralayalım
+                cari.SonFaturalar = faturalarListesi
+                    .OrderByDescending(f => f.FaturaTarihi)
+                    .Take(5)
+                    .Cast<object>()
+                    .ToList();
+            }
+            catch (Exception ex)
+            {
+                _logger.LogError(ex, "Cari detayları yüklenirken bir hata oluştu");
+                // Boş listeler oluştur
+                cari.CariHareketler = new List<Data.Entities.CariHareket>();
+                cari.SonFaturalar = new List<object>();
+                TempData["ErrorMessage"] = "Cari hareketleri yüklenirken bir hata oluştu: " + ex.Message;
+            }
+            
             return View(cari);
         }
 
@@ -141,26 +151,26 @@ namespace MuhasebeStokWebApp.Controllers
                 var cari = new Cari
                 {
                     Ad = model.Ad,
-                        CariKodu = !string.IsNullOrEmpty(model.CariKodu) ? model.CariKodu : "CRI-" + DateTime.Now.ToString("yyyyMMddHHmmss"),
-                        CariTipi = model.CariTipi,
-                    VergiNo = model.VergiNo,
-                        VergiDairesi = model.VergiDairesi,
+                    CariKodu = !string.IsNullOrEmpty(model.CariKodu) ? model.CariKodu : "CRI-" + DateTime.Now.ToString("yyyyMMddHHmmss"),
+                    CariTipi = model.CariTipi,
+                    VergiNo = string.IsNullOrEmpty(model.VergiNo) ? "00000000000" : model.VergiNo,
+                    VergiDairesi = model.VergiDairesi,
                     Telefon = model.Telefon,
                     Email = model.Email,
                     Yetkili = model.Yetkili,
                     BaslangicBakiye = model.BaslangicBakiye,
-                        Adres = model.Adres ?? "",
+                    Adres = model.Adres ?? "",
                     Aciklama = model.Aciklama,
                     Il = model.Il ?? "",
                     Ilce = model.Ilce ?? "",
                     PostaKodu = model.PostaKodu ?? "",
-                        Ulke = model.Ulke ?? "Türkiye",
+                    Ulke = model.Ulke ?? "Türkiye",
                     WebSitesi = model.WebSitesi ?? "",
                     Notlar = model.Notlar ?? "",
                     AktifMi = model.Aktif,
-                        OlusturmaTarihi = DateTime.Now,
-                        OlusturanKullaniciId = Guid.Parse(User.FindFirst(System.Security.Claims.ClaimTypes.NameIdentifier)?.Value)
-                    };
+                    OlusturmaTarihi = DateTime.Now,
+                    OlusturanKullaniciId = Guid.Parse(User.FindFirst(System.Security.Claims.ClaimTypes.NameIdentifier)?.Value)
+                };
                     
                     await _unitOfWork.CariRepository.AddAsync(cari);
                     
