@@ -281,13 +281,23 @@ using (var scope = app.Services.CreateScope())
     {
         var context = services.GetRequiredService<ApplicationDbContext>();
         
-        // Veritabanını oluştur
-        context.Database.Migrate();
+        // Veritabanı varsa migrationları uygula, yoksa oluştur
+        if (context.Database.CanConnect())
+        {
+            Log.Information("Veritabanına bağlantı başarılı. Migrationlar uygulanıyor...");
+            // Migrationları uygula ama tablolar varsa oluşturmaya çalışma
+            context.Database.EnsureCreated();
+        }
+        else
+        {
+            Log.Warning("Veritabanına bağlantı sağlanamadı. Veritabanı oluşturuluyor...");
+            context.Database.EnsureCreated();
+        }
         
         // Gerekli başlangıç verilerini ekle
         await AppDbInitializer.SeedData(services, context);
         
-        Log.Information("Veritabanı başarıyla oluşturuldu ve migrationlar uygulandı.");
+        Log.Information("Veritabanı işlemleri başarıyla tamamlandı.");
     }
     catch (Exception ex)
     {

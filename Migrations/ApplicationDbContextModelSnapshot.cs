@@ -1726,6 +1726,12 @@ namespace MuhasebeStokWebApp.Migrations
                         .HasMaxLength(50)
                         .HasColumnType("nvarchar(50)");
 
+                    b.Property<decimal>("EfektifAlis")
+                        .HasColumnType("decimal(18,6)");
+
+                    b.Property<decimal>("EfektifSatis")
+                        .HasColumnType("decimal(18,6)");
+
                     b.Property<DateTime?>("GuncellemeTarihi")
                         .HasColumnType("datetime2");
 

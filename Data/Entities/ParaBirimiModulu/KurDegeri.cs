@@ -50,6 +50,20 @@ namespace MuhasebeStokWebApp.Data.Entities.ParaBirimiModulu
         public decimal Satis { get; set; }
         
         /// <summary>
+        /// Efektif alış fiyatı
+        /// </summary>
+        [Display(Name = "Efektif Alış")]
+        [Column(TypeName = "decimal(18,6)")]
+        public decimal EfektifAlis { get; set; }
+        
+        /// <summary>
+        /// Efektif satış fiyatı
+        /// </summary>
+        [Display(Name = "Efektif Satış")]
+        [Column(TypeName = "decimal(18,6)")]
+        public decimal EfektifSatis { get; set; }
+        
+        /// <summary>
         /// Aktif mi
         /// </summary>
         [Display(Name = "Aktif")]
