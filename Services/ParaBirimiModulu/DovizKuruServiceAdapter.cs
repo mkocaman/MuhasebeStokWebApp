@@ -66,8 +66,8 @@ namespace MuhasebeStokWebApp.Services.ParaBirimiModulu
                     ParaBirimiAdi = kurDegeri.ParaBirimi?.Ad ?? string.Empty,
                     Alis = kurDegeri.Alis,
                     Satis = kurDegeri.Satis,
-                    EfektifAlis = kurDegeri.Efektif_Alis,
-                    EfektifSatis = kurDegeri.Efektif_Satis,
+                    EfektifAlis = kurDegeri.EfektifAlis,
+                    EfektifSatis = kurDegeri.EfektifSatis,
                     Tarih = kurDegeri.Tarih,
                     GuncellemeTarihi = kurDegeri.GuncellemeTarihi ?? DateTime.Now,
                     Aktif = kurDegeri.Aktif,
@@ -81,7 +81,7 @@ namespace MuhasebeStokWebApp.Services.ParaBirimiModulu
         /// <summary>
         /// Belirli bir tarih için tüm döviz kurlarını getirir
         /// </summary>
-        public async Task<List<KurDegeri>> GetKurDegerleriByTarihAsync(DateTime? tarih)
+        public async Task<List<MuhasebeStokWebApp.Data.Entities.DovizModulu.KurDegeri>> GetKurDegerleriByTarihAsync(DateTime? tarih)
         {
             // Doğrudan GetAllKurDegerleriAsync metoduna DateTime? tipindeki tarih parametresini geçiyoruz
             // Bu metodun imzası: Task<List<KurDegeri>> GetAllKurDegerleriAsync(DateTime? tarih = null)
@@ -89,7 +89,7 @@ namespace MuhasebeStokWebApp.Services.ParaBirimiModulu
             return paraKurDegerleri.Select(pk => ConvertToKurDegeri(pk)).ToList();
         }
 
-        public async Task<KurDegeri?> GetSonKurDegeriByKodAsync(string kod)
+        public async Task<MuhasebeStokWebApp.Data.Entities.DovizModulu.KurDegeri?> GetSonKurDegeriByKodAsync(string kod)
         {
             var paraBirimi = await _paraBirimiService.GetParaBirimiByKodAsync(kod);
             if (paraBirimi == null)
@@ -99,7 +99,7 @@ namespace MuhasebeStokWebApp.Services.ParaBirimiModulu
             return paraKurDegeri != null ? ConvertToKurDegeri(paraKurDegeri) : null;
         }
 
-        public async Task<KurDegeri?> GetSonKurDegeriByParaBirimiAsync(Guid paraBirimiId)
+        public async Task<MuhasebeStokWebApp.Data.Entities.DovizModulu.KurDegeri?> GetSonKurDegeriByParaBirimiAsync(Guid paraBirimiId)
         {
             var paraKurDegeri = await _paraBirimiService.GetSonKurDegeriByParaBirimiAsync(paraBirimiId);
             return paraKurDegeri != null ? ConvertToKurDegeri(paraKurDegeri) : null;
@@ -175,17 +175,17 @@ namespace MuhasebeStokWebApp.Services.ParaBirimiModulu
         }
 
         // ParaBirimiModulu.KurDegeri'yi DovizModulu.KurDegeri'ye dönüştürme yardımcı metodu
-        private KurDegeri ConvertToKurDegeri(Data.Entities.ParaBirimiModulu.KurDegeri paraKurDegeri)
+        private MuhasebeStokWebApp.Data.Entities.DovizModulu.KurDegeri ConvertToKurDegeri(Data.Entities.ParaBirimiModulu.KurDegeri paraKurDegeri)
         {
-            return new KurDegeri
+            return new MuhasebeStokWebApp.Data.Entities.DovizModulu.KurDegeri
             {
                 KurDegeriID = paraKurDegeri.KurDegeriID,
                 ParaBirimiID = paraKurDegeri.ParaBirimiID,
                 Tarih = paraKurDegeri.Tarih,
                 Alis = paraKurDegeri.Alis,
                 Satis = paraKurDegeri.Satis,
-                Efektif_Alis = paraKurDegeri.Efektif_Alis,
-                Efektif_Satis = paraKurDegeri.Efektif_Satis,
+                EfektifAlis = paraKurDegeri.EfektifAlis,
+                EfektifSatis = paraKurDegeri.EfektifSatis,
                 Aktif = paraKurDegeri.Aktif,
                 OlusturmaTarihi = paraKurDegeri.OlusturmaTarihi,
                 GuncellemeTarihi = paraKurDegeri.GuncellemeTarihi,

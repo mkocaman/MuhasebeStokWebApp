@@ -279,8 +279,8 @@ namespace MuhasebeStokWebApp.Services.ParaBirimiModulu
                 // Mevcut kaydı güncelle
                 existingKur.Alis = kurDegeri.Alis;
                 existingKur.Satis = kurDegeri.Satis;
-                existingKur.Efektif_Alis = kurDegeri.Efektif_Alis;
-                existingKur.Efektif_Satis = kurDegeri.Efektif_Satis;
+                existingKur.EfektifAlis = kurDegeri.EfektifAlis;
+                existingKur.EfektifSatis = kurDegeri.EfektifSatis;
                 existingKur.Aktif = kurDegeri.Aktif;
                 existingKur.Aciklama = kurDegeri.Aciklama;
                 existingKur.GuncellemeTarihi = DateTime.Now;
@@ -427,8 +427,8 @@ namespace MuhasebeStokWebApp.Services.ParaBirimiModulu
                             Tarih = tarih,
                             Alis = kurDegeri,
                             Satis = kurDegeri * 1.02m, // %2 farkla satış kuru
-                            Efektif_Alis = kurDegeri * 0.98m, // %2 farkla efektif alış
-                            Efektif_Satis = kurDegeri * 1.03m, // %3 farkla efektif satış
+                            EfektifAlis = kurDegeri * 0.98m, // %2 farkla efektif alış
+                            EfektifSatis = kurDegeri * 1.03m, // %3 farkla efektif satış
                             Aktif = true,
                             OlusturmaTarihi = DateTime.Now,
                             OlusturanKullaniciID = "Sistem",

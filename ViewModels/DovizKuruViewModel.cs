@@ -34,11 +34,11 @@ namespace MuhasebeStokWebApp.ViewModels
 
         [Display(Name = "Efektif Alış")]
         [DisplayFormat(DataFormatString = "{0:N6}", ApplyFormatInEditMode = false)]
-        public decimal EfektifAlisFiyati { get; set; }
+        public decimal? EfektifAlis { get; set; }
 
         [Display(Name = "Efektif Satış")]
         [DisplayFormat(DataFormatString = "{0:N6}", ApplyFormatInEditMode = false)]
-        public decimal EfektifSatisFiyati { get; set; }
+        public decimal? EfektifSatis { get; set; }
 
         [Display(Name = "Tarih")]
         [DataType(DataType.Date)]
@@ -88,10 +88,10 @@ namespace MuhasebeStokWebApp.ViewModels
         public decimal Satis { get; set; }
         
         [Display(Name = "Efektif Alış")]
-        public decimal? Efektif_Alis { get; set; }
+        public decimal? EfektifAlis { get; set; }
         
         [Display(Name = "Efektif Satış")]
-        public decimal? Efektif_Satis { get; set; }
+        public decimal? EfektifSatis { get; set; }
 
         [Required(ErrorMessage = "Tarih zorunludur.")]
         [Display(Name = "Tarih")]
@@ -134,10 +134,10 @@ namespace MuhasebeStokWebApp.ViewModels
         public decimal Satis { get; set; }
         
         [Display(Name = "Efektif Alış")]
-        public decimal? Efektif_Alis { get; set; }
+        public decimal? EfektifAlis { get; set; }
         
         [Display(Name = "Efektif Satış")]
-        public decimal? Efektif_Satis { get; set; }
+        public decimal? EfektifSatis { get; set; }
 
         [Required(ErrorMessage = "Tarih zorunludur.")]
         [Display(Name = "Tarih")]

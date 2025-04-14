@@ -32,10 +32,10 @@ namespace MuhasebeStokWebApp.ViewModels
         public decimal SatisFiyati { get; set; }
         
         [Display(Name = "Efektif Alış")]
-        public decimal? EfektifAlisFiyati { get; set; }
+        public decimal EfektifAlis { get; set; }
         
         [Display(Name = "Efektif Satış")]
-        public decimal? EfektifSatisFiyati { get; set; }
+        public decimal EfektifSatis { get; set; }
 
         [Required(ErrorMessage = "Tarih zorunludur.")]
         [Display(Name = "Tarih")]

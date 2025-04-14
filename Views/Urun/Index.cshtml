@@ -59,7 +59,10 @@
                                     <th>Kategori</th>
                                     <th>Stok Miktarı</th>
                                     <th>Liste Fiyatı</th>
-                                    <th>Maliyet Fiyatı</th>
+                                    @if (User.IsInRole("Admin") || User.IsInRole("Yönetici"))
+                                    {
+                                        <th>Maliyet Fiyatı</th>
+                                    }
                                     <th>Satış Fiyatı</th>
                                     <th>İşlemler</th>
                                 </tr>
@@ -73,20 +76,23 @@
                                         <td>@item.KategoriAdi</td>
                                         <td>@item.StokMiktar</td>
                                         <td class="text-end">@item.ListeFiyati.ToString("N2") ₺</td>
-                                        <td class="text-end">@item.MaliyetFiyati.ToString("N2") ₺</td>
+                                        @if (User.IsInRole("Admin") || User.IsInRole("Yönetici"))
+                                        {
+                                            <td class="text-end">@item.MaliyetFiyati.ToString("N2") ₺</td>
+                                        }
                                         <td class="text-end">@item.SatisFiyati.ToString("N2") ₺</td>
                                         <td class="text-center">
                                             <div class="btn-group">
-                                                <a href="#" data-id="@item.UrunID" class="btn btn-sm btn-primary btn-edit-urun">
+                                                <a href="#" data-id="@item.UrunID" class="btn btn-sm btn-primary btn-edit-urun" data-bs-toggle="tooltip" title="Ürünü Düzenle">
                                                     <i class="bi bi-pencil"></i>
                                                 </a>
-                                                <a asp-action="Delete" asp-route-id="@item.UrunID" class="btn btn-sm btn-danger">
+                                                <a asp-action="Delete" asp-route-id="@item.UrunID" class="btn btn-sm btn-danger" data-bs-toggle="tooltip" title="Ürünü Sil">
                                                     <i class="bi bi-trash"></i>
                                                 </a>
-                                                <a asp-controller="UrunFiyat" asp-action="Index" asp-route-urunId="@item.UrunID" class="btn btn-sm btn-info">
+                                                <a asp-controller="UrunFiyat" asp-action="Index" asp-route-urunId="@item.UrunID" class="btn btn-sm btn-info" data-bs-toggle="tooltip" title="Fiyat Listesini Görüntüle">
                                                     <i class="bi bi-tag"></i> Fiyatlar
                                                 </a>
-                                                <a asp-controller="Stok" asp-action="Hareketler" asp-route-id="@item.UrunID" class="btn btn-sm btn-success">
+                                                <a asp-controller="Stok" asp-action="Hareketler" asp-route-id="@item.UrunID" class="btn btn-sm btn-success" data-bs-toggle="tooltip" title="Stok Hareketlerini Görüntüle">
                                                     <i class="bi bi-graph-up"></i> Detay
                                                 </a>
                                             </div>
@@ -109,7 +115,10 @@
                                     <th>Kategori</th>
                                     <th>Stok Miktarı</th>
                                     <th>Liste Fiyatı</th>
-                                    <th>Maliyet Fiyatı</th>
+                                    @if (User.IsInRole("Admin") || User.IsInRole("Yönetici"))
+                                    {
+                                        <th>Maliyet Fiyatı</th>
+                                    }
                                     <th>Satış Fiyatı</th>
                                     <th>İşlemler</th>
                                 </tr>
@@ -123,20 +132,23 @@
                                         <td>@item.KategoriAdi</td>
                                         <td>@item.StokMiktar</td>
                                         <td class="text-end">@item.ListeFiyati.ToString("N2") ₺</td>
-                                        <td class="text-end">@item.MaliyetFiyati.ToString("N2") ₺</td>
+                                        @if (User.IsInRole("Admin") || User.IsInRole("Yönetici"))
+                                        {
+                                            <td class="text-end">@item.MaliyetFiyati.ToString("N2") ₺</td>
+                                        }
                                         <td class="text-end">@item.SatisFiyati.ToString("N2") ₺</td>
                                         <td class="text-center">
                                             <div class="btn-group">
-                                                <a href="#" data-id="@item.UrunID" class="btn btn-sm btn-primary btn-edit-urun">
+                                                <a href="#" data-id="@item.UrunID" class="btn btn-sm btn-primary btn-edit-urun" data-bs-toggle="tooltip" title="Ürünü Düzenle">
                                                     <i class="bi bi-pencil"></i>
                                                 </a>
-                                                <a asp-action="Delete" asp-route-id="@item.UrunID" class="btn btn-sm btn-danger">
+                                                <a asp-action="Delete" asp-route-id="@item.UrunID" class="btn btn-sm btn-danger" data-bs-toggle="tooltip" title="Ürünü Sil">
                                                     <i class="bi bi-trash"></i>
                                                 </a>
-                                                <a asp-controller="UrunFiyat" asp-action="Index" asp-route-urunId="@item.UrunID" class="btn btn-sm btn-info">
+                                                <a asp-controller="UrunFiyat" asp-action="Index" asp-route-urunId="@item.UrunID" class="btn btn-sm btn-info" data-bs-toggle="tooltip" title="Fiyat Listesini Görüntüle">
                                                     <i class="bi bi-tag"></i> Fiyatlar
                                                 </a>
-                                                <a asp-controller="Stok" asp-action="Hareketler" asp-route-id="@item.UrunID" class="btn btn-sm btn-success">
+                                                <a asp-controller="Stok" asp-action="Hareketler" asp-route-id="@item.UrunID" class="btn btn-sm btn-success" data-bs-toggle="tooltip" title="Stok Hareketlerini Görüntüle">
                                                     <i class="bi bi-graph-up"></i> Detay
                                                 </a>
                                             </div>
@@ -182,6 +194,12 @@
 @section Scripts {
     <script>
         $(document).ready(function() {
+            // Enable tooltips
+            var tooltipTriggerList = [].slice.call(document.querySelectorAll('[data-bs-toggle="tooltip"]'));
+            var tooltipList = tooltipTriggerList.map(function (tooltipTriggerEl) {
+                return new bootstrap.Tooltip(tooltipTriggerEl);
+            });
+            
             // DataTable uyarılarını gizle
             $.fn.dataTable.ext.errMode = 'none';
             

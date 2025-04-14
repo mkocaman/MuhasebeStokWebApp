@@ -251,6 +251,9 @@ using (var scope = app.Services.CreateScope())
         var context = services.GetRequiredService<ApplicationDbContext>();
         // Sadece migration'ları uygula
         context.Database.Migrate();
+        
+        // Admin kullanıcısını oluştur
+        await AdminCreator.CreateAdmin(services);
     }
     catch (Exception ex)
     {

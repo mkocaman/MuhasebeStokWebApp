@@ -14,17 +14,17 @@ namespace MuhasebeStokWebApp.Services.Interfaces
         /// <summary>
         /// Belirli bir tarih için tüm döviz kurlarını getirir
         /// </summary>
-        Task<List<KurDegeri>> GetKurDegerleriByTarihAsync(DateTime? tarih);
+        Task<List<MuhasebeStokWebApp.Data.Entities.DovizModulu.KurDegeri>> GetKurDegerleriByTarihAsync(DateTime? tarih);
 
         /// <summary>
         /// Belirli bir para birimi için son kur değerini getirir
         /// </summary>
-        Task<KurDegeri?> GetSonKurDegeriByParaBirimiAsync(Guid paraBirimiId);
+        Task<MuhasebeStokWebApp.Data.Entities.DovizModulu.KurDegeri?> GetSonKurDegeriByParaBirimiAsync(Guid paraBirimiId);
 
         /// <summary>
         /// Para birimi koduna göre son kur değerini getirir
         /// </summary>
-        Task<KurDegeri?> GetSonKurDegeriByKodAsync(string kod);
+        Task<MuhasebeStokWebApp.Data.Entities.DovizModulu.KurDegeri?> GetSonKurDegeriByKodAsync(string kod);
 
         /// <summary>
         /// İki para birimi arasındaki çapraz kur değerini hesaplar

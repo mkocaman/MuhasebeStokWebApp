@@ -379,11 +379,11 @@ namespace MuhasebeStokWebApp.Data
                 .HasColumnType("decimal(18,6)");
                 
             modelBuilder.Entity<Entities.ParaBirimiModulu.KurDegeri>()
-                .Property(k => k.Efektif_Alis)
+                .Property(k => k.EfektifAlis)
                 .HasColumnType("decimal(18,6)");
                 
             modelBuilder.Entity<Entities.ParaBirimiModulu.KurDegeri>()
-                .Property(k => k.Efektif_Satis)
+                .Property(k => k.EfektifSatis)
                 .HasColumnType("decimal(18,6)");
                 
             // Kasa Entity

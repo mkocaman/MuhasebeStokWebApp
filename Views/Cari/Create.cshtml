@@ -125,22 +125,26 @@
                                                     <select asp-for="VarsayilanParaBirimiId" class="form-control select2" id="varsayilanParaBirimiSelect">
                                                         @if (ViewBag.ParaBirimleri != null)
                                                         {
-                                                            var anaPB = ViewBag.ParaBirimleri.FirstOrDefault((Func<dynamic, bool>)(pb => pb.AnaParaBirimiMi));
-                                                            <option value="@(anaPB != null ? anaPB.ParaBirimiID : "")"
-                                                                    data-kod="@(anaPB != null ? anaPB.Kod : "")" 
-                                                                    data-ad="@(anaPB != null ? anaPB.Ad : "")" 
-                                                                    data-sembol="@(anaPB != null ? anaPB.Sembol : "")">
-                                                                @(anaPB != null ? $"{anaPB.Kod} - {anaPB.Ad} (Ana Para Birimi)" : "Ana Para Birimi")
-                                                            </option>
-                                                            
-                                                            @foreach (var paraBirimi in ViewBag.ParaBirimleri.Where((Func<dynamic, bool>)(pb => !pb.AnaParaBirimiMi)))
+                                                            var paraBirimleriList = ViewBag.ParaBirimleri as IEnumerable<dynamic>;
+                                                            if (paraBirimleriList != null)
                                                             {
-                                                                <option value="@paraBirimi.ParaBirimiID" 
-                                                                        data-kod="@paraBirimi.Kod" 
-                                                                        data-ad="@paraBirimi.Ad" 
-                                                                        data-sembol="@paraBirimi.Sembol">
-                                                                    @paraBirimi.Kod - @paraBirimi.Ad
+                                                                var anaPB = paraBirimleriList.FirstOrDefault(pb => pb.AnaParaBirimiMi);
+                                                                <option value="@(anaPB != null ? anaPB.ParaBirimiID : "")"
+                                                                        data-kod="@(anaPB != null ? anaPB.Kod : "")" 
+                                                                        data-ad="@(anaPB != null ? anaPB.Ad : "")" 
+                                                                        data-sembol="@(anaPB != null ? anaPB.Sembol : "")">
+                                                                    @(anaPB != null ? $"{anaPB.Kod} - {anaPB.Ad} (Ana Para Birimi)" : "Ana Para Birimi")
                                                                 </option>
+                                                                
+                                                                @foreach (var paraBirimi in paraBirimleriList.Where(pb => !pb.AnaParaBirimiMi))
+                                                                {
+                                                                    <option value="@paraBirimi.ParaBirimiID" 
+                                                                            data-kod="@paraBirimi.Kod" 
+                                                                            data-ad="@paraBirimi.Ad" 
+                                                                            data-sembol="@paraBirimi.Sembol">
+                                                                        @paraBirimi.Kod - @paraBirimi.Ad
+                                                                    </option>
+                                                                }
                                                             }
                                                         }
                                                     </select>

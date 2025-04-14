@@ -52,16 +52,16 @@
                 <div class="row mb-3">
                     <div class="col-md-6">
                         <div class="form-group">
-                            <label asp-for="Efektif_Alis" class="control-label">Efektif Alış Kuru</label>
-                            <input asp-for="Efektif_Alis" class="form-control" />
-                            <span asp-validation-for="Efektif_Alis" class="text-danger"></span>
+                            <label class="form-label" asp-for="EfektifAlis">Efektif Alış <small>TL</small></label>
+                            <input type="number" class="form-control" asp-for="EfektifAlis" step="0.0001" placeholder="Efektif Alış Fiyatı">
+                            <span class="text-danger" asp-validation-for="EfektifAlis"></span>
                         </div>
                     </div>
                     <div class="col-md-6">
                         <div class="form-group">
-                            <label asp-for="Efektif_Satis" class="control-label">Efektif Satış Kuru</label>
-                            <input asp-for="Efektif_Satis" class="form-control" />
-                            <span asp-validation-for="Efektif_Satis" class="text-danger"></span>
+                            <label class="form-label" asp-for="EfektifSatis">Efektif Satış <small>TL</small></label>
+                            <input type="number" class="form-control" asp-for="EfektifSatis" step="0.0001" placeholder="Efektif Satış Fiyatı">
+                            <span class="text-danger" asp-validation-for="EfektifSatis"></span>
                         </div>
                     </div>
                 </div>

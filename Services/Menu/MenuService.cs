@@ -359,444 +359,446 @@ namespace MuhasebeStokWebApp.Services.Menu
                     return false;
                 }
 
+                // Diğer rolleri de al (varsa)
+                var managerRole = await _roleManager.FindByNameAsync("Manager");
+                var accountantRole = await _roleManager.FindByNameAsync("Accountant");
+
                 // Transaction içinde menüleri oluştur
                 using (var transaction = await _context.Database.BeginTransactionAsync())
                 {
                     try
                     {
                         // 1. Ana Sayfa Menüsü
-                        var dashboardMenu = CreateMenu(
-                            "Dashboard", 
-                            "fas fa-tachometer-alt", 
+                        var anaSayfaMenu = CreateMenu(
+                            "Ana Sayfa", 
+                            "fas fa-home", 
                             "Home", 
                             "Index", 
                             1, 
                             null, 
                             "/Home/Index"
                         );
+                        await _context.Menuler.AddAsync(anaSayfaMenu);
 
-                        // 2. Stok Yönetimi Menüsü (Üst menü)
-                        var stokYonetimiMenu = CreateMenu(
-                            "Stok Yönetimi", 
-                            "fas fa-boxes", 
+                        // Ana sayfa için tüm rollere izin ver
+                        await _context.MenuRoller.AddAsync(new MenuRol { MenuRolID = Guid.NewGuid(), MenuId = anaSayfaMenu.MenuID, RolId = adminRole.Id });
+                        if (managerRole != null)
+                            await _context.MenuRoller.AddAsync(new MenuRol { MenuRolID = Guid.NewGuid(), MenuId = anaSayfaMenu.MenuID, RolId = managerRole.Id });
+                        if (accountantRole != null)
+                            await _context.MenuRoller.AddAsync(new MenuRol { MenuRolID = Guid.NewGuid(), MenuId = anaSayfaMenu.MenuID, RolId = accountantRole.Id });
+
+                        // 2. Cari Hesaplar Menüsü
+                        var cariHesaplarMenu = CreateMenu(
+                            "Cari Hesaplar", 
+                            "fas fa-users", 
                             "", 
                             "", 
                             2, 
                             null, 
                             "#"
                         );
+                        await _context.Menuler.AddAsync(cariHesaplarMenu);
+                        await _context.MenuRoller.AddAsync(new MenuRol { MenuRolID = Guid.NewGuid(), MenuId = cariHesaplarMenu.MenuID, RolId = adminRole.Id });
+                        if (managerRole != null)
+                            await _context.MenuRoller.AddAsync(new MenuRol { MenuRolID = Guid.NewGuid(), MenuId = cariHesaplarMenu.MenuID, RolId = managerRole.Id });
+                        if (accountantRole != null)
+                            await _context.MenuRoller.AddAsync(new MenuRol { MenuRolID = Guid.NewGuid(), MenuId = cariHesaplarMenu.MenuID, RolId = accountantRole.Id });
 
-                        // Stok Yönetimi Alt Menüleri
-                        var urunlerMenu = CreateMenu(
-                            "Ürünler", 
+                        // Cari Hesaplar Alt Menüleri
+                        var cariKartListesi = CreateMenu(
+                            "Cari Kart Listesi", 
+                            "fas fa-list", 
+                            "Cari", 
+                            "Index", 
+                            1, 
+                            cariHesaplarMenu.MenuID, 
+                            "/Cari/Index"
+                        );
+                        await _context.Menuler.AddAsync(cariKartListesi);
+                        await _context.MenuRoller.AddAsync(new MenuRol { MenuRolID = Guid.NewGuid(), MenuId = cariKartListesi.MenuID, RolId = adminRole.Id });
+                        if (managerRole != null)
+                            await _context.MenuRoller.AddAsync(new MenuRol { MenuRolID = Guid.NewGuid(), MenuId = cariKartListesi.MenuID, RolId = managerRole.Id });
+                        if (accountantRole != null)
+                            await _context.MenuRoller.AddAsync(new MenuRol { MenuRolID = Guid.NewGuid(), MenuId = cariKartListesi.MenuID, RolId = accountantRole.Id });
+
+                        var yeniCariKart = CreateMenu(
+                            "Yeni Cari Kart", 
+                            "fas fa-plus", 
+                            "Cari", 
+                            "Create", 
+                            2, 
+                            cariHesaplarMenu.MenuID, 
+                            "/Cari/Create"
+                        );
+                        await _context.Menuler.AddAsync(yeniCariKart);
+                        await _context.MenuRoller.AddAsync(new MenuRol { MenuRolID = Guid.NewGuid(), MenuId = yeniCariKart.MenuID, RolId = adminRole.Id });
+                        if (managerRole != null)
+                            await _context.MenuRoller.AddAsync(new MenuRol { MenuRolID = Guid.NewGuid(), MenuId = yeniCariKart.MenuID, RolId = managerRole.Id });
+                        if (accountantRole != null)
+                            await _context.MenuRoller.AddAsync(new MenuRol { MenuRolID = Guid.NewGuid(), MenuId = yeniCariKart.MenuID, RolId = accountantRole.Id });
+
+                        var cariHareketRaporu = CreateMenu(
+                            "Cari Hareket Raporu", 
+                            "fas fa-chart-line", 
+                            "Rapor", 
+                            "CariHareketler", 
+                            3, 
+                            cariHesaplarMenu.MenuID, 
+                            "/Rapor/CariHareketler"
+                        );
+                        await _context.Menuler.AddAsync(cariHareketRaporu);
+                        await _context.MenuRoller.AddAsync(new MenuRol { MenuRolID = Guid.NewGuid(), MenuId = cariHareketRaporu.MenuID, RolId = adminRole.Id });
+                        if (managerRole != null)
+                            await _context.MenuRoller.AddAsync(new MenuRol { MenuRolID = Guid.NewGuid(), MenuId = cariHareketRaporu.MenuID, RolId = managerRole.Id });
+                        if (accountantRole != null)
+                            await _context.MenuRoller.AddAsync(new MenuRol { MenuRolID = Guid.NewGuid(), MenuId = cariHareketRaporu.MenuID, RolId = accountantRole.Id });
+
+                        // 3. Stok & Ürün Yönetimi Menüsü
+                        var stokUrunYonetimiMenu = CreateMenu(
+                            "Stok & Ürün Yönetimi", 
+                            "fas fa-boxes", 
+                            "", 
+                            "", 
+                            3, 
+                            null, 
+                            "#"
+                        );
+                        await _context.Menuler.AddAsync(stokUrunYonetimiMenu);
+                        await _context.MenuRoller.AddAsync(new MenuRol { MenuRolID = Guid.NewGuid(), MenuId = stokUrunYonetimiMenu.MenuID, RolId = adminRole.Id });
+                        if (managerRole != null)
+                            await _context.MenuRoller.AddAsync(new MenuRol { MenuRolID = Guid.NewGuid(), MenuId = stokUrunYonetimiMenu.MenuID, RolId = managerRole.Id });
+
+                        // Stok & Ürün Yönetimi Alt Menüleri
+                        var urunListesi = CreateMenu(
+                            "Ürün Listesi", 
                             "fas fa-box", 
                             "Urun", 
                             "Index", 
                             1, 
-                            stokYonetimiMenu.MenuID, 
+                            stokUrunYonetimiMenu.MenuID, 
                             "/Urun/Index"
                         );
+                        await _context.Menuler.AddAsync(urunListesi);
+                        await _context.MenuRoller.AddAsync(new MenuRol { MenuRolID = Guid.NewGuid(), MenuId = urunListesi.MenuID, RolId = adminRole.Id });
+                        if (managerRole != null)
+                            await _context.MenuRoller.AddAsync(new MenuRol { MenuRolID = Guid.NewGuid(), MenuId = urunListesi.MenuID, RolId = managerRole.Id });
 
-                        var stokHareketleriMenu = CreateMenu(
+                        var yeniUrun = CreateMenu(
+                            "Yeni Ürün", 
+                            "fas fa-plus", 
+                            "Urun", 
+                            "Create", 
+                            2, 
+                            stokUrunYonetimiMenu.MenuID, 
+                            "/Urun/Create"
+                        );
+                        await _context.Menuler.AddAsync(yeniUrun);
+                        await _context.MenuRoller.AddAsync(new MenuRol { MenuRolID = Guid.NewGuid(), MenuId = yeniUrun.MenuID, RolId = adminRole.Id });
+                        if (managerRole != null)
+                            await _context.MenuRoller.AddAsync(new MenuRol { MenuRolID = Guid.NewGuid(), MenuId = yeniUrun.MenuID, RolId = managerRole.Id });
+
+                        var urunKategorileri = CreateMenu(
+                            "Ürün Kategorileri", 
+                            "fas fa-tags", 
+                            "UrunKategori", 
+                            "Index", 
+                            3, 
+                            stokUrunYonetimiMenu.MenuID, 
+                            "/UrunKategori/Index"
+                        );
+                        await _context.Menuler.AddAsync(urunKategorileri);
+                        await _context.MenuRoller.AddAsync(new MenuRol { MenuRolID = Guid.NewGuid(), MenuId = urunKategorileri.MenuID, RolId = adminRole.Id });
+                        if (managerRole != null)
+                            await _context.MenuRoller.AddAsync(new MenuRol { MenuRolID = Guid.NewGuid(), MenuId = urunKategorileri.MenuID, RolId = managerRole.Id });
+
+                        var depoListesi = CreateMenu(
+                            "Depo Listesi", 
+                            "fas fa-warehouse", 
+                            "Depo", 
+                            "Index", 
+                            4, 
+                            stokUrunYonetimiMenu.MenuID, 
+                            "/Depo/Index"
+                        );
+                        await _context.Menuler.AddAsync(depoListesi);
+                        await _context.MenuRoller.AddAsync(new MenuRol { MenuRolID = Guid.NewGuid(), MenuId = depoListesi.MenuID, RolId = adminRole.Id });
+                        if (managerRole != null)
+                            await _context.MenuRoller.AddAsync(new MenuRol { MenuRolID = Guid.NewGuid(), MenuId = depoListesi.MenuID, RolId = managerRole.Id });
+
+                        var birimTanimlari = CreateMenu(
+                            "Birim Tanımları", 
+                            "fas fa-ruler", 
+                            "Birim", 
+                            "Index", 
+                            5, 
+                            stokUrunYonetimiMenu.MenuID, 
+                            "/Birim/Index"
+                        );
+                        await _context.Menuler.AddAsync(birimTanimlari);
+                        await _context.MenuRoller.AddAsync(new MenuRol { MenuRolID = Guid.NewGuid(), MenuId = birimTanimlari.MenuID, RolId = adminRole.Id });
+                        if (managerRole != null)
+                            await _context.MenuRoller.AddAsync(new MenuRol { MenuRolID = Guid.NewGuid(), MenuId = birimTanimlari.MenuID, RolId = managerRole.Id });
+
+                        var stokHareketleri = CreateMenu(
                             "Stok Hareketleri", 
                             "fas fa-exchange-alt", 
                             "Stok", 
                             "Index", 
-                            2, 
-                            stokYonetimiMenu.MenuID, 
+                            6, 
+                            stokUrunYonetimiMenu.MenuID, 
                             "/Stok/Index"
                         );
+                        await _context.Menuler.AddAsync(stokHareketleri);
+                        await _context.MenuRoller.AddAsync(new MenuRol { MenuRolID = Guid.NewGuid(), MenuId = stokHareketleri.MenuID, RolId = adminRole.Id });
+                        if (managerRole != null)
+                            await _context.MenuRoller.AddAsync(new MenuRol { MenuRolID = Guid.NewGuid(), MenuId = stokHareketleri.MenuID, RolId = managerRole.Id });
+                        if (accountantRole != null)
+                            await _context.MenuRoller.AddAsync(new MenuRol { MenuRolID = Guid.NewGuid(), MenuId = stokHareketleri.MenuID, RolId = accountantRole.Id });
 
-                        // Gerçekten mevcut olan kategori menüsü
-                        var kategoriMenu = CreateMenu(
-                            "Kategoriler",
-                            "fas fa-tags",
-                            "UrunKategori",
-                            "Index",
-                            3,
-                            stokYonetimiMenu.MenuID,
-                            "/UrunKategori/Index"
-                        );
-
-                        // Gerçekten mevcut olan depo menüsü
-                        var depoMenu = CreateMenu(
-                            "Depolar",
-                            "fas fa-warehouse",
-                            "Depo",
-                            "Index",
-                            4,
-                            stokYonetimiMenu.MenuID,
-                            "/Depo/Index"
-                        );
-
-                        // Birim menüsü
-                        var birimMenu = CreateMenu(
-                            "Birimler",
-                            "fas fa-ruler",
-                            "Birim",
-                            "Index",
-                            5,
-                            stokYonetimiMenu.MenuID,
-                            "/Birim/Index"
-                        );
-
-                        // Ürün Fiyat menüsü
-                        var urunFiyatMenu = CreateMenu(
-                            "Ürün Fiyatları",
-                            "fas fa-tag",
-                            "UrunFiyat",
-                            "Index",
-                            6,
-                            stokYonetimiMenu.MenuID,
+                        var urunFiyatlari = CreateMenu(
+                            "Ürün Fiyatları", 
+                            "fas fa-tag", 
+                            "UrunFiyat", 
+                            "Index", 
+                            7, 
+                            stokUrunYonetimiMenu.MenuID, 
                             "/UrunFiyat/Index"
                         );
+                        await _context.Menuler.AddAsync(urunFiyatlari);
+                        await _context.MenuRoller.AddAsync(new MenuRol { MenuRolID = Guid.NewGuid(), MenuId = urunFiyatlari.MenuID, RolId = adminRole.Id });
+                        if (managerRole != null)
+                            await _context.MenuRoller.AddAsync(new MenuRol { MenuRolID = Guid.NewGuid(), MenuId = urunFiyatlari.MenuID, RolId = managerRole.Id });
 
-                        // 3. Cariler Menüsü
-                        var carilerMenu = CreateMenu(
-                            "Cariler", 
-                            "fas fa-users", 
-                            "Cari", 
-                            "Index", 
-                            3, 
-                            null, 
-                            "/Cari/Index"
-                        );
-
-                        // 4. Faturalar Menüsü (Üst menü)
-                        var belgelerMenu = CreateMenu(
-                            "Belgeler", 
-                            "fas fa-file-invoice", 
+                        // 4. Finans Yönetimi Menüsü
+                        var finansYonetimiMenu = CreateMenu(
+                            "Finans Yönetimi", 
+                            "fas fa-money-bill-wave", 
                             "", 
                             "", 
                             4, 
                             null, 
                             "#"
                         );
+                        await _context.Menuler.AddAsync(finansYonetimiMenu);
+                        await _context.MenuRoller.AddAsync(new MenuRol { MenuRolID = Guid.NewGuid(), MenuId = finansYonetimiMenu.MenuID, RolId = adminRole.Id });
+                        if (managerRole != null)
+                            await _context.MenuRoller.AddAsync(new MenuRol { MenuRolID = Guid.NewGuid(), MenuId = finansYonetimiMenu.MenuID, RolId = managerRole.Id });
+                        if (accountantRole != null)
+                            await _context.MenuRoller.AddAsync(new MenuRol { MenuRolID = Guid.NewGuid(), MenuId = finansYonetimiMenu.MenuID, RolId = accountantRole.Id });
 
-                        // Faturalar alt menüsü
-                        var faturalarMenu = CreateMenu(
+                        // Finans Yönetimi Alt Menüleri
+                        var faturalar = CreateMenu(
                             "Faturalar", 
-                            "fas fa-file-invoice-dollar", 
+                            "fas fa-file-invoice", 
                             "Fatura", 
                             "Index", 
                             1, 
-                            belgelerMenu.MenuID, 
+                            finansYonetimiMenu.MenuID, 
                             "/Fatura/Index"
                         );
+                        await _context.Menuler.AddAsync(faturalar);
+                        await _context.MenuRoller.AddAsync(new MenuRol { MenuRolID = Guid.NewGuid(), MenuId = faturalar.MenuID, RolId = adminRole.Id });
+                        if (managerRole != null)
+                            await _context.MenuRoller.AddAsync(new MenuRol { MenuRolID = Guid.NewGuid(), MenuId = faturalar.MenuID, RolId = managerRole.Id });
+                        if (accountantRole != null)
+                            await _context.MenuRoller.AddAsync(new MenuRol { MenuRolID = Guid.NewGuid(), MenuId = faturalar.MenuID, RolId = accountantRole.Id });
 
-                        // İrsaliye alt menüsü
-                        var irsaliyeMenu = CreateMenu(
-                            "İrsaliyeler",
-                            "fas fa-truck-loading",
-                            "Irsaliye",
-                            "Index",
-                            2,
-                            belgelerMenu.MenuID,
+                        var yeniFatura = CreateMenu(
+                            "Yeni Fatura", 
+                            "fas fa-plus", 
+                            "Fatura", 
+                            "Create", 
+                            2, 
+                            finansYonetimiMenu.MenuID, 
+                            "/Fatura/Create"
+                        );
+                        await _context.Menuler.AddAsync(yeniFatura);
+                        await _context.MenuRoller.AddAsync(new MenuRol { MenuRolID = Guid.NewGuid(), MenuId = yeniFatura.MenuID, RolId = adminRole.Id });
+                        if (managerRole != null)
+                            await _context.MenuRoller.AddAsync(new MenuRol { MenuRolID = Guid.NewGuid(), MenuId = yeniFatura.MenuID, RolId = managerRole.Id });
+                        if (accountantRole != null)
+                            await _context.MenuRoller.AddAsync(new MenuRol { MenuRolID = Guid.NewGuid(), MenuId = yeniFatura.MenuID, RolId = accountantRole.Id });
+
+                        var irsaliyeler = CreateMenu(
+                            "İrsaliyeler", 
+                            "fas fa-truck-loading", 
+                            "Irsaliye", 
+                            "Index", 
+                            3, 
+                            finansYonetimiMenu.MenuID, 
                             "/Irsaliye/Index"
                         );
+                        await _context.Menuler.AddAsync(irsaliyeler);
+                        await _context.MenuRoller.AddAsync(new MenuRol { MenuRolID = Guid.NewGuid(), MenuId = irsaliyeler.MenuID, RolId = adminRole.Id });
+                        if (managerRole != null)
+                            await _context.MenuRoller.AddAsync(new MenuRol { MenuRolID = Guid.NewGuid(), MenuId = irsaliyeler.MenuID, RolId = managerRole.Id });
 
-                        // 5. Finans Menüsü (Üst menü)
-                        var finansMenu = CreateMenu(
-                            "Finans", 
-                            "fas fa-money-bill-wave", 
-                            "", 
-                            "", 
-                            5, 
-                            null, 
-                            "#"
+                        var yeniIrsaliye = CreateMenu(
+                            "Yeni İrsaliye", 
+                            "fas fa-plus", 
+                            "Irsaliye", 
+                            "Create", 
+                            4, 
+                            finansYonetimiMenu.MenuID, 
+                            "/Irsaliye/Create"
                         );
+                        await _context.Menuler.AddAsync(yeniIrsaliye);
+                        await _context.MenuRoller.AddAsync(new MenuRol { MenuRolID = Guid.NewGuid(), MenuId = yeniIrsaliye.MenuID, RolId = adminRole.Id });
+                        if (managerRole != null)
+                            await _context.MenuRoller.AddAsync(new MenuRol { MenuRolID = Guid.NewGuid(), MenuId = yeniIrsaliye.MenuID, RolId = managerRole.Id });
 
-                        // Kasa alt menüsü
-                        var kasaMenu = CreateMenu(
-                            "Kasa", 
+                        var kasaIslemleri = CreateMenu(
+                            "Kasa İşlemleri", 
                             "fas fa-cash-register", 
                             "Kasa", 
                             "Index", 
-                            1, 
-                            finansMenu.MenuID, 
+                            5, 
+                            finansYonetimiMenu.MenuID, 
                             "/Kasa/Index"
                         );
+                        await _context.Menuler.AddAsync(kasaIslemleri);
+                        await _context.MenuRoller.AddAsync(new MenuRol { MenuRolID = Guid.NewGuid(), MenuId = kasaIslemleri.MenuID, RolId = adminRole.Id });
+                        if (managerRole != null)
+                            await _context.MenuRoller.AddAsync(new MenuRol { MenuRolID = Guid.NewGuid(), MenuId = kasaIslemleri.MenuID, RolId = managerRole.Id });
+                        if (accountantRole != null)
+                            await _context.MenuRoller.AddAsync(new MenuRol { MenuRolID = Guid.NewGuid(), MenuId = kasaIslemleri.MenuID, RolId = accountantRole.Id });
 
-                        // Banka alt menüsü
-                        var bankaMenu = CreateMenu(
-                            "Banka", 
+                        var bankaHesaplari = CreateMenu(
+                            "Banka Hesapları", 
                             "fas fa-university", 
                             "Banka", 
                             "Index", 
-                            2, 
-                            finansMenu.MenuID, 
+                            6, 
+                            finansYonetimiMenu.MenuID, 
                             "/Banka/Index"
                         );
+                        await _context.Menuler.AddAsync(bankaHesaplari);
+                        await _context.MenuRoller.AddAsync(new MenuRol { MenuRolID = Guid.NewGuid(), MenuId = bankaHesaplari.MenuID, RolId = adminRole.Id });
+                        if (managerRole != null)
+                            await _context.MenuRoller.AddAsync(new MenuRol { MenuRolID = Guid.NewGuid(), MenuId = bankaHesaplari.MenuID, RolId = managerRole.Id });
+                        if (accountantRole != null)
+                            await _context.MenuRoller.AddAsync(new MenuRol { MenuRolID = Guid.NewGuid(), MenuId = bankaHesaplari.MenuID, RolId = accountantRole.Id });
 
-                        // 6. Döviz Modülü (Üst menü)
-                        var dovizMenu = CreateMenu(
-                            "Döviz İşlemleri", 
+                        var paraBirimleri = CreateMenu(
+                            "Para Birimleri", 
                             "fas fa-dollar-sign", 
+                            "ParaBirimi", 
+                            "Index", 
+                            7, 
+                            finansYonetimiMenu.MenuID, 
+                            "/ParaBirimi/Index"
+                        );
+                        await _context.Menuler.AddAsync(paraBirimleri);
+                        await _context.MenuRoller.AddAsync(new MenuRol { MenuRolID = Guid.NewGuid(), MenuId = paraBirimleri.MenuID, RolId = adminRole.Id });
+                        if (managerRole != null)
+                            await _context.MenuRoller.AddAsync(new MenuRol { MenuRolID = Guid.NewGuid(), MenuId = paraBirimleri.MenuID, RolId = managerRole.Id });
+                        if (accountantRole != null)
+                            await _context.MenuRoller.AddAsync(new MenuRol { MenuRolID = Guid.NewGuid(), MenuId = paraBirimleri.MenuID, RolId = accountantRole.Id });
+
+                        // 5. Raporlar Menüsü
+                        var raporlarMenu = CreateMenu(
+                            "Raporlar", 
+                            "fas fa-chart-bar", 
+                            "Rapor", 
+                            "Index", 
+                            5, 
+                            null, 
+                            "/Rapor/Index"
+                        );
+                        await _context.Menuler.AddAsync(raporlarMenu);
+                        await _context.MenuRoller.AddAsync(new MenuRol { MenuRolID = Guid.NewGuid(), MenuId = raporlarMenu.MenuID, RolId = adminRole.Id });
+                        if (managerRole != null)
+                            await _context.MenuRoller.AddAsync(new MenuRol { MenuRolID = Guid.NewGuid(), MenuId = raporlarMenu.MenuID, RolId = managerRole.Id });
+                        if (accountantRole != null)
+                            await _context.MenuRoller.AddAsync(new MenuRol { MenuRolID = Guid.NewGuid(), MenuId = raporlarMenu.MenuID, RolId = accountantRole.Id });
+
+                        // 6. Sistem Yönetimi Menüsü
+                        var sistemYonetimiMenu = CreateMenu(
+                            "Sistem Yönetimi", 
+                            "fas fa-cogs", 
                             "", 
                             "", 
                             6, 
                             null, 
                             "#"
                         );
+                        await _context.Menuler.AddAsync(sistemYonetimiMenu);
+                        await _context.MenuRoller.AddAsync(new MenuRol { MenuRolID = Guid.NewGuid(), MenuId = sistemYonetimiMenu.MenuID, RolId = adminRole.Id });
 
-                        // Döviz işlemleri alt menüsü
-                        var dovizIslemMenu = CreateMenu(
-                            "Döviz Kurları", 
-                            "fas fa-exchange-alt", 
-                            "ParaBirimi", 
-                            "Kurlar", 
-                            1, 
-                            dovizMenu.MenuID, 
-                            "/ParaBirimi/Kurlar"
-                        );
-
-                        // Para Birimi modülü alt menüsü
-                        var paraBirimiMenu = CreateMenu(
-                            "Para Birimleri", 
-                            "fas fa-coins", 
-                            "ParaBirimi", 
-                            "Index", 
-                            2, 
-                            dovizMenu.MenuID, 
-                            "/ParaBirimi/Index"
-                        );
-
-                        // Para Birimi İlişkileri alt menüsü
-                        var paraBirimiIliskiMenu = CreateMenu(
-                            "Para Birimi İlişkileri", 
-                            "fas fa-link", 
-                            "ParaBirimi", 
-                            "Iliskiler", 
-                            3, 
-                            dovizMenu.MenuID, 
-                            "/ParaBirimi/Iliskiler"
-                        );
-
-                        // Kur Değerleri alt menüsü
-                        var kurDegeriMenu = CreateMenu(
-                            "Kur Değerleri", 
-                            "fas fa-chart-line", 
-                            "ParaBirimi", 
-                            "Kurlar", 
-                            4, 
-                            dovizMenu.MenuID, 
-                            "/ParaBirimi/Kurlar"
-                        );
-
-                        // 7. Raporlar Menüsü (Üst menü)
-                        var raporlarMenu = CreateMenu(
-                            "Raporlar", 
-                            "fas fa-chart-bar", 
-                            "", 
-                            "", 
-                            7, 
-                            null, 
-                            "#"
-                        );
-
-                        // Stok raporu alt menüsü
-                        var stokRaporMenu = CreateMenu(
-                            "Stok Raporu", 
-                            "fas fa-boxes", 
-                            "Stok", 
-                            "StokRapor", 
-                            1, 
-                            raporlarMenu.MenuID, 
-                            "/Stok/StokRapor"
-                        );
-
-                        // Satış raporu alt menüsü
-                        var satisRaporMenu = CreateMenu(
-                            "Satış Raporu", 
-                            "fas fa-chart-line", 
-                            "Rapor", 
-                            "SatisRapor", 
-                            2, 
-                            raporlarMenu.MenuID, 
-                            "/Rapor/SatisRapor"
-                        );
-
-                        // 8. Kullanıcı Yönetimi Menüsü 
-                        var kullaniciMenu = CreateMenu(
-                            "Kullanıcı Yönetimi", 
-                            "fas fa-users-cog", 
+                        // Sistem Yönetimi Alt Menüleri
+                        var kullanicilar = CreateMenu(
+                            "Kullanıcılar", 
+                            "fas fa-user-cog", 
                             "Kullanici", 
                             "Index", 
-                            8, 
-                            null, 
+                            1, 
+                            sistemYonetimiMenu.MenuID, 
                             "/Kullanici/Index"
                         );
+                        await _context.Menuler.AddAsync(kullanicilar);
+                        await _context.MenuRoller.AddAsync(new MenuRol { MenuRolID = Guid.NewGuid(), MenuId = kullanicilar.MenuID, RolId = adminRole.Id });
 
-                        // 9. Sistem Ayarları Menüsü (Üst menü)
-                        var sistemAyarlariMenu = CreateMenu(
+                        var sistemAyarlari = CreateMenu(
                             "Sistem Ayarları", 
-                            "fas fa-cogs", 
-                            "", 
-                            "", 
-                            9, 
-                            null, 
-                            "#"
+                            "fas fa-cog", 
+                            "SistemAyar", 
+                            "Index", 
+                            2, 
+                            sistemYonetimiMenu.MenuID, 
+                            "/SistemAyar/Index"
                         );
+                        await _context.Menuler.AddAsync(sistemAyarlari);
+                        await _context.MenuRoller.AddAsync(new MenuRol { MenuRolID = Guid.NewGuid(), MenuId = sistemAyarlari.MenuID, RolId = adminRole.Id });
 
-                        // Sistem ayarları alt menüleri
-                        var menuYonetimMenu = CreateMenu(
+                        var menuYonetimi = CreateMenu(
                             "Menü Yönetimi", 
                             "fas fa-bars", 
                             "Menu", 
                             "Index", 
-                            1, 
-                            sistemAyarlariMenu.MenuID, 
+                            3, 
+                            sistemYonetimiMenu.MenuID, 
                             "/Menu/Index"
                         );
+                        await _context.Menuler.AddAsync(menuYonetimi);
+                        await _context.MenuRoller.AddAsync(new MenuRol { MenuRolID = Guid.NewGuid(), MenuId = menuYonetimi.MenuID, RolId = adminRole.Id });
 
-                        var sistemLogMenu = CreateMenu(
+                        var sistemLoglari = CreateMenu(
                             "Sistem Logları", 
-                            "fas fa-history", 
+                            "fas fa-list-alt", 
                             "SistemLog", 
                             "Index", 
-                            2, 
-                            sistemAyarlariMenu.MenuID, 
+                            4, 
+                            sistemYonetimiMenu.MenuID, 
                             "/SistemLog/Index"
                         );
+                        await _context.Menuler.AddAsync(sistemLoglari);
+                        await _context.MenuRoller.AddAsync(new MenuRol { MenuRolID = Guid.NewGuid(), MenuId = sistemLoglari.MenuID, RolId = adminRole.Id });
 
-                        var genelAyarlarMenu = CreateMenu(
-                            "Genel Ayarlar", 
-                            "fas fa-sliders-h", 
-                            "SistemAyar", 
-                            "Index", 
-                            3, 
-                            sistemAyarlariMenu.MenuID, 
-                            "/SistemAyar/Index"
-                        );
-
-                        var dilAyarlariMenu = CreateMenu(
+                        var dilAyarlari = CreateMenu(
                             "Dil Ayarları", 
                             "fas fa-language", 
                             "Language", 
                             "Index", 
-                            4, 
-                            sistemAyarlariMenu.MenuID, 
+                            5, 
+                            sistemYonetimiMenu.MenuID, 
                             "/Language/Index"
                         );
+                        await _context.Menuler.AddAsync(dilAyarlari);
+                        await _context.MenuRoller.AddAsync(new MenuRol { MenuRolID = Guid.NewGuid(), MenuId = dilAyarlari.MenuID, RolId = adminRole.Id });
 
-                        var bildirimAyarlariMenu = CreateMenu(
-                            "Bildirim Ayarları", 
-                            "fas fa-bell", 
-                            "SistemAyar", 
-                            "Bildirimler", 
-                            5, 
-                            sistemAyarlariMenu.MenuID, 
-                            "/SistemAyar/Bildirimler"
-                        );
-
-                        var dbYonetimMenu = CreateMenu(
-                            "Veritabanı Yönetimi", 
-                            "fas fa-database", 
-                            "DbInit", 
-                            "Index", 
-                            6, 
-                            sistemAyarlariMenu.MenuID, 
-                            "/DbInit/Index"
-                        );
-
-                        // Tüm menüleri veritabanına ekle
-                        var menuler = new List<Data.Entities.Menu>
-                        {
-                            dashboardMenu,
-                            stokYonetimiMenu,
-                            urunlerMenu,
-                            stokHareketleriMenu,
-                            kategoriMenu,
-                            depoMenu,
-                            birimMenu,
-                            urunFiyatMenu,
-                            carilerMenu,
-                            belgelerMenu,
-                            faturalarMenu,
-                            irsaliyeMenu,
-                            finansMenu,
-                            kasaMenu,
-                            bankaMenu,
-                            dovizMenu,
-                            dovizIslemMenu,
-                            paraBirimiMenu,
-                            paraBirimiIliskiMenu,
-                            kurDegeriMenu,
-                            raporlarMenu,
-                            stokRaporMenu,
-                            satisRaporMenu,
-                            kullaniciMenu,
-                            sistemAyarlariMenu,
-                            menuYonetimMenu,
-                            sistemLogMenu,
-                            genelAyarlarMenu,
-                            dilAyarlariMenu,
-                            bildirimAyarlariMenu,
-                            dbYonetimMenu
-                        };
-
-                        foreach (var menu in menuler)
-                        {
-                            _context.Menuler.Add(menu);
-                        }
-
-                        // Önce menüleri kaydet
-                        await _context.SaveChangesAsync();
-
-                        // Sonra menü-rol ilişkilerini oluştur
-                        List<MenuRol> menuRoller = new List<MenuRol>();
-
-                        foreach (var menu in menuler)
-                        {
-                            var menuRol = new MenuRol
-                            {
-                                MenuRolID = Guid.NewGuid(),
-                                MenuId = menu.MenuID,
-                                RolId = adminRole.Id,
-                                OlusturmaTarihi = DateTime.Now
-                            };
-                            
-                            menuRoller.Add(menuRol);
-                        }
-
-                        // Menü-rol ilişkilerini kaydet
-                        foreach (var menuRol in menuRoller)
-                        {
-                            _context.MenuRoller.Add(menuRol);
-                        }
-
+                        // Değişiklikleri kaydet
                         await _context.SaveChangesAsync();
                         
-                        // Transaction'ı onaylayarak işlemi tamamla
+                        // Transaction'ı commit et
                         await transaction.CommitAsync();
                         
-                        try 
-                        {
-                            await _logService.LogInfoAsync("MenuService.InitDefaultMenusAsync", "Varsayılan menüler başarıyla oluşturuldu!");
-                        } 
-                        catch (Exception logEx)
-                        {
-                            // Log hatası olsa bile işlemi başarılı sayalım
-                            _logger.LogWarning(logEx, "Log kaydetme işlemi sırasında hata oluştu, ancak menüler başarıyla oluşturuldu: {Message}", logEx.Message);
-                        }
-                        
+                        _logger.LogInformation("Varsayılan menüler başarıyla oluşturuldu");
                         return true;
                     }
                     catch (Exception ex)
                     {
-                        // Hata durumunda transaction'ı geri al
-                        await transaction.RollbackAsync();
-                        
-                        string errorMessage = $"Menüler kaydedilirken hata: {ex.Message}";
-                        if (ex.InnerException != null)
-                        {
-                            errorMessage += $"\nİç Hata: {ex.InnerException.Message}";
-                        }
-                        
-                        _logger.LogError(ex, "Menüler kaydedilirken hata oluştu: {Message}", errorMessage);
-                        await _logService.LogErrorAsync("MenuService.InitDefaultMenusAsync", errorMessage);
-                        
-                        throw; // Hatayı dışarı fırlat
+                        _logger.LogError(ex, "Varsayılan menüleri oluştururken hata: {Message}", ex.Message);
+                        return false;
                     }
                 }
             }
@@ -1019,7 +1021,9 @@ namespace MuhasebeStokWebApp.Services.Menu
                         foreach (var rootMenu in rootMenus)
                         {
                             // Menünün rollerini kontrol et
-                            bool menuHasAccess = rootMenu.MenuRoller.Any(mr => userRoleIds.Contains(mr.RolId));
+                            bool menuHasAccess = rootMenu.MenuRoller.Any(mr => mr != null && 
+                                                                         mr.RolId != null && 
+                                                                         userRoleIds.Contains(mr.RolId));
                             
                             if (menuHasAccess)
                             {

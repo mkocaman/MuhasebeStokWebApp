@@ -266,14 +266,14 @@ namespace MuhasebeStokWebApp.ViewModels.ParaBirimiModulu
         /// </summary>
         [Display(Name = "Efektif Alış")]
         [Range(0, double.MaxValue, ErrorMessage = "Efektif alış kuru negatif olamaz.")]
-        public decimal Efektif_Alis { get; set; }
+        public decimal EfektifAlis { get; set; }
         
         /// <summary>
         /// Efektif satış değeri
         /// </summary>
         [Display(Name = "Efektif Satış")]
         [Range(0, double.MaxValue, ErrorMessage = "Efektif satış kuru negatif olamaz.")]
-        public decimal Efektif_Satis { get; set; }
+        public decimal EfektifSatis { get; set; }
         
         /// <summary>
         /// Aktif mi

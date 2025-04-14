@@ -183,8 +183,8 @@ namespace MuhasebeStokWebApp.Services.ParaBirimiModulu
                             Tarih = today,
                             Alis = 10.0m + (decimal)new Random().NextDouble(), // Örnek değer
                             Satis = 10.5m + (decimal)new Random().NextDouble(), // Örnek değer
-                            Efektif_Alis = 10.2m + (decimal)new Random().NextDouble(), // Örnek değer
-                            Efektif_Satis = 10.7m + (decimal)new Random().NextDouble(), // Örnek değer
+                            EfektifAlis = 10.2m + (decimal)new Random().NextDouble(), // Örnek değer
+                            EfektifSatis = 10.7m + (decimal)new Random().NextDouble(), // Örnek değer
                             Aktif = true,
                             Aciklama = "API'dan alınan değer"
                         };
@@ -218,8 +218,8 @@ namespace MuhasebeStokWebApp.Services.ParaBirimiModulu
                 Tarih = kurDegeri.Tarih,
                 Alis = kurDegeri.Alis,
                 Satis = kurDegeri.Satis,
-                Efektif_Alis = kurDegeri.Efektif_Alis,
-                Efektif_Satis = kurDegeri.Efektif_Satis,
+                EfektifAlis = kurDegeri.EfektifAlis,
+                EfektifSatis = kurDegeri.EfektifSatis,
                 Aktif = kurDegeri.Aktif,
                 Aciklama = kurDegeri.Aciklama
             };
@@ -239,8 +239,8 @@ namespace MuhasebeStokWebApp.Services.ParaBirimiModulu
                 Tarih = k.Tarih,
                 Alis = k.Alis,
                 Satis = k.Satis,
-                Efektif_Alis = k.Efektif_Alis,
-                Efektif_Satis = k.Efektif_Satis,
+                EfektifAlis = k.EfektifAlis,
+                EfektifSatis = k.EfektifSatis,
                 Aktif = k.Aktif,
                 Aciklama = k.Aciklama
             }).ToList();

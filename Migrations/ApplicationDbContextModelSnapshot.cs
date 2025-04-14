@@ -1584,10 +1584,10 @@ namespace MuhasebeStokWebApp.Migrations
                     b.Property<decimal>("Alis")
                         .HasColumnType("decimal(18,6)");
 
-                    b.Property<decimal>("Efektif_Alis")
+                    b.Property<decimal>("EfektifAlis")
                         .HasColumnType("decimal(18,6)");
 
-                    b.Property<decimal>("Efektif_Satis")
+                    b.Property<decimal>("EfektifSatis")
                         .HasColumnType("decimal(18,6)");
 
                     b.Property<DateTime?>("GuncellemeTarihi")

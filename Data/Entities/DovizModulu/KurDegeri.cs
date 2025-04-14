@@ -41,16 +41,18 @@ namespace MuhasebeStokWebApp.Data.Entities.DovizModulu
         public decimal Satis { get; set; }
         
         /// <summary>
-        /// Efektif alış değeri
+        /// Efektif alış fiyatı
         /// </summary>
+        [Display(Name = "Efektif Alış")]
         [Required]
-        public decimal Efektif_Alis { get; set; }
+        public decimal EfektifAlis { get; set; }
         
         /// <summary>
-        /// Efektif satış değeri
+        /// Efektif satış fiyatı
         /// </summary>
+        [Display(Name = "Efektif Satış")]
         [Required]
-        public decimal Efektif_Satis { get; set; }
+        public decimal EfektifSatis { get; set; }
         
         /// <summary>
         /// Aktif mi

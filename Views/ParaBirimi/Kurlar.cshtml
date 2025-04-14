@@ -55,10 +55,10 @@
                             <tr>
                                 <td>@item.ParaBirimi?.Kod - @item.ParaBirimi?.Ad</td>
                                 <td>@item.Tarih.ToString("dd.MM.yyyy")</td>
-                                <td>@item.Alis.ToString("N4")</td>
-                                <td>@item.Satis.ToString("N4")</td>
-                                <td>@item.Efektif_Alis.ToString("N4")</td>
-                                <td>@item.Efektif_Satis.ToString("N4")</td>
+                                <td>@item.Alis.ToString("N" + item.ParaBirimi.OndalikHassasiyet)</td>
+                                <td>@item.Satis.ToString("N" + item.ParaBirimi.OndalikHassasiyet)</td>
+                                <td>@item.EfektifAlis.ToString("N" + item.ParaBirimi.OndalikHassasiyet)</td>
+                                <td>@item.EfektifSatis.ToString("N" + item.ParaBirimi.OndalikHassasiyet)</td>
                                 <td>
                                     @if (item.Aktif)
                                     {

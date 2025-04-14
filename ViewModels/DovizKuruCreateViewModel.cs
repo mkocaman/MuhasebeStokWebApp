@@ -46,5 +46,8 @@ namespace MuhasebeStokWebApp.ViewModels
 
         [Display(Name = "Aktif")]
         public bool Aktif { get; set; } = true;
+
+        public decimal EfektifAlis { get; set; }
+        public decimal EfektifSatis { get; set; }
     }
 } 

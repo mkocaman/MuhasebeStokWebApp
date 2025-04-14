@@ -24,11 +24,11 @@ namespace MuhasebeStokWebApp.ViewModels.Doviz
         
         [Display(Name = "Efektif Alış")]
         [DisplayFormat(DataFormatString = "{0:N6}", ApplyFormatInEditMode = false)]
-        public decimal EfektifAlisFiyati { get; set; }
+        public decimal EfektifAlis { get; set; }
         
         [Display(Name = "Efektif Satış")]
         [DisplayFormat(DataFormatString = "{0:N6}", ApplyFormatInEditMode = false)]
-        public decimal EfektifSatisFiyati { get; set; }
+        public decimal EfektifSatis { get; set; }
         
         [Display(Name = "Tarih")]
         [DisplayFormat(DataFormatString = "{0:dd.MM.yyyy}", ApplyFormatInEditMode = false)]
