@@ -53,9 +53,7 @@
                             <div class="col-md-6">
                                 <div class="form-group">
                                     <label class="form-label">Oluşturma Tarihi</label>
-                                    <p class="form-control-static">
-                                        @(Model.OlusturmaTarihi.HasValue ? Model.OlusturmaTarihi.Value.ToString("dd.MM.yyyy") : "-")
-                                    </p>
+                                    <p class="form-control-static">@Model.OlusturmaTarihi.ToString("dd.MM.yyyy HH:mm")</p>
                                 </div>
                             </div>
                         </div>

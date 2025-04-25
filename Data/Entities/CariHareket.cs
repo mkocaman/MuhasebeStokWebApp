@@ -79,6 +79,10 @@ namespace MuhasebeStokWebApp.Data.Entities
         [Column(TypeName = "decimal(18,2)")]
         public decimal Alacak { get; set; }
         
+        // Hesaplama amaçlı kullanılacak Bakiye özelliği, veritabanında saklanmayacak
+        [NotMapped]
+        public decimal Bakiye { get; set; }
+        
         [Column(TypeName = "datetime2")]
         public new DateTime OlusturmaTarihi { get; set; } = DateTime.Now;
         

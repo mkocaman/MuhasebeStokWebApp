@@ -176,6 +176,9 @@ builder.Services.AddScoped<ICariService, CariService>();
 // CariHareketService'i ekliyoruz
 builder.Services.AddScoped<ICariHareketService, CariHareketService>();
 
+// FaturaService'i ekliyoruz
+builder.Services.AddScoped<IFaturaService, FaturaService>();
+
 // SistemAyarService'i ekliyoruz
 builder.Services.AddScoped<ISistemAyarService, SistemAyarService>();
 

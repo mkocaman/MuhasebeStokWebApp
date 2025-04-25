@@ -10,6 +10,8 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Threading.Tasks;
 using MuhasebeStokWebApp.Services.Interfaces;
+using Microsoft.AspNetCore.Authorization;
+using AutoMapper;
 
 namespace MuhasebeStokWebApp.Controllers
 {
@@ -17,6 +19,7 @@ namespace MuhasebeStokWebApp.Controllers
     public class UrunKategoriController : BaseController
     {
         private readonly ApplicationDbContext _context;
+        private readonly IMapper _mapper;
 
         // Constructor: Veritabanı bağlantısını ve base controller servislerini DI ile alır
         public UrunKategoriController(
@@ -24,34 +27,48 @@ namespace MuhasebeStokWebApp.Controllers
             IMenuService menuService,
             UserManager<ApplicationUser> userManager,
             RoleManager<IdentityRole> roleManager,
-            ILogService logService) 
+            ILogService logService,
+            IMapper mapper) 
             : base(menuService, userManager, roleManager, logService)
         {
             _context = context;
+            _mapper = mapper;
         }
 
-        // Kategorilerin listelendiği ana sayfa
-        public async Task<IActionResult> Index()
+        // GET: UrunKategori
+        public async Task<IActionResult> Index(string tab = "aktif")
         {
-            // Tüm kategorileri getir (silindi=false filtresi kaldırıldı)
-            var kategoriler = await _context.UrunKategorileri
-                .OrderByDescending(k => k.OlusturmaTarihi)
+            var tumKategoriler = await _context.UrunKategorileri
+                .IgnoreQueryFilters()
                 .ToListAsync();
 
-            // Kategori listesi görünüm modeli oluştur
             var viewModel = new UrunKategoriListViewModel
             {
-                Kategoriler = kategoriler.Select(k => new UrunKategoriViewModel
+                Kategoriler = tumKategoriler.Select(k => new UrunKategoriViewModel
                 {
                     KategoriID = k.KategoriID,
                     KategoriAdi = k.KategoriAdi,
                     Aciklama = k.Aciklama,
                     Aktif = k.Aktif,
-                    Silindi = k.Silindi,
                     OlusturmaTarihi = k.OlusturmaTarihi ?? DateTime.MinValue,
-                    GuncellemeTarihi = k.GuncellemeTarihi
+                    Silindi = k.Silindi
                 }).ToList()
             };
+
+            ViewBag.AktifTab = tab;
+
+            if (tab == "aktif")
+            {
+                viewModel.Kategoriler = viewModel.Kategoriler.Where(k => k.Aktif && !k.Silindi).ToList();
+            }
+            else if (tab == "pasif")
+            {
+                viewModel.Kategoriler = viewModel.Kategoriler.Where(k => !k.Aktif && !k.Silindi).ToList();
+            }
+            else if (tab == "silindi" && User.IsInRole("Admin"))
+            {
+                viewModel.Kategoriler = viewModel.Kategoriler.Where(k => k.Silindi).ToList();
+            }
 
             return View(viewModel);
         }
@@ -115,56 +132,58 @@ namespace MuhasebeStokWebApp.Controllers
 
         // Kategori detaylarını getirir
         [HttpGet]
-        public async Task<IActionResult> Details(Guid id)
+        public async Task<IActionResult> Details(Guid? id)
         {
-            // Kategori bilgisini getir
+            if (id == null)
+            {
+                return NotFound();
+            }
+
             var kategori = await _context.UrunKategorileri
-                .FirstOrDefaultAsync(k => k.KategoriID == id && !k.Silindi);
-                
+                .IgnoreQueryFilters() // Global filtreleri devre dışı bırak
+                .FirstOrDefaultAsync(k => k.KategoriID == id);
+
             if (kategori == null)
             {
                 return NotFound();
             }
 
-            // Kategori görünüm modeli oluştur
-#pragma warning disable CS8601 // Possible null reference assignment.
-            var viewModel = new UrunKategoriViewModel
+            var viewModel = _mapper.Map<UrunKategoriViewModel>(kategori);
+            
+            // AJAX isteği için modal içeriği döndür
+            if (Request.Headers["X-Requested-With"] == "XMLHttpRequest")
             {
-                KategoriID = kategori.KategoriID,
-                KategoriAdi = kategori.KategoriAdi,
-                Aciklama = kategori.Aciklama,
-                Aktif = kategori.Aktif,
-                OlusturmaTarihi = kategori.OlusturmaTarihi ?? DateTime.MinValue,
-                GuncellemeTarihi = kategori.GuncellemeTarihi
-            };
-#pragma warning restore CS8601 // Possible null reference assignment.
-
-            return Json(viewModel);
+                return PartialView("_DetailsPartial", viewModel);
+            }
+            
+            return View(viewModel);
         }
 
         // Kategori düzenleme formunu getirir
         [HttpGet]
-        public async Task<IActionResult> Edit(Guid id)
+        public async Task<IActionResult> Edit(Guid? id)
         {
-            // Kategori bilgisini getir
+            if (id == null)
+            {
+                return NotFound();
+            }
+
             var kategori = await _context.UrunKategorileri
-                .FirstOrDefaultAsync(k => k.KategoriID == id && !k.Silindi);
-                
+                .IgnoreQueryFilters() // Global filtreleri devre dışı bırak
+                .FirstOrDefaultAsync(k => k.KategoriID == id);
+
             if (kategori == null)
             {
                 return NotFound();
             }
 
-            // Düzenleme görünüm modeli oluştur
-            var viewModel = new UrunKategoriEditViewModel
-            {
-                KategoriID = kategori.KategoriID,
-                KategoriAdi = kategori.KategoriAdi,
-                Aciklama = kategori.Aciklama,
-                Aktif = kategori.Aktif
-            };
+            var viewModel = _mapper.Map<UrunKategoriEditViewModel>(kategori);
 
-            return PartialView("_EditPartial", viewModel);
+            if (Request.Headers["X-Requested-With"] == "XMLHttpRequest")
+            {
+                return PartialView("_EditPartial", viewModel);
+            }
+            return View(viewModel);
         }
 
         // Kategori düzenleme işlemi
@@ -310,47 +329,38 @@ namespace MuhasebeStokWebApp.Controllers
 
         // Kategori aktifleştirme işlemi
         [HttpPost]
-        [ValidateAntiForgeryToken]
-        public async Task<IActionResult> Activate(Guid id)
+        [Authorize(Roles = "Admin,StokYonetici")]
+        public async Task<IActionResult> SetActive(Guid id)
         {
             try
             {
+                // Doğrudan DbContext kullanarak IgnoreQueryFilters ile kategoriyi bul
                 var kategori = await _context.UrunKategorileri
-                    .FirstOrDefaultAsync(k => k.KategoriID == id);
-                    
+                    .IgnoreQueryFilters()
+                    .FirstOrDefaultAsync(u => u.KategoriID == id);
+                
                 if (kategori == null)
                 {
-                    if (Request.Headers["X-Requested-With"] == "XMLHttpRequest")
-                    {
-                        return Json(new { success = false, message = "Kategori bulunamadı." });
-                    }
-                    
-                    return NotFound();
+                    return Json(new { success = false, message = "Kategori bulunamadı." });
                 }
-
-                // Kategoriyi aktifleştir
-                kategori.Aktif = true;
+                
+                // Aktif durumu tersine çevir
+                kategori.Aktif = !kategori.Aktif;
+                kategori.Silindi = false; // Aktifleştirme işleminde silindi bayrağını kaldır
                 kategori.GuncellemeTarihi = DateTime.Now;
+                kategori.SonGuncelleyenKullaniciID = GetCurrentUserId();
                 
                 await _context.SaveChangesAsync();
                 
-                if (Request.Headers["X-Requested-With"] == "XMLHttpRequest")
-                {
-                    return Json(new { success = true, message = "Kategori başarıyla aktifleştirildi." });
-                }
-                
-                TempData["Success"] = "Kategori başarıyla aktifleştirildi.";
-                return RedirectToAction(nameof(Index));
+                string durumMesaji = kategori.Aktif ? "aktifleştirildi" : "pasifleştirildi";
+                return Json(new { 
+                    success = true, 
+                    message = $"{kategori.KategoriAdi} kategorisi başarıyla {durumMesaji}." 
+                });
             }
             catch (Exception ex)
             {
-                if (Request.Headers["X-Requested-With"] == "XMLHttpRequest")
-                {
-                    return Json(new { success = false, message = $"Kategori aktifleştirilirken bir hata oluştu: {ex.Message}" });
-                }
-                
-                TempData["Error"] = $"Kategori aktifleştirilirken bir hata oluştu: {ex.Message}";
-                return RedirectToAction(nameof(Index));
+                return Json(new { success = false, message = $"Kategori durumu değiştirilirken bir hata oluştu: {ex.Message}" });
             }
         }
 
@@ -405,6 +415,122 @@ namespace MuhasebeStokWebApp.Controllers
         private bool KategoriExists(Guid id)
         {
             return _context.UrunKategorileri.Any(e => e.KategoriID == id && !e.Silindi);
+        }
+
+        [HttpPost]
+        [Authorize(Roles = "Admin,StokYonetici")]
+        public async Task<IActionResult> SetDelete(Guid id)
+        {
+            try
+            {
+                // Doğrudan DbContext kullanarak IgnoreQueryFilters ile kategoriyi bul
+                var kategori = await _context.UrunKategorileri
+                    .IgnoreQueryFilters()
+                    .FirstOrDefaultAsync(u => u.KategoriID == id);
+                
+                if (kategori == null)
+                {
+                    return Json(new { success = false, message = "Kategori bulunamadı." });
+                }
+                
+                // Kategori kullanımda mı kontrol et
+                bool kategoriKullaniliyor = await _context.Urunler.AnyAsync(u => u.KategoriID == id && !u.Silindi);
+                
+                if (kategoriKullaniliyor)
+                {
+                    // İlişkili kayıtlar varsa silme, pasife al
+                    kategori.Aktif = false;
+                    kategori.Silindi = true;
+                    kategori.GuncellemeTarihi = DateTime.Now;
+                    kategori.SonGuncelleyenKullaniciID = GetCurrentUserId();
+                    
+                    _context.UrunKategorileri.Update(kategori);
+                    await _context.SaveChangesAsync();
+                    
+                    return Json(new { 
+                        success = true, 
+                        message = $"{kategori.KategoriAdi} kategorisi ürünlerde kullanıldığı için pasife alındı." 
+                    });
+                }
+                else
+                {
+                    // İlişkili kayıt yoksa soft delete uygula
+                    kategori.Silindi = true;
+                    kategori.GuncellemeTarihi = DateTime.Now;
+                    kategori.SonGuncelleyenKullaniciID = GetCurrentUserId();
+                    
+                    _context.UrunKategorileri.Update(kategori);
+                    await _context.SaveChangesAsync();
+                    
+                    return Json(new { 
+                        success = true, 
+                        message = $"{kategori.KategoriAdi} kategorisi başarıyla silindi." 
+                    });
+                }
+            }
+            catch (Exception ex)
+            {
+                return Json(new { success = false, message = $"Kategori silinirken bir hata oluştu: {ex.Message}" });
+            }
+        }
+
+        [HttpPost]
+        public async Task<IActionResult> GetKategoriDetails(Guid id)
+        {
+            try
+            {
+                var kategori = await _context.UrunKategorileri
+                    .IgnoreQueryFilters() // Global filtreleri devre dışı bırak
+                    .AsNoTracking()
+                    .FirstOrDefaultAsync(k => k.KategoriID == id);
+                    
+                if (kategori == null)
+                {
+                    return Json(new { success = false, message = "Kategori bulunamadı." });
+                }
+                
+                var viewModel = _mapper.Map<UrunKategoriViewModel>(kategori);
+                return Json(new { success = true, data = viewModel });
+            }
+            catch (Exception ex)
+            {
+                return Json(new { success = false, message = "Kategori bilgileri yüklenirken bir hata oluştu." });
+            }
+        }
+
+        // Pasife alınan veya silinen kategorileri geri alma işlemi
+        [HttpPost]
+        public async Task<IActionResult> RestoreKategori(Guid id)
+        {
+            try
+            {
+                var kategori = await _context.UrunKategorileri
+                    .IgnoreQueryFilters() // Global filtreleri devre dışı bırak
+                    .FirstOrDefaultAsync(k => k.KategoriID == id);
+                    
+                if (kategori == null)
+                {
+                    return Json(new { success = false, message = "Kategori bulunamadı." });
+                }
+
+                // Kategoriyi aktif et
+                kategori.Aktif = true;
+                kategori.Silindi = false; // Eğer silindiyse, silindi durumunu da false yap
+                kategori.GuncellemeTarihi = DateTime.Now;
+                
+                // Güncelleyen kullanıcı ID'sini al
+                var updateUserId = User.FindFirst(System.Security.Claims.ClaimTypes.NameIdentifier)?.Value;
+                kategori.SonGuncelleyenKullaniciID = string.IsNullOrEmpty(updateUserId) ? null : (Guid?)Guid.Parse(updateUserId);
+
+                await _context.SaveChangesAsync();
+                
+                return Json(new { success = true, message = "Kategori başarıyla aktif edildi." });
+            }
+            catch (Exception ex)
+            {
+                var message = "Kategori aktif edilirken bir hata oluştu.";
+                return Json(new { success = false, message = message });
+            }
         }
     }
 } 

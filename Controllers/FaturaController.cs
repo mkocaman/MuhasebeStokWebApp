@@ -19,6 +19,8 @@ using MuhasebeStokWebApp.Services.Interfaces;
 using MuhasebeStokWebApp.ViewModels.Fatura;
 using Fatura = MuhasebeStokWebApp.Data.Entities.Fatura;
 using FaturaDetay = MuhasebeStokWebApp.Data.Entities.FaturaDetay;
+using ClosedXML.Excel;
+using System.IO;
 
 namespace MuhasebeStokWebApp.Controllers
 {
@@ -32,6 +34,7 @@ namespace MuhasebeStokWebApp.Controllers
         private readonly ILogger<FaturaController> _logger;
         private readonly IStokService _stokService;
         private readonly UserManager<ApplicationUser> _userManager;
+        private readonly IFaturaService _faturaService;
 
         public FaturaController(
             IUnitOfWork unitOfWork,
@@ -43,7 +46,8 @@ namespace MuhasebeStokWebApp.Controllers
             IMenuService menuService,
             UserManager<ApplicationUser> userManager,
             RoleManager<IdentityRole> roleManager,
-            IStokService stokService)
+            IStokService stokService,
+            IFaturaService faturaService)
             : base(menuService, userManager, roleManager, logService)
         {
             _unitOfWork = unitOfWork;
@@ -53,6 +57,7 @@ namespace MuhasebeStokWebApp.Controllers
             _logger = logger;
             _stokService = stokService;
             _userManager = userManager;
+            _faturaService = faturaService;
         }
 
         // GET: Fatura
@@ -90,10 +95,12 @@ namespace MuhasebeStokWebApp.Controllers
         }
 
         // GET: Fatura/Create
+        [Authorize(Roles = "Admin,FinansYonetici,Kullanici")]
         public async Task<IActionResult> Create()
         {
             try
             {
+                _logger.LogInformation($"Fatura oluşturma sayfası yükleniyor: Kullanıcı={User.Identity.Name}");
                 // Aktif cariler
                 var cariler = await _context.Cariler
                     .Where(c => !c.Silindi && c.AktifMi)
@@ -393,6 +400,30 @@ namespace MuhasebeStokWebApp.Controllers
                             var kdvTutar = tutar * kdvOrani;
                             var toplamTutar = tutar + kdvTutar;
                             
+                            // Döviz kuruna göre birim fiyat hesaplaması
+                            decimal birimFiyatDoviz = 0;
+                            decimal? tutarDoviz = 0;
+                            decimal? kdvTutariDoviz = 0;
+                            decimal? netTutarDoviz = 0;
+                            
+                            try 
+                            {
+                                // Eğer USD faturası ise UZS değerini, UZS ise USD değerini hesapla
+                                string hedefDovizKodu = viewModel.DovizTuru == "USD" ? "UZS" : "USD";
+                                birimFiyatDoviz = await _dovizKuruService.CevirmeTutarByKodAsync(birimFiyat, viewModel.DovizTuru, hedefDovizKodu);
+                                
+                                // Diğer döviz değerlerini de hesapla
+                                tutarDoviz = birimFiyatDoviz * miktar;
+                                kdvTutariDoviz = tutarDoviz * kdvOrani;
+                                netTutarDoviz = tutarDoviz + kdvTutariDoviz;
+                                
+                                _logger.LogInformation($"Döviz değerleri hesaplandı: {viewModel.DovizTuru} -> {hedefDovizKodu}, BirimFiyat: {birimFiyat} -> {birimFiyatDoviz}");
+                            }
+                            catch (Exception ex)
+                            {
+                                _logger.LogError(ex, $"Döviz değerleri hesaplanırken hata oluştu: {ex.Message}");
+                            }
+                            
                             var faturaDetay = new FaturaDetay
                             {
                                 FaturaDetayID = Guid.NewGuid(),
@@ -400,12 +431,17 @@ namespace MuhasebeStokWebApp.Controllers
                                 UrunID = kalem.UrunID,
                                 Miktar = miktar,
                                 BirimFiyat = birimFiyat,
+                                BirimFiyatDoviz = birimFiyatDoviz,
                                 KdvOrani = kdvOrani * 100, // KdvOrani'ni yüzde olarak kaydediyoruz
                                 IndirimOrani = kalem.IndirimOrani,
                                 Tutar = tutar,
+                                TutarDoviz = tutarDoviz,
                                 KdvTutari = kdvTutar,
+                                KdvTutariDoviz = kdvTutariDoviz,
                                 IndirimTutari = tutar * (kalem.IndirimOrani / 100),
+                                IndirimTutariDoviz = tutarDoviz * (kalem.IndirimOrani / 100),
                                 NetTutar = toplamTutar,
+                                NetTutarDoviz = netTutarDoviz,
                                 Birim = kalem.Birim,
                                 SatirToplam = tutar, // Satır toplamı = tutar
                                 SatirKdvToplam = kdvTutar, // Satır KDV toplamı = KDV tutarı
@@ -1449,101 +1485,28 @@ namespace MuhasebeStokWebApp.Controllers
         [ValidateAntiForgeryToken]
         public async Task<IActionResult> DeleteConfirmed(Guid id)
         {
-            using var transaction = await _context.Database.BeginTransactionAsync();
+            // Kullanıcının yetkisini kontrol et
+            if (!User.IsInRole("Admin") && !User.IsInRole("FinansYonetici"))
+            {
+                _logger.LogWarning($"Yetkisiz fatura silme girişimi: Kullanıcı={User.Identity.Name}, FaturaID={id}");
+                return RedirectToAction("AccessDenied", "Account");
+            }
+            
             try
             {
-                var fatura = await _context.Faturalar
-                    .Include(f => f.FaturaDetaylari)
-                    .Include(f => f.FaturaTuru)
-                    .FirstOrDefaultAsync(f => f.FaturaID == id);
+                _logger.LogInformation($"Fatura silme işlemi başlatılıyor: FaturaID={id}, Kullanıcı={User.Identity.Name}");
                 
-                if (fatura == null)
-                {
-                    return NotFound();
-                }
-
-                // İlişkili stok hareketlerini bul
-                var stokHareketleri = await _context.StokHareketleri
-                    .Where(s => s.ReferansID == id && s.ReferansTuru == "Fatura" && !s.Silindi)
-                    .ToListAsync();
-
-                // Stok hareketlerini işaretle ve stok miktarlarını güncelle
-                foreach (var hareket in stokHareketleri)
-                {
-                    hareket.Silindi = true;
-                    hareket.GuncellemeTarihi = DateTime.Now;
-                    
-                    // Ürünü bul ve stok miktarını güncelle
-                    var urun = await _context.Urunler.FindAsync(hareket.UrunID);
-                    if (urun != null)
-                    {
-                        // Stok hareketinin tipine göre stok miktarını güncelle
-                        // Giriş ise azalt, çıkış ise artır
-                        if (hareket.HareketTuru == StokHareketiTipi.Giris)
-                        {
-                            urun.StokMiktar -= hareket.Miktar;
-                            _logger.LogInformation($"Stok miktarı azaltıldı: UrunID={urun.UrunID}, Miktar={hareket.Miktar}, Yeni stok={urun.StokMiktar}");
-                        }
-                        else if (hareket.HareketTuru == StokHareketiTipi.Cikis)
-                        {
-                            urun.StokMiktar -= hareket.Miktar; // Çıkış hareketinde miktar zaten negatif olduğu için çıkarınca artırılmış olacak
-                            _logger.LogInformation($"Stok miktarı artırıldı: UrunID={urun.UrunID}, Miktar={-hareket.Miktar}, Yeni stok={urun.StokMiktar}");
-                        }
-                        
-                        _context.Urunler.Update(urun);
-                    }
-                    
-                    _context.StokHareketleri.Update(hareket);
-                }
+                // Fatura silme işlemi
+                await _faturaService.DeleteAsync(id);
                 
-                // İlişkili FIFO kayıtlarını işaretle (iptal et)
-                try
-                {
-                    // Giriş veya çıkış faturası olsun, tüm FIFO kayıtlarını iptal et
-                    await _stokFifoService.FifoKayitlariniIptalEt(id, "Fatura", $"Fatura silindi: {fatura.FaturaNumarasi}", GetCurrentUserId().GetValueOrDefault(Guid.Empty));
-                    _logger.LogInformation($"{fatura.FaturaTuru?.HareketTuru} faturası FIFO kayıtları iptal edildi: FaturaID={id}");
-                }
-                catch (Exception ex)
-                {
-                    _logger.LogError(ex, "FIFO kayıtları iptal servis metodu hatası: {0}", ex.Message);
-                    throw; // Hata durumunda transaction'ı geri alabilmek için hatayı yeniden fırlat
-                }
-
-                // Faturayı silindi olarak işaretle
-                fatura.Silindi = true;
-                fatura.GuncellemeTarihi = DateTime.Now;
-                fatura.SonGuncelleyenKullaniciID = GetCurrentUserId().GetValueOrDefault(Guid.Empty);
-                
-                // İlişkili cari hareket kaydını bul ve silinmiş olarak işaretle
-                var cariHareket = await _context.CariHareketler
-                    .FirstOrDefaultAsync(ch => ch.ReferansID == id && ch.ReferansTuru == "Fatura" && !ch.Silindi);
-                
-                if (cariHareket != null)
-                {
-                    _logger.LogInformation($"İlişkili cari hareket silinmiş olarak işaretleniyor: ID={cariHareket.CariHareketID}");
-                    
-                    cariHareket.Silindi = true;
-                    cariHareket.GuncellemeTarihi = DateTime.Now;
-                    
-                    _context.CariHareketler.Update(cariHareket);
-                }
-                else
-                {
-                    _logger.LogWarning($"Fatura için ilişkili cari hareket bulunamadı: FaturaID={id}");
-                }
-                
-                _context.Faturalar.Update(fatura);
-                await _context.SaveChangesAsync();
-                await transaction.CommitAsync();
-
-                TempData["SuccessMessage"] = "Fatura ve ilişkili stok hareketleri başarıyla silindi.";
+                _logger.LogInformation($"Fatura başarıyla silindi: FaturaID={id}, Kullanıcı={User.Identity.Name}");
+                TempData["SuccessMessage"] = "Fatura başarıyla silindi.";
                 return RedirectToAction(nameof(Index));
             }
             catch (Exception ex)
             {
-                await transaction.RollbackAsync();
-                _logger.LogError(ex, "Fatura silme işlemi sırasında hata oluştu");
-                TempData["ErrorMessage"] = $"Fatura silinirken bir hata oluştu: {ex.Message}";
+                _logger.LogError(ex, $"Fatura silme işleminde hata: FaturaID={id}, Kullanıcı={User.Identity.Name}");
+                TempData["ErrorMessage"] = "Fatura silinirken bir hata oluştu: " + ex.Message;
                 return RedirectToAction(nameof(Index));
             }
         }
@@ -2028,6 +1991,14 @@ namespace MuhasebeStokWebApp.Controllers
                 _logger.LogError(ex, $"Otomatik irsaliye oluşturulurken hata oluştu: {ex.Message}");
                 throw;
             }
+        }
+
+        // Raporlar için yetki kontrolü eklenecek
+        [Authorize(Roles = "Admin,FinansYonetici,Rapor")]
+        public async Task<IActionResult> Raporlar()
+        {
+            _logger.LogInformation($"Fatura raporları erişimi: Kullanıcı={User.Identity.Name}");
+            return View();
         }
     }
 } 

@@ -14,7 +14,7 @@ namespace MuhasebeStokWebApp.Data.Entities
             BirimKodu = string.Empty;
             BirimSembol = string.Empty;
             Aciklama = string.Empty;
-            OlusturanKullaniciID = "system"; // Varsayılan değer olarak "system" atanıyor
+            OlusturanKullaniciID = null; // String yerine null olarak değiştiriyorum
             Aktif = true;
             Silindi = false;
             OlusturmaTarihi = DateTime.Now;
@@ -52,7 +52,7 @@ namespace MuhasebeStokWebApp.Data.Entities
         public DateTime? GuncellemeTarihi { get; set; }
         
         [Required]
-        public string OlusturanKullaniciID { get; set; }
+        public Guid? OlusturanKullaniciID { get; set; }
         
         public Guid? SonGuncelleyenKullaniciID { get; set; }
         

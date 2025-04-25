@@ -67,11 +67,22 @@ namespace MuhasebeStokWebApp.Services
         /// </summary>
         public async Task<StokFifo> StokGirisiYap(Guid urunID, decimal miktar, decimal birimFiyat, string birim, string referansNo, string referansTuru, Guid? referansID, string aciklama, string paraBirimi = "USD", decimal? dovizKuru = null)
         {
+            // Transaction yönetimi - dış transaction olup olmadığını kontrol et
+            bool hasExistingTransaction = _context.Database.CurrentTransaction != null;
+            IDbContextTransaction transaction = null;
+
             try
             {
                 _logger.LogInformation($"StokFifoService.StokGirisiYap başladı: UrunID={urunID}, Miktar={miktar}, BirimFiyat={birimFiyat}, ParaBirimi={paraBirimi}");
+
+                // Sadece dış transaction yoksa yeni bir transaction başlat
+                if (!hasExistingTransaction)
+                {
+                    transaction = await _context.Database.BeginTransactionAsync(System.Data.IsolationLevel.ReadCommitted);
+                    _logger.LogInformation($"StokGirisiYap - Yeni transaction başlatıldı: Ürün {urunID}, Miktar {miktar}");
+                }
                 
-                // Null kontrolü
+                // Null kontrolü ve varsayılan değer atamaları
                 birim = birim ?? "Adet";
                 referansNo = referansNo ?? "";
                 referansTuru = referansTuru ?? "Fatura";
@@ -104,55 +115,40 @@ namespace MuhasebeStokWebApp.Services
                 
                 _logger.LogInformation($"FIFO nesnesi oluşturuldu: StokFifoID={stokFifo.StokFifoID}");
                 
-                // Para birimi dönüşümleri - optimizasyon için basitleştirildi
+                // Para birimi dönüşümleri - optimize edilmiş
                 try 
                 {
-                    // Ana para birimi USD olarak varsayılıyor
-                    // Fatura USD iken UZS maliyet hesabı için alış kurunu çarp, UZS iken USD maliyet için böl
-                    
-                    // USD dönüşümü
+                    // Para birimi dönüşümlerini dovizKuruService üzerinden yapılandır
                     if (paraBirimi != "USD")
                     {
-                        // UZS -> USD dönüşümü için en güncel alış kuru bulunup bölme işlemi yapılmalı
-                        if (paraBirimi == "UZS")
+                        // USD dönüşümü
+                        decimal kurToUSD = await _dovizKuruService.GetGuncelKurAsync(paraBirimi, "USD");
+                        if (kurToUSD > 0)
                         {
-                            // UZS -> USD dönüşümü için doğru şekilde bölme işlemi yapılmalı
-                            // Veritabanından en güncel UZS/USD alış kuru alınmalı
-                            var kurUZStoUSD = await _dovizKuruService.GetGuncelKurAsync("UZS", "USD");
-                            if (kurUZStoUSD > 0)
-                            {
-                                // UZS/USD kuru büyük bir sayıdır, USD değerini elde etmek için bölmek gerekir
-                                stokFifo.USDBirimFiyat = birimFiyat / kurUZStoUSD;
-                                _logger.LogInformation($"UZS -> USD birim fiyat hesaplandı: {birimFiyat} / {kurUZStoUSD} = {stokFifo.USDBirimFiyat} USD");
-                            }
-                            else if (dovizKuru.HasValue && dovizKuru.Value > 0)
-                            {
-                                // Faturada belirtilen kur değerini kullan 
-                                stokFifo.USDBirimFiyat = birimFiyat / dovizKuru.Value;
-                                _logger.LogWarning($"UZS -> USD için API'den kur alınamadı, faturadaki kur değeri kullanıldı: {birimFiyat} / {dovizKuru.Value} = {stokFifo.USDBirimFiyat} USD");
-                            }
-                            else
-                            {
-                                // Son çare olarak varsayılan bir kur değeri kullan
-                                // Örnek: 1 USD = 13000 UZS için 
-                                stokFifo.USDBirimFiyat = birimFiyat / 13000.0m;
-                                _logger.LogWarning($"UZS -> USD için kur bilgisi bulunamadı, varsayılan değer kullanıldı: {birimFiyat} / 13000.0 = {stokFifo.USDBirimFiyat} USD");
-                            }
+                            // UZS gibi büyük kurlar için böl, diğerleri için çarp
+                            stokFifo.USDBirimFiyat = paraBirimi == "UZS" 
+                                ? birimFiyat / kurToUSD 
+                                : birimFiyat * kurToUSD;
+                            
+                            _logger.LogInformation($"{paraBirimi} -> USD birim fiyat hesaplandı: {birimFiyat} {(paraBirimi == "UZS" ? "/" : "*")} {kurToUSD} = {stokFifo.USDBirimFiyat} USD");
+                        }
+                        else if (dovizKuru.HasValue && dovizKuru.Value > 0)
+                        {
+                            // Faturada belirtilen kur değerini kullan
+                            stokFifo.USDBirimFiyat = paraBirimi == "UZS" 
+                                ? birimFiyat / dovizKuru.Value 
+                                : birimFiyat * dovizKuru.Value;
+                            
+                            _logger.LogWarning($"{paraBirimi} -> USD için API'den kur alınamadı, faturadaki kur değeri kullanıldı: {birimFiyat} {(paraBirimi == "UZS" ? "/" : "*")} {dovizKuru.Value} = {stokFifo.USDBirimFiyat} USD");
                         }
                         else
                         {
-                            // Diğer para birimleri için çarpma işlemi (örn. TRY -> USD)
-                            var kurToUSD = await _dovizKuruService.GetGuncelKurAsync(paraBirimi, "USD");
-                            if (kurToUSD > 0)
-                            {
-                                stokFifo.USDBirimFiyat = birimFiyat * kurToUSD;
-                                _logger.LogInformation($"{paraBirimi} -> USD birim fiyat hesaplandı: {birimFiyat} * {kurToUSD} = {stokFifo.USDBirimFiyat} USD");
-                            }
-                            else
-                            {
-                                stokFifo.USDBirimFiyat = birimFiyat * (dovizKuru ?? 1.0m);
-                                _logger.LogWarning($"{paraBirimi} -> USD için kur alınamadı, varsayılan değer kullanıldı: {birimFiyat} * {(dovizKuru ?? 1.0m)} = {stokFifo.USDBirimFiyat} USD");
-                            }
+                            // Varsayılan değer kullan
+                            stokFifo.USDBirimFiyat = paraBirimi == "UZS" 
+                                ? birimFiyat / 13000.0m 
+                                : birimFiyat * 1.0m;
+                            
+                            _logger.LogWarning($"{paraBirimi} -> USD için kur bilgisi bulunamadı, varsayılan değer kullanıldı");
                         }
                     }
                     else
@@ -162,73 +158,70 @@ namespace MuhasebeStokWebApp.Services
                     }
                     
                     // UZS dönüşümü
-                    if (paraBirimi == "UZS")
+                    if (paraBirimi != "UZS")
                     {
-                        stokFifo.UZSBirimFiyat = birimFiyat;
-                        _logger.LogInformation($"UZS birim fiyat direkt atandı (para birimi zaten UZS): {stokFifo.UZSBirimFiyat} UZS");
-                    }
-                    else
-                    {
-                        // USD -> UZS veya diğer para birimleri -> UZS çevrimi
-                        var kurToUZS = await _dovizKuruService.GetGuncelKurAsync(paraBirimi, "UZS");
+                        decimal kurToUZS = await _dovizKuruService.GetGuncelKurAsync(paraBirimi, "UZS");
                         if (kurToUZS > 0)
                         {
                             stokFifo.UZSBirimFiyat = birimFiyat * kurToUZS;
                             _logger.LogInformation($"{paraBirimi} -> UZS birim fiyat hesaplandı: {birimFiyat} * {kurToUZS} = {stokFifo.UZSBirimFiyat} UZS");
                         }
-                        else if (paraBirimi == "USD")
+                        else
                         {
-                            // USD -> UZS çevirimi için özel hesaplama
-                            var kurUSDtoUZS = await _dovizKuruService.GetGuncelKurAsync("USD", "UZS");
-                            if (kurUSDtoUZS > 0)
+                            // USD değeri üzerinden UZS'ye çevir
+                            decimal usdToUZS = await _dovizKuruService.GetGuncelKurAsync("USD", "UZS", DateTime.Now);
+                            if (usdToUZS > 0)
                             {
-                                stokFifo.UZSBirimFiyat = birimFiyat * kurUSDtoUZS;
-                                _logger.LogInformation($"USD -> UZS birim fiyat hesaplandı: {birimFiyat} * {kurUSDtoUZS} = {stokFifo.UZSBirimFiyat} UZS");
-                            }
-                            else if (dovizKuru.HasValue && dovizKuru.Value > 0)
-                            {
-                                // Faturada belirtilen kur değerini kullan
-                                stokFifo.UZSBirimFiyat = birimFiyat * dovizKuru.Value;
-                                _logger.LogWarning($"USD -> UZS için API'den kur alınamadı, faturadaki kur değeri kullanıldı: {birimFiyat} * {dovizKuru.Value} = {stokFifo.UZSBirimFiyat} UZS");
+                                stokFifo.UZSBirimFiyat = stokFifo.USDBirimFiyat * usdToUZS;
+                                _logger.LogInformation($"{paraBirimi} -> UZS dönüşümü USD üzerinden yapıldı: {stokFifo.USDBirimFiyat} * {usdToUZS} = {stokFifo.UZSBirimFiyat} UZS");
                             }
                             else
                             {
-                                // Son çare olarak varsayılan bir kur değeri kullan
-                                // Örnek: 1 USD = 13000 UZS
-                                stokFifo.UZSBirimFiyat = birimFiyat * 13000.0m;
-                                _logger.LogWarning($"USD -> UZS için kur bilgisi bulunamadı, varsayılan değer kullanıldı: {birimFiyat} * 13000.0 = {stokFifo.UZSBirimFiyat} UZS");
+                                stokFifo.UZSBirimFiyat = stokFifo.USDBirimFiyat * 13000.0m;
+                                _logger.LogWarning($"{paraBirimi} -> UZS için kur bilgisi bulunamadı, varsayılan değer kullanıldı: {stokFifo.USDBirimFiyat} * 13000.0 = {stokFifo.UZSBirimFiyat} UZS");
                             }
                         }
-                        else
-                        {
-                            // Diğer para birimleri için USD üzerinden dolaylı çevrim
-                            stokFifo.UZSBirimFiyat = stokFifo.USDBirimFiyat * 12000.0m; // Varsayılan USD/UZS kuru
-                            _logger.LogWarning($"{paraBirimi} -> UZS için kur alınamadı, USD üzerinden dolaylı hesaplama: {stokFifo.USDBirimFiyat} * 12000.0 = {stokFifo.UZSBirimFiyat} UZS");
-                        }
-                    }
-                    
-                    // TL dönüşümü (gerekiyorsa)
-                    if (paraBirimi == "TRY")
-                    {
-                        stokFifo.TLBirimFiyat = birimFiyat;
                     }
                     else
                     {
-                        var kurTL = await _dovizKuruService.GetGuncelKurAsync(paraBirimi, "TRY");
-                        if (kurTL > 0)
+                        stokFifo.UZSBirimFiyat = birimFiyat;
+                        _logger.LogInformation($"UZS birim fiyat direkt atandı (para birimi zaten UZS): {stokFifo.UZSBirimFiyat} UZS");
+                    }
+                    
+                    // TRY dönüşümü
+                    if (paraBirimi != "TRY")
+                    {
+                        decimal kurToTRY = await _dovizKuruService.GetGuncelKurAsync(paraBirimi, "TRY");
+                        if (kurToTRY > 0)
                         {
-                            stokFifo.TLBirimFiyat = birimFiyat * kurTL;
+                            stokFifo.TLBirimFiyat = birimFiyat * kurToTRY;
+                            _logger.LogInformation($"{paraBirimi} -> TRY birim fiyat hesaplandı: {birimFiyat} * {kurToTRY} = {stokFifo.TLBirimFiyat} TRY");
                         }
                         else
                         {
-                            // USD değeri üzerinden TL değeri hesapla
-                            stokFifo.TLBirimFiyat = stokFifo.USDBirimFiyat * 38.0m; // Varsayılan USD/TRY kuru
+                            // USD değeri üzerinden TRY'ye çevir
+                            decimal usdToTRY = await _dovizKuruService.GetGuncelKurAsync("USD", "TRY", DateTime.Now);
+                            if (usdToTRY > 0)
+                            {
+                                stokFifo.TLBirimFiyat = stokFifo.USDBirimFiyat * usdToTRY;
+                                _logger.LogInformation($"{paraBirimi} -> TRY dönüşümü USD üzerinden yapıldı: {stokFifo.USDBirimFiyat} * {usdToTRY} = {stokFifo.TLBirimFiyat} TRY");
+                            }
+                            else
+                            {
+                                stokFifo.TLBirimFiyat = stokFifo.USDBirimFiyat * 38.0m;
+                                _logger.LogWarning($"{paraBirimi} -> TRY için kur bilgisi bulunamadı, varsayılan değer kullanıldı: {stokFifo.USDBirimFiyat} * 38.0 = {stokFifo.TLBirimFiyat} TRY");
+                            }
                         }
+                    }
+                    else
+                    {
+                        stokFifo.TLBirimFiyat = birimFiyat;
+                        _logger.LogInformation($"TRY birim fiyat direkt atandı (para birimi zaten TRY): {stokFifo.TLBirimFiyat} TRY");
                     }
                 }
                 catch (Exception ex)
                 {
-                    _logger.LogError(ex, $"Para birimi dönüşümleri sırasında genel bir hata oluştu: {ex.Message}");
+                    _logger.LogError(ex, $"Para birimi dönüşümleri sırasında hata oluştu: {ex.Message}");
                     
                     // Tüm dönüşümlerde hata olsa bile varsayılan değerler ata ve devam et
                     if (stokFifo.USDBirimFiyat <= 0) stokFifo.USDBirimFiyat = birimFiyat;
@@ -239,41 +232,31 @@ namespace MuhasebeStokWebApp.Services
                 }
                 
                 // Veritabanına kaydet
-                try
+                await _context.StokFifoKayitlari.AddAsync(stokFifo);
+                await _context.SaveChangesAsync();
+                
+                _logger.LogInformation($"StokFifo kaydı başarıyla oluşturuldu: ID={stokFifo.StokFifoID}, Ürün={urunID}, Miktar={miktar}");
+                
+                // Transaction commit
+                if (!hasExistingTransaction && transaction != null)
                 {
-                    _logger.LogInformation($"FIFO kayıt verisi: UrunID={stokFifo.UrunID}, Miktar={stokFifo.Miktar}, BirimFiyat={stokFifo.BirimFiyat}, ParaBirimi={stokFifo.ParaBirimi}");
-                    _logger.LogInformation($"FIFO kaydı veritabanına ekleniyor...");
-                    // SaveChangesAsync must be called from the outer transaction context (e.g. Controller) to avoid nested transaction issues
-                    await _context.StokFifoKayitlari.AddAsync(stokFifo);
-                    // SaveChanges dışarıdan yönetilecek transaction kapsamında çağrılmalı
-                    _logger.LogInformation($"FIFO kaydı başarıyla oluşturuldu: StokFifoID={stokFifo.StokFifoID}");
-                    return stokFifo;
+                    await transaction.CommitAsync();
+                    _logger.LogInformation($"StokGirisiYap - Transaction commit edildi: Ürün {urunID}, Miktar {miktar}");
                 }
-                catch (Exception ex)
-                {
-                    _logger.LogError(ex, $"FIFO kaydı veritabanına eklenirken hata: {ex.Message}");
-                    
-                    if (ex.InnerException != null)
-                    {
-                        _logger.LogError($"İç hata detayı: {ex.InnerException.Message}");
-                    }
-                    
-                    // FIFO kaydı veritabanına eklenirken hata olsa da devam ediyoruz
-                    _logger.LogWarning($"FIFO kaydı veritabanına eklenemedi, exception fırlatılıyor.");
-                    throw new Exception("FIFO kaydı veritabanına eklenemedi.");
-                }
+                
+                return stokFifo;
             }
             catch (Exception ex)
             {
-                _logger.LogError(ex, $"Stok girişi yapılırken hata oluştu: Ürün {urunID}, Miktar={miktar}, Hata={ex.Message}");
-                
-                if (ex.InnerException != null)
+                // Transaction rollback
+                if (!hasExistingTransaction && transaction != null)
                 {
-                    _logger.LogError($"İç hata detayı: {ex.InnerException.Message}");
+                    await transaction.RollbackAsync();
+                    _logger.LogWarning($"StokGirisiYap - Transaction rollback edildi: Ürün {urunID}, Miktar {miktar}");
                 }
                 
-                _logger.LogWarning($"Stok FIFO girişi yapılamadı, fakat işleme devam ediliyor. UrunID={urunID}");
-                throw new Exception($"Stok girişi sırasında hata oluştu: {ex.Message}");
+                _logger.LogError(ex, $"Stok girişi yapılırken hata oluştu: {ex.Message}");
+                throw;
             }
         }
 
@@ -473,9 +456,20 @@ namespace MuhasebeStokWebApp.Services
         /// </summary>
         public async Task<(List<StokFifo> KullanilanFifoKayitlari, decimal ToplamMaliyet)> StokCikisiYap(Guid urunID, decimal miktar, Guid? referansID = null, StokHareketiTipi hareketTipi = StokHareketiTipi.Cikis)
         {
+            // Transaction yönetimi - dış transaction olup olmadığını kontrol et
+            bool hasExistingTransaction = _context.Database.CurrentTransaction != null;
+            IDbContextTransaction transaction = null;
+
             try
             {
                 _logger.LogInformation($"StokCikisiYap başladı: Ürün {urunID}, Miktar {miktar}, Hareket Tipi {hareketTipi}");
+                
+                // Sadece dış transaction yoksa yeni bir transaction başlat
+                if (!hasExistingTransaction)
+                {
+                    transaction = await _context.Database.BeginTransactionAsync(System.Data.IsolationLevel.ReadCommitted);
+                    _logger.LogInformation($"StokCikisiYap - Yeni transaction başlatıldı: Ürün {urunID}, Miktar {miktar}");
+                }
                 
                 // Ürünün mevcut stok durumunu kontrol et
                 var urun = await _context.Urunler.FindAsync(urunID);
@@ -488,7 +482,8 @@ namespace MuhasebeStokWebApp.Services
                 // Ürünün aktif FIFO kayıtlarını getir (en eski tarihli önce)
                 var fifoKayitlari = await _context.StokFifoKayitlari
                     .Where(f => f.UrunID == urunID && f.Aktif && !f.Iptal && !f.Silindi && f.KalanMiktar > 0)
-                    .OrderBy(f => f.GirisTarihi)
+                    .OrderBy(f => f.GirisTarihi)  // FIFO sıralaması - önce en eski kayıtlar
+                    .ThenBy(f => f.OlusturmaTarihi) // Aynı tarihli kayıtlar için ikincil sıralama
                     .ToListAsync();
 
                 if (!fifoKayitlari.Any())
@@ -502,6 +497,8 @@ namespace MuhasebeStokWebApp.Services
                 if (toplamFifoMiktari < miktar)
                 {
                     _logger.LogWarning($"Yetersiz stok: Ürün {urun.UrunAdi} (ID: {urunID}), FIFO Stok: {toplamFifoMiktari}, İstenen: {miktar}");
+                    
+                    // Ayrıntılı hata fırlat
                     throw new StokYetersizException(urunID, urun.UrunAdi, urun.UrunKodu, miktar, toplamFifoMiktari);
                 }
                 
@@ -520,25 +517,26 @@ namespace MuhasebeStokWebApp.Services
                     // Bu FIFO kaydından ne kadar kullanılacak
                     decimal kullanilanMiktar = Math.Min(fifo.KalanMiktar, kalanMiktar);
                     
-                    // FIFO kullanım kaydı oluşturulması gerekiyorsa, bunu kontrol et ve gerekirse implementasyonu yap
-                    // StokFifoKullanim yerine başka bir nesne kullanılıyor olabilir
-                    /*
-                    var fifoKullanim = new StokFifoKullanim
+                    // StokCikisDetay tablosu yoksa, bunu oluştur
+                    var stokCikisDetay = new StokCikisDetay
                     {
-                        StokFifoKullanimID = Guid.NewGuid(),
+                        StokCikisDetayID = Guid.NewGuid(),
                         StokFifoID = fifo.StokFifoID,
-                        KullanilanMiktar = kullanilanMiktar,
+                        CikisMiktari = kullanilanMiktar,
+                        CikisTarihi = DateTime.Now,
                         HareketTipi = hareketTipi.ToString(),
                         ReferansID = referansID ?? Guid.Empty,
-                        KullanimTarihi = DateTime.Now,
+                        ReferansTuru = "Stok",
+                        BirimMaliyet = fifo.USDBirimFiyat,
+                        ToplamMaliyet = kullanilanMiktar * fifo.USDBirimFiyat,
+                        ParaBirimi = "USD",
+                        Aciklama = $"{hareketTipi} hareketi ile stok çıkışı (FIFO)",
                         OlusturmaTarihi = DateTime.Now,
-                        Silindi = false
+                        Iptal = false
                     };
                     
-                    await _context.StokFifoKullanimlari.AddAsync(fifoKullanim);
-                    */
+                    await _context.StokCikisDetaylari.AddAsync(stokCikisDetay);
                     
-                    // Bunun yerine, FIFO kaydının kendisini güncelliyoruz
                     // FIFO kaydının kalan miktarını güncelle
                     fifo.KalanMiktar -= kullanilanMiktar;
                     fifo.SonCikisTarihi = DateTime.Now;
@@ -561,19 +559,29 @@ namespace MuhasebeStokWebApp.Services
                     throw new Exception($"Yetersiz stok: Talep edilen {miktar}, kalan {kalanMiktar}");
                 }
                 
-                // Ürünün stok miktarını güncelle
-                // HATA: Bu satır kaldırıldı çünkü bu işlem StokController içinde zaten yapılıyor ve çift saymaya neden oluyordu
-                // urun.StokMiktar -= miktar;
-                _context.Urunler.Update(urun);
+                // Değişiklikleri veritabanına kaydet
+                await _context.SaveChangesAsync();
+                
+                // Transaction commit
+                if (!hasExistingTransaction && transaction != null)
+                {
+                    await transaction.CommitAsync();
+                    _logger.LogInformation($"StokCikisiYap - Transaction commit edildi: Ürün {urunID}, Miktar {miktar}");
+                }
                 
                 _logger.LogInformation($"Stok çıkışı işlemi tamamlandı: Ürün {urunID}, toplam çıkış miktarı {miktar}, toplam maliyet {toplamMaliyet:N2} USD");
-                
-                // SaveChanges is called from outer transaction scope to avoid nested transaction issues
                 
                 return (kullanilanFifoKayitlari, toplamMaliyet);
             }
             catch (Exception ex)
             {
+                // Transaction rollback
+                if (!hasExistingTransaction && transaction != null)
+                {
+                    await transaction.RollbackAsync();
+                    _logger.LogWarning($"StokCikisiYap - Transaction rollback edildi: Ürün {urunID}, Miktar {miktar}");
+                }
+                
                 _logger.LogError(ex, $"Stok çıkışı yapılırken hata oluştu: {ex.Message}");
                 throw;
             }
@@ -719,34 +727,34 @@ namespace MuhasebeStokWebApp.Services
                     .ToListAsync();
                     
                 if (!fifoKayitlari.Any() || fifoKayitlari.Sum(f => f.KalanMiktar) == 0)
-                return 0;
+                    return 0;
 
-            decimal toplamMaliyet = 0;
+                decimal toplamMaliyet = 0;
                 decimal toplamMiktar = 0;
 
                 foreach (var fifo in fifoKayitlari)
                 {
-            switch (paraBirimi.ToUpper())
-            {
-                case "USD":
+                    switch (paraBirimi.ToUpper())
+                    {
+                        case "USD":
                             toplamMaliyet += fifo.KalanMiktar * fifo.USDBirimFiyat;
-                    break;
-                case "TRY":
+                            break;
+                        case "TRY":
                             toplamMaliyet += fifo.KalanMiktar * fifo.TLBirimFiyat;
-                    break;
-                case "UZS":
+                            break;
+                        case "UZS":
                             toplamMaliyet += fifo.KalanMiktar * fifo.UZSBirimFiyat;
-                    break;
-                default:
+                            break;
+                        default:
                             toplamMaliyet += fifo.KalanMiktar * fifo.USDBirimFiyat;
-                    break;
+                            break;
                     }
                     
                     toplamMiktar += fifo.KalanMiktar;
-            }
+                }
 
-            return toplamMiktar > 0 ? toplamMaliyet / toplamMiktar : 0;
-        }
+                return toplamMiktar > 0 ? toplamMaliyet / toplamMiktar : 0;
+            }
             catch (Exception ex)
             {
                 _logger.LogError(ex, $"Ortalama maliyet hesaplanırken hata oluştu: Ürün {urunID}, Para Birimi: {paraBirimi}");

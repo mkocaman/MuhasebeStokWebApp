@@ -36,6 +36,18 @@ namespace MuhasebeStokWebApp.Data.Entities
         public decimal ToplamMaliyetUSD { get; set; }
         
         [StringLength(50)]
+        public string HareketTipi { get; set; } = string.Empty;
+        
+        [Column(TypeName = "decimal(18,6)")]
+        public decimal BirimMaliyet { get; set; }
+        
+        [Column(TypeName = "decimal(18,6)")]
+        public decimal ToplamMaliyet { get; set; }
+        
+        [StringLength(10)]
+        public string ParaBirimi { get; set; } = "USD";
+        
+        [StringLength(50)]
         public string ReferansNo { get; set; }
         
         [StringLength(50)]

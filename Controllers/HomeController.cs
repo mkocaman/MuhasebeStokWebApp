@@ -23,6 +23,7 @@ using MuhasebeStokWebApp.Services.Interfaces;
 using MuhasebeStokWebApp.Services.Report;
 using MuhasebeStokWebApp.Services.Notification;
 using System.Globalization;
+using Microsoft.AspNetCore.Http;
 
 namespace MuhasebeStokWebApp.Controllers
 {
@@ -102,6 +103,31 @@ namespace MuhasebeStokWebApp.Controllers
                 _logger.LogWarning("Kimlik doğrulanmamış kullanıcı");
             }
             
+            // Önceki request'ten TempData'da kur bilgisi var mı kontrol et
+            if (TempData["TryToUsdKur"] != null && TempData["UzsToUsdKur"] != null)
+            {
+                decimal tryToUsdKur = 1;
+                decimal uzsToUsdKur = 1;
+                
+                if (decimal.TryParse(TempData["TryToUsdKur"].ToString(), NumberStyles.Any, CultureInfo.InvariantCulture, out decimal tempTry))
+                {
+                    tryToUsdKur = tempTry;
+                }
+                
+                if (decimal.TryParse(TempData["UzsToUsdKur"].ToString(), NumberStyles.Any, CultureInfo.InvariantCulture, out decimal tempUzs))
+                {
+                    uzsToUsdKur = tempUzs;
+                }
+                
+                // TempData değerlerini ViewBag'e ekle
+                ViewBag.TryToUsdKur = tryToUsdKur;
+                ViewBag.UzsToUsdKur = uzsToUsdKur;
+                
+                // TempData'yı koru
+                TempData.Keep("TryToUsdKur");
+                TempData.Keep("UzsToUsdKur");
+            }
+            
             try
             {
                 // Dashboard için varsayılan değerleri önce ayarla
@@ -109,6 +135,13 @@ namespace MuhasebeStokWebApp.Controllers
                 
                 // Dashboard için gerekli verileri yüklemeye çalışıyoruz
                 await LoadDashboardDataAsync();
+                
+                // Oluşturulan kur değerlerini TempData'ya da kaydet
+                if (ViewBag.TryToUsdKur != null && ViewBag.UzsToUsdKur != null)
+                {
+                    TempData["TryToUsdKur"] = ViewBag.TryToUsdKur.ToString(CultureInfo.InvariantCulture);
+                    TempData["UzsToUsdKur"] = ViewBag.UzsToUsdKur.ToString(CultureInfo.InvariantCulture);
+                }
             }
             catch (Exception ex)
             {
@@ -126,6 +159,41 @@ namespace MuhasebeStokWebApp.Controllers
         public IActionResult Privacy()
         {
             return View();
+        }
+
+        // Döviz kuru önbelleğini temizleyen aksiyon
+        [HttpGet]
+        [Authorize]
+        public async Task<IActionResult> RefreshCurrencyRates()
+        {
+            try
+            {
+                // Önbelleği temizle
+                await _dovizKuruService.ClearCacheAsync();
+                
+                // Hemen yeni kur değerlerini al
+                decimal tryToUsdKur = await _dovizKuruService.GetGuncelKurAsync("TRY", "USD");
+                decimal uzsToUsdKur = await _dovizKuruService.GetGuncelKurAsync("UZS", "USD");
+                
+                // Yeni değerleri TempData'ya kaydet
+                TempData["TryToUsdKur"] = tryToUsdKur.ToString(CultureInfo.InvariantCulture);
+                TempData["UzsToUsdKur"] = uzsToUsdKur.ToString(CultureInfo.InvariantCulture);
+                
+                // Session'a da kaydet
+                HttpContext.Session.SetString("TryToUsdKur", tryToUsdKur.ToString(CultureInfo.InvariantCulture));
+                HttpContext.Session.SetString("UzsToUsdKur", uzsToUsdKur.ToString(CultureInfo.InvariantCulture));
+                
+                // Başarı mesajı
+                TempData["Success"] = "Döviz kurları başarıyla yenilendi.";
+            }
+            catch (Exception ex)
+            {
+                _logger.LogError(ex, "Döviz kurları yenilenirken hata oluştu");
+                TempData["Error"] = "Döviz kurları yenilenirken bir hata oluştu.";
+            }
+            
+            // Ana sayfaya geri dön
+            return RedirectToAction("Index");
         }
 
         // Hata sayfası - Kimlik doğrulama gerektirmez
@@ -239,10 +307,36 @@ namespace MuhasebeStokWebApp.Controllers
                 tryToUsdKur = await _dovizKuruService.GetGuncelKurAsync("TRY", "USD");
                 // UZS -> USD kur
                 uzsToUsdKur = await _dovizKuruService.GetGuncelKurAsync("UZS", "USD");
+                
+                // Kur bilgilerini ViewBag'e ekle (Dashboard'da görüntülenmesi için)
+                ViewBag.TryToUsdKur = tryToUsdKur;
+                ViewBag.UzsToUsdKur = uzsToUsdKur;
+                
+                // Session'a da ekleyelim böylece sayfayı yeniden yüklerken geçici olarak saklanır
+                HttpContext.Session.SetString("TryToUsdKur", tryToUsdKur.ToString(CultureInfo.InvariantCulture));
+                HttpContext.Session.SetString("UzsToUsdKur", uzsToUsdKur.ToString(CultureInfo.InvariantCulture));
             }
             catch (Exception ex)
             {
                 _logger.LogError(ex, "Döviz kuru alınırken hata oluştu. Varsayılan değerler kullanılacak.");
+                
+                // Hata durumunda session'da değer varsa onu kullan
+                string tryKurSession = HttpContext.Session.GetString("TryToUsdKur");
+                string uzsKurSession = HttpContext.Session.GetString("UzsToUsdKur");
+                
+                if (!string.IsNullOrEmpty(tryKurSession))
+                {
+                    decimal.TryParse(tryKurSession, NumberStyles.Any, CultureInfo.InvariantCulture, out tryToUsdKur);
+                }
+                
+                if (!string.IsNullOrEmpty(uzsKurSession))
+                {
+                    decimal.TryParse(uzsKurSession, NumberStyles.Any, CultureInfo.InvariantCulture, out uzsToUsdKur);
+                }
+                
+                // Hata durumunda varsayılan değerleri ViewBag'e ekle
+                ViewBag.TryToUsdKur = tryToUsdKur;
+                ViewBag.UzsToUsdKur = uzsToUsdKur;
             }
             
             // Toplam ciro hesaplama (sadece satış faturalarının toplamı - USD cinsinden)
@@ -753,8 +847,6 @@ namespace MuhasebeStokWebApp.Controllers
             
             // Para birimi bilgisini tüm view'larda kullanılabilmesi için ViewBag'e ekle
             ViewBag.ParaBirimi = "USD";
-            ViewBag.TryToUsdKur = tryToUsdKur;
-            ViewBag.UzsToUsdKur = uzsToUsdKur;
         }
 
         // Varsayılan menüleri oluşturan yardımcı metot

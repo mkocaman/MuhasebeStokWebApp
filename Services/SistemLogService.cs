@@ -4,6 +4,7 @@ using Microsoft.AspNetCore.Http;
 using Microsoft.Extensions.Logging;
 using MuhasebeStokWebApp.Data.Entities;
 using MuhasebeStokWebApp.Data.Repositories;
+using System.Security.Claims;
 
 namespace MuhasebeStokWebApp.Services
 {
@@ -23,39 +24,44 @@ namespace MuhasebeStokWebApp.Services
             _logger = logger;
         }
 
-        public async Task LogOlustur(string islemTuru, Guid? kayitID, string tabloAdi, string kayitAdi, string aciklama, Guid? kullaniciID = null, string kullaniciAdi = null, bool basarili = true, string hataMesaji = null)
+        public async Task LogOlustur(string islemTuru, Guid? kayitID, string tabloAdi, string kayitAdi, string aciklama, string? kullaniciID = null, string kullaniciAdi = null, bool basarili = true, string hataMesaji = null)
         {
             try
             {
-                var sistemLogRepository = _unitOfWork.Repository<SistemLog>();
+                var httpContext = _httpContextAccessor.HttpContext;
+                string ipAdresi = httpContext?.Connection?.RemoteIpAddress?.ToString();
 
-                var ipAdresi = _httpContextAccessor.HttpContext?.Connection?.RemoteIpAddress?.ToString() ?? "Bilinmiyor";
-
-                var log = new SistemLog
+                if (string.IsNullOrEmpty(kullaniciAdi) && httpContext?.User.Identity?.IsAuthenticated == true)
                 {
-                    LogID = Guid.NewGuid(),
-                    LogTuru = "Sistem",
-                    Mesaj = aciklama ?? "Sistem log kaydı",
+                    kullaniciAdi = httpContext.User.Identity.Name;
+                }
+
+                if (string.IsNullOrEmpty(kullaniciID) && httpContext?.User.Identity?.IsAuthenticated == true)
+                {
+                    kullaniciID = httpContext.User.FindFirst(ClaimTypes.NameIdentifier)?.Value;
+                }
+
+                var logKaydi = new SistemLog
+                {
                     IslemTuru = islemTuru,
                     KayitID = kayitID,
-                    TabloAdi = tabloAdi ?? string.Empty,
-                    KayitAdi = kayitAdi ?? string.Empty,
-                    IslemTarihi = DateTime.Now,
-                    Aciklama = aciklama ?? "Sistem log kaydı",
-                    KullaniciID = kullaniciID,
+                    TabloAdi = tabloAdi,
+                    KayitAdi = kayitAdi,
+                    Aciklama = aciklama,
+                    KullaniciId = kullaniciID,
                     KullaniciAdi = kullaniciAdi ?? "Sistem",
                     IPAdresi = ipAdresi,
+                    IslemTarihi = DateTime.Now,
                     Basarili = basarili,
-                    HataMesaji = hataMesaji ?? (basarili ? "İşlem başarılı" : "İşlem başarısız")
+                    HataMesaji = hataMesaji ?? string.Empty
                 };
 
-                await sistemLogRepository.AddAsync(log);
-                await _unitOfWork.SaveAsync();
+                await _unitOfWork.Repository<SistemLog>().AddAsync(logKaydi);
+                await _unitOfWork.SaveChangesAsync();
             }
             catch (Exception ex)
             {
-                // Log oluşturma sırasında hata olursa, ILogger ile logla
-                _logger.LogError(ex, "Log oluşturma hatası: {IslemTuru} - {KayitAdi}", islemTuru, kayitAdi);
+                _logger.LogError(ex, "Log oluşturulurken hata oluştu: {Error}", ex.Message);
             }
         }
 
@@ -131,29 +137,31 @@ namespace MuhasebeStokWebApp.Services
             }
         }
 
-        public async Task CariPasifeAlmaLogOlustur(Guid cariID, string ad, string aciklama, Guid? kullaniciID = null, string kullaniciAdi = null)
+        public async Task CariPasifeAlmaLogOlustur(Guid cariID, string ad, string aciklama, string? kullaniciID = null, string kullaniciAdi = null)
         {
             await LogOlustur(
                 islemTuru: "Cari Pasife Alma",
                 kayitID: cariID,
-                tabloAdi: "Cariler",
+                tabloAdi: "Cari",
                 kayitAdi: ad,
-                aciklama: aciklama ?? $"{ad} adlı cari pasife alındı",
+                aciklama: aciklama,
                 kullaniciID: kullaniciID,
-                kullaniciAdi: kullaniciAdi ?? "Sistem"
+                kullaniciAdi: kullaniciAdi,
+                basarili: true
             );
         }
 
-        public async Task CariAktifleştirmeLogOlustur(Guid cariID, string ad, string aciklama, Guid? kullaniciID = null, string kullaniciAdi = null)
+        public async Task CariAktifleştirmeLogOlustur(Guid cariID, string ad, string aciklama, string? kullaniciID = null, string kullaniciAdi = null)
         {
             await LogOlustur(
                 islemTuru: "Cari Aktifleştirme",
                 kayitID: cariID,
-                tabloAdi: "Cariler",
+                tabloAdi: "Cari",
                 kayitAdi: ad,
-                aciklama: aciklama ?? $"{ad} adlı cari aktifleştirildi",
+                aciklama: aciklama,
                 kullaniciID: kullaniciID,
-                kullaniciAdi: kullaniciAdi ?? "Sistem"
+                kullaniciAdi: kullaniciAdi,
+                basarili: true
             );
         }
     }

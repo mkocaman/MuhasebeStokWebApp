@@ -1,7 +1,8 @@
-@model IEnumerable<MuhasebeStokWebApp.ViewModels.Depo.DepoViewModel>
+@model MuhasebeStokWebApp.ViewModels.Depo.DepoListViewModel
 @{
     ViewData["Title"] = "Depolar";
     Layout = "~/Views/Shared/_Layout.cshtml";
+    bool isAdmin = User.IsInRole("Admin");
 }
 
 <div class="container-fluid">
@@ -36,21 +37,29 @@
             <!-- Sekme Başlıkları -->
             <ul class="nav nav-tabs mb-3" id="depoTabs" role="tablist">
                 <li class="nav-item" role="presentation">
-                    <button class="nav-link active" id="aktif-tab" data-bs-toggle="tab" data-bs-target="#aktif" type="button" role="tab" aria-controls="aktif" aria-selected="true">
+                    <a class="nav-link @(ViewBag.AktifTab == "aktif" ? "active" : "")" id="aktif-tab" href="@Url.Action("Index", new { tab = "aktif" })" role="tab" aria-controls="aktif" aria-selected="@(ViewBag.AktifTab == "aktif" ? "true" : "false")">
                         <i class="fas fa-check-circle text-success"></i> Aktif Depolar
-                    </button>
+                    </a>
                 </li>
+                @if (isAdmin)
+                {
                 <li class="nav-item" role="presentation">
-                    <button class="nav-link" id="pasif-tab" data-bs-toggle="tab" data-bs-target="#pasif" type="button" role="tab" aria-controls="pasif" aria-selected="false">
+                        <a class="nav-link @(ViewBag.AktifTab == "pasif" ? "active" : "")" id="pasif-tab" href="@Url.Action("Index", new { tab = "pasif" })" role="tab" aria-controls="pasif" aria-selected="@(ViewBag.AktifTab == "pasif" ? "true" : "false")">
                         <i class="fas fa-times-circle text-danger"></i> Pasif Depolar
-                    </button>
+                        </a>
+                    </li>
+                    <li class="nav-item" role="presentation">
+                        <a class="nav-link @(ViewBag.AktifTab == "silindi" ? "active" : "")" id="silindi-tab" href="@Url.Action("Index", new { tab = "silindi" })" role="tab" aria-controls="silindi" aria-selected="@(ViewBag.AktifTab == "silindi" ? "true" : "false")">
+                            <i class="fas fa-trash text-danger"></i> Silinmiş Depolar
+                        </a>
                 </li>
+                }
             </ul>
             
             <!-- Sekme İçerikleri -->
             <div class="tab-content" id="depoTabsContent">
                 <!-- Aktif Depolar Sekmesi -->
-                <div class="tab-pane fade show active" id="aktif" role="tabpanel" aria-labelledby="aktif-tab">
+                <div class="tab-pane fade @(ViewBag.AktifTab == "aktif" ? "show active" : "")" id="aktif" role="tabpanel" aria-labelledby="aktif-tab">
                     <div class="table-responsive">
                         <table class="table table-bordered table-hover" id="aktifDepoTable">
                             <thead class="table-light">
@@ -62,23 +71,23 @@
                                 </tr>
                             </thead>
                             <tbody>
-                                @foreach (var item in Model.Where(d => d.Aktif && !d.Silindi))
+                                @foreach (var item in Model.Depolar.Where(d => d.Aktif && !d.Silindi))
                                 {
                                     <tr>
                                         <td>@item.DepoAdi</td>
                                         <td>@item.Adres</td>
-                                        <td>@(item.OlusturmaTarihi.HasValue ? item.OlusturmaTarihi.Value.ToString("dd.MM.yyyy") : "-")</td>
+                                        <td>@item.OlusturmaTarihi.ToString("dd.MM.yyyy")</td>
                                         <td class="text-center">
                                             <div class="btn-group" role="group">
                                                 <button type="button" class="btn btn-sm btn-info btn-edit-depo" data-id="@item.DepoID">
                                                     <i class="fas fa-edit"></i>
                                                 </button>
-                                                <a asp-action="Details" asp-route-id="@item.DepoID" class="btn btn-sm btn-primary">
+                                                <button type="button" class="btn btn-sm btn-primary btn-details-depo" data-id="@item.DepoID">
                                                     <i class="fas fa-info-circle"></i>
-                                                </a>
-                                                <a asp-action="Delete" asp-route-id="@item.DepoID" class="btn btn-sm btn-danger">
+                                                </button>
+                                                <button type="button" class="btn btn-sm btn-danger btn-delete-depo" data-id="@item.DepoID" data-name="@item.DepoAdi">
                                                     <i class="fas fa-trash"></i>
-                                                </a>
+                                                </button>
                                             </div>
                                         </td>
                                     </tr>
@@ -89,7 +98,9 @@
                 </div>
                 
                 <!-- Pasif Depolar Sekmesi -->
-                <div class="tab-pane fade" id="pasif" role="tabpanel" aria-labelledby="pasif-tab">
+                @if (isAdmin)
+                {
+                <div class="tab-pane fade @(ViewBag.AktifTab == "pasif" ? "show active" : "")" id="pasif" role="tabpanel" aria-labelledby="pasif-tab">
                     <div class="table-responsive">
                         <table class="table table-bordered table-hover" id="pasifDepoTable">
                             <thead class="table-light">
@@ -102,42 +113,23 @@
                                 </tr>
                             </thead>
                             <tbody>
-                                @foreach (var item in Model.Where(d => !d.Aktif || d.Silindi))
+                                    @foreach (var item in Model.Depolar.Where(d => !d.Aktif && !d.Silindi))
                                 {
                                     <tr>
                                         <td>@item.DepoAdi</td>
                                         <td>@item.Adres</td>
-                                        <td>@(item.OlusturmaTarihi.HasValue ? item.OlusturmaTarihi.Value.ToString("dd.MM.yyyy") : "-")</td>
+                                        <td>@item.OlusturmaTarihi.ToString("dd.MM.yyyy")</td>
                                         <td>
-                                            @if(item.Silindi)
-                                            {
-                                                <span class="badge bg-danger">Silindi</span>
-                                            }
-                                            else
-                                            {
-                                                <span class="badge bg-warning">Pasif</span>
-                                            }
+                                            <span class="badge bg-warning">Pasif</span>
                                         </td>
                                         <td class="text-center">
                                             <div class="btn-group" role="group">
-                                                <button type="button" class="btn btn-sm btn-info btn-edit-depo" data-id="@item.DepoID">
-                                                    <i class="fas fa-edit"></i>
-                                                </button>
-                                                <a asp-action="Details" asp-route-id="@item.DepoID" class="btn btn-sm btn-primary">
+                                                <button type="button" class="btn btn-sm btn-primary btn-details-depo" data-id="@item.DepoID">
                                                     <i class="fas fa-info-circle"></i>
-                                                </a>
-                                                @if (item.Silindi)
-                                                {
-                                                    <button type="button" class="btn btn-sm btn-success btn-restore-depo" data-id="@item.DepoID">
-                                                        <i class="fas fa-trash-restore"></i>
-                                                    </button>
-                                                }
-                                                else
-                                                {
-                                                    <a asp-action="Delete" asp-route-id="@item.DepoID" class="btn btn-sm btn-danger">
-                                                        <i class="fas fa-trash"></i>
-                                                    </a>
-                                                }
+                                                </button>
+                                                <button type="button" class="btn btn-sm btn-success btn-toggle-active-depo" data-id="@item.DepoID" data-name="@item.DepoAdi">
+                                                    <i class="fas fa-check-circle"></i>
+                                                </button>
                                             </div>
                                         </td>
                                     </tr>
@@ -146,6 +138,44 @@
                         </table>
                     </div>
                 </div>
+                    
+                    <!-- Silinmiş Depolar Sekmesi -->
+                    <div class="tab-pane fade @(ViewBag.AktifTab == "silindi" ? "show active" : "")" id="silindi" role="tabpanel" aria-labelledby="silindi-tab">
+                        <div class="table-responsive">
+                            <table class="table table-bordered table-hover" id="silinmisDepoTable">
+                                <thead class="table-light">
+                                    <tr>
+                                        <th>Depo Adı</th>
+                                        <th>Konum</th>
+                                        <th>Açıklama</th>
+                                        <th>Durum</th>
+                                        <th>İşlemler</th>
+                                    </tr>
+                                </thead>
+                                <tbody>
+                                    @foreach (var item in Model.Depolar.Where(d => d.Silindi))
+                                    {
+                                        <tr>
+                                            <td>@item.DepoAdi</td>
+                                            <td>@item.Adres</td>
+                                            <td>@item.Aciklama</td>
+                                            <td>
+                                                <span class="badge bg-danger">Silinmiş</span>
+                                            </td>
+                                            <td class="text-center">
+                                                <div class="btn-group" role="group">
+                                                    <button type="button" class="btn btn-sm btn-success btn-restore-depo" data-id="@item.DepoID">
+                                                        <i class="fas fa-undo"></i>
+                                                    </button>
+                                                </div>
+                                            </td>
+                                        </tr>
+                                    }
+                                </tbody>
+                            </table>
+                        </div>
+                    </div>
+                }
             </div>
         </div>
     </div>
@@ -186,6 +216,41 @@
     </div>
 </div>
 
+<!-- Depo Detay Modal -->
+<div class="modal fade" id="detailsDepoModal" tabindex="-1" aria-labelledby="detailsDepoModalLabel" aria-hidden="true">
+    <div class="modal-dialog">
+        <div class="modal-content">
+            <div id="detailsDepoModalContent">
+                <!-- İçerik AJAX ile yüklenecek -->
+                <div class="modal-body text-center">
+                    <div class="spinner-border text-primary" role="status">
+                        <span class="visually-hidden">Yükleniyor...</span>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+
+<!-- Depo Silme Onay Modal -->
+<div class="modal fade" id="deleteDepoModal" tabindex="-1" aria-labelledby="deleteDepoModalLabel" aria-hidden="true">
+    <div class="modal-dialog">
+        <div class="modal-content">
+            <div class="modal-header bg-danger text-white">
+                <h5 class="modal-title" id="deleteDepoModalLabel">Depo Silme Onayı</h5>
+                <button type="button" class="btn-close btn-close-white" data-bs-dismiss="modal" aria-label="Close"></button>
+            </div>
+            <div class="modal-body">
+                <p id="deleteDepoMessage"></p>
+            </div>
+            <div class="modal-footer">
+                <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">İptal</button>
+                <button type="button" class="btn btn-danger" id="confirmDeleteDepo">Sil</button>
+            </div>
+        </div>
+    </div>
+</div>
+
 @section Scripts {
     <script>
         $(document).ready(function() {
@@ -196,58 +261,31 @@
             try {
                 $('#aktifDepoTable').DataTable({
                     language: {
-                        "emptyTable": "Tabloda herhangi bir veri mevcut değil",
-                        "info": "_TOTAL_ kayıttan _START_ - _END_ arasındaki kayıtlar gösteriliyor",
-                        "infoEmpty": "Kayıt yok",
-                        "infoFiltered": "(_MAX_ kayıt içerisinden bulunan)",
-                        "infoPostFix": "",
-                        "thousands": ".",
-                        "lengthMenu": "Sayfada _MENU_ kayıt göster",
-                        "loadingRecords": "Yükleniyor...",
-                        "processing": "İşleniyor...",
-                        "search": "Ara:",
-                        "zeroRecords": "Eşleşen kayıt bulunamadı",
-                        "paginate": {
-                            "first": "İlk",
-                            "last": "Son",
-                            "next": "Sonraki",
-                            "previous": "Önceki"
-                        }
+                        url: '/js/dataTables.turkish.json'
                     },
                     responsive: true,
                     retrieve: true
                 });
-            } catch (e) {
-                console.log("DataTable başlatılırken bir hata oluştu, ancak işlem devam ediyor.");
-            }
             
             // Pasif Depolar DataTable başlatma
-            try {
                 $('#pasifDepoTable').DataTable({
                     language: {
-                        "emptyTable": "Tabloda herhangi bir veri mevcut değil",
-                        "info": "_TOTAL_ kayıttan _START_ - _END_ arasındaki kayıtlar gösteriliyor",
-                        "infoEmpty": "Kayıt yok",
-                        "infoFiltered": "(_MAX_ kayıt içerisinden bulunan)",
-                        "infoPostFix": "",
-                        "thousands": ".",
-                        "lengthMenu": "Sayfada _MENU_ kayıt göster",
-                        "loadingRecords": "Yükleniyor...",
-                        "processing": "İşleniyor...",
-                        "search": "Ara:",
-                        "zeroRecords": "Eşleşen kayıt bulunamadı",
-                        "paginate": {
-                            "first": "İlk",
-                            "last": "Son",
-                            "next": "Sonraki",
-                            "previous": "Önceki"
-                        }
+                        url: '/js/dataTables.turkish.json'
+                    },
+                    responsive: true,
+                    retrieve: true
+                });
+                
+                // Silinmiş Depolar DataTable başlatma
+                $('#silinmisDepoTable').DataTable({
+                    language: {
+                        url: '/js/dataTables.turkish.json'
                     },
                     responsive: true,
                     retrieve: true
                 });
             } catch (e) {
-                console.log("DataTable başlatılırken bir hata oluştu, ancak işlem devam ediyor.");
+                console.error("DataTable başlatma hatası:", e);
             }
             
             // Otomatik kapanan alertler
@@ -288,6 +326,45 @@
                     type: 'GET',
                     success: function (data) {
                         $('#editDepoModalContent').html(data);
+                        
+                        // Düzenleme formunu AJAX ile gönder
+                        $('#editDepoModalContent form').on('submit', function(e) {
+                            e.preventDefault();
+                            
+                            $.ajax({
+                                url: $(this).attr('action'),
+                                type: 'POST',
+                                data: $(this).serialize(),
+                                success: function(response) {
+                                    if (response.success) {
+                                        Swal.fire({
+                                            icon: 'success',
+                                            title: 'Başarılı!',
+                                            text: response.message,
+                                            confirmButtonText: 'Tamam'
+                                        }).then(() => {
+                                            $('#editDepoModal').modal('hide');
+                                            location.reload();
+                                        });
+                                    } else {
+                                        Swal.fire({
+                                            icon: 'error',
+                                            title: 'Hata!',
+                                            text: response.message,
+                                            confirmButtonText: 'Tamam'
+                                        });
+                                    }
+                                },
+                                error: function() {
+                                    Swal.fire({
+                                        icon: 'error',
+                                        title: 'Hata!',
+                                        text: 'İşlem sırasında bir hata oluştu.',
+                                        confirmButtonText: 'Tamam'
+                                    });
+                                }
+                            });
+                        });
                     },
                     error: function () {
                         $('#editDepoModalContent').html('<div class="alert alert-danger">Depo bilgileri yüklenirken bir hata oluştu.</div>');
@@ -295,47 +372,176 @@
                 });
             });
             
-            // Depo geri getirme işlemi
-            $(document).on('click', '.btn-restore-depo', function() {
+            // Depo detay açma
+            $(document).on('click', '.btn-details-depo', function() {
+                var depoID = $(this).data('id');
+                
+                // Modal içeriğini yükle
+                $.ajax({
+                    url: '@Url.Action("Details", "Depo")/' + depoID,
+                    type: 'GET',
+                    headers: {
+                        'X-Requested-With': 'XMLHttpRequest'
+                    },
+                    success: function(data) {
+                        $('#detailsDepoModalContent').html(data);
+                        $('#detailsDepoModal').modal('show');
+                    },
+                    error: function(xhr, status, error) {
+                        Swal.fire({
+                            icon: 'error',
+                            title: 'Hata!',
+                            text: 'Depo bilgileri yüklenirken bir hata oluştu.',
+                            confirmButtonText: 'Tamam'
+                        });
+                    }
+                });
+            });
+            
+            // Depo silme onay modalı
+            $(document).on('click', '.btn-delete-depo', function() {
+                var depoId = $(this).data('id');
+                var depoName = $(this).data('name');
+                
+                $('#deleteDepoMessage').text(`"${depoName}" deposunu silmek istediğinize emin misiniz? Bu işlem geri alınamaz.`);
+                $('#confirmDeleteDepo').data('id', depoId);
+                $('#deleteDepoModal').modal('show');
+            });
+            
+            // Depo silme işlemi
+            $('#confirmDeleteDepo').on('click', function() {
                 var depoId = $(this).data('id');
                 
+                $.ajax({
+                    url: '@Url.Action("DeleteDepo", "Depo")',
+                    type: 'POST',
+                    data: { id: depoId },
+                    success: function(response) {
+                        $('#deleteDepoModal').modal('hide');
+                        
+                        if (response.success) {
+                            Swal.fire({
+                                icon: 'success',
+                                title: 'Başarılı!',
+                                text: response.message,
+                                confirmButtonText: 'Tamam'
+                            }).then(() => {
+                                location.reload();
+                            });
+                        } else {
+                            Swal.fire({
+                                icon: 'error',
+                                title: 'Hata!',
+                                text: response.message || 'İşlem sırasında bir hata oluştu.',
+                                confirmButtonText: 'Tamam'
+                            });
+                        }
+                    },
+                    error: function() {
+                        $('#deleteDepoModal').modal('hide');
+                        Swal.fire({
+                            icon: 'error',
+                            title: 'Hata!',
+                            text: 'İşlem sırasında bir hata oluştu.',
+                            confirmButtonText: 'Tamam'
+                        });
+                    }
+                });
+            });
+            
+            // Depo geri getirme işlemi
+            $(document).on('click', '.btn-restore-depo', function () {
+                var id = $(this).data('id');
+                var name = $(this).data('name');
+
                 Swal.fire({
-                    title: 'Emin misiniz?',
-                    text: "Bu depoyu geri getirmek istediğinize emin misiniz?",
-                    icon: 'question',
+                    title: name + ' Geri Yüklenecek',
+                    text: "Bu depo geri yüklenecek. Emin misiniz?",
+                    icon: "warning",
                     showCancelButton: true,
-                    confirmButtonColor: '#3085d6',
-                    cancelButtonColor: '#d33',
-                    confirmButtonText: 'Evet, geri getir!',
-                    cancelButtonText: 'İptal'
+                    confirmButtonText: "Evet, Geri Yükle",
+                    cancelButtonText: "İptal"
                 }).then((result) => {
                     if (result.isConfirmed) {
                         $.ajax({
-                            url: '@Url.Action("RestoreDepo", "Depo")',
-                            type: 'POST',
-                            data: { id: depoId },
-                            success: function(response) {
-                                if (response.success) {
+                            type: "POST",
+                            url: "@Url.Action("RestoreDepo", "Depo")",
+                            data: { id: id },
+                            success: function (data) {
+                                if (data.success) {
                                     Swal.fire({
-                                        title: 'Başarılı!',
-                                        text: response.message,
-                                        icon: 'success'
-                                    }).then(() => {
+                                        icon: 'success',
+                                        title: 'Başarılı',
+                                        text: data.message,
+                                        confirmButtonText: 'Tamam'
+                                    }).then((value) => {
                                         location.reload();
                                     });
                                 } else {
                                     Swal.fire({
-                                        title: 'Hata!',
-                                        text: response.message || 'Bir hata oluştu',
-                                        icon: 'error'
+                                        icon: 'error',
+                                        title: 'Hata',
+                                        text: data.message,
+                                        confirmButtonText: 'Tamam'
                                     });
                                 }
                             },
-                            error: function() {
+                            error: function () {
                                 Swal.fire({
-                                    title: 'Hata!',
-                                    text: 'İşlem sırasında bir hata oluştu',
-                                    icon: 'error'
+                                    icon: 'error',
+                                    title: 'Hata',
+                                    text: 'Bir hata oluştu!',
+                                    confirmButtonText: 'Tamam'
+                                });
+                            }
+                        });
+                    }
+                });
+            });
+
+            // Depo Toggle Active
+            $(document).on('click', '.btn-toggle-active-depo', function () {
+                var id = $(this).data('id');
+                var name = $(this).data('name');
+
+                Swal.fire({
+                    title: name + ' Aktifleştirilecek',
+                    text: "Bu depo aktif duruma getirilecek. Emin misiniz?",
+                    icon: "warning",
+                    showCancelButton: true,
+                    confirmButtonText: "Evet, Aktifleştir",
+                    cancelButtonText: "İptal"
+                }).then((result) => {
+                    if (result.isConfirmed) {
+                        $.ajax({
+                            type: "POST",
+                            url: "@Url.Action("ToggleActive", "Depo")",
+                            data: { id: id },
+                            success: function (data) {
+                                if (data.success) {
+                                    Swal.fire({
+                                        icon: 'success',
+                                        title: 'Başarılı',
+                                        text: data.message,
+                                        confirmButtonText: 'Tamam'
+                                    }).then((value) => {
+                                        location.reload();
+                                    });
+                                } else {
+                                    Swal.fire({
+                                        icon: 'error',
+                                        title: 'Hata',
+                                        text: data.message,
+                                        confirmButtonText: 'Tamam'
+                                    });
+                                }
+                            },
+                            error: function () {
+                                Swal.fire({
+                                    icon: 'error',
+                                    title: 'Hata',
+                                    text: 'Bir hata oluştu!',
+                                    confirmButtonText: 'Tamam'
                                 });
                             }
                         });

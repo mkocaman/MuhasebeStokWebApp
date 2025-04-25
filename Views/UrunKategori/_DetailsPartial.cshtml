@@ -2,38 +2,47 @@
 
 <div class="modal-header">
     <h5 class="modal-title">Kategori Detayları</h5>
-    <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+    <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Kapat"></button>
 </div>
 
 <div class="modal-body">
-    <div class="row mb-2">
-        <div class="col-md-4 fw-bold">Kategori Adı:</div>
-        <div class="col-md-8">@Model.KategoriAdi</div>
-    </div>
-    <div class="row mb-2">
-        <div class="col-md-4 fw-bold">Açıklama:</div>
-        <div class="col-md-8">@(string.IsNullOrEmpty(Model.Aciklama) ? "-" : Model.Aciklama)</div>
-    </div>
-    <div class="row mb-2">
-        <div class="col-md-4 fw-bold">Durum:</div>
-        <div class="col-md-8">
-            @if (Model.Aktif)
-            {
-                <span class="badge bg-success">Aktif</span>
-            }
-            else
-            {
-                <span class="badge bg-danger">Pasif</span>
-            }
+    <div class="container">
+        <div class="row mb-3">
+            <div class="col-md-4 fw-bold">Kategori Adı:</div>
+            <div class="col-md-8">@Model.KategoriAdi</div>
         </div>
-    </div>
-    <div class="row mb-2">
-        <div class="col-md-4 fw-bold">Oluşturma Tarihi:</div>
-        <div class="col-md-8">@(Model.OlusturmaTarihi.ToString("dd.MM.yyyy HH:mm"))</div>
-    </div>
-    <div class="row mb-2">
-        <div class="col-md-4 fw-bold">Güncelleme Tarihi:</div>
-        <div class="col-md-8">@(Model.GuncellemeTarihi.HasValue ? Model.GuncellemeTarihi.Value.ToString("dd.MM.yyyy HH:mm") : "-")</div>
+        <div class="row mb-3">
+            <div class="col-md-4 fw-bold">Açıklama:</div>
+            <div class="col-md-8">@(string.IsNullOrEmpty(Model.Aciklama) ? "-" : Model.Aciklama)</div>
+        </div>
+        <div class="row mb-3">
+            <div class="col-md-4 fw-bold">Durum:</div>
+            <div class="col-md-8">
+                @if (Model.Aktif)
+                {
+                    <span class="badge bg-success">Aktif</span>
+                }
+                else
+                {
+                    <span class="badge bg-warning">Pasif</span>
+                }
+                @if (Model.Silindi)
+                {
+                    <span class="badge bg-danger ms-2">Silinmiş</span>
+                }
+            </div>
+        </div>
+        <div class="row mb-3">
+            <div class="col-md-4 fw-bold">Oluşturma Tarihi:</div>
+            <div class="col-md-8">@Model.OlusturmaTarihi.ToString("dd.MM.yyyy HH:mm")</div>
+        </div>
+        @if (Model.GuncellemeTarihi.HasValue)
+        {
+            <div class="row mb-3">
+                <div class="col-md-4 fw-bold">Güncelleme Tarihi:</div>
+                <div class="col-md-8">@Model.GuncellemeTarihi.Value.ToString("dd.MM.yyyy HH:mm")</div>
+            </div>
+        }
     </div>
 </div>
 

@@ -132,6 +132,10 @@ build_metadata.AdditionalFiles.CssScope =
 build_metadata.AdditionalFiles.TargetPath = Vmlld3MvQmlyaW0vX0NyZWF0ZVBhcnRpYWwuY3NodG1s
 build_metadata.AdditionalFiles.CssScope = 
 
+[/Users/muhammetkocaman/MuhasebeStokWebApp/Views/Birim/_DetailsPartial.cshtml]
+build_metadata.AdditionalFiles.TargetPath = Vmlld3MvQmlyaW0vX0RldGFpbHNQYXJ0aWFsLmNzaHRtbA==
+build_metadata.AdditionalFiles.CssScope = 
+
 [/Users/muhammetkocaman/MuhasebeStokWebApp/Views/Birim/_EditPartial.cshtml]
 build_metadata.AdditionalFiles.TargetPath = Vmlld3MvQmlyaW0vX0VkaXRQYXJ0aWFsLmNzaHRtbA==
 build_metadata.AdditionalFiles.CssScope = 
@@ -230,6 +234,10 @@ build_metadata.AdditionalFiles.CssScope =
 
 [/Users/muhammetkocaman/MuhasebeStokWebApp/Views/Depo/_CreatePartial.cshtml]
 build_metadata.AdditionalFiles.TargetPath = Vmlld3MvRGVwby9fQ3JlYXRlUGFydGlhbC5jc2h0bWw=
+build_metadata.AdditionalFiles.CssScope = 
+
+[/Users/muhammetkocaman/MuhasebeStokWebApp/Views/Depo/_DetailsPartial.cshtml]
+build_metadata.AdditionalFiles.TargetPath = Vmlld3MvRGVwby9fRGV0YWlsc1BhcnRpYWwuY3NodG1s
 build_metadata.AdditionalFiles.CssScope = 
 
 [/Users/muhammetkocaman/MuhasebeStokWebApp/Views/Depo/_EditPartial.cshtml]
@@ -542,6 +550,10 @@ build_metadata.AdditionalFiles.CssScope =
 
 [/Users/muhammetkocaman/MuhasebeStokWebApp/Views/Rapor/StokRaporu.cshtml]
 build_metadata.AdditionalFiles.TargetPath = Vmlld3MvUmFwb3IvU3Rva1JhcG9ydS5jc2h0bWw=
+build_metadata.AdditionalFiles.CssScope = 
+
+[/Users/muhammetkocaman/MuhasebeStokWebApp/Views/Shared/Components/ParaBirimiCevirme/Default.cshtml]
+build_metadata.AdditionalFiles.TargetPath = Vmlld3MvU2hhcmVkL0NvbXBvbmVudHMvUGFyYUJpcmltaUNldmlybWUvRGVmYXVsdC5jc2h0bWw=
 build_metadata.AdditionalFiles.CssScope = 
 
 [/Users/muhammetkocaman/MuhasebeStokWebApp/Views/Shared/Error.cshtml]

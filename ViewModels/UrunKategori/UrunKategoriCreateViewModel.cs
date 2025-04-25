@@ -7,12 +7,12 @@ namespace MuhasebeStokWebApp.ViewModels.UrunKategori
     {
         [Required(ErrorMessage = "Kategori adı zorunludur.")]
         [Display(Name = "Kategori Adı")]
-        [StringLength(100, ErrorMessage = "Kategori adı en fazla 100 karakter olabilir.")]
+        [StringLength(50, ErrorMessage = "Kategori adı en fazla 50 karakter olabilir.")]
         public string KategoriAdi { get; set; }
         
         [Display(Name = "Açıklama")]
-        [StringLength(500, ErrorMessage = "Açıklama en fazla 500 karakter olabilir.")]
-        public string? Aciklama { get; set; }
+        [StringLength(200, ErrorMessage = "Açıklama en fazla 200 karakter olabilir.")]
+        public string Aciklama { get; set; }
         
         [Display(Name = "Aktif")]
         public bool Aktif { get; set; } = true;

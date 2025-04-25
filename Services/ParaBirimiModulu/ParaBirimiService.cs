@@ -8,6 +8,9 @@ using MuhasebeStokWebApp.Data.Entities.ParaBirimiModulu;
 using System.Net.Http;
 using System.Text.Json;
 using Microsoft.Extensions.Logging;
+using MuhasebeStokWebApp.Models;
+using MuhasebeStokWebApp.Models.ParaBirimiModels;
+using System.Threading;
 
 namespace MuhasebeStokWebApp.Services.ParaBirimiModulu
 {
@@ -33,7 +36,7 @@ namespace MuhasebeStokWebApp.Services.ParaBirimiModulu
         /// <summary>
         /// Tüm para birimlerini döndürür
         /// </summary>
-        public async Task<List<ParaBirimi>> GetAllParaBirimleriAsync(bool aktiflerOnly = true)
+        public async Task<List<MuhasebeStokWebApp.Data.Entities.ParaBirimiModulu.ParaBirimi>> GetAllParaBirimleriAsync(bool aktiflerOnly = true)
         {
             var query = _context.ParaBirimleri
                 .Where(p => !p.Silindi);
@@ -50,7 +53,7 @@ namespace MuhasebeStokWebApp.Services.ParaBirimiModulu
         /// <summary>
         /// Tüm para birimlerini IParaBirimiService.GetAllAsync için döndürür
         /// </summary>
-        public async Task<IEnumerable<ParaBirimi>> GetAllAsync()
+        public async Task<IEnumerable<MuhasebeStokWebApp.Data.Entities.ParaBirimiModulu.ParaBirimi>> GetAllAsync()
         {
             return await GetAllParaBirimleriAsync(false);
         }
@@ -58,7 +61,7 @@ namespace MuhasebeStokWebApp.Services.ParaBirimiModulu
         /// <summary>
         /// ID'ye göre para birimi döndürür
         /// </summary>
-        public async Task<ParaBirimi> GetParaBirimiByIdAsync(Guid paraBirimiId)
+        public async Task<MuhasebeStokWebApp.Data.Entities.ParaBirimiModulu.ParaBirimi> GetParaBirimiByIdAsync(Guid paraBirimiId)
         {
             return await _context.ParaBirimleri
                 .FirstOrDefaultAsync(p => p.ParaBirimiID == paraBirimiId && !p.Silindi);
@@ -67,7 +70,7 @@ namespace MuhasebeStokWebApp.Services.ParaBirimiModulu
         /// <summary>
         /// Koda göre para birimi döndürür
         /// </summary>
-        public async Task<ParaBirimi> GetParaBirimiByKodAsync(string kod)
+        public async Task<MuhasebeStokWebApp.Data.Entities.ParaBirimiModulu.ParaBirimi> GetParaBirimiByKodAsync(string kod)
         {
             return await _context.ParaBirimleri
                 .FirstOrDefaultAsync(p => p.Kod == kod && !p.Silindi);
@@ -76,7 +79,7 @@ namespace MuhasebeStokWebApp.Services.ParaBirimiModulu
         /// <summary>
         /// Para birimi ekler
         /// </summary>
-        public async Task<ParaBirimi> AddParaBirimiAsync(ParaBirimi paraBirimi)
+        public async Task<MuhasebeStokWebApp.Data.Entities.ParaBirimiModulu.ParaBirimi> AddParaBirimiAsync(MuhasebeStokWebApp.Data.Entities.ParaBirimiModulu.ParaBirimi paraBirimi)
         {
             if (paraBirimi.AnaParaBirimiMi)
             {
@@ -101,7 +104,7 @@ namespace MuhasebeStokWebApp.Services.ParaBirimiModulu
         /// <summary>
         /// Para birimi günceller
         /// </summary>
-        public async Task<ParaBirimi> UpdateParaBirimiAsync(ParaBirimi paraBirimi)
+        public async Task<MuhasebeStokWebApp.Data.Entities.ParaBirimiModulu.ParaBirimi> UpdateParaBirimiAsync(MuhasebeStokWebApp.Data.Entities.ParaBirimiModulu.ParaBirimi paraBirimi)
         {
             if (paraBirimi.AnaParaBirimiMi)
             {
@@ -159,7 +162,7 @@ namespace MuhasebeStokWebApp.Services.ParaBirimiModulu
         /// <summary>
         /// Ana para birimini döndürür
         /// </summary>
-        public async Task<ParaBirimi> GetAnaParaBirimiAsync()
+        public async Task<MuhasebeStokWebApp.Data.Entities.ParaBirimiModulu.ParaBirimi> GetAnaParaBirimiAsync()
         {
             return await _context.ParaBirimleri
                 .FirstOrDefaultAsync(p => p.AnaParaBirimiMi && !p.Silindi);
@@ -786,6 +789,51 @@ namespace MuhasebeStokWebApp.Services.ParaBirimiModulu
             {
                 _logger.LogError(ex, "Kur efektif değerleri hesaplanırken hata oluştu");
                 return null;
+            }
+        }
+
+        public async Task<decimal> GetCurrentExchangeRateAsync(string sourceCurrency, string targetCurrency)
+        {
+            try
+            {
+                var client = _httpClientFactory.CreateClient();
+                
+                // Timeout ekle - 10 saniye
+                using var cts = new CancellationTokenSource(TimeSpan.FromSeconds(10));
+                
+                // Zaman aşımı kontrolüyle HTTP isteği gönder
+                var response = await client.GetAsync($"https://api.exchangerate-api.com/v4/latest/{sourceCurrency}", cts.Token);
+                
+                if (response.IsSuccessStatusCode)
+                {
+                    var content = await response.Content.ReadAsStringAsync();
+                    var data = System.Text.Json.JsonSerializer.Deserialize<MuhasebeStokWebApp.Models.ParaBirimiModels.ExchangeRateResponse>(content);
+                    
+                    if (data?.Rates != null && data.Rates.ContainsKey(targetCurrency))
+                    {
+                        return data.Rates[targetCurrency];
+                    }
+                    else
+                    {
+                        _logger.LogWarning($"Hedef para birimi ({targetCurrency}) kur değeri bulunamadı. Mevcut para birimleri: {(data?.Rates != null ? string.Join(", ", data.Rates.Keys) : "Rates null")}");
+                        return 0;
+                    }
+                }
+                else
+                {
+                    _logger.LogError($"API yanıtı başarısız: HTTP {(int)response.StatusCode} - {response.ReasonPhrase}");
+                    return 0;
+                }
+            }
+            catch (OperationCanceledException ex)
+            {
+                _logger.LogError($"Döviz kuru alınırken zaman aşımı oluştu: {sourceCurrency} to {targetCurrency}. Süre: 10 saniye");
+                return 0;
+            }
+            catch (Exception ex)
+            {
+                _logger.LogError(ex, $"Döviz kuru alınırken hata oluştu: {sourceCurrency} to {targetCurrency}. Hata: {ex.Message}");
+                return 0;
             }
         }
         #endregion

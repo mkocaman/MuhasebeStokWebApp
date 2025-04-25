@@ -2098,9 +2098,6 @@ namespace MuhasebeStokWebApp.Migrations
                         .IsRequired()
                         .HasColumnType("nvarchar(max)");
 
-                    b.Property<Guid?>("KullaniciID")
-                        .HasColumnType("uniqueidentifier");
-
                     b.Property<string>("KullaniciId")
                         .HasColumnType("varchar(128)");
 
@@ -2236,11 +2233,19 @@ namespace MuhasebeStokWebApp.Migrations
                     b.Property<decimal>("BirimFiyatUZS")
                         .HasColumnType("decimal(18,6)");
 
+                    b.Property<decimal>("BirimMaliyet")
+                        .HasColumnType("decimal(18,6)");
+
                     b.Property<decimal>("CikisMiktari")
                         .HasColumnType("decimal(18,6)");
 
                     b.Property<DateTime>("CikisTarihi")
                         .HasColumnType("datetime2");
+
+                    b.Property<string>("HareketTipi")
+                        .IsRequired()
+                        .HasMaxLength(50)
+                        .HasColumnType("nvarchar(50)");
 
                     b.Property<bool>("Iptal")
                         .HasColumnType("bit");
@@ -2255,6 +2260,11 @@ namespace MuhasebeStokWebApp.Migrations
 
                     b.Property<DateTime>("OlusturmaTarihi")
                         .HasColumnType("datetime2");
+
+                    b.Property<string>("ParaBirimi")
+                        .IsRequired()
+                        .HasMaxLength(10)
+                        .HasColumnType("nvarchar(10)");
 
                     b.Property<Guid>("ReferansID")
                         .HasColumnType("uniqueidentifier");
@@ -2271,6 +2281,9 @@ namespace MuhasebeStokWebApp.Migrations
 
                     b.Property<Guid?>("StokFifoID")
                         .HasColumnType("uniqueidentifier");
+
+                    b.Property<decimal>("ToplamMaliyet")
+                        .HasColumnType("decimal(18,6)");
 
                     b.Property<decimal>("ToplamMaliyetUSD")
                         .HasColumnType("decimal(18,6)");

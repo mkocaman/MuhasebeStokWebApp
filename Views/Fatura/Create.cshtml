@@ -5,6 +5,13 @@
     Layout = "~/Views/Shared/_Layout.cshtml";
 }
 
+@functions {
+    public static string FormatDecimal(decimal value)
+    {
+        return value.ToString("N2", new System.Globalization.CultureInfo("tr-TR"));
+    }
+}
+
 <style>
     /* Tablo hücrelerinin alt alta gelmesini önlemek için */
     #kalemlerTable tr {
@@ -685,9 +692,9 @@
                     console.log("Hesaplanan değerler:", {tutar, indirimTutari, netTutar, kdvTutari, toplamTutar});
                     
                     // Değerleri forma yaz
-                    row.find(".tutar").val(tutar.toFixed(2));
-                    row.find(".kdv-tutari").val(kdvTutari.toFixed(2));
-                    row.find(".net-tutar").val(toplamTutar.toFixed(2));
+                    row.find(".tutar").val(FormatDecimal(tutar));
+                    row.find(".kdv-tutari").val(FormatDecimal(kdvTutari));
+                    row.find(".net-tutar").val(FormatDecimal(toplamTutar));
                     
                     // Fatura toplamlarını güncelle
                     calculateFaturaTotals();
@@ -728,10 +735,10 @@
                     console.log("Hesaplanan toplamlar:", {araToplam, kdvToplam, indirimToplam, genelToplam});
                     
                     // Toplamları forma yaz
-                    $("#AraToplam").val(araToplam.toFixed(2));
-                    $("#KdvTutari").val(kdvToplam.toFixed(2));
-                    $("#toplamIndirimTutari").val(indirimToplam.toFixed(2));
-                    $("#GenelToplam").val(genelToplam.toFixed(2));
+                    $("#AraToplam").val(FormatDecimal(araToplam));
+                    $("#KdvTutari").val(FormatDecimal(kdvToplam));
+                    $("#toplamIndirimTutari").val(FormatDecimal(indirimToplam));
+                    $("#GenelToplam").val(FormatDecimal(genelToplam));
                     
                     return true; // Başarılı hesaplama
                 } catch (e) {

@@ -64,21 +64,21 @@
             <!-- Ürün Sekmeleri -->
             <ul class="nav nav-tabs" id="urunTabs" role="tablist">
                 <li class="nav-item" role="presentation">
-                    <button class="nav-link active" id="aktif-urunler-tab" data-bs-toggle="tab" data-bs-target="#aktif-urunler" type="button" role="tab" aria-controls="aktif-urunler" aria-selected="true">
+                    <a class="nav-link @(ViewBag.AktifTab == "aktif" ? "active" : "")" id="aktif-urunler-tab" href="@Url.Action("Index", new { tab = "aktif" })" role="tab" aria-controls="aktif-urunler" aria-selected="@(ViewBag.AktifTab == "aktif" ? "true" : "false")">
                         <i class="fas fa-cubes text-warning"></i> Aktif Ürünler
-                    </button>
+                    </a>
                 </li>
                 <li class="nav-item" role="presentation">
-                    <button class="nav-link" id="pasif-urunler-tab" data-bs-toggle="tab" data-bs-target="#pasif-urunler" type="button" role="tab" aria-controls="pasif-urunler" aria-selected="false">
+                    <a class="nav-link @(ViewBag.AktifTab == "pasif" ? "active" : "")" id="pasif-urunler-tab" href="@Url.Action("Index", new { tab = "pasif" })" role="tab" aria-controls="pasif-urunler" aria-selected="@(ViewBag.AktifTab == "pasif" ? "true" : "false")">
                         <i class="fas fa-ban text-danger"></i> Pasif Ürünler
-                    </button>
+                    </a>
                 </li>
                 @if (isAdmin)
                 {
                     <li class="nav-item" role="presentation">
-                        <button class="nav-link" id="silinen-urunler-tab" data-bs-toggle="tab" data-bs-target="#silinen-urunler" type="button" role="tab" aria-controls="silinen-urunler" aria-selected="false">
+                        <a class="nav-link @(ViewBag.AktifTab == "silindi" ? "active" : "")" id="silinen-urunler-tab" href="@Url.Action("Index", new { tab = "silindi" })" role="tab" aria-controls="silinen-urunler" aria-selected="@(ViewBag.AktifTab == "silindi" ? "true" : "false")">
                             <i class="fas fa-trash text-danger"></i> Silinmiş Ürünler
-                        </button>
+                        </a>
                     </li>
                 }
             </ul>
@@ -86,7 +86,7 @@
             <!-- Sekme İçerikleri -->
             <div class="tab-content" id="urunTabsContent">
                 <!-- Aktif Ürünler Sekmesi -->
-                <div class="tab-pane fade show active" id="aktif-urunler" role="tabpanel" aria-labelledby="aktif-urunler-tab">
+                <div class="tab-pane fade @(ViewBag.AktifTab == "aktif" ? "show active" : "")" id="aktif-urunler" role="tabpanel" aria-labelledby="aktif-urunler-tab">
                     <div class="table-responsive mt-3">
                         <table class="table table-bordered table-hover" id="aktifUrunlerTablosu">
                             <thead class="table-warning">
@@ -107,8 +107,8 @@
                                         <td>@item.UrunAdi</td>
                                         <td>@item.KategoriAdi</td>
                                         <td>@item.Birim</td>
-                                        <td class="text-end">@item.ListeFiyati.ToString("N2") ₺</td>
-                                        <td class="text-end">@item.SatisFiyati.ToString("N2") ₺</td>
+                                        <td class="text-end">@item.ListeFiyati.ToString("N2") $</td>
+                                        <td class="text-end">@item.SatisFiyati.ToString("N2") $</td>
                                         <td class="text-end">@item.Miktar.ToString("N2") @item.Birim</td>
                                         <td>
                                             <div class="btn-group">
@@ -137,7 +137,7 @@
                 </div>
                 
                 <!-- Pasif Ürünler Sekmesi -->
-                <div class="tab-pane fade" id="pasif-urunler" role="tabpanel" aria-labelledby="pasif-urunler-tab">
+                <div class="tab-pane fade @(ViewBag.AktifTab == "pasif" ? "show active" : "")" id="pasif-urunler" role="tabpanel" aria-labelledby="pasif-urunler-tab">
                     <div class="table-responsive mt-3">
                         <table class="table table-bordered table-hover" id="pasifUrunlerTablosu">
                             <thead class="table-secondary">
@@ -158,8 +158,8 @@
                                         <td>@item.UrunAdi</td>
                                         <td>@item.KategoriAdi</td>
                                         <td>@item.Birim</td>
-                                        <td class="text-end">@item.ListeFiyati.ToString("N2") ₺</td>
-                                        <td class="text-end">@item.SatisFiyati.ToString("N2") ₺</td>
+                                        <td class="text-end">@item.ListeFiyati.ToString("N2") $</td>
+                                        <td class="text-end">@item.SatisFiyati.ToString("N2") $</td>
                                         <td class="text-end">@item.Miktar.ToString("N2") @item.Birim</td>
                                         <td>
                                             <div class="btn-group">
@@ -187,7 +187,7 @@
                 <!-- Silinmiş Ürünler Sekmesi (Sadece Admin) -->
                 @if (isAdmin)
                 {
-                    <div class="tab-pane fade" id="silinen-urunler" role="tabpanel" aria-labelledby="silinen-urunler-tab">
+                    <div class="tab-pane fade @(ViewBag.AktifTab == "silindi" ? "show active" : "")" id="silinen-urunler" role="tabpanel" aria-labelledby="silinen-urunler-tab">
                         <div class="table-responsive mt-3">
                             <table class="table table-bordered table-hover" id="silinenUrunlerTablosu">
                                 <thead class="table-danger">
@@ -208,8 +208,8 @@
                                             <td>@item.UrunAdi</td>
                                             <td>@item.KategoriAdi</td>
                                             <td>@item.Birim</td>
-                                            <td class="text-end">@item.ListeFiyati.ToString("N2") ₺</td>
-                                            <td class="text-end">@item.SatisFiyati.ToString("N2") ₺</td>
+                                            <td class="text-end">@item.ListeFiyati.ToString("N2") $</td>
+                                            <td class="text-end">@item.SatisFiyati.ToString("N2") $</td>
                                             <td class="text-end">@item.Miktar.ToString("N2") @item.Birim</td>
                                             <td>
                                                 <div class="btn-group">

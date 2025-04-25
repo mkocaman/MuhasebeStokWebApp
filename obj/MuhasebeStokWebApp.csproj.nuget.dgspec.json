@@ -128,9 +128,13 @@
               "target": "Package",
               "version": "[9.0.3, )"
             },
+            "Microsoft.Extensions.Logging": {
+              "target": "Package",
+              "version": "[9.0.4, )"
+            },
             "MimeKit": {
               "target": "Package",
-              "version": "[4.6.0, )"
+              "version": "[4.11.0, )"
             },
             "NETCore.MailKit": {
               "target": "Package",
@@ -170,7 +174,7 @@
             },
             "SixLabors.ImageSharp": {
               "target": "Package",
-              "version": "[3.1.4, )"
+              "version": "[3.1.7, )"
             },
             "SixLabors.ImageSharp.Drawing": {
               "target": "Package",

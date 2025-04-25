@@ -33,10 +33,10 @@ namespace MuhasebeStokWebApp.Services
                 return cachedBirimler;
             }
 
-            // Veritabanından verileri al
+            // Veritabanından verileri al - Tüm birimleri al (aktif/pasif/silinmiş)
             var birimler = await _context.Birimler
+                .IgnoreQueryFilters() // Global filtreleri devre dışı bırak
                 .AsNoTracking() // Performans için tracking'i devre dışı bırak
-                .Where(b => b.Aktif && !b.Silindi)
                 .OrderBy(b => b.BirimAdi)
                 .ToListAsync();
 
@@ -57,10 +57,11 @@ namespace MuhasebeStokWebApp.Services
                 return cachedBirim;
             }
 
-            // Veritabanından veriyi al
+            // Veritabanından veriyi al - global filtreleri devre dışı bırak
             var birim = await _context.Birimler
+                .IgnoreQueryFilters() // Global filtreleri devre dışı bırak
                 .AsNoTracking()
-                .FirstOrDefaultAsync(b => b.BirimID == id && b.Aktif && !b.Silindi);
+                .FirstOrDefaultAsync(b => b.BirimID == id);
 
             if (birim != null)
             {
