@@ -178,13 +178,22 @@
                             <span asp-validation-for="OdemeDurumu" class="text-danger"></span>
                         </div>
                     </div>
-                    <div class="col-md-6">
+                    <div class="col-md-3">
                         <div class="form-group" id="sozlesmeDiv" style="display: none;">
                             <label for="SozlesmeID" class="control-label">Sözleşme</label>
                             <select asp-for="SozlesmeID" class="form-control select2" asp-items="ViewBag.Sozlesmeler">
                                 <option value="">-- Sözleşme Seçiniz --</option>
                             </select>
                             <span asp-validation-for="SozlesmeID" class="text-danger"></span>
+                        </div>
+                    </div>
+                    <div class="col-md-3">
+                        <div class="form-group">
+                            <label asp-for="DepoID" class="control-label">Depo</label>
+                            <select asp-for="DepoID" class="form-control select2" asp-items="ViewBag.Depolar">
+                                <option value="">-- Depo Seçiniz --</option>
+                            </select>
+                            <span asp-validation-for="DepoID" class="text-danger"></span>
                         </div>
                     </div>
                 </div>
@@ -557,13 +566,18 @@
                             var ilkUrunId = $urunSelect.find("option:eq(1)").val();
                             console.log("İlk ürün seçiliyor, id:", ilkUrunId);
                             
-                            // Değeri ayarla ve change event'ini tetikle
-                            $urunSelect.val(ilkUrunId).trigger('change');
+                            // Değeri ayarla
+                            $urunSelect.val(ilkUrunId); 
                             
-                            // Ürün bilgilerini getir
-                            getUrunBilgileri(ilkUrunId, $row);
+                            // Ürün bilgilerini getir (change event'ine güvenmek yerine doğrudan çağır)
+                            getUrunBilgileri(ilkUrunId, $row); 
+                            
+                            // Select2'nin görselini güncellemek için change event'ini tetikle (opsiyonel, ama iyi pratik)
+                            $urunSelect.trigger('change.select2'); 
                         } else {
                             console.log("Ürün seçenekleri bulunamadı");
+                            // Ürün yoksa bile satır ve fatura toplamlarını hesapla
+                            calculateRowTotals($row); 
                         }
                     } catch (e) {
                         console.error("Select2 veya ürün seçimi hatası:", e);
@@ -691,12 +705,16 @@
                     
                     console.log("Hesaplanan değerler:", {tutar, indirimTutari, netTutar, kdvTutari, toplamTutar});
                     
-                    // Değerleri forma yaz
-                    row.find(".tutar").val(FormatDecimal(tutar));
-                    row.find(".kdv-tutari").val(FormatDecimal(kdvTutari));
-                    row.find(".net-tutar").val(FormatDecimal(toplamTutar));
-                    
-                    // Fatura toplamlarını güncelle
+                    // Değerleri forma yaz (tutar = miktar * birimFiyat)
+                    row.find(".tutar").val(tutar.toFixed(2)); // Ham değeri yaz, formatlama sadece display için olmalı ama şimdilik toFixed(2) kullanalım
+                    row.find(".kdv-tutari").val(kdvTutari.toFixed(2)); // Ham değeri yaz
+                    row.find(".net-tutar").val(toplamTutar.toFixed(2)); // Ham değeri yaz (Bu satırın toplamını temsil eder)
+
+                    // Display için formatlanmış değeri .tutar'a set edebiliriz, ancak okurken dikkatli olmalıyız.
+                    // Şimdilik ham değeri bırakalım, calculateFaturaTotals'ı düzelteceğiz.
+                    // row.find(".tutar").val(FormatDecimal(tutar)); // Eğer display formatı isteniyorsa
+
+                    // Fatura toplamlarını güncelle (Bu fonksiyonu da düzelteceğiz)
                     calculateFaturaTotals();
                     
                     return true; // Başarılı hesaplama
@@ -716,23 +734,33 @@
                     var indirimToplam = 0;
                     var genelToplam = 0;
                     
-                    // Tüm satırları dolaş
+                    // Tüm satırları dolaş ve değerleri doğrudan inputlardan oku
                     $(".kalem-row").each(function () {
                         var row = $(this);
-                        var tutar = parseFloat(row.find(".tutar").val()) || 0;
-                        var kdvTutari = parseFloat(row.find(".kdv-tutari").val()) || 0;
+                        
+                        // Değerleri doğrudan inputlardan al
+                        var miktar = parseFloat(row.find(".miktar").val()) || 0;
+                        var birimFiyat = parseFloat(row.find(".birim-fiyat").val()) || 0;
+                        var kdvOrani = parseFloat(row.find(".kdv-orani").val()) || 0;
                         var indirimOrani = parseFloat(row.find(".indirim-orani").val()) || 0;
-                        var indirimTutari = tutar * (indirimOrani / 100);
-                        
-                        araToplam += tutar;
-                        kdvToplam += kdvTutari;
-                        indirimToplam += indirimTutari;
-                        genelToplam += parseFloat(row.find(".net-tutar").val()) || 0;
-                        
-                        console.log("Satır değerleri:", {tutar, kdvTutari, indirimOrani, indirimTutari});
+
+                        // Satır bazında hesaplamaları yeniden yap (calculateRowTotals'daki gibi)
+                        var satirTutar = miktar * birimFiyat; // İndirimsiz, KDV'siz tutar
+                        var satirIndirimTutari = satirTutar * (indirimOrani / 100);
+                        var satirNetTutar = satirTutar - satirIndirimTutari; // İndirim sonrası tutar
+                        var satirKdvTutari = satirNetTutar * (kdvOrani / 100);
+                        var satirGenelToplam = satirNetTutar + satirKdvTutari; // KDV dahil, indirim düşülmüş toplam
+
+                        // Toplamlara ekle
+                        araToplam += satirTutar; // Ara toplam = Tüm satırların (miktar * birim fiyat) toplamı
+                        kdvToplam += satirKdvTutari; // KDV toplamı = Tüm satırların KDV tutarları toplamı
+                        indirimToplam += satirIndirimTutari; // İndirim toplamı = Tüm satırların indirim tutarları toplamı
+                        genelToplam += satirGenelToplam; // Genel toplam = Tüm satırların KDV dahil toplamları
+
+                        console.log("Satır değerleri (recalculated):", { miktar, birimFiyat, kdvOrani, indirimOrani, satirTutar, satirIndirimTutari, satirKdvTutari, satirGenelToplam });
                     });
                     
-                    console.log("Hesaplanan toplamlar:", {araToplam, kdvToplam, indirimToplam, genelToplam});
+                    console.log("Hesaplanan toplamlar (recalculated):", {araToplam, kdvToplam, indirimToplam, genelToplam});
                     
                     // Toplamları forma yaz
                     $("#AraToplam").val(FormatDecimal(araToplam));
@@ -841,8 +869,19 @@
                 return true;
             });
 
-            // Sayfanın ilk yüklenişinde ilk fatura kalemini hazırla
-            addFirstItemIfEmpty();
+            // Sayfanın ilk yüklenişinde ilk fatura kalemini ekle (addFirstItemIfEmpty diye bir fonksiyon yoktu, doğrudan addKalemRow çağrılıyordu)
+            // addKalemRow(); // Bu zaten yukarıda çağrılıyor, tekrar çağırmaya gerek yok.
         });
+        
+        // Global formatlama fonksiyonu (calculateRowTotals içinde kullanılabilir)
+        function FormatDecimal(value) {
+            // Sayıyı string'e çevir ve ondalık kısmı 2 basamağa ayarla
+            let formattedValue = Number(value).toFixed(2); 
+            // Noktayı virgülle değiştir (Türkçe formatı için)
+            formattedValue = formattedValue.replace('.', ','); 
+            // Binlik ayırıcı ekle (isteğe bağlı, ama genellikle kullanılır)
+            formattedValue = formattedValue.replace(/\B(?=(\d{3})+(?!\d))/g, "."); 
+            return formattedValue;
+        }
     </script>
-} 
+}

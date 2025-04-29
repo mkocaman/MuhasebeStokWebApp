@@ -1301,6 +1301,9 @@ namespace MuhasebeStokWebApp.Migrations
                     b.Property<Guid>("CariID")
                         .HasColumnType("uniqueidentifier");
 
+                    b.Property<Guid?>("DepoID")
+                        .HasColumnType("uniqueidentifier");
+
                     b.Property<string>("Durum")
                         .IsRequired()
                         .HasMaxLength(20)
@@ -1343,6 +1346,8 @@ namespace MuhasebeStokWebApp.Migrations
 
                     b.HasIndex("CariID");
 
+                    b.HasIndex("DepoID");
+
                     b.HasIndex("FaturaID");
 
                     b.HasIndex("IrsaliyeTuruID");
@@ -1373,6 +1378,9 @@ namespace MuhasebeStokWebApp.Migrations
                         .HasColumnType("decimal(18,2)");
 
                     b.Property<Guid?>("BirimID")
+                        .HasColumnType("uniqueidentifier");
+
+                    b.Property<Guid?>("DepoID")
                         .HasColumnType("uniqueidentifier");
 
                     b.Property<DateTime?>("GuncellemeTarihi")
@@ -1414,6 +1422,8 @@ namespace MuhasebeStokWebApp.Migrations
                     b.HasKey("IrsaliyeDetayID");
 
                     b.HasIndex("BirimID");
+
+                    b.HasIndex("DepoID");
 
                     b.HasIndex("IrsaliyeID");
 
@@ -2890,6 +2900,10 @@ namespace MuhasebeStokWebApp.Migrations
                         .OnDelete(DeleteBehavior.Cascade)
                         .IsRequired();
 
+                    b.HasOne("MuhasebeStokWebApp.Data.Entities.Depo", "Depo")
+                        .WithMany()
+                        .HasForeignKey("DepoID");
+
                     b.HasOne("MuhasebeStokWebApp.Data.Entities.Fatura", "Fatura")
                         .WithMany("Irsaliyeler")
                         .HasForeignKey("FaturaID");
@@ -2900,6 +2914,8 @@ namespace MuhasebeStokWebApp.Migrations
 
                     b.Navigation("Cari");
 
+                    b.Navigation("Depo");
+
                     b.Navigation("Fatura");
                 });
 
@@ -2908,6 +2924,10 @@ namespace MuhasebeStokWebApp.Migrations
                     b.HasOne("MuhasebeStokWebApp.Data.Entities.Birim", null)
                         .WithMany("IrsaliyeDetaylari")
                         .HasForeignKey("BirimID");
+
+                    b.HasOne("MuhasebeStokWebApp.Data.Entities.Depo", "Depo")
+                        .WithMany()
+                        .HasForeignKey("DepoID");
 
                     b.HasOne("MuhasebeStokWebApp.Data.Entities.Irsaliye", "Irsaliye")
                         .WithMany("IrsaliyeDetaylari")
@@ -2920,6 +2940,8 @@ namespace MuhasebeStokWebApp.Migrations
                         .HasForeignKey("UrunID")
                         .OnDelete(DeleteBehavior.Cascade)
                         .IsRequired();
+
+                    b.Navigation("Depo");
 
                     b.Navigation("Irsaliye");
 

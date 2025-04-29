@@ -58,6 +58,10 @@ namespace MuhasebeStokWebApp.ViewModels.Fatura
         [Display(Name = "Açıklama")]
         public string? Aciklama { get; set; }
 
+        [StringLength(500, ErrorMessage = "Fatura notu en fazla 500 karakter olabilir.")]
+        [Display(Name = "Fatura Notu")]
+        public string FaturaNotu { get; set; } = "";
+
         [Required(ErrorMessage = "Ödeme durumu seçilmelidir.")]
         [Display(Name = "Ödeme Durumu")]
         public string OdemeDurumu { get; set; }
@@ -73,6 +77,9 @@ namespace MuhasebeStokWebApp.ViewModels.Fatura
 
         public Guid? IrsaliyeID { get; set; }
         public Guid? SozlesmeID { get; set; }
+        
+        [Display(Name = "Depo")]
+        public Guid? DepoID { get; set; }
 
         [Display(Name = "Otomatik İrsaliye Oluştur")]
         public bool OtomatikIrsaliyeOlustur { get; set; } = false;

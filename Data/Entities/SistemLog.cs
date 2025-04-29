@@ -113,7 +113,7 @@ namespace MuhasebeStokWebApp.Data.Entities
         public Guid? KayitID { get; set; }
         
         /// <summary>
-        /// İşlemi yapan kullanıcının ID'si
+        /// İşlemi yapan kullanıcının ID'si (IdentityUser ID)
         /// </summary>
         public string? KullaniciId { get; set; }
         

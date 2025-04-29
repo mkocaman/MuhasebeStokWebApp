@@ -389,7 +389,8 @@ namespace MuhasebeStokWebApp.Controllers
             // Üst menü bilgisini getir
             if (viewModel.ParentId.HasValue)
             {
-                viewModel.ParentMenu = await _menuService.GetMenuByIdAsync(viewModel.ParentId.Value);
+                var parentMenu = await _menuService.GetMenuByIdAsync(viewModel.ParentId.Value);
+                viewModel.ParentMenu = parentMenu;
             }
 
             // Tüm menüleri getir

@@ -125,6 +125,14 @@ namespace MuhasebeStokWebApp.Controllers
                     .ToListAsync();
 
                 _logger.LogInformation("Ürün listesi yüklendi, toplam {count} adet ürün bulundu.", urunler.Count);
+                
+                // Aktif depolar
+                var depolar = await _context.Depolar
+                    .Where(d => !d.Silindi && d.Aktif)
+                    .OrderBy(d => d.DepoAdi)
+                    .ToListAsync();
+                
+                _logger.LogInformation("Depo listesi yüklendi, toplam {count} adet depo bulundu.", depolar.Count);
 
                 if (urunler.Count == 0)
                 {
@@ -176,6 +184,7 @@ namespace MuhasebeStokWebApp.Controllers
                 ViewBag.FaturaTurleri = new SelectList(_context.FaturaTurleri, "FaturaTuruID", "FaturaTuruAdi");
                 ViewBag.ParaBirimleri = paraBirimleri;
                 ViewBag.CariParaBirimleri = cariParaBirimleri; // Cari - ParaBirimi ilişkisini JS'e taşımak için
+                ViewBag.Depolar = new SelectList(depolar, "DepoID", "DepoAdi");
 
                 // Varsayılan model
                 var model = new FaturaCreateViewModel
@@ -252,474 +261,243 @@ namespace MuhasebeStokWebApp.Controllers
                     }
                 }
                 
-                if (!ModelState.IsValid)
+                // Eğer fatura kalemleri yoksa ekleme yapılmamalı
+                if (viewModel.FaturaKalemleri == null || viewModel.FaturaKalemleri.Count == 0)
                 {
-                    _logger.LogWarning("Step 2 - ModelState geçersiz, validation hataları var");
-                    _logger.LogWarning("Validation hataları: " + string.Join(", ", ModelState.Keys
-                        .Where(k => ModelState[k].Errors.Count > 0)
-                        .Select(k => k + ": " + string.Join("; ", ModelState[k].Errors.Select(e => e.ErrorMessage)))));
+                    ModelState.AddModelError("", "En az bir fatura kalemi eklemelisiniz!");
                     
-                    // ViewBag'leri doldur ve modeli geri döndür
-                    ViewBag.Cariler = new SelectList(_context.Cariler.Where(c => !c.Silindi && c.AktifMi), "CariID", "Ad", viewModel.CariID);
-                    ViewBag.FaturaTurleri = new SelectList(_context.FaturaTurleri, "FaturaTuruID", "FaturaTuruAdi", viewModel.FaturaTuruID);
-                    ViewBag.Sozlesmeler = new SelectList(_context.Sozlesmeler.Where(s => !s.Silindi && s.AktifMi), "SozlesmeID", "SozlesmeNo");
-                    
-                    // Ürünleri tekrar yükle ve birim bilgilerini de ekle
-                    var urunler = await _context.Urunler
-                        .Include(u => u.Birim)
-                        .Where(u => !u.Silindi && u.Aktif)
+                    // FormData'yı yeniden oluştur
+                    var cariler = await _context.Cariler
+                        .Where(c => !c.Silindi && c.AktifMi)
+                        .OrderBy(c => c.Ad)
                         .ToListAsync();
-
-                    var urunSelectList = urunler.Select(u => new SelectListItem
-                    {
-                        Value = u.UrunID.ToString(),
-                        Text = u.UrunAdi,
-                        Group = new SelectListGroup { Name = u.KategoriID.HasValue ? u.Kategori?.KategoriAdi ?? "Genel" : "Genel" }
-                    }).ToList();
                     
-                    ViewBag.Urunler = urunSelectList;
-                    ViewBag.UrunBirimBilgileri = urunler.ToDictionary(
-                        u => u.UrunID.ToString(), 
-                        u => u.Birim?.BirimAdi ?? "Adet"
-                    );
+                    ViewBag.Cariler = new SelectList(cariler, "CariID", "Ad");
+                    ViewBag.FaturaTurleri = new SelectList(_context.FaturaTurleri, "FaturaTuruID", "FaturaTuruAdi");
                     
-                    // Para birimlerini de ekleyelim
-                    ViewBag.ParaBirimleri = await _context.ParaBirimleri
+                    var urunler = await _context.Urunler
+                        .Where(u => !u.Silindi && u.Aktif)
+                        .OrderBy(u => u.UrunAdi)
+                        .ToListAsync();
+                    
+                    ViewBag.Urunler = new SelectList(urunler, "UrunID", "UrunAdi");
+                    
+                    var depolar = await _context.Depolar
+                        .Where(d => !d.Silindi && d.Aktif)
+                        .OrderBy(d => d.DepoAdi)
+                        .ToListAsync();
+                    
+                    ViewBag.Depolar = new SelectList(depolar, "DepoID", "DepoAdi");
+                    
+                    var paraBirimleri = await _context.ParaBirimleri
                         .Where(p => !p.Silindi && p.Aktif)
                         .OrderBy(p => p.Sira)
                         .ToListAsync();
                     
+                    ViewBag.ParaBirimleri = paraBirimleri;
+                    
                     return View(viewModel);
                 }
                 
-                _logger.LogInformation("Step 2 - ModelState kontrol ediliyor");
+                _logger.LogInformation("Step 2 - Validasyon kontrolleri geçildi, işlem başlatılıyor");
                 
-                // Fatura türü kontrolü
-                var dbFaturaTuru = await _context.FaturaTurleri.FindAsync(viewModel.FaturaTuruID);
-                if (dbFaturaTuru == null)
+                using (var transaction = await _context.Database.BeginTransactionAsync())
                 {
-                    _logger.LogWarning($"Geçersiz fatura türü ID: {viewModel.FaturaTuruID}");
-                    ModelState.AddModelError("FaturaTuruID", "Geçersiz fatura türü seçildi.");
-                    
-                    // ViewBag'leri doldur ve modeli geri döndür
-                    ViewBag.Cariler = new SelectList(_context.Cariler.Where(c => !c.Silindi && c.AktifMi), "CariID", "Ad", viewModel.CariID);
-                    ViewBag.FaturaTurleri = new SelectList(_context.FaturaTurleri, "FaturaTuruID", "FaturaTuruAdi", viewModel.FaturaTuruID);
-                    ViewBag.Sozlesmeler = new SelectList(_context.Sozlesmeler.Where(s => !s.Silindi && s.AktifMi), "SozlesmeID", "SozlesmeNo");
-                    
-                    // Ürünleri tekrar yükle ve birim bilgilerini de ekle
-                    var urunler = await _context.Urunler
-                        .Include(u => u.Birim)
-                        .Where(u => !u.Silindi && u.Aktif)
-                        .ToListAsync();
-
-                    var urunSelectList = urunler.Select(u => new SelectListItem
+                    try
                     {
-                        Value = u.UrunID.ToString(),
-                        Text = u.UrunAdi,
-                        Group = new SelectListGroup { Name = u.KategoriID.HasValue ? u.Kategori?.KategoriAdi ?? "Genel" : "Genel" }
-                    }).ToList();
-                    
-                    ViewBag.Urunler = urunSelectList;
-                    ViewBag.UrunBirimBilgileri = urunler.ToDictionary(
-                        u => u.UrunID.ToString(), 
-                        u => u.Birim?.BirimAdi ?? "Adet"
-                    );
-                    
-                    // Para birimlerini de ekleyelim
-                    ViewBag.ParaBirimleri = await _context.ParaBirimleri
-                        .Where(p => !p.Silindi && p.Aktif)
-                        .OrderBy(p => p.Sira)
-                        .ToListAsync();
-                
-                    return View(viewModel);
-                }
-
-                // Read Committed izolasyon seviyesi kullanarak transaction başlat
-                // Bu daha yüksek eşzamanlılık ve daha kısa sürede tamamlanmasını sağlar
-                using var transaction = await _context.Database.BeginTransactionAsync(System.Data.IsolationLevel.ReadCommitted);
-                try 
-                {
-                    _logger.LogInformation("Step 3 - Transaction başlatılıyor (Read Committed)");
-                    
-                    _logger.LogInformation("Step 4 - Fatura nesnesi oluşturuluyor");
-                    
-                    // Yeni Fatura oluştur
-                    var fatura = new Data.Entities.Fatura
-                    {
-                        FaturaID = Guid.NewGuid(),
-                        FaturaNumarasi = viewModel.FaturaNumarasi ?? GenerateNewFaturaNumarasi(),
-                        FaturaTarihi = viewModel.FaturaTarihi,
-                        VadeTarihi = viewModel.VadeTarihi,
-                        CariID = viewModel.CariID,
-                        FaturaTuruID = viewModel.FaturaTuruID,
-                        SiparisNumarasi = viewModel.SiparisNumarasi ?? "",
-                        ResmiMi = viewModel.ResmiMi,
-                        FaturaNotu = viewModel.Aciklama ?? "",
-                        OdemeDurumu = viewModel.OdemeDurumu,
-                        AraToplam = viewModel.AraToplam,
-                        KDVToplam = viewModel.KdvToplam,
-                        GenelToplam = viewModel.GenelToplam,
-                        Aktif = true,
-                        Silindi = false,
-                        OlusturmaTarihi = DateTime.Now,
-                        OlusturanKullaniciID = GetCurrentUserId().GetValueOrDefault(Guid.Empty),
-                        DovizTuru = viewModel.DovizTuru ?? "TRY",
-                        DovizKuru = viewModel.DovizKuru ?? 1,
-                        // SozlesmeID değeri eğer viewModel'de set edilmiş ve geçerli bir değerse ekle, aksi halde null bırak
-                        SozlesmeID = viewModel.SozlesmeID.HasValue && viewModel.SozlesmeID.Value != Guid.Empty ? viewModel.SozlesmeID : null
-                    };
-
-                    _context.Faturalar.Add(fatura);
-                    _logger.LogInformation($"Fatura oluşturuldu: ID={fatura.FaturaID}, FaturaNo={fatura.FaturaNumarasi}");
-
-                    // FIFO işlemleri için toplu veri yapısı
-                    var stokHareketleri = new List<StokHareket>();
-                    var fifoGirisIslemleri = new List<(Guid UrunID, decimal Miktar, decimal BirimFiyat, string Birim, string DovizTuru, decimal? DovizKuru)>();
-                    var fifoCikisIslemleri = new List<(Guid UrunID, decimal Miktar)>();
-                    var faturaDetaylari = new List<FaturaDetay>();
-
-                    // Ürün stok miktarı güncellemeleri için toplu veri yapısı
-                    var urunGuncellemeleri = new Dictionary<Guid, decimal>();
-
-                    _logger.LogInformation("Step 5 - Fatura kalemleri işleniyor");
-                    if (viewModel.FaturaKalemleri != null && viewModel.FaturaKalemleri.Any())
-                    {
-                        _logger.LogInformation($"Fatura kalemleri işleniyor. Toplam {viewModel.FaturaKalemleri.Count} adet kalem var.");
+                        var faturaTuru = await _context.FaturaTurleri.FindAsync(viewModel.FaturaTuruID);
+                        var stokHareketTipi = faturaTuru?.HareketTuru == "Giriş" 
+                            ? StokHareketiTipi.Giris 
+                            : StokHareketiTipi.Cikis;
                         
-                        var stokHareketTuru = dbFaturaTuru?.HareketTuru ?? "Giriş";
-                        var isGiris = stokHareketTuru == "Giriş";
+                        // Fatura numarası otomatik oluşturulacak
+                        if (string.IsNullOrEmpty(viewModel.FaturaNumarasi))
+                        {
+                            viewModel.FaturaNumarasi = GenerateNewFaturaNumarasi();
+                            _logger.LogInformation($"Yeni fatura numarası oluşturuldu: {viewModel.FaturaNumarasi}");
+                        }
+                        
+                        // Sipariş numarası otomatik oluşturulacak
+                        if (string.IsNullOrEmpty(viewModel.SiparisNumarasi))
+                        {
+                            viewModel.SiparisNumarasi = GenerateSiparisNumarasi();
+                            _logger.LogInformation($"Yeni sipariş numarası oluşturuldu: {viewModel.SiparisNumarasi}");
+                        }
+                        
+                        decimal araToplam = 0;
+                        decimal kdvToplam = 0;
+                        decimal indirimToplam = 0;
+                        decimal genelToplam = 0;
+                        
+                        // Yeni fatura oluştur
+                        var fatura = new Data.Entities.Fatura
+                        {
+                            FaturaID = Guid.NewGuid(),
+                            FaturaNumarasi = viewModel.FaturaNumarasi,
+                            SiparisNumarasi = viewModel.SiparisNumarasi,
+                            FaturaTarihi = viewModel.FaturaTarihi,
+                            VadeTarihi = viewModel.VadeTarihi,
+                            CariID = viewModel.CariID,
+                            FaturaTuruID = viewModel.FaturaTuruID,
+                            ResmiMi = viewModel.ResmiMi,
+                            FaturaNotu = viewModel.FaturaNotu,
+                            OdemeDurumu = viewModel.OdemeDurumu,
+                            DovizTuru = viewModel.DovizTuru,
+                            DovizKuru = viewModel.DovizKuru,
+                            Aktif = viewModel.Aktif,
+                            SozlesmeID = viewModel.SozlesmeID,
+                            OlusturmaTarihi = DateTime.Now,
+                            OlusturanKullaniciID = GetCurrentUserId()
+                        };
+                        
+                        // Fatura kalemlerini ekle
+                        var faturaDetaylari = new List<Data.Entities.FaturaDetay>();
                         
                         foreach (var kalem in viewModel.FaturaKalemleri)
                         {
-                            // SatirKdvToplam değeri için KdvTutari değerini kullanıyoruz
-                            var birimFiyat = kalem.BirimFiyat;
-                            var miktar = kalem.Miktar;
-                            var kdvOrani = kalem.KdvOrani / 100;
-
-                            var tutar = birimFiyat * miktar;
-                            var kdvTutar = tutar * kdvOrani;
-                            var toplamTutar = tutar + kdvTutar;
-                            
-                            // Döviz kuruna göre birim fiyat hesaplaması
-                            decimal birimFiyatDoviz = 0;
-                            decimal? tutarDoviz = 0;
-                            decimal? kdvTutariDoviz = 0;
-                            decimal? netTutarDoviz = 0;
-                            
-                            try 
+                            if (kalem.UrunID == Guid.Empty || kalem.Miktar <= 0)
                             {
-                                // Eğer USD faturası ise UZS değerini, UZS ise USD değerini hesapla
-                                string hedefDovizKodu = viewModel.DovizTuru == "USD" ? "UZS" : "USD";
-                                birimFiyatDoviz = await _dovizKuruService.CevirmeTutarByKodAsync(birimFiyat, viewModel.DovizTuru, hedefDovizKodu);
-                                
-                                // Diğer döviz değerlerini de hesapla
-                                tutarDoviz = birimFiyatDoviz * miktar;
-                                kdvTutariDoviz = tutarDoviz * kdvOrani;
-                                netTutarDoviz = tutarDoviz + kdvTutariDoviz;
-                                
-                                _logger.LogInformation($"Döviz değerleri hesaplandı: {viewModel.DovizTuru} -> {hedefDovizKodu}, BirimFiyat: {birimFiyat} -> {birimFiyatDoviz}");
-                            }
-                            catch (Exception ex)
-                            {
-                                _logger.LogError(ex, $"Döviz değerleri hesaplanırken hata oluştu: {ex.Message}");
+                                continue; // Geçersiz kalemleri atla
                             }
                             
-                            var faturaDetay = new FaturaDetay
+                            // Kalem hesaplamaları
+                            decimal tutar = kalem.Miktar * kalem.BirimFiyat;
+                            decimal indirimTutari = tutar * (kalem.IndirimOrani / 100M);
+                            decimal araTutar = tutar - indirimTutari;
+                            decimal kdvTutari = araTutar * (kalem.KdvOrani / 100M);
+                            decimal netTutar = araTutar + kdvTutari;
+                            
+                            // Toplam hesaplamalar
+                            araToplam += tutar;
+                            indirimToplam += indirimTutari;
+                            kdvToplam += kdvTutari;
+                            genelToplam += netTutar;
+                            
+                            // Yeni fatura detayı oluştur
+                            var faturaDetay = new Data.Entities.FaturaDetay
                             {
                                 FaturaDetayID = Guid.NewGuid(),
                                 FaturaID = fatura.FaturaID,
                                 UrunID = kalem.UrunID,
-                                Miktar = miktar,
-                                BirimFiyat = birimFiyat,
-                                BirimFiyatDoviz = birimFiyatDoviz,
-                                KdvOrani = kdvOrani * 100, // KdvOrani'ni yüzde olarak kaydediyoruz
-                                IndirimOrani = kalem.IndirimOrani,
-                                Tutar = tutar,
-                                TutarDoviz = tutarDoviz,
-                                KdvTutari = kdvTutar,
-                                KdvTutariDoviz = kdvTutariDoviz,
-                                IndirimTutari = tutar * (kalem.IndirimOrani / 100),
-                                IndirimTutariDoviz = tutarDoviz * (kalem.IndirimOrani / 100),
-                                NetTutar = toplamTutar,
-                                NetTutarDoviz = netTutarDoviz,
+                                Aciklama = kalem.Aciklama,
+                                Miktar = kalem.Miktar,
                                 Birim = kalem.Birim,
-                                SatirToplam = tutar, // Satır toplamı = tutar
-                                SatirKdvToplam = kdvTutar, // Satır KDV toplamı = KDV tutarı
-                                Aciklama = "",
-                                OlusturmaTarihi = DateTime.Now,
-                                OlusturanKullaniciID = GetCurrentUserId(),
-                                Silindi = false
+                                BirimFiyat = kalem.BirimFiyat,
+                                Tutar = tutar,
+                                IndirimOrani = kalem.IndirimOrani,
+                                IndirimTutari = indirimTutari,
+                                KdvOrani = kalem.KdvOrani,
+                                KdvTutari = kdvTutari,
+                                NetTutar = netTutar,
+                                SatirToplam = tutar,
+                                SatirKdvToplam = kdvTutari,
+                                OlusturmaTarihi = DateTime.Now
                             };
-
-                            faturaDetaylari.Add(faturaDetay);
-                            _logger.LogInformation($"Fatura detayı oluşturuldu: ID={faturaDetay.FaturaDetayID}, Ürün={kalem.UrunID}, Miktar={kalem.Miktar}");
-
-                            // Stok hareketi oluştur
-                            var stokHareket = new StokHareket
-                            {
-                                StokHareketID = Guid.NewGuid(),
-                                UrunID = kalem.UrunID,
-                                HareketTuru = isGiris ? StokHareketiTipi.Giris : StokHareketiTipi.Cikis,
-                                Miktar = isGiris ? miktar : -miktar,
-                                BirimFiyat = birimFiyat,
-                                Tarih = viewModel.FaturaTarihi ?? DateTime.Now,
-                                Aciklama = $"{viewModel.FaturaNumarasi} numaralı fatura",
-                                ReferansNo = fatura.FaturaNumarasi ?? "",
-                                ReferansTuru = "Fatura",
-                                ReferansID = fatura.FaturaID,
-                                OlusturmaTarihi = DateTime.Now,
-                                Silindi = false,
-                                Birim = kalem.Birim ?? "Adet"
-                            };
-
-                            stokHareketleri.Add(stokHareket);
-                            _logger.LogInformation($"Stok hareketi oluşturuldu: ID={stokHareket.StokHareketID}, Tür={stokHareketTuru}, Miktar={stokHareket.Miktar}");
-
-                            // Ürün stok miktarını güncelle
-                            if (!urunGuncellemeleri.ContainsKey(kalem.UrunID))
-                            {
-                                urunGuncellemeleri[kalem.UrunID] = 0;
-                            }
-                            urunGuncellemeleri[kalem.UrunID] += isGiris ? miktar : -miktar;
-
-                            // FIFO işlemleri için veri topla
-                            if (isGiris)
-                            {
-                                fifoGirisIslemleri.Add((
-                                    kalem.UrunID,
-                                    miktar,
-                                    birimFiyat,
-                                    kalem.Birim ?? "Adet",
-                                    viewModel.DovizTuru ?? "TRY",
-                                    viewModel.DovizKuru
-                                ));
-                            }
-                            else
-                            {
-                                fifoCikisIslemleri.Add((kalem.UrunID, miktar));
-                            }
-                        }
-                    }
-
-                    // Batch işlemlerle veritabanına kaydet
-                    _logger.LogInformation("Step 6 - Veritabanı işlemleri başlatılıyor");
-                    
-                    // Fatura detaylarını ekle
-                    _context.FaturaDetaylari.AddRange(faturaDetaylari);
-                    
-                    // Stok hareketlerini ekle
-                    _context.StokHareketleri.AddRange(stokHareketleri);
-                    
-                    // Ürün stok miktarlarını güncelle
-                    foreach (var urunGuncelleme in urunGuncellemeleri)
-                    {
-                        var urun = await _context.Urunler.FindAsync(urunGuncelleme.Key);
-                        if (urun != null)
-                        {
-                            var eskiMiktar = urun.StokMiktar;
-                            urun.StokMiktar += urunGuncelleme.Value;
-                            _logger.LogInformation($"Ürün stok miktarı güncellendi: UrunID={urun.UrunID}, Eski={eskiMiktar}, Yeni={urun.StokMiktar}");
-                        }
-                    }
-                    
-                    // SaveChanges işlemini yaparak ana kayıtları ekleyelim
-                    await _context.SaveChangesAsync();
-                    _logger.LogInformation("Step 7 - Ana kayıtlar veritabanına eklendi");
-                    
-                    // FIFO işlemlerini toplu olarak yap
-                    _logger.LogInformation("Step 8 - FIFO işlemleri başlatılıyor");
-                    
-                    try
-                    {
-                        // Giriş işlemleri
-                        foreach (var fifoGiris in fifoGirisIslemleri)
-                        {
-                            try
-                            {
-                                var faturaNo = fatura.FaturaNumarasi ?? "Fatura";
-                                
-                                var fifoKaydi = await _stokFifoService.StokGirisiYap(
-                                    urunID: fifoGiris.UrunID,
-                                    miktar: fifoGiris.Miktar,
-                                    birimFiyat: fifoGiris.BirimFiyat,
-                                    birim: fifoGiris.Birim,
-                                    referansNo: faturaNo,
-                                    referansTuru: "Fatura",
-                                    referansID: fatura.FaturaID,
-                                    aciklama: $"{faturaNo} numaralı fatura ile giriş",
-                                    paraBirimi: fifoGiris.DovizTuru,
-                                    dovizKuru: fifoGiris.DovizKuru
-                                );
-                                
-                                _logger.LogInformation($"FIFO giriş kaydı başarıyla oluşturuldu: UrunID={fifoGiris.UrunID}, Miktar={fifoGiris.Miktar}");
-                            }
-                            catch (Exception ex)
-                            {
-                                _logger.LogError(ex, $"FIFO giriş kaydı oluşturulurken hata: UrunID={fifoGiris.UrunID}, Hata={ex.Message}");
-                                // Hata olsa bile işleme devam et
-                            }
-                        }
-                        
-                        // Çıkış işlemleri
-                        foreach (var fifoCikis in fifoCikisIslemleri)
-                        {
-                            try
-                            {
-                                var faturaNo = fatura.FaturaNumarasi ?? "Fatura";
-                                
-                                var result = await _stokFifoService.StokCikisiYap(
-                                    fifoCikis.UrunID,
-                                    fifoCikis.Miktar,
-                                    faturaNo,
-                                    "Fatura",
-                                    fatura.FaturaID,
-                                    $"{faturaNo} numaralı fatura ile çıkış"
-                                );
-                                
-                                _logger.LogInformation($"FIFO çıkış işlemi başarıyla yapıldı: UrunID={fifoCikis.UrunID}, Miktar={fifoCikis.Miktar}");
-                            }
-                            catch (Exception ex)
-                            {
-                                _logger.LogError(ex, $"FIFO çıkış işlemi yapılırken hata: UrunID={fifoCikis.UrunID}, Hata={ex.Message}");
-                                // Hata olsa bile işleme devam et
-                            }
-                        }
-                    }
-                    catch (Exception ex)
-                    {
-                        _logger.LogError(ex, "FIFO işlemleri sırasında genel bir hata oluştu, ancak fatura kaydı tamamlandı.");
-                    }
-
-                    // Cari hareket kaydı oluştur
-                    _logger.LogInformation("Step 9 - Cari hareket kaydı oluşturuluyor");
-                    
-                    try
-                    {
-                        // FaturaTuru bilgisini yükle
-                        await _context.Entry(fatura).Reference(f => f.FaturaTuru).LoadAsync();
-                        
-                        // Hareket türünü belirle
-                        string hareketTuru = fatura.FaturaTuru?.FaturaTuruAdi ?? "Bilinmiyor";
-                        bool borcMu = fatura.FaturaTuru?.HareketTuru == "Çıkış"; // Satış faturası ise Borç, Alış faturası ise Alacak
-                        
-                        // Kullanıcı ID'sini al
-                        var userId = GetCurrentUserId();
-
-                        var cariHareket = new CariHareket
-                        {
-                            CariHareketID = Guid.NewGuid(),
-                            CariID = fatura.CariID.Value,
-                            HareketTuru = hareketTuru,
-                            Borc = borcMu ? fatura.GenelToplam ?? 0 : 0,
-                            Alacak = !borcMu ? fatura.GenelToplam ?? 0 : 0,
-                            Tarih = fatura.FaturaTarihi ?? DateTime.Now,
-                            Aciklama = $"{fatura.FaturaNumarasi} numaralı fatura",
-                            ReferansNo = fatura.FaturaNumarasi ?? "",
-                            ReferansTuru = "Fatura",
-                            ReferansID = fatura.FaturaID,
-                            OlusturmaTarihi = DateTime.Now,
-                            OlusturanKullaniciID = string.IsNullOrEmpty(_userManager.GetUserId(User)) ? null : new Guid(_userManager.GetUserId(User)),
-                            Silindi = false
-                        };
-
-                        _context.CariHareketler.Add(cariHareket);
-                        await _context.SaveChangesAsync();
-                        _logger.LogInformation($"Cari hareket kaydı oluşturuldu: ID={cariHareket.CariHareketID}, CariID={cariHareket.CariID}");
-                    }
-                    catch (Exception ex)
-                    {
-                        _logger.LogError(ex, "Cari hareket kaydı oluşturulurken hata oluştu, ancak fatura kaydı tamamlandı.");
-                    }
-
-                    // İrsaliye işlemlerini yap
-                    if (viewModel.OtomatikIrsaliyeOlustur && dbFaturaTuru?.HareketTuru == "Çıkış")
-                    {
-                        _logger.LogInformation("Step 10 - Otomatik irsaliye oluşturuluyor (background)");
-                        
-                        // Arka planda çalıştırmak için yeni bir Guid olan faturaID'yi kaydedelim
-                        var faturaIDCopy = fatura.FaturaID;
-                        
-                        try
-                        {
-                            // Arka plan işlemi için Task.Run kullanıyoruz
-                            await Task.Run(async () => 
-                            {
-                                try 
-                                {
-                                    // İşlemin tamamlanması için kısa bir bekleme
-                                    await Task.Delay(2000); 
-                                    
-                                    // Yeni oluşturduğumuz OtomatikIrsaliyeOlusturFromID metodunu çağırıyoruz
-                                    await OtomatikIrsaliyeOlusturFromID(faturaIDCopy);
-                                    
-                                    _logger.LogInformation($"Arka plan işlemi: İrsaliye oluşturma başarıyla tamamlandı: FaturaID={faturaIDCopy}");
-                                }
-                                catch (Exception ex)
-                                {
-                                    _logger.LogError(ex, $"Arka plan işlemi: İrsaliye oluşturma sırasında hata: {ex.Message}");
-                                }
-                            });
                             
-                            _logger.LogInformation($"Ana işlem: İrsaliye oluşturma arka planda başlatıldı: FaturaID={faturaIDCopy}");
+                            faturaDetaylari.Add(faturaDetay);
                         }
-                        catch (Exception ex)
+                        
+                        // Toplam değerleri faturaya ata
+                        fatura.AraToplam = araToplam;
+                        fatura.IndirimTutari = indirimToplam;
+                        fatura.KDVToplam = kdvToplam;
+                        fatura.GenelToplam = genelToplam;
+                        
+                        // Dövizli değerleri de hesapla ve ata
+                        decimal dovizKuru = viewModel.DovizKuru ?? 1M;
+                        fatura.AraToplamDoviz = araToplam / dovizKuru;
+                        fatura.IndirimTutariDoviz = indirimToplam / dovizKuru;
+                        fatura.KDVToplamDoviz = kdvToplam / dovizKuru;
+                        fatura.GenelToplamDoviz = genelToplam / dovizKuru;
+                        
+                        // Faturayı veritabanına ekle
+                        _context.Faturalar.Add(fatura);
+                        await _context.SaveChangesAsync();
+                        
+                        _logger.LogInformation($"Fatura başarıyla kaydedildi. ID: {fatura.FaturaID}");
+                        
+                        // Fatura detaylarını veritabanına ekle
+                        await _context.FaturaDetaylari.AddRangeAsync(faturaDetaylari);
+                        await _context.SaveChangesAsync();
+                        
+                        _logger.LogInformation($"Fatura detayları başarıyla kaydedildi. Detay sayısı: {faturaDetaylari.Count}");
+                        
+                        // Stok hareketlerini oluştur
+                        foreach (var detay in faturaDetaylari)
                         {
-                            _logger.LogError(ex, "Otomatik irsaliye oluşturulurken hata oluştu, ancak fatura kaydı tamamlandı.");
+                            await CreateStokHareket(fatura, detay, stokHareketTipi, viewModel.DepoID);
                         }
+                        
+                        _logger.LogInformation("Stok hareketleri başarıyla kaydedildi.");
+                        
+                        // FIFO kayıtlarını oluştur
+                        if (viewModel.FaturaKalemleri != null && viewModel.FaturaKalemleri.Any())
+                        {
+                            var fifoFaturaTuru = await _context.FaturaTurleri.FindAsync(viewModel.FaturaTuruID);
+                            var fifoStokHareketTipi = fifoFaturaTuru?.HareketTuru == "Giriş" 
+                                ? StokHareketiTipi.Giris 
+                                : StokHareketiTipi.Cikis;
+                            
+                            foreach (var kalem in viewModel.FaturaKalemleri.Where(k => k.UrunID != Guid.Empty))
+                            {
+                                var miktar = kalem.Miktar;
+                                var birimFiyat = kalem.BirimFiyat;
+                                var birim = kalem.Birim;
+                                
+                                if (fifoStokHareketTipi == StokHareketiTipi.Giris)
+                                {
+                                    // Stok girişi için FIFO kaydı oluştur
+                                    await _stokFifoService.StokGirisiYap(
+                                        kalem.UrunID, 
+                                        miktar, 
+                                        birimFiyat, 
+                                        birim, 
+                                        fatura.FaturaNumarasi, 
+                                        "Fatura", 
+                                        fatura.FaturaID, 
+                                        $"{fatura.FaturaNumarasi} numaralı fatura ile stok girişi", 
+                                        fatura.ParaBirimi, 
+                                        fatura.DovizKuru);
+                                }
+                                else
+                                {
+                                    // Stok çıkışı için FIFO kaydı kullan
+                                    await _stokFifoService.StokCikisiYap(
+                                        kalem.UrunID, 
+                                        miktar, 
+                                        fatura.FaturaNumarasi, 
+                                        "Fatura", 
+                                        fatura.FaturaID, 
+                                        $"{fatura.FaturaNumarasi} numaralı fatura ile stok çıkışı");
+                                }
+                            }
+                            
+                            _logger.LogInformation("FIFO kayıtları başarıyla oluşturuldu.");
+                        }
+                        
+                        // Otomatik irsaliye oluştur (eğer isteniyorsa)
+                        if (viewModel.OtomatikIrsaliyeOlustur)
+                        {
+                            await OtomatikIrsaliyeOlustur(fatura, viewModel.DepoID);
+                            _logger.LogInformation("Otomatik irsaliye oluşturuldu.");
+                        }
+                        
+                        // Transaction'ı commit et
+                        await transaction.CommitAsync();
+                        
+                        _logger.LogInformation("İşlem başarıyla tamamlandı ve commit edildi.");
+                        
+                        TempData["SuccessMessage"] = $"Fatura başarıyla oluşturuldu. Fatura No: {fatura.FaturaNumarasi}";
+                        return RedirectToAction(nameof(Details), new { id = fatura.FaturaID });
                     }
-
-                    // Tüm işlemler başarılı, transaction'ı commit et
-                    await transaction.CommitAsync();
-                    _logger.LogInformation("Step 11 - Transaction commit edildi, fatura kaydı tamamlandı");
-
-                    // Başarılı mesajı ve yönlendirme
-                    TempData["SuccessMessage"] = $"{fatura.FaturaNumarasi} numaralı fatura başarıyla oluşturuldu.";
-                    return RedirectToAction(nameof(Index));
-                }
-                catch (Exception ex)
-                {
-                    // Transaction'ı rollback yap
-                    await transaction.RollbackAsync();
-                    
-                    _logger.LogError(ex, "Fatura kaydedilirken hata oluştu: " + ex.Message);
-                    TempData["ErrorMessage"] = "Fatura kaydedilirken bir hata oluştu: " + ex.Message;
-                    
-                    if (Request.Headers["X-Requested-With"] == "XMLHttpRequest")
+                    catch (Exception ex)
                     {
-                        return Json(new { success = false, message = "Fatura kaydedilirken bir hata oluştu: " + ex.Message });
+                        // Hata durumunda transaction rollback
+                        _logger.LogError(ex, "Fatura oluşturulurken hata oluştu. Transaction geri alınıyor.");
+                        await transaction.RollbackAsync();
+                        
+                        throw; // Hatayı yukarıya fırlat
                     }
-                    
-                    // ViewBag'leri doldur ve modeli geri döndür
-                    ViewBag.Cariler = new SelectList(_context.Cariler.Where(c => !c.Silindi && c.AktifMi), "CariID", "Ad", viewModel.CariID);
-                    ViewBag.FaturaTurleri = new SelectList(_context.FaturaTurleri, "FaturaTuruID", "FaturaTuruAdi", viewModel.FaturaTuruID);
-                    ViewBag.Sozlesmeler = new SelectList(_context.Sozlesmeler.Where(s => !s.Silindi && s.AktifMi), "SozlesmeID", "SozlesmeNo");
-                    
-                    // Ürünleri tekrar yükle ve birim bilgilerini de ekle
-                    var urunler = await _context.Urunler
-                        .Include(u => u.Birim)
-                        .Where(u => !u.Silindi && u.Aktif)
-                        .ToListAsync();
-
-                    var urunSelectList = urunler.Select(u => new SelectListItem
-                    {
-                        Value = u.UrunID.ToString(),
-                        Text = u.UrunAdi,
-                        Group = new SelectListGroup { Name = u.KategoriID.HasValue ? u.Kategori?.KategoriAdi ?? "Genel" : "Genel" }
-                    }).ToList();
-                    
-                    ViewBag.Urunler = urunSelectList;
-                    ViewBag.UrunBirimBilgileri = urunler.ToDictionary(
-                        u => u.UrunID.ToString(), 
-                        u => u.Birim?.BirimAdi ?? "Adet"
-                    );
-                    
-                    // Para birimlerini de ekleyelim
-                    ViewBag.ParaBirimleri = await _context.ParaBirimleri
-                        .Where(p => !p.Silindi && p.Aktif)
-                        .OrderBy(p => p.Sira)
-                        .ToListAsync();
-                    
-                    return View(viewModel);
                 }
             }
             catch (Exception ex)
@@ -793,12 +571,16 @@ namespace MuhasebeStokWebApp.Controllers
         // Diğer action ve metotlar...
         
         // Stok hareketleri ile ilgili metot örneği
-        private async Task CreateStokHareket(Data.Entities.Fatura fatura, Data.Entities.FaturaDetay detay, StokHareketiTipi hareketTipi)
+        private async Task CreateStokHareket(Data.Entities.Fatura fatura, Data.Entities.FaturaDetay detay, StokHareketiTipi hareketTipi, Guid? depoID = null)
         {
+            // İrsaliye türünü belirle
+            string irsaliyeTuruStr = hareketTipi == StokHareketiTipi.Giris ? "Giriş" : "Çıkış";
+            
             var stokHareket = new StokHareket
             {
                 StokHareketID = Guid.NewGuid(),
                 UrunID = detay.UrunID,
+                DepoID = depoID,
                 Miktar = hareketTipi == StokHareketiTipi.Cikis ? -detay.Miktar : detay.Miktar,
                 Birim = detay.Birim ?? "Adet",
                 HareketTuru = hareketTipi,
@@ -809,7 +591,11 @@ namespace MuhasebeStokWebApp.Controllers
                 FaturaID = fatura.FaturaID,
                 Aciklama = $"{fatura.FaturaNumarasi} numaralı fatura",
                 BirimFiyat = detay.BirimFiyat,
-                OlusturmaTarihi = DateTime.Now
+                OlusturmaTarihi = DateTime.Now,
+                // İrsaliye bilgilerini ekle
+                IrsaliyeID = null, // Otomatik oluşturulacak irsaliyenin ID'si SaveChanges sonrası doldurulacak
+                IrsaliyeTuru = irsaliyeTuruStr, // Fatura türüne göre irsaliye türü
+                ParaBirimi = fatura.DovizTuru ?? "TRY" // Faturanın para birimi
             };
 
             await _unitOfWork.Repository<StokHareket>().AddAsync(stokHareket);
@@ -1079,6 +865,31 @@ namespace MuhasebeStokWebApp.Controllers
                 ViewBag.CariSilindi = true;
             }
 
+            // Aktif ürünler
+            var urunler = await _context.Urunler
+                .Include(u => u.Birim)
+                .Where(u => !u.Silindi && u.Aktif)
+                .OrderBy(u => u.UrunAdi)
+                .ToListAsync();
+
+            // Ürünler için hem birim bilgisini hem de ID'yi taşıyacak özel bir SelectList
+            ViewBag.Urunler = urunler.Select(u => new SelectListItem
+            {
+                Value = u.UrunID.ToString(),
+                Text = u.UrunAdi,
+                Group = new SelectListGroup { Name = u.KategoriID.HasValue ? u.Kategori?.KategoriAdi ?? "Genel" : "Genel" }
+            }).ToList();
+            
+            // Birim bilgisini farklı bir yöntemle taşıyalım, örneğin ViewBag ile
+            ViewBag.UrunBirimBilgileri = urunler.ToDictionary(
+                u => u.UrunID.ToString(), 
+                u => u.Birim?.BirimAdi ?? "Adet"
+            );
+
+            ViewBag.Cariler = new SelectList(await _context.Cariler.Where(c => !c.Silindi && c.AktifMi).ToListAsync(), "CariID", "Ad");
+            ViewBag.FaturaTurleri = new SelectList(await _context.FaturaTurleri.ToListAsync(), "FaturaTuruID", "FaturaTuruAdi");
+            ViewBag.Sozlesmeler = new SelectList(await _context.Sozlesmeler.Where(s => !s.Silindi && s.AktifMi).ToListAsync(), "SozlesmeID", "SozlesmeNo");
+
             return View(viewModel);
         }
 
@@ -1163,7 +974,7 @@ namespace MuhasebeStokWebApp.Controllers
                     fatura.ResmiMi = viewModel.ResmiMi;
                     fatura.SozlesmeID = viewModel.SozlesmeID.HasValue && viewModel.SozlesmeID.Value != Guid.Empty ? viewModel.SozlesmeID : null;
                     fatura.FaturaNotu = viewModel.Aciklama ?? "";
-                    fatura.DovizTuru = viewModel.DovizTuru ?? "TRY";
+                    fatura.DovizTuru = viewModel.DovizTuru ?? "USD";
                     fatura.DovizKuru = viewModel.DovizKuru ?? 1;
                     fatura.OdemeDurumu = viewModel.OdemeDurumu;
                     fatura.IndirimTutari = viewModel.IndirimTutari ?? 0m;
@@ -1195,6 +1006,8 @@ namespace MuhasebeStokWebApp.Controllers
                             var tutar = birimFiyat * miktar;
                             var kdvTutar = tutar * kdvOrani;
                             var toplamTutar = tutar + kdvTutar;
+                            var indirimTutar = tutar * (kalem.IndirimOrani / 100);
+                            var netTutar = tutar - indirimTutar;
 
                             araToplam += tutar;
                             kdvToplam += kdvTutar;
@@ -1213,10 +1026,10 @@ namespace MuhasebeStokWebApp.Controllers
                                 Tutar = toplamTutar,
                                 KdvTutari = kdvTutar,
                                 IndirimTutari = tutar * (kalem.IndirimOrani / 100),
-                                NetTutar = toplamTutar - kdvTutar,
+                                NetTutar = netTutar,
                                 Birim = kalem.Birim,
-                                SatirToplam = tutar, // Satır toplamı = tutar
-                                SatirKdvToplam = kdvTutar, // Satır KDV toplamı = KDV tutarı
+                                SatirToplam = tutar,
+                                SatirKdvToplam = kdvTutar,
                                 Aciklama = "",
                                 OlusturmaTarihi = DateTime.Now,
                                 OlusturanKullaniciID = GetCurrentUserId(),
@@ -1708,7 +1521,7 @@ namespace MuhasebeStokWebApp.Controllers
         }
 
         // Otomatik irsaliye oluşturma metodu
-        private async Task OtomatikIrsaliyeOlustur(Data.Entities.Fatura fatura)
+        private async Task OtomatikIrsaliyeOlustur(Data.Entities.Fatura fatura, Guid? depoID = null)
         {
             try
             {
@@ -1722,7 +1535,9 @@ namespace MuhasebeStokWebApp.Controllers
                 if (faturaWithDetails != null)
                 {
                     // Fatura türüne göre irsaliye türünü belirle
-                    var irsaliyeTuru = fatura.FaturaTuru?.HareketTuru ?? "Çıkış";
+                    var irsaliyeTuru = fatura.FaturaTuru?.HareketTuru == "Giriş" 
+                        ? "Giriş İrsaliyesi" 
+                        : "Çıkış İrsaliyesi";
 
                     // Yeni irsaliye numarası oluştur
                     var today = DateTime.Now;
@@ -1757,12 +1572,14 @@ namespace MuhasebeStokWebApp.Controllers
                         IrsaliyeTarihi = faturaWithDetails.FaturaTarihi ?? DateTime.Now,
                         CariID = faturaWithDetails.CariID ?? Guid.Empty,
                         FaturaID = faturaWithDetails.FaturaID,
+                        DepoID = depoID,
                         IrsaliyeTuru = irsaliyeTuru, // Fatura türüne göre belirlenen irsaliye türü
                         Aciklama = $"{faturaWithDetails.FaturaNumarasi ?? ""} numaralı faturaya ait otomatik oluşturulan {irsaliyeTuru} irsaliyesi",
                         OlusturmaTarihi = DateTime.Now,
                         OlusturanKullaniciId = GetCurrentUserId().GetValueOrDefault(Guid.Empty),
                         Aktif = true,
-                        Silindi = false
+                        Silindi = false,
+                        Durum = "Açık" // Durumu açık olarak ayarla
                     };
 
                     _context.Irsaliyeler.Add(irsaliye);
@@ -1779,6 +1596,7 @@ namespace MuhasebeStokWebApp.Controllers
                                     IrsaliyeDetayID = Guid.NewGuid(),
                                     IrsaliyeID = irsaliye.IrsaliyeID,
                                     UrunID = detay.UrunID,
+                                    DepoID = depoID,
                                     Miktar = detay.Miktar,
                                     Birim = detay.Birim ?? "Adet",
                                     Aciklama = "",
@@ -1795,6 +1613,22 @@ namespace MuhasebeStokWebApp.Controllers
                     {
                         await _context.SaveChangesAsync();
                         _logger.LogInformation($"Fatura için otomatik irsaliye oluşturuldu: IrsaliyeNo={irsaliyeNumarasi}, FaturaNo={faturaWithDetails.FaturaNumarasi}");
+                        
+                        // İrsaliye oluşturulduktan sonra, faturaya bağlı stok hareketlerinin IrsaliyeID alanını güncelle
+                        var stokHareketleri = await _context.StokHareketleri
+                            .Where(sh => sh.FaturaID == faturaWithDetails.FaturaID && !sh.Silindi)
+                            .ToListAsync();
+                            
+                        if (stokHareketleri != null && stokHareketleri.Any())
+                        {
+                            foreach (var hareket in stokHareketleri)
+                            {
+                                hareket.IrsaliyeID = irsaliye.IrsaliyeID;
+                                _context.StokHareketleri.Update(hareket);
+                            }
+                            await _context.SaveChangesAsync();
+                            _logger.LogInformation($"{stokHareketleri.Count} adet stok hareketinin IrsaliyeID alanı güncellendi. IrsaliyeID: {irsaliye.IrsaliyeID}");
+                        }
                     }
                     catch (Exception saveEx)
                     {
@@ -1890,7 +1724,7 @@ namespace MuhasebeStokWebApp.Controllers
         }
 
         // Yeni Guid parametreli metod
-        private async Task OtomatikIrsaliyeOlusturFromID(Guid faturaID)
+        private async Task OtomatikIrsaliyeOlusturFromID(Guid faturaID, Guid? depoID = null)
         {
             try
             {
@@ -1907,7 +1741,11 @@ namespace MuhasebeStokWebApp.Controllers
                     string irsaliyeTuru = faturaWithDetails.FaturaTuru?.HareketTuru == "Giriş" ? "Giriş İrsaliyesi" : "Çıkış İrsaliyesi";
                     
                     // Otomatik irsaliye numarası oluştur (Prefix + Tarih + Sıra No)
-                    string prefix = faturaWithDetails.FaturaTuru?.HareketTuru == "Giriş" ? "GI-" : "CI-";
+                    var today = DateTime.Now;
+                    var year = today.Year.ToString().Substring(2);
+                    var month = today.Month.ToString().PadLeft(2, '0');
+                    var day = today.Day.ToString().PadLeft(2, '0');
+                    var prefix = $"IRS-{year}{month}{day}-";
                     
                     // Son irsaliyeyi bul
                     var lastIrsaliye = await _context.Irsaliyeler
@@ -1935,12 +1773,14 @@ namespace MuhasebeStokWebApp.Controllers
                         IrsaliyeTarihi = faturaWithDetails.FaturaTarihi ?? DateTime.Now,
                         CariID = faturaWithDetails.CariID ?? Guid.Empty,
                         FaturaID = faturaWithDetails.FaturaID,
+                        DepoID = depoID,
                         IrsaliyeTuru = irsaliyeTuru, // Fatura türüne göre belirlenen irsaliye türü
                         Aciklama = $"{faturaWithDetails.FaturaNumarasi ?? ""} numaralı faturaya ait otomatik oluşturulan {irsaliyeTuru} irsaliyesi",
                         OlusturmaTarihi = DateTime.Now,
                         OlusturanKullaniciId = GetCurrentUserId().GetValueOrDefault(Guid.Empty),
                         Aktif = true,
-                        Silindi = false
+                        Silindi = false,
+                        Durum = "Açık" // Durumu açık olarak ayarla
                     };
 
                     _context.Irsaliyeler.Add(irsaliye);
@@ -1957,6 +1797,7 @@ namespace MuhasebeStokWebApp.Controllers
                                     IrsaliyeDetayID = Guid.NewGuid(),
                                     IrsaliyeID = irsaliye.IrsaliyeID,
                                     UrunID = detay.UrunID,
+                                    DepoID = depoID,
                                     Miktar = detay.Miktar,
                                     Birim = detay.Birim ?? "Adet",
                                     Aciklama = "",
@@ -1973,6 +1814,24 @@ namespace MuhasebeStokWebApp.Controllers
                     {
                         await _context.SaveChangesAsync();
                         _logger.LogInformation($"Fatura için otomatik irsaliye oluşturuldu: IrsaliyeNo={irsaliyeNumarasi}, FaturaNo={faturaWithDetails.FaturaNumarasi}");
+                        
+                        // İrsaliye oluşturulduktan sonra, faturaya bağlı stok hareketlerinin IrsaliyeID alanını güncelle
+                        var stokHareketleri = await _context.StokHareketleri
+                            .Where(sh => sh.FaturaID == faturaID && !sh.Silindi)
+                            .ToListAsync();
+                            
+                        if (stokHareketleri != null && stokHareketleri.Any())
+                        {
+                            foreach (var hareket in stokHareketleri)
+                            {
+                                hareket.IrsaliyeID = irsaliye.IrsaliyeID;
+                                _context.StokHareketleri.Update(hareket);
+                            }
+                            await _context.SaveChangesAsync();
+                            _logger.LogInformation($"{stokHareketleri.Count} adet stok hareketinin IrsaliyeID alanı güncellendi. IrsaliyeID: {irsaliye.IrsaliyeID}");
+                        }
+                        
+                        return irsaliye.IrsaliyeID;
                     }
                     catch (Exception saveEx)
                     {

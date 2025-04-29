@@ -72,6 +72,10 @@ namespace MuhasebeStokWebApp.ViewModels.Fatura
 
         [Display(Name = "Birim")]
         public string Birim { get; set; } = "Adet";
+        
+        [Display(Name = "Açıklama")]
+        [StringLength(200)]
+        public string Aciklama { get; set; } = "";
 
         public bool Silindi { get; set; }
         public Guid KalemID { get; set; }

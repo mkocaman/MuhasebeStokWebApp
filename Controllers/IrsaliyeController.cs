@@ -213,35 +213,45 @@ namespace MuhasebeStokWebApp.Controllers
         [HttpGet]
         public async Task<IActionResult> Details(Guid id)
         {
-            var irsaliye = await _unitOfWork.IrsaliyeRepository.GetIrsaliyeWithDetailsAsync(id);
+            var irsaliye = await _unitOfWork.Repository<DEntityIrsaliye>().GetFirstOrDefaultAsync(
+                filter: i => i.IrsaliyeID.Equals(id),
+                includeProperties: "Cari,Fatura,IrsaliyeDetaylari.Urun");
+
             if (irsaliye == null)
             {
                 return NotFound();
             }
 
-            var model = new IrsaliyeDetailViewModel
+            var viewModel = new IrsaliyeDetailViewModel
             {
                 IrsaliyeID = irsaliye.IrsaliyeID,
                 IrsaliyeNumarasi = irsaliye.IrsaliyeNumarasi ?? string.Empty,
                 IrsaliyeTarihi = irsaliye.IrsaliyeTarihi,
                 CariID = irsaliye.CariID,
+                CariAdi = irsaliye.Cari?.Ad ?? string.Empty,
+                CariVergiNo = irsaliye.Cari?.VergiNo ?? string.Empty,
+                CariTelefon = irsaliye.Cari?.Telefon ?? string.Empty,
+                CariAdres = irsaliye.Cari?.Adres ?? string.Empty,
+                IrsaliyeTuru = irsaliye.IrsaliyeTuru ?? string.Empty,
                 FaturaID = irsaliye.FaturaID,
+                FaturaNumarasi = irsaliye.Fatura?.FaturaNumarasi ?? string.Empty,
                 Aciklama = irsaliye.Aciklama ?? string.Empty,
-                CariAdi = irsaliye.Cari?.Ad ?? "Belirtilmemiş",
-                IrsaliyeDetaylari = irsaliye.IrsaliyeDetaylari?.Select(d => new IrsaliyeKalemViewModel
+                Aktif = irsaliye.Aktif,
+                OlusturmaTarihi = irsaliye.OlusturmaTarihi,
+                GuncellemeTarihi = irsaliye.GuncellemeTarihi,
+                IrsaliyeDetaylari = irsaliye.IrsaliyeDetaylari.Select(id => new IrsaliyeVM.IrsaliyeKalemViewModel
                 {
-                    KalemID = d.IrsaliyeDetayID,
-                    IrsaliyeID = d.IrsaliyeID,
-                    UrunID = d.UrunID,
-                    UrunAdi = d.Urun?.UrunAdi,
-                    Miktar = d.Miktar,
-                    Birim = d.Birim,
-                    BirimFiyat = d.BirimFiyat,
-                    Aciklama = d.Aciklama
+                    KalemID = id.IrsaliyeDetayID,
+                    UrunID = id.UrunID,
+                    UrunAdi = id.Urun?.UrunAdi ?? string.Empty,
+                    UrunKodu = id.Urun?.UrunKodu ?? string.Empty,
+                    Miktar = id.Miktar,
+                    Birim = id.Birim ?? string.Empty,
+                    Aciklama = id.Aciklama ?? string.Empty
                 }).ToList()
             };
 
-            return View(model);
+            return View(viewModel);
         }
 
         // Yeni irsaliye oluşturma formu

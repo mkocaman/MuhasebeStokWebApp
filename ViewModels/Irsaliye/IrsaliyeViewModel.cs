@@ -30,6 +30,12 @@ namespace MuhasebeStokWebApp.ViewModels.Irsaliye
         [Display(Name = "Fatura Numarası")]
         public string FaturaNumarasi { get; set; }
 
+        [Display(Name = "Depo")]
+        public Guid? DepoID { get; set; }
+
+        [Display(Name = "Depo Adı")]
+        public string? DepoAdi { get; set; }
+
         [Display(Name = "İrsaliye Türü")]
         public string IrsaliyeTuru { get; set; }
 

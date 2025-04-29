@@ -24,44 +24,44 @@ namespace MuhasebeStokWebApp.Services
             _logger = logger;
         }
 
-        public async Task LogOlustur(string islemTuru, Guid? kayitID, string tabloAdi, string kayitAdi, string aciklama, string? kullaniciID = null, string kullaniciAdi = null, bool basarili = true, string hataMesaji = null)
+        public async Task LogOlustur(string islemTuru, Guid? kayitID, string tabloAdi, string kayitAdi, string aciklama, string? kullaniciIDString = null, string kullaniciAdi = null, bool basarili = true, string hataMesaji = null)
         {
             try
             {
                 var httpContext = _httpContextAccessor.HttpContext;
-                string ipAdresi = httpContext?.Connection?.RemoteIpAddress?.ToString();
-
-                if (string.IsNullOrEmpty(kullaniciAdi) && httpContext?.User.Identity?.IsAuthenticated == true)
+                if (kullaniciAdi == null)
                 {
-                    kullaniciAdi = httpContext.User.Identity.Name;
+                    kullaniciAdi = httpContext?.User?.Identity?.Name ?? "Sistem";
                 }
+                var ipAdresi = httpContext?.Connection?.RemoteIpAddress?.ToString() ?? "Bilinmiyor";
 
-                if (string.IsNullOrEmpty(kullaniciID) && httpContext?.User.Identity?.IsAuthenticated == true)
-                {
-                    kullaniciID = httpContext.User.FindFirst(ClaimTypes.NameIdentifier)?.Value;
-                }
+                string? kullaniciId = kullaniciIDString;
 
-                var logKaydi = new SistemLog
+                var log = new SistemLog
                 {
-                    IslemTuru = islemTuru,
-                    KayitID = kayitID,
-                    TabloAdi = tabloAdi,
-                    KayitAdi = kayitAdi,
-                    Aciklama = aciklama,
-                    KullaniciId = kullaniciID,
-                    KullaniciAdi = kullaniciAdi ?? "Sistem",
+                    LogID = Guid.NewGuid(),
+                    LogTuru = "Bilgi",
+                    Mesaj = aciklama ?? islemTuru,
+                    HataMesaji = hataMesaji ?? "",
+                    Aciklama = aciklama ?? islemTuru,
+                    KullaniciAdi = kullaniciAdi,
                     IPAdresi = ipAdresi,
                     IslemTarihi = DateTime.Now,
+                    IslemTuru = islemTuru,
                     Basarili = basarili,
-                    HataMesaji = hataMesaji ?? string.Empty
+                    TabloAdi = tabloAdi ?? string.Empty,
+                    KayitAdi = kayitAdi ?? string.Empty,
+                    KayitID = kayitID,
+                    KullaniciId = kullaniciId
                 };
 
-                await _unitOfWork.Repository<SistemLog>().AddAsync(logKaydi);
-                await _unitOfWork.SaveChangesAsync();
+                var sistemLogRepository = _unitOfWork.Repository<SistemLog>();
+                await sistemLogRepository.AddAsync(log);
+                await _unitOfWork.SaveAsync();
             }
             catch (Exception ex)
             {
-                _logger.LogError(ex, "Log oluşturulurken hata oluştu: {Error}", ex.Message);
+                _logger.LogError(ex, "Log kaydedilirken hata oluştu: {Message}", ex.Message);
             }
         }
 
@@ -72,6 +72,7 @@ namespace MuhasebeStokWebApp.Services
                 var httpContext = _httpContextAccessor.HttpContext;
                 var kullaniciAdi = httpContext?.User?.Identity?.Name ?? "Sistem";
                 var ipAdresi = httpContext?.Connection?.RemoteIpAddress?.ToString() ?? "Bilinmiyor";
+                var kullaniciId = httpContext?.User?.FindFirstValue(ClaimTypes.NameIdentifier);
 
                 var log = new SistemLog
                 {
@@ -86,7 +87,8 @@ namespace MuhasebeStokWebApp.Services
                     IslemTuru = "Bilgi",
                     Basarili = true,
                     TabloAdi = string.Empty,
-                    KayitAdi = string.Empty
+                    KayitAdi = string.Empty,
+                    KullaniciId = kullaniciId
                 };
 
                 var sistemLogRepository = _unitOfWork.Repository<SistemLog>();
@@ -108,6 +110,7 @@ namespace MuhasebeStokWebApp.Services
                 var httpContext = _httpContextAccessor.HttpContext;
                 var kullaniciAdi = httpContext?.User?.Identity?.Name ?? "Sistem";
                 var ipAdresi = httpContext?.Connection?.RemoteIpAddress?.ToString() ?? "Bilinmiyor";
+                var kullaniciId = httpContext?.User?.FindFirstValue(ClaimTypes.NameIdentifier);
 
                 var log = new SistemLog
                 {
@@ -122,7 +125,8 @@ namespace MuhasebeStokWebApp.Services
                     IslemTuru = "Hata",
                     Basarili = false,
                     TabloAdi = string.Empty,
-                    KayitAdi = string.Empty
+                    KayitAdi = string.Empty,
+                    KullaniciId = kullaniciId
                 };
 
                 var sistemLogRepository = _unitOfWork.Repository<SistemLog>();
@@ -137,7 +141,7 @@ namespace MuhasebeStokWebApp.Services
             }
         }
 
-        public async Task CariPasifeAlmaLogOlustur(Guid cariID, string ad, string aciklama, string? kullaniciID = null, string kullaniciAdi = null)
+        public async Task CariPasifeAlmaLogOlustur(Guid cariID, string ad, string aciklama, string? kullaniciIDString = null, string kullaniciAdi = null)
         {
             await LogOlustur(
                 islemTuru: "Cari Pasife Alma",
@@ -145,13 +149,13 @@ namespace MuhasebeStokWebApp.Services
                 tabloAdi: "Cari",
                 kayitAdi: ad,
                 aciklama: aciklama,
-                kullaniciID: kullaniciID,
+                kullaniciIDString: kullaniciIDString,
                 kullaniciAdi: kullaniciAdi,
                 basarili: true
             );
         }
 
-        public async Task CariAktifleştirmeLogOlustur(Guid cariID, string ad, string aciklama, string? kullaniciID = null, string kullaniciAdi = null)
+        public async Task CariAktifleştirmeLogOlustur(Guid cariID, string ad, string aciklama, string? kullaniciIDString = null, string kullaniciAdi = null)
         {
             await LogOlustur(
                 islemTuru: "Cari Aktifleştirme",
@@ -159,7 +163,7 @@ namespace MuhasebeStokWebApp.Services
                 tabloAdi: "Cari",
                 kayitAdi: ad,
                 aciklama: aciklama,
-                kullaniciID: kullaniciID,
+                kullaniciIDString: kullaniciIDString,
                 kullaniciAdi: kullaniciAdi,
                 basarili: true
             );
