@@ -696,8 +696,8 @@ namespace MuhasebeStokWebApp.Data
                 .HasOne(s => s.Cari)
                 .WithMany()
                 .HasForeignKey(s => s.CariID)
-                .OnDelete(DeleteBehavior.Cascade)
-                .IsRequired(false);
+                .OnDelete(DeleteBehavior.Restrict)
+                .IsRequired(true);
 
             // StokCikisDetay - StokFifo ilişkisini opsiyonel hale getirme
             modelBuilder.Entity<Entities.StokCikisDetay>()
