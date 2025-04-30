@@ -87,7 +87,7 @@ namespace MuhasebeStokWebApp.Data.Entities
         
         // Concurrency kontrolü için RowVersion alanı
         [Timestamp]
-        public byte[]? RowVersion { get; set; }
+        public byte[] RowVersion { get; set; }
         
         // Navigation properties
         [ForeignKey("UrunID")]

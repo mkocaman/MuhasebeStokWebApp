@@ -179,11 +179,20 @@ builder.Services.AddScoped<ICariHareketService, CariHareketService>();
 // FaturaService'i ekliyoruz
 builder.Services.AddScoped<IFaturaService, FaturaService>();
 
+// FaturaOrchestrationService'i ekliyoruz
+builder.Services.AddScoped<IFaturaOrchestrationService, FaturaOrchestrationService>();
+
 // SistemAyarService'i ekliyoruz
 builder.Services.AddScoped<ISistemAyarService, SistemAyarService>();
 
 // IStokService'i ekliyoruz
 builder.Services.AddScoped<IStokService, StokService>();
+
+// IStokHareketService'i ekliyoruz
+builder.Services.AddScoped<IStokHareketService, StokHareketService>();
+
+// IIrsaliyeService'i ekliyoruz
+builder.Services.AddScoped<IIrsaliyeService, IrsaliyeService>();
 
 // AuthService'i ekliyoruz
 builder.Services.AddScoped<IAuthService, AuthService>();

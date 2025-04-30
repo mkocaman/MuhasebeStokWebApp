@@ -2378,6 +2378,7 @@ namespace MuhasebeStokWebApp.Migrations
 
                     b.Property<byte[]>("RowVersion")
                         .IsConcurrencyToken()
+                        .IsRequired()
                         .ValueGeneratedOnAddOrUpdate()
                         .HasColumnType("rowversion");
 
@@ -2806,7 +2807,8 @@ namespace MuhasebeStokWebApp.Migrations
                 {
                     b.HasOne("MuhasebeStokWebApp.Data.Entities.Cari", "Cari")
                         .WithMany("Faturalar")
-                        .HasForeignKey("CariID");
+                        .HasForeignKey("CariID")
+                        .OnDelete(DeleteBehavior.Restrict);
 
                     b.HasOne("MuhasebeStokWebApp.Data.Entities.FaturaTuru", "FaturaTuru")
                         .WithMany("Faturalar")
@@ -3055,7 +3057,8 @@ namespace MuhasebeStokWebApp.Migrations
                     b.HasOne("MuhasebeStokWebApp.Data.Entities.Cari", "Cari")
                         .WithMany()
                         .HasForeignKey("CariID")
-                        .OnDelete(DeleteBehavior.Cascade);
+                        .OnDelete(DeleteBehavior.Restrict)
+                        .IsRequired();
 
                     b.Navigation("Cari");
                 });

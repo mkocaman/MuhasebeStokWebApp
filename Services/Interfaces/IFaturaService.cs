@@ -17,5 +17,9 @@ namespace MuhasebeStokWebApp.Services.Interfaces
         Task<FaturaDetailViewModel> GetFaturaDetailViewModelAsync(Guid id);
         Task<List<FaturaViewModel>> GetAllFaturaViewModelsAsync();
         Task<bool> IsFaturaInUseAsync(Guid id);
+        
+        Task<Guid> CreateFatura(FaturaCreateViewModel viewModel, Guid? currentUserId);
+        Task<Guid> UpdateFatura(Guid id, FaturaEditViewModel viewModel, Guid? currentUserId);
+        Task<bool> DeleteFatura(Guid id, Guid? currentUserId);
     }
 } 

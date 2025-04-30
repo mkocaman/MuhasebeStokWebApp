@@ -691,13 +691,20 @@ namespace MuhasebeStokWebApp.Data
                 .Property(a => a.ParaBirimi)
                 .HasDefaultValue("TL");
                 
-            // Cari - Sozlesme ilişkisi için IsRequired(false) ayarla
+            // Cari - Sozlesme ilişkisi için Restrict davranışı ayarla
             modelBuilder.Entity<Entities.Sozlesme>()
                 .HasOne(s => s.Cari)
                 .WithMany()
                 .HasForeignKey(s => s.CariID)
                 .OnDelete(DeleteBehavior.Restrict)
                 .IsRequired(true);
+
+            // Fatura - Cari ilişkisi için Restrict davranışı ayarla
+            modelBuilder.Entity<Entities.Fatura>()
+                .HasOne(f => f.Cari)
+                .WithMany(c => c.Faturalar)
+                .HasForeignKey(f => f.CariID)
+                .OnDelete(DeleteBehavior.Restrict);
 
             // StokCikisDetay - StokFifo ilişkisini opsiyonel hale getirme
             modelBuilder.Entity<Entities.StokCikisDetay>()

@@ -73,7 +73,7 @@ namespace MuhasebeStokWebApp.Services
                 var kullaniciAdi = httpContext?.User?.Identity?.Name ?? "Sistem";
                 var ipAdresi = httpContext?.Connection?.RemoteIpAddress?.ToString() ?? "Bilinmiyor";
                 var kullaniciId = httpContext?.User?.FindFirstValue(ClaimTypes.NameIdentifier);
-
+                
                 var log = new SistemLog
                 {
                     LogID = Guid.NewGuid(),
@@ -94,7 +94,7 @@ namespace MuhasebeStokWebApp.Services
                 var sistemLogRepository = _unitOfWork.Repository<SistemLog>();
                 await sistemLogRepository.AddAsync(log);
                 await _unitOfWork.SaveAsync();
-                return true;
+                    return true;
             }
             catch (Exception ex)
             {
@@ -111,7 +111,7 @@ namespace MuhasebeStokWebApp.Services
                 var kullaniciAdi = httpContext?.User?.Identity?.Name ?? "Sistem";
                 var ipAdresi = httpContext?.Connection?.RemoteIpAddress?.ToString() ?? "Bilinmiyor";
                 var kullaniciId = httpContext?.User?.FindFirstValue(ClaimTypes.NameIdentifier);
-
+                
                 var log = new SistemLog
                 {
                     LogID = Guid.NewGuid(),
@@ -132,7 +132,7 @@ namespace MuhasebeStokWebApp.Services
                 var sistemLogRepository = _unitOfWork.Repository<SistemLog>();
                 await sistemLogRepository.AddAsync(log);
                 await _unitOfWork.SaveAsync();
-                return true;
+                    return true;
             }
             catch (Exception ex)
             {

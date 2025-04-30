@@ -16,6 +16,22 @@ using System.Threading;
 namespace MuhasebeStokWebApp.Services
 {
     /// <summary>
+    /// FIFO işlemi sırasında oluşabilecek concurrency ihlalleri için özel hata sınıfı
+    /// </summary>
+    public class FifoConcurrencyException : Exception
+    {
+        public Guid StokFifoID { get; }
+        public int RetryCount { get; }
+
+        public FifoConcurrencyException(Guid stokFifoID, int retryCount, string message) 
+            : base(message)
+        {
+            StokFifoID = stokFifoID;
+            RetryCount = retryCount;
+        }
+    }
+
+    /// <summary>
     /// Stok yetersizliği durumunda fırlatılan özel hata sınıfı
     /// </summary>
     public class StokYetersizException : Exception
@@ -143,12 +159,9 @@ namespace MuhasebeStokWebApp.Services
                         }
                         else
                         {
-                            // Varsayılan değer kullan
-                            stokFifo.USDBirimFiyat = paraBirimi == "UZS" 
-                                ? birimFiyat / 13000.0m 
-                                : birimFiyat * 1.0m;
-                            
-                            _logger.LogWarning($"{paraBirimi} -> USD için kur bilgisi bulunamadı, varsayılan değer kullanıldı");
+                            // Kur değeri bulunamadı, hata fırlat
+                            _logger.LogError($"{paraBirimi} -> USD için kur bilgisi bulunamadı ve faturada belirtilmemiş");
+                            throw new InvalidOperationException($"{paraBirimi} para biriminden USD'ye dönüşüm için geçerli bir kur değeri bulunamadı. Lütfen faturada geçerli bir döviz kuru belirtin veya sistem yöneticinize başvurun.");
                         }
                     }
                     else
@@ -169,16 +182,16 @@ namespace MuhasebeStokWebApp.Services
                         else
                         {
                             // USD değeri üzerinden UZS'ye çevir
-                            decimal usdToUZS = await _dovizKuruService.GetGuncelKurAsync("USD", "UZS", DateTime.Now);
-                            if (usdToUZS > 0)
+                            decimal usdToUZS = await _dovizKuruService.GetGuncelKurAsync("USD", "UZS");
+                            if (usdToUZS > 0 && stokFifo.USDBirimFiyat > 0)
                             {
                                 stokFifo.UZSBirimFiyat = stokFifo.USDBirimFiyat * usdToUZS;
                                 _logger.LogInformation($"{paraBirimi} -> UZS dönüşümü USD üzerinden yapıldı: {stokFifo.USDBirimFiyat} * {usdToUZS} = {stokFifo.UZSBirimFiyat} UZS");
                             }
                             else
                             {
-                                stokFifo.UZSBirimFiyat = stokFifo.USDBirimFiyat * 13000.0m;
-                                _logger.LogWarning($"{paraBirimi} -> UZS için kur bilgisi bulunamadı, varsayılan değer kullanıldı: {stokFifo.USDBirimFiyat} * 13000.0 = {stokFifo.UZSBirimFiyat} UZS");
+                                _logger.LogWarning($"{paraBirimi} -> UZS ve USD -> UZS için kur bilgisi bulunamadı. UZS değeri 0 olarak kaydedilecek.");
+                                stokFifo.UZSBirimFiyat = 0;
                             }
                         }
                     }
@@ -200,16 +213,16 @@ namespace MuhasebeStokWebApp.Services
                         else
                         {
                             // USD değeri üzerinden TRY'ye çevir
-                            decimal usdToTRY = await _dovizKuruService.GetGuncelKurAsync("USD", "TRY", DateTime.Now);
-                            if (usdToTRY > 0)
+                            decimal usdToTRY = await _dovizKuruService.GetGuncelKurAsync("USD", "TRY");
+                            if (usdToTRY > 0 && stokFifo.USDBirimFiyat > 0)
                             {
                                 stokFifo.TLBirimFiyat = stokFifo.USDBirimFiyat * usdToTRY;
                                 _logger.LogInformation($"{paraBirimi} -> TRY dönüşümü USD üzerinden yapıldı: {stokFifo.USDBirimFiyat} * {usdToTRY} = {stokFifo.TLBirimFiyat} TRY");
                             }
                             else
                             {
-                                stokFifo.TLBirimFiyat = stokFifo.USDBirimFiyat * 38.0m;
-                                _logger.LogWarning($"{paraBirimi} -> TRY için kur bilgisi bulunamadı, varsayılan değer kullanıldı: {stokFifo.USDBirimFiyat} * 38.0 = {stokFifo.TLBirimFiyat} TRY");
+                                _logger.LogWarning($"{paraBirimi} -> TRY ve USD -> TRY için kur bilgisi bulunamadı. TRY değeri 0 olarak kaydedilecek.");
+                                stokFifo.TLBirimFiyat = 0;
                             }
                         }
                     }
@@ -223,12 +236,24 @@ namespace MuhasebeStokWebApp.Services
                 {
                     _logger.LogError(ex, $"Para birimi dönüşümleri sırasında hata oluştu: {ex.Message}");
                     
-                    // Tüm dönüşümlerde hata olsa bile varsayılan değerler ata ve devam et
-                    if (stokFifo.USDBirimFiyat <= 0) stokFifo.USDBirimFiyat = birimFiyat;
-                    if (stokFifo.TLBirimFiyat <= 0) stokFifo.TLBirimFiyat = birimFiyat * 38.0m;
-                    if (stokFifo.UZSBirimFiyat <= 0) stokFifo.UZSBirimFiyat = birimFiyat * 13000.0m;
+                    // Ana para birimi (USD) dönüşümünde hata olduysa hata fırlat, kritik bir hatadır
+                    if (paraBirimi != "USD" && stokFifo.USDBirimFiyat <= 0)
+                    {
+                        throw new InvalidOperationException($"Stok kaydı için gerekli USD dönüşümü yapılamadı: {ex.Message}", ex);
+                    }
                     
-                    _logger.LogWarning($"Para birimi dönüşüm hatalarına rağmen varsayılan değerler atandı ve işleme devam ediliyor.");
+                    // Diğer para birimleri için varsayılan 0 değerini kullan ama loglama yap
+                    if (stokFifo.TLBirimFiyat <= 0)
+                    {
+                        _logger.LogWarning("TRY dönüşümü yapılamadı, değer 0 olarak atandı.");
+                        stokFifo.TLBirimFiyat = 0;
+                    }
+                    
+                    if (stokFifo.UZSBirimFiyat <= 0)
+                    {
+                        _logger.LogWarning("UZS dönüşümü yapılamadı, değer 0 olarak atandı.");
+                        stokFifo.UZSBirimFiyat = 0;
+                    }
                 }
                 
                 // Veritabanına kaydet
@@ -537,11 +562,21 @@ namespace MuhasebeStokWebApp.Services
                     
                     await _context.StokCikisDetaylari.AddAsync(stokCikisDetay);
                     
-                    // FIFO kaydının kalan miktarını güncelle
-                    fifo.KalanMiktar -= kullanilanMiktar;
-                    fifo.SonCikisTarihi = DateTime.Now;
-                    fifo.GuncellemeTarihi = DateTime.Now;
-                    _context.StokFifoKayitlari.Update(fifo);
+                    // FIFO kaydının kalan miktarını güncelle - concurrency yönetimi ile
+                    decimal kullanilacakMiktar = kullanilanMiktar; // Yerel değişkene kopyala
+                    
+                    bool fifoUpdateSuccess = await ProcessFifoEntryWithRetry(fifo, async (fifoToUpdate) => {
+                        fifoToUpdate.KalanMiktar -= kullanilacakMiktar;
+                        fifoToUpdate.SonCikisTarihi = DateTime.Now;
+                        fifoToUpdate.GuncellemeTarihi = DateTime.Now;
+                        _context.StokFifoKayitlari.Update(fifoToUpdate);
+                    });
+                    
+                    if (!fifoUpdateSuccess)
+                    {
+                        _logger.LogWarning($"FIFO kaydı güncellenemedi: ID {fifo.StokFifoID}, Çıkış işlemi tamamlanamayabilir");
+                        throw new Exception($"FIFO kaydı güncellenemedi: ID {fifo.StokFifoID}");
+                    }
                     
                     // Toplam maliyeti hesapla (kullanılan miktar * birim fiyat)
                     decimal hareketMaliyeti = kullanilanMiktar * fifo.USDBirimFiyat;
@@ -663,9 +698,17 @@ namespace MuhasebeStokWebApp.Services
                             var fifo = await _context.StokFifoKayitlari.FindAsync(cikis.StokFifoID);
                             if (fifo != null)
                             {
-                                fifo.KalanMiktar += cikis.CikisMiktari;
-                                _logger.LogInformation($"FIFO kayıtı kalan miktarı güncellendi: FifoID={fifo.StokFifoID}, Eski miktar={fifo.KalanMiktar - cikis.CikisMiktari}, Yeni miktar={fifo.KalanMiktar}");
-                                fifo.GuncellemeTarihi = DateTime.Now;
+                                var cikisMiktari = cikis.CikisMiktari;
+                                var basarili = await ProcessFifoEntryWithRetry(fifo, async (f) => {
+                                    f.KalanMiktar += cikisMiktari;
+                                    _logger.LogInformation($"FIFO kayıtı kalan miktarı güncellendi: FifoID={f.StokFifoID}, Eski miktar={f.KalanMiktar - cikisMiktari}, Yeni miktar={f.KalanMiktar}");
+                                    f.GuncellemeTarihi = DateTime.Now;
+                                });
+                                
+                                if (!basarili)
+                                {
+                                    _logger.LogWarning($"FIFO kaydı güncellenirken concurrency hatası oluştu ve maksimum deneme sayısı aşıldı: FifoID={fifo.StokFifoID}, CikisMiktari={cikisMiktari}");
+                                }
                             }
                             
                             // Çıkış kaydını işaretle
@@ -889,53 +932,54 @@ namespace MuhasebeStokWebApp.Services
                 
                 _logger.LogInformation($"GetParaBirimiKuru çalıştırılıyor: {kaynakParaBirimi} -> {hedefParaBirimi}, Tarih: {tarih}");
                 
-                // Öncelikle döviz kuru servisini kullanmayı deneyelim
-                if (_dovizKuruService != null)
+                // Döviz kuru servisi kontrol
+                if (_dovizKuruService == null)
                 {
-                    try {
-                        // Servis çağrısına bir timeout ekleyelim
-                        using var cts = new CancellationTokenSource(TimeSpan.FromSeconds(5));
-                        var kurTask = _dovizKuruService.GetGuncelKurAsync(kaynakParaBirimi, hedefParaBirimi, tarih);
-                        
-                        // Task tamamlanmadan önce timeout olursa, hata fırlat
-                        var completedTask = await Task.WhenAny(kurTask, Task.Delay(5000, cts.Token));
-                        if (completedTask != kurTask)
-                        {
-                            _logger.LogWarning($"Döviz kuru servisi yanıt vermedi (timeout): {kaynakParaBirimi} -> {hedefParaBirimi}");
-                            cts.Cancel();
-                            throw new TimeoutException($"Döviz kuru servisi yanıt vermedi: {kaynakParaBirimi} -> {hedefParaBirimi}");
-                        }
-                        
-                        var kurDegeri = await kurTask;
-                        
-                        if (kurDegeri > 0)
-                        {
-                            _logger.LogInformation($"Kur değeri başarıyla alındı: {kaynakParaBirimi} -> {hedefParaBirimi} = {kurDegeri}");
-                            return kurDegeri;
-                        }
-                        else
-                        {
-                            throw new InvalidOperationException($"Geçersiz kur değeri alındı (0 veya negatif): {kaynakParaBirimi} -> {hedefParaBirimi}");
-                        }
-                    }
-                    catch (TaskCanceledException ex)
+                    _logger.LogError("Döviz kuru servisi bulunamadı - DI yapılandırmasını kontrol edin");
+                    throw new InvalidOperationException("Döviz kuru servisi bulunamadı. Sistem yöneticinizle iletişime geçin.");
+                }
+                
+                try 
+                {
+                    // Servis çağrısına bir timeout ekleyelim
+                    using var cts = new CancellationTokenSource(TimeSpan.FromSeconds(5));
+                    var kurTask = _dovizKuruService.GetGuncelKurAsync(kaynakParaBirimi, hedefParaBirimi, tarih);
+                    
+                    // Task tamamlanmadan önce timeout olursa, hata fırlat
+                    var completedTask = await Task.WhenAny(kurTask, Task.Delay(5000, cts.Token));
+                    if (completedTask != kurTask)
                     {
-                        _logger.LogWarning($"Döviz kuru servisi timeout: {ex.Message}");
-                        throw new TimeoutException($"Döviz kuru servisi yanıt vermedi: {kaynakParaBirimi} -> {hedefParaBirimi}", ex);
+                        _logger.LogWarning($"Döviz kuru servisi yanıt vermedi (timeout): {kaynakParaBirimi} -> {hedefParaBirimi}");
+                        cts.Cancel();
+                        throw new TimeoutException($"Döviz kuru servisi yanıt vermedi: {kaynakParaBirimi} -> {hedefParaBirimi}");
                     }
-                    catch (TimeoutException)
+                    
+                    var kurDegeri = await kurTask;
+                    
+                    if (kurDegeri > 0)
                     {
-                        throw;
+                        _logger.LogInformation($"Kur değeri başarıyla alındı: {kaynakParaBirimi} -> {hedefParaBirimi} = {kurDegeri}");
+                        return kurDegeri;
                     }
-                    catch (Exception ex)
+                    else
                     {
-                        _logger.LogError(ex, $"Döviz kuru servisinden değer alınırken hata: {kaynakParaBirimi} -> {hedefParaBirimi}");
-                        throw new InvalidOperationException($"Döviz kuru alınırken hata oluştu: {kaynakParaBirimi} -> {hedefParaBirimi}", ex);
+                        _logger.LogError($"Geçersiz kur değeri alındı: {kaynakParaBirimi} -> {hedefParaBirimi} = {kurDegeri}");
+                        throw new InvalidOperationException($"Geçersiz kur değeri alındı (0 veya negatif): {kaynakParaBirimi} -> {hedefParaBirimi}");
                     }
                 }
-                else
+                catch (TaskCanceledException ex)
                 {
-                    throw new InvalidOperationException("Döviz kuru servisi bulunamadı.");
+                    _logger.LogWarning($"Döviz kuru servisi timeout: {ex.Message}");
+                    throw new TimeoutException($"Döviz kuru servisi yanıt vermedi: {kaynakParaBirimi} -> {hedefParaBirimi}", ex);
+                }
+                catch (TimeoutException)
+                {
+                    throw;
+                }
+                catch (Exception ex)
+                {
+                    _logger.LogError(ex, $"Döviz kuru servisinden değer alınırken hata: {kaynakParaBirimi} -> {hedefParaBirimi}");
+                    throw new InvalidOperationException($"Döviz kuru alınırken hata oluştu: {kaynakParaBirimi} -> {hedefParaBirimi}", ex);
                 }
             }
             catch (Exception ex)
@@ -943,6 +987,138 @@ namespace MuhasebeStokWebApp.Services
                 _logger.LogError(ex, $"Döviz kuru alınırken hata oluştu: {kaynakParaBirimi} -> {hedefParaBirimi}, Tarih: {tarih}");
                 throw new InvalidOperationException($"Döviz kuru alınırken hata oluştu: {kaynakParaBirimi} -> {hedefParaBirimi}, Tarih: {tarih}", ex);
             }
+        }
+
+        /// <summary>
+        /// Concurrency yönetimi ile FIFO kaydı işleme ve güncellenen kaydı döndürme
+        /// </summary>
+        /// <param name="fifoEntry">İşlenecek FIFO kaydı</param>
+        /// <param name="processAction">FIFO kaydı üzerinde yapılacak işlem</param>
+        /// <param name="maxRetries">Maksimum yeniden deneme sayısı</param>
+        /// <returns>Güncellenmiş FIFO kaydı veya null</returns>
+        public async Task<StokFifo> ProcessFifoEntryWithRetryAndReturn(StokFifo fifoEntry, Func<StokFifo, Task> processAction, int maxRetries = 3)
+        {
+            bool retryNeeded = true;
+            int retryCount = 0;
+            
+            while (retryNeeded && retryCount < maxRetries)
+            {
+                try
+                {
+                    // FIFO kaydı işleme
+                    await processAction(fifoEntry);
+                    
+                    // Değişiklikleri kaydet
+                    await _context.SaveChangesAsync();
+                    
+                    // İşlem başarılı, retry gerek yok
+                    retryNeeded = false;
+                    return fifoEntry;
+                }
+                catch (DbUpdateConcurrencyException ex)
+                {
+                    retryCount++;
+                    _logger.LogWarning($"FIFO işlemi sırasında concurrency hatası oluştu. StokFifoID: {fifoEntry.StokFifoID}, Deneme: {retryCount}/{maxRetries}");
+                    
+                    if (retryCount >= maxRetries)
+                    {
+                        _logger.LogError($"FIFO işlemi maksimum deneme sayısını aştı. StokFifoID: {fifoEntry.StokFifoID}, Hata: {ex.Message}");
+                        throw new FifoConcurrencyException(fifoEntry.StokFifoID, retryCount, 
+                            $"FIFO işlemi {maxRetries} deneme sonrasında başarısız oldu: {ex.Message}");
+                    }
+                    
+                    // Veritabanındaki güncel değerleri al
+                    var entry = ex.Entries.Single();
+                    var databaseValues = await entry.GetDatabaseValuesAsync();
+                    
+                    if (databaseValues == null)
+                    {
+                        // Kayıt silinmiş, retry gereksiz
+                        _logger.LogWarning($"FIFO kaydı {fifoEntry.StokFifoID} veritabanında bulunamadı, işlem iptal edildi.");
+                        return null;
+                    }
+                    
+                    // Değerleri güncelle ve yeniden dene
+                    entry.OriginalValues.SetValues(databaseValues);
+                    
+                    // Bekle ve tekrar dene (exponential backoff - artan bekleme süresi)
+                    int waitTime = (int)Math.Pow(2, retryCount) * 100; // 100ms, 200ms, 400ms...
+                    await Task.Delay(waitTime);
+                }
+                catch (Exception ex)
+                {
+                    _logger.LogError($"FIFO işlemi sırasında beklenmeyen hata: {ex.Message}");
+                    throw;
+                }
+            }
+            
+            return null;
+        }
+
+        /// <summary>
+        /// Concurrency yönetimi ile FIFO kaydı işleme
+        /// </summary>
+        /// <param name="fifoEntry">İşlenecek FIFO kaydı</param>
+        /// <param name="processAction">FIFO kaydı üzerinde yapılacak işlem</param>
+        /// <param name="maxRetries">Maksimum yeniden deneme sayısı</param>
+        /// <returns>İşlem sonucu</returns>
+        public async Task<bool> ProcessFifoEntryWithRetry(StokFifo fifoEntry, Func<StokFifo, Task> processAction, int maxRetries = 3)
+        {
+            bool retryNeeded = true;
+            int retryCount = 0;
+            
+            while (retryNeeded && retryCount < maxRetries)
+            {
+                try
+                {
+                    // FIFO kaydı işleme
+                    await processAction(fifoEntry);
+                    
+                    // Değişiklikleri kaydet
+                    await _context.SaveChangesAsync();
+                    
+                    // İşlem başarılı, retry gerek yok
+                    retryNeeded = false;
+                    return true;
+                }
+                catch (DbUpdateConcurrencyException ex)
+                {
+                    retryCount++;
+                    _logger.LogWarning($"FIFO işlemi sırasında concurrency hatası oluştu. StokFifoID: {fifoEntry.StokFifoID}, Deneme: {retryCount}/{maxRetries}");
+                    
+                    if (retryCount >= maxRetries)
+                    {
+                        _logger.LogError($"FIFO işlemi maksimum deneme sayısını aştı. StokFifoID: {fifoEntry.StokFifoID}, Hata: {ex.Message}");
+                        throw new FifoConcurrencyException(fifoEntry.StokFifoID, retryCount, 
+                            $"FIFO işlemi {maxRetries} deneme sonrasında başarısız oldu: {ex.Message}");
+                    }
+                    
+                    // Veritabanındaki güncel değerleri al
+                    var entry = ex.Entries.Single();
+                    var databaseValues = await entry.GetDatabaseValuesAsync();
+                    
+                    if (databaseValues == null)
+                    {
+                        // Kayıt silinmiş, retry gereksiz
+                        _logger.LogWarning($"FIFO kaydı {fifoEntry.StokFifoID} veritabanında bulunamadı, işlem iptal edildi.");
+                        return false;
+                    }
+                    
+                    // Değerleri güncelle ve yeniden dene
+                    entry.OriginalValues.SetValues(databaseValues);
+                    
+                    // Bekle ve tekrar dene (exponential backoff - artan bekleme süresi)
+                    int waitTime = (int)Math.Pow(2, retryCount) * 100; // 100ms, 200ms, 400ms...
+                    await Task.Delay(waitTime);
+                }
+                catch (Exception ex)
+                {
+                    _logger.LogError($"FIFO işlemi sırasında beklenmeyen hata: {ex.Message}");
+                    throw;
+                }
+            }
+            
+            return false;
         }
 
         #endregion

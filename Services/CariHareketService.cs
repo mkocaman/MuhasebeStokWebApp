@@ -1,7 +1,9 @@
 using Microsoft.EntityFrameworkCore;
+using Microsoft.Extensions.Logging;
 using MuhasebeStokWebApp.Data;
 using MuhasebeStokWebApp.Data.Entities;
 using MuhasebeStokWebApp.Data.Repositories;
+using MuhasebeStokWebApp.Enums;
 using MuhasebeStokWebApp.Services.Interfaces;
 using System;
 using System.Collections.Generic;
@@ -15,15 +17,18 @@ namespace MuhasebeStokWebApp.Services
         private readonly ApplicationDbContext _context;
         private readonly ILogService _logService;
         private readonly IUnitOfWork _unitOfWork;
+        private readonly ILogger<CariHareketService> _logger;
 
         public CariHareketService(
             ApplicationDbContext context, 
             ILogService logService,
-            IUnitOfWork unitOfWork)
+            IUnitOfWork unitOfWork,
+            ILogger<CariHareketService> logger)
         {
             _context = context;
             _logService = logService;
             _unitOfWork = unitOfWork;
+            _logger = logger;
         }
 
         /// <summary>
@@ -146,6 +151,92 @@ namespace MuhasebeStokWebApp.Services
                 .Where(c => c.CariID == cariId && !c.Silindi)
                 .OrderByDescending(c => c.Tarih)
                 .ToListAsync();
+        }
+
+        /// <summary>
+        /// Fatura için cari hareket kaydı oluşturur
+        /// </summary>
+        public async Task<CariHareket> CreateFromFaturaAsync(Fatura fatura, Guid? kullaniciId)
+        {
+            if (fatura == null)
+                throw new ArgumentNullException(nameof(fatura));
+            
+            if (fatura.CariID == null || fatura.CariID == Guid.Empty)
+            {
+                _logger.LogWarning($"Faturada geçerli bir Cari ID yok. FaturaID: {fatura.FaturaID}");
+                return null;
+            }
+            
+            // Fatura türünü yükle (eğer yüklenmemişse)
+            if (fatura.FaturaTuru == null && fatura.FaturaTuruID.HasValue)
+            {
+                await _context.Entry(fatura).Reference(f => f.FaturaTuru).LoadAsync();
+            }
+            
+            // Hareket türünü belirle
+            string hareketTuru = fatura.FaturaTuru?.FaturaTuruAdi ?? "Bilinmiyor";
+            bool borcMu = fatura.FaturaTuru?.HareketTuru == "Çıkış"; // Satış faturası ise Borç, Alış faturası ise Alacak
+            
+            var cariHareket = new CariHareket
+            {
+                CariHareketID = Guid.NewGuid(),
+                CariID = fatura.CariID.Value,
+                Tarih = fatura.FaturaTarihi ?? DateTime.Now,
+                Aciklama = $"{fatura.FaturaNumarasi} numaralı {hareketTuru} faturası",
+                ReferansNo = fatura.FaturaNumarasi,
+                ReferansTuru = "Fatura",
+                ReferansID = fatura.FaturaID,
+                HareketTuru = hareketTuru,
+                Borc = borcMu ? fatura.GenelToplam ?? 0 : 0,
+                Alacak = !borcMu ? fatura.GenelToplam ?? 0 : 0,
+                Tutar = fatura.GenelToplam ?? 0,
+                OlusturmaTarihi = DateTime.Now,
+                OlusturanKullaniciID = kullaniciId
+            };
+            
+            await _unitOfWork.CariHareketRepository.AddAsync(cariHareket);
+            
+            _logger.LogInformation($"Faturadan cari hareket oluşturuldu: FaturaID: {fatura.FaturaID}, CariID: {cariHareket.CariID}, Tutar: {cariHareket.Tutar}");
+            
+            return cariHareket;
+        }
+
+        /// <summary>
+        /// Fatura silme işlemi için cari hareket kaydını iptal eder
+        /// </summary>
+        public async Task<bool> IptalEtCariHareketAsync(Guid faturaId)
+        {
+            // Faturaya ait cari hareketleri bul
+            var cariHareketler = await _context.CariHareketler
+                .Where(ch => ch.ReferansID == faturaId && ch.ReferansTuru == "Fatura" && !ch.Silindi)
+                .ToListAsync();
+            
+            if (cariHareketler == null || !cariHareketler.Any())
+            {
+                _logger.LogWarning($"FaturaID: {faturaId} için iptal edilecek cari hareket bulunamadı.");
+                return false;
+            }
+            
+            foreach (var hareket in cariHareketler)
+            {
+                // Cari hareketi silinmiş olarak işaretle
+                hareket.Silindi = true;
+                hareket.GuncellemeTarihi = DateTime.Now;
+                hareket.Aciklama += " (İptal edildi)";
+                
+                _context.CariHareketler.Update(hareket);
+                
+                _logger.LogInformation($"Cari hareket iptal edildi: CariHareketID: {hareket.CariHareketID}, FaturaID: {faturaId}");
+            }
+            
+            await _context.SaveChangesAsync();
+            
+            await _logService.Log(
+                $"Fatura silme işlemi için {cariHareketler.Count} adet cari hareket iptal edildi. FaturaID: {faturaId}",
+                LogTuru.Bilgi
+            );
+            
+            return true;
         }
     }
 } 

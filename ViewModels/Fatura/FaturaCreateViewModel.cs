@@ -89,6 +89,9 @@ namespace MuhasebeStokWebApp.ViewModels.Fatura
 
         [Display(Name = "KDV Toplam")]
         public decimal KdvToplam { get; set; }
+        
+        [Display(Name = "İndirim Tutarı")]
+        public decimal IndirimTutari { get; set; }
 
         [Display(Name = "Genel Toplam")]
         public decimal GenelToplam { get; set; }
