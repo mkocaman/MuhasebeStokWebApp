@@ -1,13 +1,17 @@
 using System;
 using System.Threading.Tasks;
 using MuhasebeStokWebApp.Data.Entities;
+using MuhasebeStokWebApp.Data.Repositories.EntityRepositories;
 
 namespace MuhasebeStokWebApp.Data.Repositories
 {
     public interface IUnitOfWork : IDisposable
     {
+        // Generic Repository Properties
         IRepository<Fatura> FaturaRepository { get; }
         IRepository<FaturaDetay> FaturaDetayRepository { get; }
+        IRepository<FaturaOdeme> FaturaOdemeleriRepository { get; }
+        IRepository<FaturaTuru> FaturaTurleriRepository { get; }
         IRepository<Cari> CariRepository { get; }
         IRepository<CariHareket> CariHareketRepository { get; }
         IRepository<Urun> UrunRepository { get; }
@@ -23,9 +27,25 @@ namespace MuhasebeStokWebApp.Data.Repositories
         IRepository<Menu> MenuRepository { get; }
         IRepository<Sozlesme> SozlesmeRepository { get; }
         IRepository<SistemAyarlari> SistemAyarlariRepository { get; }
+        IRepository<Depo> DepolarRepository { get; }
         
+        // Entity-specific Repository Properties
+        IUrunRepository EntityUrunRepository { get; }
+        IFaturaRepository EntityFaturaRepository { get; }
+        ICariRepository EntityCariRepository { get; }
+        IIrsaliyeRepository EntityIrsaliyeRepository { get; }
+        IIrsaliyeDetayRepository EntityIrsaliyeDetayRepository { get; }
+        // Diğer entity-specific repository'ler
+        IRepository<StokHareket> EntityStokHareketRepository { get; }
+        IRepository<StokFifo> EntityStokFifoRepository { get; }
+        IRepository<FaturaDetay> EntityFaturaDetayRepository { get; }
+        IRepository<CariHareket> EntityCariHareketRepository { get; }
+        IRepository<Depo> EntityDepolarRepository { get; }
+        
+        // Generic repository factory method
         IRepository<TEntity> Repository<TEntity>() where TEntity : class;
         
+        // Transaction methods
         Task BeginTransactionAsync();
         Task CommitTransactionAsync();
         Task RollbackTransactionAsync();

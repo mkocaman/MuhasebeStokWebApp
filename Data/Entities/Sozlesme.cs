@@ -12,7 +12,7 @@ namespace MuhasebeStokWebApp.Data.Entities
         
         [Required]
         [StringLength(100)]
-        public string SozlesmeNo { get; set; }
+        public string SozlesmeNo { get; set; } = "";
         
         [Required]
         public DateTime SozlesmeTarihi { get; set; }
@@ -20,9 +20,10 @@ namespace MuhasebeStokWebApp.Data.Entities
         public DateTime? BitisTarihi { get; set; }
         
         [ForeignKey("Cari")]
+        [Required]
         public Guid CariID { get; set; }
         
-        public virtual Cari? Cari { get; set; }
+        public virtual Cari Cari { get; set; } = null!;
         
         public bool VekaletGeldiMi { get; set; } = false;
         

@@ -1,6 +1,7 @@
 using Microsoft.EntityFrameworkCore;
 using MuhasebeStokWebApp.Data;
 using MuhasebeStokWebApp.Data.Entities;
+using MuhasebeStokWebApp.Data.Repositories;
 using MuhasebeStokWebApp.Services.Interfaces;
 using MuhasebeStokWebApp.Services;
 using System;
@@ -13,144 +14,165 @@ namespace MuhasebeStokWebApp.Services
 {
     public class CariService : ICariService
     {
-        private readonly ApplicationDbContext _context;
+        private readonly IUnitOfWork _unitOfWork;
         private readonly ILogger<CariService> _logger;
         private readonly IParaBirimiService _paraBirimiService;
+        private readonly IExceptionHandlingService _exceptionHandler;
+        private readonly ITransactionManagerService _transactionManager;
+        private readonly IParaBirimiCeviriciService _paraBirimiCevirici;
         // Bakiye değerlerini geçici olarak saklamak için Dictionary
         private readonly Dictionary<Guid, decimal> _bakiyeSozlugu = new Dictionary<Guid, decimal>();
 
         public CariService(
-            ApplicationDbContext context, 
+            IUnitOfWork unitOfWork, 
             ILogger<CariService> logger,
-            IParaBirimiService paraBirimiService)
+            IParaBirimiService paraBirimiService,
+            IExceptionHandlingService exceptionHandler,
+            ITransactionManagerService transactionManager,
+            IParaBirimiCeviriciService paraBirimiCevirici)
         {
-            _context = context;
+            _unitOfWork = unitOfWork;
             _logger = logger;
             _paraBirimiService = paraBirimiService;
+            _exceptionHandler = exceptionHandler;
+            _transactionManager = transactionManager;
+            _paraBirimiCevirici = paraBirimiCevirici;
         }
 
         public async Task<IEnumerable<Cari>> GetAllAsync()
         {
-            return await _context.Cariler
-                .AsNoTracking()
-                .Where(c => !c.Silindi)
-                .OrderBy(c => c.Ad)
-                .ToListAsync();
+            return await _unitOfWork.EntityCariRepository.GetAllAsync(c => !c.Silindi, q => q.OrderBy(c => c.Ad));
         }
 
         public async Task<Cari> GetByIdAsync(Guid id)
         {
-            return await _context.Cariler
-                .FirstOrDefaultAsync(c => c.CariID == id && !c.Silindi);
+            return await _exceptionHandler.HandleExceptionAsync(
+                async () => await _unitOfWork.EntityCariRepository.GetByIdAsync(id),
+                "GetByIdAsync",
+                id);
         }
 
         public async Task<Cari> AddAsync(Cari cari)
         {
-            // Transaction yönetimi
-            using var transaction = await _context.Database.BeginTransactionAsync();
-            try
+            return await _exceptionHandler.HandleExceptionAsync(async () => 
             {
-                await _context.Cariler.AddAsync(cari);
-                await _context.SaveChangesAsync();
-                
-                // Açılış bakiyesi hareketi ekleme
-                if (cari.BaslangicBakiye != 0)
+                // Transaction başlat
+                await _unitOfWork.BeginTransactionAsync();
+                try
                 {
-                    var acilisBakiyeHareketi = new CariHareket
-                    {
-                        CariHareketID = Guid.NewGuid(),
-                        CariID = cari.CariID,
-                        Tarih = DateTime.Now,
-                        HareketTuru = "Açılış bakiyesi",
-                        Aciklama = "Açılış bakiyesi",
-                        Borc = cari.BaslangicBakiye < 0 ? Math.Abs(cari.BaslangicBakiye) : 0,
-                        Alacak = cari.BaslangicBakiye > 0 ? cari.BaslangicBakiye : 0,
-                        Tutar = Math.Abs(cari.BaslangicBakiye),
-                        OlusturmaTarihi = DateTime.Now,
-                        OlusturanKullaniciID = cari.OlusturanKullaniciId
-                    };
+                    // Cari ekle
+                    await _unitOfWork.CariRepository.AddAsync(cari);
+                    await _unitOfWork.SaveChangesAsync();
                     
-                    await _context.CariHareketler.AddAsync(acilisBakiyeHareketi);
-                    await _context.SaveChangesAsync();
-                    _logger.LogInformation($"Cari açılış bakiye hareketi oluşturuldu: ID={acilisBakiyeHareketi.CariHareketID}, Tutar={cari.BaslangicBakiye}");
+                    // Açılış bakiyesi hareketi ekleme
+                    if (cari.BaslangicBakiye != 0)
+                    {
+                        var acilisBakiyeHareketi = new CariHareket
+                        {
+                            CariHareketID = Guid.NewGuid(),
+                            CariID = cari.CariID,
+                            Tarih = DateTime.Now,
+                            HareketTuru = "Açılış bakiyesi",
+                            Aciklama = "Açılış bakiyesi",
+                            Borc = cari.BaslangicBakiye < 0 ? Math.Abs(cari.BaslangicBakiye) : 0,
+                            Alacak = cari.BaslangicBakiye > 0 ? cari.BaslangicBakiye : 0,
+                            Tutar = Math.Abs(cari.BaslangicBakiye),
+                            OlusturmaTarihi = DateTime.Now,
+                            OlusturanKullaniciID = cari.OlusturanKullaniciId
+                        };
+                        
+                        await _unitOfWork.CariHareketRepository.AddAsync(acilisBakiyeHareketi);
+                        await _unitOfWork.SaveChangesAsync();
+                    }
+                    
+                    // Transaction'ı commit et
+                    await _unitOfWork.CommitTransactionAsync();
+                    return cari;
                 }
-                
-                await transaction.CommitAsync();
-                _logger.LogInformation($"Cari başarıyla oluşturuldu: ID={cari.CariID}, Ad={cari.Ad}");
-                
-                return cari;
-            }
-            catch (Exception ex)
-            {
-                await transaction.RollbackAsync();
-                _logger.LogError(ex, $"Cari kayıt işlemi sırasında hata: {ex.Message}");
-                throw;
-            }
+                catch
+                {
+                    // Hata durumunda rollback yap
+                    await _unitOfWork.RollbackTransactionAsync();
+                    throw;
+                }
+            }, "AddAsync", cari.CariID, cari.Ad, cari.BaslangicBakiye);
         }
 
         public async Task<Cari> UpdateAsync(Cari cari)
         {
-            using var transaction = await _context.Database.BeginTransactionAsync();
-            try
+            return await _exceptionHandler.HandleExceptionAsync(async () => 
             {
-                _context.Entry(cari).State = EntityState.Modified;
-                cari.GuncellemeTarihi = DateTime.Now;
-                
-                await _context.SaveChangesAsync();
-                await transaction.CommitAsync();
-                
-                _logger.LogInformation($"Cari başarıyla güncellendi: ID={cari.CariID}, Ad={cari.Ad}");
-                return cari;
-            }
-            catch (Exception ex)
-            {
-                await transaction.RollbackAsync();
-                _logger.LogError(ex, $"Cari güncelleme işlemi sırasında hata: {ex.Message}");
-                throw;
-            }
+                // Transaction başlat
+                await _unitOfWork.BeginTransactionAsync();
+                try
+                {
+                    cari.GuncellemeTarihi = DateTime.Now;
+                    
+                    await _unitOfWork.CariRepository.UpdateAsync(cari);
+                    await _unitOfWork.SaveChangesAsync();
+                    
+                    // Transaction'ı commit et
+                    await _unitOfWork.CommitTransactionAsync();
+                    
+                    return cari;
+                }
+                catch
+                {
+                    // Hata durumunda rollback yap
+                    await _unitOfWork.RollbackTransactionAsync();
+                    throw;
+                }
+            }, "UpdateAsync", cari.CariID, cari.Ad);
         }
 
         public async Task DeleteAsync(Cari cari)
         {
-            using var transaction = await _context.Database.BeginTransactionAsync();
-            try
+            await _exceptionHandler.HandleExceptionAsync(async () => 
             {
-                // İlgili cariye ait hareketleri kontrol et
-                bool hareketVarMi = await _context.CariHareketler
-                    .AnyAsync(ch => ch.CariID == cari.CariID && !ch.Silindi);
+                // Transaction başlat
+                await _unitOfWork.BeginTransactionAsync();
+                try
+                {
+                    // İlgili cariye ait hareketleri kontrol et
+                    bool hareketVarMi = await _unitOfWork.CariHareketRepository.AnyAsync(ch => 
+                        ch.CariID == cari.CariID && !ch.Silindi);
+                    
+                    if (hareketVarMi)
+                    {
+                        _logger.LogWarning($"Cari silinemiyor, ilişkili hareketleri var: ID={cari.CariID}, Ad={cari.Ad}");
+                        // Hard delete yerine soft delete uygula
+                        cari.Silindi = true;
+                        cari.AktifMi = false;
+                        cari.GuncellemeTarihi = DateTime.Now;
+                        
+                        await _unitOfWork.CariRepository.UpdateAsync(cari);
+                        await _unitOfWork.SaveChangesAsync();
+                        _logger.LogInformation($"Cari pasife alındı (soft delete): ID={cari.CariID}, Ad={cari.Ad}");
+                    }
+                    else
+                    {
+                        // İlişkili kayıtlar yoksa hard delete yapabilirsin
+                        // Veya yine soft delete tercih edilebilir
+                        cari.Silindi = true;
+                        cari.GuncellemeTarihi = DateTime.Now;
+                        
+                        await _unitOfWork.CariRepository.UpdateAsync(cari);
+                        await _unitOfWork.SaveChangesAsync();
+                        _logger.LogInformation($"Cari silindi: ID={cari.CariID}, Ad={cari.Ad}");
+                    }
+                    
+                    // Transaction'ı commit et
+                    await _unitOfWork.CommitTransactionAsync();
+                }
+                catch
+                {
+                    // Hata durumunda rollback yap
+                    await _unitOfWork.RollbackTransactionAsync();
+                    throw;
+                }
                 
-                if (hareketVarMi)
-                {
-                    _logger.LogWarning($"Cari silinemiyor, ilişkili hareketleri var: ID={cari.CariID}, Ad={cari.Ad}");
-                    // Hard delete yerine soft delete uygula
-                    cari.Silindi = true;
-                    cari.AktifMi = false;
-                    cari.GuncellemeTarihi = DateTime.Now;
-                    
-                    await _context.SaveChangesAsync();
-                    await transaction.CommitAsync();
-                    
-                    _logger.LogInformation($"Cari pasife alındı (soft delete): ID={cari.CariID}, Ad={cari.Ad}");
-                }
-                else
-                {
-                    // İlişkili kayıtlar yoksa hard delete yapabilirsin
-                    // Veya yine soft delete tercih edilebilir
-                    cari.Silindi = true;
-                    cari.GuncellemeTarihi = DateTime.Now;
-                    
-                    await _context.SaveChangesAsync();
-                    await transaction.CommitAsync();
-                    
-                    _logger.LogInformation($"Cari silindi: ID={cari.CariID}, Ad={cari.Ad}");
-                }
-            }
-            catch (Exception ex)
-            {
-                await transaction.RollbackAsync();
-                _logger.LogError(ex, $"Cari silme işlemi sırasında hata: {ex.Message}");
-                throw;
-            }
+                return true;
+            }, "DeleteAsync", cari.CariID, cari.Ad);
         }
 
         /// <summary>
@@ -162,27 +184,22 @@ namespace MuhasebeStokWebApp.Services
             {
                 _logger.LogInformation($"CariBakiyeHesaplaAsync başladı: CariID={cariId}, Tarih={tarih}, ParaBirimiID={paraBirimiId}");
                 
-                // Cari'yi veritabanından getir
-                var cari = await _context.Cariler.FindAsync(cariId);
+                // Cari'yi repository üzerinden getir
+                var cari = await _unitOfWork.EntityCariRepository.GetByIdAsync(cariId);
                 if (cari == null)
                 {
                     _logger.LogWarning($"Bakiye hesaplanamadı: Cari bulunamadı (ID: {cariId})");
                     throw new Exception($"Cari bulunamadı (ID: {cariId})");
                 }
                 
-                // Cari hareketlerini getir - performans için AsNoTracking kullan
-                var query = _context.CariHareketler
-                    .AsNoTracking()
-                    .Where(ch => ch.CariID == cariId && !ch.Silindi);
+                // Cari hareketlerini getir
+                var hareketler = await _unitOfWork.EntityCariRepository.GetCariHareketlerAsync(cariId);
                 
-                // Tarih filtresi ekle
+                // Tarih filtresi uygula
                 if (tarih.HasValue)
                 {
-                    query = query.Where(ch => ch.Tarih <= tarih.Value);
+                    hareketler = hareketler.Where(ch => ch.Tarih <= tarih.Value).ToList();
                 }
-                
-                // Hareketleri getir
-                var hareketler = await query.ToListAsync();
                 
                 // Açılış bakiyesi hareketlerini bul
                 var acilisBakiyeHareketi = hareketler
@@ -196,41 +213,48 @@ namespace MuhasebeStokWebApp.Services
                     : cari.BaslangicBakiye;
                 
                 // Diğer hareketlerin bakiyeye etkisini hesapla (açılış bakiyesi hariç)
-                foreach (var hareket in hareketler.Where(h => h.HareketTuru != "Açılış bakiyesi").OrderBy(h => h.Tarih))
+                foreach (var hareket in hareketler
+                    .Where(h => h.HareketTuru != "Açılış bakiyesi")
+                    .OrderBy(h => h.Tarih))
                 {
                     // Bakiye düzeltmesi ise
                     if (hareket.HareketTuru == "Bakiye Düzeltmesi")
                     {
+                        bakiye = hareket.Alacak - hareket.Borc;
+                    }
+                    else
+                    {
                         bakiye += hareket.Alacak - hareket.Borc;
-                    }
-                    // Ödeme, borç veya çıkış ise bakiyeyi azalt
-                    else if (hareket.HareketTuru == "Ödeme" || hareket.HareketTuru == "Borç" || hareket.HareketTuru == "Çıkış")
-                    {
-                        bakiye -= hareket.Tutar;
-                    }
-                    // Tahsilat, alacak veya giriş ise bakiyeyi artır
-                    else if (hareket.HareketTuru == "Tahsilat" || hareket.HareketTuru == "Alacak" || hareket.HareketTuru == "Giriş")
-                    {
-                        bakiye += hareket.Tutar;
                     }
                 }
                 
                 // Para birimi dönüşümü
-                if (paraBirimiId.HasValue && cari.VarsayilanParaBirimiId.HasValue && paraBirimiId.Value != cari.VarsayilanParaBirimiId.Value)
+                if (paraBirimiId.HasValue && paraBirimiId != cari.VarsayilanParaBirimiId && cari.VarsayilanParaBirimiId.HasValue)
                 {
-                    // Not: Bu kısım uygulamanın döviz kuru servisiyle entegrasyonu gerektirir
-                    // Örnek olarak sabit bir dönüşüm oranı kullanılabilir veya bu fonksiyonellik daha sonra eklenebilir
-                    var dovizKuru = 1.0m; // Varsayılan olarak 1:1 dönüşüm
+                    // Hedef para birimi kodunu getir
+                    var hedefParaBirimi = await _paraBirimiService.GetByIdAsync(paraBirimiId.Value);
+                    var kaynakParaBirimi = await _paraBirimiService.GetByIdAsync(cari.VarsayilanParaBirimiId.Value);
                     
-                    bakiye = Math.Round(bakiye * dovizKuru, 2);
+                    if (hedefParaBirimi != null && kaynakParaBirimi != null)
+                    {
+                        // Para birimi dönüşümü
+                        bakiye = await _paraBirimiCevirici.TutarDonusturAsync(
+                            bakiye, 
+                            kaynakParaBirimi.ParaBirimiKodu, 
+                            hedefParaBirimi.ParaBirimiKodu);
+                    }
                 }
                 
-                _logger.LogInformation($"Cari bakiye hesaplandı: CariID={cariId}, Bakiye={bakiye}");
+                _logger.LogInformation($"CariBakiyeHesaplaAsync tamamlandı: CariID={cariId}, Tarih={tarih}, ParaBirimiID={paraBirimiId}, Bakiye={bakiye}");
+                
+                // Hesaplanan bakiyeyi cache'le
+                _bakiyeSozlugu[cariId] = bakiye;
+                
                 return bakiye;
             }
             catch (Exception ex)
             {
-                _logger.LogError(ex, $"Cari bakiye hesaplanırken hata oluştu: {ex.Message}");
+                _logger.LogError(ex, $"Bakiye hesaplanırken hata: CariID={cariId}, Tarih={tarih}, ParaBirimiID={paraBirimiId}");
                 throw;
             }
         }
@@ -253,7 +277,7 @@ namespace MuhasebeStokWebApp.Services
                 var endDate = bitisTarihi ?? DateTime.Now.Date.AddDays(1).AddSeconds(-1);
                 
                 // Cari varlığını kontrol et
-                var cari = await _context.Cariler.FindAsync(cariId);
+                var cari = await _unitOfWork.EntityCariRepository.GetByIdAsync(cariId);
                 if (cari == null || cari.Silindi)
                 {
                     _logger.LogWarning($"Cari ekstre alınamadı: Cari bulunamadı (ID: {cariId})");
@@ -267,10 +291,7 @@ namespace MuhasebeStokWebApp.Services
                 }
                 
                 // Tüm hareketleri getir - performans için AsNoTracking kullan
-                var tumHareketler = await _context.CariHareketler
-                    .AsNoTracking()
-                    .Where(c => !c.Silindi && c.CariID == cariId)
-                    .ToListAsync();
+                var tumHareketler = await _unitOfWork.EntityCariRepository.GetCariHareketlerAsync(cariId);
                 
                 // Açılış bakiyesi hareketlerini ayrı al 
                 var acilisBakiyeHareketi = tumHareketler
@@ -354,26 +375,58 @@ namespace MuhasebeStokWebApp.Services
                 // Para birimi dönüşümü
                 if (paraBirimiId.HasValue && cari.VarsayilanParaBirimiId.HasValue && paraBirimiId.Value != cari.VarsayilanParaBirimiId.Value)
                 {
-                    // Not: Döviz kuru servisi entegrasyonu
-                    var dovizKuru = 1.0m; // Varsayılan olarak 1:1 dönüşüm
+                    // Para birimlerini bul
+                    var kaynakParaBirimi = await _paraBirimiService.GetByIdAsync(cari.VarsayilanParaBirimiId.Value);
+                    var hedefParaBirimi = await _paraBirimiService.GetByIdAsync(paraBirimiId.Value);
                     
-                    // Başlangıç bakiyesi ve her bir hareketin bakiyesini dönüştür
-                    baslangicBakiyesi = Math.Round(baslangicBakiyesi * dovizKuru, 2);
-                    
-                    foreach (var hareket in gosterilecekHareketler)
+                    if (kaynakParaBirimi != null && hedefParaBirimi != null)
                     {
-                        // Sözlükteki bakiye değerlerini güncelle
-                        if (_bakiyeSozlugu.ContainsKey(hareket.CariHareketID))
-                        {
-                            _bakiyeSozlugu[hareket.CariHareketID] = Math.Round(_bakiyeSozlugu[hareket.CariHareketID] * dovizKuru, 2);
-                        }
+                        // Başlangıç bakiyesini çevir
+                        baslangicBakiyesi = await _paraBirimiCevirici.TutarCevirAsync(
+                            baslangicBakiyesi, 
+                            kaynakParaBirimi.ParaBirimiKodu, 
+                            hedefParaBirimi.ParaBirimiKodu);
                         
-                        hareket.Tutar = Math.Round(hareket.Tutar * dovizKuru, 2);
-                        hareket.Borc = Math.Round(hareket.Borc * dovizKuru, 2);
-                        hareket.Alacak = Math.Round(hareket.Alacak * dovizKuru, 2);
+                        // Son bakiyeyi çevir
+                        bakiye = await _paraBirimiCevirici.TutarCevirAsync(
+                            bakiye, 
+                            kaynakParaBirimi.ParaBirimiKodu, 
+                            hedefParaBirimi.ParaBirimiKodu);
+                        
+                        // Hareketleri çevir
+                        await _paraBirimiCevirici.EntityKoleksiyonuCevirAsync(
+                            gosterilecekHareketler,
+                            hareket => hareket.Tutar,
+                            (hareket, deger) => hareket.Tutar = deger,
+                            kaynakParaBirimi.ParaBirimiKodu,
+                            hedefParaBirimi.ParaBirimiKodu);
+                        
+                        await _paraBirimiCevirici.EntityKoleksiyonuCevirAsync(
+                            gosterilecekHareketler,
+                            hareket => hareket.Borc,
+                            (hareket, deger) => hareket.Borc = deger,
+                            kaynakParaBirimi.ParaBirimiKodu,
+                            hedefParaBirimi.ParaBirimiKodu);
+                        
+                        await _paraBirimiCevirici.EntityKoleksiyonuCevirAsync(
+                            gosterilecekHareketler,
+                            hareket => hareket.Alacak,
+                            (hareket, deger) => hareket.Alacak = deger,
+                            kaynakParaBirimi.ParaBirimiKodu,
+                            hedefParaBirimi.ParaBirimiKodu);
+                        
+                        // Sözlükteki bakiye değerlerini güncelle
+                        foreach (var hareket in gosterilecekHareketler)
+                        {
+                            if (_bakiyeSozlugu.ContainsKey(hareket.CariHareketID))
+                            {
+                                _bakiyeSozlugu[hareket.CariHareketID] = await _paraBirimiCevirici.TutarCevirAsync(
+                                    _bakiyeSozlugu[hareket.CariHareketID],
+                                    kaynakParaBirimi.ParaBirimiKodu,
+                                    hedefParaBirimi.ParaBirimiKodu);
+                            }
+                        }
                     }
-                    
-                    bakiye = Math.Round(bakiye * dovizKuru, 2);
                 }
                 
                 _logger.LogInformation($"Cari ekstre başarıyla alındı: CariID={cariId}, Başlangıç bakiyesi={baslangicBakiyesi}, Son bakiye={bakiye}, Hareket sayısı={gosterilecekHareketler.Count}");

@@ -2,6 +2,7 @@ using System;
 using System.Collections.Generic;
 using System.Threading.Tasks;
 using MuhasebeStokWebApp.Data.Entities;
+using MuhasebeStokWebApp.ViewModels.Irsaliye;
 
 namespace MuhasebeStokWebApp.Services.Interfaces
 {
@@ -21,5 +22,13 @@ namespace MuhasebeStokWebApp.Services.Interfaces
         /// Yeni bir irsaliye numarası oluşturur
         /// </summary>
         string GenerateIrsaliyeNumarasi();
+
+        /// <summary>
+        /// İrsaliye detaylarını günceller
+        /// </summary>
+        /// <param name="irsaliyeID">İrsaliye ID</param>
+        /// <param name="detaylar">Detay listesi</param>
+        /// <returns>İşlem başarılı ise true</returns>
+        Task<bool> UpdateIrsaliyeDetaylarAsync(Guid irsaliyeID, List<IrsaliyeDetayViewModel> detaylar);
     }
 } 

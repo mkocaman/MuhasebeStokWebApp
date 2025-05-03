@@ -1,0 +1,95 @@
+# Migration Birleştirme Planı
+
+## Analiz
+Mevcut durumda 60+ migration dosyası bulunmakta. Bu dosyalar benzer işlemler için çok sayıda küçük değişiklikler içeriyor.
+
+## Birleştirme Stratejisi
+Migration'lar şu kategorilere ayrılabilir:
+
+1. **Temel Veritabanı Yapısı**
+   - InitialCreate
+   - PendingChanges
+   - FixPendingModelChanges
+   - FixRelationships
+   - FixRemainingRelationships
+   
+2. **Cari Modülü İyileştirmeleri**
+   - MakeCariUnvaniNullable
+   - FixCariHareketJsonPropertyNames
+   - RemoveCariGlobalQueryFilter
+   - CariNullableFields
+
+3. **Fatura ve İrsaliye Modeli İyileştirmeleri**
+   - FixFaturaTuruIDType
+   - FaturaNullableUpdate
+   - UpdateFaturaIrsaliyeRelations
+   - FaturaIrsaliyeAndStokUpdate
+   - FaturaDeleteiFix
+   - FixFaturaForeignKeyConstraints
+   - FixSozlesmeIdNullability
+   - AddSilindiToFaturaTuru
+   - AddOdenenTutarToFatura
+   - AddParaBirimiToFatura
+   - NormalizeFaturaParaAlanlari
+   - AddDovizFields
+
+4. **Stok Modülü İyileştirmeleri**
+   - AddStokFifoAndStokCikisDetay
+   - UpdateStokCikisDetayRelationToOptional
+   - StokMiktarFix
+   - AddPropertyForStokCikisDetay
+   - AddUrunAciklamaColumn
+   - AddParaBirimiToStokHareket
+
+5. **Para Birimi ve Kur İyileştirmeleri**
+   - FixParaBirimiController
+   - FixParaBirimiAdiProperty
+   - FixParaBirimiAdiIssue
+   - FixKarsiParaBirimi
+   - RemoveEffectiveRatesFromKurDegeri
+   - UpdateKurDegeriViewModel
+   - EfektifKurlarEklendi
+
+6. **Format ve Veri Tipi Düzeltmeleri**
+   - UpdateNullableTypes
+   - FixNullableCariIDConversion
+   - KDVFormatFix
+   - FixKDVOrani
+   - FormattingAndDisplayFixMigration
+   - FixDecimalColumnTypes
+   - UpdateDecimalColumnTypes
+
+7. **Diğer İyileştirmeler**
+   - FixFirstOrDefaultWithOrderBy
+   - DataTablesFixAndExcelExport
+   - FixCategoryDropdownIssue 
+   - ExcelImportExportFunctionality
+   - SetDeleteAndRestoreDeletedMethods
+   - AddMissingColumns
+   - InitialMigrationFix
+   - UpdateSistemLogWithKullaniciIDRelation
+   - FixSistemLogKullaniciIdColumnIssue
+   - MenuTablosuDuzenleme
+   - FixSchemaMismatch_20250501
+   - AddKullaniciGuidColumn
+   - AddKullaniciIdStringColumn
+
+## Eylem Planı
+1. Mevcut migration'ları yedekle
+2. Veritabanını ve __EFMigrationsHistory tablosunu yedekle
+3. Yeni birleştirilmiş migration'lar oluştur:
+   - ConsolidatedInitialMigration (Temel Veritabanı yapısı)
+   - ConsolidatedCariModuleImprovement (Cari Modülü)
+   - ConsolidatedFaturaIrsaliyeImprovements (Fatura/İrsaliye modülü)
+   - ConsolidatedStokModuleImprovements (Stok modülü)
+   - ConsolidatedParaBirimiImprovements (Para Birimi/Kur)
+   - ConsolidatedDataFormatFixes (Format düzeltmeleri)
+   - ConsolidatedOtherImprovements (Diğer iyileştirmeler)
+4. Program.cs'de DbContext kaydını güncelleyerek yeni migration'ları kullan
+5. Test et
+
+## Dikkat Edilecek Noktalar
+- Migration'lar arası bağımlılıklar dikkatle incelenmeli
+- Veri kaybı olmamasına dikkat edilmeli
+- Mevcut veritabanı yapısı tam olarak korunmalı
+- Test ortamında denenmeden production'a gönderilmemeli 

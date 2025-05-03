@@ -89,6 +89,60 @@ namespace MuhasebeStokWebApp.Services
 
             return new SelectList(sozlesmeler, "SozlesmeID", "SozlesmeNo", selectedSozlesmeId);
         }
+        
+        // Birim dropdown'ları için metod
+        public async Task<SelectList> GetBirimSelectListAsync(Guid? selectedBirimId = null)
+        {
+            var birimler = await _context.Birimler
+                .Where(b => b.Aktif && !b.Silindi)
+                .OrderBy(b => b.BirimAdi)
+                .ToListAsync();
+
+            return new SelectList(birimler, "BirimID", "BirimAdi", selectedBirimId);
+        }
+        
+        // Kategori dropdown'ları için metod
+        public async Task<SelectList> GetKategoriSelectListAsync(Guid? selectedKategoriId = null)
+        {
+            var kategoriler = await _context.UrunKategoriler
+                .Where(k => k.Aktif && !k.Silindi)
+                .OrderBy(k => k.KategoriAdi)
+                .ToListAsync();
+
+            return new SelectList(kategoriler, "KategoriID", "KategoriAdi", selectedKategoriId);
+        }
+        
+        // UrunController için kategori dropdown metodu
+        public async Task<List<SelectListItem>> GetKategoriSelectItemsAsync(Guid? selectedKategoriId = null)
+        {
+            var kategoriler = await _context.UrunKategoriler
+                .Where(k => k.Aktif && !k.Silindi)
+                .OrderBy(k => k.KategoriAdi)
+                .ToListAsync();
+
+            return kategoriler.Select(k => new SelectListItem
+            {
+                Value = k.KategoriID.ToString(),
+                Text = k.KategoriAdi,
+                Selected = selectedKategoriId.HasValue && k.KategoriID == selectedKategoriId.Value
+            }).ToList();
+        }
+        
+        // UrunController için birim dropdown metodu
+        public async Task<List<SelectListItem>> GetBirimSelectItemsAsync(Guid? selectedBirimId = null)
+        {
+            var birimler = await _context.Birimler
+                .Where(b => b.Aktif && !b.Silindi)
+                .OrderBy(b => b.BirimAdi)
+                .ToListAsync();
+
+            return birimler.Select(b => new SelectListItem
+            {
+                Value = b.BirimID.ToString(),
+                Text = b.BirimAdi,
+                Selected = selectedBirimId.HasValue && b.BirimID == selectedBirimId.Value
+            }).ToList();
+        }
 
         public async Task<Dictionary<string, SelectList>> PrepareCommonDropdownsAsync(Guid? selectedCariId = null, Guid? selectedUrunId = null)
         {
@@ -123,6 +177,19 @@ namespace MuhasebeStokWebApp.Services
             };
             return dropdowns;
         }
+        
+        // UrunController için dropdownları hazırla
+        public async Task<Dictionary<string, object>> PrepareUrunDropdownsAsync(
+            Guid? selectedBirimId = null, 
+            Guid? selectedKategoriId = null)
+        {
+            var dropdowns = new Dictionary<string, object>
+            {
+                ["Birimler"] = await GetBirimSelectItemsAsync(selectedBirimId),
+                ["Kategoriler"] = await GetKategoriSelectItemsAsync(selectedKategoriId)
+            };
+            return dropdowns;
+        }
 
         public async Task<Dictionary<string, object>> PrepareViewBagAsync(
             string controller,
@@ -146,6 +213,16 @@ namespace MuhasebeStokWebApp.Services
                 case "fatura/edit":
                     var faturaDropdowns = await PrepareFaturaDropdownsAsync();
                     foreach (var item in faturaDropdowns)
+                    {
+                        viewBagData[item.Key] = item.Value;
+                    }
+                    break;
+                
+                case "urun/create":
+                case "urun/edit":
+                case "urun/index":
+                    var urunDropdowns = await PrepareUrunDropdownsAsync();
+                    foreach (var item in urunDropdowns)
                     {
                         viewBagData[item.Key] = item.Value;
                     }

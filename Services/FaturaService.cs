@@ -2,6 +2,7 @@ using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Threading.Tasks;
+using System.Transactions;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Storage;
 using Microsoft.Extensions.Logging;
@@ -11,12 +12,19 @@ using MuhasebeStokWebApp.Data.Repositories;
 using MuhasebeStokWebApp.Enums;
 using MuhasebeStokWebApp.Services.Interfaces;
 using MuhasebeStokWebApp.ViewModels.Fatura;
+using MuhasebeStokWebApp.Models;
+using MuhasebeStokWebApp.Exceptions;
 
 namespace MuhasebeStokWebApp.Services
 {
+    // Hata sınıfı tanımı
+    public class EntityNotFoundException : Exception
+    {
+        public EntityNotFoundException(string message) : base(message) { }
+    }
+
     public class FaturaService : IFaturaService
     {
-        private readonly ApplicationDbContext _context;
         private readonly ILogger<FaturaService> _logger;
         private readonly IUnitOfWork _unitOfWork;
         private readonly IStokFifoService _stokFifoService;
@@ -26,9 +34,10 @@ namespace MuhasebeStokWebApp.Services
         private readonly ICariHareketService _cariHareketService;
         private readonly IStokHareketService _stokHareketService;
         private readonly IIrsaliyeService _irsaliyeService;
+        private readonly IExceptionHandlingService _exceptionHandler;
+        private bool _transactionActive = false;
 
         public FaturaService(
-            ApplicationDbContext context,
             IUnitOfWork unitOfWork,
             ILogger<FaturaService> logger,
             IStokFifoService stokFifoService,
@@ -37,9 +46,9 @@ namespace MuhasebeStokWebApp.Services
             IFaturaValidationService faturaValidationService,
             ICariHareketService cariHareketService,
             IStokHareketService stokHareketService,
-            IIrsaliyeService irsaliyeService)
+            IIrsaliyeService irsaliyeService,
+            IExceptionHandlingService exceptionHandler)
         {
-            _context = context;
             _unitOfWork = unitOfWork;
             _logger = logger;
             _stokFifoService = stokFifoService;
@@ -49,49 +58,231 @@ namespace MuhasebeStokWebApp.Services
             _cariHareketService = cariHareketService;
             _stokHareketService = stokHareketService;
             _irsaliyeService = irsaliyeService;
+            _exceptionHandler = exceptionHandler;
         }
 
-        public async Task<IEnumerable<Fatura>> GetAllAsync()
+        /// <summary>
+        /// Transaction kontrolü yapar ve gerekirse yeni bir transaction başlatır
+        /// </summary>
+        private async Task EnsureTransactionAsync()
         {
-            return await _context.Faturalar
-                .Include(f => f.Cari)
-                .Include(f => f.FaturaDetaylari)
-                .Where(f => !f.Silindi)
-                .ToListAsync();
+            // Eğer transaction yoksa, yeni bir transaction başlat
+            if (!_transactionActive)
+            {
+                await _unitOfWork.BeginTransactionAsync();
+                _transactionActive = true;
+            }
         }
 
-        public async Task<Fatura> GetByIdAsync(Guid id)
+        /// <summary>
+        /// Transaction'ı commit eder ve transaction durumunu sıfırlar
+        /// </summary>
+        private async Task CommitTransactionAsync()
         {
-            return await _context.Faturalar
-                .Include(f => f.Cari)
-                .Include(f => f.FaturaDetaylari)
-                    .ThenInclude(fk => fk.Urun)
-                .FirstOrDefaultAsync(f => f.FaturaID == id && !f.Silindi);
+            if (_transactionActive)
+            {
+                await _unitOfWork.CommitTransactionAsync();
+                _transactionActive = false;
+            }
         }
 
-        public async Task<Fatura> AddAsync(Fatura fatura)
+        /// <summary>
+        /// Transaction'ı rollback eder ve transaction durumunu sıfırlar
+        /// </summary>
+        private async Task RollbackTransactionAsync()
         {
-            await _context.Faturalar.AddAsync(fatura);
-            await _context.SaveChangesAsync();
-            return fatura;
+            if (_transactionActive)
+            {
+                await _unitOfWork.RollbackTransactionAsync();
+                _transactionActive = false;
+            }
         }
 
-        public async Task<Fatura> UpdateAsync(Fatura fatura)
+        /// <summary>
+        /// Transaction içinde çalıştırılması gereken işlemleri yönetir
+        /// </summary>
+        private async Task<T> ExecuteInTransactionAsync<T>(Func<Task<T>> action, string operationName, params object[] parameters)
         {
-            _context.Faturalar.Update(fatura);
-            await _context.SaveChangesAsync();
-            return fatura;
+            return await _exceptionHandler.HandleExceptionAsync(async () =>
+            {
+                // Eğer dışarıdan başlatılmış bir transaction varsa, onun içinde çalış
+                if (_transactionActive)
+                {
+                    return await action();
+                }
+                
+                // Kendi transaction'ını başlat
+                await EnsureTransactionAsync();
+                try
+                {
+                    var result = await action();
+                    await CommitTransactionAsync();
+                    return result;
+                }
+                catch
+                {
+                    await RollbackTransactionAsync();
+                    throw;
+                }
+            }, $"FaturaService.{operationName}", parameters);
+        }
+
+        /// <summary>
+        /// Transaction içinde çalıştırılması gereken void işlemleri yönetir
+        /// </summary>
+        private async Task ExecuteInTransactionAsync(Func<Task> action, string operationName, params object[] parameters)
+        {
+            await _exceptionHandler.HandleExceptionAsync(async () =>
+            {
+                // Eğer dışarıdan başlatılmış bir transaction varsa, onun içinde çalış
+                if (_transactionActive)
+                {
+                    await action();
+                    return;
+                }
+                
+                // Kendi transaction'ını başlat
+                await EnsureTransactionAsync();
+                try
+                {
+                    await action();
+                    await CommitTransactionAsync();
+                }
+                catch
+                {
+                    await RollbackTransactionAsync();
+                    throw;
+                }
+            }, $"FaturaService.{operationName}", parameters);
+        }
+
+        public async Task<IEnumerable<Data.Entities.Fatura>> GetAllAsync()
+        {
+            return await _exceptionHandler.HandleExceptionAsync(async () =>
+            {
+                return await _unitOfWork.EntityFaturaRepository.GetAllWithIncludesAsync();
+            }, "GetAllAsync");
+        }
+
+        public async Task<Data.Entities.Fatura> GetByIdAsync(Guid id)
+        {
+            return await _exceptionHandler.HandleExceptionAsync(async () =>
+            {
+                return await _unitOfWork.EntityFaturaRepository.GetByIdWithIncludesAsync(id);
+            }, "GetByIdAsync", id);
+        }
+
+        public async Task<Data.Entities.Fatura> AddAsync(Data.Entities.Fatura fatura)
+        {
+            return await ExecuteInTransactionAsync(async () =>
+            {
+                _logger.LogInformation("Yeni fatura ekleniyor...");
+                
+                // Fatura numarası oluştur
+                if (string.IsNullOrEmpty(fatura.FaturaNumarasi))
+                {
+                    // TODO: Fatura numarası oluşturma mantığı ekle
+                    fatura.FaturaNumarasi = $"FTR-{DateTime.Now:yyyyMMdd}-{Guid.NewGuid().ToString().Substring(0, 4)}";
+                }
+                
+                // Fatura ve detaylarını ekle
+                await _unitOfWork.FaturaRepository.AddAsync(fatura);
+                await _unitOfWork.SaveChangesAsync();
+                
+                _logger.LogInformation("Fatura başarıyla eklendi, FaturaID: {FaturaID}", fatura.FaturaID);
+                
+                return fatura;
+            }, "AddAsync", fatura.CariID, fatura.FaturaTuruID, fatura.FaturaNumarasi);
+        }
+
+        public async Task<Data.Entities.Fatura> UpdateAsync(Data.Entities.Fatura fatura)
+        {
+            return await ExecuteInTransactionAsync(async () =>
+            {
+                _logger.LogInformation("Fatura güncelleniyor, FaturaID: {FaturaID}", fatura.FaturaID);
+                
+                // Mevcut faturayı kontrol et
+                var mevcutFatura = await _unitOfWork.FaturaRepository.GetByIdAsync(fatura.FaturaID);
+                if (mevcutFatura == null)
+                {
+                    throw new EntityNotFoundException($"FaturaID: {fatura.FaturaID} bulunamadı");
+                }
+                
+                // Güncelleme tarihini ayarla
+                fatura.GuncellemeTarihi = DateTime.Now;
+                
+                // Faturayı güncelle
+                _unitOfWork.FaturaRepository.Update(fatura);
+                await _unitOfWork.SaveChangesAsync();
+                
+                _logger.LogInformation("Fatura başarıyla güncellendi, FaturaID: {FaturaID}", fatura.FaturaID);
+                
+                return fatura;
+            }, "UpdateAsync", fatura.FaturaID);
         }
 
         public async Task<bool> DeleteAsync(Guid id)
         {
-            var fatura = await _context.Faturalar.FindAsync(id);
-            if (fatura == null)
-                return false;
+            return await ExecuteInTransactionAsync(async () =>
+            {
+                _logger.LogInformation("Fatura siliniyor, FaturaID: {FaturaID}", id);
+                
+                // Mevcut faturayı kontrol et
+                var fatura = await _unitOfWork.FaturaRepository.GetByIdAsync(id);
+                if (fatura == null)
+                {
+                    throw new EntityNotFoundException($"FaturaID: {id} bulunamadı");
+                }
+                
+                // Mantıksal silme
+                fatura.Silindi = true;
+                fatura.GuncellemeTarihi = DateTime.Now;
+                
+                // Faturayı güncelle
+                _unitOfWork.FaturaRepository.Update(fatura);
+                
+                // Fatura detaylarını da mantıksal olarak sil
+                var faturaDetaylari = await _unitOfWork.EntityFaturaRepository.GetFaturaDetaylarAsync(id);
+                foreach (var detay in faturaDetaylari)
+                {
+                    detay.Silindi = true;
+                    detay.GuncellemeTarihi = DateTime.Now;
+                    _unitOfWork.FaturaDetayRepository.Update(detay);
+                }
+                
+                await _unitOfWork.SaveChangesAsync();
+                _logger.LogInformation("Fatura başarıyla silindi, FaturaID: {FaturaID}", id);
+                
+                return true;
+            }, "DeleteAsync", id);
+        }
 
-            fatura.Silindi = true;
-            await _context.SaveChangesAsync();
-            return true;
+        public async Task<bool> DeleteFatura(Guid id, Guid? currentUserId)
+        {
+            return await ExecuteInTransactionAsync(async () =>
+            {
+                _logger.LogInformation("DeleteFatura çağrıldı, FaturaID: {0}, İşlemi Yapan: {1}", id, currentUserId);
+                
+                // Faturanın kullanımda olup olmadığını kontrol et
+                if (await IsFaturaInUseAsync(id))
+                {
+                    _logger.LogWarning("Fatura başka kayıtlarda kullanıldığı için silinemez. FaturaID: {0}", id);
+                    throw new BusinessException("Bu fatura başka kayıtlarda kullanıldığı için silinemez.");
+                }
+                
+                // Mevcut faturayı kontrol et
+                var fatura = await _unitOfWork.FaturaRepository.GetByIdAsync(id);
+                if (fatura == null)
+                {
+                    throw new EntityNotFoundException($"FaturaID: {id} bulunamadı");
+                }
+                
+                // Faturayı sil
+                await DeleteAsync(id);
+                _logger.LogInformation("Fatura başarıyla silindi, FaturaID: {0}", id);
+                
+                return true;
+            }, "DeleteFatura", id, currentUserId);
         }
 
         public async Task<FaturaDetailViewModel> GetFaturaDetailViewModelAsync(Guid id)
@@ -180,8 +371,7 @@ namespace MuhasebeStokWebApp.Services
             // Faturanın kullanımda olup olmadığını kontrol etme mantığı
             // Örneğin, ödeme kayıtlarında veya başka bir ilişkili tabloda kullanılıyorsa true dönebilir
             
-            var isUsedInPayments = await _context.FaturaOdemeleri
-                .AnyAsync(o => o.FaturaID == id && !o.Silindi);
+            var isUsedInPayments = await _unitOfWork.FaturaOdemeleriRepository.AnyAsync(o => o.FaturaID == id && !o.Silindi);
                 
             return isUsedInPayments;
         }
@@ -240,13 +430,13 @@ namespace MuhasebeStokWebApp.Services
             try
             {
                 // Fatura türünü al, stok hareket tipini belirle
-                var faturaTuru = await _context.FaturaTurleri.FindAsync(viewModel.FaturaTuruID);
+                var faturaTuru = await _unitOfWork.FaturaTurleriRepository.GetByIdAsync(viewModel.FaturaTuruID);
                 var stokHareketTipi = faturaTuru?.HareketTuru == "Giriş" 
                     ? StokHareketiTipi.Giris 
                     : StokHareketiTipi.Cikis;
                 
                 // 1. Fatura oluştur
-                var fatura = new Fatura
+                var fatura = new Data.Entities.Fatura
                 {
                     FaturaID = Guid.NewGuid(),
                     FaturaNumarasi = string.IsNullOrEmpty(viewModel.FaturaNumarasi) ? GenerateNewFaturaNumarasi() : viewModel.FaturaNumarasi,
@@ -311,7 +501,7 @@ namespace MuhasebeStokWebApp.Services
                 await _unitOfWork.FaturaDetayRepository.AddRangeAsync(faturaDetaylari);
                 
                 // 3. Stok hareketlerini oluştur
-                var stokHareketService = new StokHareketService(_context, _unitOfWork, _logger as ILogger<StokHareketService>, _stokFifoService);
+                var stokHareketService = new StokHareketService(_unitOfWork.EntityStokHareketRepository, _unitOfWork.EntityStokFifoRepository, _logger as ILogger<StokHareketService>, _stokFifoService);
                 var stokHareketleri = await stokHareketService.CreateStokHareket(fatura, faturaDetaylari, currentUserId);
                 
                 // 4. FIFO kayıtlarını oluştur (StokFifoService içinde yapılıyor)
@@ -361,7 +551,7 @@ namespace MuhasebeStokWebApp.Services
                 {
                     // CariHareketService'i kullanarak cari hareket oluştur
                     // Bu işlemi aynı transaction içinde yapıyoruz
-                    var cariHareketService = new CariHareketService(_context, null, _unitOfWork, _logger as ILogger<CariHareketService>);
+                    var cariHareketService = new CariHareketService(_unitOfWork.EntityCariHareketRepository, null, _unitOfWork, _logger as ILogger<CariHareketService>);
                     await cariHareketService.CreateFromFaturaAsync(fatura, currentUserId);
                 }
                 
@@ -414,7 +604,7 @@ namespace MuhasebeStokWebApp.Services
             var prefix = $"FTR-{year}{month}{day}-";
             
             // Son fatura numarasını bul ve arttır
-            var lastFatura = _context.Faturalar
+            var lastFatura = _unitOfWork.EntityFaturaRepository.GetAll()
                 .Where(f => f.FaturaNumarasi != null && f.FaturaNumarasi.StartsWith(prefix))
                 .OrderByDescending(f => f.FaturaNumarasi)
                 .FirstOrDefault();
@@ -445,7 +635,7 @@ namespace MuhasebeStokWebApp.Services
             var prefix = $"SIP-{year}{month}{day}-";
             
             // Son sipariş numarasını bul ve arttır
-            var lastFatura = _context.Faturalar
+            var lastFatura = _unitOfWork.EntityFaturaRepository.GetAll()
                 .Where(f => f.SiparisNumarasi != null && f.SiparisNumarasi.StartsWith(prefix))
                 .OrderByDescending(f => f.SiparisNumarasi)
                 .FirstOrDefault();
@@ -464,184 +654,6 @@ namespace MuhasebeStokWebApp.Services
         }
         
         /// <summary>
-        /// Faturadan otomatik irsaliye oluşturur
-        /// </summary>
-        /// <param name="fatura">Fatura nesnesi</param>
-        /// <param name="depoID">Depo ID</param>
-        private async Task CreateIrsaliyeFromFatura(Fatura fatura, Guid? depoID)
-        {
-            try
-            {
-                // IrsaliyeService üzerinden irsaliye oluştur
-                await _irsaliyeService.OtomatikIrsaliyeOlustur(fatura, depoID);
-                _logger.LogInformation($"Faturadan irsaliye başarıyla oluşturuldu. FaturaID: {fatura.FaturaID}");
-            }
-            catch (Exception ex)
-            {
-                _logger.LogError(ex, $"Faturadan irsaliye oluşturulurken hata: {ex.Message}");
-                throw;
-            }
-        }
-
-        /// <summary>
-        /// Faturayı ve ilişkili kayıtları siler (soft delete).
-        /// Tüm bağlı kayıtları (StokHareket, StokFifo, CariHareket, İrsaliye vb.) iptal eder.
-        /// </summary>
-        /// <param name="id">Silinecek fatura ID</param>
-        /// <param name="currentUserId">İşlemi yapan kullanıcı ID</param>
-        /// <returns>İşlemin başarılı olup olmadığı</returns>
-        public async Task<bool> DeleteFatura(Guid id, Guid? currentUserId)
-        {
-            _logger.LogInformation("FaturaService.DeleteFatura başlatılıyor. FaturaID: {FaturaID}", id);
-            
-            // Faturayı detaylarıyla birlikte getir
-            var fatura = await _context.Faturalar
-                .Include(f => f.FaturaDetaylari)
-                .Include(f => f.FaturaTuru)
-                .FirstOrDefaultAsync(f => f.FaturaID == id && !f.Silindi);
-                
-            if (fatura == null)
-            {
-                _logger.LogWarning("Silinmek istenen fatura bulunamadı. FaturaID: {FaturaID}", id);
-                return false;
-            }
-            
-            // Faturanın kullanımda olup olmadığını kontrol et (örn: ödeme kayıtları)
-            bool isInUse = await IsFaturaInUseAsync(id);
-            if (isInUse)
-            {
-                _logger.LogWarning("Fatura kullanımda olduğu için silinemez. FaturaID: {FaturaID}", id);
-                throw new Exception("Bu fatura ödeme kayıtlarında kullanılmaktadır ve silinmesi mümkün değildir.");
-            }
-            
-            // UnitOfWork ile transaction başlat
-            await _unitOfWork.BeginTransactionAsync();
-            
-            try
-            {
-                // 1. FIFO kayıtlarını iptal et
-                await _stokFifoService.FifoKayitlariniIptalEt(id, "Fatura", "Fatura silme işlemi nedeniyle iptal edildi");
-                _logger.LogInformation("Faturaya bağlı FIFO kayıtları iptal edildi. FaturaID: {FaturaID}", id);
-                
-                // 2. Stok hareketlerini iptal et (silindi olarak işaretle)
-                var stokHareketleri = await _context.StokHareketleri
-                    .Where(sh => sh.FaturaID == id && !sh.Silindi)
-                    .ToListAsync();
-                    
-                foreach (var hareket in stokHareketleri)
-                {
-                    hareket.Silindi = true;
-                    hareket.OlusturmaTarihi = DateTime.Now; // Değişiklik saati olarak oluşturma tarihini güncelle
-                    _unitOfWork.StokHareketRepository.Update(hareket);
-                }
-                _logger.LogInformation("Faturaya bağlı stok hareketleri iptal edildi. FaturaID: {FaturaID}", id);
-                
-                // 3. Cari hareketleri iptal et
-                var cariHareketler = await _context.CariHareketler
-                    .Where(ch => ch.ReferansID == id && ch.ReferansTuru == "Fatura" && !ch.Silindi)
-                    .ToListAsync();
-                    
-                foreach (var cariHareket in cariHareketler)
-                {
-                    cariHareket.Silindi = true;
-                    cariHareket.GuncellemeTarihi = DateTime.Now;
-                    _unitOfWork.CariHareketRepository.Update(cariHareket);
-                }
-                _logger.LogInformation("Faturaya bağlı cari hareketler iptal edildi. FaturaID: {FaturaID}", id);
-                
-                // 4. İrsaliyeleri iptal et
-                var irsaliyeler = await _context.Irsaliyeler
-                    .Include(i => i.IrsaliyeDetaylari)
-                    .Where(i => i.FaturaID == id && !i.Silindi)
-                    .ToListAsync();
-                
-                foreach (var irsaliye in irsaliyeler)
-                {
-                    irsaliye.Silindi = true;
-                    irsaliye.GuncellemeTarihi = DateTime.Now;
-                    _unitOfWork.IrsaliyeRepository.Update(irsaliye);
-                    
-                    // İrsaliye detaylarını sil
-                    foreach (var detay in irsaliye.IrsaliyeDetaylari.Where(d => !d.Silindi))
-                    {
-                        detay.Silindi = true;
-                        detay.GuncellemeTarihi = DateTime.Now;
-                        _unitOfWork.IrsaliyeDetayRepository.Update(detay);
-                    }
-                }
-                _logger.LogInformation("Faturaya bağlı irsaliyeler iptal edildi. FaturaID: {FaturaID}", id);
-                
-                // 5. Fatura detaylarını sil (soft delete)
-                foreach (var detay in fatura.FaturaDetaylari)
-                {
-                    detay.Silindi = true;
-                    _unitOfWork.FaturaDetayRepository.Update(detay);
-                }
-                _logger.LogInformation("Fatura detayları iptal edildi. FaturaID: {FaturaID}", id);
-                
-                // 6. Faturayı sil (soft delete)
-                fatura.Silindi = true;
-                fatura.GuncellemeTarihi = DateTime.Now;
-                _unitOfWork.FaturaRepository.Update(fatura);
-                _logger.LogInformation("Fatura iptal edildi. FaturaID: {FaturaID}", id);
-                
-                // 7. Değişiklikleri kaydet
-                await _unitOfWork.CompleteAsync();
-                
-                // 8. Transaction'ı commit et
-                await _unitOfWork.CommitTransactionAsync();
-                
-                _logger.LogInformation("Fatura ve ilişkili tüm kayıtlar başarıyla silindi. FaturaID: {FaturaID}", id);
-                
-                return true;
-            }
-            catch (Exception ex)
-            {
-                // Hata durumunda rollback
-                await _unitOfWork.RollbackTransactionAsync();
-                
-                if (ex is DbUpdateException dbEx)
-                {
-                    _logger.LogError(dbEx, $"Veritabanı güncelleme hatası: {dbEx.InnerException?.Message ?? dbEx.Message}");
-                    throw new Exception($"Veritabanı işlemi sırasında bir hata oluştu: {dbEx.InnerException?.Message ?? dbEx.Message}", dbEx);
-                }
-                else if (ex is DbUpdateConcurrencyException concurrencyEx)
-                {
-                    _logger.LogError(concurrencyEx, "Veritabanı eşzamanlılık hatası. Başka bir kullanıcı aynı kaydı değiştirmiş olabilir.");
-                    throw new Exception("Kayıt başka bir kullanıcı tarafından değiştirilmiş olabilir. Lütfen tekrar deneyin.", concurrencyEx);
-                }
-                
-                _logger.LogError(ex, $"Fatura silme işlemi sırasında hata: {ex.Message}");
-                throw;
-            }
-        }
-
-        /// <summary>
-        /// Faturadan irsaliye oluşturur
-        /// </summary>
-        /// <param name="faturaID">Fatura ID</param>
-        /// <param name="depoID">Depo ID (opsiyonel)</param>
-        public async Task<Guid> CreateIrsaliyeFromFaturaID(Guid faturaID, Guid? depoID = null)
-        {
-            try
-            {
-                // IrsaliyeService üzerinden irsaliye oluştur
-                return await _irsaliyeService.OtomatikIrsaliyeOlusturFromID(faturaID, depoID);
-            }
-            catch (Exception ex)
-            {
-                _logger.LogError(ex, $"Faturadan irsaliye oluşturulurken hata: {ex.Message}");
-                throw;
-            }
-        }
-
-        private string GenerateIrsaliyeNumarasi()
-        {
-            // IrsaliyeService üzerinden numara oluştur
-            return _irsaliyeService.GenerateIrsaliyeNumarasi();
-        }
-
-        /// <summary>
         /// Faturayı ve ilişkili kayıtları günceller.
         /// Eski kayıtları iptal eder ve yenilerini oluşturur.
         /// </summary>
@@ -654,10 +666,7 @@ namespace MuhasebeStokWebApp.Services
             _logger.LogInformation("FaturaService.UpdateFatura başlatılıyor. FaturaID: {FaturaID}", id);
             
             // Faturayı detaylarıyla birlikte getir
-            var existingFatura = await _context.Faturalar
-                .Include(f => f.FaturaDetaylari)
-                .Include(f => f.FaturaTuru)
-                .FirstOrDefaultAsync(f => f.FaturaID == id && !f.Silindi);
+            var existingFatura = await _unitOfWork.EntityFaturaRepository.GetByIdWithIncludesAsync(id);
                 
             if (existingFatura == null)
             {
@@ -671,7 +680,7 @@ namespace MuhasebeStokWebApp.Services
             try
             {
                 // Stok hareket tipini belirle
-                var faturaTuru = await _context.FaturaTurleri.FindAsync(viewModel.FaturaTuruID);
+                var faturaTuru = await _unitOfWork.FaturaTurleriRepository.GetByIdAsync(viewModel.FaturaTuruID);
                 var stokHareketTipi = faturaTuru?.HareketTuru == "Giriş" 
                     ? StokHareketiTipi.Giris 
                     : StokHareketiTipi.Cikis;
@@ -683,7 +692,7 @@ namespace MuhasebeStokWebApp.Services
                 _logger.LogInformation("Faturaya bağlı FIFO kayıtları iptal edildi. FaturaID: {FaturaID}", id);
                 
                 // 1.2. Faturaya bağlı stok hareketlerini iptal et (silindi olarak işaretle)
-                var stokHareketleri = await _context.StokHareketleri
+                var stokHareketleri = await _unitOfWork.EntityStokHareketRepository.GetAll()
                     .Where(sh => sh.FaturaID == id && !sh.Silindi)
                     .ToListAsync();
                     
@@ -691,12 +700,12 @@ namespace MuhasebeStokWebApp.Services
                 {
                     hareket.Silindi = true;
                     hareket.OlusturmaTarihi = DateTime.Now; // Değişiklik saati olarak oluşturma tarihini güncelle
-                    _unitOfWork.StokHareketRepository.Update(hareket);
+                    _unitOfWork.EntityStokHareketRepository.Update(hareket);
                 }
                 _logger.LogInformation("Faturaya bağlı stok hareketleri iptal edildi. FaturaID: {FaturaID}", id);
                 
                 // 1.3. Faturaya bağlı eski CariHareket kayıtlarını bul ve iptal et
-                var cariHareketler = await _context.CariHareketler
+                var cariHareketler = await _unitOfWork.EntityCariHareketRepository.GetAll()
                     .Where(ch => ch.ReferansID == id && ch.ReferansTuru == "Fatura" && !ch.Silindi)
                     .ToListAsync();
                     
@@ -704,12 +713,12 @@ namespace MuhasebeStokWebApp.Services
                 {
                     cariHareket.Silindi = true;
                     cariHareket.GuncellemeTarihi = DateTime.Now;
-                    _unitOfWork.CariHareketRepository.Update(cariHareket);
+                    _unitOfWork.EntityCariHareketRepository.Update(cariHareket);
                 }
                 _logger.LogInformation("Faturaya bağlı cari hareketler iptal edildi. FaturaID: {FaturaID}", id);
                 
                 // 1.4. Eski fatura detaylarını sil
-                _context.FaturaDetaylari.RemoveRange(existingFatura.FaturaDetaylari);
+                _unitOfWork.EntityFaturaDetayRepository.RemoveRange(existingFatura.FaturaDetaylari);
                 _logger.LogInformation("Eski fatura detayları silindi. FaturaID: {FaturaID}", id);
                 
                 // Değişiklikleri kaydet
@@ -796,8 +805,8 @@ namespace MuhasebeStokWebApp.Services
                 existingFatura.GenelToplamDoviz = genelToplam / dovizKuru;
                 
                 // Faturayı güncelle ve yeni detayları ekle
-                _unitOfWork.FaturaRepository.Update(existingFatura);
-                await _unitOfWork.FaturaDetayRepository.AddRangeAsync(faturaDetaylari);
+                _unitOfWork.EntityFaturaRepository.Update(existingFatura);
+                _unitOfWork.EntityFaturaDetayRepository.AddRange(faturaDetaylari);
                 
                 // DepoID'yi al
                 Guid? depoID = await GetDepoIDFromViewModel(viewModel);
@@ -833,7 +842,7 @@ namespace MuhasebeStokWebApp.Services
                 }
                 
                 // Stok hareketlerini ekle
-                await _unitOfWork.StokHareketRepository.AddRangeAsync(yeniStokHareketleri);
+                _unitOfWork.EntityStokHareketRepository.AddRange(yeniStokHareketleri);
                 
                 // 5. Yeni cari hareket kaydı oluştur
                 if (existingFatura.CariID.HasValue && existingFatura.CariID != Guid.Empty)
@@ -857,7 +866,7 @@ namespace MuhasebeStokWebApp.Services
                         Alacak = stokHareketTipi == StokHareketiTipi.Giris ? 0 : cariHareketTutari
                     };
                     
-                    await _unitOfWork.CariHareketRepository.AddAsync(cariHareket);
+                    _unitOfWork.EntityCariHareketRepository.Add(cariHareket);
                 }
                 
                 // 6. Değişiklikleri kaydet
@@ -910,7 +919,7 @@ namespace MuhasebeStokWebApp.Services
                 if (otomatikIrsaliyeOlustur)
                 {
                     // Mevcut irsaliye var mı kontrol et
-                    var mevcutIrsaliye = await _context.Irsaliyeler
+                    var mevcutIrsaliye = await _unitOfWork.EntityIrsaliyeRepository.GetAll()
                         .FirstOrDefaultAsync(i => i.FaturaID == existingFatura.FaturaID && !i.Silindi);
                         
                     if (mevcutIrsaliye != null)
@@ -918,10 +927,10 @@ namespace MuhasebeStokWebApp.Services
                         // Mevcut irsaliyeyi sil/iptal et
                         mevcutIrsaliye.Silindi = true;
                         mevcutIrsaliye.GuncellemeTarihi = DateTime.Now;
-                        _unitOfWork.IrsaliyeRepository.Update(mevcutIrsaliye);
+                        _unitOfWork.EntityIrsaliyeRepository.Update(mevcutIrsaliye);
                         
                         // İrsaliye detaylarını sil
-                        var irsaliyeDetaylari = await _context.IrsaliyeDetaylari
+                        var irsaliyeDetaylari = await _unitOfWork.EntityIrsaliyeDetayRepository.GetAll()
                             .Where(id => id.IrsaliyeID == mevcutIrsaliye.IrsaliyeID && !id.Silindi)
                             .ToListAsync();
                             
@@ -929,14 +938,14 @@ namespace MuhasebeStokWebApp.Services
                         {
                             detay.Silindi = true;
                             detay.GuncellemeTarihi = DateTime.Now;
-                            _unitOfWork.IrsaliyeDetayRepository.Update(detay);
+                            _unitOfWork.EntityIrsaliyeDetayRepository.Update(detay);
                         }
                         
                         await _unitOfWork.CompleteAsync();
                     }
                     
                     // Yeni irsaliye oluştur
-                    await CreateIrsaliyeFromFatura(existingFatura, depoID);
+                    await _irsaliyeService.OtomatikIrsaliyeOlustur(existingFatura, depoID);
                     _logger.LogInformation($"Fatura güncellemesi için otomatik irsaliye oluşturuldu");
                 }
                 
@@ -976,7 +985,7 @@ namespace MuhasebeStokWebApp.Services
             // FaturaEditViewModel'da depo ID yoksa, ilk aktif depoyu kullan
             
             // Direkt olarak model üzerinde depo ID'yi kontrol etmek için ek property yoksa ilk aktif depoyu döndür 
-            var ilkDepo = await _context.Depolar
+            var ilkDepo = await _unitOfWork.EntityDepolarRepository.GetAll()
                 .Where(d => d.Aktif && !d.Silindi)
                 .OrderBy(d => d.DepoAdi) // Sıra yerine DepoAdi'ye göre sırala
                 .FirstOrDefaultAsync();
@@ -989,14 +998,10 @@ namespace MuhasebeStokWebApp.Services
         /// </summary>
         private async Task<bool> ShouldCreateIrsaliye(FaturaEditViewModel viewModel)
         {
-            // FaturaEditViewModel'da OtomatikIrsaliyeOlustur property'si yoksa, 
-            // sistem ayarlarına göre karar vermek gerekir
-            
-            // Burada gerçek implementasyonda sistem ayarlarını kontrol etmek gerekebilir
-            // Ya da edit view'da irsaliye oluşturma seçeneği varsa, bu irsaliye form field'ına göre karar verebiliriz
-            
-            // Basitlik için varsayılan olarak true döndürelim
-            return true;
+            if (viewModel.OtomatikIrsaliyeOlustur)
+                return true;
+                
+            return false;
         }
     }
 } 

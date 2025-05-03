@@ -63,8 +63,12 @@ namespace MuhasebeStokWebApp.ViewModels.Urun
         [Display(Name = "Güncelleme Tarihi")]
         public DateTime? GuncellemeTarihi { get; set; }
         
-        // Dropdown listeler için - zorunlu değil
-        public List<SelectListItem> BirimListesi { get; set; }
-        public List<SelectListItem> KategoriListesi { get; set; }
+        // Dropdown listeler için yeni özellikler
+        public List<SelectListItem> Birimler { get; set; } = new List<SelectListItem>();
+        public List<SelectListItem> Kategoriler { get; set; } = new List<SelectListItem>();
+        
+        // Geriye uyumluluk için mevcut özellikleri koruyoruz
+        public List<SelectListItem> BirimListesi { get; set; } = new List<SelectListItem>();
+        public List<SelectListItem> KategoriListesi { get; set; } = new List<SelectListItem>();
     }
 } 

@@ -464,61 +464,59 @@ namespace MuhasebeStokWebApp.Controllers
         [ValidateAntiForgeryToken]
         public async Task<IActionResult> DeleteConfirmed(Guid id)
         {
-            var cari = await _unitOfWork.CariRepository.GetByIdAsync(id);
-            if (cari == null)
+            try
             {
-                return NotFound();
-            }
-            
-            // Cari ile ilgili hareket/fatura kontrolü yap
-            var hareketSayisi = (await _unitOfWork.CariHareketRepository
-                .GetAsync(filter: ch => ch.CariID == id)).Count();
+                // SoftDeleteService üzerinden işlem yap
+                var softDeleteService = HttpContext.RequestServices.GetService<ISoftDeleteService<Cari>>();
+                if (softDeleteService == null)
+                {
+                    TempData["ErrorMessage"] = "Silme işlemi için gerekli servis bulunamadı.";
+                    return RedirectToAction(nameof(Index));
+                }
                 
-            var faturaSayisi = (await _unitOfWork.FaturaRepository
-                .GetAsync(filter: f => f.CariID == id)).Count();
-            
-            if (hareketSayisi > 0 || faturaSayisi > 0)
+                // Cari kaydını sil/pasife al
+                var cari = await _unitOfWork.CariRepository.GetByIdAsync(id);
+                if (cari == null)
+                {
+                    return NotFound();
+                }
+                
+                // İlişkili kayıtlar kontrolü ve silme işlemi
+                bool hasRelatedRecords = await softDeleteService.HasRelatedRecordsAsync(id);
+                bool success = await softDeleteService.SoftDeleteByIdAsync(id);
+                
+                if (success)
+                {
+                    // Logla
+                    string logMesaj = hasRelatedRecords 
+                        ? $"{cari.Ad} adlı cari kaydı pasife alındı." 
+                        : $"{cari.Ad} adlı cari kaydı silindi.";
+                        
+                    await _logService.LogOlustur(
+                        hasRelatedRecords ? "Cari pasife alındı" : "Cari silindi", 
+                        LogTuru.Bilgi, 
+                        "Cari", 
+                        cari.Ad, 
+                        Guid.Parse(cari.CariID.ToString()), 
+                        logMesaj);
+                    
+                    TempData["SuccessMessage"] = hasRelatedRecords
+                        ? "Cari pasife alındı. İlişkili kayıtlar olduğu için tamamen silinemedi."
+                        : "Cari başarıyla silindi.";
+                }
+                else
+                {
+                    TempData["ErrorMessage"] = "Cari silinemedi. Lütfen tekrar deneyin.";
+                }
+                
+                return RedirectToAction(nameof(Index));
+            }
+            catch (Exception ex)
             {
-                // İlişkili kayıtlar varsa sadece pasife al
-                cari.AktifMi = false;
-                cari.GuncellemeTarihi = DateTime.Now;
-                cari.SonGuncelleyenKullaniciId = Guid.Parse(User.FindFirst(System.Security.Claims.ClaimTypes.NameIdentifier)?.Value);
-                
-                await _unitOfWork.CariRepository.UpdateAsync(cari);
-                await _unitOfWork.SaveAsync();
-                
-                await _logService.LogOlustur(
-                    "Cari pasife alındı", 
-                    LogTuru.Bilgi, 
-                    "Cari", 
-                    cari.Ad, 
-                    Guid.Parse(cari.CariID.ToString()), 
-                    $"{cari.Ad} adlı cari kaydı pasife alındı.");
-                
-                TempData["SuccessMessage"] = "Cari pasife alındı. İlişkili kayıtlar olduğu için tamamen silinemedi.";
+                _logger.LogError(ex, "Cari silme işleminde hata oluştu");
+                TempData["ErrorMessage"] = $"Cari silinirken bir hata oluştu: {ex.Message}";
+                return RedirectToAction(nameof(Index));
             }
-            else
-            {
-                // İlişkili kayıt yoksa silinebilir
-                cari.Silindi = true;
-                cari.GuncellemeTarihi = DateTime.Now;
-                cari.SonGuncelleyenKullaniciId = Guid.Parse(User.FindFirst(System.Security.Claims.ClaimTypes.NameIdentifier)?.Value);
-                
-                await _unitOfWork.CariRepository.UpdateAsync(cari);
-                await _unitOfWork.SaveAsync();
-                
-                await _logService.LogOlustur(
-                    "Cari silindi", 
-                    LogTuru.Bilgi, 
-                    "Cari", 
-                    cari.Ad, 
-                    Guid.Parse(cari.CariID.ToString()), 
-                    $"{cari.Ad} adlı cari kaydı silindi.");
-                
-                TempData["SuccessMessage"] = "Cari başarıyla silindi.";
-            }
-            
-            return RedirectToAction(nameof(Index));
         }
 
         [HttpGet]
@@ -1463,6 +1461,53 @@ namespace MuhasebeStokWebApp.Controllers
             };
             
             return View("HareketEkle", viewModel);
+        }
+
+        [HttpPost]
+        [Authorize(Roles = "Admin")]
+        public async Task<IActionResult> RestoreCari(Guid id)
+        {
+            try
+            {
+                // SoftDeleteService üzerinden işlem yap
+                var softDeleteService = HttpContext.RequestServices.GetService<ISoftDeleteService<Cari>>();
+                if (softDeleteService == null)
+                {
+                    return Json(new { success = false, message = "Geri getirme işlemi için gerekli servis bulunamadı." });
+                }
+                
+                bool success = await softDeleteService.RestoreByIdAsync(id);
+                
+                if (success)
+                {
+                    // Geri getirilen carinin adını bulmak için
+                    var cari = await _unitOfWork.CariRepository.GetByIdAsync(id);
+                    string cariAdi = cari?.Ad ?? "Cari";
+                    
+                    // Logla
+                    await _logService.LogOlustur(
+                        "Cari geri getirildi", 
+                        LogTuru.Bilgi, 
+                        "Cari", 
+                        cariAdi, 
+                        id, 
+                        $"{cariAdi} adlı cari kaydı geri getirildi.");
+                    
+                    return Json(new { 
+                        success = true, 
+                        message = $"{cariAdi} adlı cari başarıyla geri getirildi." 
+                    });
+                }
+                else
+                {
+                    return Json(new { success = false, message = "Silinmiş cari bulunamadı veya geri getirilemedi." });
+                }
+            }
+            catch (Exception ex)
+            {
+                _logger.LogError(ex, "Cari geri getirilirken hata: {Message}", ex.Message);
+                return Json(new { success = false, message = $"Cari geri getirilirken bir hata oluştu: {ex.Message}" });
+            }
         }
     }
 }

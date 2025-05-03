@@ -14,13 +14,13 @@ namespace MuhasebeStokWebApp.Data.Entities
         [ForeignKey("FaturaDetay")]
         public Guid FaturaKalemID { get; set; }
         
-        public virtual FaturaDetay FaturaDetay { get; set; }
+        public virtual FaturaDetay? FaturaDetay { get; set; }
         
         [Required]
         [ForeignKey("Urun")]
         public Guid UrunID { get; set; }
         
-        public virtual Urun Urun { get; set; }
+        public virtual Urun? Urun { get; set; }
         
         [Required]
         [Column(TypeName = "decimal(18,3)")]
@@ -35,11 +35,10 @@ namespace MuhasebeStokWebApp.Data.Entities
         [Required]
         public string AklanmaNotu { get; set; } = "";
         
-        [Required]
         [ForeignKey("Sozlesme")]
-        public Guid SozlesmeID { get; set; }
+        public Guid? SozlesmeID { get; set; }
         
-        public virtual Sozlesme Sozlesme { get; set; }
+        public virtual Sozlesme? Sozlesme { get; set; }
         
         [Required]
         public AklamaDurumu Durum { get; set; } = AklamaDurumu.Bekliyor;
@@ -64,6 +63,11 @@ namespace MuhasebeStokWebApp.Data.Entities
         
         [Required]
         public bool Silindi { get; set; } = false;
+        
+        public DateTime? SilmeTarihi { get; set; }
+        
+        [Required]
+        public bool ManuelKayit { get; set; } = false;
         
         public Guid? ResmiFaturaKalemID { get; set; }
         

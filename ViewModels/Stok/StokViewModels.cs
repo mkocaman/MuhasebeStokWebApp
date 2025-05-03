@@ -373,14 +373,14 @@ namespace MuhasebeStokWebApp.ViewModels.Stok
         public string Birim { get; set; }
 
         [Required(ErrorMessage = "Birim fiyat girişi zorunludur.")]
-        [Range(0, double.MaxValue, ErrorMessage = "Birim fiyat 0 veya daha büyük olmalıdır.")]
+        [Range(0.01, double.MaxValue, ErrorMessage = "Birim fiyat 0'dan büyük olmalıdır.")]
         [Display(Name = "Birim Fiyat")]
         public decimal BirimFiyat { get; set; }
 
         [Required(ErrorMessage = "Tarih girişi zorunludur.")]
         [Display(Name = "Tarih")]
         [DataType(DataType.Date)]
-        public DateTime Tarih { get; set; }
+        public DateTime Tarih { get; set; } = DateTime.Now;
 
         [Display(Name = "Referans No")]
         public string ReferansNo { get; set; }
@@ -390,14 +390,25 @@ namespace MuhasebeStokWebApp.ViewModels.Stok
 
         [Display(Name = "Açıklama")]
         public string Aciklama { get; set; }
-        
+
         [Display(Name = "Hareket Türü")]
         public StokHareketiTipi HareketTuru { get; set; } = StokHareketiTipi.Giris;
 
         [Display(Name = "Para Birimi")]
         public string ParaBirimi { get; set; } = "TRY";
+
+        // ViewBag yerine ViewModel'de saklanacak veriler
+        public Microsoft.AspNetCore.Mvc.Rendering.SelectList Urunler { get; set; }
+        public Microsoft.AspNetCore.Mvc.Rendering.SelectList Depolar { get; set; }
+        public Microsoft.AspNetCore.Mvc.Rendering.SelectList Birimler { get; set; }
+        public List<string> ParaBirimleri { get; set; } = new List<string> { "TRY", "USD", "EUR", "UZS" };
         
-        public List<string> ParaBirimleri { get; set; }
+        // Ürünlerin birim bilgilerini saklamak için
+        public Dictionary<string, string> UrunBirimBilgileri { get; set; } = new Dictionary<string, string>();
+        
+        // Döviz kuru bilgisi
+        [Display(Name = "Döviz Kuru")]
+        public decimal DovizKuru { get; set; } = 1;
     }
 
     // Stok Çıkış ViewModel

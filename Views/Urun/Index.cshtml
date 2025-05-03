@@ -1,29 +1,35 @@
 @model MuhasebeStokWebApp.ViewModels.Urun.UrunListViewModel
+@using MuhasebeStokWebApp.ViewModels
+@using MuhasebeStokWebApp.ViewModels.Shared
 
 @{
-    ViewData["Title"] = "Ürün Yönetimi";
-    Layout = "~/Views/Shared/_Layout.cshtml";
-    bool isAdmin = User.IsInRole("Admin");
+    ViewData["Title"] = "Ürünler";
+    
+    // Admin rolüne sahip kullanıcıları kontrol et
+    var isAdmin = User.IsInRole("Admin");
 }
 
 <div class="container-fluid">
-    <div class="card">
-        <div class="card-header bg-primary text-white">
-            <div class="d-flex justify-content-between align-items-center">
-                <h4 class="mb-0"><i class="fas fa-cubes"></i> Ürün Kataloğu</h4>
-                <div>
-                    <button type="button" class="btn btn-primary" data-bs-toggle="modal" data-bs-target="#yeniUrunModal">
-                        <i class="fas fa-plus"></i> Yeni Ürün
-                    </button>
-                    <button type="button" class="btn btn-success" data-bs-toggle="modal" data-bs-target="#excelImportModal">
-                        <i class="fas fa-file-import"></i> Excel'den İçe Aktar
-                    </button>
-                    <a href="#" class="btn btn-info" id="excelExportBtn">
-                        <i class="fas fa-file-export"></i> Excel'e Aktar
-                    </a>
-                </div>
+    <div class="page-header">
+        <div class="row">
+            <div class="col-sm-6">
+                <h3>Ürünler</h3>
+                <ol class="breadcrumb">
+                    <li class="breadcrumb-item"><a href="/">Ana Sayfa</a></li>
+                    <li class="breadcrumb-item active">Ürünler</li>
+                </ol>
+            </div>
+            <div class="col-sm-6 text-end">
+                <button type="button" class="btn btn-primary create-btn" data-bs-toggle="modal" data-bs-target="#urunModal">
+                    <i class="fas fa-plus me-1"></i> Yeni Ürün
+                </button>
             </div>
         </div>
+    </div>
+</div>
+
+<div class="container-fluid">
+    <div class="card">
         <div class="card-body">
             @if (TempData["SuccessMessage"] != null)
             {
@@ -44,19 +50,9 @@
             <div class="mb-4">
                 <select name="kategoriID" class="form-select" id="kategoriFilter" style="max-width: 300px;">
                     <option value="">-- Tüm Kategoriler --</option>
-                    @if (ViewBag.Kategoriler != null)
+                    @foreach (var kategori in Model.Kategoriler)
                     {
-                        foreach (var kategori in ViewBag.Kategoriler)
-                        {
-                            if (ViewBag.CurrentKategori != null && ViewBag.CurrentKategori.ToString() == kategori.Value)
-                            {
-                                <option value="@kategori.Value" selected>@kategori.Text</option>
-                            }
-                            else
-                            {
-                                <option value="@kategori.Value">@kategori.Text</option>
-                            }
-                        }
+                        <option value="@kategori.Value" selected="@kategori.Selected">@kategori.Text</option>
                     }
                 </select>
             </div>
@@ -64,29 +60,48 @@
             <!-- Ürün Sekmeleri -->
             <ul class="nav nav-tabs" id="urunTabs" role="tablist">
                 <li class="nav-item" role="presentation">
-                    <a class="nav-link @(ViewBag.AktifTab == "aktif" ? "active" : "")" id="aktif-urunler-tab" href="@Url.Action("Index", new { tab = "aktif" })" role="tab" aria-controls="aktif-urunler" aria-selected="@(ViewBag.AktifTab == "aktif" ? "true" : "false")">
-                        <i class="fas fa-cubes text-warning"></i> Aktif Ürünler
-                    </a>
+                    <button class="nav-link @(Model.AktifTab == "aktif" ? "active" : "")" 
+                            id="aktif-urunler-tab" 
+                            data-bs-toggle="tab" 
+                            data-bs-target="#aktif-urunler" 
+                            type="button" 
+                            role="tab" 
+                            aria-controls="aktif-urunler" 
+                            aria-selected="@(Model.AktifTab == "aktif")">
+                        Aktif Ürünler <span class="badge bg-success">@Model.Urunler.Count(u => u.Aktif && !u.Silindi)</span>
+                    </button>
                 </li>
                 <li class="nav-item" role="presentation">
-                    <a class="nav-link @(ViewBag.AktifTab == "pasif" ? "active" : "")" id="pasif-urunler-tab" href="@Url.Action("Index", new { tab = "pasif" })" role="tab" aria-controls="pasif-urunler" aria-selected="@(ViewBag.AktifTab == "pasif" ? "true" : "false")">
-                        <i class="fas fa-ban text-danger"></i> Pasif Ürünler
-                    </a>
+                    <button class="nav-link @(Model.AktifTab == "pasif" ? "active" : "")" 
+                            id="pasif-urunler-tab" 
+                            data-bs-toggle="tab" 
+                            data-bs-target="#pasif-urunler" 
+                            type="button" 
+                            role="tab" 
+                            aria-controls="pasif-urunler" 
+                            aria-selected="@(Model.AktifTab == "pasif")">
+                        Pasif Ürünler <span class="badge bg-warning">@Model.Urunler.Count(u => !u.Aktif && !u.Silindi)</span>
+                    </button>
                 </li>
-                @if (isAdmin)
+                @if(isAdmin)
                 {
                     <li class="nav-item" role="presentation">
-                        <a class="nav-link @(ViewBag.AktifTab == "silindi" ? "active" : "")" id="silinen-urunler-tab" href="@Url.Action("Index", new { tab = "silindi" })" role="tab" aria-controls="silinen-urunler" aria-selected="@(ViewBag.AktifTab == "silindi" ? "true" : "false")">
-                            <i class="fas fa-trash text-danger"></i> Silinmiş Ürünler
-                        </a>
+                        <button class="nav-link @(Model.AktifTab == "silindi" ? "active" : "")" 
+                                id="silindi-urunler-tab" 
+                                data-bs-toggle="tab" 
+                                data-bs-target="#silindi-urunler" 
+                                type="button" 
+                                role="tab" 
+                                aria-controls="silindi-urunler" 
+                                aria-selected="@(Model.AktifTab == "silindi")">
+                            Silinmiş Ürünler <span class="badge bg-danger">@Model.Urunler.Count(u => u.Silindi)</span>
+                        </button>
                     </li>
                 }
             </ul>
-            
-            <!-- Sekme İçerikleri -->
             <div class="tab-content" id="urunTabsContent">
                 <!-- Aktif Ürünler Sekmesi -->
-                <div class="tab-pane fade @(ViewBag.AktifTab == "aktif" ? "show active" : "")" id="aktif-urunler" role="tabpanel" aria-labelledby="aktif-urunler-tab">
+                <div class="tab-pane fade @(Model.AktifTab == "aktif" ? "show active" : "")" id="aktif-urunler" role="tabpanel" aria-labelledby="aktif-urunler-tab">
                     <div class="table-responsive mt-3">
                         <table class="table table-bordered table-hover" id="aktifUrunlerTablosu">
                             <thead class="table-warning">
@@ -97,6 +112,7 @@
                                     <th>Liste Fiyatı</th>
                                     <th>Satış Fiyatı</th>
                                     <th>Stok Miktarı</th>
+                                    <th>Stok Durumu</th>
                                     <th>İşlemler</th>
                                 </tr>
                             </thead>
@@ -109,18 +125,23 @@
                                         <td>@item.Birim</td>
                                         <td class="text-end">@item.ListeFiyati.ToString("N2") $</td>
                                         <td class="text-end">@item.SatisFiyati.ToString("N2") $</td>
-                                        <td class="text-end">@item.Miktar.ToString("N2") @item.Birim</td>
+                                        <td class="text-end @ColorHelpers.GetNumberColorClass(item.Miktar)">
+                                            @item.Miktar.ToString("N2") @item.Birim
+                                        </td>
+                                        <td class="text-center">
+                                            @Html.StokDurumuBadge(item.Miktar, 5)
+                                        </td>
                                         <td>
                                             <div class="btn-group">
+                                                <a asp-action="Details" asp-route-id="@item.UrunID" class="btn btn-sm btn-info" title="Detaylar">
+                                                    <i class="fas fa-info-circle"></i>
+                                                </a>
                                                 <button type="button" class="btn btn-sm btn-warning edit-btn" data-id="@item.UrunID" title="Düzenle">
                                                     <i class="fas fa-edit"></i>
                                                 </button>
                                                 <button type="button" class="btn btn-sm btn-danger pasif-yap-btn" data-id="@item.UrunID" title="Pasif Yap">
-                                                    <i class="fas fa-ban"></i>
+                                                    <i class="fas fa-times"></i>
                                                 </button>
-                                                <a asp-controller="Stok" asp-action="Durum" asp-route-urunId="@item.UrunID" class="btn btn-sm btn-success" title="Stok Durumu">
-                                                    <i class="fas fa-boxes"></i>
-                                                </a>
                                                 @if (isAdmin)
                                                 {
                                                     <button type="button" class="btn btn-sm btn-dark delete-btn" data-id="@item.UrunID" title="Sil">
@@ -137,10 +158,10 @@
                 </div>
                 
                 <!-- Pasif Ürünler Sekmesi -->
-                <div class="tab-pane fade @(ViewBag.AktifTab == "pasif" ? "show active" : "")" id="pasif-urunler" role="tabpanel" aria-labelledby="pasif-urunler-tab">
+                <div class="tab-pane fade @(Model.AktifTab == "pasif" ? "show active" : "")" id="pasif-urunler" role="tabpanel" aria-labelledby="pasif-urunler-tab">
                     <div class="table-responsive mt-3">
                         <table class="table table-bordered table-hover" id="pasifUrunlerTablosu">
-                            <thead class="table-secondary">
+                            <thead class="table-warning">
                                 <tr>
                                     <th>Ürün Adı</th>
                                     <th>Kategori</th>
@@ -148,6 +169,7 @@
                                     <th>Liste Fiyatı</th>
                                     <th>Satış Fiyatı</th>
                                     <th>Stok Miktarı</th>
+                                    <th>Stok Durumu</th>
                                     <th>İşlemler</th>
                                 </tr>
                             </thead>
@@ -160,7 +182,12 @@
                                         <td>@item.Birim</td>
                                         <td class="text-end">@item.ListeFiyati.ToString("N2") $</td>
                                         <td class="text-end">@item.SatisFiyati.ToString("N2") $</td>
-                                        <td class="text-end">@item.Miktar.ToString("N2") @item.Birim</td>
+                                        <td class="text-end @ColorHelpers.GetNumberColorClass(item.Miktar)">
+                                            @item.Miktar.ToString("N2") @item.Birim
+                                        </td>
+                                        <td class="text-center">
+                                            @Html.StokDurumuBadge(item.Miktar, 5)
+                                        </td>
                                         <td>
                                             <div class="btn-group">
                                                 <button type="button" class="btn btn-sm btn-warning edit-btn" data-id="@item.UrunID" title="Düzenle">
@@ -187,9 +214,9 @@
                 <!-- Silinmiş Ürünler Sekmesi (Sadece Admin) -->
                 @if (isAdmin)
                 {
-                    <div class="tab-pane fade @(ViewBag.AktifTab == "silindi" ? "show active" : "")" id="silinen-urunler" role="tabpanel" aria-labelledby="silinen-urunler-tab">
+                    <div class="tab-pane fade @(Model.AktifTab == "silindi" ? "show active" : "")" id="silindi-urunler" role="tabpanel" aria-labelledby="silindi-urunler-tab">
                         <div class="table-responsive mt-3">
-                            <table class="table table-bordered table-hover" id="silinenUrunlerTablosu">
+                            <table class="table table-bordered table-hover" id="silinmisUrunlerTablosu">
                                 <thead class="table-danger">
                                     <tr>
                                         <th>Ürün Adı</th>
@@ -198,6 +225,7 @@
                                         <th>Liste Fiyatı</th>
                                         <th>Satış Fiyatı</th>
                                         <th>Stok Miktarı</th>
+                                        <th>Stok Durumu</th>
                                         <th>İşlemler</th>
                                     </tr>
                                 </thead>
@@ -210,7 +238,12 @@
                                             <td>@item.Birim</td>
                                             <td class="text-end">@item.ListeFiyati.ToString("N2") $</td>
                                             <td class="text-end">@item.SatisFiyati.ToString("N2") $</td>
-                                            <td class="text-end">@item.Miktar.ToString("N2") @item.Birim</td>
+                                            <td class="text-end @ColorHelpers.GetNumberColorClass(item.Miktar)">
+                                                @item.Miktar.ToString("N2") @item.Birim
+                                            </td>
+                                            <td class="text-center">
+                                                @Html.StokDurumuBadge(item.Miktar, 5)
+                                            </td>
                                             <td>
                                                 <div class="btn-group">
                                                     <button type="button" class="btn btn-sm btn-success restore-btn" data-id="@item.UrunID" title="Geri Getir">
@@ -231,53 +264,14 @@
 </div>
 
 <!-- Yeni Ürün Ekle Modal -->
-<div class="modal fade" id="yeniUrunModal" tabindex="-1" aria-labelledby="yeniUrunModalLabel" aria-hidden="true">
+<div class="modal fade" id="urunModal" tabindex="-1" aria-labelledby="urunModalLabel" aria-hidden="true">
     <div class="modal-dialog modal-lg">
         <div class="modal-content">
-            <div class="modal-header bg-primary text-white">
-                <h5 class="modal-title" id="yeniUrunModalLabel"><i class="fas fa-plus-circle"></i> Yeni Ürün Oluştur</h5>
-                <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
-            </div>
-            <div class="modal-body">
-                <form asp-action="Create" method="post">
-                    <!-- Form içeriği burada olacak -->
-                    <p class="text-center">Yükleniyor...</p>
-                </form>
-            </div>
-        </div>
-    </div>
-</div>
-
-<!-- Ürün Düzenleme Modal -->
-<div class="modal fade" id="editUrunModal" tabindex="-1" aria-labelledby="editUrunModalLabel" aria-hidden="true">
-    <div class="modal-dialog modal-lg">
-        <div class="modal-content">
-            <form asp-action="Edit" method="post">
-                <!-- Modal içeriği AJAX ile yüklenecek -->
-            </form>
-        </div>
-    </div>
-</div>
-
-<!-- Excel İçe Aktar Modal -->
-<div class="modal fade" id="excelImportModal" tabindex="-1" aria-labelledby="excelImportModalLabel" aria-hidden="true">
-    <div class="modal-dialog">
-        <div class="modal-content">
-            <div class="modal-header bg-success text-white">
-                <h5 class="modal-title" id="excelImportModalLabel"><i class="fas fa-file-excel"></i> Excel'den Ürün İçe Aktar</h5>
-                <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
-            </div>
-            <div class="modal-body">
-                <form asp-action="ImportPreview" method="post" enctype="multipart/form-data">
-                    <div class="mb-3">
-                        <label for="excelFile" class="form-label">Excel Dosyası Seçin</label>
-                        <input type="file" class="form-control" id="excelFile" name="excelFile" required accept=".xlsx,.xls">
-                    </div>
-                    <div class="d-grid gap-2">
-                        <button type="submit" class="btn btn-success"><i class="fas fa-upload"></i> Yükle ve İçe Aktar</button>
-                        <a href="@Url.Action("DownloadExcelTemplate")" class="btn btn-outline-secondary"><i class="fas fa-download"></i> Örnek Excel Şablonu İndir</a>
-                    </div>
-                </form>
+            <!-- Modal içeriği AJAX ile doldurulacak -->
+            <div class="d-flex justify-content-center p-5">
+                <div class="spinner-border text-primary" role="status">
+                    <span class="visually-hidden">Yükleniyor...</span>
+                </div>
             </div>
         </div>
     </div>
@@ -286,368 +280,110 @@
 @section Scripts {
     <script>
         $(document).ready(function() {
-            // DataTables başlatma
-            $('#aktifUrunlerTablosu').DataTable({
-                language: {
-                    url: '//cdn.datatables.net/plug-ins/1.13.7/i18n/tr.json',
-                    emptyTable: "Aktif ürün bulunamadı"
-                },
-                responsive: true,
-                order: [[0, 'asc']] // Ürün adına göre artan sıralama
-            });
-            
-            $('#pasifUrunlerTablosu').DataTable({
-                language: {
-                    url: '//cdn.datatables.net/plug-ins/1.13.7/i18n/tr.json',
-                    emptyTable: "Pasif ürün bulunamadı"
-                },
-                responsive: true,
-                order: [[0, 'asc']] // Ürün adına göre artan sıralama
-            });
-            
-            @if (isAdmin)
-            {
-                <text>
-                $('#silinenUrunlerTablosu').DataTable({
-                    language: {
-                        url: '//cdn.datatables.net/plug-ins/1.13.7/i18n/tr.json',
-                        emptyTable: "Silinmiş ürün bulunamadı"
-                    },
-                    responsive: true,
-                    order: [[0, 'asc']] // Ürün adına göre artan sıralama
-                });
-                </text>
-            }
-
-            // Kategori filtresi değiştiğinde sayfayı yönlendir
+            // Kategori filtreleme
             $('#kategoriFilter').change(function() {
                 var kategoriID = $(this).val();
-                var url = '@Url.Action("Index")';
+                var currentUrl = new URL(window.location.href);
                 
                 if (kategoriID) {
-                    url += '?kategoriID=' + kategoriID;
+                    currentUrl.searchParams.set('kategoriID', kategoriID);
+                } else {
+                    currentUrl.searchParams.delete('kategoriID');
                 }
                 
-                window.location.href = url;
+                window.location.href = currentUrl.toString();
             });
             
-            // Yeni ürün modalı açıldığında içeriği yükle
-            $('#yeniUrunModal').on('show.bs.modal', function() {
-                var modal = $(this);
-                modal.find('.modal-body form').html('<div class="text-center"><div class="spinner-border text-primary" role="status"><span class="visually-hidden">Yükleniyor...</span></div></div>');
-                
-                $.ajax({
-                    url: '@Url.Action("Create")',
-                    type: 'GET',
-                    headers: {
-                        'X-Requested-With': 'XMLHttpRequest'
-                    },
-                    success: function(data) {
-                        modal.find('.modal-body form').html(data);
-                        
-                        // Form gönderimi için event handler
-                        $('#createUrunForm').on('submit', function(e) {
-                            e.preventDefault();
-                            
-                            var formData = $(this).serialize();
-                            
-                            $.ajax({
-                                url: $(this).attr('action'),
-                                type: 'POST',
-                                data: formData,
-                                headers: {
-                                    'X-Requested-With': 'XMLHttpRequest'
-                                },
-                                success: function(response) {
-                                    if (response.success) {
-                                        // Başarılı olursa Sweet Alert göster
-                                        Swal.fire({
-                                            icon: 'success',
-                                            title: 'Başarılı!',
-                                            text: response.message || 'Ürün başarıyla oluşturuldu.',
-                                            confirmButtonText: 'Tamam'
-                                        }).then((result) => {
-                                            // Modal'ı kapat ve sayfayı yenile
-                                            $('#yeniUrunModal').modal('hide');
-                                            location.reload();
-                                        });
-                                    } else {
-                                        // Başarısız olursa Sweet Alert göster
-                                        Swal.fire({
-                                            icon: 'error',
-                                            title: 'Hata!',
-                                            text: response.message || 'Ürün oluşturulurken bir hata oluştu.',
-                                            confirmButtonText: 'Tamam'
-                                        });
-                                        
-                                        // Hata mesajlarını göster
-                                        if (response.errors && response.errors.length > 0) {
-                                            var errorHtml = '<ul>';
-                                            $.each(response.errors, function(index, error) {
-                                                errorHtml += '<li>' + error + '</li>';
-                                            });
-                                            errorHtml += '</ul>';
-                                            
-                                            $('#createFormAlert').html(errorHtml).removeClass('d-none');
-                                        }
-                                    }
-                                },
-                                error: function(xhr, status, error) {
-                                    // AJAX hatası olursa Sweet Alert göster
-                                    Swal.fire({
-                                        icon: 'error',
-                                        title: 'AJAX Hatası!',
-                                        text: 'Ürün oluşturulurken bir hata oluştu: ' + error,
-                                        confirmButtonText: 'Tamam'
-                                    });
-                                }
-                            });
-                        });
-                    },
-                    error: function(xhr, status, error) {
-                        modal.find('.modal-body form').html('<div class="alert alert-danger">Form yüklenirken bir hata oluştu: ' + error + '</div>');
-                    }
+            // DataTables için tablo ayarları
+            var dataTableOptions = {
+                language: {
+                    url: '//cdn.datatables.net/plug-ins/1.13.4/i18n/tr.json',
+                },
+                order: [[0, 'asc']], // Ürün adına göre sırala
+                columnDefs: [
+                    { orderable: false, targets: -1 } // Son sütun sıralanamaz (İşlemler)
+                ]
+            };
+            
+            // Aktif ürünler tablosu
+            $('#aktifUrunlerTablosu').DataTable(dataTableOptions);
+            
+            // Pasif ürünler tablosu
+            $('#pasifUrunlerTablosu').DataTable(dataTableOptions);
+            
+            // Silinmiş ürünler tablosu
+            $('#silinmisUrunlerTablosu').DataTable(dataTableOptions);
+            
+            // Yeni ürün ekleme modal
+            $('.create-btn').click(function() {
+                $.get('@Url.Action("Create")', function(data) {
+                    $('#urunModal .modal-content').html(data);
                 });
             });
             
-            // Pasif yap butonları için
-            $('.pasif-yap-btn').click(function() {
-                var urunId = $(this).data('id');
-                Swal.fire({
-                    title: 'Emin misiniz?',
-                    text: 'Bu ürünü pasif duruma getirmek istediğinize emin misiniz?',
-                    icon: 'warning',
-                    showCancelButton: true,
-                    confirmButtonColor: '#d33',
-                    cancelButtonColor: '#3085d6',
-                    confirmButtonText: 'Evet, pasif yap!',
-                    cancelButtonText: 'İptal'
-                }).then((result) => {
-                    if (result.isConfirmed) {
-                        $.post('@Url.Action("SetInactive")', { id: urunId }, function(result) {
-                            if (result.success) {
-                                Swal.fire({
-                                    title: 'Başarılı!',
-                                    text: result.message,
-                                    icon: 'success',
-                                    confirmButtonText: 'Tamam'
-                                }).then(() => {
-                                    location.reload();
-                                });
-                            } else {
-                                Swal.fire({
-                                    title: 'Hata!',
-                                    text: 'İşlem sırasında bir hata oluştu: ' + result.message,
-                                    icon: 'error',
-                                    confirmButtonText: 'Tamam'
-                                });
-                            }
-                        });
-                    }
-                });
-            });
-            
-            // Aktif yap butonları için
-            $('.aktif-yap-btn').click(function() {
-                var urunId = $(this).data('id');
-                Swal.fire({
-                    title: 'Emin misiniz?',
-                    text: 'Bu ürünü aktif duruma getirmek istediğinize emin misiniz?',
-                    icon: 'warning',
-                    showCancelButton: true,
-                    confirmButtonColor: '#3085d6',
-                    cancelButtonColor: '#d33',
-                    confirmButtonText: 'Evet, aktif yap!',
-                    cancelButtonText: 'İptal'
-                }).then((result) => {
-                    if (result.isConfirmed) {
-                        $.post('@Url.Action("SetActive")', { id: urunId }, function(result) {
-                            if (result.success) {
-                                Swal.fire({
-                                    title: 'Başarılı!',
-                                    text: result.message,
-                                    icon: 'success',
-                                    confirmButtonText: 'Tamam'
-                                }).then(() => {
-                                    location.reload();
-                                });
-                            } else {
-                                Swal.fire({
-                                    title: 'Hata!',
-                                    text: 'İşlem sırasında bir hata oluştu: ' + result.message,
-                                    icon: 'error',
-                                    confirmButtonText: 'Tamam'
-                                });
-                            }
-                        });
-                    }
-                });
-            });
-            
-            // Sil butonları için
-            $('.delete-btn').click(function() {
-                var urunId = $(this).data('id');
-                Swal.fire({
-                    title: 'Emin misiniz?',
-                    text: 'Bu ürünü silmek istediğinize emin misiniz?',
-                    icon: 'warning',
-                    showCancelButton: true,
-                    confirmButtonColor: '#d33',
-                    cancelButtonColor: '#3085d6',
-                    confirmButtonText: 'Evet, sil!',
-                    cancelButtonText: 'İptal'
-                }).then((result) => {
-                    if (result.isConfirmed) {
-                        $.post('@Url.Action("SetDelete")', { id: urunId }, function(result) {
-                            if (result.success) {
-                                Swal.fire({
-                                    title: 'Başarılı!',
-                                    text: result.message,
-                                    icon: 'success',
-                                    confirmButtonText: 'Tamam'
-                                }).then(() => {
-                                    location.reload();
-                                });
-                            } else {
-                                Swal.fire({
-                                    title: 'Hata!',
-                                    text: 'İşlem sırasında bir hata oluştu: ' + result.message,
-                                    icon: 'error',
-                                    confirmButtonText: 'Tamam'
-                                });
-                            }
-                        });
-                    }
-                });
-            });
-            
-            // Geri getir butonları için
-            $('.restore-btn').click(function() {
-                var urunId = $(this).data('id');
-                Swal.fire({
-                    title: 'Emin misiniz?',
-                    text: 'Bu ürünü geri getirmek istediğinize emin misiniz?',
-                    icon: 'warning',
-                    showCancelButton: true,
-                    confirmButtonColor: '#3085d6',
-                    cancelButtonColor: '#d33',
-                    confirmButtonText: 'Evet, geri getir!',
-                    cancelButtonText: 'İptal'
-                }).then((result) => {
-                    if (result.isConfirmed) {
-                        $.post('@Url.Action("RestoreDeleted")', { id: urunId }, function(result) {
-                            if (result.success) {
-                                Swal.fire({
-                                    title: 'Başarılı!',
-                                    text: result.message,
-                                    icon: 'success',
-                                    confirmButtonText: 'Tamam'
-                                }).then(() => {
-                                    location.reload();
-                                });
-                            } else {
-                                Swal.fire({
-                                    title: 'Hata!',
-                                    text: 'İşlem sırasında bir hata oluştu: ' + result.message,
-                                    icon: 'error',
-                                    confirmButtonText: 'Tamam'
-                                });
-                            }
-                        });
-                    }
-                });
-            });
-            
-            // Excel'e aktar butonu
-            $('#excelExportBtn').click(function(e) {
-                e.preventDefault();
-                window.location.href = '@Url.Action("ExportToExcel", "Urun")';
-            });
-            
-            // Düzenleme butonu tıklandığında
+            // Ürün düzenleme modal
             $(document).on('click', '.edit-btn', function() {
-                var urunId = $(this).data('id');
-                var modal = $('#editUrunModal');
-                
-                // Loading göster
-                modal.find('.modal-content form').html('<div class="text-center p-5"><div class="spinner-border text-primary" role="status"><span class="visually-hidden">Yükleniyor...</span></div></div>');
-                
-                // Modalı aç
-                modal.modal('show');
-                
-                // AJAX ile düzenleme formunu yükle
-                $.ajax({
-                    url: '@Url.Action("Edit")/' + urunId,
-                    type: 'GET',
-                    headers: {
-                        'X-Requested-With': 'XMLHttpRequest'
-                    },
-                    success: function(data) {
-                        modal.find('.modal-content form').html(data);
-                        
-                        // Form gönderimini AJAX ile yap
-                        $('#editUrunForm').on('submit', function(e) {
-                            e.preventDefault();
-                            
-                            var formData = $(this).serialize();
-                            
-                            $.ajax({
-                                url: $(this).attr('action'),
-                                type: 'POST',
-                                data: formData,
-                                headers: {
-                                    'X-Requested-With': 'XMLHttpRequest'
-                                },
-                                success: function(response) {
-                                    if (response.success) {
-                                        // Başarılı olursa Sweet Alert göster
-                                        Swal.fire({
-                                            icon: 'success',
-                                            title: 'Başarılı!',
-                                            text: response.message || 'Ürün başarıyla güncellendi.',
-                                            confirmButtonText: 'Tamam'
-                                        }).then(() => {
-                                            // Modalı kapat ve sayfayı yenile
-                                            $('#editUrunModal').modal('hide');
-                                            location.reload();
-                                        });
-                                    } else {
-                                        // Başarısız olursa Sweet Alert göster
-                                        Swal.fire({
-                                            icon: 'error',
-                                            title: 'Hata!',
-                                            text: response.message || 'Ürün güncellenirken bir hata oluştu.',
-                                            confirmButtonText: 'Tamam'
-                                        });
-                                        
-                                        // Hata mesajlarını göster
-                                        if (response.errors && response.errors.length > 0) {
-                                            var errorHtml = '<ul>';
-                                            $.each(response.errors, function(index, error) {
-                                                errorHtml += '<li>' + error + '</li>';
-                                            });
-                                            errorHtml += '</ul>';
-                                            
-                                            $('#editFormAlert').html(errorHtml).removeClass('d-none');
-                                        }
-                                    }
-                                },
-                                error: function(xhr, status, error) {
-                                    // AJAX hatası olursa Sweet Alert göster
-                                    Swal.fire({
-                                        icon: 'error',
-                                        title: 'AJAX Hatası!',
-                                        text: 'Ürün güncellenirken bir hata oluştu: ' + error,
-                                        confirmButtonText: 'Tamam'
-                                    });
-                                }
-                            });
-                        });
-                    },
-                    error: function(xhr, status, error) {
-                        modal.find('.modal-content form').html('<div class="alert alert-danger m-3">Form yüklenirken bir hata oluştu: ' + error + '</div>');
-                    }
+                var id = $(this).data('id');
+                $.get('@Url.Action("Edit")/' + id, function(data) {
+                    $('#urunModal .modal-content').html(data);
+                    $('#urunModal').modal('show');
                 });
+            });
+            
+            // Ürün pasif yapma
+            $(document).on('click', '.pasif-yap-btn', function() {
+                var id = $(this).data('id');
+                if (confirm('Bu ürünü pasif yapmak istediğinize emin misiniz?')) {
+                    $.post('@Url.Action("SetInactive")/' + id, function(data) {
+                        if (data.success) {
+                            location.reload();
+                        } else {
+                            alert('Ürün pasif yapılırken bir hata oluştu: ' + data.message);
+                        }
+                    });
+                }
+            });
+            
+            // Ürün aktif yapma
+            $(document).on('click', '.aktif-yap-btn', function() {
+                var id = $(this).data('id');
+                if (confirm('Bu ürünü aktif yapmak istediğinize emin misiniz?')) {
+                    $.post('@Url.Action("SetActive")/' + id, function(data) {
+                        if (data.success) {
+                            location.reload();
+                        } else {
+                            alert('Ürün aktif yapılırken bir hata oluştu: ' + data.message);
+                        }
+                    });
+                }
+            });
+            
+            // Ürün silme
+            $(document).on('click', '.delete-btn', function() {
+                var id = $(this).data('id');
+                if (confirm('Bu ürünü silmek istediğinize emin misiniz? Bu işlem geri alınamaz.')) {
+                    $.post('@Url.Action("SetDelete")/' + id, function(data) {
+                        if (data.success) {
+                            location.reload();
+                        } else {
+                            alert('Ürün silinirken bir hata oluştu: ' + data.message);
+                        }
+                    });
+                }
+            });
+            
+            // Silinen ürünü geri getirme
+            $(document).on('click', '.restore-btn', function() {
+                var id = $(this).data('id');
+                if (confirm('Bu ürünü geri getirmek istediğinize emin misiniz?')) {
+                    $.post('@Url.Action("RestoreDeleted")/' + id, function(data) {
+                        if (data.success) {
+                            location.reload();
+                        } else {
+                            alert('Ürün geri getirilirken bir hata oluştu: ' + data.message);
+                        }
+                    });
+                }
             });
         });
     </script>

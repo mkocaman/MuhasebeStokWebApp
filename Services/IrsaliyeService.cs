@@ -15,24 +15,24 @@ namespace MuhasebeStokWebApp.Services
 {
     public class IrsaliyeService : IIrsaliyeService
     {
-        private readonly ApplicationDbContext _context;
         private readonly IUnitOfWork _unitOfWork;
         private readonly ILogger<IrsaliyeService> _logger;
         private readonly UserManager<ApplicationUser> _userManager;
         private readonly IHttpContextAccessor _httpContextAccessor;
+        private readonly IExceptionHandlingService _exceptionHandler;
 
         public IrsaliyeService(
-            ApplicationDbContext context,
             IUnitOfWork unitOfWork,
             ILogger<IrsaliyeService> logger,
             UserManager<ApplicationUser> userManager,
-            IHttpContextAccessor httpContextAccessor)
+            IHttpContextAccessor httpContextAccessor,
+            IExceptionHandlingService exceptionHandler)
         {
-            _context = context;
             _unitOfWork = unitOfWork;
             _logger = logger;
             _userManager = userManager;
             _httpContextAccessor = httpContextAccessor;
+            _exceptionHandler = exceptionHandler;
         }
 
         /// <summary>
@@ -40,15 +40,10 @@ namespace MuhasebeStokWebApp.Services
         /// </summary>
         public async Task<Guid> OtomatikIrsaliyeOlustur(Fatura fatura, Guid? depoID = null)
         {
-            try
+            return await _exceptionHandler.HandleExceptionAsync(async () =>
             {
-                // Faturayı detaylarıyla birlikte tekrar çek - FaturaTuru ilişkisini ekle
-                var faturaWithDetails = await _context.Faturalar
-                    .Include(f => f.FaturaTuru)
-                    .Include(f => f.FaturaDetaylari)
-                        .ThenInclude(fd => fd.Urun)
-                    .Include(f => f.Cari)
-                    .FirstOrDefaultAsync(f => f.FaturaID == fatura.FaturaID);
+                // Faturayı detaylarıyla birlikte tekrar çek
+                var faturaWithDetails = await _unitOfWork.EntityFaturaRepository.GetByIdWithIncludesAsync(fatura.FaturaID);
 
                 if (faturaWithDetails != null && faturaWithDetails.FaturaDetaylari != null && faturaWithDetails.FaturaDetaylari.Any())
                 {
@@ -79,91 +74,87 @@ namespace MuhasebeStokWebApp.Services
                     // Mevcut kullanıcının ID'sini al
                     var currentUserId = GetCurrentUserId();
 
-                    // Yeni irsaliye oluştur
-                    var irsaliye = new Irsaliye
-                    {
-                        IrsaliyeID = Guid.NewGuid(),
-                        IrsaliyeNumarasi = irsaliyeNumarasi,
-                        IrsaliyeTarihi = faturaWithDetails.FaturaTarihi ?? DateTime.Now,
-                        CariID = cariID,
-                        FaturaID = faturaWithDetails.FaturaID,
-                        DepoID = depoID,
-                        IrsaliyeTuru = irsaliyeTuru,
-                        Aciklama = $"{faturaWithDetails.FaturaNumarasi ?? ""} numaralı faturaya ait otomatik oluşturulan {irsaliyeTuru} irsaliyesi",
-                        OlusturmaTarihi = DateTime.Now,
-                        OlusturanKullaniciId = currentUserId,
-                        Aktif = true,
-                        Silindi = false,
-                        Durum = "Açık" // Durumu açık olarak ayarla
-                    };
-
-                    _context.Irsaliyeler.Add(irsaliye);
-
-                    // Fatura kalemlerini irsaliye kalemlerine dönüştür
-                    if (faturaWithDetails.FaturaDetaylari != null && faturaWithDetails.FaturaDetaylari.Any())
-                    {
-                        foreach (var detay in faturaWithDetails.FaturaDetaylari)
-                        {
-                            if (detay.Urun != null)
-                            {
-                                var irsaliyeDetay = new IrsaliyeDetay
-                                {
-                                    IrsaliyeDetayID = Guid.NewGuid(),
-                                    IrsaliyeID = irsaliye.IrsaliyeID,
-                                    UrunID = detay.UrunID,
-                                    DepoID = depoID,
-                                    Miktar = detay.Miktar,
-                                    BirimFiyat = detay.BirimFiyat,
-                                    KdvOrani = detay.KdvOrani,
-                                    IndirimOrani = detay.IndirimOrani,
-                                    Birim = detay.Birim ?? "Adet",
-                                    Aciklama = detay.Aciklama ?? "",
-                                    OlusturmaTarihi = DateTime.Now,
-                                    SatirToplam = detay.SatirToplam ?? 0m,
-                                    SatirKdvToplam = detay.SatirKdvToplam ?? 0m,
-                                    Aktif = true,
-                                    Silindi = false
-                                };
-
-                                _context.IrsaliyeDetaylari.Add(irsaliyeDetay);
-                            }
-                        }
-                    }
-
+                    await _unitOfWork.BeginTransactionAsync();
                     try
                     {
-                        await _context.SaveChangesAsync();
+                        // Yeni irsaliye oluştur
+                        var irsaliye = new Irsaliye
+                        {
+                            IrsaliyeID = Guid.NewGuid(),
+                            IrsaliyeNumarasi = irsaliyeNumarasi,
+                            IrsaliyeTarihi = faturaWithDetails.FaturaTarihi ?? DateTime.Now,
+                            CariID = cariID,
+                            FaturaID = faturaWithDetails.FaturaID,
+                            DepoID = depoID,
+                            IrsaliyeTuru = irsaliyeTuru,
+                            Aciklama = $"{faturaWithDetails.FaturaNumarasi ?? ""} numaralı faturaya ait otomatik oluşturulan {irsaliyeTuru} irsaliyesi",
+                            OlusturmaTarihi = DateTime.Now,
+                            OlusturanKullaniciId = currentUserId,
+                            Aktif = true,
+                            Silindi = false,
+                            Durum = "Açık" // Durumu açık olarak ayarla
+                        };
+
+                        await _unitOfWork.IrsaliyeRepository.AddAsync(irsaliye);
+
+                        // Fatura kalemlerini irsaliye kalemlerine dönüştür
+                        if (faturaWithDetails.FaturaDetaylari != null && faturaWithDetails.FaturaDetaylari.Any())
+                        {
+                            foreach (var detay in faturaWithDetails.FaturaDetaylari)
+                            {
+                                if (detay.Urun != null)
+                                {
+                                    var irsaliyeDetay = new IrsaliyeDetay
+                                    {
+                                        IrsaliyeDetayID = Guid.NewGuid(),
+                                        IrsaliyeID = irsaliye.IrsaliyeID,
+                                        UrunID = detay.UrunID,
+                                        DepoID = depoID,
+                                        Miktar = detay.Miktar,
+                                        BirimFiyat = detay.BirimFiyat,
+                                        KdvOrani = detay.KdvOrani,
+                                        IndirimOrani = detay.IndirimOrani,
+                                        Birim = detay.Birim ?? "Adet",
+                                        Aciklama = detay.Aciklama ?? "",
+                                        OlusturmaTarihi = DateTime.Now,
+                                        SatirToplam = detay.SatirToplam ?? 0m,
+                                        SatirKdvToplam = detay.SatirKdvToplam ?? 0m,
+                                        Aktif = true,
+                                        Silindi = false
+                                    };
+
+                                    await _unitOfWork.IrsaliyeDetayRepository.AddAsync(irsaliyeDetay);
+                                }
+                            }
+                        }
+
+                        // İrsaliye ve detay kayıtlarını kaydet
+                        await _unitOfWork.SaveChangesAsync();
                         _logger.LogInformation($"Fatura için otomatik irsaliye oluşturuldu: IrsaliyeNo={irsaliyeNumarasi}, FaturaNo={faturaWithDetails.FaturaNumarasi}");
                         
                         // İrsaliye oluşturulduktan sonra, faturaya bağlı stok hareketlerinin IrsaliyeID alanını güncelle
-                        var stokHareketleri = await _context.StokHareketleri
-                            .Where(sh => sh.FaturaID == faturaWithDetails.FaturaID && !sh.Silindi)
-                            .ToListAsync();
+                        var stokHareketleri = await _unitOfWork.StokHareketRepository.GetAllAsync(
+                            sh => sh.FaturaID == faturaWithDetails.FaturaID && !sh.Silindi);
                             
-                        if (stokHareketleri != null && stokHareketleri.Any())
+                        if (stokHareketleri.Any())
                         {
                             foreach (var hareket in stokHareketleri)
                             {
                                 hareket.IrsaliyeID = irsaliye.IrsaliyeID;
                                 hareket.IrsaliyeTuru = irsaliyeTuru;
-                                _context.StokHareketleri.Update(hareket);
+                                await _unitOfWork.StokHareketRepository.UpdateAsync(hareket);
                             }
                             
-                            try {
-                                await _context.SaveChangesAsync();
-                                _logger.LogInformation($"{stokHareketleri.Count} adet stok hareketinin IrsaliyeID alanı güncellendi. IrsaliyeID: {irsaliye.IrsaliyeID}");
-                            }
-                            catch (Exception stokEx) {
-                                _logger.LogError(stokEx, $"Stok hareketleri güncellenirken hata oluştu: {stokEx.Message}");
-                                // Sadece log tutup devam ediyoruz, irsaliye oluşturuldu
-                            }
+                            await _unitOfWork.SaveChangesAsync();
+                            _logger.LogInformation($"{stokHareketleri.Count()} adet stok hareketinin IrsaliyeID alanı güncellendi. IrsaliyeID: {irsaliye.IrsaliyeID}");
                         }
                         
+                        await _unitOfWork.CommitTransactionAsync();
                         return irsaliye.IrsaliyeID;
                     }
-                    catch (Exception saveEx)
+                    catch 
                     {
-                        _logger.LogError(saveEx, $"İrsaliye detayları kaydedilirken hata oluştu: {saveEx.Message}");
+                        await _unitOfWork.RollbackTransactionAsync();
                         throw;
                     }
                 }
@@ -172,12 +163,7 @@ namespace MuhasebeStokWebApp.Services
                     _logger.LogWarning($"İrsaliye oluşturmak için fatura detayları bulunamadı. FaturaID: {fatura.FaturaID}");
                     throw new Exception($"İrsaliye oluşturmak için fatura veya detayları bulunamadı. FaturaID: {fatura.FaturaID}");
                 }
-            }
-            catch (Exception ex)
-            {
-                _logger.LogError(ex, $"Otomatik irsaliye oluşturulurken hata oluştu: {ex.Message}");
-                throw;
-            }
+            }, "OtomatikIrsaliyeOlustur", fatura.FaturaID, depoID);
         }
 
         /// <summary>
@@ -185,194 +171,169 @@ namespace MuhasebeStokWebApp.Services
         /// </summary>
         public async Task<Guid> OtomatikIrsaliyeOlusturFromID(Guid faturaID, Guid? depoID = null)
         {
+            return await _exceptionHandler.HandleExceptionAsync(async () =>
+            {
+                // Faturayı bul
+                var fatura = await _unitOfWork.FaturaRepository.GetByIdAsync(faturaID);
+                if (fatura == null)
+                {
+                    throw new Exception($"Fatura bulunamadı. FaturaID: {faturaID}");
+                }
+
+                // Faturadan irsaliye oluştur
+                return await OtomatikIrsaliyeOlustur(fatura, depoID);
+            }, "OtomatikIrsaliyeOlusturFromID", faturaID, depoID);
+        }
+
+        /// <summary>
+        /// Yeni irsaliye numarası oluşturur (örn. IRS-2023-0001)
+        /// </summary>
+        public string GenerateIrsaliyeNumarasi()
+        {
+            // Son irsaliye numarasını bul
+            string prefix = $"IRS-{DateTime.Now.Year}-";
+            var numara = 1;
+
             try
             {
-                // Faturayı detayları ile birlikte yükle
-                var faturaWithDetails = await _context.Faturalar
-                    .Include(f => f.FaturaTuru)
-                    .Include(f => f.FaturaDetaylari)
-                        .ThenInclude(fd => fd.Urun)
-                    .FirstOrDefaultAsync(f => f.FaturaID == faturaID);
+                var sonIrsaliye = _unitOfWork.IrsaliyeRepository.GetAll()
+                    .Where(i => i.IrsaliyeNumarasi != null && i.IrsaliyeNumarasi.StartsWith(prefix))
+                    .OrderByDescending(i => i.IrsaliyeNumarasi)
+                    .FirstOrDefault();
 
-                if (faturaWithDetails != null && faturaWithDetails.FaturaDetaylari != null && faturaWithDetails.FaturaDetaylari.Any())
+                if (sonIrsaliye != null && int.TryParse(sonIrsaliye.IrsaliyeNumarasi.Substring(prefix.Length), out int sonNumara))
                 {
-                    // İrsaliye türünü belirle
-                    string irsaliyeTuru;
-                    if (faturaWithDetails.FaturaTuru == null)
-                    {
-                        _logger.LogWarning($"Fatura türü bulunamadı. Varsayılan olarak 'Çıkış İrsaliyesi' kullanılıyor. FaturaID: {faturaID}");
-                        irsaliyeTuru = "Çıkış İrsaliyesi"; // Varsayılan değer
-                    }
-                    else
-                    {
-                        irsaliyeTuru = faturaWithDetails.FaturaTuru.HareketTuru == "Giriş" 
-                            ? "Giriş İrsaliyesi" 
-                            : "Çıkış İrsaliyesi";
-                    }
-                    
-                    // Otomatik irsaliye numarası oluştur
-                    var irsaliyeNumarasi = GenerateIrsaliyeNumarasi();
-
-                    // CariID kontrol et ve geçerli bir ID olduğundan emin ol
-                    var cariID = faturaWithDetails.CariID ?? Guid.Empty;
-                    if (cariID == Guid.Empty)
-                    {
-                        _logger.LogWarning($"Faturada geçerli bir cari bulunamadı. FaturaID: {faturaID}");
-                    }
-
-                    // Mevcut kullanıcının ID'sini al
-                    var currentUserId = GetCurrentUserId();
-
-                    // Yeni irsaliye oluştur
-                    var irsaliye = new Irsaliye
-                    {
-                        IrsaliyeID = Guid.NewGuid(),
-                        IrsaliyeNumarasi = irsaliyeNumarasi,
-                        IrsaliyeTarihi = faturaWithDetails.FaturaTarihi ?? DateTime.Now,
-                        CariID = cariID,
-                        FaturaID = faturaWithDetails.FaturaID,
-                        DepoID = depoID,
-                        IrsaliyeTuru = irsaliyeTuru,
-                        Aciklama = $"{faturaWithDetails.FaturaNumarasi ?? ""} numaralı faturaya ait otomatik oluşturulan {irsaliyeTuru} irsaliyesi",
-                        OlusturmaTarihi = DateTime.Now,
-                        OlusturanKullaniciId = currentUserId,
-                        Aktif = true,
-                        Silindi = false,
-                        Durum = "Açık" // Durumu açık olarak ayarla
-                    };
-
-                    _context.Irsaliyeler.Add(irsaliye);
-
-                    // Fatura kalemlerini irsaliye kalemlerine dönüştür
-                    if (faturaWithDetails.FaturaDetaylari != null && faturaWithDetails.FaturaDetaylari.Any())
-                    {
-                        foreach (var detay in faturaWithDetails.FaturaDetaylari)
-                        {
-                            if (detay.Urun != null)
-                            {
-                                var irsaliyeDetay = new IrsaliyeDetay
-                                {
-                                    IrsaliyeDetayID = Guid.NewGuid(),
-                                    IrsaliyeID = irsaliye.IrsaliyeID,
-                                    UrunID = detay.UrunID,
-                                    DepoID = depoID,
-                                    Miktar = detay.Miktar,
-                                    BirimFiyat = detay.BirimFiyat,
-                                    KdvOrani = detay.KdvOrani,
-                                    IndirimOrani = detay.IndirimOrani,
-                                    Birim = detay.Birim ?? "Adet",
-                                    Aciklama = detay.Aciklama ?? "",
-                                    OlusturmaTarihi = DateTime.Now,
-                                    SatirToplam = detay.SatirToplam ?? 0m,
-                                    SatirKdvToplam = detay.SatirKdvToplam ?? 0m,
-                                    Aktif = true,
-                                    Silindi = false
-                                };
-
-                                _context.IrsaliyeDetaylari.Add(irsaliyeDetay);
-                            }
-                        }
-                    }
-
-                    try
-                    {
-                        await _context.SaveChangesAsync();
-                        _logger.LogInformation($"Fatura için otomatik irsaliye oluşturuldu: IrsaliyeNo={irsaliyeNumarasi}, FaturaNo={faturaWithDetails.FaturaNumarasi}");
-                        
-                        // İrsaliye oluşturulduktan sonra, faturaya bağlı stok hareketlerinin IrsaliyeID alanını güncelle
-                        var stokHareketleri = await _context.StokHareketleri
-                            .Where(sh => sh.FaturaID == faturaWithDetails.FaturaID && !sh.Silindi)
-                            .ToListAsync();
-                            
-                        if (stokHareketleri != null && stokHareketleri.Any())
-                        {
-                            foreach (var hareket in stokHareketleri)
-                            {
-                                hareket.IrsaliyeID = irsaliye.IrsaliyeID;
-                                hareket.IrsaliyeTuru = irsaliyeTuru;
-                                _context.StokHareketleri.Update(hareket);
-                            }
-                            
-                            try {
-                                await _context.SaveChangesAsync();
-                                _logger.LogInformation($"{stokHareketleri.Count} adet stok hareketinin IrsaliyeID alanı güncellendi. IrsaliyeID: {irsaliye.IrsaliyeID}");
-                            }
-                            catch (Exception stokEx) {
-                                _logger.LogError(stokEx, $"Stok hareketleri güncellenirken hata oluştu: {stokEx.Message}");
-                                // Sadece log tutup devam ediyoruz, irsaliye oluşturuldu
-                            }
-                        }
-                        
-                        return irsaliye.IrsaliyeID;
-                    }
-                    catch (Exception saveEx)
-                    {
-                        _logger.LogError(saveEx, $"İrsaliye detayları kaydedilirken hata oluştu: {saveEx.Message}");
-                        throw;
-                    }
-                }
-                else
-                {
-                    _logger.LogWarning($"İrsaliye oluşturmak için fatura detayları bulunamadı. FaturaID: {faturaID}");
-                    throw new Exception($"İrsaliye oluşturmak için fatura veya detayları bulunamadı. FaturaID: {faturaID}");
+                    numara = sonNumara + 1;
                 }
             }
             catch (Exception ex)
             {
-                _logger.LogError(ex, $"Otomatik irsaliye oluşturulurken hata oluştu: {ex.Message}");
-                throw;
+                _logger.LogError(ex, "İrsaliye numarası oluşturulurken hata oluştu. Varsayılan değer kullanılıyor.");
             }
+
+            return $"{prefix}{numara:D4}";
         }
 
         /// <summary>
-        /// Yeni bir irsaliye numarası oluşturur
-        /// </summary>
-        public string GenerateIrsaliyeNumarasi()
-        {
-            var today = DateTime.Now;
-            var year = today.Year.ToString().Substring(2);
-            var month = today.Month.ToString().PadLeft(2, '0');
-            var day = today.Day.ToString().PadLeft(2, '0');
-            var prefix = $"IRS-{year}{month}{day}-";
-
-            // Son irsaliye numarasını bulup arttır
-            var lastIrsaliye = _context.Irsaliyeler
-                .Where(i => i.IrsaliyeNumarasi != null && i.IrsaliyeNumarasi.StartsWith(prefix))
-                .OrderByDescending(i => i.IrsaliyeNumarasi)
-                .FirstOrDefault();
-
-            int sequence = 1;
-            if (lastIrsaliye != null && lastIrsaliye.IrsaliyeNumarasi != null)
-            {
-                var parts = lastIrsaliye.IrsaliyeNumarasi.Split('-');
-                if (parts.Length == 3 && int.TryParse(parts[2], out int lastSeq))
-                {
-                    sequence = lastSeq + 1;
-                }
-            }
-
-            return $"{prefix}{sequence.ToString().PadLeft(3, '0')}";
-        }
-
-        /// <summary>
-        /// Mevcut kullanıcının ID'sini al
+        /// Mevcut kullanıcının ID'sini döndürür
         /// </summary>
         private Guid GetCurrentUserId()
         {
-            if (_httpContextAccessor.HttpContext == null || 
-                _httpContextAccessor.HttpContext.User == null || 
-                !_httpContextAccessor.HttpContext.User.Identity.IsAuthenticated)
+            try
             {
-                return Guid.Empty;
+                var userId = _userManager.GetUserId(_httpContextAccessor.HttpContext.User);
+                if (Guid.TryParse(userId, out Guid userGuid))
+                {
+                    return userGuid;
+                }
             }
-
-            var userIdClaim = _httpContextAccessor.HttpContext.User.FindFirst(System.Security.Claims.ClaimTypes.NameIdentifier);
-            if (userIdClaim != null && Guid.TryParse(userIdClaim.Value, out Guid userId))
+            catch (Exception ex)
             {
-                return userId;
+                _logger.LogError(ex, "Kullanıcı ID'si alınırken hata oluştu.");
             }
-
+            
             return Guid.Empty;
+        }
+
+        /// <summary>
+        /// İrsaliye detaylarını günceller
+        /// </summary>
+        public async Task<bool> UpdateIrsaliyeDetaylarAsync(Guid irsaliyeID, List<MuhasebeStokWebApp.ViewModels.Irsaliye.IrsaliyeDetayViewModel> detaylar)
+        {
+            return await _exceptionHandler.HandleExceptionAsync(async () => 
+            {
+                // İrsaliyeyi kontrol et
+                var irsaliye = await _unitOfWork.IrsaliyeRepository.GetByIdAsync(irsaliyeID);
+                if (irsaliye == null)
+                {
+                    _logger.LogWarning($"İrsaliye detayları güncellenemedi: İrsaliye bulunamadı. IrsaliyeID: {irsaliyeID}");
+                    return false;
+                }
+
+                await _unitOfWork.BeginTransactionAsync();
+                try
+                {
+                    // Mevcut detayları getir
+                    var mevcutDetaylar = await _unitOfWork.IrsaliyeDetayRepository.GetAllAsync(
+                        d => d.IrsaliyeID == irsaliyeID && !d.Silindi);
+                    
+                    // Silinecek detayları işaretle
+                    foreach (var mevcutDetay in mevcutDetaylar)
+                    {
+                        var guncellenecekDetay = detaylar.FirstOrDefault(d => d.IrsaliyeDetayID == mevcutDetay.IrsaliyeDetayID);
+                        
+                        if (guncellenecekDetay == null)
+                        {
+                            // Detay listede yoksa sil
+                            mevcutDetay.Silindi = true;
+                            mevcutDetay.GuncellemeTarihi = DateTime.Now;
+                            await _unitOfWork.IrsaliyeDetayRepository.UpdateAsync(mevcutDetay);
+                        }
+                    }
+                    
+                    // Detayları ekle veya güncelle
+                    foreach (var detay in detaylar)
+                    {
+                        if (detay.IrsaliyeDetayID == Guid.Empty)
+                        {
+                            // Yeni detay ekle
+                            var yeniDetay = new IrsaliyeDetay
+                            {
+                                IrsaliyeDetayID = Guid.NewGuid(),
+                                IrsaliyeID = irsaliyeID,
+                                UrunID = detay.UrunID,
+                                DepoID = detay.DepoID,
+                                Miktar = detay.Miktar,
+                                BirimFiyat = detay.BirimFiyat,
+                                KdvOrani = detay.KdvOrani,
+                                IndirimOrani = detay.IndirimOrani,
+                                Birim = detay.Birim,
+                                Aciklama = detay.Aciklama,
+                                OlusturmaTarihi = DateTime.Now,
+                                SatirToplam = detay.SatirToplam,
+                                SatirKdvToplam = detay.SatirKdvToplam,
+                                Aktif = true,
+                                Silindi = false
+                            };
+                            
+                            await _unitOfWork.IrsaliyeDetayRepository.AddAsync(yeniDetay);
+                        }
+                        else
+                        {
+                            // Mevcut detayı güncelle
+                            var mevcutDetay = mevcutDetaylar.FirstOrDefault(d => d.IrsaliyeDetayID == detay.IrsaliyeDetayID);
+                            if (mevcutDetay != null)
+                            {
+                                mevcutDetay.UrunID = detay.UrunID;
+                                mevcutDetay.DepoID = detay.DepoID;
+                                mevcutDetay.Miktar = detay.Miktar;
+                                mevcutDetay.BirimFiyat = detay.BirimFiyat;
+                                mevcutDetay.KdvOrani = detay.KdvOrani;
+                                mevcutDetay.IndirimOrani = detay.IndirimOrani;
+                                mevcutDetay.Birim = detay.Birim;
+                                mevcutDetay.Aciklama = detay.Aciklama;
+                                mevcutDetay.GuncellemeTarihi = DateTime.Now;
+                                mevcutDetay.SatirToplam = detay.SatirToplam;
+                                mevcutDetay.SatirKdvToplam = detay.SatirKdvToplam;
+                                mevcutDetay.Silindi = false;
+                                
+                                await _unitOfWork.IrsaliyeDetayRepository.UpdateAsync(mevcutDetay);
+                            }
+                        }
+                    }
+                    
+                    await _unitOfWork.SaveChangesAsync();
+                    await _unitOfWork.CommitTransactionAsync();
+                    
+                    _logger.LogInformation($"İrsaliye detayları başarıyla güncellendi. IrsaliyeID: {irsaliyeID}, Detay sayısı: {detaylar.Count}");
+                    return true;
+                }
+                catch 
+                {
+                    await _unitOfWork.RollbackTransactionAsync();
+                    throw;
+                }
+            }, "UpdateIrsaliyeDetaylarAsync", irsaliyeID);
         }
     }
 } 

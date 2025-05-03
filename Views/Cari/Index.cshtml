@@ -1,5 +1,5 @@
 @model IEnumerable<MuhasebeStokWebApp.Data.Entities.Cari>
-
+@using MuhasebeStokWebApp.ViewModels
 @{
     ViewData["Title"] = "Cariler";
     Layout = "~/Views/Shared/_Layout.cshtml";
@@ -79,18 +79,11 @@
                                         </td>
                                         <td>@(string.IsNullOrEmpty(cari.Yetkili) ? "-" : cari.Yetkili)</td>
                                         <td>@(string.IsNullOrEmpty(cari.Telefon) ? "-" : cari.Telefon)</td>
-                                        <td class="text-end @(cari.BaslangicBakiye >= 0 ? "text-success" : "text-danger")">
+                                        <td class="text-end @ColorHelpers.GetNumberColorClass(cari.BaslangicBakiye)">
                                             @cari.BaslangicBakiye.ToString("N2") @paraBirimiSembol
                                         </td>
                                         <td class="text-center">
-                                            @if (cari.AktifMi)
-                                            {
-                                                <span class="badge bg-success">Aktif</span>
-                                            }
-                                            else
-                                            {
-                                                <span class="badge bg-danger">Pasif</span>
-                                            }
+                                            @Html.AktifPasifBadge(cari.AktifMi)
                                         </td>
                                         <td class="text-center">
                                             <div class="btn-group">

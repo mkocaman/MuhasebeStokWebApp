@@ -118,6 +118,11 @@ namespace MuhasebeStokWebApp.Data.Entities
         public string? KullaniciId { get; set; }
         
         /// <summary>
+        /// İşlemi yapan kullanıcının ID'si (eski sistem için)
+        /// </summary>
+        public Guid? KullaniciGuid { get; set; }
+        
+        /// <summary>
         /// İşlemi yapan kullanıcı
         /// </summary>
         [ForeignKey("KullaniciId")]

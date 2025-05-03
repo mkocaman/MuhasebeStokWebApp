@@ -8,6 +8,7 @@ using Newtonsoft.Json;
 using System.Diagnostics;
 using System.Collections.Generic;
 using Microsoft.EntityFrameworkCore;
+using MuhasebeStokWebApp.Exceptions;
 
 namespace MuhasebeStokWebApp.Middleware
 {
@@ -16,12 +17,18 @@ namespace MuhasebeStokWebApp.Middleware
         private readonly RequestDelegate _next;
         private readonly ILogger<GlobalExceptionHandlingMiddleware> _logger;
         private readonly IHostEnvironment _env;
+        private readonly ExceptionStrategyFactory _exceptionStrategyFactory;
 
-        public GlobalExceptionHandlingMiddleware(RequestDelegate next, ILogger<GlobalExceptionHandlingMiddleware> logger, IHostEnvironment env)
+        public GlobalExceptionHandlingMiddleware(
+            RequestDelegate next, 
+            ILogger<GlobalExceptionHandlingMiddleware> logger, 
+            IHostEnvironment env,
+            ExceptionStrategyFactory exceptionStrategyFactory)
         {
             _next = next;
             _logger = logger;
             _env = env;
+            _exceptionStrategyFactory = exceptionStrategyFactory;
         }
 
         public async Task InvokeAsync(HttpContext context)
@@ -51,11 +58,13 @@ namespace MuhasebeStokWebApp.Middleware
 
         private async Task HandleExceptionAsync(HttpContext context, Exception exception, string requestId)
         {
+            // Strateji deseni kullanarak exception'ı işle
+            var strategy = _exceptionStrategyFactory.GetStrategy(exception);
+            string userFriendlyMessage = strategy.GetUserFriendlyMessage(exception);
+            int statusCode = strategy.GetStatusCode(exception);
+            
             context.Response.ContentType = "text/html";
-            context.Response.StatusCode = StatusCodes.Status500InternalServerError;
-
-            // Hata tipine göre özel mesajlar
-            string userFriendlyMessage = GetUserFriendlyMessage(exception);
+            context.Response.StatusCode = statusCode;
             
             // AJAX isteği mi kontrol et
             bool isAjaxRequest = context.Request.Headers["X-Requested-With"] == "XMLHttpRequest";
@@ -143,23 +152,6 @@ namespace MuhasebeStokWebApp.Middleware
                 
                 await context.Response.WriteAsync(errorHtml);
             }
-        }
-
-        private string GetUserFriendlyMessage(Exception exception)
-        {
-            // Hata tipine göre daha anlaşılır mesajlar
-            return exception switch
-            {
-                DbUpdateConcurrencyException => "Veri güncelleme sırasında beklenmeyen bir çakışma oluştu. Lütfen sayfayı yenileyip tekrar deneyin.",
-                DbUpdateException => "Veritabanı işlemi sırasında bir hata oluştu. Girdiğiniz veriler doğru formatta mı kontrol edin.",
-                TimeoutException => "İşlem zaman aşımına uğradı. Lütfen daha sonra tekrar deneyin.",
-                UnauthorizedAccessException => "Bu işlemi gerçekleştirmek için gereken yetkiye sahip değilsiniz.",
-                ArgumentException => "Geçersiz bir değer girildi. Lütfen girdiğiniz değerleri kontrol edin.",
-                InvalidOperationException => "İşlem şu anda gerçekleştirilemiyor. Lütfen sistem yöneticinize başvurun.",
-                FormatException => "Geçersiz format. Lütfen girdiğiniz verinin formatını kontrol edin.",
-                OverflowException => "Çok büyük veya çok küçük bir değer girdiniz.",
-                _ => "İşlem sırasında beklenmeyen bir hata oluştu. Teknik ekibimiz bu konuyla ilgileniyor."
-            };
         }
 
         private object GetDetailedExceptionInfo(Exception exception)

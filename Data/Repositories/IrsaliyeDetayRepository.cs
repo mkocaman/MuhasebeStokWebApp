@@ -17,10 +17,23 @@ namespace MuhasebeStokWebApp.Data.Repositories
 
         public async Task<IrsaliyeDetay> GetIrsaliyeDetayWithDetailsAsync(Guid irsaliyeDetayId)
         {
-            return await _context.Set<IrsaliyeDetay>()
-                .Include(id => id.Irsaliye)
-                .Include(id => id.Urun)
+            // Önce sadece irsaliye detayı getir
+            var irsaliyeDetay = await _context.Set<IrsaliyeDetay>()
                 .FirstOrDefaultAsync(id => id.IrsaliyeDetayID == irsaliyeDetayId && !id.Silindi);
+                
+            if (irsaliyeDetay == null)
+                return null;
+                
+            // İlişkili verileri ayrı sorgularda getir
+            await _context.Entry(irsaliyeDetay)
+                .Reference(id => id.Irsaliye)
+                .LoadAsync();
+                
+            await _context.Entry(irsaliyeDetay)
+                .Reference(id => id.Urun)
+                .LoadAsync();
+                
+            return irsaliyeDetay;
         }
     }
 } 

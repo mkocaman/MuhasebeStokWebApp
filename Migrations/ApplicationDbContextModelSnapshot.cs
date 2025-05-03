@@ -2108,6 +2108,9 @@ namespace MuhasebeStokWebApp.Migrations
                         .IsRequired()
                         .HasColumnType("nvarchar(max)");
 
+                    b.Property<Guid?>("KullaniciGuid")
+                        .HasColumnType("uniqueidentifier");
+
                     b.Property<string>("KullaniciId")
                         .HasColumnType("varchar(128)");
 
@@ -2378,7 +2381,6 @@ namespace MuhasebeStokWebApp.Migrations
 
                     b.Property<byte[]>("RowVersion")
                         .IsConcurrencyToken()
-                        .IsRequired()
                         .ValueGeneratedOnAddOrUpdate()
                         .HasColumnType("rowversion");
 

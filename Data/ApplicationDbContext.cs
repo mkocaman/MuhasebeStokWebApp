@@ -8,6 +8,7 @@ using Microsoft.EntityFrameworkCore.Metadata;
 using MuhasebeStokWebApp.Data.Entities;
 using MuhasebeStokWebApp.Models;
 using MuhasebeStokWebApp.Data.Entities.ParaBirimiModulu;
+using MuhasebeStokWebApp.Data.Entities.ParaBirimiBirlesikModul;
 using Microsoft.Extensions.Configuration;
 using MuhasebeStokWebApp.Enums;
 
@@ -34,7 +35,12 @@ namespace MuhasebeStokWebApp.Data
         public virtual DbSet<Entities.IrsaliyeTuru> IrsaliyeTurleri { get; set; }
         public virtual DbSet<Entities.Sozlesme> Sozlesmeler { get; set; }
         
-        // Para Birimi Modülü Entity'leri
+        // Para Birimi Birleşik Modül Entity'leri
+        public virtual DbSet<Entities.ParaBirimiBirlesikModul.ParaBirimi> BirlesikParaBirimleri { get; set; }
+        public virtual DbSet<Entities.ParaBirimiBirlesikModul.KurDegeri> BirlesikKurDegerleri { get; set; }
+        public virtual DbSet<Entities.ParaBirimiBirlesikModul.ParaBirimiIliski> BirlesikParaBirimiIliskileri { get; set; }
+        
+        // Eski Para Birimi Modülü Entity'leri (geçiş süreci için bırakıldı)
         public virtual DbSet<Entities.ParaBirimiModulu.ParaBirimi> ParaBirimleri { get; set; }
         public virtual DbSet<Entities.ParaBirimiModulu.KurDegeri> KurDegerleri { get; set; }
         public virtual DbSet<Entities.ParaBirimiModulu.ParaBirimiIliski> ParaBirimiIliskileri { get; set; }
@@ -75,7 +81,6 @@ namespace MuhasebeStokWebApp.Data
         public DbSet<BankaHesapHareket> BankaHesapHareketleri { get; set; }
         
         // Merkezi aklama veritabanı nesneleri
-
         public virtual DbSet<FaturaAklamaKuyruk> FaturaAklamaKuyrugu { get; set; }
 
         protected override void OnConfiguring(DbContextOptionsBuilder optionsBuilder)
@@ -696,8 +701,7 @@ namespace MuhasebeStokWebApp.Data
                 .HasOne(s => s.Cari)
                 .WithMany()
                 .HasForeignKey(s => s.CariID)
-                .OnDelete(DeleteBehavior.Restrict)
-                .IsRequired(true);
+                .OnDelete(DeleteBehavior.Restrict);
 
             // Fatura - Cari ilişkisi için Restrict davranışı ayarla
             modelBuilder.Entity<Entities.Fatura>()

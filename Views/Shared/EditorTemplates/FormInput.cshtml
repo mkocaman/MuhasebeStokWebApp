@@ -1,0 +1,40 @@
+@model MuhasebeStokWebApp.ViewModels.Shared.FormInputViewModel
+
+<div class="form-group @(Model.IsInvalid ? "has-error" : "")">
+    <label for="@Model.Id" class="control-label">@Model.Label @(Model.IsRequired ? "<span class='text-danger'>*</span>" : "")</label>
+    <div class="input-group">
+        @if (!string.IsNullOrEmpty(Model.PrependIcon))
+        {
+            <div class="input-group-prepend">
+                <span class="input-group-text"><i class="@Model.PrependIcon"></i></span>
+            </div>
+        }
+        <input 
+            type="@Model.InputType" 
+            id="@Model.Id" 
+            name="@Model.Name" 
+            value="@Model.Value" 
+            class="form-control @(Model.IsInvalid ? "is-invalid" : "") @Model.CssClass" 
+            placeholder="@Model.Placeholder" 
+            @(Model.IsRequired ? "required" : "") 
+            @(Model.IsDisabled ? "disabled" : "")
+            @(Model.IsReadOnly ? "readonly" : "")
+            @(Model.AutoComplete ? "autocomplete=\"on\"" : "autocomplete=\"off\"")
+            @Html.Raw(Model.HtmlAttributes)
+        />
+        @if (!string.IsNullOrEmpty(Model.AppendText))
+        {
+            <div class="input-group-append">
+                <span class="input-group-text">@Model.AppendText</span>
+            </div>
+        }
+    </div>
+    @if (Model.IsInvalid)
+    {
+        <span class="text-danger">@Model.ErrorMessage</span>
+    }
+    @if (!string.IsNullOrEmpty(Model.HelpText))
+    {
+        <small class="form-text text-muted">@Model.HelpText</small>
+    }
+</div> 

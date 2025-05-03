@@ -66,7 +66,7 @@
                 <p class="mb-0">Fatura kaydetme işlemi, özellikle çok sayıda kalem içeren faturalarda uzun sürebilir. Lütfen işlem tamamlanana kadar bekleyin ve sayfayı yenilemeyin. Kaydetme işlemi arka planda devam edecektir.</p>
             </div>
             
-            @if (ViewBag.UrunListesiBosMu != null && ViewBag.UrunListesiBosMu)
+            @if (Model.UrunListesiBosMu)
             {
                 <div class="alert alert-warning">
                     <strong>Uyarı!</strong> Veritabanında ürün bulunamadı. Lütfen önce <a href="/Urun/Create">ürün ekleyin</a>.
@@ -76,30 +76,23 @@
             <form asp-action="Create" id="faturaForm" method="post">
                 <div asp-validation-summary="ModelOnly" class="text-danger"></div>
                 
-                <!-- 1. Satır: Fatura No, Sipariş No, Fatura Tarihi, Vade Tarihi -->
+                <!-- 1. Satır: Fatura No, Fatura Tarihi, Vade Tarihi -->
                 <div class="row mb-3">
-                    <div class="col-md-3">
+                    <div class="col-md-4">
                         <div class="form-group">
                             <label asp-for="FaturaNumarasi" class="control-label">Fatura Numarası</label>
-                            <input asp-for="FaturaNumarasi" class="form-control" readonly />
+                            <input asp-for="FaturaNumarasi" class="form-control" />
                             <span asp-validation-for="FaturaNumarasi" class="text-danger"></span>
                         </div>
                     </div>
-                    <div class="col-md-3">
-                        <div class="form-group">
-                            <label asp-for="SiparisNumarasi" class="control-label">Sipariş Numarası</label>
-                            <input asp-for="SiparisNumarasi" class="form-control" readonly />
-                            <span asp-validation-for="SiparisNumarasi" class="text-danger"></span>
-                        </div>
-                    </div>
-                    <div class="col-md-3">
+                    <div class="col-md-4">
                         <div class="form-group">
                             <label asp-for="FaturaTarihi" class="control-label">Fatura Tarihi</label>
                             <input asp-for="FaturaTarihi" class="form-control" type="date" />
                             <span asp-validation-for="FaturaTarihi" class="text-danger"></span>
                         </div>
                     </div>
-                    <div class="col-md-3">
+                    <div class="col-md-4">
                         <div class="form-group">
                             <label asp-for="VadeTarihi" class="control-label">Vade Tarihi</label>
                             <input asp-for="VadeTarihi" class="form-control" type="date" />
@@ -113,7 +106,7 @@
                     <div class="col-md-3">
                         <div class="form-group">
                             <label asp-for="CariID" class="control-label">Cari</label>
-                            <select asp-for="CariID" class="form-control select2" asp-items="ViewBag.Cariler">
+                            <select asp-for="CariID" class="form-control select2" asp-items="Model.Cariler">
                                 <option value="">-- Cari Seçiniz --</option>
                             </select>
                             <span asp-validation-for="CariID" class="text-danger"></span>
@@ -122,7 +115,7 @@
                     <div class="col-md-3">
                         <div class="form-group">
                             <label asp-for="FaturaTuruID" class="control-label">Fatura Türü</label>
-                            <select asp-for="FaturaTuruID" class="form-control select2" asp-items="ViewBag.FaturaTurleri">
+                            <select asp-for="FaturaTuruID" class="form-control select2" asp-items="Model.FaturaTurleri">
                                 <option value="">-- Fatura Türü Seçiniz --</option>
                             </select>
                             <span asp-validation-for="FaturaTuruID" class="text-danger"></span>
@@ -132,7 +125,7 @@
                         <div class="form-group">
                             <label asp-for="DovizTuru" class="control-label">Döviz Türü</label>
                             <select asp-for="DovizTuru" class="form-control" id="dovizTuruSelect">
-                                @foreach (var paraBirimi in ViewBag.ParaBirimleri)
+                                @foreach (var paraBirimi in Model.ParaBirimleri)
                                 {
                                     <option value="@paraBirimi.Kod" data-anapara="@paraBirimi.AnaParaBirimiMi.ToString().ToLower()">
                                         @paraBirimi.Kod - @paraBirimi.Ad
@@ -181,7 +174,7 @@
                     <div class="col-md-3">
                         <div class="form-group" id="sozlesmeDiv" style="display: none;">
                             <label for="SozlesmeID" class="control-label">Sözleşme</label>
-                            <select asp-for="SozlesmeID" class="form-control select2" asp-items="ViewBag.Sozlesmeler">
+                            <select asp-for="SozlesmeID" class="form-control select2" asp-items="Model.Sozlesmeler">
                                 <option value="">-- Sözleşme Seçiniz --</option>
                             </select>
                             <span asp-validation-for="SozlesmeID" class="text-danger"></span>
@@ -190,7 +183,7 @@
                     <div class="col-md-3">
                         <div class="form-group">
                             <label asp-for="DepoID" class="control-label">Depo</label>
-                            <select asp-for="DepoID" class="form-control select2" asp-items="ViewBag.Depolar">
+                            <select asp-for="DepoID" class="form-control select2" asp-items="Model.Depolar">
                                 <option value="">-- Depo Seçiniz --</option>
                             </select>
                             <span asp-validation-for="DepoID" class="text-danger"></span>

@@ -30,7 +30,7 @@
                     <div class="col-md-6">
                         <div class="form-group">
                             <label asp-for="UrunID" class="form-label">Ürün</label>
-                            <select asp-for="UrunID" class="form-select" asp-items="ViewBag.Urunler">
+                            <select asp-for="UrunID" class="form-select" asp-items="Model.Urunler">
                                 <option value="">Ürün Seçiniz</option>
                             </select>
                             <span asp-validation-for="UrunID" class="text-danger"></span>
@@ -39,7 +39,7 @@
                     <div class="col-md-6">
                         <div class="form-group">
                             <label asp-for="DepoID" class="form-label">Depo</label>
-                            <select asp-for="DepoID" class="form-select" asp-items="ViewBag.Depolar">
+                            <select asp-for="DepoID" class="form-select" asp-items="Model.Depolar">
                                 <option value="">Depo Seçiniz</option>
                             </select>
                             <span asp-validation-for="DepoID" class="text-danger"></span>
@@ -58,7 +58,7 @@
                     <div class="col-md-4">
                         <div class="form-group">
                             <label asp-for="Birim" class="form-label">Birim</label>
-                            <select asp-for="Birim" class="form-select" asp-items="ViewBag.Birimler">
+                            <select asp-for="Birim" class="form-select" asp-items="Model.Birimler">
                                 <option value="">Birim Seçiniz</option>
                             </select>
                             <span asp-validation-for="Birim" class="text-danger"></span>
@@ -69,7 +69,12 @@
                             <label asp-for="BirimFiyat" class="form-label">Birim Fiyat</label>
                             <div class="input-group">
                                 <input asp-for="BirimFiyat" class="form-control" />
-                                <span class="input-group-text">₺</span>
+                                <select asp-for="ParaBirimi" class="form-select" style="width: auto">
+                                    @foreach (var paraBirimi in Model.ParaBirimleri)
+                                    {
+                                        <option value="@paraBirimi">@paraBirimi</option>
+                                    }
+                                </select>
                             </div>
                             <span asp-validation-for="BirimFiyat" class="text-danger"></span>
                         </div>
@@ -77,18 +82,30 @@
                 </div>
                 
                 <div class="row mb-4">
-                    <div class="col-md-6">
+                    <div class="col-md-4">
                         <div class="form-group">
                             <label asp-for="Tarih" class="form-label">Tarih</label>
                             <input asp-for="Tarih" class="form-control" type="date" />
                             <span asp-validation-for="Tarih" class="text-danger"></span>
                         </div>
                     </div>
-                    <div class="col-md-6">
+                    <div class="col-md-4">
                         <div class="form-group">
                             <label asp-for="ReferansNo" class="form-label">Referans No</label>
                             <input asp-for="ReferansNo" class="form-control" placeholder="Manuel Giriş" />
                             <span asp-validation-for="ReferansNo" class="text-danger"></span>
+                        </div>
+                    </div>
+                    <div class="col-md-4">
+                        <div class="form-group">
+                            <label asp-for="DovizKuru" class="form-label">Döviz Kuru</label>
+                            <div class="input-group">
+                                <input asp-for="DovizKuru" class="form-control" />
+                                <button type="button" class="btn btn-info" id="btnKurGetir">
+                                    <i class="fas fa-sync"></i> Kur Getir
+                                </button>
+                            </div>
+                            <span asp-validation-for="DovizKuru" class="text-danger"></span>
                         </div>
                     </div>
                 </div>
@@ -131,19 +148,32 @@
             // Ürün değiştiğinde otomatik olarak birim getir
             $('#UrunID').change(function () {
                 var urunID = $(this).val();
-                if (urunID) {
+                if (urunID && urunBirimBilgileri[urunID]) {
+                    $('#Birim').val(urunBirimBilgileri[urunID]);
+                }
+            });
+            
+            // Kur getir butonu tıklandığında
+            $('#btnKurGetir').click(function() {
+                var paraBirimi = $('#ParaBirimi').val();
+                if (paraBirimi && paraBirimi !== 'TRY') {
                     $.ajax({
-                        url: '@Url.Action("GetUrunBirim", "Stok")',
+                        url: '@Url.Action("GetKurBilgisi", "Fatura")',
                         type: 'GET',
-                        data: { urunID: urunID },
-                        success: function (result) {
-                            if (result && result.birim) {
-                                $('#Birim').val(result.birim);
+                        data: { dovizKodu: paraBirimi },
+                        success: function(result) {
+                            if (result && result.kurDegeri) {
+                                $('#DovizKuru').val(result.kurDegeri);
                             }
                         }
                     });
+                } else {
+                    $('#DovizKuru').val(1);
                 }
             });
+            
+            // Birim bilgilerini istemciye gönder
+            var urunBirimBilgileri = @Html.Raw(Json.Serialize(Model.UrunBirimBilgileri));
         });
     </script>
 } 

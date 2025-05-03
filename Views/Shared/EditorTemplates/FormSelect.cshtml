@@ -1,0 +1,55 @@
+@model MuhasebeStokWebApp.ViewModels.Shared.FormSelectViewModel
+
+<div class="form-group @(Model.IsInvalid ? "has-error" : "")">
+    <label for="@Model.Id" class="control-label">@Model.Label @(Model.IsRequired ? "<span class='text-danger'>*</span>" : "")</label>
+    <div class="input-group">
+        @if (!string.IsNullOrEmpty(Model.PrependIcon))
+        {
+            <div class="input-group-prepend">
+                <span class="input-group-text"><i class="@Model.PrependIcon"></i></span>
+            </div>
+        }
+        <select 
+            id="@Model.Id" 
+            name="@Model.Name" 
+            class="form-control @(Model.IsInvalid ? "is-invalid" : "") @Model.CssClass" 
+            @(Model.IsRequired ? "required" : "") 
+            @(Model.IsDisabled ? "disabled" : "")
+            @(Model.IsMultiple ? "multiple" : "")
+            @Html.Raw(Model.HtmlAttributes)
+        >
+            @if (!string.IsNullOrEmpty(Model.DefaultOption))
+            {
+                <option value="">@Model.DefaultOption</option>
+            }
+            @if (Model.Items != null)
+            {
+                foreach (var item in Model.Items)
+                {
+                    <option value="@item.Value" @(item.Selected ? "selected" : "")>@item.Text</option>
+                }
+            }
+        </select>
+    </div>
+    @if (Model.IsInvalid)
+    {
+        <span class="text-danger">@Model.ErrorMessage</span>
+    }
+    @if (!string.IsNullOrEmpty(Model.HelpText))
+    {
+        <small class="form-text text-muted">@Model.HelpText</small>
+    }
+</div>
+
+@if (Model.EnableSelect2)
+{
+    <script>
+        $(document).ready(function() {
+            $('#@Model.Id').select2({
+                theme: 'bootstrap4',
+                placeholder: '@Model.DefaultOption',
+                allowClear: true
+            });
+        });
+    </script>
+} 

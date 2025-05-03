@@ -12,6 +12,7 @@ using MuhasebeStokWebApp.Services;
 using MuhasebeStokWebApp.Services.Interfaces;
 using Microsoft.Extensions.Logging;
 using System.Threading;
+using MuhasebeStokWebApp.Models;
 
 namespace MuhasebeStokWebApp.Services
 {
@@ -94,8 +95,9 @@ namespace MuhasebeStokWebApp.Services
                 // Sadece dış transaction yoksa yeni bir transaction başlat
                 if (!hasExistingTransaction)
                 {
-                    transaction = await _context.Database.BeginTransactionAsync(System.Data.IsolationLevel.ReadCommitted);
-                    _logger.LogInformation($"StokGirisiYap - Yeni transaction başlatıldı: Ürün {urunID}, Miktar {miktar}");
+                    // Snapshot isolation level kullanarak deadlock riskini azalt
+                    transaction = await _context.Database.BeginTransactionAsync(System.Data.IsolationLevel.Snapshot);
+                    _logger.LogInformation($"StokGirisiYap - Yeni transaction başlatıldı (Isolation Level: Snapshot): Ürün {urunID}, Miktar {miktar}");
                 }
                 
                 // Null kontrolü ve varsayılan değer atamaları
@@ -477,11 +479,12 @@ namespace MuhasebeStokWebApp.Services
         }
 
         /// <summary>
-        /// Stok çıkışı yapan temel metot. FIFO prensibine göre en eski stokları kullanır.
+        /// Stok çıkışı yapar
         /// </summary>
-        public async Task<(List<StokFifo> KullanilanFifoKayitlari, decimal ToplamMaliyet)> StokCikisiYap(Guid urunID, decimal miktar, Guid? referansID = null, StokHareketiTipi hareketTipi = StokHareketiTipi.Cikis)
+        public async Task<StokCikisInfo> StokCikisiYap(Guid urunID, decimal miktar, StokHareketTipi hareketTipi, 
+            Guid? referansID = null, string aciklama = null, string paraBirimi = "USD", bool useBatch = false)
         {
-            // Transaction yönetimi - dış transaction olup olmadığını kontrol et
+            // Concurrency yönetimi için Snapshot isolation level kullan
             bool hasExistingTransaction = _context.Database.CurrentTransaction != null;
             IDbContextTransaction transaction = null;
 
@@ -492,8 +495,9 @@ namespace MuhasebeStokWebApp.Services
                 // Sadece dış transaction yoksa yeni bir transaction başlat
                 if (!hasExistingTransaction)
                 {
-                    transaction = await _context.Database.BeginTransactionAsync(System.Data.IsolationLevel.ReadCommitted);
-                    _logger.LogInformation($"StokCikisiYap - Yeni transaction başlatıldı: Ürün {urunID}, Miktar {miktar}");
+                    // Snapshot isolation level kullanarak deadlock riskini azalt
+                    transaction = await _context.Database.BeginTransactionAsync(System.Data.IsolationLevel.Snapshot);
+                    _logger.LogInformation($"StokCikisiYap - Yeni transaction başlatıldı (Isolation Level: Snapshot): Ürün {urunID}, Miktar {miktar}");
                 }
                 
                 // Ürünün mevcut stok durumunu kontrol et
@@ -513,27 +517,25 @@ namespace MuhasebeStokWebApp.Services
 
                 if (!fifoKayitlari.Any())
                 {
-                    _logger.LogWarning($"Stok çıkışı yapılamadı: FIFO kaydı bulunamadı (Ürün ID: {urunID})");
-                    throw new Exception($"FIFO kaydı bulunamadı (Ürün ID: {urunID})");
+                    _logger.LogWarning($"Stok çıkışı yapılamadı: Ürün için aktif FIFO kaydı bulunamadı (ID: {urunID})");
+                    throw new StokYetersizException(urun.UrunID, urun.UrunAdi, urun.UrunKodu, miktar, 0);
                 }
                 
-                // FIFO kayıtlarındaki toplam kalan miktarı kontrol et
-                decimal toplamFifoMiktari = fifoKayitlari.Sum(f => f.KalanMiktar);
-                if (toplamFifoMiktari < miktar)
+                // Toplam stok miktarını hesapla
+                decimal toplamStok = fifoKayitlari.Sum(f => f.KalanMiktar);
+                if (toplamStok < miktar)
                 {
-                    _logger.LogWarning($"Yetersiz stok: Ürün {urun.UrunAdi} (ID: {urunID}), FIFO Stok: {toplamFifoMiktari}, İstenen: {miktar}");
-                    
-                    // Ayrıntılı hata fırlat
-                    throw new StokYetersizException(urunID, urun.UrunAdi, urun.UrunKodu, miktar, toplamFifoMiktari);
+                    _logger.LogWarning($"Stok çıkışı yapılamadı: Yetersiz stok. Ürün {urunID}, Talep: {miktar}, Mevcut: {toplamStok}");
+                    throw new StokYetersizException(urun.UrunID, urun.UrunAdi, urun.UrunKodu, miktar, toplamStok);
                 }
                 
-                _logger.LogInformation($"FIFO kayıtları bulundu: {fifoKayitlari.Count} adet kayıt, toplam kalan miktar: {toplamFifoMiktari}");
-                
-                // Çıkış işlemi için kullanılacak FIFO kayıtları ve toplam maliyet
-                var kullanilanFifoKayitlari = new List<StokFifo>();
-                decimal toplamMaliyet = 0;
+                // Çıkış işlemi için gerekli değişkenleri hazırla
                 decimal kalanMiktar = miktar;
+                decimal toplamMaliyet = 0;
+                var kullanılanFifoKayitlari = new List<(StokFifo Fifo, decimal KullanilanMiktar)>();
+                var cikisDetaylari = new List<StokCikisDetay>();
                 
+                // Her FIFO kaydından çıkış yap
                 foreach (var fifo in fifoKayitlari)
                 {
                     if (kalanMiktar <= 0)
@@ -555,70 +557,102 @@ namespace MuhasebeStokWebApp.Services
                         BirimMaliyet = fifo.USDBirimFiyat,
                         ToplamMaliyet = kullanilanMiktar * fifo.USDBirimFiyat,
                         ParaBirimi = "USD",
-                        Aciklama = $"{hareketTipi} hareketi ile stok çıkışı (FIFO)",
+                        Aciklama = aciklama ?? $"{hareketTipi} hareketi ile stok çıkışı (FIFO)",
                         OlusturmaTarihi = DateTime.Now,
                         Iptal = false
                     };
                     
-                    await _context.StokCikisDetaylari.AddAsync(stokCikisDetay);
+                    cikisDetaylari.Add(stokCikisDetay);
                     
                     // FIFO kaydının kalan miktarını güncelle - concurrency yönetimi ile
                     decimal kullanilacakMiktar = kullanilanMiktar; // Yerel değişkene kopyala
                     
                     bool fifoUpdateSuccess = await ProcessFifoEntryWithRetry(fifo, async (fifoToUpdate) => {
+                        // Snapshot isolation level kullanıldığında dirty reads oluşmaz
                         fifoToUpdate.KalanMiktar -= kullanilacakMiktar;
                         fifoToUpdate.SonCikisTarihi = DateTime.Now;
                         fifoToUpdate.GuncellemeTarihi = DateTime.Now;
                         _context.StokFifoKayitlari.Update(fifoToUpdate);
-                    });
+                    }, maxRetries: 5); // Daha fazla deneme şansı ver
                     
                     if (!fifoUpdateSuccess)
                     {
-                        _logger.LogWarning($"FIFO kaydı güncellenemedi: ID {fifo.StokFifoID}, Çıkış işlemi tamamlanamayabilir");
-                        throw new Exception($"FIFO kaydı güncellenemedi: ID {fifo.StokFifoID}");
+                        _logger.LogError($"FIFO kaydı güncellenemedi. StokFifoID: {fifo.StokFifoID}");
+                        throw new FifoConcurrencyException(fifo.StokFifoID, 5, 
+                            $"FIFO kaydı 5 deneme sonrasında güncellenemedi. StokFifoID: {fifo.StokFifoID}");
                     }
                     
-                    // Toplam maliyeti hesapla (kullanılan miktar * birim fiyat)
-                    decimal hareketMaliyeti = kullanilanMiktar * fifo.USDBirimFiyat;
-                    toplamMaliyet += hareketMaliyeti;
-                    
-                    _logger.LogInformation($"FIFO kaydı kullanıldı: ID {fifo.StokFifoID}, Miktar: {kullanilanMiktar}, Maliyet: {hareketMaliyeti:N2} USD, Kalan: {fifo.KalanMiktar}");
-                    
-                    kullanilanFifoKayitlari.Add(fifo);
+                    kullanılanFifoKayitlari.Add((fifo, kullanilanMiktar));
+                    toplamMaliyet += stokCikisDetay.ToplamMaliyet;
                     kalanMiktar -= kullanilanMiktar;
                 }
                 
-                if (kalanMiktar > 0)
-                {
-                    _logger.LogWarning($"Stok çıkışı tam yapılamadı: Talep edilen {miktar}, kalan {kalanMiktar}");
-                    throw new Exception($"Yetersiz stok: Talep edilen {miktar}, kalan {kalanMiktar}");
-                }
+                // StokCikisDetay kayıtlarını toplu ekle
+                await _context.StokCikisDetaylari.AddRangeAsync(cikisDetaylari);
                 
-                // Değişiklikleri veritabanına kaydet
+                // Değişiklikleri kaydet
                 await _context.SaveChangesAsync();
                 
-                // Transaction commit
+                // Toplam maliyeti istenen para birimine çevir
+                decimal maliyet = toplamMaliyet;
+                if (paraBirimi != "USD" && toplamMaliyet > 0)
+                {
+                    try
+                    {
+                        decimal kurDegeri = await GetKurDegeri("USD", paraBirimi);
+                        maliyet = toplamMaliyet * kurDegeri;
+                    }
+                    catch (Exception ex)
+                    {
+                        _logger.LogWarning($"Para birimi dönüşümü yapılamadı: {ex.Message}. USD cinsinden maliyet kullanılacak.");
+                    }
+                }
+                
+                // Sonuç nesnesini hazırla
+                var result = new StokCikisInfo
+                {
+                    Miktar = miktar,
+                    ToplamMaliyet = maliyet,
+                    ParaBirimi = paraBirimi,
+                    KullanilanFifoKayitlari = kullanılanFifoKayitlari.Select(k => k.Fifo.StokFifoID).ToList(),
+                    CikisDetaylari = cikisDetaylari.Select(d => d.StokCikisDetayID).ToList()
+                };
+                
+                // Sadece biz başlattıysak transaction'ı commit et
                 if (!hasExistingTransaction && transaction != null)
                 {
                     await transaction.CommitAsync();
                     _logger.LogInformation($"StokCikisiYap - Transaction commit edildi: Ürün {urunID}, Miktar {miktar}");
                 }
                 
-                _logger.LogInformation($"Stok çıkışı işlemi tamamlandı: Ürün {urunID}, toplam çıkış miktarı {miktar}, toplam maliyet {toplamMaliyet:N2} USD");
-                
-                return (kullanilanFifoKayitlari, toplamMaliyet);
+                _logger.LogInformation($"Stok çıkışı başarıyla tamamlandı: Ürün {urunID}, Miktar {miktar}, Maliyet {maliyet} {paraBirimi}");
+                return result;
             }
             catch (Exception ex)
             {
-                // Transaction rollback
+                // Sadece biz başlattıysak transaction'ı geri al
                 if (!hasExistingTransaction && transaction != null)
                 {
                     await transaction.RollbackAsync();
-                    _logger.LogWarning($"StokCikisiYap - Transaction rollback edildi: Ürün {urunID}, Miktar {miktar}");
+                    _logger.LogWarning($"StokCikisiYap - Transaction geri alındı: Ürün {urunID}, Miktar {miktar}");
                 }
                 
-                _logger.LogError(ex, $"Stok çıkışı yapılırken hata oluştu: {ex.Message}");
-                throw;
+                if (ex is StokYetersizException || ex is FifoConcurrencyException)
+                {
+                    // Özel hata tiplerimiz, tekrar fırlat
+                    throw;
+                }
+                
+                _logger.LogError(ex, $"Stok çıkışı sırasında hata oluştu: Ürün {urunID}, Miktar {miktar}");
+                throw new Exception($"Stok çıkışı işlemi başarısız oldu: {ex.Message}", ex);
+            }
+            finally
+            {
+                // Sadece biz başlattıysak transaction'ı dispose et
+                if (!hasExistingTransaction && transaction != null)
+                {
+                    await transaction.DisposeAsync();
+                }
             }
         }
 
@@ -631,13 +665,24 @@ namespace MuhasebeStokWebApp.Services
             {
                 _logger.LogInformation($"StokCikisiYap (genişletilmiş) başladı: Ürün {urunID}, Miktar {miktar}, Ref: {referansTuru}/{referansNo}");
                 
-                // Basit stok çıkışı metodunu çağır
-                var result = await StokCikisiYap(urunID, miktar, referansID, StokHareketiTipi.Cikis);
+                // StokCikisInfo sonucunu döndüren metodu çağır
+                var result = await StokCikisiYap(urunID, miktar, StokHareketTipi.Cikis, referansID, aciklama);
                 
                 // Ek log kaydı - referans bilgileri
                 _logger.LogInformation($"Stok çıkışı referans bilgileri: Tür: {referansTuru}, No: {referansNo}, ID: {referansID}, Açıklama: {aciklama}");
                 
-                return result;
+                // Eski tarzda response için sonucu dönüştür
+                var fifoKayitlar = new List<StokFifo>();
+                foreach (var fifoId in result.KullanilanFifoKayitlari)
+                {
+                    var fifo = await _context.StokFifoKayitlari.FindAsync(fifoId);
+                    if (fifo != null)
+                    {
+                        fifoKayitlar.Add(fifo);
+                    }
+                }
+                
+                return (fifoKayitlar, result.ToplamMaliyet);
             }
             catch (Exception ex)
             {
@@ -920,72 +965,24 @@ namespace MuhasebeStokWebApp.Services
         #region Yardımcı Metotlar
 
         /// <summary>
-        /// İki para birimi arasındaki döviz kurunu getirir.
+        /// Para birimleri arasındaki kur değerini alır
         /// </summary>
-        private async Task<decimal> GetParaBirimiKuru(string kaynakParaBirimi, string hedefParaBirimi, DateTime tarih)
+        private async Task<decimal> GetKurDegeri(string kaynakParaBirimi, string hedefParaBirimi)
         {
             try
             {
-                // Aynı para birimi ise 1 dön
-                if (kaynakParaBirimi == hedefParaBirimi)
-                    return 1m;
-                
-                _logger.LogInformation($"GetParaBirimiKuru çalıştırılıyor: {kaynakParaBirimi} -> {hedefParaBirimi}, Tarih: {tarih}");
-                
-                // Döviz kuru servisi kontrol
-                if (_dovizKuruService == null)
+                var kur = await _dovizKuruService.GetGuncelKurAsync(kaynakParaBirimi, hedefParaBirimi);
+                if (kur <= 0)
                 {
-                    _logger.LogError("Döviz kuru servisi bulunamadı - DI yapılandırmasını kontrol edin");
-                    throw new InvalidOperationException("Döviz kuru servisi bulunamadı. Sistem yöneticinizle iletişime geçin.");
+                    _logger.LogWarning($"Geçerli kur değeri bulunamadı: {kaynakParaBirimi} -> {hedefParaBirimi}. Varsayılan değer kullanılacak.");
+                    return 1.0m; // Varsayılan değer
                 }
-                
-                try 
-                {
-                    // Servis çağrısına bir timeout ekleyelim
-                    using var cts = new CancellationTokenSource(TimeSpan.FromSeconds(5));
-                    var kurTask = _dovizKuruService.GetGuncelKurAsync(kaynakParaBirimi, hedefParaBirimi, tarih);
-                    
-                    // Task tamamlanmadan önce timeout olursa, hata fırlat
-                    var completedTask = await Task.WhenAny(kurTask, Task.Delay(5000, cts.Token));
-                    if (completedTask != kurTask)
-                    {
-                        _logger.LogWarning($"Döviz kuru servisi yanıt vermedi (timeout): {kaynakParaBirimi} -> {hedefParaBirimi}");
-                        cts.Cancel();
-                        throw new TimeoutException($"Döviz kuru servisi yanıt vermedi: {kaynakParaBirimi} -> {hedefParaBirimi}");
-                    }
-                    
-                    var kurDegeri = await kurTask;
-                    
-                    if (kurDegeri > 0)
-                    {
-                        _logger.LogInformation($"Kur değeri başarıyla alındı: {kaynakParaBirimi} -> {hedefParaBirimi} = {kurDegeri}");
-                        return kurDegeri;
-                    }
-                    else
-                    {
-                        _logger.LogError($"Geçersiz kur değeri alındı: {kaynakParaBirimi} -> {hedefParaBirimi} = {kurDegeri}");
-                        throw new InvalidOperationException($"Geçersiz kur değeri alındı (0 veya negatif): {kaynakParaBirimi} -> {hedefParaBirimi}");
-                    }
-                }
-                catch (TaskCanceledException ex)
-                {
-                    _logger.LogWarning($"Döviz kuru servisi timeout: {ex.Message}");
-                    throw new TimeoutException($"Döviz kuru servisi yanıt vermedi: {kaynakParaBirimi} -> {hedefParaBirimi}", ex);
-                }
-                catch (TimeoutException)
-                {
-                    throw;
-                }
-                catch (Exception ex)
-                {
-                    _logger.LogError(ex, $"Döviz kuru servisinden değer alınırken hata: {kaynakParaBirimi} -> {hedefParaBirimi}");
-                    throw new InvalidOperationException($"Döviz kuru alınırken hata oluştu: {kaynakParaBirimi} -> {hedefParaBirimi}", ex);
-                }
+                return kur;
             }
             catch (Exception ex)
             {
-                _logger.LogError(ex, $"Döviz kuru alınırken hata oluştu: {kaynakParaBirimi} -> {hedefParaBirimi}, Tarih: {tarih}");
-                throw new InvalidOperationException($"Döviz kuru alınırken hata oluştu: {kaynakParaBirimi} -> {hedefParaBirimi}, Tarih: {tarih}", ex);
+                _logger.LogError(ex, $"Kur değeri alınırken hata oluştu: {kaynakParaBirimi} -> {hedefParaBirimi}");
+                return 1.0m; // Varsayılan değer
             }
         }
 

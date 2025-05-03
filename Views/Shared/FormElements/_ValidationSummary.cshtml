@@ -1,0 +1,7 @@
+@if (!ViewData.ModelState.IsValid)
+{
+    <div class="alert alert-danger">
+        <h5><i class="icon fas fa-exclamation-triangle"></i> Formda hatalar var!</h5>
+        <div asp-validation-summary="All" class="text-danger"></div>
+    </div>
+} 

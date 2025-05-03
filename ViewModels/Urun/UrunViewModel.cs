@@ -1,6 +1,7 @@
 using System;
 using System.Collections.Generic;
 using System.ComponentModel.DataAnnotations;
+using Microsoft.AspNetCore.Mvc.Rendering;
 
 namespace MuhasebeStokWebApp.ViewModels.Urun
 {
@@ -75,5 +76,24 @@ namespace MuhasebeStokWebApp.ViewModels.Urun
     public class UrunListViewModel
     {
         public List<UrunViewModel> Urunler { get; set; } = new List<UrunViewModel>();
+        
+        // Filtreleme için parametreler
+        [Display(Name = "Kategori")]
+        public Guid? KategoriID { get; set; }
+        
+        [Display(Name = "Ürün Adı")]
+        public string UrunAdi { get; set; }
+        
+        [Display(Name = "Ürün Kodu")]
+        public string UrunKodu { get; set; }
+        
+        [Display(Name = "Aktif")]
+        public bool? AktifMi { get; set; }
+        
+        [Display(Name = "Aktif Sekme")]
+        public string AktifTab { get; set; } = "aktif";
+        
+        // Dropdown listesi için kategori listesi
+        public List<SelectListItem> Kategoriler { get; set; } = new List<SelectListItem>();
     }
 } 

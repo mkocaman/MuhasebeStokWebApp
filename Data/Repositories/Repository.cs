@@ -148,11 +148,34 @@ namespace MuhasebeStokWebApp.Data.Repositories
 
         public async Task<Irsaliye> GetIrsaliyeWithDetailsAsync(Guid id)
         {
-            return await _context.Irsaliyeler
-                .Include(i => i.Cari)
-                .Include(i => i.IrsaliyeDetaylari)
-                    .ThenInclude(id => id.Urun)
+            // Önce sadece irsaliyeyi getir
+            var irsaliye = await _context.Irsaliyeler
                 .FirstOrDefaultAsync(i => i.IrsaliyeID.Equals(id) && !i.Silindi);
+                
+            if (irsaliye == null)
+                return null;
+                
+            // İlişkili verileri ayrı sorgularda getir
+            await _context.Entry(irsaliye)
+                .Reference(i => i.Cari)
+                .LoadAsync();
+                
+            // IrsaliyeDetaylari ilişkisini yükle
+            await _context.Entry(irsaliye)
+                .Collection(i => i.IrsaliyeDetaylari)
+                .Query()
+                .Where(id => !id.Silindi)
+                .LoadAsync();
+                
+            // Her detay için Urun ilişkisini yükle
+            foreach (var detay in irsaliye.IrsaliyeDetaylari.Where(d => d != null))
+            {
+                await _context.Entry(detay)
+                    .Reference(d => d.Urun)
+                    .LoadAsync();
+            }
+                
+            return irsaliye;
         }
 
         public async Task AddRangeAsync(IEnumerable<TEntity> entities)

@@ -4,6 +4,7 @@ using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Storage;
 using MuhasebeStokWebApp.Data.Entities;
 using MuhasebeStokWebApp.Data.Repositories;
+using MuhasebeStokWebApp.Data.Repositories.EntityRepositories;
 
 namespace MuhasebeStokWebApp.Data.EfCore
 {
@@ -12,6 +13,7 @@ namespace MuhasebeStokWebApp.Data.EfCore
         private readonly ApplicationDbContext _context;
         private IDbContextTransaction? _transaction;
         
+        // Generic repository instances
         private IRepository<Fatura>? _faturaRepository;
         private IRepository<FaturaDetay>? _faturaDetayRepository;
         private IRepository<Cari>? _cariRepository;
@@ -30,12 +32,18 @@ namespace MuhasebeStokWebApp.Data.EfCore
         private IRepository<SistemAyarlari>? _sistemAyarlariRepository;
         private IRepository<StokHareket>? _stokHareketRepository;
         
+        // Entity-specific repository instances
+        private IUrunRepository? _entityUrunRepository;
+        private IFaturaRepository? _entityFaturaRepository;
+        private ICariRepository? _entityCariRepository;
+        private IIrsaliyeRepository? _entityIrsaliyeRepository;
+        
         public UnitOfWork(ApplicationDbContext context)
         {
             _context = context;
         }
         
-        // Repository Properties
+        // Generic Repository Properties
         public IRepository<Fatura> FaturaRepository => _faturaRepository ??= new Repository<Fatura>(_context);
         public IRepository<FaturaDetay> FaturaDetayRepository => _faturaDetayRepository ??= new Repository<FaturaDetay>(_context);
         public IRepository<Cari> CariRepository => _cariRepository ??= new Repository<Cari>(_context);
@@ -54,6 +62,13 @@ namespace MuhasebeStokWebApp.Data.EfCore
         public IRepository<SistemAyarlari> SistemAyarlariRepository => _sistemAyarlariRepository ??= new Repository<SistemAyarlari>(_context);
         public IRepository<StokHareket> StokHareketRepository => _stokHareketRepository ??= new Repository<StokHareket>(_context);
         
+        // Entity-specific Repository Properties
+        public IUrunRepository EntityUrunRepository => _entityUrunRepository ??= new UrunRepository(_context);
+        public IFaturaRepository EntityFaturaRepository => _entityFaturaRepository ??= new FaturaRepository(_context);
+        public ICariRepository EntityCariRepository => _entityCariRepository ??= new CariRepository(_context);
+        public IIrsaliyeRepository EntityIrsaliyeRepository => _entityIrsaliyeRepository ??= new IrsaliyeRepository(_context);
+        
+        // Generic repository factory method
         public IRepository<TEntity> Repository<TEntity>() where TEntity : class
         {
             return new Repository<TEntity>(_context);
