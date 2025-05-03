@@ -8,7 +8,7 @@ namespace MuhasebeStokWebApp.Models
     public class SistemLog
     {
         [Key]
-        public Guid LogID { get; set; }
+        public string LogID { get; set; } = string.Empty;
         
         public int SistemLogID { get; set; } // Bu property GetHashCode için kullanılıyor
         
@@ -18,7 +18,7 @@ namespace MuhasebeStokWebApp.Models
         
         public int LogTuruInt { get; set; } // LogTuru enum değerinin sayısal karşılığı
         
-        public Guid? KayitID { get; set; } // İlgili kaydın ID'si (CariID, FaturaID, vb.)
+        public string? KayitID { get; set; } // İlgili kaydın ID'si (CariID, FaturaID, vb.)
         
         [StringLength(100)]
         public string TabloAdi { get; set; } = string.Empty; // Cariler, Faturalar, vb.
@@ -49,21 +49,8 @@ namespace MuhasebeStokWebApp.Models
         
         public string Tarayici { get; set; } = string.Empty;
         
-        // Eski model ile uyumluluk için property'ler
-        public LogTuru LogTuru
-        {
-            get
-            {
-                if (Enum.TryParse<LogTuru>(IslemTuru, out var logTuru))
-                    return logTuru;
-                return LogTuru.Bilgi;
-            }
-            set
-            {
-                IslemTuru = value.ToString();
-                LogTuruInt = (int)value;
-            }
-        }
+        // LogTuru property'si
+        public string LogTuru { get; set; } = string.Empty;
         
         public string Mesaj { get => Aciklama ?? ""; set => Aciklama = value; }
         

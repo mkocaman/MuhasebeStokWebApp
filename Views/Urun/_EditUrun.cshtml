@@ -26,7 +26,7 @@
         
         <div class="mb-3">
             <label asp-for="KategoriID" class="form-label">Kategori</label>
-            <select asp-for="KategoriID" asp-items="ViewBag.Kategoriler" class="form-select" required>
+            <select asp-for="KategoriID" asp-items="Model.Kategoriler" class="form-select" required>
                 <option value="">-- Kategori Seçin --</option>
             </select>
             <span asp-validation-for="KategoriID" class="text-danger"></span>
@@ -34,7 +34,7 @@
         
         <div class="mb-3">
             <label asp-for="BirimID" class="form-label">Birim</label>
-            <select asp-for="BirimID" asp-items="ViewBag.Birimler" class="form-select" required>
+            <select asp-for="BirimID" asp-items="Model.Birimler" class="form-select" required>
                 <option value="">-- Birim Seçin --</option>
             </select>
             <span asp-validation-for="BirimID" class="text-danger"></span>
@@ -42,21 +42,22 @@
         
         <div class="mb-3">
             <label asp-for="KDVOrani" class="form-label">KDV Oranı (%)</label>
-            <input asp-for="KDVOrani" class="form-control kdv-input" type="text" />
+            <input asp-for="KDVOrani" class="form-control" type="number" min="0" max="100" step="0.01" />
             <span asp-validation-for="KDVOrani" class="text-danger"></span>
         </div>
         
         <div class="mb-3">
             <label asp-for="Aciklama" class="form-label">Açıklama</label>
-            <textarea asp-for="Aciklama" class="form-control" maxlength="500"></textarea>
+            <textarea asp-for="Aciklama" class="form-control" rows="3" maxlength="500"></textarea>
             <span asp-validation-for="Aciklama" class="text-danger"></span>
         </div>
         
         <div class="form-check mb-3">
-            <input asp-for="Aktif" class="form-check-input" />
+            <input asp-for="Aktif" class="form-check-input" type="checkbox" />
             <label asp-for="Aktif" class="form-check-label">Aktif</label>
         </div>
     </div>
+    
     <div class="modal-footer">
         <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">İptal</button>
         <button type="submit" class="btn btn-primary">Kaydet</button>
@@ -64,18 +65,30 @@
 </form>
 
 <script>
-    $(document).ready(function() {
-        // KDV alanı için numerik input kontrolü
-        $('.kdv-input').on('input', function() {
-            var value = $(this).val().replace(/[^\d]/g, '');
-            if (value > 100) value = 100;
-            $(this).val(value);
-        });
-        
-        $('.kdv-input').on('blur', function() {
-            if (this.value === '') {
-                this.value = '12';
-            }
+    $(document).ready(function () {
+        // Form submit işlemini ele al
+        $('#editUrunForm').submit(function (e) {
+            e.preventDefault();
+            
+            // Form verilerini al
+            var formData = $(this).serialize();
+            
+            // AJAX ile form verilerini gönder
+            $.ajax({
+                url: '@Url.Action("Edit", "Urun")',
+                type: 'POST',
+                data: formData,
+                success: function (response) {
+                    // İşlem başarılı ise modal'ı kapat ve tabloyu güncelle
+                    $('#urunModal').modal('hide');
+                    // Ürün listesini yenile
+                    location.reload();
+                },
+                error: function (xhr, status, error) {
+                    // Hata durumunda uyarı göster
+                    $('#editFormAlert').text('Ürün güncelleme sırasında bir hata oluştu: ' + error).removeClass('d-none');
+                }
+            });
         });
     });
 </script>

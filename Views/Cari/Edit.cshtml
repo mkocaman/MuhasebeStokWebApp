@@ -37,7 +37,7 @@
                 <div class="card-body">
                     <form id="cariEditForm" asp-action="Edit" method="post">
                         <div asp-validation-summary="ModelOnly" class="text-danger"></div>
-                        <input type="hidden" asp-for="Id" />
+                        <input type="hidden" asp-for="CariID" />
                         <input type="hidden" asp-for="MevcutBakiye" value="@Model.BaslangicBakiye" />
                         <input type="hidden" asp-for="OlusturmaTarihi" />
                         
@@ -166,7 +166,7 @@
                         
                         <div class="form-group mb-0">
                             <button type="submit" class="btn btn-primary">Kaydet</button>
-                            <a asp-action="Details" asp-route-id="@Model.Id" class="btn btn-outline-secondary">İptal</a>
+                            <a asp-action="Details" asp-route-id="@Model.CariID" class="btn btn-outline-secondary">İptal</a>
                         </div>
                     </form>
                 </div>
@@ -210,7 +210,7 @@
                                 confirmButtonText: 'Tamam'
                             }).then(function() {
                                 // Detay sayfasına yönlendir
-                                window.location.href = '@Url.Action("Details", new { id = Model.Id })';
+                                window.location.href = '@Url.Action("Details", new { id = Model.CariID })';
                             });
                         } else {
                             // İşlem hatası

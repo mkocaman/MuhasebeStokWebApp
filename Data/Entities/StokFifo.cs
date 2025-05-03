@@ -15,6 +15,7 @@ namespace MuhasebeStokWebApp.Data.Entities
         public Guid StokFifoID { get; set; }
         
         [Required]
+        [ForeignKey("Urun")]
         public Guid UrunID { get; set; }
         
         [Required]
@@ -28,22 +29,29 @@ namespace MuhasebeStokWebApp.Data.Entities
         
         [Required]
         [StringLength(20)]
-        public required string Birim { get; set; }
+        public string Birim { get; set; } = "";
         
-        [StringLength(3)]
-        public required string ParaBirimi { get; set; } = "TRY";
+        // Para birimi bilgisi
+        [Required]
+        [StringLength(10)]
+        public string ParaBirimi { get; set; } = "TRY";
         
         // USD'ye çevirmek için kullanılan kur
+        [Required]
         public decimal DovizKuru { get; set; } = 1;
         
-        // USD cinsinden birim fiyat (ana para birimi)
+        // Standardize edilmiş USD para birimi değeri - raporlama ve hesaplamalar için
         [Required]
         public decimal USDBirimFiyat { get; set; }
-        
-        // TL cinsinden birim fiyat (raporlama için)
+
+        // TL para birimi değeri - kaldırılacak (tüm hesaplamalar USD üzerinden yapılacak)
+        // Migration ile bu alan kaldırılacak
+        [Required]
         public decimal TLBirimFiyat { get; set; }
         
-        // UZS cinsinden birim fiyat (raporlama için)
+        // UZS para birimi değeri - kaldırılacak (tüm hesaplamalar USD üzerinden yapılacak)
+        // Migration ile bu alan kaldırılacak
+        [Required]
         public decimal UZSBirimFiyat { get; set; }
         
         [Required]
@@ -53,21 +61,22 @@ namespace MuhasebeStokWebApp.Data.Entities
         
         [Required]
         [StringLength(50)]
-        public required string ReferansNo { get; set; }
+        public string ReferansNo { get; set; } = "";
         
         [Required]
         [StringLength(20)]
-        public required string ReferansTuru { get; set; }
+        public string ReferansTuru { get; set; } = "";
         
         [Required]
         public Guid ReferansID { get; set; }
         
-        [Required]
         [StringLength(500)]
         public string? Aciklama { get; set; }
         
+        [Required]
         public bool Aktif { get; set; } = true;
         
+        [Required]
         public bool Iptal { get; set; } = false;
         
         public DateTime? IptalTarihi { get; set; }
@@ -90,7 +99,6 @@ namespace MuhasebeStokWebApp.Data.Entities
         public byte[]? RowVersion { get; set; }
         
         // Navigation properties
-        [ForeignKey("UrunID")]
-        public virtual Urun? Urun { get; set; }
+        public virtual Urun Urun { get; set; } = null!;
     }
 } 

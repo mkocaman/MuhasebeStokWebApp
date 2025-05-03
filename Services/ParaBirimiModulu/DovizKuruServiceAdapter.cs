@@ -8,6 +8,7 @@ using MuhasebeStokWebApp.Services.Interfaces;
 using Microsoft.Extensions.Logging;
 using MuhasebeStokWebApp.Services.ParaBirimiModulu;
 using Microsoft.Extensions.Caching.Memory;
+using System.Text.RegularExpressions;
 
 namespace MuhasebeStokWebApp.Services.ParaBirimiModulu
 {
@@ -76,10 +77,21 @@ namespace MuhasebeStokWebApp.Services.ParaBirimiModulu
                 // Veri yoksa hesapla
                 var kurDegeri = await HesaplaKurDegeriByKodAsync(kaynakKod, hedefKod, tarih);
                 
-                // Önbelleğe ekle
+                // Güncel kurlar için daha uzun süreli önbellekleme yapılandırması
                 var cacheOptions = new MemoryCacheEntryOptions()
-                    .SetSlidingExpiration(TimeSpan.FromMinutes(CACHE_DURATION_MINUTES))
-                    .SetAbsoluteExpiration(TimeSpan.FromHours(1));
+                    .SetSlidingExpiration(TimeSpan.FromMinutes(CACHE_DURATION_MINUTES * 2)) // 2 katı süre
+                    .SetAbsoluteExpiration(TimeSpan.FromHours(24)); // 24 saat maksimum
+                
+                // TRY ve USD gibi standart kurlar için daha uzun süre
+                if ((kaynakKod == "TRY" && hedefKod == "USD") || 
+                    (kaynakKod == "USD" && hedefKod == "TRY") ||
+                    (kaynakKod == "UZS" && hedefKod == "USD") || 
+                    (kaynakKod == "USD" && hedefKod == "UZS"))
+                {
+                    cacheOptions = new MemoryCacheEntryOptions()
+                        .SetSlidingExpiration(TimeSpan.FromHours(1)) // 1 saat
+                        .SetAbsoluteExpiration(TimeSpan.FromDays(1)); // 1 gün maksimum
+                }
                 
                 _cache.Set(cacheKey, kurDegeri, cacheOptions);
                 return kurDegeri;
@@ -355,6 +367,9 @@ namespace MuhasebeStokWebApp.Services.ParaBirimiModulu
             return await CevirmeTutarByKodAsync(tutar, kaynakKod, hedefKod, tarih);
         }
 
+        /// <summary>
+        /// Döviz kurlarını dış servislerden (örneğin TCMB) güncellemek için metod
+        /// </summary>
         public async Task<bool> GuncelleKurDegerleriniFromTCMBAsync()
         {
             try
@@ -377,59 +392,25 @@ namespace MuhasebeStokWebApp.Services.ParaBirimiModulu
             }
         }
 
-        public async Task<bool> UpdateExchangeRatesAsync()
+        /// <summary>
+        /// Döviz kuru önbelleğini temizler
+        /// </summary>
+        public async Task<bool> ClearCacheAsync()
         {
-            try
+            try 
             {
-                var result = await _kurDegeriService.UpdateExchangeRatesFromApiAsync();
-                
-                if (result)
-                {
-                    // Başarılı güncelleme sonrası önbelleği temizle
-                    ClearCache();
-                }
-                
-                return result;
+                ClearCache();
+                // API'den en son kurları yeniden yükle
+                await _paraBirimiService.GuncelleKurDegerleriniFromAPIAsync();
+                return true;
             }
             catch (Exception ex)
             {
-                _logger.LogError(ex, "Döviz kurları güncellenirken hata oluştu");
+                _logger.LogError(ex, "Döviz kuru önbelleği temizlenirken hata oluştu");
                 return false;
             }
         }
 
-        public async Task<decimal> GetExchangeRateAsync(string fromCurrency, string toCurrency, DateTime? date = null)
-        {
-            try
-            {
-                // Aynı para birimi ise kur 1 olacak
-                if (fromCurrency == toCurrency)
-                    return 1.0m;
-                
-                // HesaplaKurDegeriByKodAsync metodunu kullanarak kur değerini al
-                return await HesaplaKurDegeriByKodAsync(fromCurrency, toCurrency, date);
-            }
-            catch (Exception ex)
-            {
-                _logger.LogError(ex, $"Döviz kurları dönüştürülürken hata oluştu: {fromCurrency} -> {toCurrency}");
-                return 0;
-            }
-        }
-
-        public async Task<decimal> ConvertAmountAsync(decimal amount, string fromCurrency, string toCurrency, DateTime? date = null)
-        {
-            try
-            {
-                var rate = await GetExchangeRateAsync(fromCurrency, toCurrency, date);
-                return amount * rate;
-            }
-            catch (Exception ex)
-            {
-                _logger.LogError(ex, $"Tutar dönüştürülürken hata oluştu: {amount} {fromCurrency} -> {toCurrency}");
-                return 0;
-            }
-        }
-        
         /// <summary>
         /// Önbelleği temizler
         /// </summary>
@@ -437,19 +418,71 @@ namespace MuhasebeStokWebApp.Services.ParaBirimiModulu
         {
             try
             {
-                // Dinamik önbellek anahtarlarını doğrudan temizlemek zor olduğundan
-                // Burada sadece gerekli anahtarları içeren önbellekleri temizliyoruz
                 _logger.LogInformation("Döviz kuru önbelleğini temizleme işlemi başlatıldı");
                 
-                // Şu anda oluşturulan önbellek anahtarlarını izlemiyoruz
-                // Bu nedenle, DovizKuruService önbelleğiyle ilgili öğeleri temizlemek
-                // için önbellek yönetimi geliştirilebilir.
+                // Basitleştirilmiş yaklaşım - doğrudan bilinen önbellek anahtarlarını temizle
+                // TRY ve USD gibi standart kurlar
+                _cache.Remove($"{CACHE_KUR_HESAPLAMA}TRY_USD_current");
+                _cache.Remove($"{CACHE_KUR_HESAPLAMA}USD_TRY_current");
+                _cache.Remove($"{CACHE_KUR_HESAPLAMA}UZS_USD_current");
+                _cache.Remove($"{CACHE_KUR_HESAPLAMA}USD_UZS_current");
                 
-                _logger.LogInformation("Döviz kuru önbelleğini temizleme işlemi tamamlandı");
+                // SonKur değerleri
+                _cache.Remove($"{CACHE_SON_KUR}TRY");
+                _cache.Remove($"{CACHE_SON_KUR}USD");
+                _cache.Remove($"{CACHE_SON_KUR}UZS");
+                
+                // Güncel tarihli kurlar
+                _cache.Remove($"{CACHE_KUR_DEGERLERI}current");
+                
+                // Bugünün tarihine göre kur değerleri
+                var today = DateTime.Today.ToString("yyyyMMdd");
+                _cache.Remove($"{CACHE_KUR_DEGERLERI}{today}");
+                
+                _logger.LogInformation("Döviz kuru önbelleği temizleme işlemi tamamlandı");
             }
             catch (Exception ex)
             {
                 _logger.LogError(ex, "Önbellek temizlenirken hata oluştu");
+            }
+        }
+        
+        /// <summary>
+        /// Belirli bir desene uyan tüm önbellek girişlerini temizler
+        /// </summary>
+        private void RemoveCacheByPattern(Regex pattern)
+        {
+            // Bu metod, reflection kullanarak IMemoryCache içindeki _entries field'ını erişerek
+            // pattern'e uyan tüm cache anahtarlarını temizler
+            // Not: Bu yaklaşım Microsoft'un memory cache implementasyonuna bağlıdır
+            var cacheEntriesCollectionDefinition = typeof(MemoryCache).GetProperty("EntriesCollection", System.Reflection.BindingFlags.NonPublic | System.Reflection.BindingFlags.Instance);
+            
+            if (cacheEntriesCollectionDefinition != null)
+            {
+                var cacheEntriesCollection = cacheEntriesCollectionDefinition.GetValue(_cache) as dynamic;
+                
+                if (cacheEntriesCollection != null)
+                {
+                    List<string> keysToRemove = new List<string>();
+                    
+                    foreach (dynamic cacheItem in cacheEntriesCollection)
+                    {
+                        var cacheItemKey = Convert.ToString(cacheItem.GetType().GetProperty("Key").GetValue(cacheItem, null));
+                        
+                        if (pattern.IsMatch(cacheItemKey))
+                        {
+                            keysToRemove.Add(cacheItemKey);
+                        }
+                    }
+                    
+                    foreach (var key in keysToRemove)
+                    {
+                        _cache.Remove(key);
+                        _logger.LogDebug($"Önbellekten temizlendi: {key}");
+                    }
+                    
+                    _logger.LogInformation($"{keysToRemove.Count} adet önbellek girdisi temizlendi");
+                }
             }
         }
 

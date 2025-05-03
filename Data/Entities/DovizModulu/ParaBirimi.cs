@@ -9,6 +9,7 @@ namespace MuhasebeStokWebApp.Data.Entities.DovizModulu
     /// <summary>
     /// Para Birimi entity sınıfı
     /// </summary>
+    [Table("DovizModuluParaBirimleri")]
     public class ParaBirimi
     {
         /// <summary>

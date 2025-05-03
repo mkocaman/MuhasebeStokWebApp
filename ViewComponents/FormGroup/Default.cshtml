@@ -1,0 +1,21 @@
+@model MuhasebeStokWebApp.ViewModels.Shared.FormGroupViewModel
+
+<div class="form-group @Model.ColumnClass">
+    <div class="card @Model.CardClass">
+        @if (!string.IsNullOrEmpty(Model.Title))
+        {
+            <div class="card-header">
+                <h5 class="card-title mb-0">
+                    @if (!string.IsNullOrEmpty(Model.Icon))
+                    {
+                        <i class="@Model.Icon"></i>
+                    }
+                    @Model.Title
+                </h5>
+            </div>
+        }
+        <div class="card-body">
+            @Model.Content
+        </div>
+    </div>
+</div> 

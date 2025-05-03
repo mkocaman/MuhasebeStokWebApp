@@ -1,0 +1,56 @@
+@model MuhasebeStokWebApp.Data.Entities.SistemLog
+
+<div class="container">
+    <div class="row mb-3">
+        <div class="col-md-4 fw-bold">İşlem Tarihi:</div>
+        <div class="col-md-8">@Model.IslemTarihi.ToString("dd.MM.yyyy HH:mm:ss")</div>
+    </div>
+    <div class="row mb-3">
+        <div class="col-md-4 fw-bold">İşlem Türü:</div>
+        <div class="col-md-8">@Model.IslemTuru</div>
+    </div>
+    <div class="row mb-3">
+        <div class="col-md-4 fw-bold">Tablo Adı:</div>
+        <div class="col-md-8">@Model.TabloAdi</div>
+    </div>
+    <div class="row mb-3">
+        <div class="col-md-4 fw-bold">Kayıt Adı:</div>
+        <div class="col-md-8">@Model.KayitAdi</div>
+    </div>
+    <div class="row mb-3">
+        <div class="col-md-4 fw-bold">Kayıt ID:</div>
+        <div class="col-md-8">@(Model.KayitID?.ToString() ?? "-")</div>
+    </div>
+    <div class="row mb-3">
+        <div class="col-md-4 fw-bold">Kullanıcı Adı:</div>
+        <div class="col-md-8">@(string.IsNullOrEmpty(Model.KullaniciAdi) ? "-" : Model.KullaniciAdi)</div>
+    </div>
+    <div class="row mb-3">
+        <div class="col-md-4 fw-bold">IP Adresi:</div>
+        <div class="col-md-8">@(string.IsNullOrEmpty(Model.IPAdresi) ? "-" : Model.IPAdresi)</div>
+    </div>
+    <div class="row mb-3">
+        <div class="col-md-4 fw-bold">Durum:</div>
+        <div class="col-md-8">
+            @if (Model.Basarili)
+            {
+                <span class="badge bg-success">Başarılı</span>
+            }
+            else
+            {
+                <span class="badge bg-danger">Başarısız</span>
+            }
+        </div>
+    </div>
+    <div class="row mb-3">
+        <div class="col-md-4 fw-bold">Açıklama:</div>
+        <div class="col-md-8">@Model.Aciklama</div>
+    </div>
+    @if (!string.IsNullOrEmpty(Model.HataMesaji))
+    {
+        <div class="row mb-3">
+            <div class="col-md-4 fw-bold">Hata Mesajı:</div>
+            <div class="col-md-8 text-danger">@Model.HataMesaji</div>
+        </div>
+    }
+</div> 

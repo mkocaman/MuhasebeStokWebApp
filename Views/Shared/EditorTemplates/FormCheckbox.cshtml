@@ -1,0 +1,28 @@
+@model MuhasebeStokWebApp.ViewModels.Shared.FormCheckboxViewModel
+
+<div class="form-group @(Model.IsInvalid ? "has-error" : "")">
+    <div class="form-check">
+        <input 
+            type="checkbox" 
+            id="@Model.Id" 
+            name="@Model.Name" 
+            class="form-check-input @(Model.IsInvalid ? "is-invalid" : "") @Model.CssClass" 
+            value="true" 
+            @(Model.IsChecked ? "checked" : "")
+            @(Model.IsRequired ? "required" : "") 
+            @(Model.IsDisabled ? "disabled" : "")
+            @Html.Raw(Model.HtmlAttributes)
+        />
+        <label class="form-check-label" for="@Model.Id">
+            @Model.Label @(Model.IsRequired ? "<span class='text-danger'>*</span>" : "")
+        </label>
+    </div>
+    @if (Model.IsInvalid)
+    {
+        <span class="text-danger">@Model.ErrorMessage</span>
+    }
+    @if (!string.IsNullOrEmpty(Model.HelpText))
+    {
+        <small class="form-text text-muted">@Model.HelpText</small>
+    }
+</div> 

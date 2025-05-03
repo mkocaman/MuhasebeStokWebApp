@@ -24,7 +24,7 @@
         
         <div class="mb-3">
             <label asp-for="KategoriID" class="form-label">Kategori</label>
-            <select asp-for="KategoriID" asp-items="ViewBag.Kategoriler" class="form-select" required>
+            <select asp-for="KategoriID" asp-items="Model.Kategoriler" class="form-select" required>
                 <option value="">-- Kategori Seçin --</option>
             </select>
             <span asp-validation-for="KategoriID" class="text-danger"></span>
@@ -32,7 +32,7 @@
         
         <div class="mb-3">
             <label asp-for="BirimID" class="form-label">Birim</label>
-            <select asp-for="BirimID" asp-items="ViewBag.Birimler" class="form-select" required>
+            <select asp-for="BirimID" asp-items="Model.Birimler" class="form-select" required>
                 <option value="">-- Birim Seçin --</option>
             </select>
             <span asp-validation-for="BirimID" class="text-danger"></span>
@@ -42,6 +42,12 @@
             <label asp-for="KDVOrani" class="form-label">KDV Oranı (%)</label>
             <input asp-for="KDVOrani" class="form-control" type="number" min="0" max="100" step="1" value="12" />
             <span asp-validation-for="KDVOrani" class="text-danger"></span>
+        </div>
+        
+        <div class="mb-3">
+            <label asp-for="KritikStokSeviyesi" class="form-label">Kritik Stok Seviyesi</label>
+            <input asp-for="KritikStokSeviyesi" class="form-control" type="number" min="0" max="10000" step="1" value="100" />
+            <span asp-validation-for="KritikStokSeviyesi" class="text-danger"></span>
         </div>
         
         <div class="form-check mb-3">
@@ -54,6 +60,73 @@
         <button type="submit" class="btn btn-primary">Kaydet</button>
     </div>
 </form>
+
+<script>
+    $(document).ready(function() {
+        $("#createUrunForm").submit(function(e) {
+            e.preventDefault();
+            var form = $(this);
+            
+            // Form verilerini al
+            var formData = form.serialize();
+            
+            // AJAX isteği
+            $.ajax({
+                url: form.attr('action'),
+                type: form.attr('method'),
+                data: formData,
+                headers: {
+                    'X-Requested-With': 'XMLHttpRequest'
+                },
+                success: function(response) {
+                    if (response.success) {
+                        // Başarılı olursa Sweet Alert göster
+                        Swal.fire({
+                            icon: 'success',
+                            title: 'Başarılı!',
+                            text: response.message || 'Ürün başarıyla oluşturuldu.',
+                            confirmButtonText: 'Tamam'
+                        }).then((result) => {
+                            // Modal'ı kapat ve sayfayı yenile
+                            $('#createUrunModal').modal('hide');
+                            location.reload();
+                        });
+                    } else {
+                        // Başarısız olursa Sweet Alert göster
+                        Swal.fire({
+                            icon: 'error',
+                            title: 'Hata!',
+                            text: response.message || 'Ürün oluşturulurken bir hata oluştu.',
+                            confirmButtonText: 'Tamam'
+                        });
+                        
+                        // Hata mesajlarını göster (varsa)
+                        if (response.errors && response.errors.length > 0) {
+                            var errorList = '';
+                            $.each(response.errors, function(index, error) {
+                                errorList += error + '<br>';
+                            });
+                            
+                            $('#createFormAlert').html(errorList).removeClass('d-none');
+                        }
+                    }
+                },
+                error: function(xhr, status, error) {
+                    // AJAX hatası olursa Sweet Alert göster
+                    Swal.fire({
+                        icon: 'error',
+                        title: 'Hata!',
+                        text: 'Ürün oluşturulurken bir hata oluştu. Lütfen tekrar deneyin.',
+                        confirmButtonText: 'Tamam'
+                    });
+                    
+                    // Hata mesajını göster
+                    $('#createFormAlert').text('Ürün kaydı sırasında bir hata oluştu: ' + error).removeClass('d-none');
+                }
+            });
+        });
+    });
+</script>
 
 @section Scripts {
     @{await Html.RenderPartialAsync("_ValidationScriptsPartial");}

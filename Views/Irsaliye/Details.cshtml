@@ -40,7 +40,10 @@
                             <div class="info-group">
                                 <h6 class="f-w-600">İrsaliye Türü</h6>
                                 <p>
-                                    @if (Model.IrsaliyeTuru == "Giriş")
+                                    @{
+                                        var irsaliyeTuru = Model.IrsaliyeTuru;
+                                    }
+                                    @if (irsaliyeTuru == "Giriş" || irsaliyeTuru == "Giriş İrsaliyesi")
                                     {
                                         <span class="badge bg-info">Giriş</span>
                                     }
@@ -81,6 +84,21 @@
                                 <p>@(string.IsNullOrEmpty(Model.CariAdres) ? "-" : Model.CariAdres)</p>
                             </div>
                         </div>
+                        @if (Model.FaturaID.HasValue)
+                        {
+                            <div class="col-12">
+                                <div class="info-group">
+                                    <h6 class="f-w-600">İlişkili Fatura</h6>
+                                    <p><a asp-controller="Fatura" asp-action="Details" asp-route-id="@Model.FaturaID">@Model.FaturaNumarasi</a></p>
+                                </div>
+                            </div>
+                        }
+                        <div class="col-sm-6 col-md-12 col-lg-6">
+                            <div class="info-group">
+                                <h6 class="f-w-600">Açıklama</h6>
+                                <p>@(string.IsNullOrEmpty(Model.Aciklama) ? "-" : Model.Aciklama)</p>
+                            </div>
+                        </div>
                         <div class="col-sm-6 col-md-12 col-lg-6">
                             <div class="info-group">
                                 <h6 class="f-w-600">Durum</h6>
@@ -96,34 +114,7 @@
                                 </p>
                             </div>
                         </div>
-                        <div class="col-sm-6 col-md-12 col-lg-6">
-                            <div class="info-group">
-                                <h6 class="f-w-600">İlişkili Fatura</h6>
-                                <p>
-                                    @if (!string.IsNullOrEmpty(Model.FaturaNumarasi))
-                                    {
-                                        <a asp-controller="Fatura" asp-action="Details" asp-route-id="@Model.FaturaID">@Model.FaturaNumarasi</a>
-                                    }
-                                    else
-                                    {
-                                        <span>-</span>
-                                    }
-                                </p>
-                            </div>
-                        </div>
                     </div>
-                </div>
-            </div>
-        </div>
-        
-        <!-- Açıklama -->
-        <div class="col-xl-6 col-md-12 box-col-12">
-            <div class="card">
-                <div class="card-header bg-primary text-white">
-                    <h5 class="mb-0">Açıklama</h5>
-                </div>
-                <div class="card-body">
-                    <p>@(string.IsNullOrEmpty(Model.Aciklama) ? "Açıklama bulunmamaktadır." : Model.Aciklama)</p>
                 </div>
             </div>
         </div>

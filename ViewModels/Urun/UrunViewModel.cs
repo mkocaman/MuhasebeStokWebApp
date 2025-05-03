@@ -1,6 +1,7 @@
 using System;
 using System.Collections.Generic;
 using System.ComponentModel.DataAnnotations;
+using Microsoft.AspNetCore.Mvc.Rendering;
 
 namespace MuhasebeStokWebApp.ViewModels.Urun
 {
@@ -17,6 +18,10 @@ namespace MuhasebeStokWebApp.ViewModels.Urun
         [StringLength(200, ErrorMessage = "Ürün adı en fazla 200 karakter olabilir.")]
         [Display(Name = "Ürün Adı")]
         public string UrunAdi { get; set; }
+        
+        [StringLength(500, ErrorMessage = "Açıklama en fazla 500 karakter olabilir.")]
+        [Display(Name = "Açıklama")]
+        public string Aciklama { get; set; }
         
         [StringLength(50, ErrorMessage = "Birim en fazla 50 karakter olabilir.")]
         [Display(Name = "Birim")]
@@ -45,6 +50,12 @@ namespace MuhasebeStokWebApp.ViewModels.Urun
         
         [Display(Name = "Satış Fiyatı (USD)")]
         public decimal? DovizliSatisFiyati { get; set; }
+        
+        [Display(Name = "KDV Oranı")]
+        public int KdvOrani { get; set; }
+        
+        [Display(Name = "Kritik Stok Seviyesi")]
+        public decimal KritikStokSeviyesi { get; set; }
         
         [Display(Name = "Aktif")]
         public bool Aktif { get; set; }
@@ -75,5 +86,24 @@ namespace MuhasebeStokWebApp.ViewModels.Urun
     public class UrunListViewModel
     {
         public List<UrunViewModel> Urunler { get; set; } = new List<UrunViewModel>();
+        
+        // Filtreleme için parametreler
+        [Display(Name = "Kategori")]
+        public Guid? KategoriID { get; set; }
+        
+        [Display(Name = "Ürün Adı")]
+        public string UrunAdi { get; set; }
+        
+        [Display(Name = "Ürün Kodu")]
+        public string UrunKodu { get; set; }
+        
+        [Display(Name = "Aktif")]
+        public bool? AktifMi { get; set; }
+        
+        [Display(Name = "Aktif Sekme")]
+        public string AktifTab { get; set; } = "aktif";
+        
+        // Dropdown listesi için kategori listesi
+        public List<SelectListItem> Kategoriler { get; set; } = new List<SelectListItem>();
     }
 } 

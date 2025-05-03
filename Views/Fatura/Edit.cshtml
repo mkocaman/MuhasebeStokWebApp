@@ -5,6 +5,13 @@
     Layout = "~/Views/Shared/_Layout.cshtml";
 }
 
+@functions {
+    public static string FormatDecimal(decimal value)
+    {
+        return value.ToString("N2", new System.Globalization.CultureInfo("tr-TR"));
+    }
+}
+
 <style>
     /* Tablo hücrelerinin alt alta gelmesini önlemek için */
     #kalemlerTable tr {

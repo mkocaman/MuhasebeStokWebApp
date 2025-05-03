@@ -21,12 +21,13 @@ using System.IO;
 namespace MuhasebeStokWebApp.Controllers
 {
     // Ürün yönetimi işlemlerini yöneten controller sınıfı
-    // [Authorize] - Geçici olarak kaldırıldı
+    [Authorize]
     public class UrunController : BaseController
     {
         private readonly IUnitOfWork _unitOfWork;
         private readonly ApplicationDbContext _context;
         private readonly ILogger<UrunController> _logger;
+        private readonly IDropdownService _dropdownService;
 
         // Constructor: Repository ve veritabanı bağlantısını DI ile alır
         public UrunController(
@@ -36,101 +37,146 @@ namespace MuhasebeStokWebApp.Controllers
             UserManager<ApplicationUser> userManager,
             RoleManager<IdentityRole> roleManager,
             ILogService logService,
-            ILogger<UrunController> logger)
+            ILogger<UrunController> logger,
+            IDropdownService dropdownService)
             : base(menuService, userManager, roleManager, logService)
         {
             _unitOfWork = unitOfWork;
             _context = context;
             _logger = logger;
+            _dropdownService = dropdownService;
         }
 
         // Ürünlerin listelendiği ana sayfa
-        public async Task<IActionResult> Index(Guid? kategoriID = null)
+        public async Task<IActionResult> Index(Guid? kategoriID = null, string urunAdi = null, string urunKodu = null, bool? aktifMi = null, string tab = "aktif")
         {
             var urunRepository = _unitOfWork.Repository<Urun>();
             var urunFiyatRepository = _unitOfWork.Repository<UrunFiyat>();
             var kategoriRepository = _unitOfWork.Repository<UrunKategori>();
-            var birimRepository = _unitOfWork.Repository<Birim>();
 
-            // Tüm ürünleri getir (silinen ve pasif ürünler dahil), birim bilgisiyle birlikte
-            var urunler = await urunRepository.GetAsync(
-                filter: null, // filter parametresi kaldırıldı, tüm ürünleri getir
-                includeProperties: "Birim"
-            );
-
+            // ApplicationDbContext'te HasQueryFilter ile varsayılan filtre uygulandığı için
+            // doğrudan DbContext'i kullanarak IgnoreQueryFilters() ile tüm ürünleri getirelim
+            var tümUrunler = await _context.Urunler
+                .IgnoreQueryFilters()
+                .Include("Birim")
+                .ToListAsync();
+            
             // Silinmemiş tüm kategorileri getir
             var kategoriler = await kategoriRepository.GetAsync(
                 filter: k => k.Silindi == false,
                 orderBy: q => q.OrderBy(k => k.KategoriAdi)
             );
             
-            // Kategorileri ViewBag'e ekle
-            ViewBag.Kategoriler = new SelectList(kategoriler, "KategoriID", "KategoriAdi", kategoriID);
-            ViewBag.CurrentKategori = kategoriID;
-
+            // Ürün fiyatlarını getir
+            var urunFiyatlar = await urunFiyatRepository.GetAllAsync();
+            
             // Ürün listesi görünüm modeli oluştur
             var viewModel = new UrunListViewModel
             {
-                Urunler = urunler.Select(u => new UrunViewModel
-                {
-                    UrunID = u.UrunID,
-                    UrunKodu = u.UrunKodu,
-                    UrunAdi = u.UrunAdi,
-                    Birim = u.Birim != null ? u.Birim.BirimAdi : string.Empty,
-                    Miktar = u.StokMiktar,
-                    // Her ürün için en güncel liste fiyatını getir
-                    ListeFiyati = urunFiyatRepository.GetAllAsync().Result
-                        .Where(uf => uf.UrunID == u.UrunID && uf.FiyatTipiID == 1 && uf.Silindi == false)
-                        .OrderByDescending(uf => uf.GecerliTarih)
-                        .FirstOrDefault()?.Fiyat ?? 0m,
-                    // Her ürün için en güncel maliyet fiyatını getir
-                    MaliyetFiyati = urunFiyatRepository.GetAllAsync().Result
-                        .Where(uf => uf.UrunID == u.UrunID && uf.FiyatTipiID == 2 && uf.Silindi == false)
-                        .OrderByDescending(uf => uf.GecerliTarih)
-                        .FirstOrDefault()?.Fiyat ?? 0m,
-                    // Her ürün için en güncel satış fiyatını getir
-                    SatisFiyati = urunFiyatRepository.GetAllAsync().Result
-                        .Where(uf => uf.UrunID == u.UrunID && uf.FiyatTipiID == 3 && uf.Silindi == false)
-                        .OrderByDescending(uf => uf.GecerliTarih)
-                        .FirstOrDefault()?.Fiyat ?? 0m,
-                    Aktif = u.Aktif,
-                    Silindi = u.Silindi,
-                    OlusturmaTarihi = u.OlusturmaTarihi,
-                    KategoriID = u.KategoriID,
-                    // Ürün kategorisinin adını bul
-                    KategoriAdi = u.KategoriID.HasValue ? 
-                        kategoriler.FirstOrDefault(k => k.KategoriID == u.KategoriID)?.KategoriAdi : "Kategorisiz"
-                }).ToList()
+                Urunler = tümUrunler.Select(u => new UrunViewModel
+                    {
+                        UrunID = u.UrunID,
+                        UrunKodu = u.UrunKodu,
+                        UrunAdi = u.UrunAdi,
+                        Birim = u.Birim != null ? u.Birim.BirimAdi : string.Empty,
+                        Miktar = u.StokMiktar,
+                        // Her ürün için en güncel liste fiyatını getir
+                        ListeFiyati = urunFiyatlar
+                            .Where(uf => uf.UrunID == u.UrunID && uf.FiyatTipiID == 1 && uf.Silindi == false)
+                            .OrderByDescending(uf => uf.GecerliTarih)
+                            .FirstOrDefault()?.Fiyat ?? 0m,
+                        // Her ürün için en güncel maliyet fiyatını getir
+                        MaliyetFiyati = urunFiyatlar
+                            .Where(uf => uf.UrunID == u.UrunID && uf.FiyatTipiID == 2 && uf.Silindi == false)
+                            .OrderByDescending(uf => uf.GecerliTarih)
+                            .FirstOrDefault()?.Fiyat ?? 0m,
+                        // Her ürün için en güncel satış fiyatını getir
+                        SatisFiyati = urunFiyatlar
+                            .Where(uf => uf.UrunID == u.UrunID && uf.FiyatTipiID == 3 && uf.Silindi == false)
+                            .OrderByDescending(uf => uf.GecerliTarih)
+                            .FirstOrDefault()?.Fiyat ?? 0m,
+                        Aktif = u.Aktif,
+                        Silindi = u.Silindi,
+                        OlusturmaTarihi = u.OlusturmaTarihi,
+                        KategoriID = u.KategoriID,
+                        // Ürün kategorisinin adını bul
+                        KategoriAdi = u.KategoriID.HasValue ? 
+                            kategoriler.FirstOrDefault(k => k.KategoriID == u.KategoriID)?.KategoriAdi : "Kategorisiz"
+                }).ToList(),
+                
+                // Filtre özellikleri ViewModel'e taşındı
+                KategoriID = kategoriID,
+                UrunAdi = urunAdi,
+                UrunKodu = urunKodu,
+                AktifMi = aktifMi,
+                AktifTab = tab
             };
+            
+            // Kategorileri DropdownService üzerinden al
+            viewModel.Kategoriler = await _dropdownService.GetKategoriSelectItemsAsync(kategoriID);
 
+            // Önce tab filtresi uygula - Aktif, Pasif ve Silinmiş ürünleri sekmelerine göre filtrele
+            if (tab == "aktif")
+            {
+                viewModel.Urunler = viewModel.Urunler.Where(u => u.Aktif && !u.Silindi).ToList();
+            }
+            else if (tab == "pasif")
+            {
+                viewModel.Urunler = viewModel.Urunler.Where(u => !u.Aktif && !u.Silindi).ToList();
+            }
+            else if (tab == "silindi")
+            {
+                viewModel.Urunler = viewModel.Urunler.Where(u => u.Silindi).ToList();
+            }
+
+            // Diğer filtreleri uygula
             // Kategori filtresi varsa uygula
             if (kategoriID.HasValue)
             {
                 viewModel.Urunler = viewModel.Urunler.Where(u => u.KategoriID == kategoriID.Value).ToList();
+            }
+            
+            // Ürün adı filtresi varsa uygula
+            if (!string.IsNullOrWhiteSpace(urunAdi))
+            {
+                viewModel.Urunler = viewModel.Urunler.Where(u => u.UrunAdi.Contains(urunAdi, StringComparison.OrdinalIgnoreCase)).ToList();
+            }
+            
+            // Ürün kodu filtresi varsa uygula
+            if (!string.IsNullOrWhiteSpace(urunKodu))
+            {
+                viewModel.Urunler = viewModel.Urunler.Where(u => u.UrunKodu.Contains(urunKodu, StringComparison.OrdinalIgnoreCase)).ToList();
+            }
+            
+            // Aktiflik durumu filtresi varsa uygula
+            if (aktifMi.HasValue)
+            {
+                viewModel.Urunler = viewModel.Urunler.Where(u => u.Aktif == aktifMi.Value).ToList();
             }
 
             return View(viewModel);
         }
 
         // Ürün detaylarını gösterir
-        public async Task<IActionResult> Details(Guid id)
+        public async Task<IActionResult> Details(Guid id, bool returnView = true)
         {
             var urunRepository = _unitOfWork.Repository<Urun>();
-            var urunFiyatRepository = _unitOfWork.Repository<UrunFiyat>();
             var kategoriRepository = _unitOfWork.Repository<UrunKategori>();
+            var urunFiyatRepository = _unitOfWork.Repository<UrunFiyat>();
 
-            // Ürün bilgisini getir
-            var urun = await urunRepository.GetFirstOrDefaultAsync(u => u.UrunID == id && u.Silindi == false);
+            var urun = await urunRepository.GetFirstOrDefaultAsync(u => u.UrunID == id && u.Silindi == false, includeProperties: "Birim");
             if (urun == null)
             {
                 return NotFound();
             }
 
-            // Kategori bilgisini getir
-            var kategori = urun.KategoriID.HasValue ? 
-                await kategoriRepository.GetFirstOrDefaultAsync(k => k.KategoriID.ToString() == urun.KategoriID.ToString()) : null;
-
-            // Ürün detay görünüm modeli oluştur
+            // Kategori bilgisi
+            UrunKategori? kategori = null;
+            if (urun.KategoriID.HasValue)
+            {
+                kategori = await kategoriRepository.GetByIdAsync(urun.KategoriID.Value);
+            }
+            
             var viewModel = new UrunViewModel
             {
                 UrunID = urun.UrunID,
@@ -153,55 +199,66 @@ namespace MuhasebeStokWebApp.Controllers
                     .Where(uf => uf.UrunID == urun.UrunID && uf.FiyatTipiID == 3 && uf.Silindi == false)
                     .OrderByDescending(uf => uf.GecerliTarih)
                     .FirstOrDefault()?.Fiyat ?? 0m,
-                Aktif = urun.Aktif,
+                KategoriAdi = kategori?.KategoriAdi ?? "Kategorisiz",
                 OlusturmaTarihi = urun.OlusturmaTarihi,
-                KategoriID = urun.KategoriID,
-                KategoriAdi = kategori?.KategoriAdi ?? "Kategorisiz"
+                GuncellemeTarihi = urun.GuncellemeTarihi,
+                Aktif = urun.Aktif,
+                KdvOrani = urun.KDVOrani,
+                KritikStokSeviyesi = urun.KritikStokSeviyesi,
+                Aciklama = urun.Aciklama
             };
-
+            
+            // AJAX isteği için modal içeriği döndür
+            if (Request.Headers["X-Requested-With"] == "XMLHttpRequest")
+            {
+                return PartialView("_DetailsPartial", viewModel);
+            }
+            
+            if (!returnView)
+            {
+                return Ok(viewModel);
+            }
             return View(viewModel);
         }
 
         // Yeni ürün oluşturma formu
         public async Task<IActionResult> Create()
         {
-            // Aktif kategorileri getir
-            var kategoriRepository = _unitOfWork.Repository<UrunKategori>();
-            var kategoriler = await kategoriRepository.GetAsync(
-                filter: k => k.Silindi == false && k.Aktif,
-                orderBy: q => q.OrderBy(k => k.KategoriAdi)
-            );
+            // DropdownService üzerinden kategori ve birim listelerini al
+            var kategoriler = await _dropdownService.GetKategoriSelectItemsAsync();
+            var birimler = await _dropdownService.GetBirimSelectItemsAsync();
             
-            // Aktif birimleri getir
-            var birimRepository = _unitOfWork.Repository<Birim>();
-            var birimler = await birimRepository.GetAsync(
-                filter: b => b.Silindi == false && b.Aktif,
-                orderBy: q => q.OrderBy(b => b.BirimAdi)
-            );
-            
-            // Dropdown listelerini hazırla
-            ViewBag.Kategoriler = new SelectList(kategoriler, "KategoriID", "KategoriAdi");
-            ViewBag.Birimler = new SelectList(birimler, "BirimID", "BirimAdi");
-            
+            // ViewModel oluştur ve içine kategorileri ve birimleri ekle
             var model = new UrunCreateViewModel
             {
-                Aktif = true
+                Aktif = true,
+                KDVOrani = 12, // Varsayılan KDV oranı 12 olarak ayarlandı
+                KritikStokSeviyesi = 100, // Varsayılan kritik stok seviyesi 100 olarak ayarlandı
+                Kategoriler = kategoriler,
+                Birimler = birimler,
+                // Geriye uyumluluk için eski listeler de doldurulur
+                KategoriListesi = kategoriler,
+                BirimListesi = birimler
             };
             
             // AJAX isteğiyse partial view döndür
             if (Request.Headers["X-Requested-With"] == "XMLHttpRequest")
             {
-                return PartialView("_CreateUrun", model);
+                return PartialView("_CreatePartial", model);
             }
             
             return View(model);
         }
 
         // Yeni ürün oluşturma işlemi
+        [Authorize(Roles = "Admin,StokYonetici,Kullanici")]
         [HttpPost]
         [ValidateAntiForgeryToken]
         public async Task<IActionResult> Create(UrunCreateViewModel model)
         {
+            // İşlem başlangıcında logging
+            _logger.LogInformation($"Yeni ürün oluşturma işlemi başlatılıyor: Kullanıcı={User.Identity.Name}");
+            
             // Birim ve kategori zorunlu alanlar - Guid için null kontrolü
             if (model.BirimID == Guid.Empty)
             {
@@ -232,13 +289,13 @@ namespace MuhasebeStokWebApp.Controllers
             }
 
             try
-            {
-                var urunRepository = _unitOfWork.Repository<Urun>();
-
+                {
+                    var urunRepository = _unitOfWork.Repository<Urun>();
+                    
                 // Ürün kodu kontrol et
                 var existingUrun = await urunRepository.GetFirstOrDefaultAsync(u => u.UrunKodu == model.UrunKodu && !u.Silindi);
-                if (existingUrun != null)
-                {
+                    if (existingUrun != null)
+                    {
                     ModelState.AddModelError("UrunKodu", "Bu ürün kodu zaten kullanılıyor.");
                     
                     // Eğer AJAX isteği ise hata mesajı döndür
@@ -249,33 +306,35 @@ namespace MuhasebeStokWebApp.Controllers
                     
                     // Dropdown list verilerini hazırla
                     await ListeleriDoldur();
-                    return View(model);
-                }
-                
-                // Yeni ürün oluştur
+                        return View(model);
+                    }
+                    
+                    // Yeni ürün oluştur
                 var yeniUrun = new Urun
-                {
-                    UrunID = Guid.NewGuid(),
-                    UrunKodu = model.UrunKodu,
-                    UrunAdi = model.UrunAdi,
-                    Aciklama = model.Aciklama ?? string.Empty,
-                    BirimID = model.BirimID,
-                    KategoriID = model.KategoriID,
-                    KDVOrani = (int)model.KDVOrani,
-                    Aktif = model.Aktif,
-                    OlusturmaTarihi = DateTime.Now,
-                    OlusturanKullaniciID = GetCurrentUserId()
-                };
-                
+                    {
+                        UrunID = Guid.NewGuid(),
+                        UrunKodu = model.UrunKodu,
+                        UrunAdi = model.UrunAdi,
+                        Aciklama = model.Aciklama ?? string.Empty,
+                        BirimID = model.BirimID,
+                        KategoriID = model.KategoriID,
+                        KDVOrani = (int)model.KDVOrani,
+                        KritikStokSeviyesi = model.KritikStokSeviyesi,
+                        Aktif = model.Aktif,
+                        OlusturmaTarihi = DateTime.Now,
+                        OlusturanKullaniciID = GetCurrentUserId()
+                    };
+                    
                 await urunRepository.AddAsync(yeniUrun);
                 
                 // Veritabanına kaydet
-                await _unitOfWork.SaveAsync();
-                
-                // Log oluştur
-                await _logService.LogInfoAsync(
-                    "UrunController.Create",
-                    $"Yeni ürün oluşturuldu: {yeniUrun.UrunAdi}, ID: {yeniUrun.UrunID}"
+                    await _unitOfWork.SaveAsync();
+                    
+                // Log oluştur - Daha detaylı bir log için UrunOlusturmaLogOlustur metodunu kullanıyoruz
+                await _logService.UrunOlusturmaLogOlustur(
+                    yeniUrun.UrunID.ToString(),
+                    yeniUrun.UrunAdi,
+                    $"Ürün Kodu: {yeniUrun.UrunKodu}, Kategori: {model.KategoriID}, Birim: {model.BirimID}, KDV Oranı: %{yeniUrun.KDVOrani}, Kritik Stok: {yeniUrun.KritikStokSeviyesi}, Açıklama: {yeniUrun.Aciklama}"
                 );
                 
                 // Eğer AJAX isteği ise başarı mesajı döndür
@@ -309,8 +368,6 @@ namespace MuhasebeStokWebApp.Controllers
         public async Task<IActionResult> Edit(Guid id)
         {
             var urunRepository = _unitOfWork.Repository<Urun>();
-            var kategoriRepository = _unitOfWork.Repository<UrunKategori>();
-            var birimRepository = _unitOfWork.Repository<Birim>();
 
             // Ürün bilgisini getir
             var urun = await urunRepository.GetFirstOrDefaultAsync(u => u.UrunID == id && u.Silindi == false);
@@ -319,22 +376,10 @@ namespace MuhasebeStokWebApp.Controllers
                 return NotFound();
             }
 
-            // Aktif kategorileri getir
-            var kategoriler = await kategoriRepository.GetAsync(
-                filter: k => k.Silindi == false && k.Aktif,
-                orderBy: q => q.OrderBy(k => k.KategoriAdi)
-            );
+            // DropdownService üzerinden kategori ve birim listelerini al
+            var kategoriler = await _dropdownService.GetKategoriSelectItemsAsync(urun.KategoriID);
+            var birimler = await _dropdownService.GetBirimSelectItemsAsync(urun.BirimID);
             
-            // Aktif birimleri getir
-            var birimler = await birimRepository.GetAsync(
-                filter: b => b.Silindi == false && b.Aktif,
-                orderBy: q => q.OrderBy(b => b.BirimAdi)
-            );
-            
-            // Dropdown listelerini hazırla
-            ViewBag.Kategoriler = new SelectList(kategoriler, "KategoriID", "KategoriAdi", urun.KategoriID);
-            ViewBag.Birimler = new SelectList(birimler, "BirimID", "BirimAdi", urun.BirimID);
-
             // ViewModel oluştur
             var viewModel = new UrunEditViewModel
             {
@@ -345,13 +390,22 @@ namespace MuhasebeStokWebApp.Controllers
                 KategoriID = urun.KategoriID,
                 BirimID = urun.BirimID,
                 KDVOrani = urun.KDVOrani,
-                Aktif = urun.Aktif
+                KritikStokSeviyesi = urun.KritikStokSeviyesi,
+                Aktif = urun.Aktif,
+                
+                // Dropdown listeleri doğrudan ViewModel içine ekle
+                Birimler = birimler,
+                Kategoriler = kategoriler,
+                
+                // Geriye uyumluluk için BirimListesi ve KategoriListesi de doldur
+                BirimListesi = birimler,
+                KategoriListesi = kategoriler
             };
-            
+
             // AJAX isteği ise partial view döndür
             if (Request.Headers["X-Requested-With"] == "XMLHttpRequest")
             {
-                return PartialView("_EditUrun", viewModel);
+                return PartialView("_EditPartial", viewModel);
             }
             
             return View(viewModel);
@@ -383,21 +437,7 @@ namespace MuhasebeStokWebApp.Controllers
                 }
                 
                 // Tekrar dropdown verilerini hazırla
-                var kategoriRepository = _unitOfWork.Repository<UrunKategori>();
-                var birimRepository = _unitOfWork.Repository<Birim>();
-                
-                var kategoriler = await kategoriRepository.GetAsync(
-                    filter: k => k.Silindi == false && k.Aktif,
-                    orderBy: q => q.OrderBy(k => k.KategoriAdi)
-                );
-                
-                var birimler = await birimRepository.GetAsync(
-                    filter: b => b.Silindi == false && b.Aktif,
-                    orderBy: q => q.OrderBy(b => b.BirimAdi)
-                );
-                
-                ViewBag.Kategoriler = new SelectList(kategoriler, "KategoriID", "KategoriAdi", model.KategoriID);
-                ViewBag.Birimler = new SelectList(birimler, "BirimID", "BirimAdi", model.BirimID);
+                await ListeleriDoldur();
                 
                 return View(model);
             }
@@ -408,7 +448,7 @@ namespace MuhasebeStokWebApp.Controllers
                 
                 // Ürün bilgisini getir
                 var urun = await urunRepository.GetFirstOrDefaultAsync(u => u.UrunID == model.UrunID && !u.Silindi);
-                if (urun == null)
+                    if (urun == null)
                 {
                     // AJAX isteği ise hata mesajı döndür
                     if (Request.Headers["X-Requested-With"] == "XMLHttpRequest")
@@ -420,42 +460,39 @@ namespace MuhasebeStokWebApp.Controllers
                 }
 
                 // Ürün bilgilerini güncelle
-                urun.UrunKodu = model.UrunKodu;
-                urun.UrunAdi = model.UrunAdi;
+                    urun.UrunKodu = model.UrunKodu;
+                    urun.UrunAdi = model.UrunAdi;
                 urun.Aciklama = model.Aciklama ?? string.Empty;
-                urun.KategoriID = model.KategoriID;
+                    urun.KategoriID = model.KategoriID;
                 urun.BirimID = model.BirimID;
-                urun.KDVOrani = (int)model.KDVOrani;
-                urun.Aktif = model.Aktif;
-                urun.GuncellemeTarihi = DateTime.Now;
-                
-                // Kullanıcı ID'sini guid olarak ayarla
-                if (Guid.TryParse(User.Identity.Name, out Guid kullaniciID))
-                {
-                    urun.SonGuncelleyenKullaniciID = kullaniciID;
-                }
+                    urun.KDVOrani = (int)model.KDVOrani;
+                    urun.KritikStokSeviyesi = model.KritikStokSeviyesi;
+                    urun.Aktif = model.Aktif;
+                    urun.GuncellemeTarihi = DateTime.Now;
+                    urun.SonGuncelleyenKullaniciID = GetCurrentUserId();
                 
                 await urunRepository.UpdateAsync(urun);
                 
-                await _unitOfWork.SaveAsync();
-                
-                // Log oluştur
-                await _logService.LogInfoAsync(
-                    "UrunController.Edit",
-                    $"Ürün güncellendi: {urun.UrunAdi}, ID: {urun.UrunID}"
-                );
-                
-                // AJAX isteği ise başarı mesajı döndür
-                if (Request.Headers["X-Requested-With"] == "XMLHttpRequest")
-                {
-                    return Json(new { success = true, message = "Ürün başarıyla güncellendi." });
+                    await _unitOfWork.SaveAsync();
+                    
+                    // Log oluştur - Daha detaylı bir log için UrunGuncellemeLogOlustur metodunu kullanıyoruz
+                    await _logService.UrunGuncellemeLogOlustur(
+                        urun.UrunID.ToString(),
+                        urun.UrunAdi,
+                        $"Ürün Kodu: {urun.UrunKodu}, Kategori: {model.KategoriID}, Birim: {model.BirimID}, KDV Oranı: %{urun.KDVOrani}, Kritik Stok: {urun.KritikStokSeviyesi}, Aktif: {urun.Aktif}, Açıklama: {urun.Aciklama}"
+                    );
+                    
+                    // AJAX isteği ise başarı mesajı döndür
+                    if (Request.Headers["X-Requested-With"] == "XMLHttpRequest")
+                    {
+                        return Json(new { success = true, message = "Ürün başarıyla güncellendi." });
+                    }
+                    
+                    TempData["SuccessMessage"] = $"{urun.UrunAdi} ürünü başarıyla güncellendi.";
+                    return RedirectToAction(nameof(Index));
                 }
-                
-                TempData["SuccessMessage"] = $"{urun.UrunAdi} ürünü başarıyla güncellendi.";
-                return RedirectToAction(nameof(Index));
-            }
-            catch (Exception ex)
-            {
+                catch (Exception ex)
+                {
                 _logger.LogError(ex, "Ürün güncelleme hatası: {Message}", ex.Message);
                 
                 // AJAX isteği ise hata mesajı döndür
@@ -467,21 +504,7 @@ namespace MuhasebeStokWebApp.Controllers
                 TempData["ErrorMessage"] = $"Ürün güncellenirken bir hata oluştu: {ex.Message}";
                 
                 // Tekrar dropdown verilerini hazırla
-                var kategoriRepository = _unitOfWork.Repository<UrunKategori>();
-                var birimRepository = _unitOfWork.Repository<Birim>();
-                
-                var kategoriler = await kategoriRepository.GetAsync(
-                    filter: k => k.Silindi == false && k.Aktif,
-                    orderBy: q => q.OrderBy(k => k.KategoriAdi)
-                );
-                
-                var birimler = await birimRepository.GetAsync(
-                    filter: b => b.Silindi == false && b.Aktif,
-                    orderBy: q => q.OrderBy(b => b.BirimAdi)
-                );
-                
-                ViewBag.Kategoriler = new SelectList(kategoriler, "KategoriID", "KategoriAdi", model.KategoriID);
-                ViewBag.Birimler = new SelectList(birimler, "BirimID", "BirimAdi", model.BirimID);
+                await ListeleriDoldur();
                 
                 return View(model);
             }
@@ -535,89 +558,53 @@ namespace MuhasebeStokWebApp.Controllers
         }
 
         // Ürün silme işlemi (soft delete)
+        [Authorize(Roles = "Admin,StokYonetici")]
         [HttpPost, ActionName("Delete")]
+        [ValidateAntiForgeryToken]
         public async Task<IActionResult> DeleteConfirmed(Guid id)
         {
-            var urunRepository = _unitOfWork.Repository<Urun>();
-            var stokHareketRepository = _unitOfWork.Repository<StokHareket>();
-            var faturaDetayRepository = _unitOfWork.Repository<FaturaDetay>();
-            var urunFiyatRepository = _unitOfWork.Repository<UrunFiyat>();
-
-            // Ürün bilgisini getir
-            var urun = await urunRepository.GetFirstOrDefaultAsync(u => u.UrunID == id && u.Silindi == false);
-            if (urun == null)
+            // Kullanıcının yetkilerini kontrol et
+            if (!User.IsInRole("Admin") && !User.IsInRole("StokYonetici"))
             {
-                return NotFound();
+                _logger.LogWarning($"Yetkisiz ürün silme girişimi: Kullanıcı={User.Identity.Name}, UrunID={id}");
+                return RedirectToAction("AccessDenied", "Account");
             }
-
+            
             try
             {
-                // Fatura detaylarında kullanılıp kullanılmadığını kontrol et
-                var faturaDetayVarMi = await _context.FaturaDetaylari
-                    .AnyAsync(fd => fd.UrunID == id && fd.Silindi == false);
+                // İşlem öncesi logging
+                _logger.LogInformation($"Ürün silme işlemi başlatılıyor: UrunID={id}, Kullanıcı={User.Identity.Name}");
                 
-                // Eğer ürün herhangi bir faturada kullanılmışsa, sadece pasife al
-                if (faturaDetayVarMi)
+                // SoftDeleteService üzerinden işlem yap
+                var softDeleteService = HttpContext.RequestServices.GetService<ISoftDeleteService<Urun>>();
+                if (softDeleteService == null)
                 {
-                    urun.Aktif = false;
-                    urun.GuncellemeTarihi = DateTime.Now;
-                    
-                    await urunRepository.UpdateAsync(urun);
-                    await _unitOfWork.SaveAsync();
-                    
-                    TempData["Warning"] = $"'{urun.UrunAdi}' ürünü faturalarda kullanıldığı için silinemedi, sadece pasife alındı.";
+                    TempData["ErrorMessage"] = "Silme işlemi için gerekli servis bulunamadı.";
                     return RedirectToAction(nameof(Index));
                 }
                 
-                // İkinci bir kontrol daha yap - Repository kullanarak
-                var faturaDetaylari = await faturaDetayRepository.GetAllAsync();
-                var urunKullanilmis = faturaDetaylari.Any(fd => fd.UrunID == id && !fd.Silindi);
+                // İlişkili kayıtlar kontrolü ve silme işlemi
+                bool success = await softDeleteService.SoftDeleteByIdAsync(id);
                 
-                if (urunKullanilmis)
+                if (success)
                 {
-                    urun.Aktif = false;
-                    urun.GuncellemeTarihi = DateTime.Now;
-                    
-                    await urunRepository.UpdateAsync(urun);
-                    await _unitOfWork.SaveAsync();
-                    
-                    TempData["Warning"] = $"'{urun.UrunAdi}' ürünü faturalarda kullanıldığı için silinemedi, sadece pasife alındı.";
-                    return RedirectToAction(nameof(Index));
+                    _logger.LogInformation($"Ürün başarıyla silindi: UrunID={id}, Kullanıcı={User.Identity.Name}");
+                    TempData["SuccessMessage"] = "Ürün başarıyla silindi.";
+                }
+                else
+                {
+                    _logger.LogWarning($"Ürün silinemedi: UrunID={id}, Kullanıcı={User.Identity.Name}");
+                    TempData["WarningMessage"] = "Ürün silme işlemi gerçekleştirilemedi.";
                 }
                 
-                // Stok hareketlerini soft delete yap
-                var stokHareketleri = await stokHareketRepository.GetAsync(h => h.UrunID == id && h.Silindi == false);
-                foreach (var hareket in stokHareketleri)
-                {
-                    hareket.Silindi = true;
-                    hareket.GuncellemeTarihi = DateTime.Now;
-                    await stokHareketRepository.UpdateAsync(hareket);
-                }
-                
-                // Ürün fiyatlarını soft delete yap
-                var urunFiyatlari = await urunFiyatRepository.GetAsync(uf => uf.UrunID == id && uf.Silindi == false);
-                foreach (var fiyat in urunFiyatlari)
-                {
-                    fiyat.Silindi = true;
-                    await urunFiyatRepository.UpdateAsync(fiyat);
-                }
-
-                // Ürünü soft delete yap
-                urun.Silindi = true;
-                urun.Aktif = false;
-                urun.GuncellemeTarihi = DateTime.Now;
-                
-                await urunRepository.UpdateAsync(urun);
-                await _unitOfWork.SaveAsync();
-                
-                TempData["SuccessMessage"] = $"'{urun.UrunAdi}' ürünü ve ilişkili tüm kayıtları başarıyla silindi.";
+                return RedirectToAction(nameof(Index), new { tab = "silindi" });
             }
             catch (Exception ex)
             {
-                TempData["ErrorMessage"] = $"Ürün silinirken bir hata oluştu: {ex.Message}";
+                _logger.LogError(ex, $"Ürün silme işlemi sırasında hata: UrunID={id}, Kullanıcı={User.Identity.Name}");
+                TempData["ErrorMessage"] = "Ürün silinirken bir hata oluştu: " + ex.Message;
+                return RedirectToAction(nameof(Index));
             }
-
-            return RedirectToAction(nameof(Index));
         }
 
         // Pasif ürünü aktifleştirme
@@ -719,22 +706,22 @@ namespace MuhasebeStokWebApp.Controllers
         // AJAX: Belirli bir ürünün bilgilerini getir
         [HttpGet]
         public async Task<IActionResult> GetUrunBilgileri(Guid id)
-        {
-            var urun = await _unitOfWork.Repository<Urun>().GetFirstOrDefaultAsync(
-                filter: u => u.UrunID == id && u.Aktif && !u.Silindi,
-                includeProperties: "Birim");
-
-            if (urun == null)
             {
+                var urun = await _unitOfWork.Repository<Urun>().GetFirstOrDefaultAsync(
+                    filter: u => u.UrunID == id && u.Aktif && !u.Silindi,
+                    includeProperties: "Birim");
+
+                if (urun == null)
+                {
                 return Json(new { success = false, message = "Ürün bulunamadı" });
             }
 
-            return Json(new
-            {
-                urunID = urun.UrunID,
-                urunKodu = urun.UrunKodu,
-                urunAdi = urun.UrunAdi,
-                birim = urun.Birim != null ? urun.Birim.BirimAdi : "Adet",
+                return Json(new
+                {
+                    urunID = urun.UrunID,
+                    urunKodu = urun.UrunKodu,
+                    urunAdi = urun.UrunAdi,
+                    birim = urun.Birim != null ? urun.Birim.BirimAdi : "Adet",
                 stokMiktar = urun.StokMiktar
             });
         }
@@ -762,20 +749,22 @@ namespace MuhasebeStokWebApp.Controllers
         // Dropdown listelerini doldur
         private async Task ListeleriDoldur(Guid? kategoriID = null, Guid? birimID = null)
         {
-            var kategoriRepository = _unitOfWork.Repository<UrunKategori>();
-            var kategoriler = await kategoriRepository.GetAsync(
-                filter: k => k.Silindi == false && k.Aktif,
-                orderBy: q => q.OrderBy(k => k.KategoriAdi)
-            );
-            
-            var birimRepository = _unitOfWork.Repository<Birim>();
-            var birimler = await birimRepository.GetAsync(
-                filter: b => b.Silindi == false && b.Aktif,
-                orderBy: q => q.OrderBy(b => b.BirimAdi)
-            );
-            
-            ViewBag.Kategoriler = new SelectList(kategoriler, "KategoriID", "KategoriAdi", kategoriID);
-            ViewBag.Birimler = new SelectList(birimler, "BirimID", "BirimAdi", birimID);
+            try
+            {
+                // Bu metot artık DropdownService ile güncellenebilir
+                var dropdownData = await _dropdownService.PrepareUrunDropdownsAsync(birimID, kategoriID);
+                
+                ViewBag.Kategoriler = dropdownData["Kategoriler"];
+                ViewBag.Birimler = dropdownData["Birimler"];
+            }
+            catch (Exception ex)
+            {
+                _logger.LogError(ex, "ListeleriDoldur hatası: {Message}", ex.Message);
+                
+                // Hata durumunda boş listeler oluştur
+                ViewBag.Kategoriler = new SelectList(new List<SelectListItem>());
+                ViewBag.Birimler = new SelectList(new List<SelectListItem>());
+            }
         }
         
         #endregion
@@ -809,188 +798,9 @@ namespace MuhasebeStokWebApp.Controllers
             }
         }
 
-        // Ürünün silinmesi (soft delete) için ajax endpointi
+        // Ürün pasife alma metodu (SetPassive adıyla)
         [HttpPost]
-        public async Task<IActionResult> SetDelete(Guid id)
-        {
-            try
-            {
-                var urunRepository = _unitOfWork.Repository<Urun>();
-                var stokHareketRepository = _unitOfWork.Repository<StokHareket>();
-                var urunFiyatRepository = _unitOfWork.Repository<UrunFiyat>();
-                var faturaDetayRepository = _unitOfWork.Repository<FaturaDetay>();
-
-                // Ürün bilgisini getir
-                var urun = await urunRepository.GetFirstOrDefaultAsync(u => u.UrunID == id && u.Silindi == false);
-                if (urun == null)
-                {
-                    return Json(new { success = false, message = "Ürün bulunamadı." });
-                }
-
-                try
-                {
-                    // Fatura detaylarında kullanılıp kullanılmadığını kontrol et
-                    var faturaDetayVarMi = await _context.FaturaDetaylari
-                        .AnyAsync(fd => fd.UrunID == id && fd.Silindi == false);
-                    
-                    // Eğer ürün herhangi bir faturada kullanılmışsa, sadece pasife al
-                    if (faturaDetayVarMi)
-                    {
-                        urun.Aktif = false;
-                        urun.GuncellemeTarihi = DateTime.Now;
-                        
-                        await urunRepository.UpdateAsync(urun);
-                        await _unitOfWork.SaveAsync();
-                        
-                        // Log oluştur
-                        await _logService.UrunSilmeLogOlustur(
-                            urun.UrunID, 
-                            urun.UrunAdi, 
-                            $"Ürün faturalarda kullanıldığı için silinemedi, sadece pasife alındı."
-                        );
-                        
-                        return Json(new { 
-                            success = true, 
-                            message = $"'{urun.UrunAdi}' ürünü faturalarda kullanıldığı için silinemedi, sadece pasife alındı." 
-                        });
-                    }
-                    
-                    // Stok hareketlerini soft delete yap
-                    var stokHareketleri = await stokHareketRepository.GetAsync(h => h.UrunID == id && h.Silindi == false);
-                    foreach (var hareket in stokHareketleri)
-                    {
-                        hareket.Silindi = true;
-                        hareket.GuncellemeTarihi = DateTime.Now;
-                        await stokHareketRepository.UpdateAsync(hareket);
-                    }
-                    
-                    // Ürün fiyatlarını soft delete yap
-                    var urunFiyatlari = await urunFiyatRepository.GetAsync(uf => uf.UrunID == id && uf.Silindi == false);
-                    foreach (var fiyat in urunFiyatlari)
-                    {
-                        fiyat.Silindi = true;
-                        await urunFiyatRepository.UpdateAsync(fiyat);
-                    }
-
-                    // Ürünü soft delete yap
-                    urun.Silindi = true;
-                    urun.Aktif = false;
-                    urun.GuncellemeTarihi = DateTime.Now;
-                    
-                    await urunRepository.UpdateAsync(urun);
-                    await _unitOfWork.SaveAsync();
-                    
-                    // Log oluştur
-                    await _logService.UrunSilmeLogOlustur(
-                        urun.UrunID, 
-                        urun.UrunAdi, 
-                        $"Ürün ve ilişkili kayıtlar başarıyla silindi."
-                    );
-                    
-                    return Json(new { 
-                        success = true, 
-                        message = $"'{urun.UrunAdi}' ürünü ve ilişkili tüm kayıtları başarıyla silindi." 
-                    });
-                }
-                catch (Exception ex)
-                {
-                    // Hata logla
-                    _logger.LogError(ex, "Ürün silme işlemi sırasında hata: {Message}", ex.Message);
-                    
-                    return Json(new { 
-                        success = false, 
-                        message = $"Ürün silinirken bir hata oluştu: {ex.Message}" 
-                    });
-                }
-            }
-            catch (Exception ex)
-            {
-                // Hata logla
-                _logger.LogError(ex, "Ürün silme işlemi sırasında hata: {Message}", ex.Message);
-                return Json(new { success = false, message = $"Ürün silinirken bir hata oluştu: {ex.Message}" });
-            }
-        }
-        
-        // Silinmiş ürünü geri getirme için ajax endpointi
-        [HttpPost]
-        public async Task<IActionResult> RestoreDeleted(Guid id)
-        {
-            try
-            {
-                var urunRepository = _unitOfWork.Repository<Urun>();
-                var stokHareketRepository = _unitOfWork.Repository<StokHareket>();
-                var urunFiyatRepository = _unitOfWork.Repository<UrunFiyat>();
-
-                // Silinmiş ürünü bul
-                var urun = await urunRepository.GetFirstOrDefaultAsync(u => u.UrunID == id && u.Silindi == true);
-                if (urun == null)
-                {
-                    return Json(new { success = false, message = "Silinmiş ürün bulunamadı." });
-                }
-
-                try
-                {
-                    // Ürünü geri getir
-                    urun.Silindi = false;
-                    urun.Aktif = true; // Aktif olarak geri getir
-                    urun.GuncellemeTarihi = DateTime.Now;
-                    
-                    await urunRepository.UpdateAsync(urun);
-                    
-                    // Ürünün stok hareketlerini geri getir
-                    var stokHareketleri = await _context.StokHareketleri
-                        .Where(sh => sh.UrunID == id && sh.Silindi == true)
-                        .ToListAsync();
-                        
-                    foreach (var hareket in stokHareketleri)
-                    {
-                        hareket.Silindi = false;
-                        hareket.GuncellemeTarihi = DateTime.Now;
-                    }
-                    
-                    // Ürünün fiyat bilgilerini geri getir
-                    var urunFiyatlari = await _context.UrunFiyatlari
-                        .Where(uf => uf.UrunID == id && uf.Silindi == true)
-                        .ToListAsync();
-                        
-                    foreach (var fiyat in urunFiyatlari)
-                    {
-                        fiyat.Silindi = false;
-                    }
-                    
-                    await _unitOfWork.SaveAsync();
-                    
-                    // Log oluştur
-                    await _logService.UrunGuncellemeLogOlustur(
-                        urun.UrunID, 
-                        urun.UrunAdi, 
-                        $"'{urun.UrunAdi}' ürünü ve ilişkili kayıtlar başarıyla geri getirildi."
-                    );
-                    
-                    return Json(new { 
-                        success = true, 
-                        message = $"'{urun.UrunAdi}' ürünü ve ilişkili tüm kayıtları başarıyla geri getirildi." 
-                    });
-                }
-                catch (Exception ex)
-                {
-                    _logger.LogError(ex, "Ürün geri getirme işlemi sırasında hata: {Message}", ex.Message);
-                    return Json(new { 
-                        success = false, 
-                        message = $"Ürün geri getirilirken bir hata oluştu: {ex.Message}" 
-                    });
-                }
-            }
-            catch (Exception ex)
-            {
-                _logger.LogError(ex, "Ürün geri getirme işlemi sırasında hata: {Message}", ex.Message);
-                return Json(new { success = false, message = $"Ürün geri getirilirken bir hata oluştu: {ex.Message}" });
-            }
-        }
-
-        // Ürün pasife alma metodu
-        [HttpPost]
-        public async Task<IActionResult> SetInactive(Guid id)
+        public async Task<IActionResult> SetPassive(Guid id)
         {
             try
             {
@@ -1004,9 +814,13 @@ namespace MuhasebeStokWebApp.Controllers
                 
                 urun.Aktif = false;
                 urun.GuncellemeTarihi = DateTime.Now;
+                urun.SonGuncelleyenKullaniciID = GetCurrentUserId();
                 
                 await urunRepository.UpdateAsync(urun);
                 await _unitOfWork.SaveAsync();
+                
+                // Pasife alma işlemi için log kaydı
+                await _logService.UrunPasifleştirmeLogOlustur(urun.UrunID.ToString(), urun.UrunAdi);
                 
                 return Json(new { 
                     success = true, 
@@ -1026,8 +840,10 @@ namespace MuhasebeStokWebApp.Controllers
         {
             try
             {
-                var urunRepository = _unitOfWork.Repository<Urun>();
-                var urun = await urunRepository.GetFirstOrDefaultAsync(u => u.UrunID == id && !u.Silindi);
+                // Doğrudan DbContext kullanarak IgnoreQueryFilters ile ürünü bul
+                var urun = await _context.Urunler
+                    .IgnoreQueryFilters()
+                    .FirstOrDefaultAsync(u => u.UrunID == id && !u.Silindi);
                 
                 if (urun == null)
                 {
@@ -1036,9 +852,13 @@ namespace MuhasebeStokWebApp.Controllers
                 
                 urun.Aktif = true;
                 urun.GuncellemeTarihi = DateTime.Now;
+                urun.SonGuncelleyenKullaniciID = GetCurrentUserId();
                 
-                await urunRepository.UpdateAsync(urun);
-                await _unitOfWork.SaveAsync();
+                _context.Urunler.Update(urun);
+                await _context.SaveChangesAsync();
+                
+                // Aktife alma işlemi için log kaydı
+                await _logService.UrunAktifleştirmeLogOlustur(urun.UrunID.ToString(), urun.UrunAdi);
                 
                 return Json(new { 
                     success = true, 
@@ -1052,6 +872,83 @@ namespace MuhasebeStokWebApp.Controllers
             }
         }
         
+        // Ürün silme metodu (Ajax çağrısıyla)
+        [HttpPost]
+        [Authorize(Roles = "Admin,StokYonetici")]
+        public async Task<IActionResult> SetDelete(Guid id)
+        {
+            try
+            {
+                // Doğrudan DbContext kullanarak IgnoreQueryFilters ile ürünü bul
+                var urun = await _context.Urunler
+                    .IgnoreQueryFilters()
+                    .FirstOrDefaultAsync(u => u.UrunID == id);
+                
+                if (urun == null)
+                {
+                    return Json(new { success = false, message = "Ürün bulunamadı." });
+                }
+                
+                // Ürün kullanımda mı kontrol et
+                bool urunKullaniliyor = await _context.FaturaDetaylari.AnyAsync(fd => fd.UrunID == id && !fd.Silindi);
+                urunKullaniliyor = urunKullaniliyor || await _context.IrsaliyeDetaylari.AnyAsync(item => item.UrunID == id && !item.Silindi);
+                urunKullaniliyor = urunKullaniliyor || await _context.StokHareketleri.AnyAsync(sh => sh.UrunID == id && !sh.Silindi);
+                
+                if (urunKullaniliyor)
+                {
+                    // İlişkili kayıtlar varsa silme, pasife al
+                    urun.Aktif = false;
+                    urun.Silindi = true;
+                    urun.GuncellemeTarihi = DateTime.Now;
+                    urun.SonGuncelleyenKullaniciID = GetCurrentUserId();
+                    
+                    _context.Urunler.Update(urun);
+                    await _context.SaveChangesAsync();
+                    
+                    _logger.LogInformation($"Urun ID: {id} soft delete yapıldı");
+                    
+                    // İlişkili kayıtlarla beraber silme işlemi için log kaydı
+                    await _logService.UrunSilmeLogOlustur(
+                        urun.UrunID.ToString(), 
+                        urun.UrunAdi, 
+                        "İlişkili kayıtlar nedeniyle soft delete yapıldı");
+                    
+                    return Json(new { 
+                        success = true, 
+                        message = $"{urun.UrunAdi} ürünü diğer kayıtlarda kullanıldığı için pasife alındı." 
+                    });
+                }
+                else
+                {
+                    // İlişkili kayıt yoksa soft delete uygula
+                    urun.Silindi = true;
+                    urun.GuncellemeTarihi = DateTime.Now;
+                    urun.SonGuncelleyenKullaniciID = GetCurrentUserId();
+                    
+                    _context.Urunler.Update(urun);
+                    await _context.SaveChangesAsync();
+                    
+                    _logger.LogInformation($"Urun ID: {id} soft delete yapıldı");
+                    
+                    // Normal silme işlemi için log kaydı
+                    await _logService.UrunSilmeLogOlustur(
+                        urun.UrunID.ToString(), 
+                        urun.UrunAdi, 
+                        "Soft delete yapıldı");
+                    
+                    return Json(new { 
+                        success = true, 
+                        message = $"{urun.UrunAdi} ürünü başarıyla silindi." 
+                    });
+                }
+            }
+            catch (Exception ex)
+            {
+                _logger.LogError(ex, "Ürün silinirken hata: {Message}", ex.Message);
+                return Json(new { success = false, message = $"Ürün silinirken bir hata oluştu: {ex.Message}" });
+            }
+        }
+        
         // Excel'e aktarma işlemi
         public async Task<IActionResult> ExportToExcel()
         {
@@ -1059,7 +956,7 @@ namespace MuhasebeStokWebApp.Controllers
             {
                 var urunRepository = _unitOfWork.Repository<Urun>();
                 var urunFiyatRepository = _unitOfWork.Repository<UrunFiyat>();
-                var kategoriRepository = _unitOfWork.Repository<UrunKategori>();
+            var kategoriRepository = _unitOfWork.Repository<UrunKategori>();
                 
                 // Ürünleri getir (silinen ürünler hariç)
                 var urunler = await urunRepository.GetAsync(
@@ -1068,7 +965,7 @@ namespace MuhasebeStokWebApp.Controllers
                 );
                 
                 // Silinmemiş tüm kategorileri getir
-                var kategoriler = await kategoriRepository.GetAsync(
+            var kategoriler = await kategoriRepository.GetAsync(
                     filter: k => k.Silindi == false
                 );
                 
@@ -1162,19 +1059,19 @@ namespace MuhasebeStokWebApp.Controllers
             try
             {
                 var urunRepository = _unitOfWork.Repository<Urun>();
-                var kategoriRepository = _unitOfWork.Repository<UrunKategori>();
-                var birimRepository = _unitOfWork.Repository<Birim>();
+            var kategoriRepository = _unitOfWork.Repository<UrunKategori>();
+            var birimRepository = _unitOfWork.Repository<Birim>();
                 
                 // Mevcut ürünleri getir
                 var mevcutUrunler = await urunRepository.GetAllAsync();
                 
                 // Kategorileri getir
-                var kategoriler = await kategoriRepository.GetAsync(
+            var kategoriler = await kategoriRepository.GetAsync(
                     filter: k => k.Silindi == false && k.Aktif
-                );
-                
+            );
+            
                 // Birimleri getir
-                var birimler = await birimRepository.GetAsync(
+            var birimler = await birimRepository.GetAsync(
                     filter: b => b.Silindi == false && b.Aktif
                 );
                 
@@ -1334,7 +1231,7 @@ namespace MuhasebeStokWebApp.Controllers
                                 BirimAdi = urunModel.BirimAdi,
                                 Aktif = true,
                                 OlusturmaTarihi = DateTime.Now,
-                                OlusturanKullaniciID = GetCurrentUserId().ToString()
+                                OlusturanKullaniciID = GetCurrentUserId()
                             };
                             
                             await birimRepository.AddAsync(birim);
@@ -1523,6 +1420,86 @@ namespace MuhasebeStokWebApp.Controllers
                 _logger.LogError(ex, "Excel şablonu indirme işlemi sırasında hata: {Message}", ex.Message);
                 TempData["ErrorMessage"] = $"Excel şablonu oluşturulurken bir hata oluştu: {ex.Message}";
                 return RedirectToAction(nameof(Index));
+            }
+        }
+        
+        // Silinmiş ürünü geri getirme metodu
+        [HttpPost]
+        [Authorize(Roles = "Admin")]
+        public async Task<IActionResult> Restore(Guid id)
+        {
+            try
+            {
+                // Doğrudan DbContext kullanarak IgnoreQueryFilters ile silinmiş ürünü bul
+                var entity = await _context.Urunler
+                    .IgnoreQueryFilters()
+                    .FirstOrDefaultAsync(u => u.UrunID == id && u.Silindi);
+                
+                if (entity == null)
+                {
+                    return Json(new { success = false, message = "Silinmiş ürün bulunamadı." });
+                }
+
+                // Entity'yi güncelle
+                entity.Silindi = false;
+                entity.Aktif = true; // Geri yüklenen ürünü aktif yap
+                entity.GuncellemeTarihi = DateTime.Now;
+                entity.SonGuncelleyenKullaniciID = GetCurrentUserId();
+
+                _context.Urunler.Update(entity);
+                await _context.SaveChangesAsync();
+                
+                _logger.LogInformation($"Ürün geri getirildi: UrunID={id}, Kullanıcı={User.Identity.Name}");
+                
+                return Json(new { 
+                    success = true, 
+                    message = $"{entity.UrunAdi} ürünü başarıyla geri getirildi." 
+                });
+            }
+            catch (Exception ex)
+            {
+                _logger.LogError(ex, "Ürün geri getirilirken hata: {Message}", ex.Message);
+                return Json(new { success = false, message = $"Ürün geri getirilirken bir hata oluştu: {ex.Message}" });
+            }
+        }
+        
+        // Silinmiş ürünü geri getirme metodu (RestoreDeleted adıyla da çalışması için eklendi)
+        [HttpPost]
+        [Authorize(Roles = "Admin")]
+        public async Task<IActionResult> RestoreDeleted(Guid id)
+        {
+            try
+            {
+                // Doğrudan DbContext kullanarak IgnoreQueryFilters ile silinmiş ürünü bul
+                var entity = await _context.Urunler
+                    .IgnoreQueryFilters()
+                    .FirstOrDefaultAsync(u => u.UrunID == id && u.Silindi);
+                
+                if (entity == null)
+                {
+                    return Json(new { success = false, message = "Silinmiş ürün bulunamadı." });
+                }
+
+                // Entity'yi güncelle
+                entity.Silindi = false;
+                entity.Aktif = true; // Geri yüklenen ürünü aktif yap
+                entity.GuncellemeTarihi = DateTime.Now;
+                entity.SonGuncelleyenKullaniciID = GetCurrentUserId();
+
+                _context.Urunler.Update(entity);
+                await _context.SaveChangesAsync();
+                
+                _logger.LogInformation($"Ürün geri getirildi: UrunID={id}, Kullanıcı={User.Identity.Name}");
+                
+                return Json(new { 
+                    success = true, 
+                    message = $"{entity.UrunAdi} ürünü başarıyla geri getirildi." 
+                });
+            }
+            catch (Exception ex)
+            {
+                _logger.LogError(ex, "Ürün geri getirilirken hata: {Message}", ex.Message);
+                return Json(new { success = false, message = $"Ürün geri getirilirken bir hata oluştu: {ex.Message}" });
             }
         }
     }

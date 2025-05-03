@@ -9,6 +9,6 @@ namespace ViewModels.KasaHareket
         public Guid? CariID { get; set; }
         
         [Display(Name = "Cari Adı")]
-        public string CariAdi { get; set; }
+        public string? CariAdi { get; set; }
     }
 } 

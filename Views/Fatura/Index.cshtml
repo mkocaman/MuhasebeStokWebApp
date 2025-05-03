@@ -1,4 +1,6 @@
 @model IEnumerable<MuhasebeStokWebApp.ViewModels.Fatura.FaturaViewModel>
+@using MuhasebeStokWebApp.ViewModels
+@using MuhasebeStokWebApp.ViewModels.Shared
 @{
     ViewData["Title"] = "Fatura Listesi";
     Layout = "~/Views/Shared/_Layout.cshtml";
@@ -55,10 +57,7 @@
                                 <td>@(item.VadeTarihi.HasValue ? item.VadeTarihi.Value.ToString("dd.MM.yyyy") : "-")</td>
                                 <td>
                                     @item.CariAdi
-                                    @if(item.CariSilindi)
-                                    {
-                                        <span class="badge bg-danger ms-1">Silindi</span>
-                                    }
+                                    @Html.SilindiBadge(item.CariSilindi)
                                 </td>
                                 <td>@item.FaturaTuru</td>
                                 <td class="text-end">
@@ -75,18 +74,7 @@
                                     @((item.GenelToplam / 100).ToString("N2")) @currencySymbol
                                 </td>
                                 <td>
-                                    @if (item.OdemeDurumu == "Ödendi")
-                                    {
-                                        <span class="badge bg-success">Ödendi</span>
-                                    }
-                                    else if (item.OdemeDurumu == "Kısmi Ödendi")
-                                    {
-                                        <span class="badge bg-warning">Kısmi Ödendi</span>
-                                    }
-                                    else
-                                    {
-                                        <span class="badge bg-danger">Ödenmedi</span>
-                                    }
+                                    @Html.OdemeDurumuBadge(item.OdemeDurumu)
                                 </td>
                                 <td>
                                     <div class="btn-group" role="group">

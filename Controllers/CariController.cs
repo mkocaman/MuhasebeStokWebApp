@@ -57,16 +57,28 @@ namespace MuhasebeStokWebApp.Controllers
         [HttpGet]
         public async Task<IActionResult> Index()
         {
-            // Sadece aktif ve silinmemiş carileri listeleyelim, çünkü bu liste yeni işlem yapmak için kullanılıyor
-            var cariler = await _unitOfWork.CariRepository.GetAll()
-                .Where(c => !c.Silindi && c.AktifMi)
-                .OrderBy(c => c.Ad)
-                .ToListAsync();
+            try
+            {
+                // Sekme parametresini kontrol et
+                var tabParam = HttpContext.Request.Query["tab"].ToString();
+                var activeTab = string.IsNullOrEmpty(tabParam) ? "aktif" : tabParam;
+
+                // Tüm carileri alacağız ama görüntülerken filtreleyeceğiz
+                var cariler = await _unitOfWork.CariRepository.GetAll()
+                    .IgnoreQueryFilters() // Tüm cari kayıtları almak için filtreleri devre dışı bırak
+                    .ToListAsync();
             
-            // Para birimi listesini view'a gönder
-            ViewBag.ParaBirimleri = await _paraBirimiService.GetAllParaBirimleriAsync(true);
+                // Para birimi listesini view'a gönder
+                ViewBag.ParaBirimleri = await _paraBirimiService.GetAllParaBirimleriAsync(true);
             
-            return View(cariler);
+                return View(cariler);
+            }
+            catch (Exception ex)
+            {
+                _logger.LogError(ex, "Cari listesi yüklenirken hata: {Message}", ex.Message);
+                TempData["ErrorMessage"] = "Cari listesi yüklenirken bir hata oluştu.";
+                return View(new List<Data.Entities.Cari>());
+            }
         }
 
         [HttpGet]
@@ -93,23 +105,33 @@ namespace MuhasebeStokWebApp.Controllers
                     .Where(c => !c.Silindi && c.CariID == id)
                     .ToListAsync();
                 
-                // Açılış bakiyesi hareketlerini ayrı al 
-                var acilisBakiyeHareketleri = tumHareketler.Where(h => h.HareketTuru == "Açılış bakiyesi").OrderBy(h => h.Tarih).ToList();
+                // Önce listeyi alalım, sonra bellekte sıralama yapalım
+                var acilisBakiyeHareketleri = tumHareketler
+                    .Where(h => h.HareketTuru == "Açılış bakiyesi")
+                    .ToList()
+                    .OrderBy(h => h.Tarih)
+                    .ToList();
                 
                 // Diğer hareketleri al
-                var digerHareketler = tumHareketler.Where(h => h.HareketTuru != "Açılış bakiyesi").OrderBy(h => h.Tarih).ToList();
+                var digerHareketler = tumHareketler
+                    .Where(h => h.HareketTuru != "Açılış bakiyesi")
+                    .ToList()
+                    .OrderBy(h => h.Tarih)
+                    .ToList();
                     
                 cari.CariHareketler = acilisBakiyeHareketleri.Concat(digerHareketler).ToList();
 
                 // Son faturaları getir - veritabanı seviyesinde filtreleme
                 var faturalar = await _unitOfWork.FaturaRepository.GetAll()
                     .Where(f => !f.Silindi && f.CariID == id)
+                    .ToListAsync();
+                    
+                // Bellekte sıralama
+                cari.SonFaturalar = faturalar
                     .OrderByDescending(f => f.FaturaTarihi)
                     .Take(5)
                     .Cast<object>()
-                    .ToListAsync();
-                    
-                cari.SonFaturalar = faturalar;
+                    .ToList();
             }
             catch (Exception ex)
             {
@@ -125,313 +147,319 @@ namespace MuhasebeStokWebApp.Controllers
         [HttpGet]
         public async Task<IActionResult> Create()
         {
-            // Para birimi listesini view'a gönder
-            ViewBag.ParaBirimleri = await _paraBirimiService.GetAllParaBirimleriAsync(true);
-            
-            var model = new CariCreateViewModel
+            try
             {
-                Ad = "", // required alan boş olarak başlatıldı
-                CariTipi = "Müşteri", // required alan varsayılan değerle başlatıldı
-                BaslangicBakiye = 0, // Başlangıç bakiyesi otomatik olarak 0 olarak ayarlanır
-                CariKodu = GenerateCariKodu() // Otomatik cari kodu oluşturulur
-            };
-            
-            return View(model);
+                // Para birimlerini view'a gönder
+                ViewBag.ParaBirimleri = await _paraBirimiService.GetAllParaBirimleriAsync(true);
+                
+                // Yeni cari modeli oluştur
+                var model = new CariCreateViewModel
+                {
+                    Ad = "",
+                    CariTipi = "Müşteri",
+                    Aktif = true,
+                    BaslangicBakiye = 0,
+                    Ulke = "Türkiye"
+                };
+                
+                // Eğer AJAX isteği ise partial view döndür
+                if (Request.Headers["X-Requested-With"] == "XMLHttpRequest")
+                {
+                    return PartialView("_CreatePartial", model);
+                }
+                
+                // Normal istek ise tam sayfa döndür
+                return View(model);
+            }
+            catch (Exception ex)
+            {
+                _logger.LogError(ex, "Cari oluşturma sayfası yüklenirken hata: {Message}", ex.Message);
+                
+                TempData["ErrorMessage"] = $"Cari oluşturma sayfası yüklenirken bir hata oluştu: {ex.Message}";
+                return RedirectToAction(nameof(Index));
+            }
         }
 
         [HttpPost]
         [ValidateAntiForgeryToken]
         public async Task<IActionResult> Create(CariCreateViewModel model)
         {
-            if (ModelState.IsValid)
+            try
             {
-                try
+                // Validasyon kontrolü
+                if (!ModelState.IsValid)
                 {
-                    // Transaction başlat
-                    await _unitOfWork.BeginTransactionAsync();
-                    
-                    var cari = new Data.Entities.Cari
-                    {
-                        CariID = Guid.NewGuid(),
-                        Ad = model.Ad,
-                        CariKodu = !string.IsNullOrEmpty(model.CariKodu) ? model.CariKodu : GenerateCariKodu(),
-                        CariTipi = model.CariTipi,
-                        VergiNo = model.VergiNo,
-                        VergiDairesi = model.VergiDairesi,
-                        Telefon = model.Telefon,
-                        Email = model.Email,
-                        Yetkili = model.Yetkili,
-                        BaslangicBakiye = model.BaslangicBakiye,
-                        Adres = model.Adres ?? "",
-                        Aciklama = model.Aciklama,
-                        Il = model.Il ?? "",
-                        Ilce = model.Ilce ?? "",
-                        PostaKodu = model.PostaKodu ?? "",
-                        Ulke = model.Ulke ?? "Türkiye",
-                        WebSitesi = model.WebSitesi ?? "",
-                        Notlar = model.Notlar ?? "",
-                        AktifMi = model.Aktif,
-                        OlusturmaTarihi = DateTime.Now,
-                        OlusturanKullaniciId = Guid.Parse(User.FindFirst(System.Security.Claims.ClaimTypes.NameIdentifier)?.Value)
-                    };
-                    
-                    await _unitOfWork.CariRepository.AddAsync(cari);
-                    
-                    // Eğer başlangıç bakiyesi 0 ise veya null ise, başlangıç bakiyesi hareketi oluştur
-                    if (cari.BaslangicBakiye == 0)
-                    {
-                        var acilisHareketi = new Data.Entities.CariHareket
-                        {
-                            CariId = cari.CariID,
-                            HareketTuru = "Açılış bakiyesi",
-                            Tutar = 0,
-                            Tarih = DateTime.Now,
-                            Aciklama = "Cari oluşturulurken belirlenen bakiye",
-                            OlusturmaTarihi = DateTime.Now,
-                            OlusturanKullaniciId = Guid.Parse(User.FindFirst(System.Security.Claims.ClaimTypes.NameIdentifier)?.Value),
-                            Borc = 0,
-                            Alacak = 0,
-                            Silindi = false
-                        };
-                        
-                        await _unitOfWork.CariHareketRepository.AddAsync(acilisHareketi);
-                    }
-                    // Başlangıç bakiyesi 0'dan farklı ise, uygun hareket kaydını oluştur
-                    else if (cari.BaslangicBakiye != 0)
-                    {
-                        // Başlangıç bakiyesi pozitif ise alacak, negatif ise borç olarak kaydet
-                        decimal borc = 0;
-                        decimal alacak = 0;
-                        
-                        if (cari.BaslangicBakiye > 0)
-                        {
-                            alacak = cari.BaslangicBakiye;
-                        }
-                        else
-                        {
-                            borc = Math.Abs(cari.BaslangicBakiye);
-                        }
-                        
-                        var acilisHareketi = new Data.Entities.CariHareket
-                        {
-                            CariId = cari.CariID,
-                            HareketTuru = "Açılış bakiyesi",
-                            Tutar = Math.Abs(cari.BaslangicBakiye),
-                            Tarih = DateTime.Now,
-                            Aciklama = "Cari oluşturulurken belirlenen bakiye",
-                            OlusturmaTarihi = DateTime.Now,
-                            OlusturanKullaniciId = Guid.Parse(User.FindFirst(System.Security.Claims.ClaimTypes.NameIdentifier)?.Value),
-                            Borc = borc,
-                            Alacak = alacak,
-                            Silindi = false
-                        };
-                        
-                        await _unitOfWork.CariHareketRepository.AddAsync(acilisHareketi);
-                    }
-                    
-                    // Para birimi ilişkisini ayarla
-                    if (model.VarsayilanParaBirimiId.HasValue)
-                    {
-                        cari.VarsayilanParaBirimiId = model.VarsayilanParaBirimiId;
-                        cari.VarsayilanKurKullan = model.VarsayilanKurKullan;
-                    }
-                    
-                    // Transaction'ı commit et
-                    await _unitOfWork.CommitTransactionAsync();
+                    ViewBag.ParaBirimleri = await _paraBirimiService.GetAllParaBirimleriAsync(true);
                     
                     if (Request.Headers["X-Requested-With"] == "XMLHttpRequest")
                     {
-                        return Json(new { id = cari.CariID, ad = cari.Ad, success = true });
+                        return Json(new { success = false, message = "Lütfen tüm zorunlu alanları doldurunuz.", errors = ModelState.Values.SelectMany(v => v.Errors.Select(e => e.ErrorMessage)) });
                     }
                     
-                    // Başarılı mesajı ekleyip detay sayfasına yönlendir
-                    TempData["SuccessMessage"] = "Cari başarıyla oluşturuldu.";
-                    return RedirectToAction(nameof(Details), new { id = cari.CariID });
+                    return View(model);
                 }
-                catch (Exception ex)
+                
+                // Aynı koda sahip cari var mı kontrol et
+                if (await _unitOfWork.CariRepository.AnyAsync(c => c.CariKodu == model.CariKodu && !c.Silindi))
                 {
-                    // Hata durumunda transaction'ı geri al
-                    await _unitOfWork.RollbackTransactionAsync();
+                    ModelState.AddModelError("CariKodu", "Bu cari kodu zaten kullanılıyor.");
+                    ViewBag.ParaBirimleri = await _paraBirimiService.GetAllParaBirimleriAsync(true);
                     
-                    _logger.LogError(ex, "Cari oluşturulurken hata: {Message}", ex.Message);
-                    ModelState.AddModelError("", "Cari oluşturulurken bir hata oluştu. Lütfen tekrar deneyin.");
+                    if (Request.Headers["X-Requested-With"] == "XMLHttpRequest")
+                    {
+                        return Json(new { success = false, message = "Bu cari kodu zaten kullanılıyor." });
+                    }
+                    
+                    return View(model);
                 }
+                
+                // Cari nesnesini oluştur
+                var cari = new Cari
+                {
+                    CariID = Guid.NewGuid(),
+                    Ad = model.Ad,
+                    CariUnvani = model.CariUnvani,
+                    CariKodu = model.CariKodu,
+                    CariTipi = model.CariTipi,
+                    VergiNo = model.VergiNo,
+                    VergiDairesi = model.VergiDairesi,
+                    Telefon = model.Telefon,
+                    Email = model.Email,
+                    Yetkili = model.Yetkili,
+                    Adres = model.Adres,
+                    Il = model.Il,
+                    Ilce = model.Ilce,
+                    PostaKodu = model.PostaKodu,
+                    Ulke = model.Ulke,
+                    WebSitesi = model.WebSitesi,
+                    BaslangicBakiye = model.BaslangicBakiye,
+                    VarsayilanParaBirimiId = model.VarsayilanParaBirimiId,
+                    Aciklama = model.Aciklama,
+                    Notlar = model.Notlar,
+                    AktifMi = model.Aktif,
+                    OlusturmaTarihi = DateTime.Now,
+                    OlusturanKullaniciId = Guid.Parse(User.FindFirst(System.Security.Claims.ClaimTypes.NameIdentifier)?.Value)
+                };
+                
+                // Cari kaydı oluştur
+                await _unitOfWork.CariRepository.AddAsync(cari);
+                await _unitOfWork.SaveAsync();
+                
+                // Log oluştur
+                await _logService.CariOlusturmaLogOlustur(
+                    cari.CariID.ToString(),
+                    cari.Ad,
+                    "Yeni cari oluşturuldu."
+                );
+                
+                // AJAX isteğine yanıt ver
+                if (Request.Headers["X-Requested-With"] == "XMLHttpRequest")
+                {
+                    return Json(new { 
+                        success = true, 
+                        message = $"{cari.Ad} carisi başarıyla oluşturuldu." 
+                    });
+                }
+                
+                // Normal istekte yönlendirme
+                TempData["SuccessMessage"] = $"{cari.Ad} carisi başarıyla oluşturuldu.";
+                return RedirectToAction(nameof(Index));
             }
-            
-            // Hatalar varsa para birimi listesini tekrar yükleyip view'ı göster
-            ViewBag.ParaBirimleri = await _paraBirimiService.GetAllParaBirimleriAsync(true);
-            return View(model);
+            catch (Exception ex)
+            {
+                _logger.LogError(ex, "Cari oluşturma hatası: {Message}", ex.Message);
+                
+                // AJAX isteğine hata yanıtı
+                if (Request.Headers["X-Requested-With"] == "XMLHttpRequest")
+                {
+                    return Json(new { success = false, message = $"Cari oluşturulurken bir hata oluştu: {ex.Message}" });
+                }
+                
+                // Normal istekte hata gösterimi
+                ModelState.AddModelError("", $"Cari oluşturulurken bir hata oluştu: {ex.Message}");
+                ViewBag.ParaBirimleri = await _paraBirimiService.GetAllParaBirimleriAsync(true);
+                return View(model);
+            }
         }
 
         [HttpGet]
         public async Task<IActionResult> Edit(Guid id)
         {
-            var cari = await _unitOfWork.CariRepository.GetByIdAsync(id);
-            if (cari == null)
+            try
             {
-                return NotFound();
-            }
-
-            var viewModel = new CariEditViewModel
-            {
-                Id = cari.CariID,
-                Ad = cari.Ad,
-                CariKodu = cari.CariKodu,
-                VergiNo = cari.VergiNo,
-                VergiDairesi = cari.VergiDairesi,
-                Adres = cari.Adres,
-                Telefon = cari.Telefon,
-                Email = cari.Email,
-                Yetkili = cari.Yetkili,
-                BaslangicBakiye = cari.BaslangicBakiye,
-                MevcutBakiye = cari.BaslangicBakiye,
-                Il = cari.Il,
-                Ilce = cari.Ilce,
-                PostaKodu = cari.PostaKodu,
-                Aciklama = cari.Aciklama,
-                AktifMi = cari.AktifMi,
-                OlusturmaTarihi = cari.OlusturmaTarihi,
-                VarsayilanParaBirimiId = cari.VarsayilanParaBirimiId,
-                VarsayilanKurKullan = cari.VarsayilanKurKullan
-            };
-
-            // Para birimi bilgilerini al
-            if (cari.VarsayilanParaBirimiId.HasValue)
-            {
-                var paraBirimi = await _paraBirimiService.GetParaBirimiByIdAsync(cari.VarsayilanParaBirimiId.Value);
-                if (paraBirimi != null)
+                var cari = await _unitOfWork.CariRepository.GetFirstOrDefaultAsync(c => c.CariID == id && !c.Silindi);
+                if (cari == null)
                 {
-                    viewModel.VarsayilanParaBirimiKodu = paraBirimi.Kod;
-                    viewModel.VarsayilanParaBirimiAdi = paraBirimi.Ad;
-                    viewModel.VarsayilanParaBirimiSembol = paraBirimi.Sembol;
+                    if (Request.Headers["X-Requested-With"] == "XMLHttpRequest")
+                    {
+                        return Json(new { success = false, message = "Cari bulunamadı." });
+                    }
+                    
+                    TempData["ErrorMessage"] = "Cari bulunamadı.";
+                    return RedirectToAction(nameof(Index));
                 }
+                
+                // ViewModel'i doldur
+                var model = new CariEditViewModel
+                {
+                    CariID = cari.CariID,
+                    Ad = cari.Ad,
+                    CariUnvani = cari.CariUnvani,
+                    CariKodu = cari.CariKodu,
+                    CariTipi = cari.CariTipi,
+                    VergiNo = cari.VergiNo,
+                    VergiDairesi = cari.VergiDairesi,
+                    Telefon = cari.Telefon,
+                    Email = cari.Email,
+                    Yetkili = cari.Yetkili,
+                    Adres = cari.Adres,
+                    Il = cari.Il,
+                    Ilce = cari.Ilce,
+                    PostaKodu = cari.PostaKodu,
+                    Ulke = cari.Ulke,
+                    WebSitesi = cari.WebSitesi,
+                    BaslangicBakiye = cari.BaslangicBakiye,
+                    VarsayilanParaBirimiId = cari.VarsayilanParaBirimiId,
+                    Aciklama = cari.Aciklama,
+                    Notlar = cari.Notlar,
+                    AktifMi = cari.AktifMi
+                };
+                
+                // Para birimlerini view'a gönder
+                ViewBag.ParaBirimleri = await _paraBirimiService.GetAllParaBirimleriAsync(true);
+                
+                // AJAX isteğiyse partial view döndür
+                if (Request.Headers["X-Requested-With"] == "XMLHttpRequest")
+                {
+                    return PartialView("_EditPartial", model);
+                }
+                
+                // Normal istekte tam sayfa döndür
+                return View(model);
             }
-
-            // Para birimi listesini view'a gönder
-            ViewBag.ParaBirimleri = await _paraBirimiService.GetAllParaBirimleriAsync(true);
-
-            return View(viewModel);
+            catch (Exception ex)
+            {
+                _logger.LogError(ex, "Cari düzenleme sayfası yüklenirken hata: {Message}", ex.Message);
+                
+                if (Request.Headers["X-Requested-With"] == "XMLHttpRequest")
+                {
+                    return Json(new { success = false, message = $"Cari bilgileri yüklenirken bir hata oluştu: {ex.Message}" });
+                }
+                
+                TempData["ErrorMessage"] = $"Cari düzenleme sayfası yüklenirken bir hata oluştu: {ex.Message}";
+                return RedirectToAction(nameof(Index));
+            }
         }
 
         [HttpPost]
         [ValidateAntiForgeryToken]
-        public async Task<IActionResult> Edit(Guid id, CariEditViewModel model)
-        {
-            if (id != model.Id)
-            {
-                return BadRequest();
-            }
-
-            if (ModelState.IsValid)
+        public async Task<IActionResult> Edit(CariEditViewModel model)
         {
             try
             {
-                    var cari = await _unitOfWork.CariRepository.GetByIdAsync(id);
-                if (cari == null)
+                // Validasyon kontrolü
+                if (!ModelState.IsValid)
                 {
-                        return NotFound();
-                    }
-
-                    // Bakiye değişikliğini kontrol et
-                    decimal bakiyeDegisimi = model.BaslangicBakiye - model.MevcutBakiye;
-                    
-                    // Güncelleme işlemleri
-                    cari.Ad = model.Ad;
-                    cari.CariKodu = !string.IsNullOrEmpty(model.CariKodu) ? model.CariKodu : GenerateCariKodu();
-                    
-                    // CariTipi için validasyon kontrolü
-                    if (string.IsNullOrEmpty(model.CariTipi))
-                    {
-                        cari.CariTipi = "Müşteri";
-                    }
-                    else if (model.CariTipi != "Müşteri" && model.CariTipi != "Tedarikçi" && model.CariTipi != "Müşteri ve Tedarikçi")
-                    {
-                        cari.CariTipi = "Müşteri"; // Geçersiz değer durumunda varsayılan olarak Müşteri ata
-                    }
-                    else
-                    {
-                        cari.CariTipi = model.CariTipi;
-                    }
-                    
-                    cari.VergiNo = model.VergiNo;
-                    cari.VergiDairesi = model.VergiDairesi ?? "Belirtilmemiş";
-                    cari.Telefon = model.Telefon;
-                    cari.Email = model.Email;
-                    cari.Yetkili = model.Yetkili;
-
-                    // Önceki bakiye değerini saklayalım
-                    decimal eskiBakiye = cari.BaslangicBakiye;
-                    
-                    // Yeni bakiye değeri
-                    cari.BaslangicBakiye = model.BaslangicBakiye;
-                    cari.Adres = model.Adres ?? "";
-                    cari.Aciklama = model.Aciklama ?? "";
-                    cari.AktifMi = model.AktifMi;
-                    cari.GuncellemeTarihi = DateTime.Now;
-                    cari.SonGuncelleyenKullaniciId = Guid.Parse(User.FindFirst(System.Security.Claims.ClaimTypes.NameIdentifier)?.Value);
-                    
-                    // Para birimi ayarlarını güncelle
-                    cari.VarsayilanParaBirimiId = model.VarsayilanParaBirimiId;
-                    cari.VarsayilanKurKullan = model.VarsayilanKurKullan;
-                    
-                    await _unitOfWork.CariRepository.UpdateAsync(cari);
-                    
-                    // Bakiye değişikliği varsa cari hareketi oluştur
-                    if (bakiyeDegisimi != 0)
-                    {
-                        var cariHareket = new Data.Entities.CariHareket
-                        {
-                            CariId = cari.CariID,
-                            HareketTuru = "Bakiye Düzeltmesi",
-                            // Tutar her zaman değişim miktarının mutlak değeri olmalı
-                            Tutar = Math.Abs(bakiyeDegisimi),
-                            Tarih = DateTime.Now,
-                            // Açıklamada gerçek önceki bakiye değerini göster
-                            Aciklama = $"Bakiye düzeltmesi yapıldı. Önceki bakiye: {eskiBakiye:N2}, Yeni bakiye: {model.BaslangicBakiye:N2}",
-                            OlusturmaTarihi = DateTime.Now,
-                            OlusturanKullaniciId = Guid.Parse(User.FindFirst(System.Security.Claims.ClaimTypes.NameIdentifier)?.Value),
-                            // Borç ve Alacak alanlarını bakiye değişimine göre belirle
-                            Borc = bakiyeDegisimi < 0 ? Math.Abs(bakiyeDegisimi) : 0,
-                            Alacak = bakiyeDegisimi > 0 ? Math.Abs(bakiyeDegisimi) : 0,
-                            Silindi = false
-                        };
-                        
-                        await _unitOfWork.CariHareketRepository.AddAsync(cariHareket);
-                    }
-                    
-                    await _unitOfWork.SaveAsync();
-                    
-                    await _logService.LogOlustur(
-                        "Cari güncellendi", 
-                        LogTuru.Bilgi, 
-                        "Cari", 
-                        cari.Ad, 
-                        Guid.Parse(cari.Id.ToString()), 
-                        $"{cari.Ad} adlı cari kaydı güncellendi. {(bakiyeDegisimi != 0 ? $"Bakiye değişimi: {bakiyeDegisimi:N2}" : "")}"
-                    );
-                    
-                    TempData["SuccessMessage"] = bakiyeDegisimi != 0 
-                        ? $"Cari başarıyla güncellendi. Bakiye düzeltmesi ({bakiyeDegisimi:N2} TL) cari hareketlerine kaydedildi."
-                        : "Cari başarıyla güncellendi.";
+                    ViewBag.ParaBirimleri = await _paraBirimiService.GetAllParaBirimleriAsync(true);
                     
                     if (Request.Headers["X-Requested-With"] == "XMLHttpRequest")
                     {
-                        return Json(new { success = true, message = "Cari başarıyla güncellendi." });
+                        return Json(new { success = false, message = "Lütfen tüm zorunlu alanları doldurunuz.", errors = ModelState.Values.SelectMany(v => v.Errors.Select(e => e.ErrorMessage)) });
                     }
                     
-                    return RedirectToAction(nameof(Details), new { id = cari.Id });
+                    return View(model);
                 }
-                catch (Exception ex)
+                
+                // Cari kaydını bul
+                var cari = await _unitOfWork.CariRepository.GetFirstOrDefaultAsync(c => c.CariID == model.CariID && !c.Silindi);
+                if (cari == null)
                 {
-                    _logger.LogError(ex, "Cari güncelleme hatası");
-                    ModelState.AddModelError("", "Cari güncellenirken bir hata oluştu. Lütfen tekrar deneyin.");
+                    if (Request.Headers["X-Requested-With"] == "XMLHttpRequest")
+                    {
+                        return Json(new { success = false, message = "Cari bulunamadı." });
+                    }
+                    
+                    TempData["ErrorMessage"] = "Cari bulunamadı.";
+                    return RedirectToAction(nameof(Index));
                 }
+                
+                // Aynı kodu kullanan başka bir cari var mı kontrol et (kendisi hariç)
+                if (await _unitOfWork.CariRepository.AnyAsync(c => c.CariKodu == model.CariKodu && c.CariID != model.CariID && !c.Silindi))
+                {
+                    ModelState.AddModelError("CariKodu", "Bu cari kodu zaten başka bir cari tarafından kullanılıyor.");
+                    ViewBag.ParaBirimleri = await _paraBirimiService.GetAllParaBirimleriAsync(true);
+                    
+                    if (Request.Headers["X-Requested-With"] == "XMLHttpRequest")
+                    {
+                        return Json(new { success = false, message = "Bu cari kodu zaten başka bir cari tarafından kullanılıyor." });
+                    }
+                    
+                    return View(model);
+                }
+                
+                // Cari verileri güncelle
+                cari.Ad = model.Ad;
+                cari.CariUnvani = model.CariUnvani;
+                cari.CariKodu = model.CariKodu;
+                cari.CariTipi = model.CariTipi;
+                cari.VergiNo = model.VergiNo;
+                cari.VergiDairesi = model.VergiDairesi;
+                cari.Telefon = model.Telefon;
+                cari.Email = model.Email;
+                cari.Yetkili = model.Yetkili;
+                cari.Adres = model.Adres;
+                cari.Il = model.Il;
+                cari.Ilce = model.Ilce;
+                cari.PostaKodu = model.PostaKodu;
+                cari.Ulke = model.Ulke;
+                cari.WebSitesi = model.WebSitesi;
+                cari.BaslangicBakiye = model.BaslangicBakiye;
+                cari.VarsayilanParaBirimiId = model.VarsayilanParaBirimiId;
+                cari.Aciklama = model.Aciklama;
+                cari.Notlar = model.Notlar;
+                cari.AktifMi = model.AktifMi;
+                cari.GuncellemeTarihi = DateTime.Now;
+                cari.SonGuncelleyenKullaniciId = Guid.Parse(User.FindFirst(System.Security.Claims.ClaimTypes.NameIdentifier)?.Value);
+                
+                // Güncellemeyi kaydet
+                await _unitOfWork.CariRepository.UpdateAsync(cari);
+                await _unitOfWork.SaveAsync();
+                
+                // Log oluştur
+                await _logService.CariGuncellemeLogOlustur(
+                    cari.CariID.ToString(),
+                    cari.Ad,
+                    "Cari bilgileri güncellendi."
+                );
+                
+                // AJAX isteğine yanıt ver
+                if (Request.Headers["X-Requested-With"] == "XMLHttpRequest")
+                {
+                    return Json(new { 
+                        success = true, 
+                        message = $"{cari.Ad} carisi başarıyla güncellendi." 
+                    });
+                }
+                
+                // Normal istekte yönlendirme
+                TempData["SuccessMessage"] = $"{cari.Ad} carisi başarıyla güncellendi.";
+                return RedirectToAction(nameof(Index));
             }
-            
-            // Para birimi listesini view'a gönder
-            ViewBag.ParaBirimleri = await _paraBirimiService.GetAllParaBirimleriAsync(true);
-            
-            return View(model);
+            catch (Exception ex)
+            {
+                _logger.LogError(ex, "Cari güncelleme hatası: {Message}", ex.Message);
+                
+                // AJAX isteğine hata yanıtı
+                if (Request.Headers["X-Requested-With"] == "XMLHttpRequest")
+                {
+                    return Json(new { success = false, message = $"Cari güncellenirken bir hata oluştu: {ex.Message}" });
+                }
+                
+                // Normal istekte hata gösterimi
+                ModelState.AddModelError("", $"Cari güncellenirken bir hata oluştu: {ex.Message}");
+                ViewBag.ParaBirimleri = await _paraBirimiService.GetAllParaBirimleriAsync(true);
+                return View(model);
+            }
         }
 
         [HttpGet]
@@ -450,61 +478,53 @@ namespace MuhasebeStokWebApp.Controllers
         [ValidateAntiForgeryToken]
         public async Task<IActionResult> DeleteConfirmed(Guid id)
         {
-            var cari = await _unitOfWork.CariRepository.GetByIdAsync(id);
-            if (cari == null)
+            try
             {
-                return NotFound();
-            }
-            
-            // Cari ile ilgili hareket/fatura kontrolü yap
-            var hareketSayisi = (await _unitOfWork.CariHareketRepository
-                .GetAsync(filter: ch => ch.CariID == id)).Count();
+                // SoftDeleteService üzerinden işlem yap
+                var softDeleteService = HttpContext.RequestServices.GetService<ISoftDeleteService<Cari>>();
+                if (softDeleteService == null)
+                {
+                    TempData["ErrorMessage"] = "Silme işlemi için gerekli servis bulunamadı.";
+                    return RedirectToAction(nameof(Index));
+                }
                 
-            var faturaSayisi = (await _unitOfWork.FaturaRepository
-                .GetAsync(filter: f => f.CariID == id)).Count();
-            
-            if (hareketSayisi > 0 || faturaSayisi > 0)
+                // Cari kaydını sil/pasife al
+                var cari = await _unitOfWork.CariRepository.GetByIdAsync(id);
+                if (cari == null)
+                {
+                    return NotFound();
+                }
+                
+                // İlişkili kayıtlar kontrolü ve silme işlemi
+                bool hasRelatedRecords = await softDeleteService.HasRelatedRecordsAsync(id);
+                bool success = await softDeleteService.SoftDeleteByIdAsync(id);
+                
+                if (success)
+                {
+                    // Logla
+                    string logMesaj = hasRelatedRecords 
+                        ? $"{cari.Ad} adlı cari kaydı pasife alındı." 
+                        : $"{cari.Ad} adlı cari kaydı silindi.";
+                        
+                    await _logService.CariSilmeLogOlustur(id.ToString(), cari.Ad, logMesaj);
+                    
+                    TempData["SuccessMessage"] = hasRelatedRecords
+                        ? "Cari pasife alındı. İlişkili kayıtlar olduğu için tamamen silinemedi."
+                        : "Cari başarıyla silindi.";
+                }
+                else
+                {
+                    TempData["ErrorMessage"] = "Cari silinemedi. Lütfen tekrar deneyin.";
+                }
+                
+                return RedirectToAction(nameof(Index));
+            }
+            catch (Exception ex)
             {
-                // İlişkili kayıtlar varsa sadece pasife al
-                cari.AktifMi = false;
-                cari.GuncellemeTarihi = DateTime.Now;
-                cari.SonGuncelleyenKullaniciId = Guid.Parse(User.FindFirst(System.Security.Claims.ClaimTypes.NameIdentifier)?.Value);
-                
-                await _unitOfWork.CariRepository.UpdateAsync(cari);
-                await _unitOfWork.SaveAsync();
-                
-                await _logService.LogOlustur(
-                    "Cari pasife alındı", 
-                    LogTuru.Bilgi, 
-                    "Cari", 
-                    cari.Ad, 
-                    Guid.Parse(cari.Id.ToString()), 
-                    $"{cari.Ad} adlı cari kaydı pasife alındı.");
-                
-                TempData["SuccessMessage"] = "Cari pasife alındı. İlişkili kayıtlar olduğu için tamamen silinemedi.";
+                _logger.LogError(ex, "Cari silme işleminde hata oluştu");
+                TempData["ErrorMessage"] = $"Cari silinirken bir hata oluştu: {ex.Message}";
+                return RedirectToAction(nameof(Index));
             }
-            else
-            {
-                // İlişkili kayıt yoksa silinebilir
-                cari.Silindi = true;
-                cari.GuncellemeTarihi = DateTime.Now;
-                cari.SonGuncelleyenKullaniciId = Guid.Parse(User.FindFirst(System.Security.Claims.ClaimTypes.NameIdentifier)?.Value);
-                
-                await _unitOfWork.CariRepository.UpdateAsync(cari);
-                await _unitOfWork.SaveAsync();
-                
-                await _logService.LogOlustur(
-                    "Cari silindi", 
-                    LogTuru.Bilgi, 
-                    "Cari", 
-                    cari.Ad, 
-                    Guid.Parse(cari.Id.ToString()), 
-                    $"{cari.Ad} adlı cari kaydı silindi.");
-                
-                TempData["SuccessMessage"] = "Cari başarıyla silindi.";
-            }
-            
-            return RedirectToAction(nameof(Index));
         }
 
         [HttpGet]
@@ -516,19 +536,15 @@ namespace MuhasebeStokWebApp.Controllers
                 return NotFound();
             }
             
-            var model = new CariHareketCreateViewModel
+            var viewModel = new CariHareketCreateViewModel
             {
-                CariId = cari.CariID,
+                CariID = cari.CariID,
                 CariAdi = cari.Ad,
-                Tarih = DateTime.Now.Date
+                Tarih = DateTime.Now,
+                HareketTuru = "Tahsilat" // HareketTuru için varsayılan değer atıyoruz
             };
             
-            if (Request.Headers["X-Requested-With"] == "XMLHttpRequest")
-            {
-                return PartialView("_HareketEklePartial", model);
-            }
-            
-            return View(model);
+            return View(viewModel);
         }
 
         [HttpPost]
@@ -537,7 +553,7 @@ namespace MuhasebeStokWebApp.Controllers
         {
             if (!ModelState.IsValid)
             {
-                PrepareCariHareketViewBag(model.CariId);
+                PrepareCariHareketViewBag(model.CariID);
                 return View(model);
             }
 
@@ -550,7 +566,7 @@ namespace MuhasebeStokWebApp.Controllers
                 var cariHareket = new Data.Entities.CariHareket
                 {
                     CariHareketID = Guid.NewGuid(),
-                    CariID = model.CariId,
+                    CariID = model.CariID,
                     Tarih = model.Tarih,
                     VadeTarihi = model.VadeTarihi,
                     HareketTuru = model.HareketTuru,
@@ -571,18 +587,21 @@ namespace MuhasebeStokWebApp.Controllers
                 
                 // İşlemi tamamla
                 await _unitOfWork.CommitTransactionAsync();
-                
-                // Log kaydı oluştur
-                await _logService.CariHareketEklemeLogOlustur(
-                    model.CariId, 
-                    (await _unitOfWork.CariRepository.GetByIdAsync(model.CariId))?.Ad ?? "Bilinmeyen Cari", 
-                    model.HareketTuru, 
-                    model.Tutar, 
-                    model.Aciklama
-                );
+
+                // Log kaydı için cari nesnesini tekrar almamız gerekebilir, çünkü transaction sonrası context değişmiş olabilir.
+                // Ancak burada zaten try bloğunun başında aldık ve transaction içinde kullanıyoruz.
+                var cariForLog = await _unitOfWork.CariRepository.GetByIdAsync(model.CariID); 
+                if(cariForLog != null) {
+                    // Log kaydı oluştur
+                    await _logService.CariHareketEklemeLogOlustur(model.CariID.ToString(), cariForLog.Ad, model.HareketTuru, model.Tutar, model.Aciklama);
+                } else {
+                     _logger.LogWarning("Loglama için cari bulunamadı: {CariID}", model.CariID);
+                     // Alternatif olarak, modeldeki cari adını kullanabiliriz ama güncel olmayabilir.
+                     // await _logService.CariHareketEklemeLogOlustur(model.CariID.ToString(), model.CariAdi, model.HareketTuru, model.Tutar, model.Aciklama);
+                }
 
                 TempData["SuccessMessage"] = "Cari hareket başarıyla kaydedildi.";
-                return RedirectToAction(nameof(Details), new { id = model.CariId });
+                return RedirectToAction(nameof(Details), new { id = model.CariID });
             }
             catch (Exception ex)
             {
@@ -593,7 +612,7 @@ namespace MuhasebeStokWebApp.Controllers
                 
                 TempData["ErrorMessage"] = "Cari hareket kaydedilirken bir hata oluştu.";
                 
-                PrepareCariHareketViewBag(model.CariId);
+                PrepareCariHareketViewBag(model.CariID);
                 return View(model);
             }
         }
@@ -1021,7 +1040,7 @@ namespace MuhasebeStokWebApp.Controllers
                 await _unitOfWork.CariHareketRepository.AddAsync(new Data.Entities.CariHareket 
                 { 
                     CariHareketID = Guid.NewGuid(), 
-                    CariId = cari1Id,
+                    CariID = cari1Id,
                     Tutar = 5000.00m,
                     Tarih = DateTime.Now.AddDays(-30),
                     HareketTuru = "Alış Faturası",
@@ -1033,7 +1052,7 @@ namespace MuhasebeStokWebApp.Controllers
                 await _unitOfWork.CariHareketRepository.AddAsync(new Data.Entities.CariHareket 
                 { 
                     CariHareketID = Guid.NewGuid(), 
-                    CariId = cari1Id,
+                    CariID = cari1Id,
                     Tutar = 8000.00m,
                     Tarih = DateTime.Now.AddDays(-15),
                     HareketTuru = "Alış Faturası",
@@ -1047,7 +1066,7 @@ namespace MuhasebeStokWebApp.Controllers
                 await _unitOfWork.CariHareketRepository.AddAsync(new Data.Entities.CariHareket 
                 { 
                     CariHareketID = Guid.NewGuid(), 
-                    CariId = cari2Id,
+                    CariID = cari2Id,
                     Tutar = 12000.00m,
                     Tarih = DateTime.Now.AddDays(-20),
                     HareketTuru = "Alış Faturası",
@@ -1060,7 +1079,7 @@ namespace MuhasebeStokWebApp.Controllers
                 await _unitOfWork.CariHareketRepository.AddAsync(new Data.Entities.CariHareket 
                 { 
                     CariHareketID = Guid.NewGuid(), 
-                    CariId = cari3Id,
+                    CariID = cari3Id,
                     Tutar = 3500.00m,
                     Tarih = DateTime.Now.AddDays(-10),
                     HareketTuru = "Satış Faturası",
@@ -1079,8 +1098,10 @@ namespace MuhasebeStokWebApp.Controllers
                     LogTuru.Bilgi, 
                     "Cari", 
                     "Örnek Veriler", 
-                    Guid.Empty, 
-                    "Sistem tarafından örnek cari verileri oluşturuldu."
+                    null,
+                    kullaniciAdi: User.Identity?.Name ?? "Sistem",
+                    basarili: true,
+                    kategori: "Sistem"
                 );
                 
                 TempData["SuccessMessage"] = "Örnek cari ve cari hareket verileri başarıyla oluşturuldu.";
@@ -1117,6 +1138,29 @@ namespace MuhasebeStokWebApp.Controllers
             ViewBag.CariTipi = "Tedarikçi";
             
             return View("CariTipi", cariler);
+        }
+
+        [HttpGet]
+        public async Task<IActionResult> Pasifler()
+        {
+            try
+            {
+                // Tüm carileri al - silindiye bakmaksızın
+                var cariler = await _unitOfWork.CariRepository.GetAll()
+                    .IgnoreQueryFilters() // Tüm kayıtları almak için
+                    .ToListAsync();
+                
+                // Para birimi listesini view'a gönder
+                ViewBag.ParaBirimleri = await _paraBirimiService.GetAllParaBirimleriAsync(true);
+                
+                return View(cariler);
+            }
+            catch (Exception ex)
+            {
+                _logger.LogError(ex, "Pasif cariler yüklenirken hata: {Message}", ex.Message);
+                TempData["ErrorMessage"] = "Pasif cariler listesi yüklenirken bir hata oluştu.";
+                return View(new List<Data.Entities.Cari>());
+            }
         }
 
         // Cari'nin varsayılan para birimini Ajax ile almak için endpoint ekliyorum
@@ -1184,16 +1228,16 @@ namespace MuhasebeStokWebApp.Controllers
 
         // GET: Cari/GetCariDetails
         [HttpGet]
-        public IActionResult GetCariDetails(Guid cariId)
+        public IActionResult GetCariDetails(Guid cariID)
         {
             try
             {
-                if (cariId == Guid.Empty)
+                if (cariID == Guid.Empty)
                 {
                     return Json(new { success = false, message = "Geçersiz Cari ID." });
                 }
 
-                var cari = _unitOfWork.CariRepository.GetByIdAsync(cariId).Result;
+                var cari = _unitOfWork.CariRepository.GetByIdAsync(cariID).Result;
 
                 if (cari == null)
                 {
@@ -1288,10 +1332,10 @@ namespace MuhasebeStokWebApp.Controllers
             }
         }
 
-        private void PrepareCariHareketViewBag(Guid cariId)
+        private void PrepareCariHareketViewBag(Guid cariID)
         {
-            var cari = _unitOfWork.CariRepository.GetByIdAsync(cariId).Result;
-            ViewBag.CariId = cariId;
+            var cari = _unitOfWork.CariRepository.GetByIdAsync(cariID).Result;
+            ViewBag.CariID = cariID;
             ViewBag.CariAdi = cari?.Ad ?? string.Empty;
             
             ViewBag.HareketTurleri = new List<string>
@@ -1304,9 +1348,9 @@ namespace MuhasebeStokWebApp.Controllers
         }
 
         [HttpGet]
-        public async Task<IActionResult> YeniHareket(Guid cariId)
+        public async Task<IActionResult> YeniHareket(Guid cariID)
         {
-            var cari = await _unitOfWork.CariRepository.GetByIdAsync(cariId);
+            var cari = await _unitOfWork.CariRepository.GetByIdAsync(cariID);
             if (cari == null)
             {
                 return NotFound();
@@ -1314,12 +1358,13 @@ namespace MuhasebeStokWebApp.Controllers
 
             var model = new CariHareketCreateViewModel
             {
-                CariId = cariId,
+                CariID = cariID,
                 CariAdi = cari.Ad,
-                Tarih = DateTime.Now
+                Tarih = DateTime.Now,
+                HareketTuru = "Tahsilat" // HareketTuru için varsayılan değer atıyoruz
             };
 
-            PrepareCariHareketViewBag(cariId);
+            PrepareCariHareketViewBag(cariID);
             return View(model);
         }
 
@@ -1329,7 +1374,7 @@ namespace MuhasebeStokWebApp.Controllers
         {
             if (!ModelState.IsValid)
             {
-                PrepareCariHareketViewBag(model.CariId);
+                PrepareCariHareketViewBag(model.CariID);
                 return View(model);
             }
 
@@ -1341,7 +1386,7 @@ namespace MuhasebeStokWebApp.Controllers
                 var cariHareket = new Data.Entities.CariHareket
                 {
                     CariHareketID = Guid.NewGuid(),
-                    CariID = model.CariId,
+                    CariID = model.CariID,
                     Tarih = model.Tarih,
                     HareketTuru = model.HareketTuru,
                     Tutar = model.Tutar,
@@ -1367,7 +1412,7 @@ namespace MuhasebeStokWebApp.Controllers
                 
                 TempData["SuccessMessage"] = "Cari hareket başarıyla eklendi.";
                 
-                return RedirectToAction("Details", new { id = model.CariId });
+                return RedirectToAction("Details", new { id = model.CariID });
             }
             catch (Exception ex)
             {
@@ -1375,16 +1420,16 @@ namespace MuhasebeStokWebApp.Controllers
                 _logger.LogError(ex, "Cari hareket eklenirken hata oluştu: {Message}", ex.Message);
                 TempData["ErrorMessage"] = "Cari hareket eklenirken bir hata oluştu.";
                 
-                PrepareCariHareketViewBag(model.CariId);
+                PrepareCariHareketViewBag(model.CariID);
                 return View(model);
             }
         }
 
         [HttpPost]
         [ValidateAntiForgeryToken]
-        public async Task<IActionResult> CariHareketSil(Guid hareketId, Guid cariId)
+        public async Task<IActionResult> CariHareketSil(Guid hareketID, Guid cariID)
         {
-            var cariHareket = await _unitOfWork.CariHareketRepository.GetByIdAsync(hareketId);
+            var cariHareket = await _unitOfWork.CariHareketRepository.GetByIdAsync(hareketID);
             
             if (cariHareket == null || cariHareket.Silindi)
             {
@@ -1401,13 +1446,224 @@ namespace MuhasebeStokWebApp.Controllers
                 await _unitOfWork.SaveChangesAsync();
                 
                 TempData["SuccessMessage"] = "Cari hareket başarıyla silindi.";
-                return RedirectToAction(nameof(Details), new { id = cariId });
+                return RedirectToAction(nameof(Details), new { id = cariID });
             }
             catch (Exception ex)
             {
                 _logger.LogError(ex, "Cari hareket silinirken hata oluştu: {Message}", ex.Message);
                 TempData["ErrorMessage"] = "Cari hareket silinirken bir hata oluştu.";
-                return RedirectToAction(nameof(Details), new { id = cariId });
+                return RedirectToAction(nameof(Details), new { id = cariID });
+            }
+        }
+
+        [HttpGet]
+        public async Task<IActionResult> AvansBakiye(Guid id)
+        {
+            var cari = await _unitOfWork.CariRepository.GetByIdAsync(id);
+            if (cari == null)
+            {
+                return NotFound();
+            }
+            
+            var viewModel = new CariHareketCreateViewModel
+            {
+                CariID = cari.CariID,
+                CariAdi = cari.Ad,
+                Tarih = DateTime.Now,
+                HareketTuru = "Avans", // Required alan için varsayılan değer atandı
+                Tutar = 0
+            };
+            
+            return View("HareketEkle", viewModel);
+        }
+
+        [HttpGet]
+        public async Task<IActionResult> YeniBakiyeDuzenle(Guid id)
+        {
+            var cari = await _unitOfWork.CariRepository.GetByIdAsync(id);
+            if (cari == null)
+            {
+                return NotFound();
+            }
+            
+            var viewModel = new CariHareketCreateViewModel
+            {
+                CariID = cari.CariID,
+                CariAdi = cari.Ad,
+                Tarih = DateTime.Now,
+                HareketTuru = "Bakiye Düzeltme", // Required alan için varsayılan değer atandı
+                Tutar = 0,
+                Aciklama = "Bakiye düzeltme"
+            };
+            
+            return View("HareketEkle", viewModel);
+        }
+
+        [HttpPost]
+        [Authorize(Roles = "Admin")]
+        public async Task<IActionResult> RestoreCari(Guid id)
+        {
+            try
+            {
+                // SoftDeleteService üzerinden işlem yap
+                var softDeleteService = HttpContext.RequestServices.GetService<ISoftDeleteService<Cari>>();
+                if (softDeleteService == null)
+                {
+                    return Json(new { success = false, message = "Geri getirme işlemi için gerekli servis bulunamadı." });
+                }
+                
+                bool success = await softDeleteService.RestoreByIdAsync(id);
+                
+                if (success)
+                {
+                    // Geri getirilen carinin adını bulmak için
+                    var cari = await _unitOfWork.CariRepository.GetByIdAsync(id);
+                    string cariAdi = cari?.Ad ?? "Cari";
+                    
+                    // Logla
+                    await _logService.CariAktifleştirmeLogOlustur(cari.CariID.ToString(), cari.Ad, "Cari kaydı geri yüklendi.");
+                    
+                    return Json(new { 
+                        success = true, 
+                        message = $"{cariAdi} adlı cari başarıyla geri getirildi." 
+                    });
+                }
+                else
+                {
+                    return Json(new { success = false, message = "Silinmiş cari bulunamadı veya geri getirilemedi." });
+                }
+            }
+            catch (Exception ex)
+            {
+                _logger.LogError(ex, "Cari geri getirilirken hata: {Message}", ex.Message);
+                return Json(new { success = false, message = $"Cari geri getirilirken bir hata oluştu: {ex.Message}" });
+            }
+        }
+
+        [HttpPost]
+        public async Task<IActionResult> SetPassive(Guid id)
+        {
+            try
+            {
+                var cari = await _unitOfWork.CariRepository.GetFirstOrDefaultAsync(c => c.CariID == id && !c.Silindi);
+                if (cari == null)
+                {
+                    return Json(new { success = false, message = "Cari bulunamadı." });
+                }
+                
+                cari.AktifMi = false;
+                cari.GuncellemeTarihi = DateTime.Now;
+                cari.SonGuncelleyenKullaniciId = Guid.Parse(User.FindFirst(System.Security.Claims.ClaimTypes.NameIdentifier)?.Value);
+                
+                await _unitOfWork.CariRepository.UpdateAsync(cari);
+                await _unitOfWork.SaveAsync();
+                
+                // Log oluştur
+                await _logService.CariPasifleştirmeLogOlustur(
+                    cari.CariID.ToString(),
+                    cari.Ad,
+                    "Cari pasif duruma alındı."
+                );
+                
+                return Json(new { 
+                    success = true, 
+                    message = $"{cari.Ad} carisi başarıyla pasif duruma alındı." 
+                });
+            }
+            catch (Exception ex)
+            {
+                _logger.LogError(ex, "Cari pasife alma hatası: {Message}", ex.Message);
+                return Json(new { success = false, message = $"Cari pasife alınırken bir hata oluştu: {ex.Message}" });
+            }
+        }
+
+        [HttpPost]
+        public async Task<IActionResult> SetActive(Guid id)
+        {
+            try
+            {
+                var cari = await _unitOfWork.CariRepository.GetAll()
+                    .IgnoreQueryFilters() // Silindi filtresini devre dışı bırak
+                    .FirstOrDefaultAsync(c => c.CariID == id);
+                    
+                if (cari == null)
+                {
+                    return Json(new { success = false, message = "Cari bulunamadı." });
+                }
+                
+                cari.AktifMi = true;
+                cari.GuncellemeTarihi = DateTime.Now;
+                cari.SonGuncelleyenKullaniciId = Guid.Parse(User.FindFirst(System.Security.Claims.ClaimTypes.NameIdentifier)?.Value);
+                
+                await _unitOfWork.CariRepository.UpdateAsync(cari);
+                await _unitOfWork.SaveAsync();
+                
+                // Log oluştur
+                await _logService.CariAktifleştirmeLogOlustur(
+                    cari.CariID.ToString(),
+                    cari.Ad,
+                    "Cari aktif duruma alındı."
+                );
+                
+                return Json(new { 
+                    success = true, 
+                    message = $"{cari.Ad} carisi başarıyla aktif duruma alındı." 
+                });
+            }
+            catch (Exception ex)
+            {
+                _logger.LogError(ex, "Cari aktif etme hatası: {Message}", ex.Message);
+                return Json(new { success = false, message = $"Cari aktif edilirken bir hata oluştu: {ex.Message}" });
+            }
+        }
+
+        [HttpPost]
+        [Authorize(Roles = "Admin,MuhasebeYonetici")]
+        public async Task<IActionResult> SetDelete(Guid id)
+        {
+            try
+            {
+                var cari = await _unitOfWork.CariRepository.GetFirstOrDefaultAsync(c => c.CariID == id && !c.Silindi);
+                if (cari == null)
+                {
+                    return Json(new { success = false, message = "Cari bulunamadı." });
+                }
+
+                // İlişkili kayıtları kontrol et
+                var iliskiliKayitVar = await _unitOfWork.CariHareketRepository.AnyAsync(ch => ch.CariID == id && !ch.Silindi);
+                iliskiliKayitVar = iliskiliKayitVar || await _unitOfWork.FaturaRepository.AnyAsync(f => f.CariID == id && !f.Silindi);
+                
+                if (iliskiliKayitVar)
+                {
+                    return Json(new { 
+                        success = false, 
+                        message = $"{cari.Ad} carisine ait kayıtlar (hareketler, faturalar, vb.) bulunduğu için silinemez. Öncelikle bu kayıtları silmeniz gerekiyor." 
+                    });
+                }
+                
+                cari.Silindi = true;
+                cari.GuncellemeTarihi = DateTime.Now;
+                cari.SonGuncelleyenKullaniciId = Guid.Parse(User.FindFirst(System.Security.Claims.ClaimTypes.NameIdentifier)?.Value);
+                
+                await _unitOfWork.CariRepository.UpdateAsync(cari);
+                await _unitOfWork.SaveAsync();
+                
+                // Log oluştur
+                await _logService.CariSilmeLogOlustur(
+                    cari.CariID.ToString(),
+                    cari.Ad,
+                    "Cari silindi."
+                );
+                
+                return Json(new { 
+                    success = true, 
+                    message = $"{cari.Ad} carisi başarıyla silindi." 
+                });
+            }
+            catch (Exception ex)
+            {
+                _logger.LogError(ex, "Cari silme hatası: {Message}", ex.Message);
+                return Json(new { success = false, message = $"Cari silinirken bir hata oluştu: {ex.Message}" });
             }
         }
     }

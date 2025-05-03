@@ -104,6 +104,15 @@ namespace MuhasebeStokWebApp.Services.Interfaces
         /// Varsayılan para birimlerini ekler (ilk kurulum için)
         /// </summary>
         Task<bool> VarsayilanParaBirimleriniEkleAsync();
+
+        /// <summary>
+        /// İki para birimi kodu arasındaki kur değerini hesaplar
+        /// </summary>
+        /// <param name="kaynakKod">Kaynak para birimi kodu</param>
+        /// <param name="hedefKod">Hedef para birimi kodu</param>
+        /// <param name="tarih">Tarih (null ise bugün)</param>
+        /// <returns>Kur değeri</returns>
+        Task<decimal> HesaplaKurDegeriByKodAsync(string kaynakKod, string hedefKod, DateTime? tarih = null);
         #endregion
     }
 } 

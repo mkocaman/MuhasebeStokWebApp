@@ -24,6 +24,13 @@
     bool cariSilindi = (ViewBag.CariSilindi != null && (bool)ViewBag.CariSilindi) || Model.CariSilindi;
 }
 
+@functions {
+    public static string FormatDecimal(decimal value)
+    {
+        return value.ToString("N2", new System.Globalization.CultureInfo("tr-TR"));
+    }
+}
+
 <div class="container-fluid">
     <div class="row">
         <!-- Fatura Bilgileri -->
@@ -159,7 +166,7 @@
                         <div class="col-sm-6 col-md-12 col-lg-6">
                             <div class="info-group">
                                 <h6 class="f-w-600">Döviz Kuru</h6>
-                                <p>@Model.DovizKuru.ToString("N4")</p>
+                                <p>@FormatDecimal(Model.DovizKuru)</p>
                             </div>
                         </div>
                     </div>
@@ -178,37 +185,37 @@
                         <div class="col-sm-6 col-md-12 col-lg-6">
                             <div class="info-group">
                                 <h6 class="f-w-600">Ara Toplam</h6>
-                                <p>@Model.AraToplam.ToString("N2") @currencySymbol</p>
+                                <p>@FormatDecimal(Model.AraToplam) @currencySymbol</p>
                             </div>
                         </div>
                         <div class="col-sm-6 col-md-12 col-lg-6">
                             <div class="info-group">
                                 <h6 class="f-w-600">KDV Tutarı</h6>
-                                <p>@Model.KdvTutari.ToString("N2") @currencySymbol</p>
+                                <p>@FormatDecimal(Model.KdvTutari) @currencySymbol</p>
                             </div>
                         </div>
                         <div class="col-sm-6 col-md-12 col-lg-6">
                             <div class="info-group">
                                 <h6 class="f-w-600">İndirim Tutarı</h6>
-                                <p>@Model.IndirimTutari.ToString("N2") @currencySymbol</p>
+                                <p>@FormatDecimal(Model.IndirimTutari) @currencySymbol</p>
                             </div>
                         </div>
                         <div class="col-sm-6 col-md-12 col-lg-6">
                             <div class="info-group">
                                 <h6 class="f-w-600">Genel Toplam</h6>
-                                <p class="f-w-600 text-primary">@Model.GenelToplam.ToString("N2") @currencySymbol</p>
+                                <p class="f-w-600 text-primary">@FormatDecimal(Model.GenelToplam) @currencySymbol</p>
                             </div>
                         </div>
                         <div class="col-sm-6 col-md-12 col-lg-6">
                             <div class="info-group">
                                 <h6 class="f-w-600">Ödenen Tutar</h6>
-                                <p class="f-w-600 text-success">@ViewBag.OdenenTutar.ToString("N2") @currencySymbol</p>
+                                <p class="f-w-600 text-success">@FormatDecimal(ViewBag.OdenenTutar) @currencySymbol</p>
                             </div>
                         </div>
                         <div class="col-sm-6 col-md-12 col-lg-6">
                             <div class="info-group">
                                 <h6 class="f-w-600">Ödenecek Tutar</h6>
-                                <p class="f-w-600 text-danger">@ViewBag.OdenecekTutar.ToString("N2") @currencySymbol</p>
+                                <p class="f-w-600 text-danger">@FormatDecimal(ViewBag.OdenecekTutar) @currencySymbol</p>
                             </div>
                         </div>
                     </div>
@@ -222,25 +229,25 @@
                         <div class="col-sm-6 col-md-12 col-lg-6">
                             <div class="info-group">
                                 <h6 class="f-w-600">Ara Toplam (Döviz)</h6>
-                                <p>@Model.AraToplamDoviz.ToString("N2") @dovizSymbol</p>
+                                <p>@FormatDecimal(Model.AraToplamDoviz) @dovizSymbol</p>
                             </div>
                         </div>
                         <div class="col-sm-6 col-md-12 col-lg-6">
                             <div class="info-group">
                                 <h6 class="f-w-600">KDV Tutarı (Döviz)</h6>
-                                <p>@Model.KdvTutariDoviz.ToString("N2") @dovizSymbol</p>
+                                <p>@FormatDecimal(Model.KdvTutariDoviz) @dovizSymbol</p>
                             </div>
                         </div>
                         <div class="col-sm-6 col-md-12 col-lg-6">
                             <div class="info-group">
                                 <h6 class="f-w-600">İndirim Tutarı (Döviz)</h6>
-                                <p>@Model.IndirimTutariDoviz.ToString("N2") @dovizSymbol</p>
+                                <p>@FormatDecimal(Model.IndirimTutariDoviz) @dovizSymbol</p>
                             </div>
                         </div>
                         <div class="col-sm-6 col-md-12 col-lg-6">
                             <div class="info-group">
                                 <h6 class="f-w-600">Genel Toplam (Döviz)</h6>
-                                <p class="f-w-600 text-info">@Model.GenelToplamDoviz.ToString("N2") @dovizSymbol</p>
+                                <p class="f-w-600 text-info">@FormatDecimal(Model.GenelToplamDoviz) @dovizSymbol</p>
                             </div>
                         </div>
                     </div>
@@ -295,14 +302,14 @@
                                                     @kalem.UrunAdi
                                                 </a>
                                             </td>
-                                            <td>@kalem.Miktar.ToString("N2")</td>
+                                            <td>@FormatDecimal(kalem.Miktar)</td>
                                             <td>@kalem.Birim</td>
-                                            <td>@kalem.BirimFiyat.ToString("N2") @currencySymbol</td>
-                                            <td>@kalem.BirimFiyatDoviz.ToString("N2") @dovizSymbol</td>
+                                            <td>@FormatDecimal(kalem.BirimFiyat) @currencySymbol</td>
+                                            <td>@(kalem.BirimFiyatDoviz > 0 ? FormatDecimal(kalem.BirimFiyatDoviz) : FormatDecimal(kalem.BirimFiyat * Model.DovizKuru)) @dovizSymbol</td>
                                             <td>%@kalem.KdvOrani</td>
                                             <td>%@kalem.IndirimOrani</td>
-                                            <td>@kalem.Tutar.ToString("N2") @currencySymbol</td>
-                                            <td>@kalem.NetTutar.ToString("N2") @currencySymbol</td>
+                                            <td>@FormatDecimal(kalem.Tutar) @currencySymbol</td>
+                                            <td>@FormatDecimal(kalem.NetTutar) @currencySymbol</td>
                                         </tr>
                                     }
                                 }
@@ -352,7 +359,7 @@
                                         <tr>
                                             <td>@odeme.OdemeTarihi.ToString("dd.MM.yyyy")</td>
                                             <td>@odeme.OdemeTuru</td>
-                                            <td>@odeme.OdemeTutari.ToString("N2") @currencySymbol</td>
+                                            <td>@FormatDecimal(odeme.OdemeTutari) @currencySymbol</td>
                                             <td>@(string.IsNullOrEmpty(odeme.Aciklama) ? "-" : odeme.Aciklama)</td>
                                             <td>
                                                 <button type="button" class="btn btn-danger btn-sm" onclick="confirmDeleteOdeme('@odeme.OdemeID')">

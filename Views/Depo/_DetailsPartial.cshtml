@@ -1,0 +1,49 @@
+@model MuhasebeStokWebApp.ViewModels.Depo.DepoViewModel
+
+<div class="modal-header">
+    <h5 class="modal-title">Depo Detayları</h5>
+    <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Kapat"></button>
+</div>
+<div class="modal-body">
+    <div class="container">
+        <div class="row mb-3">
+            <div class="col-md-4 fw-bold">Depo Adı:</div>
+            <div class="col-md-8">@Model.DepoAdi</div>
+        </div>
+        <div class="row mb-3">
+            <div class="col-md-4 fw-bold">Adres:</div>
+            <div class="col-md-8">@(string.IsNullOrEmpty(Model.Adres) ? "-" : Model.Adres)</div>
+        </div>
+        <div class="row mb-3">
+            <div class="col-md-4 fw-bold">Durum:</div>
+            <div class="col-md-8">
+                @if (Model.Aktif)
+                {
+                    <span class="badge bg-success">Aktif</span>
+                }
+                else
+                {
+                    <span class="badge bg-warning">Pasif</span>
+                }
+                @if (Model.Silindi)
+                {
+                    <span class="badge bg-danger ms-2">Silinmiş</span>
+                }
+            </div>
+        </div>
+        <div class="row mb-3">
+            <div class="col-md-4 fw-bold">Oluşturma Tarihi:</div>
+            <div class="col-md-8">@Model.OlusturmaTarihi.ToString("dd.MM.yyyy HH:mm")</div>
+        </div>
+        @if (Model.GuncellemeTarihi.HasValue)
+        {
+            <div class="row mb-3">
+                <div class="col-md-4 fw-bold">Güncelleme Tarihi:</div>
+                <div class="col-md-8">@Model.GuncellemeTarihi.Value.ToString("dd.MM.yyyy HH:mm")</div>
+            </div>
+        }
+    </div>
+</div>
+<div class="modal-footer">
+    <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Kapat</button>
+</div> 

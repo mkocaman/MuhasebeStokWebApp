@@ -2,6 +2,9 @@
 @{
     ViewData["Title"] = "Müşteriler";
     Layout = "~/Views/Shared/_Layout.cshtml";
+    
+    // Admin rolüne sahip kullanıcıları kontrol et
+    var isAdmin = User.IsInRole("Admin");
 }
 
 <div class="container-fluid">
@@ -48,6 +51,12 @@
                                 <a href="@Url.Action("Tedarikciler")" class="btn btn-outline-secondary">
                                     <i class="fa fa-truck"></i> Tedarikçiler
                                 </a>
+                                @if (isAdmin)
+                                {
+                                    <a href="@Url.Action("Pasifler")" class="btn btn-outline-secondary">
+                                        <i class="fa fa-ban"></i> Pasif Cariler
+                                    </a>
+                                }
                             </div>
                         </div>
                     </div>

@@ -5,6 +5,13 @@
     Layout = "~/Views/Shared/_Layout.cshtml";
 }
 
+@functions {
+    public static string FormatDecimal(decimal value)
+    {
+        return value.ToString("N2", new System.Globalization.CultureInfo("tr-TR"));
+    }
+}
+
 <style>
     /* Tablo hücrelerinin alt alta gelmesini önlemek için */
     #kalemlerTable tr {
@@ -30,6 +37,16 @@
     #kalemlerTable th, #kalemlerTable td {
         white-space: nowrap;
     }
+    
+    /* Uyarı mesajı stilini düzenleyelim */
+    .performance-warning {
+        background-color: #fff3cd;
+        color: #856404;
+        padding: 10px;
+        margin-bottom: 15px;
+        border-radius: 4px;
+        border: 1px solid #ffeeba;
+    }
 </style>
 
 <div class="container-fluid">
@@ -43,7 +60,13 @@
             </div>
         </div>
         <div class="card-body">
-            @if (ViewBag.UrunListesiBosMu != null && ViewBag.UrunListesiBosMu)
+            <!-- Performans uyarısı ekleyelim -->
+            <div class="alert alert-warning performance-warning">
+                <strong><i class="fas fa-exclamation-triangle"></i> Önemli Bilgilendirme</strong>
+                <p class="mb-0">Fatura kaydetme işlemi, özellikle çok sayıda kalem içeren faturalarda uzun sürebilir. Lütfen işlem tamamlanana kadar bekleyin ve sayfayı yenilemeyin. Kaydetme işlemi arka planda devam edecektir.</p>
+            </div>
+            
+            @if (Model.UrunListesiBosMu)
             {
                 <div class="alert alert-warning">
                     <strong>Uyarı!</strong> Veritabanında ürün bulunamadı. Lütfen önce <a href="/Urun/Create">ürün ekleyin</a>.
@@ -53,36 +76,40 @@
             <form asp-action="Create" id="faturaForm" method="post">
                 <div asp-validation-summary="ModelOnly" class="text-danger"></div>
                 
-                <!-- 1. Satır: Fatura No, Sipariş No, Fatura Tarihi, Vade Tarihi -->
+                <!-- 1. Satır: Fatura No, Fatura Tarihi, Vade Tarihi -->
                 <div class="row mb-3">
-                    <div class="col-md-3">
+                    <div class="col-md-4">
                         <div class="form-group">
                             <label asp-for="FaturaNumarasi" class="control-label">Fatura Numarası</label>
-                            <input asp-for="FaturaNumarasi" class="form-control" readonly />
+                            <input asp-for="FaturaNumarasi" class="form-control" />
                             <span asp-validation-for="FaturaNumarasi" class="text-danger"></span>
                         </div>
                     </div>
-                    <div class="col-md-3">
+                    <div class="col-md-4">
                         <div class="form-group">
                             <label asp-for="SiparisNumarasi" class="control-label">Sipariş Numarası</label>
-                            <input asp-for="SiparisNumarasi" class="form-control" readonly />
+                            <input asp-for="SiparisNumarasi" class="form-control" />
                             <span asp-validation-for="SiparisNumarasi" class="text-danger"></span>
                         </div>
                     </div>
-                    <div class="col-md-3">
+                    <div class="col-md-4">
                         <div class="form-group">
                             <label asp-for="FaturaTarihi" class="control-label">Fatura Tarihi</label>
                             <input asp-for="FaturaTarihi" class="form-control" type="date" />
                             <span asp-validation-for="FaturaTarihi" class="text-danger"></span>
                         </div>
                     </div>
-                    <div class="col-md-3">
+                </div>
+                
+                <div class="row mb-3">
+                    <div class="col-md-4">
                         <div class="form-group">
                             <label asp-for="VadeTarihi" class="control-label">Vade Tarihi</label>
                             <input asp-for="VadeTarihi" class="form-control" type="date" />
                             <span asp-validation-for="VadeTarihi" class="text-danger"></span>
                         </div>
                     </div>
+                    <!-- Diğer alanlar burada olacak -->
                 </div>
                 
                 <!-- 2. Satır: Cari, Fatura Türü, Döviz Türü, Döviz Kuru -->
@@ -90,7 +117,7 @@
                     <div class="col-md-3">
                         <div class="form-group">
                             <label asp-for="CariID" class="control-label">Cari</label>
-                            <select asp-for="CariID" class="form-control select2" asp-items="ViewBag.Cariler">
+                            <select asp-for="CariID" class="form-control select2" asp-items="Model.Cariler">
                                 <option value="">-- Cari Seçiniz --</option>
                             </select>
                             <span asp-validation-for="CariID" class="text-danger"></span>
@@ -99,7 +126,7 @@
                     <div class="col-md-3">
                         <div class="form-group">
                             <label asp-for="FaturaTuruID" class="control-label">Fatura Türü</label>
-                            <select asp-for="FaturaTuruID" class="form-control select2" asp-items="ViewBag.FaturaTurleri">
+                            <select asp-for="FaturaTuruID" class="form-control select2" asp-items="Model.FaturaTurleri">
                                 <option value="">-- Fatura Türü Seçiniz --</option>
                             </select>
                             <span asp-validation-for="FaturaTuruID" class="text-danger"></span>
@@ -109,7 +136,7 @@
                         <div class="form-group">
                             <label asp-for="DovizTuru" class="control-label">Döviz Türü</label>
                             <select asp-for="DovizTuru" class="form-control" id="dovizTuruSelect">
-                                @foreach (var paraBirimi in ViewBag.ParaBirimleri)
+                                @foreach (var paraBirimi in Model.ParaBirimleri)
                                 {
                                     <option value="@paraBirimi.Kod" data-anapara="@paraBirimi.AnaParaBirimiMi.ToString().ToLower()">
                                         @paraBirimi.Kod - @paraBirimi.Ad
@@ -155,13 +182,22 @@
                             <span asp-validation-for="OdemeDurumu" class="text-danger"></span>
                         </div>
                     </div>
-                    <div class="col-md-6">
+                    <div class="col-md-3">
                         <div class="form-group" id="sozlesmeDiv" style="display: none;">
                             <label for="SozlesmeID" class="control-label">Sözleşme</label>
-                            <select asp-for="SozlesmeID" class="form-control select2" asp-items="ViewBag.Sozlesmeler">
+                            <select asp-for="SozlesmeID" class="form-control select2" asp-items="Model.Sozlesmeler">
                                 <option value="">-- Sözleşme Seçiniz --</option>
                             </select>
                             <span asp-validation-for="SozlesmeID" class="text-danger"></span>
+                        </div>
+                    </div>
+                    <div class="col-md-3">
+                        <div class="form-group">
+                            <label asp-for="DepoID" class="control-label">Depo</label>
+                            <select asp-for="DepoID" class="form-control select2" asp-items="Model.Depolar">
+                                <option value="">-- Depo Seçiniz --</option>
+                            </select>
+                            <span asp-validation-for="DepoID" class="text-danger"></span>
                         </div>
                     </div>
                 </div>
@@ -308,7 +344,10 @@
     <link href="https://cdn.jsdelivr.net/npm/select2@4.1.0-rc.0/dist/css/select2.min.css" rel="stylesheet" />
     <script src="https://cdn.jsdelivr.net/npm/select2@4.1.0-rc.0/dist/js/select2.min.js"></script>
     
-    <script>
+    <script type="text/javascript">
+        // Cari - Para Birimi ilişkilerini JavaScript değişkenine aktar
+        var cariParaBirimleri = @Html.Raw(Json.Serialize(ViewBag.CariParaBirimleri));
+        
         $(document).ready(function () {
             var kalemIndex = 0;
             
@@ -347,71 +386,85 @@
                 console.error("Select2 yüklenemedi:", e);
             }
 
-            // Cari seçildiğinde döviz türünü ve kurunu güncelle
-            $("#CariID").change(function() {
-                var cariID = $(this).val();
-                if (cariID) {
-                    console.log("Cari değişti, ID:", cariID, "para birimi bilgisi getiriliyor...");
+            // Cari değiştiğinde
+            $('#CariID').on('change', function() {
+                var cariId = $(this).val();
+                
+                // Eğer bir cari seçildiyse ve bu carinin varsayılan para birimi varsa
+                if (cariId && cariParaBirimleri && cariParaBirimleri[cariId]) {
+                    // Döviz türünü otomatik güncelle
+                    var dovizKodu = cariParaBirimleri[cariId];
+                    $('#DovizTuru').val(dovizKodu).trigger('change');
                     
-                    $.ajax({
-                        url: "/Cari/GetCariParaBirimi",
-                        type: "GET",
-                        data: { id: cariID },
-                        dataType: "json",
-                        success: function(data) {
-                            if (data && data.success && data.paraBirimiKodu) {
-                                console.log("Cari para birimi bilgisi alındı:", data.paraBirimiKodu);
-                                
-                                // Doğrudan değer atama ve tetikleme
-                                $("#dovizTuruSelect").val(data.paraBirimiKodu);
-                                $("#dovizTuruSelect").trigger('change');
-                                
-                                console.log("Döviz türü güncellendi:", data.paraBirimiKodu);
-                            } else {
-                                console.warn("Cari para birimi bilgisi alınamadı veya eksik");
-                                $("#dovizTuruSelect").val("TRY").trigger('change');
-                            }
-                        },
-                        error: function(xhr, status, error) {
-                            console.error("Cari para birimi bilgisi alınamadı:", error);
-                            $("#dovizTuruSelect").val("TRY").trigger('change');
-                        }
-                    });
+                    // Kur bilgisini getir
+                    kurGetir(dovizKodu);
                 }
             });
 
-            // Güncel kur getir
-            $("#btnGetirKur").click(function() {
-                var dovizKodu = $("#dovizTuruSelect").val();
-                if (dovizKodu === "TRY") {
-                    $("#DovizKuru").val(1);
+            // Kur Getir butonuna tıklanınca
+            $(document).on('click', '.btn-kur-getir', function() {
+                var dovizKodu = $('#DovizTuru').val();
+                var faturaTarihi = $('#FaturaTarihi').val();
+                
+                kurGetir(dovizKodu, faturaTarihi);
+            });
+            
+            // Kur bilgisi getir
+            function kurGetir(dovizKodu, tarih = null) {
+                // Eğer TRY seçildiyse, kur 1 olarak ayarla
+                if (dovizKodu === 'TRY') {
+                    $('#DovizKuru').val('1');
                     return;
                 }
                 
-                try {
-                    $.ajax({
-                        url: "/ParaBirimi/GetLatestExchangeRateByKod",
-                        type: "GET",
-                        data: { kod: dovizKodu },
-                        success: function(data) {
-                            if (data && data.kur) {
-                                $("#DovizKuru").val(data.kur.toFixed(4));
-                            } else {
-                                alert("Kur bilgisi bulunamadı. Lütfen manuel olarak giriniz.");
-                                $("#DovizKuru").val(1);
-                            }
-                        },
-                        error: function(xhr, status, error) {
-                            console.error("Kur bilgisi alınırken hata:", error);
-                            alert("Kur bilgisi alınırken bir hata oluştu. Varsayılan değer 1 olarak ayarlandı.");
-                            $("#DovizKuru").val(1);
-                        }
-                    });
-                } catch (e) {
-                    console.error("Kur getirme işleminde hata:", e);
-                    $("#DovizKuru").val(1);
+                // Parametreleri hazırla
+                var params = { dovizKodu: dovizKodu };
+                if (tarih) {
+                    params.tarih = tarih;
                 }
-            });
+                
+                // Kur bilgisini getir
+                $.ajax({
+                    url: '@Url.Action("GetKurBilgisi", "Fatura")',
+                    type: 'GET',
+                    data: params,
+                    success: function(data) {
+                        if (data.success) {
+                            $('#DovizKuru').val(data.kurDegeri);
+                            
+                            if (data.message) {
+                                // Eğer mesaj varsa kullanıcıya bilgi ver
+                                Swal.fire({
+                                    title: 'Bilgi',
+                                    text: data.message,
+                                    icon: 'info'
+                                });
+                            }
+                        } else {
+                            // Kur bilgisi bulunamadı
+                            Swal.fire({
+                                title: 'Uyarı',
+                                text: data.message || 'Kur bilgisi bulunamadı. Lütfen manuel olarak giriniz.',
+                                icon: 'warning'
+                            });
+                            
+                            // Varsayılan değer
+                            if (data.kurDegeri) {
+                                $('#DovizKuru').val(data.kurDegeri);
+                            } else {
+                                $('#DovizKuru').val('0');
+                            }
+                        }
+                    },
+                    error: function() {
+                        Swal.fire({
+                            title: 'Hata',
+                            text: 'Kur bilgisi alınırken bir hata oluştu.',
+                            icon: 'error'
+                        });
+                    }
+                });
+            }
             
             // Resmi Fatura mı? checkbox değişiminde
             $("#resmiMiCheck").change(function() {
@@ -517,13 +570,18 @@
                             var ilkUrunId = $urunSelect.find("option:eq(1)").val();
                             console.log("İlk ürün seçiliyor, id:", ilkUrunId);
                             
-                            // Değeri ayarla ve change event'ini tetikle
-                            $urunSelect.val(ilkUrunId).trigger('change');
+                            // Değeri ayarla
+                            $urunSelect.val(ilkUrunId); 
                             
-                            // Ürün bilgilerini getir
-                            getUrunBilgileri(ilkUrunId, $row);
+                            // Ürün bilgilerini getir (change event'ine güvenmek yerine doğrudan çağır)
+                            getUrunBilgileri(ilkUrunId, $row); 
+                            
+                            // Select2'nin görselini güncellemek için change event'ini tetikle (opsiyonel, ama iyi pratik)
+                            $urunSelect.trigger('change.select2'); 
                         } else {
                             console.log("Ürün seçenekleri bulunamadı");
+                            // Ürün yoksa bile satır ve fatura toplamlarını hesapla
+                            calculateRowTotals($row); 
                         }
                     } catch (e) {
                         console.error("Select2 veya ürün seçimi hatası:", e);
@@ -651,12 +709,16 @@
                     
                     console.log("Hesaplanan değerler:", {tutar, indirimTutari, netTutar, kdvTutari, toplamTutar});
                     
-                    // Değerleri forma yaz
-                    row.find(".tutar").val(tutar.toFixed(2));
-                    row.find(".kdv-tutari").val(kdvTutari.toFixed(2));
-                    row.find(".net-tutar").val(toplamTutar.toFixed(2));
-                    
-                    // Fatura toplamlarını güncelle
+                    // Değerleri forma yaz (tutar = miktar * birimFiyat)
+                    row.find(".tutar").val(tutar.toFixed(2)); // Ham değeri yaz, formatlama sadece display için olmalı ama şimdilik toFixed(2) kullanalım
+                    row.find(".kdv-tutari").val(kdvTutari.toFixed(2)); // Ham değeri yaz
+                    row.find(".net-tutar").val(toplamTutar.toFixed(2)); // Ham değeri yaz (Bu satırın toplamını temsil eder)
+
+                    // Display için formatlanmış değeri .tutar'a set edebiliriz, ancak okurken dikkatli olmalıyız.
+                    // Şimdilik ham değeri bırakalım, calculateFaturaTotals'ı düzelteceğiz.
+                    // row.find(".tutar").val(FormatDecimal(tutar)); // Eğer display formatı isteniyorsa
+
+                    // Fatura toplamlarını güncelle (Bu fonksiyonu da düzelteceğiz)
                     calculateFaturaTotals();
                     
                     return true; // Başarılı hesaplama
@@ -676,29 +738,39 @@
                     var indirimToplam = 0;
                     var genelToplam = 0;
                     
-                    // Tüm satırları dolaş
+                    // Tüm satırları dolaş ve değerleri doğrudan inputlardan oku
                     $(".kalem-row").each(function () {
                         var row = $(this);
-                        var tutar = parseFloat(row.find(".tutar").val()) || 0;
-                        var kdvTutari = parseFloat(row.find(".kdv-tutari").val()) || 0;
+                        
+                        // Değerleri doğrudan inputlardan al
+                        var miktar = parseFloat(row.find(".miktar").val()) || 0;
+                        var birimFiyat = parseFloat(row.find(".birim-fiyat").val()) || 0;
+                        var kdvOrani = parseFloat(row.find(".kdv-orani").val()) || 0;
                         var indirimOrani = parseFloat(row.find(".indirim-orani").val()) || 0;
-                        var indirimTutari = tutar * (indirimOrani / 100);
-                        
-                        araToplam += tutar;
-                        kdvToplam += kdvTutari;
-                        indirimToplam += indirimTutari;
-                        genelToplam += parseFloat(row.find(".net-tutar").val()) || 0;
-                        
-                        console.log("Satır değerleri:", {tutar, kdvTutari, indirimOrani, indirimTutari});
+
+                        // Satır bazında hesaplamaları yeniden yap (calculateRowTotals'daki gibi)
+                        var satirTutar = miktar * birimFiyat; // İndirimsiz, KDV'siz tutar
+                        var satirIndirimTutari = satirTutar * (indirimOrani / 100);
+                        var satirNetTutar = satirTutar - satirIndirimTutari; // İndirim sonrası tutar
+                        var satirKdvTutari = satirNetTutar * (kdvOrani / 100);
+                        var satirGenelToplam = satirNetTutar + satirKdvTutari; // KDV dahil, indirim düşülmüş toplam
+
+                        // Toplamlara ekle
+                        araToplam += satirTutar; // Ara toplam = Tüm satırların (miktar * birim fiyat) toplamı
+                        kdvToplam += satirKdvTutari; // KDV toplamı = Tüm satırların KDV tutarları toplamı
+                        indirimToplam += satirIndirimTutari; // İndirim toplamı = Tüm satırların indirim tutarları toplamı
+                        genelToplam += satirGenelToplam; // Genel toplam = Tüm satırların KDV dahil toplamları
+
+                        console.log("Satır değerleri (recalculated):", { miktar, birimFiyat, kdvOrani, indirimOrani, satirTutar, satirIndirimTutari, satirKdvTutari, satirGenelToplam });
                     });
                     
-                    console.log("Hesaplanan toplamlar:", {araToplam, kdvToplam, indirimToplam, genelToplam});
+                    console.log("Hesaplanan toplamlar (recalculated):", {araToplam, kdvToplam, indirimToplam, genelToplam});
                     
                     // Toplamları forma yaz
-                    $("#AraToplam").val(araToplam.toFixed(2));
-                    $("#KdvTutari").val(kdvToplam.toFixed(2));
-                    $("#toplamIndirimTutari").val(indirimToplam.toFixed(2));
-                    $("#GenelToplam").val(genelToplam.toFixed(2));
+                    $("#AraToplam").val(FormatDecimal(araToplam));
+                    $("#KdvTutari").val(FormatDecimal(kdvToplam));
+                    $("#toplamIndirimTutari").val(FormatDecimal(indirimToplam));
+                    $("#GenelToplam").val(FormatDecimal(genelToplam));
                     
                     return true; // Başarılı hesaplama
                 } catch (e) {
@@ -714,6 +786,14 @@
                     alert("En az bir fatura kalemi eklemelisiniz!");
                     return false;
                 }
+                
+                // Boş satırları kaldıralım (performans için)
+                var validRows = $(".kalem-row").filter(function() {
+                    var urunID = $(this).find(".urun-select").val();
+                    var miktar = parseFloat($(this).find(".miktar").val()) || 0;
+                    return urunID && miktar > 0; // Ürün seçili ve miktar > 0 olan satırlar geçerli
+                });
+                $(".kalem-row").not(validRows).remove();
                 
                 // UrunAdi değerlerini kontrol et ve doldur
                 var isValid = true;
@@ -764,7 +844,7 @@
                 $("#submitBtn").prop("disabled", true).html('<i class="fas fa-spinner fa-spin"></i> Kaydediliyor...');
                 console.log("Form gönderiliyor...");
                 
-                // 60 saniye sonra işlem tamamlanmadıysa kullanıcıya bilgi ver
+                // 3 dakika (180 saniye) sonra işlem tamamlanmadıysa kullanıcıya bilgi ver (süre uzatıldı)
                 setTimeout(function() {
                     if ($("#submitBtn").prop("disabled")) {
                         console.log("İşlem uzun sürüyor, kullanıcıya bilgi veriliyor...");
@@ -774,8 +854,8 @@
                             title: 'İşlem Devam Ediyor',
                             html: 'Fatura kaydediliyor, ancak işlem normalden uzun sürüyor. Bu, büyük faturaların kaydedilmesi sırasında olağan bir durumdur.<br><br>' +
                                   'Seçenekleriniz:<br>' +
-                                  '1. <b>Bekleyin</b>: İşlem tamamlanana kadar bekleyin.<br>' +
-                                  '2. <b>Listeleye Dönün</b>: İşlem arka planda devam edecektir. Tamamlandığında fatura listesinde görünecektir.',
+                                  '1. <b>Bekleyin</b>: İşlem tamamlanana kadar bekleyin (2-3 dakika sürebilir).<br>' +
+                                  '2. <b>Listeleye Dön</b>: İşlem arka planda devam edecektir. Tamamlandığında fatura listesinde görünecektir.',
                             icon: 'info',
                             showCancelButton: true,
                             confirmButtonText: 'Bekle',
@@ -787,11 +867,25 @@
                             }
                         });
                     }
-                }, 60000);
+                }, 180000);
                 
                 // Normal form gönderimi için true döndür
                 return true;
             });
+
+            // Sayfanın ilk yüklenişinde ilk fatura kalemini ekle (addFirstItemIfEmpty diye bir fonksiyon yoktu, doğrudan addKalemRow çağrılıyordu)
+            // addKalemRow(); // Bu zaten yukarıda çağrılıyor, tekrar çağırmaya gerek yok.
         });
+        
+        // Global formatlama fonksiyonu (calculateRowTotals içinde kullanılabilir)
+        function FormatDecimal(value) {
+            // Sayıyı string'e çevir ve ondalık kısmı 2 basamağa ayarla
+            let formattedValue = Number(value).toFixed(2); 
+            // Noktayı virgülle değiştir (Türkçe formatı için)
+            formattedValue = formattedValue.replace('.', ','); 
+            // Binlik ayırıcı ekle (isteğe bağlı, ama genellikle kullanılır)
+            formattedValue = formattedValue.replace(/\B(?=(\d{3})+(?!\d))/g, "."); 
+            return formattedValue;
+        }
     </script>
-} 
+}

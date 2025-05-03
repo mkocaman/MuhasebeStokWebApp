@@ -25,7 +25,7 @@ namespace MuhasebeStokWebApp.Data.Entities
         [ForeignKey("Cari")]
         public Guid? CariID { get; set; }
         
-        public virtual Cari Cari { get; set; } = null!;
+        public virtual Cari? Cari { get; set; }
         
         public int? FaturaTuruID { get; set; }
         
@@ -40,6 +40,9 @@ namespace MuhasebeStokWebApp.Data.Entities
         
         [Column(TypeName = "decimal(18,2)")]
         public decimal? GenelToplam { get; set; }
+        
+        [Column(TypeName = "decimal(18,2)")]
+        public decimal? OdenenTutar { get; set; } = 0;
         
         // Dövizli toplam değerler (seçilen para biriminde)
         [Column(TypeName = "decimal(18,2)")]
@@ -65,10 +68,14 @@ namespace MuhasebeStokWebApp.Data.Entities
         
         public Guid? SozlesmeID { get; set; }
         
-        public virtual Sozlesme? Sozlesme { get; set; } = null;
+        public virtual Sozlesme? Sozlesme { get; set; }
         
         [StringLength(10)]
         public string DovizTuru { get; set; } = "USD";
+        
+        // Para birimi
+        [StringLength(10)]
+        public string ParaBirimi { get; set; } = "USD";
         
         [Column(TypeName = "decimal(18,4)")]
         public decimal? DovizKuru { get; set; } = 1;
@@ -90,15 +97,15 @@ namespace MuhasebeStokWebApp.Data.Entities
         public int? OdemeTuruID { get; set; }
         
         [ForeignKey("OdemeTuruID")]
-        public virtual OdemeTuru OdemeTuru { get; set; } = null!;
+        public virtual OdemeTuru? OdemeTuru { get; set; }
         
         [ForeignKey("FaturaTuruID")]
-        public virtual FaturaTuru FaturaTuru { get; set; } = null!;
+        public virtual FaturaTuru? FaturaTuru { get; set; }
         
-        public virtual ICollection<FaturaDetay> FaturaDetaylari { get; set; } = null!;
-        public virtual ICollection<Irsaliye> Irsaliyeler { get; set; } = null!;
-        public virtual ICollection<FaturaOdeme> FaturaOdemeleri { get; set; } = null!;
-        public virtual ICollection<FaturaAklamaKuyruk> AklamaKayitlari { get; set; } = null!;
+        public virtual ICollection<FaturaDetay>? FaturaDetaylari { get; set; }
+        public virtual ICollection<Irsaliye>? Irsaliyeler { get; set; }
+        public virtual ICollection<FaturaOdeme>? FaturaOdemeleri { get; set; }
+        public virtual ICollection<FaturaAklamaKuyruk>? AklamaKayitlari { get; set; }
         
         public DateTime? AklanmaTarihi { get; set; }
         
@@ -115,6 +122,7 @@ namespace MuhasebeStokWebApp.Data.Entities
             OdemeDurumu = "";
             FaturaNotu = "";
             DovizTuru = "USD";
+            ParaBirimi = "USD";
             DovizKuru = 1;
             OlusturmaTarihi = DateTime.Now;
             Silindi = false;

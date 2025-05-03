@@ -12,6 +12,8 @@ using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Identity;
 using MuhasebeStokWebApp.Services;
 using MuhasebeStokWebApp.Services.Interfaces;
+using MuhasebeStokWebApp.Data.Repositories;
+using AutoMapper;
 
 namespace MuhasebeStokWebApp.Controllers
 {
@@ -20,42 +22,70 @@ namespace MuhasebeStokWebApp.Controllers
     {
         private readonly ApplicationDbContext _context;
         private readonly IBirimService _birimService;
-        private readonly new ILogService _logService;
+        private readonly ILogger<BirimController> _logger;
         private readonly IValidationService _validationService;
         private readonly new UserManager<ApplicationUser> _userManager;
+        private readonly IRepository<Birim> _birimRepository;
+        private readonly IMapper _mapper;
 
         public BirimController(
             ApplicationDbContext context,
             IBirimService birimService,
-            ILogService logService,
+            ILogger<BirimController> logger,
             IValidationService validationService,
             IMenuService menuService,
             UserManager<ApplicationUser> userManager,
-            RoleManager<IdentityRole> roleManager)
+            RoleManager<IdentityRole> roleManager,
+            ILogService logService,
+            IRepository<Birim> birimRepository,
+            IMapper mapper)
             : base(menuService, userManager, roleManager, logService)
         {
             _context = context;
             _birimService = birimService;
-            _logService = logService;
+            _logger = logger;
             _validationService = validationService;
             _userManager = userManager;
+            _birimRepository = birimRepository;
+            _mapper = mapper;
         }
 
         // GET: Birim
-        public async Task<IActionResult> Index()
+        public async Task<IActionResult> Index(string tab = "aktif")
         {
-            var birimler = await _context.Birimler
-                .Where(b => !b.Silindi)
-                .Select(b => new BirimViewModel
-                {
-                    BirimID = b.BirimID,
-                    BirimAdi = b.BirimAdi,
-                    Aciklama = b.Aciklama,
-                    Aktif = b.Aktif
-                })
-                .ToListAsync();
+            try
+            {
+                var birimler = await _birimService.GetAllAsync();
+                var aktifBirimler = birimler.Where(x => x.Aktif && !x.Silindi).ToList();
+                var pasifBirimler = birimler.Where(x => !x.Aktif && !x.Silindi).ToList();
+                var silinmisBirimler = birimler.Where(x => x.Silindi).ToList();
 
-            return View(birimler);
+                _logger.LogInformation($"Birim sayısı: Aktif={aktifBirimler.Count}, Pasif={pasifBirimler.Count}, Silinmiş={silinmisBirimler.Count}");
+
+                var viewModel = new BirimListViewModel();
+                
+                switch (tab.ToLower())
+                {
+                    case "pasif":
+                        viewModel.Birimler = _mapper.Map<List<BirimViewModel>>(pasifBirimler);
+                        break;
+                    case "silindi":
+                        viewModel.Birimler = _mapper.Map<List<BirimViewModel>>(silinmisBirimler);
+                        break;
+                    default: // "aktif"
+                        viewModel.Birimler = _mapper.Map<List<BirimViewModel>>(aktifBirimler);
+                        tab = "aktif"; // Varsayılan sekmeyi belirle
+                        break;
+                }
+
+                ViewBag.AktifTab = tab;
+                return View(viewModel);
+            }
+            catch (Exception ex)
+            {
+                _logger.LogError(ex, "Birimler listelenirken bir hata oluştu");
+                return View("Error");
+            }
         }
 
         // GET: Birim/Details/5
@@ -67,21 +97,22 @@ namespace MuhasebeStokWebApp.Controllers
             }
 
             var birim = await _context.Birimler
-                .FirstOrDefaultAsync(b => b.BirimID == id && b.Aktif);
+                .IgnoreQueryFilters() // Global filtreleri devre dışı bırak
+                .FirstOrDefaultAsync(b => b.BirimID == id);
 
             if (birim == null)
             {
                 return NotFound();
             }
 
-            var viewModel = new BirimViewModel
+            var viewModel = _mapper.Map<BirimViewModel>(birim);
+            
+            // AJAX isteği için modal içeriği döndür
+            if (Request.Headers["X-Requested-With"] == "XMLHttpRequest")
             {
-                BirimID = birim.BirimID,
-                BirimAdi = birim.BirimAdi,
-                Aciklama = birim.Aciklama,
-                Aktif = birim.Aktif
-            };
-
+                return PartialView("_DetailsPartial", viewModel);
+            }
+            
             return View(viewModel);
         }
 
@@ -105,22 +136,17 @@ namespace MuhasebeStokWebApp.Controllers
         {
             try
             {
-                // Log the incoming model
-                await _logService.LogInfoAsync($"Gelen model: BirimAdi={model.BirimAdi}, Aciklama={model.Aciklama}, Aktif={model.Aktif}");
-
-                // Birim adının boş olup olmadığını kontrol et
-                _validationService.ValidateRequiredString(ModelState, model.BirimAdi, nameof(model.BirimAdi), "Birim adı zorunludur.");
-
                 if (!ModelState.IsValid)
                 {
-                    return Json(await _validationService.HandleValidationErrorAsync(ModelState, "Birim oluşturma"));
+                    var errors = ModelState.Values.SelectMany(v => v.Errors).Select(e => e.ErrorMessage);
+                    return Json(new { success = false, message = "Form alanlarını doğru şekilde doldurunuz.", errors = errors });
                 }
 
-                // Kullanıcı ID'sini al
                 var currentUserId = User.FindFirst(System.Security.Claims.ClaimTypes.NameIdentifier)?.Value;
+                
                 if (string.IsNullOrEmpty(currentUserId))
                 {
-                    return Json(await _validationService.HandleErrorAsync("Kullanıcı bilgisi alınamadı.", "Birim oluşturma"));
+                    return Json(new { success = false, message = "Kullanıcı bilgisi bulunamadı." });
                 }
 
                 // Aynı isimde birim olup olmadığını kontrol et
@@ -140,32 +166,37 @@ namespace MuhasebeStokWebApp.Controllers
                     Aciklama = model.Aciklama?.Trim(),
                     Aktif = model.Aktif,
                     OlusturmaTarihi = DateTime.Now,
-                    OlusturanKullaniciID = currentUserId,
+                    OlusturanKullaniciID = Guid.TryParse(currentUserId, out Guid kullaniciGuid) ? kullaniciGuid : (Guid?)null,
                     BirimKodu = model.BirimAdi.Length > 3 ? model.BirimAdi.Substring(0, 3).ToUpper() : model.BirimAdi.ToUpper(),
                     Silindi = false,
                     BirimSembol = model.BirimAdi.Length > 3 ? model.BirimAdi.Substring(0, 3).ToUpper() : model.BirimAdi.ToUpper()
                 };
 
-                // Birim ekleme işlemini gerçekleştir
-                await _logService.LogInfoAsync($"Birim oluşturuluyor: {birim.BirimAdi}, Kullanıcı ID: {birim.OlusturanKullaniciID}");
+                // Önce birim ekle, sonra log oluştur
                 _context.Add(birim);
                 
                 try
                 {
+                    // Log işlemini burada yapmak yerine, önce kaydet
                     await _context.SaveChangesAsync();
+                    
+                    // Önbelleği temizle
+                    await _birimService.ClearCacheAsync();
+                    
+                    // Log oluştur
+                    await _logService.BirimOlusturmaLogOlustur(birim.BirimID.ToString(), birim.BirimAdi);
+                    
                     return Json(new { success = true, message = "Birim başarıyla oluşturuldu." });
                 }
                 catch (DbUpdateException ex)
                 {
                     var message = "Birim kaydedilirken bir hata oluştu. Lütfen tekrar deneyin.";
-                    await _logService.LogErrorAsync($"Veritabanı güncellenirken hata oluştu. Kullanıcı ID: {birim.OlusturanKullaniciID}", ex);
                     return Json(new { success = false, message = message });
                 }
             }
             catch (Exception ex)
             {
                 var message = "Birim oluşturulurken bir hata oluştu.";
-                await _logService.LogErrorAsync(message, ex);
                 return Json(new { success = false, message = message });
             }
         }
@@ -179,20 +210,15 @@ namespace MuhasebeStokWebApp.Controllers
             }
 
             var birim = await _context.Birimler
-                .FirstOrDefaultAsync(b => b.BirimID == id && b.Aktif);
+                .IgnoreQueryFilters() // Global filtreleri devre dışı bırak
+                .FirstOrDefaultAsync(b => b.BirimID == id);
 
             if (birim == null)
             {
                 return NotFound();
             }
 
-            var viewModel = new BirimEditViewModel
-            {
-                BirimID = birim.BirimID,
-                BirimAdi = birim.BirimAdi,
-                Aciklama = birim.Aciklama,
-                Aktif = birim.Aktif
-            };
+            var viewModel = _mapper.Map<BirimEditViewModel>(birim);
 
             if (Request.Headers["X-Requested-With"] == "XMLHttpRequest")
             {
@@ -220,7 +246,8 @@ namespace MuhasebeStokWebApp.Controllers
             try
             {
                 var birim = await _context.Birimler
-                    .FirstOrDefaultAsync(b => b.BirimID == id && !b.Silindi);
+                    .IgnoreQueryFilters() // Global filtreleri devre dışı bırak
+                    .FirstOrDefaultAsync(b => b.BirimID == id);
 
                 if (birim == null)
                 {
@@ -234,40 +261,38 @@ namespace MuhasebeStokWebApp.Controllers
                 // Aktif değerini doğru bir şekilde al
                 birim.Aktif = model.Aktif;
 
-                // Debug için log ekleyelim
-                await _logService.LogInfoAsync($"Güncellenen Birim - BirimID: {birim.BirimID}, Aktif: {birim.Aktif}");
-
                 birim.GuncellemeTarihi = DateTime.Now;
                 
                 // OlusturanKullaniciID'nin null olup olmadığını kontrol et
-                if (string.IsNullOrEmpty(birim.OlusturanKullaniciID))
+                if (birim.OlusturanKullaniciID == null)
                 {
                     var currentUserId = User.FindFirst(System.Security.Claims.ClaimTypes.NameIdentifier)?.Value;
-                    birim.OlusturanKullaniciID = currentUserId ?? "system";
+                    birim.OlusturanKullaniciID = string.IsNullOrEmpty(currentUserId) ? null : (Guid?)Guid.Parse(currentUserId);
                 }
                 
-                // SonGuncelleyenKullaniciID güncelleme
+                // Güncelleyen kullanıcı ID'sini al
                 var updateUserId = User.FindFirst(System.Security.Claims.ClaimTypes.NameIdentifier)?.Value;
-                if (!string.IsNullOrEmpty(updateUserId))
-                {
-                    birim.SonGuncelleyenKullaniciID = Guid.Parse(updateUserId);
-                }
+                birim.SonGuncelleyenKullaniciID = string.IsNullOrEmpty(updateUserId) ? null : (Guid?)Guid.Parse(updateUserId);
 
                 _context.Update(birim);
                 await _context.SaveChangesAsync();
                 
-                await _logService.LogInfoAsync($"Birim güncellendi: {birim.BirimID} - {birim.BirimAdi} - Aktif: {birim.Aktif}");
+                // Önbelleği temizle
+                await _birimService.ClearCacheAsync();
                 
+                // Log oluştur
+                await _logService.BirimGuncellemeLogOlustur(id.ToString(), birim.BirimAdi);
+
                 return Json(new { success = true, message = "Birim başarıyla güncellendi." });
             }
             catch (DbUpdateConcurrencyException ex)
             {
-                await _logService.LogErrorAsync("Birim güncellenirken veri tutarsızlığı oluştu.", ex);
+                _logger.LogError("Birim güncellenirken veri tutarsızlığı oluştu.", ex);
                 return Json(new { success = false, message = "Birim daha önce başka bir kullanıcı tarafından değiştirilmiş olabilir." });
             }
             catch (Exception ex)
             {
-                await _logService.LogErrorAsync("Birim güncellenirken hata oluştu.", ex);
+                _logger.LogError("Birim güncellenirken hata oluştu.", ex);
                 return Json(new { success = false, message = "Birim güncellenirken bir hata oluştu: " + ex.Message });
             }
         }
@@ -288,14 +313,13 @@ namespace MuhasebeStokWebApp.Controllers
                 return NotFound();
             }
 
-            var viewModel = new BirimViewModel
+            var viewModel = _mapper.Map<BirimViewModel>(birim);
+            
+            if (Request.Headers["X-Requested-With"] == "XMLHttpRequest")
             {
-                BirimID = birim.BirimID,
-                BirimAdi = birim.BirimAdi,
-                Aciklama = birim.Aciklama,
-                Aktif = birim.Aktif
-            };
-
+                return Json(viewModel);
+            }
+            
             return View(viewModel);
         }
 
@@ -311,22 +335,77 @@ namespace MuhasebeStokWebApp.Controllers
                 return NotFound();
             }
             
-            // Soft delete işlemi
+            // Silme işlemini gerçekleştir
+            //_context.Birimler.Remove(birim);
+            
+            // Soft delete yap
             birim.Silindi = true;
             birim.Aktif = false;
+            birim.GuncellemeTarihi = DateTime.Now;
+            birim.SonGuncelleyenKullaniciID = Guid.Parse(User.FindFirst(System.Security.Claims.ClaimTypes.NameIdentifier).Value);
             
             _context.Update(birim);
             await _context.SaveChangesAsync();
+
+            // Önbelleği temizle
+            await _birimService.ClearCacheAsync();
             
+            // Log oluştur
+            await _logService.BirimSilmeLogOlustur(id.ToString(), birim.BirimAdi);
+                
             TempData["SuccessMessage"] = "Birim başarıyla silindi.";
             return RedirectToAction(nameof(Index));
         }
 
         [HttpPost]
+        public async Task<IActionResult> DeleteBirim(Guid id)
+        {
+            try
+            {
+                var result = await _birimService.DeleteAsync(id);
+                
+                if (result)
+                {
+                    // Önbelleği temizle
+                    await _birimService.ClearCacheAsync();
+                    
+                    return Json(new { success = true, message = "Birim başarıyla silindi." });
+                }
+                else
+                {
+                    return Json(new { success = false, message = "Birim silinemedi. Bu birim ürünlerde kullanılıyor olabilir." });
+                }
+            }
+            catch (Exception ex)
+            {
+                _logger.LogError(ex, "Birim silinirken bir hata oluştu. BirimID: {BirimID}", id);
+                return Json(new { success = false, message = "Birim silinirken bir hata oluştu." });
+            }
+        }
+
+        [HttpPost]
         public async Task<IActionResult> GetBirimDetails(Guid id)
         {
-            // Stub metod, gerçek implementasyona göre doldurulacak
-            return Json(new { success = false, message = "Not implemented" });
+            try 
+            {
+                var birim = await _context.Birimler
+                    .IgnoreQueryFilters() // Global filtreleri devre dışı bırak
+                    .AsNoTracking()
+                    .FirstOrDefaultAsync(b => b.BirimID == id);
+                    
+                if (birim == null)
+                {
+                    return Json(new { success = false, message = "Birim bulunamadı." });
+                }
+                
+                var viewModel = _mapper.Map<BirimViewModel>(birim);
+                return Json(new { success = true, data = viewModel });
+            }
+            catch (Exception ex)
+            {
+                _logger.LogError(ex, "Birim detayları alınırken hata oluştu");
+                return Json(new { success = false, message = "Birim bilgileri yüklenirken bir hata oluştu." });
+            }
         }
 
         [HttpPost]
@@ -339,8 +418,40 @@ namespace MuhasebeStokWebApp.Controllers
         [HttpPost]
         public async Task<IActionResult> ToggleActive(Guid id)
         {
-            // Stub metod, gerçek implementasyona göre doldurulacak
-            return Json(new { success = false, message = "Not implemented" });
+            try
+            {
+                var birim = await _context.Birimler.FindAsync(id);
+                if (birim == null)
+                {
+                    return Json(new { success = false, message = "Birim bulunamadı." });
+                }
+                
+                // Aktiflik durumunu değiştir
+                birim.Aktif = !birim.Aktif;
+                birim.GuncellemeTarihi = DateTime.Now;
+                
+                // Güncelleyen kullanıcı ID'sini al
+                var updateUserId = User.FindFirst(System.Security.Claims.ClaimTypes.NameIdentifier)?.Value;
+                birim.SonGuncelleyenKullaniciID = string.IsNullOrEmpty(updateUserId) ? null : (Guid?)Guid.Parse(updateUserId);
+                
+                _context.Update(birim);
+                await _context.SaveChangesAsync();
+                
+                // Önbelleği temizle
+                await _birimService.ClearCacheAsync();
+                
+                // Log oluştur
+                await _logService.BirimDurumDegisikligiLogOlustur(id.ToString(), birim.BirimAdi, birim.Aktif);
+
+                var durumText = birim.Aktif ? "aktif" : "pasif";
+                return Json(new { success = true, message = $"Birim başarıyla {durumText} duruma getirildi.", isActive = birim.Aktif });
+            }
+            catch (Exception ex)
+            {
+                var message = "Birim durumu değiştirilirken bir hata oluştu.";
+                _logger.LogError(message, ex);
+                return Json(new { success = false, message = message });
+            }
         }
 
         [HttpPost]
@@ -348,6 +459,52 @@ namespace MuhasebeStokWebApp.Controllers
         {
             // Stub metod, gerçek implementasyona göre doldurulacak
             return Json(new { inUse = false });
+        }
+
+        // Pasife alınan veya silinen birimleri geri alma işlemi
+        [HttpPost]
+        public async Task<IActionResult> RestoreUnit(Guid id)
+        {
+            try
+            {
+                var birim = await _context.Birimler
+                    .IgnoreQueryFilters() // Global filtreleri devre dışı bırak
+                    .FirstOrDefaultAsync(b => b.BirimID == id);
+                    
+                if (birim == null)
+                {
+                    return Json(new { success = false, message = "Birim bulunamadı." });
+                }
+                
+                // Silindi durumunu false yap
+                birim.Silindi = false;
+                birim.Aktif = true; // Aktifleştir
+                birim.GuncellemeTarihi = DateTime.Now;
+                
+                // Güncelleyen kullanıcı ID'sini al
+                var updateUserId = User.FindFirst(System.Security.Claims.ClaimTypes.NameIdentifier)?.Value;
+                birim.SonGuncelleyenKullaniciID = string.IsNullOrEmpty(updateUserId) ? null : (Guid?)Guid.Parse(updateUserId);
+                
+                _context.Update(birim);
+                await _context.SaveChangesAsync();
+                
+                // Önbelleği temizle
+                await _birimService.ClearCacheAsync();
+                
+                await _logService.AddLogAsync(
+                    "Bilgi", 
+                    $"'{birim.BirimAdi}' birimi geri yüklendi.", 
+                    "BirimController/RestoreUnit",
+                    id.ToString());
+                    
+                return Json(new { success = true, message = "Birim başarıyla geri yüklendi." });
+            }
+            catch (Exception ex)
+            {
+                var message = "Birim geri yüklenirken bir hata oluştu.";
+                _logger.LogError(message, ex);
+                return Json(new { success = false, message = message });
+            }
         }
 
         private bool BirimExists(Guid id)

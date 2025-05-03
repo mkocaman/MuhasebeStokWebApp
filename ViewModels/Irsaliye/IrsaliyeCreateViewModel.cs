@@ -25,6 +25,9 @@ namespace MuhasebeStokWebApp.ViewModels.Irsaliye
         [Display(Name = "Fatura")]
         public Guid? FaturaID { get; set; }
 
+        [Display(Name = "Depo")]
+        public Guid? DepoID { get; set; }
+
         [StringLength(500)]
         [Display(Name = "Açıklama")]
         public string? Aciklama { get; set; }
@@ -40,6 +43,7 @@ namespace MuhasebeStokWebApp.ViewModels.Irsaliye
 
         public SelectList? CariListesi { get; set; }
         public SelectList? UrunListesi { get; set; }
+        public SelectList? DepoListesi { get; set; }
         public List<IrsaliyeDetayViewModel> IrsaliyeDetaylari { get; set; }
 
         public IrsaliyeCreateViewModel()

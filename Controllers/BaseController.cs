@@ -53,27 +53,25 @@ namespace MuhasebeStokWebApp.Controllers
         {
             try 
             {
-                // Kullanıcı kimliği ve rol bilgilerini al
-                var userId = User?.FindFirstValue(ClaimTypes.NameIdentifier);
-                var userRoles = User?.FindAll(ClaimTypes.Role)?.Select(c => c.Value)?.ToList();
+                // Kullanıcı ve rol bilgisini Template Method deseni kullanarak al
+                var (userId, userRoles, isAdmin) = await GetUserRoleInfoAsync();
+                ViewBag.IsAdmin = isAdmin;
                 
                 // Kullanıcı giriş yapmışsa ve rolleri varsa
                 if (!string.IsNullOrEmpty(userId) && userRoles != null && userRoles.Any())
                 {
-                    // Admin rolüne sahip kullanıcılar için özel işlemler
-                    bool isAdmin = userRoles.Contains("Admin");
-                    ViewBag.IsAdmin = isAdmin;
+                    // Alt sınıflara özel hook
+                    await OnAuthenticatedUserAsync(userId, userRoles, isAdmin);
                     
                     try
                     {
                         // Kullanıcının rollerine göre menü öğelerini getir
-                        var menuItems = await _menuService.GetActiveSidebarMenusAsync(userId);
+                        var menuItems = await GetMenuItemsAsync(userId);
                         
                         if (menuItems == null || !menuItems.Any())
                         {
                             // Alternatif bir yöntem dene: varsayılan menüleri manuel olarak oluştur
-                            await _logService.LogWarningAsync("BaseController.OnActionExecutionAsync", 
-                                "Menüler boş geldi. Varsayılan menüler kullanılıyor.");
+                            await LogWarningAsync("Menüler boş geldi. Varsayılan menüler kullanılıyor.");
                             menuItems = CreateDefaultMenuItems();
                             
                             // Debugging için ek bilgi
@@ -84,29 +82,7 @@ namespace MuhasebeStokWebApp.Controllers
                         menuItems = menuItems.OrderBy(m => m.Sira).ToList();
                         
                         // Stil sınıflarını ekleyerek menü öğelerinin görünümünü iyileştir
-                        string currentController = context.RouteData.Values["controller"]?.ToString();
-                        string currentAction = context.RouteData.Values["action"]?.ToString();
-                        
-                        foreach (var menuItem in menuItems)
-                        {
-                            // Controller adı mevcut controller adı ile eşleşiyorsa aktif olarak işaretle
-                            if (!string.IsNullOrEmpty(menuItem.Controller) && 
-                                menuItem.Controller.Equals(currentController, StringComparison.OrdinalIgnoreCase))
-                            {
-                                menuItem.Active = true;
-                            }
-                            
-                            // Alt menüler için de kontrolü yap
-                            foreach (var subItem in menuItem.AltMenuler)
-                            {
-                                if (!string.IsNullOrEmpty(subItem.Controller) && 
-                                    subItem.Controller.Equals(currentController, StringComparison.OrdinalIgnoreCase))
-                                {
-                                    subItem.Active = true;
-                                    menuItem.Active = true; // Üst menüyü de aktif yap
-                                }
-                            }
-                        }
+                        MarkActiveMenuItems(menuItems, context);
                         
                         // ViewBag'e menüleri aktar
                         ViewBag.MenuItems = menuItems;
@@ -116,8 +92,7 @@ namespace MuhasebeStokWebApp.Controllers
                     catch (Exception ex)
                     {
                         // Hata durumunda varsayılan menüleri oluştur ve hatayı logla
-                        await _logService.LogErrorAsync("BaseController.OnActionExecutionAsync", 
-                            $"Menüler getirilirken hata: {ex.Message}");
+                        await LogErrorAsync("Menüler getirilirken hata: " + ex.Message, ex);
                         ViewBag.MenuItems = CreateDefaultMenuItems();
                         ViewBag.UsingDefaultMenus = true;
                         ViewBag.MenuLoadError = ex.Message;
@@ -126,16 +101,19 @@ namespace MuhasebeStokWebApp.Controllers
                 else
                 {
                     // Giriş yapmamış kullanıcılar için
+                    await OnUnauthenticatedUserAsync();
                     ViewBag.MenuItems = new List<MenuViewModel>();
                     ViewBag.IsAuthenticated = false;
                     ViewBag.RequiresLogin = true;
                 }
+                
+                // Alt sınıflar için hook (hem giriş yapmış hem de yapmamış kullanıcılar için)
+                await OnBeforeActionExecutionAsync(context);
             }
             catch (Exception ex)
             {
                 // Genel hata durumunda
-                await _logService.LogErrorAsync("BaseController.OnActionExecutionAsync", 
-                    $"Beklenmeyen hata: {ex.Message}");
+                await LogErrorAsync("Beklenmeyen hata: " + ex.Message, ex);
                 
                 // Yine de varsayılan menüleri oluşturup görüntüleyelim
                 ViewBag.MenuItems = CreateDefaultMenuItems();
@@ -146,7 +124,124 @@ namespace MuhasebeStokWebApp.Controllers
             }
 
             // İşleme devam et
-            await next();
+            var resultContext = await next();
+            
+            // Action çalıştırıldıktan sonra devreye giren kod
+            await OnAfterActionExecutionAsync(context, resultContext);
+        }
+        
+        /// <summary>
+        /// Loglama işlemini yönetir - Override edilebilir
+        /// </summary>
+        protected virtual async Task LogWarningAsync(string message)
+        {
+            if (_logService != null)
+            {
+                await _logService.LogWarningAsync("BaseController.OnActionExecutionAsync", message);
+            }
+        }
+        
+        /// <summary>
+        /// Hata logunu yönetir - Override edilebilir
+        /// </summary>
+        protected virtual async Task LogErrorAsync(string message, Exception ex = null)
+        {
+            if (_logService != null)
+            {
+                await _logService.LogErrorAsync("BaseController.OnActionExecutionAsync", message, ex);
+            }
+        }
+        
+        /// <summary>
+        /// Kullanıcı ve rol bilgilerini alır - Override edilebilir template method
+        /// </summary>
+        protected virtual async Task<(string userId, List<string> userRoles, bool isAdmin)> GetUserRoleInfoAsync()
+        {
+            // Kullanıcı kimliği ve rol bilgilerini al
+            var userId = User?.FindFirstValue(ClaimTypes.NameIdentifier);
+            var userRoles = User?.FindAll(ClaimTypes.Role)?.Select(c => c.Value)?.ToList() ?? new List<string>();
+            
+            // Admin rolüne sahip kullanıcılar için özel işlemler
+            bool isAdmin = userRoles.Contains("Admin");
+            
+            return (userId, userRoles, isAdmin);
+        }
+        
+        /// <summary>
+        /// Kullanıcı rollerine göre menü öğelerini getirir - Override edilebilir template method
+        /// </summary>
+        protected virtual async Task<List<MenuViewModel>> GetMenuItemsAsync(string userId)
+        {
+            if (_menuService == null)
+                return CreateDefaultMenuItems();
+                
+            return await _menuService.GetActiveSidebarMenusAsync(userId);
+        }
+        
+        /// <summary>
+        /// Aktif menü öğelerini işaretler - Override edilebilir
+        /// </summary>
+        protected virtual void MarkActiveMenuItems(List<MenuViewModel> menuItems, ActionExecutingContext context)
+        {
+            string currentController = context.RouteData.Values["controller"]?.ToString();
+            string currentAction = context.RouteData.Values["action"]?.ToString();
+            
+            foreach (var menuItem in menuItems)
+            {
+                // Controller adı mevcut controller adı ile eşleşiyorsa aktif olarak işaretle
+                if (!string.IsNullOrEmpty(menuItem.Controller) && 
+                    menuItem.Controller.Equals(currentController, StringComparison.OrdinalIgnoreCase))
+                {
+                    menuItem.Active = true;
+                }
+                
+                // Alt menüler için de kontrolü yap
+                foreach (var subItem in menuItem.AltMenuler)
+                {
+                    if (!string.IsNullOrEmpty(subItem.Controller) && 
+                        subItem.Controller.Equals(currentController, StringComparison.OrdinalIgnoreCase))
+                    {
+                        subItem.Active = true;
+                        menuItem.Active = true; // Üst menüyü de aktif yap
+                    }
+                }
+            }
+        }
+        
+        /// <summary>
+        /// Giriş yapmış kullanıcılar için özelleştirme hook'u - Alt sınıflar override edebilir
+        /// </summary>
+        protected virtual async Task OnAuthenticatedUserAsync(string userId, List<string> userRoles, bool isAdmin)
+        {
+            // Alt sınıflar override edebilir
+            await Task.CompletedTask;
+        }
+        
+        /// <summary>
+        /// Giriş yapmamış kullanıcılar için özelleştirme hook'u - Alt sınıflar override edebilir
+        /// </summary>
+        protected virtual async Task OnUnauthenticatedUserAsync()
+        {
+            // Alt sınıflar override edebilir
+            await Task.CompletedTask;
+        }
+        
+        /// <summary>
+        /// Action çalıştırılmadan önce çağrılan hook - Alt sınıflar override edebilir
+        /// </summary>
+        protected virtual async Task OnBeforeActionExecutionAsync(ActionExecutingContext context)
+        {
+            // Alt sınıflar override edebilir
+            await Task.CompletedTask;
+        }
+        
+        /// <summary>
+        /// Action çalıştırıldıktan sonra çağrılan hook - Alt sınıflar override edebilir
+        /// </summary>
+        protected virtual async Task OnAfterActionExecutionAsync(ActionExecutingContext context, ActionExecutedContext resultContext)
+        {
+            // Alt sınıflar override edebilir
+            await Task.CompletedTask;
         }
         
         // Varsayılan menüleri oluşturan yardımcı metot
@@ -632,19 +727,26 @@ namespace MuhasebeStokWebApp.Controllers
         /// </summary>
         protected IActionResult SuccessResult(string message, object data = null, string url = null)
         {
+            var result = new
+            {
+                success = true,
+                message = message,
+                data = data,
+                url = url
+            };
+
             if (Request.Headers["X-Requested-With"] == "XMLHttpRequest")
             {
-                return Json(new { success = true, message, data, url });
+                return Json(result);
             }
-            
-            TempData["SuccessMessage"] = message;
-            
+
             if (!string.IsNullOrEmpty(url))
             {
                 return Redirect(url);
             }
-            
-            return RedirectToAction(nameof(Index));
+
+            TempData["SuccessMessage"] = message;
+            return RedirectToAction("Index");
         }
         
         /// <summary>
@@ -652,20 +754,18 @@ namespace MuhasebeStokWebApp.Controllers
         /// </summary>
         protected IActionResult ErrorResult(string message, Exception ex = null, HttpStatusCode statusCode = HttpStatusCode.BadRequest)
         {
-            if (ex != null && _logService != null)
+            if (ex != null)
             {
-                _logService.LogErrorAsync($"{this.GetType().Name}.ErrorResult", $"{message} Exception: {ex.Message}").Wait();
+                _logService?.LogErrorAsync("BaseController.ErrorResult", message, ex);
             }
-            
+
             if (Request.Headers["X-Requested-With"] == "XMLHttpRequest")
             {
-                Response.StatusCode = (int)statusCode;
-                return Json(new { success = false, message });
+                return StatusCode((int)statusCode, new { success = false, message = message });
             }
-            
+
             TempData["ErrorMessage"] = message;
-            
-            return RedirectToAction(nameof(Index));
+            return RedirectToAction("Index");
         }
         
         /// <summary>
@@ -673,11 +773,9 @@ namespace MuhasebeStokWebApp.Controllers
         /// </summary>
         protected string GetModelStateErrors()
         {
-            var errors = ModelState.Values
-                .SelectMany(v => v.Errors)
-                .Select(e => e.ErrorMessage);
-                
-            return string.Join(", ", errors);
+            return string.Join("; ", ModelState.Values
+                .SelectMany(x => x.Errors)
+                .Select(x => x.ErrorMessage));
         }
         
         /// <summary>
@@ -685,7 +783,7 @@ namespace MuhasebeStokWebApp.Controllers
         /// </summary>
         protected IActionResult ApiOk(object data = null, string message = "İşlem başarılı")
         {
-            return Ok(new { success = true, message, data });
+            return Json(new { success = true, message = message, data = data });
         }
         
         /// <summary>
@@ -693,7 +791,7 @@ namespace MuhasebeStokWebApp.Controllers
         /// </summary>
         protected IActionResult ApiBadRequest(string message = "İşlem sırasında bir hata oluştu", object errors = null)
         {
-            return BadRequest(new { success = false, message, errors });
+            return StatusCode((int)HttpStatusCode.BadRequest, new { success = false, message = message, errors = errors });
         }
         
         /// <summary>
@@ -701,88 +799,110 @@ namespace MuhasebeStokWebApp.Controllers
         /// </summary>
         protected Guid? GetCurrentUserId()
         {
-            var userId = User.FindFirstValue(ClaimTypes.NameIdentifier);
-            return Guid.TryParse(userId, out Guid id) ? id : null;
+            var userIdStr = User?.FindFirstValue(ClaimTypes.NameIdentifier);
+            return !string.IsNullOrEmpty(userIdStr) && Guid.TryParse(userIdStr, out Guid userId) ? userId : (Guid?)null;
         }
 
         protected async Task<BaseViewModel> GetBaseViewModel()
         {
-            var controllerName = ControllerContext.RouteData.Values["controller"]?.ToString();
-            var actionName = ControllerContext.RouteData.Values["action"]?.ToString();
-
-            var baseViewModel = new BaseViewModel
-            {
-                AppLanguages = await _languageService.GetAllLanguagesAsync(),
-            };
+            var viewModel = new BaseViewModel();
             
-            // Anasayfa özel ayarları
-            if (controllerName == "Home" && actionName == "Index")
+            // Kullanıcı kimliği ve rol bilgilerini al
+            var userIdStr = User?.FindFirstValue(ClaimTypes.NameIdentifier);
+            if (!string.IsNullOrEmpty(userIdStr) && Guid.TryParse(userIdStr, out Guid userId))
             {
-                baseViewModel.PageTitle = _localizer["Anasayfa"].ToString();
-                baseViewModel.MenuInfo = new MenuViewModel 
-                { 
-                    Ad = _localizer["Anasayfa"].ToString(),
-                    Url = Url.Action("Index", "Home") ?? "#"
-                };
-                baseViewModel.MenuTitle = _localizer["Anasayfa"].ToString();
+                viewModel.CurrentUserId = userId;
+                
+                if (_userManager != null)
+                {
+                    var user = await _userManager.FindByIdAsync(userIdStr);
+                    if (user != null)
+                    {
+                        viewModel.CurrentUserName = user.UserName ?? string.Empty;
+                        viewModel.CurrentUserFullName = $"{user.Ad ?? string.Empty} {user.Soyad ?? string.Empty}".Trim();
+                        viewModel.CurrentUserEmail = user.Email ?? string.Empty;
+                        
+                        if (_userManager != null)
+                        {
+                            var roles = await _userManager.GetRolesAsync(user);
+                            viewModel.CurrentUserRoles = roles.ToList();
+                            viewModel.IsAdmin = roles.Contains("Admin");
+                        }
+                    }
+                }
             }
-            // Cari özel ayarları
-            else if (controllerName == "Cari" && actionName == "Index")
-            {
-                baseViewModel.PageTitle = _localizer["Cari Liste"].ToString();
-                baseViewModel.MenuInfo = new MenuViewModel 
-                { 
-                    Ad = _localizer["Cari Liste"].ToString(),
-                    Url = Url.Action("Index", "Cari") ?? "#" 
-                };
-                baseViewModel.MenuTitle = _localizer["Cari Liste"].ToString();
-            }
-            // Ürün özel ayarları
-            else if (controllerName == "Urun" && actionName == "Index")
-            {
-                baseViewModel.PageTitle = _localizer["Ürün Liste"].ToString();
-                baseViewModel.MenuInfo = new MenuViewModel 
-                { 
-                    Ad = _localizer["Ürün Liste"].ToString(),
-                    Url = Url.Action("Index", "Urun") ?? "#"
-                };
-                baseViewModel.MenuTitle = _localizer["Ürün Liste"].ToString();
-            }
-            // Stok özel ayarları
-            else if (controllerName == "Stok" && (actionName == "Index" || actionName == "StokListesi"))
-            {
-                baseViewModel.PageTitle = _localizer["Stok Listesi"].ToString();
-                baseViewModel.MenuInfo = new MenuViewModel 
-                { 
-                    Ad = _localizer["Stok Listesi"].ToString(),
-                    Url = Url.Action("Index", "Stok") ?? "#"
-                };
-                baseViewModel.MenuTitle = _localizer["Stok Listesi"].ToString();
-            }
-            // Fatura özel ayarları
-            else if (controllerName == "Fatura" && actionName == "Index")
-            {
-                baseViewModel.PageTitle = _localizer["Fatura Listesi"].ToString();
-                baseViewModel.MenuInfo = new MenuViewModel 
-                { 
-                    Ad = _localizer["Fatura Listesi"].ToString(),
-                    Url = Url.Action("Index", "Fatura") ?? "#"
-                };
-                baseViewModel.MenuTitle = _localizer["Fatura Listesi"].ToString();
-            }
-            // İrsaliye özel ayarları
-            else if (controllerName == "Irsaliye" && actionName == "Index")
-            {
-                baseViewModel.PageTitle = _localizer["İrsaliye Listesi"].ToString();
-                baseViewModel.MenuInfo = new MenuViewModel 
-                { 
-                    Ad = _localizer["İrsaliye Listesi"].ToString(),
-                    Url = Url.Action("Index", "Irsaliye") ?? "#" 
-                };
-                baseViewModel.MenuTitle = _localizer["İrsaliye Listesi"].ToString();
-            }
+            
+            // Sistem ayarlarından varsayılan değerleri al (Şirket adı, logo, vs)
+            // TODO: Add settings service
+            
+            return viewModel;
+        }
 
-            return baseViewModel;
+        /// <summary>
+        /// İşlemin bir AJAX isteği olup olmadığını kontrol eder - Override edilebilir
+        /// </summary>
+        protected virtual bool IsAjaxRequest()
+        {
+            return Request.Headers["X-Requested-With"] == "XMLHttpRequest";
+        }
+
+        protected virtual void PopulateCurrentUserInfo(BaseViewModel viewModel)
+        {
+            if (User.Identity.IsAuthenticated)
+            {
+                var user = _userManager.GetUserAsync(User).Result;
+                if (user != null)
+                {
+                    // Eğer BaseViewModel'de bu özellikler bulunmuyorsa, 
+                    // dinamik olarak property'lerin varlığını kontrol edip varsa değer atayalım
+                    var type = viewModel.GetType();
+                    
+                    // CurrentUserId
+                    var propertyCurrentUserId = type.GetProperty("CurrentUserId");
+                    if (propertyCurrentUserId != null)
+                    {
+                        propertyCurrentUserId.SetValue(viewModel, user.Id);
+                    }
+                    
+                    // CurrentUserName
+                    var propertyCurrentUserName = type.GetProperty("CurrentUserName");
+                    if (propertyCurrentUserName != null)
+                    {
+                        propertyCurrentUserName.SetValue(viewModel, user.UserName ?? string.Empty);
+                    }
+                    
+                    // CurrentUserFullName
+                    var propertyCurrentUserFullName = type.GetProperty("CurrentUserFullName");
+                    if (propertyCurrentUserFullName != null)
+                    {
+                        // ApplicationUser'da Ad ve Soyad özelliklerini kullan
+                        propertyCurrentUserFullName.SetValue(viewModel, $"{user.Ad ?? string.Empty} {user.Soyad ?? string.Empty}".Trim()); 
+                    }
+                    
+                    // CurrentUserEmail
+                    var propertyCurrentUserEmail = type.GetProperty("CurrentUserEmail");
+                    if (propertyCurrentUserEmail != null)
+                    {
+                        propertyCurrentUserEmail.SetValue(viewModel, user.Email ?? string.Empty);
+                    }
+                    
+                    // CurrentUserRoles
+                    var propertyCurrentUserRoles = type.GetProperty("CurrentUserRoles");
+                    if (propertyCurrentUserRoles != null)
+                    {
+                        var roles = _userManager.GetRolesAsync(user).Result;
+                        propertyCurrentUserRoles.SetValue(viewModel, roles);
+                    }
+                    
+                    // IsAdmin
+                    var propertyIsAdmin = type.GetProperty("IsAdmin");
+                    if (propertyIsAdmin != null)
+                    {
+                        var isAdmin = User.IsInRole("Admin");
+                        propertyIsAdmin.SetValue(viewModel, isAdmin);
+                    }
+                }
+            }
         }
     }
 } 

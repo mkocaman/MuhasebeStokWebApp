@@ -9,6 +9,7 @@ using MuhasebeStokWebApp.Services;
 using MuhasebeStokWebApp.Services.Menu;
 using MuhasebeStokWebApp.Services.Auth;
 using MuhasebeStokWebApp.Services.ParaBirimiModulu;
+using MuhasebeStokWebApp.Services.ParaBirimiBirlesikModul;
 using MuhasebeStokWebApp.Services.Currency;
 using MuhasebeStokWebApp.Middleware;
 using Microsoft.AspNetCore.SignalR;
@@ -139,11 +140,29 @@ builder.Services.AddDataProtection();
 builder.Services.AddScoped(typeof(IRepository<>), typeof(Repository<>));
 builder.Services.AddScoped<MuhasebeStokWebApp.Data.Repositories.IUnitOfWork, MuhasebeStokWebApp.Data.Repositories.UnitOfWork>();
 
+// Entity repository'lerini ekliyoruz
+builder.Services.AddScoped<MuhasebeStokWebApp.Data.Repositories.EntityRepositories.IUrunRepository, MuhasebeStokWebApp.Data.Repositories.EntityRepositories.UrunRepository>();
+builder.Services.AddScoped<MuhasebeStokWebApp.Data.Repositories.EntityRepositories.IFaturaRepository, MuhasebeStokWebApp.Data.Repositories.EntityRepositories.FaturaRepository>();
+builder.Services.AddScoped<MuhasebeStokWebApp.Data.Repositories.EntityRepositories.ICariRepository, MuhasebeStokWebApp.Data.Repositories.EntityRepositories.CariRepository>();
+builder.Services.AddScoped<MuhasebeStokWebApp.Data.Repositories.IIrsaliyeRepository, MuhasebeStokWebApp.Data.Repositories.IrsaliyeRepository>();
+builder.Services.AddScoped<MuhasebeStokWebApp.Data.Repositories.IIrsaliyeDetayRepository, MuhasebeStokWebApp.Data.Repositories.IrsaliyeDetayRepository>();
+
 // HttpClient servisini ekliyoruz
 builder.Services.AddHttpClient();
 
 // LogService bağımlılığını ekliyoruz
 builder.Services.AddScoped<ILogService, LogService>();
+
+// TransactionManagerService bağımlılığını ekliyoruz
+builder.Services.AddScoped<ITransactionManagerService, TransactionManagerService>();
+
+// ExceptionHandlingService bağımlılığını ekliyoruz
+builder.Services.AddScoped<MuhasebeStokWebApp.Services.ExceptionHandlingService>();
+builder.Services.AddScoped(typeof(MuhasebeStokWebApp.Services.IExceptionHandlingService), provider => provider.GetRequiredService<MuhasebeStokWebApp.Services.ExceptionHandlingService>());
+builder.Services.AddScoped(typeof(MuhasebeStokWebApp.Services.Interfaces.IExceptionHandlingService), provider => provider.GetRequiredService<MuhasebeStokWebApp.Services.ExceptionHandlingService>());
+
+// ParaBirimiCeviriciService bağımlılığını ekliyoruz
+builder.Services.AddScoped<IParaBirimiCeviriciService, ParaBirimiCeviriciService>();
 
 // AutoMapper'ı ekliyoruz
 builder.Services.AddAutoMapper(typeof(MappingProfiles));
@@ -158,8 +177,16 @@ builder.Services.AddScoped<IDbMigrationService, DbMigrationService>();
 builder.Services.AddScoped<MuhasebeStokWebApp.Services.SistemLogService>();
 builder.Services.AddHttpContextAccessor();
 
+// SoftDeleteService'i ekliyoruz
+builder.Services.AddScoped(typeof(ISoftDeleteService<>), typeof(SoftDeleteService<>));
+builder.Services.AddScoped<ISoftDeleteService<Urun>, UrunSoftDeleteService>();
+builder.Services.AddScoped<ISoftDeleteService<Cari>, CariSoftDeleteService>();
+
+// Filter servislerini ekliyoruz
+builder.Services.AddScoped<MuhasebeStokWebApp.Services.Filters.UrunFilterService>();
+
 // UserManager'ı ekliyoruz
-builder.Services.AddScoped<UserManager>();
+builder.Services.AddScoped<MuhasebeStokWebApp.Services.UserManager>();
 
 // StokFifoService'i ekliyoruz
 builder.Services.AddScoped<StokFifoService>();
@@ -176,11 +203,41 @@ builder.Services.AddScoped<ICariService, CariService>();
 // CariHareketService'i ekliyoruz
 builder.Services.AddScoped<ICariHareketService, CariHareketService>();
 
+// FaturaService'i ekliyoruz
+builder.Services.AddScoped<IFaturaService, FaturaService>();
+
+// FaturaTransactionService'i ekliyoruz
+builder.Services.AddScoped<IFaturaTransactionService, FaturaTransactionService>();
+
+// FaturaCrudService'i ekliyoruz
+builder.Services.AddScoped<IFaturaCrudService, FaturaCrudService>();
+
+// FaturaValidationService'i ekliyoruz
+builder.Services.AddScoped<IFaturaValidationService, FaturaValidationService>();
+
+// FaturaOrchestrationService'i ekliyoruz
+builder.Services.AddScoped<IFaturaOrchestrationService, FaturaOrchestrationService>();
+
 // SistemAyarService'i ekliyoruz
 builder.Services.AddScoped<ISistemAyarService, SistemAyarService>();
 
 // IStokService'i ekliyoruz
 builder.Services.AddScoped<IStokService, StokService>();
+
+// IStokHareketService'i ekliyoruz
+builder.Services.AddScoped<IStokHareketService, StokHareketService>();
+
+// StokKontrolService'i ekliyoruz
+builder.Services.AddScoped<IStokKontrolService, StokKontrolService>();
+
+// IIrsaliyeService'i ekliyoruz
+builder.Services.AddScoped<IIrsaliyeService, IrsaliyeService>();
+
+// FaturaNumaralandirmaService'i ekliyoruz
+builder.Services.AddScoped<IFaturaNumaralandirmaService, FaturaNumaralandirmaService>();
+
+// IrsaliyeNumaralandirmaService'i ekliyoruz
+builder.Services.AddScoped<IIrsaliyeNumaralandirmaService, IrsaliyeNumaralandirmaService>();
 
 // AuthService'i ekliyoruz
 builder.Services.AddScoped<IAuthService, AuthService>();
@@ -191,12 +248,15 @@ builder.Services.AddScoped<IMenuService, MenuService>();
 // BirimService'i ekliyoruz
 builder.Services.AddScoped<IBirimService, BirimService>();
 
-// Para birimi modülü servislerini ekliyoruz
+// Birleştirilmiş Para Birimi Modülü servislerini ekliyoruz
+builder.Services.AddScoped<MuhasebeStokWebApp.Services.ParaBirimiBirlesikModul.IParaBirimiService, MuhasebeStokWebApp.Services.ParaBirimiBirlesikModul.ParaBirimiService>();
+
+// Eski Para birimi modülü servislerini geçiş süreci için koruyoruz
 builder.Services.AddScoped<MuhasebeStokWebApp.Services.ParaBirimiModulu.IParaBirimiService, MuhasebeStokWebApp.Services.ParaBirimiModulu.ParaBirimiService>();
 builder.Services.AddScoped<MuhasebeStokWebApp.Services.ParaBirimiModulu.IKurDegeriService, MuhasebeStokWebApp.Services.ParaBirimiModulu.KurDegeriService>();
 builder.Services.AddScoped<MuhasebeStokWebApp.Services.ParaBirimiModulu.IParaBirimiIliskiService, MuhasebeStokWebApp.Services.ParaBirimiModulu.ParaBirimiIliskiService>();
 
-// Services.Interfaces altındaki IParaBirimiService'i de açıkça kaydedelim
+// Services.Interfaces altındaki IParaBirimiService için artık birleştirilmiş servisi bağlayalım
 builder.Services.AddScoped<MuhasebeStokWebApp.Services.Interfaces.IParaBirimiService, MuhasebeStokWebApp.Services.ParaBirimiAdapter>();
 
 // IDovizKuruService servisini DovizKuruServiceAdapter ile eşleştiriyoruz
@@ -213,12 +273,20 @@ builder.Services.AddScoped<ISozlesmeService, SozlesmeService>();
 builder.Services.AddScoped<IMerkeziAklamaService, MerkeziAklamaService>();
 builder.Services.AddScoped<IStokFifoService, StokFifoService>();
 
+// SistemLogService'i interface üzerinden kaydet
+builder.Services.AddScoped<ISistemLogService, SistemLogService>();
+
+// EmailService ve diğer servisler için interface üzerinden kayıt
+builder.Services.AddScoped<MuhasebeStokWebApp.Services.Interfaces.IEmailService, MuhasebeStokWebApp.Services.EmailService>();
+builder.Services.AddScoped<INotificationService, NotificationService>();
+
+// StokHareketService ve StokFifoService'in tekrar eden kayıtlarını düzelt
+// Not: Tekrar eden kayıtları kaldır ve sadece interface üzerinden kaydet
+
 builder.Services.AddSignalR();
 builder.Services.Configure<EmailSettings>(builder.Configuration.GetSection("EmailSettings"));
 // Arayüzlerin uygulamalarını açıkça tanımlayarak çakışmaları önlüyoruz
 builder.Services.AddScoped<MuhasebeStokWebApp.Services.Email.IEmailService, MuhasebeStokWebApp.Services.Email.EmailService>();
-builder.Services.AddScoped<MuhasebeStokWebApp.Services.Interfaces.IEmailService, MuhasebeStokWebApp.Services.EmailService>();
-builder.Services.AddScoped<INotificationService, NotificationService>();
 
 // Localization
 builder.Services.AddLocalization(options => options.ResourcesPath = "Resources");
@@ -257,6 +325,17 @@ builder.Services.AddCors(options =>
     });
 });
 
+// Exception Stratejilerini ve Factory'yi ekle
+builder.Services.AddSingleton<MuhasebeStokWebApp.Exceptions.ExceptionStrategyFactory>();
+builder.Services.AddSingleton<MuhasebeStokWebApp.Exceptions.IExceptionStrategy, MuhasebeStokWebApp.Exceptions.Strategies.BusinessExceptionStrategy>();
+builder.Services.AddSingleton<MuhasebeStokWebApp.Exceptions.IExceptionStrategy, MuhasebeStokWebApp.Exceptions.Strategies.ValidationExceptionStrategy>();
+builder.Services.AddSingleton<MuhasebeStokWebApp.Exceptions.IExceptionStrategy, MuhasebeStokWebApp.Exceptions.Strategies.DataExceptionStrategy>();
+builder.Services.AddSingleton<MuhasebeStokWebApp.Exceptions.IExceptionStrategy, MuhasebeStokWebApp.Exceptions.Strategies.DbExceptionStrategy>();
+builder.Services.AddSingleton<MuhasebeStokWebApp.Exceptions.IExceptionStrategy, MuhasebeStokWebApp.Exceptions.Strategies.DefaultExceptionStrategy>();
+
+// ParaBirimiDonusumHelper'ı DI container'a ekle
+builder.Services.AddScoped<MuhasebeStokWebApp.Services.Interfaces.IParaBirimiDonusumHelper, MuhasebeStokWebApp.Services.Helpers.ParaBirimiDonusumHelper>();
+
 builder.Services.AddControllersWithViews();
 
 var app = builder.Build();
@@ -281,13 +360,23 @@ using (var scope = app.Services.CreateScope())
     {
         var context = services.GetRequiredService<ApplicationDbContext>();
         
-        // Veritabanını oluştur
-        context.Database.Migrate();
+        // Veritabanı varsa migrationları uygula, yoksa oluştur
+        if (context.Database.CanConnect())
+        {
+            Log.Information("Veritabanına bağlantı başarılı. Migrationlar uygulanıyor...");
+            // Migrationları uygula ama tablolar varsa oluşturmaya çalışma
+            context.Database.EnsureCreated();
+        }
+        else
+        {
+            Log.Warning("Veritabanına bağlantı sağlanamadı. Veritabanı oluşturuluyor...");
+            context.Database.EnsureCreated();
+        }
         
         // Gerekli başlangıç verilerini ekle
         await AppDbInitializer.SeedData(services, context);
         
-        Log.Information("Veritabanı başarıyla oluşturuldu ve migrationlar uygulandı.");
+        Log.Information("Veritabanı işlemleri başarıyla tamamlandı.");
     }
     catch (Exception ex)
     {

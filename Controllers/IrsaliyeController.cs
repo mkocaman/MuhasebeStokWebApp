@@ -60,38 +60,44 @@ namespace MuhasebeStokWebApp.Controllers
     public class IrsaliyeController : BaseController
     {
         private readonly IUnitOfWork _unitOfWork;
-        private readonly ILogger<IrsaliyeController> _logger;
         private readonly ApplicationDbContext _context;
+        private readonly ILogger<IrsaliyeController> _logger;
+        private readonly UserManager<ApplicationUser> _userManager;
+        private readonly IIrsaliyeService _irsaliyeService;
+        private readonly IIrsaliyeNumaralandirmaService _irsaliyeNumaralandirmaService;
         private readonly StokFifoService _stokFifoService;
         private readonly IDovizKuruService _dovizKuruService;
-        private new readonly ILogService _logService;
+        private readonly ILogService _logService;
         private readonly IWebHostEnvironment _env;
         private readonly IDropdownService _dropdownService;
-        protected new readonly UserManager<ApplicationUser> _userManager;
         protected new readonly RoleManager<IdentityRole> _roleManager;
 
         public IrsaliyeController(
             IUnitOfWork unitOfWork,
-            ILogger<IrsaliyeController> logger,
             ApplicationDbContext context,
+            ILogger<IrsaliyeController> logger,
+            ILogService logService,
             IMenuService menuService,
+            UserManager<ApplicationUser> userManager,
+            RoleManager<IdentityRole> roleManager,
+            IIrsaliyeService irsaliyeService,
+            IIrsaliyeNumaralandirmaService irsaliyeNumaralandirmaService,
             StokFifoService stokFifoService,
             IDovizKuruService dovizKuruService,
-            ILogService logService,
             IWebHostEnvironment env,
-            IDropdownService dropdownService,
-            UserManager<ApplicationUser> userManager,
-            RoleManager<IdentityRole> roleManager) : base(menuService, userManager, roleManager, logService)
+            IDropdownService dropdownService)
+            : base(menuService, userManager, roleManager, logService)
         {
             _unitOfWork = unitOfWork;
-            _logger = logger;
             _context = context;
+            _logger = logger;
+            _userManager = userManager;
+            _irsaliyeService = irsaliyeService;
+            _irsaliyeNumaralandirmaService = irsaliyeNumaralandirmaService;
             _stokFifoService = stokFifoService;
             _dovizKuruService = dovizKuruService;
-            _logService = logService;
             _env = env;
             _dropdownService = dropdownService;
-            _userManager = userManager;
             _roleManager = roleManager;
         }
 
@@ -213,51 +219,76 @@ namespace MuhasebeStokWebApp.Controllers
         [HttpGet]
         public async Task<IActionResult> Details(Guid id)
         {
-            var irsaliye = await _unitOfWork.IrsaliyeRepository.GetIrsaliyeWithDetailsAsync(id);
+            var irsaliye = await _unitOfWork.Repository<DEntityIrsaliye>().GetFirstOrDefaultAsync(
+                filter: i => i.IrsaliyeID.Equals(id),
+                includeProperties: "Cari,Fatura,IrsaliyeDetaylari.Urun");
+
             if (irsaliye == null)
             {
                 return NotFound();
             }
 
-            var model = new IrsaliyeDetailViewModel
+            var viewModel = new IrsaliyeDetailViewModel
             {
                 IrsaliyeID = irsaliye.IrsaliyeID,
                 IrsaliyeNumarasi = irsaliye.IrsaliyeNumarasi ?? string.Empty,
                 IrsaliyeTarihi = irsaliye.IrsaliyeTarihi,
                 CariID = irsaliye.CariID,
+                CariAdi = irsaliye.Cari?.Ad ?? string.Empty,
+                CariVergiNo = irsaliye.Cari?.VergiNo ?? string.Empty,
+                CariTelefon = irsaliye.Cari?.Telefon ?? string.Empty,
+                CariAdres = irsaliye.Cari?.Adres ?? string.Empty,
+                IrsaliyeTuru = irsaliye.IrsaliyeTuru ?? string.Empty,
                 FaturaID = irsaliye.FaturaID,
+                FaturaNumarasi = irsaliye.Fatura?.FaturaNumarasi ?? string.Empty,
                 Aciklama = irsaliye.Aciklama ?? string.Empty,
-                CariAdi = irsaliye.Cari?.Ad ?? "Belirtilmemiş",
-                IrsaliyeDetaylari = irsaliye.IrsaliyeDetaylari?.Select(d => new IrsaliyeKalemViewModel
+                Aktif = irsaliye.Aktif,
+                OlusturmaTarihi = irsaliye.OlusturmaTarihi,
+                GuncellemeTarihi = irsaliye.GuncellemeTarihi,
+                IrsaliyeDetaylari = irsaliye.IrsaliyeDetaylari.Select(id => new IrsaliyeVM.IrsaliyeKalemViewModel
                 {
-                    KalemID = d.IrsaliyeDetayID,
-                    IrsaliyeID = d.IrsaliyeID,
-                    UrunID = d.UrunID,
-                    UrunAdi = d.Urun?.UrunAdi,
-                    Miktar = d.Miktar,
-                    Birim = d.Birim,
-                    BirimFiyat = d.BirimFiyat,
-                    Aciklama = d.Aciklama
+                    KalemID = id.IrsaliyeDetayID,
+                    UrunID = id.UrunID,
+                    UrunAdi = id.Urun?.UrunAdi ?? string.Empty,
+                    UrunKodu = id.Urun?.UrunKodu ?? string.Empty,
+                    Miktar = id.Miktar,
+                    Birim = id.Birim ?? string.Empty,
+                    Aciklama = id.Aciklama ?? string.Empty
                 }).ToList()
             };
 
-            return View(model);
+            return View(viewModel);
         }
 
-        // Yeni irsaliye oluşturma formu
-        [HttpGet]
+        // GET: Irsaliye/Create
         public async Task<IActionResult> Create()
         {
-            var model = new IrsaliyeCreateViewModel
+            try
             {
-                IrsaliyeTarihi = DateTime.Now,
-                Aktif = true
-            };
-
-            // ViewBag'i direkt doldur
-            await PrepareViewBagForCreate();
-            
-            return View(model);
+                _logger.LogInformation("İrsaliye oluşturma sayfası yükleniyor");
+                
+                // Yeni irsaliye numarası oluştur
+                string irsaliyeNumarasi = await _irsaliyeNumaralandirmaService.GenerateIrsaliyeNumarasiAsync();
+                
+                var viewModel = new IrsaliyeCreateViewModel
+                {
+                    IrsaliyeNumarasi = irsaliyeNumarasi,
+                    IrsaliyeTarihi = DateTime.Today,
+                    Aktif = true,
+                    IrsaliyeDetaylari = new List<IrsaliyeVM.IrsaliyeDetayViewModel>()
+                };
+                
+                // Dropdownları doldur
+                await PopulateDropdownsAsync(viewModel);
+                
+                return View(viewModel);
+            }
+            catch (Exception ex)
+            {
+                _logger.LogError(ex, "İrsaliye oluşturma sayfası yüklenirken hata oluştu");
+                TempData["ErrorMessage"] = "İrsaliye oluşturma sayfası yüklenirken bir hata oluştu.";
+                return RedirectToAction("Index");
+            }
         }
 
         // Yeni irsaliye oluşturma işlemi
@@ -319,7 +350,7 @@ namespace MuhasebeStokWebApp.Controllers
                 }
             }
 
-            await PrepareViewBagForCreate();
+            await PopulateDropdownsAsync(model);
             return View(model);
         }
 
@@ -621,43 +652,20 @@ namespace MuhasebeStokWebApp.Controllers
                 .Any(e => e.IrsaliyeID.Equals(id) && e.Aktif);
         }
         
-        // Otomatik irsaliye numarası oluşturma
+        /// <summary>
+        /// Yeni irsaliye numarası oluşturur
+        /// </summary>
         private async Task<string> GenerateNewIrsaliyeNumber()
         {
             try
             {
-                // Bugünün tarihini al ve formatla (YYMMDD)
-                string dateFormat = DateTime.Now.ToString("yyMMdd");
-                
-                // Son irsaliye numarasını bul
-                var lastIrsaliye = await _unitOfWork.Repository<DEntityIrsaliye>().GetAsync(
-                    orderBy: q => q.OrderByDescending(i => i.OlusturmaTarihi)
-                );
-                
-                int sequence = 1;
-                
-                if (lastIrsaliye.Any())
-                {
-                    var lastNumber = lastIrsaliye.First().IrsaliyeNumarasi;
-                    
-                    // Son irsaliye numarasından sıra numarasını çıkarmaya çalış
-                    if (lastNumber != null && lastNumber.StartsWith("IRS-") && lastNumber.Length >= 14)
-                    {
-                        string lastSequence = lastNumber.Substring(11); // Son 3 karakter
-                        if (int.TryParse(lastSequence, out int lastSeq))
-                        {
-                            sequence = lastSeq + 1;
-                        }
-                    }
-                }
-                
-                // Yeni irsaliye numarası oluştur (IRS-YYMMDD-001 formatında)
-                return $"IRS-{dateFormat}-{sequence:000}";
+                return await _irsaliyeNumaralandirmaService.GenerateIrsaliyeNumarasiAsync();
             }
-            catch (Exception)
+            catch (Exception ex)
             {
                 // Hata durumunda varsayılan bir numara döndür
-                return $"IRS-{DateTime.Now.ToString("yyMMdd")}-001";
+                _logger.LogError(ex, "İrsaliye numarası oluşturulurken hata oluştu.");
+                return $"IRS-{DateTime.Now.ToString("yyMMdd")}-0001";
             }
         }
 
@@ -686,7 +694,7 @@ namespace MuhasebeStokWebApp.Controllers
         }
 
         // ViewBag hazırlama yardımcı metodu
-        private async Task PrepareViewBagForCreate()
+        private async Task PopulateDropdownsAsync(IrsaliyeCreateViewModel model)
         {
             // Cari listesini hazırla
             ViewBag.Cariler = new SelectList(await _context.Cariler
@@ -766,36 +774,47 @@ namespace MuhasebeStokWebApp.Controllers
         // Detayları güncelleme, ekleme ve silme işlemlerini yapan metod
         private async Task UpdateIrsaliyeDetaylarAsync(Guid irsaliyeID, List<MuhasebeStokWebApp.ViewModels.Irsaliye.IrsaliyeDetayViewModel> detaylar)
         {
-            // Mevcut detayları getir
-            var mevcutDetaylar = await _context.IrsaliyeDetaylari
-                .Where(d => d.IrsaliyeID == irsaliyeID)
-                .ToListAsync();
-
-            // Mevcut detayları sil
-            _context.IrsaliyeDetaylari.RemoveRange(mevcutDetaylar);
-
-            // Yeni detayları ekle
-            if (detaylar != null && detaylar.Any())
+            // IrsaliyeService'deki metodu çağır
+            var irsaliyeService = HttpContext.RequestServices.GetService(typeof(IIrsaliyeService)) as IIrsaliyeService;
+            if (irsaliyeService != null)
             {
-                foreach (var detay in detaylar)
-                {
-                    if (detay.UrunID != Guid.Empty)
-                    {
-                        var urun = await _context.Urunler.FindAsync(detay.UrunID);
-                        if (urun != null)
-                        {
-                            var yeniDetay = new DEntityIrsaliyeDetay
-                            {
-                                IrsaliyeDetayID = Guid.NewGuid(),
-                                IrsaliyeID = irsaliyeID,
-                                UrunID = detay.UrunID,
-                                Miktar = detay.Miktar,
-                                BirimFiyat = detay.BirimFiyat,
-                                Birim = detay.Birim,
-                                Aciklama = detay.Aciklama
-                            };
+                await irsaliyeService.UpdateIrsaliyeDetaylarAsync(irsaliyeID, detaylar);
+            }
+            else
+            {
+                _logger.LogError("IIrsaliyeService servisine erişilemedi.");
+                
+                // Mevcut detayları getir
+                var mevcutDetaylar = await _context.IrsaliyeDetaylari
+                    .Where(d => d.IrsaliyeID == irsaliyeID)
+                    .ToListAsync();
 
-                            await _context.IrsaliyeDetaylari.AddAsync(yeniDetay);
+                // Mevcut detayları sil
+                _context.IrsaliyeDetaylari.RemoveRange(mevcutDetaylar);
+
+                // Yeni detayları ekle
+                if (detaylar != null && detaylar.Any())
+                {
+                    foreach (var detay in detaylar)
+                    {
+                        if (detay.UrunID != Guid.Empty)
+                        {
+                            var urun = await _context.Urunler.FindAsync(detay.UrunID);
+                            if (urun != null)
+                            {
+                                var yeniDetay = new DEntityIrsaliyeDetay
+                                {
+                                    IrsaliyeDetayID = Guid.NewGuid(),
+                                    IrsaliyeID = irsaliyeID,
+                                    UrunID = detay.UrunID,
+                                    Miktar = detay.Miktar,
+                                    BirimFiyat = detay.BirimFiyat,
+                                    Birim = detay.Birim,
+                                    Aciklama = detay.Aciklama
+                                };
+
+                                await _context.IrsaliyeDetaylari.AddAsync(yeniDetay);
+                            }
                         }
                     }
                 }
@@ -819,27 +838,22 @@ namespace MuhasebeStokWebApp.Controllers
             return model;
         }
 
-        private void PrepareDropdownLists(IrsaliyeCreateViewModel model)
+        private async Task PrepareDropdownLists(IrsaliyeCreateViewModel model)
         {
             try
             {
-                var cariler = _context.Cariler
-                    .Where(c => c.AktifMi && !c.Silindi)
-                    .OrderBy(c => c.Ad)
-                    .ToList();
-                model.CariListesi = new SelectList(cariler, "CariID", "Ad");
-
-                var urunler = _context.Urunler
-                    .Where(u => u.Aktif)
-                    .OrderBy(u => u.UrunAdi)
-                    .ToList();
-                model.UrunListesi = new SelectList(urunler, "UrunID", "UrunAdi");
+                // DropdownService kullanarak dropdown değerlerini al
+                var dropdowns = await _dropdownService.PrepareIrsaliyeDropdownsAsync();
                 
-                // ViewBag için de aynı ürünleri ayarla
-                ViewBag.Cariler = new SelectList(cariler, "CariID", "Ad");
-                ViewBag.Urunler = new SelectList(urunler, "UrunID", "UrunAdi");
-                ViewBag.IrsaliyeTurleri = new SelectList(new List<string> { "Giriş", "Çıkış" }, "Çıkış");
-                ViewBag.Durumlar = new SelectList(new List<string> { "Açık", "Kapalı", "İptal" }, "Açık");
+                // Model için SelectList'leri ayarla
+                model.CariListesi = dropdowns["CariListesi"];
+                model.UrunListesi = dropdowns["UrunListesi"];
+                
+                // ViewBag için de aynı değerleri ayarla
+                ViewBag.Cariler = dropdowns["CariListesi"];
+                ViewBag.Urunler = dropdowns["UrunListesi"];
+                ViewBag.IrsaliyeTurleri = dropdowns["IrsaliyeTurleri"];
+                ViewBag.Durumlar = dropdowns["Durumlar"];
             }
             catch (Exception ex)
             {
@@ -858,51 +872,82 @@ namespace MuhasebeStokWebApp.Controllers
             }
         }
 
-        private void PrepareDropdownLists(IrsaliyeEditViewModel model)
+        private async Task PrepareDropdownLists(IrsaliyeEditViewModel model)
         {
-            var cariler = _context.Cariler
-                .Where(c => c.AktifMi && !c.Silindi)
-                .OrderBy(c => c.Ad)
-                .ToList();
-            model.CariListesi = new SelectList(cariler, "CariID", "Ad", model.CariID);
-
-            var urunler = _context.Urunler
-                .Where(u => u.Aktif)
-                .OrderBy(u => u.UrunAdi)
-                .ToList();
-            model.UrunListesi = new SelectList(urunler, "UrunID", "UrunAdi");
+            try
+            {
+                // DropdownService kullanarak dropdown değerlerini al
+                var dropdowns = await _dropdownService.PrepareIrsaliyeDropdownsAsync(model.CariID, null, model.IrsaliyeTuru);
+                
+                // Model için SelectList'leri ayarla
+                model.CariListesi = dropdowns["CariListesi"];
+                model.UrunListesi = dropdowns["UrunListesi"];
+                
+                // ViewBag için de aynı değerleri ayarla
+                ViewBag.Cariler = dropdowns["CariListesi"];
+                ViewBag.Urunler = dropdowns["UrunListesi"];
+                ViewBag.IrsaliyeTurleri = dropdowns["IrsaliyeTurleri"];
+                ViewBag.Durumlar = dropdowns["Durumlar"];
+                
+                // Fatura listesini ekstra olarak al
+                var faturalar = await _unitOfWork.Repository<DEntityFatura>().GetAsync(
+                    filter: f => f.Aktif == true && !f.Silindi,
+                    includeProperties: "Cari");
+                ViewBag.Faturalar = new SelectList(faturalar, "FaturaID", "FaturaNumarasi", model.FaturaID);
+            }
+            catch (Exception ex)
+            {
+                // Hata durumunda boş listeler oluştur
+                model.CariListesi = new SelectList(new List<DEntityCari>(), "CariID", "Ad");
+                model.UrunListesi = new SelectList(new List<DEntityUrun>(), "UrunID", "UrunAdi");
+                
+                // ViewBag için de boş listeler
+                ViewBag.Cariler = new SelectList(new List<DEntityCari>(), "CariID", "Ad");
+                ViewBag.Urunler = new SelectList(new List<DEntityUrun>(), "UrunID", "UrunAdi");
+                ViewBag.IrsaliyeTurleri = new SelectList(new List<string> { "Standart", "Giriş", "Çıkış" }, model.IrsaliyeTuru);
+                ViewBag.Durumlar = new SelectList(new List<string> { "Açık", "Kapalı", "İptal" }, model.Aktif);
+                ViewBag.Faturalar = new SelectList(new List<DEntityFatura>(), "FaturaID", "FaturaNumarasi");
+                
+                // Hata loglama
+                _logger.LogError(ex, "PrepareDropdownLists hata: {Message}", ex.Message);
+            }
         }
 
         private async Task PrepareEditViewModelAsync(IrsaliyeEditViewModel model)
         {
-            var cariler = await _unitOfWork.Repository<DEntityCari>().GetAsync(
-                filter: c => c.AktifMi && !c.Silindi);
-            
-            var faturalar = await _unitOfWork.Repository<DEntityFatura>().GetAsync(
-                filter: f => f.Aktif == true && !f.Silindi,
-                includeProperties: "Cari");
-
-            ViewBag.Cariler = new SelectList(cariler, "CariID", "Ad", model.CariID);
-            ViewBag.Faturalar = new SelectList(faturalar, "FaturaID", "FaturaNumarasi", model.FaturaID);
-            ViewBag.IrsaliyeTurleri = new SelectList(new List<string> { "Standart", "Giriş", "Çıkış" }, model.IrsaliyeTuru);
-            ViewBag.Durumlar = new SelectList(new List<string> { "Açık", "Kapalı", "İptal" }, model.Aktif);
-
             if (model.IrsaliyeDetaylari == null)
             {
                 model.IrsaliyeDetaylari = new List<IrsaliyeVM.IrsaliyeDetayViewModel>();
             }
-
-            var urunler = await _unitOfWork.Repository<DEntityUrun>().GetAsync(
-                filter: u => u.Aktif == true && !u.Silindi);
-            ViewBag.Urunler = new SelectList(urunler, "UrunID", "UrunAdi");
             
             // Dropdown listeleri doldur
-            PrepareDropdownLists(model);
+            await PrepareDropdownLists(model);
         }
 
         private async Task PrepareCreateViewBagAsync()
         {
-            await PrepareViewBagForCreate();
+            try
+            {
+                // DropdownService kullanarak tüm dropdown değerlerini tek seferde al
+                var viewBagData = await _dropdownService.PrepareViewBagAsync("irsaliye", "create");
+                
+                // ViewBag'e değerleri ekle
+                foreach (var item in viewBagData)
+                {
+                    ViewBag[item.Key] = item.Value;
+                }
+            }
+            catch (Exception ex)
+            {
+                // Hata loglama ve varsayılan boş listeler
+                _logger.LogError(ex, "PrepareViewBagForCreate hata: {Message}", ex.Message);
+                
+                // Hata durumunda boş listeler oluştur
+                ViewBag.CariListesi = new SelectList(new List<DEntityCari>(), "CariID", "Ad");
+                ViewBag.UrunListesi = new SelectList(new List<DEntityUrun>(), "UrunID", "UrunAdi");
+                ViewBag.IrsaliyeTurleri = new SelectList(new List<string> { "Giriş", "Çıkış" }, "Çıkış");
+                ViewBag.Durumlar = new SelectList(new List<string> { "Açık", "Kapalı", "İptal" }, "Açık");
+            }
         }
 
         [HttpGet]

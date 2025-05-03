@@ -11,9 +11,9 @@ namespace MuhasebeStokWebApp.Data.Repositories
     {
         Task<IEnumerable<TEntity>> GetAllAsync(Expression<Func<TEntity, bool>> filter = null,
             Func<IQueryable<TEntity>, IOrderedQueryable<TEntity>> orderBy = null,
-            string includeProperties = "");
+            string includeProperties = "", bool ignoreQueryFilters = false, bool asNoTracking = false);
         Task<TEntity> GetByIdAsync(object id);
-        Task<TEntity> GetFirstOrDefaultAsync(Expression<Func<TEntity, bool>> filter = null, string includeProperties = "");
+        Task<TEntity> GetFirstOrDefaultAsync(Expression<Func<TEntity, bool>> filter = null, string includeProperties = "", bool ignoreQueryFilters = false, bool asNoTracking = false);
         Task<TEntity> GetFirstAsync();
         Task<IEnumerable<TEntity>> GetAsync(
             Expression<Func<TEntity, bool>> filter = null, 
@@ -34,5 +34,14 @@ namespace MuhasebeStokWebApp.Data.Repositories
         Task RemoveAsync(TEntity entity);
         Task RemoveRangeAsync(IEnumerable<TEntity> entities);
         Task<Irsaliye> GetIrsaliyeWithDetailsAsync(Guid id);
+        Task<int> CountAsync(Expression<Func<TEntity, bool>> filter = null, bool asNoTracking = false);
+        Task<bool> AnyAsync(Expression<Func<TEntity, bool>> filter = null);
+        IQueryable<TEntity> Query();
+        Task<IEnumerable<TResult>> GetAllAsync<TResult>(
+            Expression<Func<TEntity, bool>> filter = null,
+            Expression<Func<TEntity, TResult>> selector = null,
+            Func<IQueryable<TEntity>, IOrderedQueryable<TEntity>> orderBy = null,
+            string includeProperties = "",
+            bool asNoTracking = false);
     }
 } 

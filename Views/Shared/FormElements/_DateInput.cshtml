@@ -1,0 +1,26 @@
+@model MuhasebeStokWebApp.ViewModels.FormElements.TextInputViewModel
+
+<div class="form-group">
+    <label asp-for="@Model.For" class="control-label">@Model.Label</label>
+    <input asp-for="@Model.For" 
+           class="form-control datepicker @(ViewData.ModelState.TryGetValue(Model.For.Name, out var entry) && entry.Errors.Count > 0 ? "is-invalid" : "")" 
+           placeholder="@Model.Placeholder"
+           type="date"
+           value="@Model.Value">
+    <span asp-validation-for="@Model.For" class="text-danger"></span>
+    @if (!string.IsNullOrEmpty(Model.HelpText))
+    {
+        <small class="form-text text-muted">@Model.HelpText</small>
+    }
+</div>
+
+<script>
+    $(document).ready(function () {
+        $('.datepicker').datepicker({
+            format: 'yyyy-mm-dd',
+            autoclose: true,
+            todayHighlight: true,
+            language: 'tr'
+        });
+    });
+</script> 

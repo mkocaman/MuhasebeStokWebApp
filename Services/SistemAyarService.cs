@@ -62,11 +62,11 @@ namespace MuhasebeStokWebApp.Services
 
         public async Task SaveSettingAsync(string key, string value)
         {
-            var ayar = await _context.SistemAyarlari.FirstOrDefaultAsync(a => a.Anahtar == key && !a.Silindi);
+            var existingSetting = await _context.SistemAyarlari.FirstOrDefaultAsync(a => a.Anahtar == key && !a.Silindi);
             
-            if (ayar == null)
+            if (existingSetting == null)
             {
-                ayar = new Data.Entities.SistemAyar
+                existingSetting = new Data.Entities.SistemAyar
                 {
                     Anahtar = key,
                     Deger = value,
@@ -74,17 +74,24 @@ namespace MuhasebeStokWebApp.Services
                     OlusturmaTarihi = DateTime.Now,
                     GuncellemeTarihi = DateTime.Now
                 };
-                _context.SistemAyarlari.Add(ayar);
+                _context.SistemAyarlari.Add(existingSetting);
             }
             else
             {
-                ayar.Deger = value;
-                ayar.GuncellemeTarihi = DateTime.Now;
+                existingSetting.Deger = value;
+                existingSetting.GuncellemeTarihi = DateTime.Now;
             }
 
+            // Değişiklik yapılmadan önce eski değeri al
+            string eskiDeger = existingSetting.Deger;
+            
             await _context.SaveChangesAsync();
             _cache.Remove(CacheKey);
             
+            // Yeni loglama metodu ile değişikliği kaydet
+            await _logService.SistemAyarlariDegisiklikLogOlustur(key, eskiDeger, value);
+            
+            // Eski log metodunu da kullanalım (geriye dönük uyumluluk için)
             await _logService.AddLogAsync("Bilgi", $"Sistem ayarı güncellendi: {key}", "SistemAyarService/SaveSettingAsync");
         }
 

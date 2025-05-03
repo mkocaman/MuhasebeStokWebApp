@@ -1,0 +1,40 @@
+@model MuhasebeStokWebApp.ViewModels.Shared.FormTextAreaViewModel
+
+<div class="form-group @(Model.IsInvalid ? "has-error" : "")">
+    <label for="@Model.Id" class="control-label">@Model.Label @(Model.IsRequired ? "<span class='text-danger'>*</span>" : "")</label>
+    <textarea 
+        id="@Model.Id" 
+        name="@Model.Name" 
+        class="form-control @(Model.IsInvalid ? "is-invalid" : "") @Model.CssClass" 
+        placeholder="@Model.Placeholder" 
+        rows="@Model.Rows"
+        @(Model.IsRequired ? "required" : "") 
+        @(Model.IsDisabled ? "disabled" : "")
+        @(Model.IsReadOnly ? "readonly" : "")
+        @Html.Raw(Model.HtmlAttributes)>@Model.Value</textarea>
+    @if (Model.IsInvalid)
+    {
+        <span class="text-danger">@Model.ErrorMessage</span>
+    }
+    @if (!string.IsNullOrEmpty(Model.HelpText))
+    {
+        <small class="form-text text-muted">@Model.HelpText</small>
+    }
+</div>
+
+@if (Model.EnableRichTextEditor)
+{
+    <script>
+        $(document).ready(function() {
+            $('#@Model.Id').summernote({
+                height: @(Model.Rows * 30),
+                toolbar: [
+                    ['style', ['bold', 'italic', 'underline', 'clear']],
+                    ['font', ['strikethrough']],
+                    ['para', ['ul', 'ol', 'paragraph']],
+                    ['height', ['height']]
+                ]
+            });
+        });
+    </script>
+} 

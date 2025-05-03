@@ -1,0 +1,169 @@
+@model MuhasebeStokWebApp.ViewModels.Shared.TableViewModel
+
+<div class="card shadow mb-4">
+    <div class="card-header py-3 d-flex flex-row align-items-center justify-content-between">
+        <h6 class="m-0 font-weight-bold text-primary">@Model.Title</h6>
+        <div class="dropdown no-arrow">
+            <a class="dropdown-toggle" href="#" role="button" id="dropdownMenuLink" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">
+                <i class="fas fa-ellipsis-v fa-sm fa-fw text-gray-400"></i>
+            </a>
+            <div class="dropdown-menu dropdown-menu-right shadow animated--fade-in" aria-labelledby="dropdownMenuLink">
+                <div class="dropdown-header">İşlemler:</div>
+                @if (Model.ShowCreateButton)
+                {
+                    <a class="dropdown-item" href="@(Model.ControllerName)/Create">
+                        <i class="fas fa-plus fa-sm fa-fw mr-2 text-gray-400"></i>Yeni Ekle
+                    </a>
+                }
+                <a class="dropdown-item" href="#" onclick="exportToExcel()">
+                    <i class="fas fa-file-excel fa-sm fa-fw mr-2 text-gray-400"></i>Excel'e Aktar
+                </a>
+                <a class="dropdown-item" href="#" onclick="printTable()">
+                    <i class="fas fa-print fa-sm fa-fw mr-2 text-gray-400"></i>Yazdır
+                </a>
+            </div>
+        </div>
+    </div>
+    <div class="card-body">
+        <div class="table-responsive">
+            <table class="table table-bordered table-hover" id="@Model.TableId" width="100%" cellspacing="0">
+                <thead>
+                    <tr>
+                        @foreach (var column in Model.Columns)
+                        {
+                            <th>@column.DisplayName</th>
+                        }
+                        @if (Model.ShowActions)
+                        {
+                            <th>İşlemler</th>
+                        }
+                    </tr>
+                </thead>
+                <tbody>
+                    @foreach (var item in Model.Items)
+                    {
+                        <tr>
+                            @foreach (var column in Model.Columns)
+                            {
+                                <td>@(column.GetValueFunc != null ? column.GetValueFunc(item) : item.GetPropertyValue(column.PropertyName))</td>
+                            }
+                            @if (Model.ShowActions)
+                            {
+                                <td>
+                                    <div class="btn-group">
+                                        @if (Model.ShowDetailsButton)
+                                        {
+                                            <a href="/@Model.ControllerName/Details/@item.GetPropertyValue(Model.IdPropertyName)" 
+                                               class="btn btn-sm btn-info">
+                                                <i class="fas fa-info-circle"></i> Detay
+                                            </a>
+                                        }
+                                        @if (Model.ShowEditButton)
+                                        {
+                                            <a href="/@Model.ControllerName/Edit/@item.GetPropertyValue(Model.IdPropertyName)" 
+                                               class="btn btn-sm btn-primary">
+                                                <i class="fas fa-edit"></i> Düzenle
+                                            </a>
+                                        }
+                                        @if (Model.ShowDeleteButton)
+                                        {
+                                            <a href="#" onclick="confirmDelete('@item.GetPropertyValue(Model.IdPropertyName)')" 
+                                               class="btn btn-sm btn-danger">
+                                                <i class="fas fa-trash"></i> Sil
+                                            </a>
+                                        }
+                                        @if (Model.ShowActivateButton)
+                                        {
+                                            <a href="#" onclick="confirmActivate('@item.GetPropertyValue(Model.IdPropertyName)')" 
+                                               class="btn btn-sm @(item.GetPropertyValue("Aktif") != null && (bool)item.GetPropertyValue("Aktif") ? "btn-warning" : "btn-success")">
+                                                <i class="fas @(item.GetPropertyValue("Aktif") != null && (bool)item.GetPropertyValue("Aktif") ? "fa-ban" : "fa-check")"></i> 
+                                                @(item.GetPropertyValue("Aktif") != null && (bool)item.GetPropertyValue("Aktif") ? "Pasife Al" : "Aktif Et")
+                                            </a>
+                                        }
+                                        @if (Model.CustomButtons != null)
+                                        {
+                                            @foreach (var button in Model.CustomButtons)
+                                            {
+                                                <a href="@button.Url?.Replace("{id}", item.GetPropertyValue(Model.IdPropertyName).ToString())" 
+                                                   onclick="@(button.OnClickFunction != null ? button.OnClickFunction.Replace("{id}", item.GetPropertyValue(Model.IdPropertyName).ToString()) : "")"
+                                                   class="btn btn-sm @button.CssClass">
+                                                    <i class="@button.IconClass"></i> @button.DisplayText
+                                                </a>
+                                            }
+                                        }
+                                    </div>
+                                </td>
+                            }
+                        </tr>
+                    }
+                </tbody>
+            </table>
+        </div>
+        
+        @if (Model.Pagination != null && Model.Pagination.TotalPages > 1)
+        {
+            <div class="row">
+                <div class="col-sm-12 col-md-5">
+                    <div class="dataTables_info" role="status" aria-live="polite">
+                        Toplam @Model.Pagination.TotalItems kayıttan @((Model.Pagination.CurrentPage - 1) * Model.Pagination.PageSize + 1) - @Math.Min(Model.Pagination.CurrentPage * Model.Pagination.PageSize, Model.Pagination.TotalItems) arası gösteriliyor
+                    </div>
+                </div>
+                <div class="col-sm-12 col-md-7">
+                    <div class="dataTables_paginate paging_simple_numbers">
+                        <ul class="pagination">
+                            <li class="paginate_button page-item previous @(Model.Pagination.CurrentPage == 1 ? "disabled" : "")">
+                                <a href="?page=@(Model.Pagination.CurrentPage - 1)" class="page-link">Önceki</a>
+                            </li>
+                            @for (int i = 1; i <= Model.Pagination.TotalPages; i++)
+                            {
+                                <li class="paginate_button page-item @(i == Model.Pagination.CurrentPage ? "active" : "")">
+                                    <a href="?page=@i" class="page-link">@i</a>
+                                </li>
+                            }
+                            <li class="paginate_button page-item next @(Model.Pagination.CurrentPage == Model.Pagination.TotalPages ? "disabled" : "")">
+                                <a href="?page=@(Model.Pagination.CurrentPage + 1)" class="page-link">Sonraki</a>
+                            </li>
+                        </ul>
+                    </div>
+                </div>
+            </div>
+        }
+    </div>
+</div>
+
+@if (Model.ShowDeleteConfirmation)
+{
+<script>
+    function confirmDelete(id) {
+        if (confirm('Bu kaydı silmek istediğinizden emin misiniz?')) {
+            window.location.href = '/@Model.ControllerName/Delete/' + id;
+        }
+    }
+</script>
+}
+
+@if (Model.ShowActivateConfirmation)
+{
+<script>
+    function confirmActivate(id) {
+        if (confirm('Bu kaydın durumunu değiştirmek istediğinizden emin misiniz?')) {
+            window.location.href = '/@Model.ControllerName/ToggleActive/' + id;
+        }
+    }
+</script>
+}
+
+@if (Model.EnableDataTable)
+{
+<script>
+    $(document).ready(function () {
+        $('#@Model.TableId').DataTable({
+            language: {
+                url: '/js/dataTables.turkish.json'
+            },
+            responsive: true,
+            retrieve: true
+        });
+    });
+</script>
+} 

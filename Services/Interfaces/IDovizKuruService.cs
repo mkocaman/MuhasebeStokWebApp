@@ -65,5 +65,10 @@ namespace MuhasebeStokWebApp.Services.Interfaces
         /// Döviz kurlarını dış servislerden (örneğin TCMB) güncellemek için metod
         /// </summary>
         Task<bool> GuncelleKurDegerleriniFromTCMBAsync();
+        
+        /// <summary>
+        /// Döviz kuru önbelleğini temizler
+        /// </summary>
+        Task<bool> ClearCacheAsync();
     }
 } 

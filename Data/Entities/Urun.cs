@@ -5,7 +5,7 @@ using System.ComponentModel.DataAnnotations.Schema;
 
 namespace MuhasebeStokWebApp.Data.Entities
 {
-    public class Urun
+    public class Urun : ISoftDelete
     {
         [Key]
         public Guid UrunID { get; set; }
@@ -31,6 +31,9 @@ namespace MuhasebeStokWebApp.Data.Entities
         
         // KDV Oranı
         public int KDVOrani { get; set; } = 12; // Varsayılan %12
+        
+        // Kritik Stok Seviyesi
+        public decimal KritikStokSeviyesi { get; set; } = 100; // Varsayılan 100
         
         // Dövizli Fiyat Alanları (USD)
         public decimal? DovizliListeFiyati { get; set; }

@@ -8,6 +8,7 @@ using Microsoft.EntityFrameworkCore.Metadata;
 using MuhasebeStokWebApp.Data.Entities;
 using MuhasebeStokWebApp.Models;
 using MuhasebeStokWebApp.Data.Entities.ParaBirimiModulu;
+using MuhasebeStokWebApp.Data.Entities.ParaBirimiBirlesikModul;
 using Microsoft.Extensions.Configuration;
 using MuhasebeStokWebApp.Enums;
 
@@ -34,7 +35,12 @@ namespace MuhasebeStokWebApp.Data
         public virtual DbSet<Entities.IrsaliyeTuru> IrsaliyeTurleri { get; set; }
         public virtual DbSet<Entities.Sozlesme> Sozlesmeler { get; set; }
         
-        // Para Birimi Modülü Entity'leri
+        // Para Birimi Birleşik Modül Entity'leri
+        public virtual DbSet<Entities.ParaBirimiBirlesikModul.ParaBirimi> BirlesikParaBirimleri { get; set; }
+        public virtual DbSet<Entities.ParaBirimiBirlesikModul.KurDegeri> BirlesikKurDegerleri { get; set; }
+        public virtual DbSet<Entities.ParaBirimiBirlesikModul.ParaBirimiIliski> BirlesikParaBirimiIliskileri { get; set; }
+        
+        // Eski Para Birimi Modülü Entity'leri (geçiş süreci için bırakıldı)
         public virtual DbSet<Entities.ParaBirimiModulu.ParaBirimi> ParaBirimleri { get; set; }
         public virtual DbSet<Entities.ParaBirimiModulu.KurDegeri> KurDegerleri { get; set; }
         public virtual DbSet<Entities.ParaBirimiModulu.ParaBirimiIliski> ParaBirimiIliskileri { get; set; }
@@ -75,7 +81,6 @@ namespace MuhasebeStokWebApp.Data
         public DbSet<BankaHesapHareket> BankaHesapHareketleri { get; set; }
         
         // Merkezi aklama veritabanı nesneleri
-
         public virtual DbSet<FaturaAklamaKuyruk> FaturaAklamaKuyrugu { get; set; }
 
         protected override void OnConfiguring(DbContextOptionsBuilder optionsBuilder)
@@ -134,6 +139,12 @@ namespace MuhasebeStokWebApp.Data
             modelBuilder.Entity<Entities.Urun>()
                 .Property(u => u.Silindi)
                 .HasDefaultValue(false);
+                
+            // Kritik Stok Seviyesi decimal veri tipi belirle
+            modelBuilder.Entity<Entities.Urun>()
+                .Property(u => u.KritikStokSeviyesi)
+                .HasColumnType("decimal(18,2)")
+                .HasPrecision(18, 2);
                 
             // UrunBirim ilişkisini Birim ile değiştir
             modelBuilder.Entity<Entities.Urun>()
@@ -384,6 +395,13 @@ namespace MuhasebeStokWebApp.Data
             modelBuilder.Entity<Entities.CariHareket>()
                 .Property(c => c.Tutar)
                 .HasColumnType("decimal(18,2)");
+            modelBuilder.Entity<Entities.CariHareket>().HasQueryFilter(c => c.Silindi == false);
+            modelBuilder.Entity<Entities.CariHareket>()
+                .HasOne(ch => ch.Cari)
+                .WithMany(c => c.CariHareketler)
+                .HasForeignKey(ch => ch.CariID)
+                .OnDelete(DeleteBehavior.Restrict)
+                .IsRequired(true);
                 
             // KurDegeri Entity
             modelBuilder.Entity<Entities.ParaBirimiModulu.KurDegeri>()
@@ -543,7 +561,6 @@ namespace MuhasebeStokWebApp.Data
             // Global query filtreleri - İlişkili entity'ler için uyumlu şekilde ayarlanıyor
             // Cari - CariHareket ilişkisi için filtreler
             modelBuilder.Entity<Entities.Cari>().HasQueryFilter(c => c.Silindi == false && c.AktifMi == true);
-            modelBuilder.Entity<Entities.CariHareket>().HasQueryFilter(ch => ch.Silindi == false);
 
             // Fatura - FaturaDetay ilişkisi için filtreler
             modelBuilder.Entity<Entities.Fatura>().HasQueryFilter(f => f.Silindi == false && f.Aktif == true);
@@ -685,13 +702,20 @@ namespace MuhasebeStokWebApp.Data
                 .Property(a => a.ParaBirimi)
                 .HasDefaultValue("TL");
                 
-            // Cari - Sozlesme ilişkisi için IsRequired(false) ayarla
+            // Cari ve Sozlesme arasındaki ilişkiyi optional olarak yapılandır
             modelBuilder.Entity<Entities.Sozlesme>()
                 .HasOne(s => s.Cari)
-                .WithMany()
+                .WithMany(c => c.Sozlesmeler)
                 .HasForeignKey(s => s.CariID)
-                .OnDelete(DeleteBehavior.Cascade)
-                .IsRequired(false);
+                .IsRequired(false)  // İlişkiyi optional yapar
+                .OnDelete(DeleteBehavior.SetNull);
+
+            // Fatura - Cari ilişkisi için Restrict davranışı ayarla
+            modelBuilder.Entity<Entities.Fatura>()
+                .HasOne(f => f.Cari)
+                .WithMany(c => c.Faturalar)
+                .HasForeignKey(f => f.CariID)
+                .OnDelete(DeleteBehavior.Restrict);
 
             // StokCikisDetay - StokFifo ilişkisini opsiyonel hale getirme
             modelBuilder.Entity<Entities.StokCikisDetay>()
@@ -700,6 +724,39 @@ namespace MuhasebeStokWebApp.Data
                 .HasForeignKey(s => s.StokFifoID)
                 .OnDelete(DeleteBehavior.SetNull)
                 .IsRequired(false);
+
+            // Para Birimi ve DovizIliski ilişkileri
+            modelBuilder.Entity<Entities.ParaBirimiModulu.ParaBirimiIliski>()
+                .HasOne(d => d.KaynakParaBirimi)
+                .WithMany(p => p.KaynakParaBirimiIliskileri)
+                .HasForeignKey(d => d.KaynakParaBirimiID)
+                .OnDelete(DeleteBehavior.Restrict);
+                
+            modelBuilder.Entity<Entities.ParaBirimiModulu.ParaBirimiIliski>()
+                .HasOne(d => d.HedefParaBirimi)
+                .WithMany(p => p.HedefParaBirimiIliskileri)
+                .HasForeignKey(d => d.HedefParaBirimiID)
+                .OnDelete(DeleteBehavior.Restrict);
+                
+            // CheckConstraint ile farklı para birimleri kontrolü
+            modelBuilder.Entity<Entities.ParaBirimiModulu.ParaBirimiIliski>()
+                .HasCheckConstraint("CK_DovizIliski_DifferentCurrencies", "KaynakParaBirimiID <> HedefParaBirimiID");
+                
+            // Birleşik Para Birimi Modülü İlişkileri
+            modelBuilder.Entity<Entities.ParaBirimiBirlesikModul.ParaBirimiIliski>()
+                .HasOne(d => d.KaynakParaBirimi)
+                .WithMany(p => p.KaynakParaBirimiIliskileri)
+                .HasForeignKey(d => d.KaynakParaBirimiID)
+                .OnDelete(DeleteBehavior.NoAction);
+                
+            modelBuilder.Entity<Entities.ParaBirimiBirlesikModul.ParaBirimiIliski>()
+                .HasOne(d => d.HedefParaBirimi)
+                .WithMany(p => p.HedefParaBirimiIliskileri)
+                .HasForeignKey(d => d.HedefParaBirimiID)
+                .OnDelete(DeleteBehavior.NoAction);
+                
+            modelBuilder.Entity<Entities.ParaBirimiBirlesikModul.ParaBirimiIliski>()
+                .HasCheckConstraint("CK_BirlesikModulDovizIliski_DifferentCurrencies", "KaynakParaBirimiID <> HedefParaBirimiID");
         }
 
         // GetDbContextOptions metodunu ekle

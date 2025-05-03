@@ -352,54 +352,6 @@ namespace MuhasebeStokWebApp.ViewModels.Stok
         public string IptalAciklama { get; set; }
     }
 
-    // Stok Giriş ViewModel
-    public class StokGirisViewModel
-    {
-        [Required(ErrorMessage = "Ürün seçimi zorunludur.")]
-        [Display(Name = "Ürün")]
-        public Guid UrunID { get; set; }
-
-        [Required(ErrorMessage = "Depo seçimi zorunludur.")]
-        [Display(Name = "Depo")]
-        public Guid DepoID { get; set; }
-
-        [Required(ErrorMessage = "Miktar girişi zorunludur.")]
-        [Range(0.01, double.MaxValue, ErrorMessage = "Miktar 0'dan büyük olmalıdır.")]
-        [Display(Name = "Miktar")]
-        public decimal Miktar { get; set; }
-
-        [Required(ErrorMessage = "Birim seçimi zorunludur.")]
-        [Display(Name = "Birim")]
-        public string Birim { get; set; }
-
-        [Required(ErrorMessage = "Birim fiyat girişi zorunludur.")]
-        [Range(0, double.MaxValue, ErrorMessage = "Birim fiyat 0 veya daha büyük olmalıdır.")]
-        [Display(Name = "Birim Fiyat")]
-        public decimal BirimFiyat { get; set; }
-
-        [Required(ErrorMessage = "Tarih girişi zorunludur.")]
-        [Display(Name = "Tarih")]
-        [DataType(DataType.Date)]
-        public DateTime Tarih { get; set; }
-
-        [Display(Name = "Referans No")]
-        public string ReferansNo { get; set; }
-
-        [Display(Name = "Referans Türü")]
-        public string ReferansTuru { get; set; }
-
-        [Display(Name = "Açıklama")]
-        public string Aciklama { get; set; }
-        
-        [Display(Name = "Hareket Türü")]
-        public StokHareketiTipi HareketTuru { get; set; } = StokHareketiTipi.Giris;
-
-        [Display(Name = "Para Birimi")]
-        public string ParaBirimi { get; set; } = "TRY";
-        
-        public List<string> ParaBirimleri { get; set; }
-    }
-
     // Stok Çıkış ViewModel
     public class StokCikisViewModel
     {

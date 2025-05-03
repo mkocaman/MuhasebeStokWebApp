@@ -4,6 +4,7 @@ using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Storage;
 using Microsoft.Extensions.Logging;
 using MuhasebeStokWebApp.Data.Entities;
+using MuhasebeStokWebApp.Data.Repositories.EntityRepositories;
 
 namespace MuhasebeStokWebApp.Data.Repositories
 {
@@ -13,8 +14,11 @@ namespace MuhasebeStokWebApp.Data.Repositories
         private readonly ILogger<UnitOfWork> _logger;
         private IDbContextTransaction? _transaction;
         
+        // Generic repository instances
         private IRepository<Fatura>? _faturaRepository;
         private IRepository<FaturaDetay>? _faturaDetayRepository;
+        private IRepository<FaturaOdeme>? _faturaOdemeleriRepository;
+        private IRepository<FaturaTuru>? _faturaTurleriRepository;
         private IRepository<Cari>? _cariRepository;
         private IRepository<CariHareket>? _cariHareketRepository;
         private IRepository<Urun>? _urunRepository;
@@ -30,6 +34,19 @@ namespace MuhasebeStokWebApp.Data.Repositories
         private IRepository<Sozlesme>? _sozlesmeRepository;
         private IRepository<SistemAyarlari>? _sistemAyarlariRepository;
         private IRepository<StokHareket>? _stokHareketRepository;
+        private IRepository<Depo>? _depolarRepository;
+        
+        // Entity-specific repository instances
+        private IUrunRepository? _entityUrunRepository;
+        private IFaturaRepository? _entityFaturaRepository;
+        private ICariRepository? _entityCariRepository;
+        private IIrsaliyeRepository? _entityIrsaliyeRepository;
+        private IIrsaliyeDetayRepository? _entityIrsaliyeDetayRepository;
+        private IRepository<StokHareket>? _entityStokHareketRepository;
+        private IRepository<StokFifo>? _entityStokFifoRepository;
+        private IRepository<FaturaDetay>? _entityFaturaDetayRepository;
+        private IRepository<CariHareket>? _entityCariHareketRepository;
+        private IRepository<Depo>? _entityDepolarRepository;
         
         public UnitOfWork(ApplicationDbContext context, ILogger<UnitOfWork> logger)
         {
@@ -37,9 +54,11 @@ namespace MuhasebeStokWebApp.Data.Repositories
             _logger = logger;
         }
         
-        // Repository Properties
+        // Generic Repository Properties
         public IRepository<Fatura> FaturaRepository => _faturaRepository ??= new Repository<Fatura>(_context);
         public IRepository<FaturaDetay> FaturaDetayRepository => _faturaDetayRepository ??= new Repository<FaturaDetay>(_context);
+        public IRepository<FaturaOdeme> FaturaOdemeleriRepository => _faturaOdemeleriRepository ??= new Repository<FaturaOdeme>(_context);
+        public IRepository<FaturaTuru> FaturaTurleriRepository => _faturaTurleriRepository ??= new Repository<FaturaTuru>(_context);
         public IRepository<Cari> CariRepository => _cariRepository ??= new Repository<Cari>(_context);
         public IRepository<CariHareket> CariHareketRepository => _cariHareketRepository ??= new Repository<CariHareket>(_context);
         public IRepository<Urun> UrunRepository => _urunRepository ??= new Repository<Urun>(_context);
@@ -55,7 +74,21 @@ namespace MuhasebeStokWebApp.Data.Repositories
         public IRepository<Sozlesme> SozlesmeRepository => _sozlesmeRepository ??= new Repository<Sozlesme>(_context);
         public IRepository<SistemAyarlari> SistemAyarlariRepository => _sistemAyarlariRepository ??= new Repository<SistemAyarlari>(_context);
         public IRepository<StokHareket> StokHareketRepository => _stokHareketRepository ??= new Repository<StokHareket>(_context);
+        public IRepository<Depo> DepolarRepository => _depolarRepository ??= new Repository<Depo>(_context);
         
+        // Entity-specific Repository Properties
+        public IUrunRepository EntityUrunRepository => _entityUrunRepository ??= new UrunRepository(_context);
+        public IFaturaRepository EntityFaturaRepository => _entityFaturaRepository ??= new FaturaRepository(_context);
+        public ICariRepository EntityCariRepository => _entityCariRepository ??= new CariRepository(_context);
+        public IIrsaliyeRepository EntityIrsaliyeRepository => _entityIrsaliyeRepository ??= new IrsaliyeRepository(_context);
+        public IIrsaliyeDetayRepository EntityIrsaliyeDetayRepository => _entityIrsaliyeDetayRepository ??= new IrsaliyeDetayRepository(_context);
+        public IRepository<StokHareket> EntityStokHareketRepository => _entityStokHareketRepository ??= new Repository<StokHareket>(_context);
+        public IRepository<StokFifo> EntityStokFifoRepository => _entityStokFifoRepository ??= new Repository<StokFifo>(_context);
+        public IRepository<FaturaDetay> EntityFaturaDetayRepository => _entityFaturaDetayRepository ??= new Repository<FaturaDetay>(_context);
+        public IRepository<CariHareket> EntityCariHareketRepository => _entityCariHareketRepository ??= new Repository<CariHareket>(_context);
+        public IRepository<Depo> EntityDepolarRepository => _entityDepolarRepository ??= new Repository<Depo>(_context);
+        
+        // Generic repository factory method
         public IRepository<TEntity> Repository<TEntity>() where TEntity : class
         {
             return new Repository<TEntity>(_context);

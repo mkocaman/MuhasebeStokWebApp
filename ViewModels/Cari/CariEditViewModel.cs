@@ -5,29 +5,33 @@ namespace MuhasebeStokWebApp.ViewModels.Cari
 {
     public class CariEditViewModel
     {
-        public Guid Id { get; set; }
+        public Guid CariID { get; set; }
 
         [Required(ErrorMessage = "Cari adı zorunludur.")]
         [StringLength(100, ErrorMessage = "Cari adı en fazla 100 karakter olabilir.")]
         [Display(Name = "Cari Adı")]
-        public string Ad { get; set; }
+        public required string Ad { get; set; }
+
+        [StringLength(100, ErrorMessage = "Cari ünvanı en fazla 100 karakter olabilir.")]
+        [Display(Name = "Cari Ünvanı")]
+        public string? CariUnvani { get; set; }
 
         [StringLength(15, MinimumLength = 0, ErrorMessage = "Vergi numarası 0 ve 15 karakter arasında olmalıdır.")]
         [Display(Name = "Vergi No")]
-        public string VergiNo { get; set; }
+        public string? VergiNo { get; set; }
 
         [StringLength(15, ErrorMessage = "Telefon numarası en fazla 15 karakter olabilir.")]
         [Display(Name = "Telefon")]
-        public string Telefon { get; set; }
+        public string? Telefon { get; set; }
 
         [EmailAddress(ErrorMessage = "Geçerli bir e-posta adresi giriniz.")]
         [StringLength(100, ErrorMessage = "E-posta adresi en fazla 100 karakter olabilir.")]
         [Display(Name = "E-posta Adresi")]
-        public string Email { get; set; }
+        public string? Email { get; set; }
 
         [StringLength(50, ErrorMessage = "Yetkili adı en fazla 50 karakter olabilir.")]
         [Display(Name = "Yetkili")]
-        public string Yetkili { get; set; }
+        public string? Yetkili { get; set; }
 
         [Display(Name = "Başlangıç Bakiyesi")]
         public decimal BaslangicBakiye { get; set; }
@@ -37,50 +41,50 @@ namespace MuhasebeStokWebApp.ViewModels.Cari
 
         [StringLength(250, ErrorMessage = "Adres en fazla 250 karakter olabilir.")]
         [Display(Name = "Adres")]
-        public string Adres { get; set; }
+        public string? Adres { get; set; }
 
         [StringLength(500, ErrorMessage = "Açıklama en fazla 500 karakter olabilir.")]
         [Display(Name = "Açıklama")]
-        public string Aciklama { get; set; }
+        public string? Aciklama { get; set; }
 
         [Display(Name = "Aktif")]
         public bool AktifMi { get; set; } = true;
 
         [StringLength(20, ErrorMessage = "Cari kodu en fazla 20 karakter olabilir.")]
         [Display(Name = "Cari Kodu")]
-        public string CariKodu { get; set; }
+        public string? CariKodu { get; set; }
 
         [Required(ErrorMessage = "Cari tipi zorunludur.")]
         [Display(Name = "Cari Tipi")]
-        public string CariTipi { get; set; } = "Müşteri";
+        public required string CariTipi { get; set; } = "Müşteri";
 
         [StringLength(50, ErrorMessage = "Vergi dairesi en fazla 50 karakter olabilir.")]
         [Display(Name = "Vergi Dairesi")]
-        public string VergiDairesi { get; set; }
+        public string? VergiDairesi { get; set; }
 
         [StringLength(50, ErrorMessage = "İl en fazla 50 karakter olabilir.")]
         [Display(Name = "İl")]
-        public string Il { get; set; }
+        public string? Il { get; set; }
 
         [StringLength(50, ErrorMessage = "İlçe en fazla 50 karakter olabilir.")]
         [Display(Name = "İlçe")]
-        public string Ilce { get; set; }
+        public string? Ilce { get; set; }
 
         [StringLength(10, ErrorMessage = "Posta kodu en fazla 10 karakter olabilir.")]
         [Display(Name = "Posta Kodu")]
-        public string PostaKodu { get; set; }
+        public string? PostaKodu { get; set; }
 
         [StringLength(50, ErrorMessage = "Ülke en fazla 50 karakter olabilir.")]
         [Display(Name = "Ülke")]
-        public string Ulke { get; set; }
+        public string? Ulke { get; set; }
 
         [StringLength(100, ErrorMessage = "Web sitesi en fazla 100 karakter olabilir.")]
         [Display(Name = "Web Sitesi")]
-        public string WebSitesi { get; set; }
+        public string? WebSitesi { get; set; }
 
         [StringLength(1000, ErrorMessage = "Notlar en fazla 1000 karakter olabilir.")]
         [Display(Name = "Notlar")]
-        public string Notlar { get; set; }
+        public string? Notlar { get; set; }
 
         [Display(Name = "Oluşturma Tarihi")]
         public DateTime OlusturmaTarihi { get; set; }
@@ -92,8 +96,8 @@ namespace MuhasebeStokWebApp.ViewModels.Cari
         public bool VarsayilanKurKullan { get; set; } = true;
 
         // Ekstra bilgiler - view'de görüntü için kullanılabilir, entity'ye kaydedilmez
-        public string VarsayilanParaBirimiKodu { get; set; }
-        public string VarsayilanParaBirimiAdi { get; set; }
-        public string VarsayilanParaBirimiSembol { get; set; }
+        public string? VarsayilanParaBirimiKodu { get; set; }
+        public string? VarsayilanParaBirimiAdi { get; set; }
+        public string? VarsayilanParaBirimiSembol { get; set; }
     }
 } 

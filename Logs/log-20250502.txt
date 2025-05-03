@@ -1,0 +1,1321 @@
+2025-05-02 10:17:17.282 +03:00 [INF] Giriş denemesi: admin
+2025-05-02 10:17:17.380 +03:00 [INF] Admin kullanıcısı başarıyla giriş yaptı: admin
+2025-05-02 10:17:17.380 +03:00 [INF] Admin session oluşturuldu: UserID=fc704594-5ae7-463d-bbba-6be38187613c, UserName=admin
+2025-05-02 10:17:17.380 +03:00 [INF] Yönlendirme adresi: /Urun
+2025-05-02 10:17:17.380 +03:00 [INF] Admin kullanıcısı /Urun adresine yönlendiriliyor
+2025-05-02 10:17:19.923 +03:00 [INF] Aktif session bulundu: UserID=fc704594-5ae7-463d-bbba-6be38187613c, UserName=admin
+2025-05-02 10:17:19.923 +03:00 [INF] Admin kullanıcısı tespit edildi
+2025-05-02 10:17:19.923 +03:00 [INF] Kimlik doğrulanmış kullanıcı: admin
+2025-05-02 10:17:23.408 +03:00 [INF] Birim sayısı: Aktif=1, Pasif=0, Silinmiş=0
+2025-05-02 10:17:24.775 +03:00 [INF] Toplam depo sayısı: 2
+2025-05-02 10:17:24.775 +03:00 [INF] Aktif depo sayısı: 1
+2025-05-02 10:17:24.775 +03:00 [INF] Pasif depo sayısı: 0
+2025-05-02 10:17:24.776 +03:00 [INF] Silinmiş depo sayısı: 1
+2025-05-02 10:17:34.813 +03:00 [INF] Aktif session bulundu: UserID=fc704594-5ae7-463d-bbba-6be38187613c, UserName=admin
+2025-05-02 10:17:34.814 +03:00 [INF] Admin kullanıcısı tespit edildi
+2025-05-02 10:17:34.814 +03:00 [INF] Kimlik doğrulanmış kullanıcı: admin
+2025-05-02 10:17:34.819 +03:00 [INF] Kur değeri önbellekten alındı: TRY -> USD
+2025-05-02 10:17:34.819 +03:00 [INF] Kur değeri önbellekten alındı: UZS -> USD
+2025-05-02 10:17:44.611 +03:00 [INF] Fatura oluşturma sayfası yükleniyor: Kullanıcı=admin
+2025-05-02 10:17:44.615 +03:00 [INF] Cari listesi yüklendi, toplam 0 adet cari bulundu.
+2025-05-02 10:17:44.618 +03:00 [INF] Sözleşme listesi yüklendi, toplam 0 adet sözleşme bulundu.
+2025-05-02 10:17:44.621 +03:00 [INF] Ürün listesi yüklendi, toplam 2 adet ürün bulundu.
+2025-05-02 10:17:44.624 +03:00 [INF] Depo listesi yüklendi, toplam 1 adet depo bulundu.
+2025-05-02 10:17:44.624 +03:00 [INF] Ürün select list oluşturuldu, toplam 2 adet öğe içeriyor.
+2025-05-02 10:17:44.628 +03:00 [INF] Para birimi listesi yüklendi, toplam 3 adet para birimi bulundu.
+2025-05-02 10:18:17.843 +03:00 [INF] Aktif session bulundu: UserID=fc704594-5ae7-463d-bbba-6be38187613c, UserName=admin
+2025-05-02 10:18:17.844 +03:00 [INF] Admin kullanıcısı tespit edildi
+2025-05-02 10:18:17.844 +03:00 [INF] Kimlik doğrulanmış kullanıcı: admin
+2025-05-02 10:18:17.851 +03:00 [INF] Kur değeri önbellekten alındı: TRY -> USD
+2025-05-02 10:18:17.852 +03:00 [INF] Kur değeri önbellekten alındı: UZS -> USD
+2025-05-02 10:18:24.669 +03:00 [INF] Start processing HTTP request GET https://v6.exchangerate-api.com/v6/645b5bebcab7cef56e1b609c/latest/USD
+2025-05-02 10:18:24.672 +03:00 [INF] Sending HTTP request GET https://v6.exchangerate-api.com/v6/645b5bebcab7cef56e1b609c/latest/USD
+2025-05-02 10:18:25.057 +03:00 [INF] Received HTTP response headers after 382.3283ms - 200
+2025-05-02 10:18:25.060 +03:00 [INF] End processing HTTP request after 392.9566ms - 200
+2025-05-02 10:18:52.596 +03:00 [INF] Birim sayısı: Aktif=1, Pasif=0, Silinmiş=0
+2025-05-02 10:18:59.271 +03:00 [INF] Birim sayısı: Aktif=1, Pasif=0, Silinmiş=0
+2025-05-02 10:19:01.686 +03:00 [INF] Birim sayısı: Aktif=1, Pasif=0, Silinmiş=0
+2025-05-02 10:19:03.151 +03:00 [INF] Birim sayısı: Aktif=1, Pasif=0, Silinmiş=0
+2025-05-02 10:19:04.105 +03:00 [INF] Birim sayısı: Aktif=1, Pasif=0, Silinmiş=0
+2025-05-02 10:19:05.794 +03:00 [INF] Toplam depo sayısı: 2
+2025-05-02 10:19:05.795 +03:00 [INF] Aktif depo sayısı: 1
+2025-05-02 10:19:05.795 +03:00 [INF] Pasif depo sayısı: 0
+2025-05-02 10:19:05.795 +03:00 [INF] Silinmiş depo sayısı: 1
+2025-05-02 10:19:09.954 +03:00 [WRN] Hata - Adres: The Adres field is required.
+2025-05-02 10:19:10.798 +03:00 [WRN] Hata - Adres: The Adres field is required.
+2025-05-02 10:19:14.526 +03:00 [INF] Toplam depo sayısı: 3
+2025-05-02 10:19:14.526 +03:00 [INF] Aktif depo sayısı: 2
+2025-05-02 10:19:14.526 +03:00 [INF] Pasif depo sayısı: 0
+2025-05-02 10:19:14.526 +03:00 [INF] Silinmiş depo sayısı: 1
+2025-05-02 10:19:16.145 +03:00 [INF] Birim sayısı: Aktif=1, Pasif=0, Silinmiş=0
+2025-05-02 10:23:36.388 +03:00 [INF] Birim sayısı: Aktif=1, Pasif=0, Silinmiş=0
+2025-05-02 10:23:43.001 +03:00 [INF] Birim sayısı: Aktif=1, Pasif=0, Silinmiş=0
+2025-05-02 10:23:44.438 +03:00 [INF] Toplam depo sayısı: 3
+2025-05-02 10:23:44.438 +03:00 [INF] Aktif depo sayısı: 2
+2025-05-02 10:23:44.438 +03:00 [INF] Pasif depo sayısı: 0
+2025-05-02 10:23:44.438 +03:00 [INF] Silinmiş depo sayısı: 1
+2025-05-02 10:23:47.150 +03:00 [INF] Birim sayısı: Aktif=1, Pasif=0, Silinmiş=0
+2025-05-02 10:23:48.342 +03:00 [INF] Birim sayısı: Aktif=1, Pasif=0, Silinmiş=0
+2025-05-02 10:23:49.562 +03:00 [INF] Birim sayısı: Aktif=1, Pasif=0, Silinmiş=0
+2025-05-02 10:23:50.695 +03:00 [INF] Birim sayısı: Aktif=1, Pasif=0, Silinmiş=0
+2025-05-02 10:23:52.207 +03:00 [INF] Toplam depo sayısı: 3
+2025-05-02 10:23:52.207 +03:00 [INF] Aktif depo sayısı: 2
+2025-05-02 10:23:52.207 +03:00 [INF] Pasif depo sayısı: 0
+2025-05-02 10:23:52.207 +03:00 [INF] Silinmiş depo sayısı: 1
+2025-05-02 10:24:14.885 +03:00 [INF] Birim sayısı: Aktif=1, Pasif=0, Silinmiş=0
+2025-05-02 10:24:21.667 +03:00 [INF] Toplam depo sayısı: 3
+2025-05-02 10:24:21.668 +03:00 [INF] Aktif depo sayısı: 2
+2025-05-02 10:24:21.668 +03:00 [INF] Pasif depo sayısı: 0
+2025-05-02 10:24:21.668 +03:00 [INF] Silinmiş depo sayısı: 1
+2025-05-02 10:24:22.961 +03:00 [INF] Toplam depo sayısı: 3
+2025-05-02 10:24:22.961 +03:00 [INF] Aktif depo sayısı: 2
+2025-05-02 10:24:22.961 +03:00 [INF] Pasif depo sayısı: 0
+2025-05-02 10:24:22.961 +03:00 [INF] Silinmiş depo sayısı: 1
+2025-05-02 10:24:23.813 +03:00 [INF] Toplam depo sayısı: 3
+2025-05-02 10:24:23.814 +03:00 [INF] Aktif depo sayısı: 2
+2025-05-02 10:24:23.814 +03:00 [INF] Pasif depo sayısı: 0
+2025-05-02 10:24:23.814 +03:00 [INF] Silinmiş depo sayısı: 1
+2025-05-02 10:24:29.341 +03:00 [INF] Toplam depo sayısı: 3
+2025-05-02 10:24:29.341 +03:00 [INF] Aktif depo sayısı: 2
+2025-05-02 10:24:29.341 +03:00 [INF] Pasif depo sayısı: 0
+2025-05-02 10:24:29.341 +03:00 [INF] Silinmiş depo sayısı: 1
+2025-05-02 10:24:30.846 +03:00 [INF] Toplam depo sayısı: 3
+2025-05-02 10:24:30.846 +03:00 [INF] Aktif depo sayısı: 2
+2025-05-02 10:24:30.846 +03:00 [INF] Pasif depo sayısı: 0
+2025-05-02 10:24:30.846 +03:00 [INF] Silinmiş depo sayısı: 1
+2025-05-02 10:24:33.412 +03:00 [INF] Toplam depo sayısı: 3
+2025-05-02 10:24:33.412 +03:00 [INF] Aktif depo sayısı: 2
+2025-05-02 10:24:33.412 +03:00 [INF] Pasif depo sayısı: 0
+2025-05-02 10:24:33.412 +03:00 [INF] Silinmiş depo sayısı: 1
+2025-05-02 10:24:34.675 +03:00 [INF] Toplam depo sayısı: 3
+2025-05-02 10:24:34.675 +03:00 [INF] Aktif depo sayısı: 2
+2025-05-02 10:24:34.675 +03:00 [INF] Pasif depo sayısı: 0
+2025-05-02 10:24:34.675 +03:00 [INF] Silinmiş depo sayısı: 1
+2025-05-02 10:24:37.400 +03:00 [INF] Toplam depo sayısı: 3
+2025-05-02 10:24:37.400 +03:00 [INF] Aktif depo sayısı: 2
+2025-05-02 10:24:37.400 +03:00 [INF] Pasif depo sayısı: 0
+2025-05-02 10:24:37.400 +03:00 [INF] Silinmiş depo sayısı: 1
+2025-05-02 10:24:41.635 +03:00 [INF] Toplam depo sayısı: 3
+2025-05-02 10:24:41.635 +03:00 [INF] Aktif depo sayısı: 2
+2025-05-02 10:24:41.635 +03:00 [INF] Pasif depo sayısı: 0
+2025-05-02 10:24:41.635 +03:00 [INF] Silinmiş depo sayısı: 1
+2025-05-02 10:24:42.818 +03:00 [INF] Birim sayısı: Aktif=1, Pasif=0, Silinmiş=0
+2025-05-02 10:25:23.973 +03:00 [INF] Birim sayısı: Aktif=1, Pasif=0, Silinmiş=0
+2025-05-02 10:25:24.862 +03:00 [INF] Toplam depo sayısı: 3
+2025-05-02 10:25:24.862 +03:00 [INF] Aktif depo sayısı: 2
+2025-05-02 10:25:24.863 +03:00 [INF] Pasif depo sayısı: 0
+2025-05-02 10:25:24.863 +03:00 [INF] Silinmiş depo sayısı: 1
+2025-05-02 10:25:27.390 +03:00 [INF] Toplam depo sayısı: 3
+2025-05-02 10:25:27.390 +03:00 [INF] Aktif depo sayısı: 2
+2025-05-02 10:25:27.390 +03:00 [INF] Pasif depo sayısı: 0
+2025-05-02 10:25:27.390 +03:00 [INF] Silinmiş depo sayısı: 1
+2025-05-02 10:25:29.156 +03:00 [INF] Toplam depo sayısı: 3
+2025-05-02 10:25:29.156 +03:00 [INF] Aktif depo sayısı: 2
+2025-05-02 10:25:29.156 +03:00 [INF] Pasif depo sayısı: 0
+2025-05-02 10:25:29.156 +03:00 [INF] Silinmiş depo sayısı: 1
+2025-05-02 10:25:31.672 +03:00 [INF] Toplam depo sayısı: 3
+2025-05-02 10:25:31.672 +03:00 [INF] Aktif depo sayısı: 2
+2025-05-02 10:25:31.672 +03:00 [INF] Pasif depo sayısı: 0
+2025-05-02 10:25:31.672 +03:00 [INF] Silinmiş depo sayısı: 1
+2025-05-02 10:25:39.157 +03:00 [INF] Toplam depo sayısı: 4
+2025-05-02 10:25:39.158 +03:00 [INF] Aktif depo sayısı: 3
+2025-05-02 10:25:39.158 +03:00 [INF] Pasif depo sayısı: 0
+2025-05-02 10:25:39.158 +03:00 [INF] Silinmiş depo sayısı: 1
+2025-05-02 10:25:44.101 +03:00 [INF] Toplam depo sayısı: 4
+2025-05-02 10:25:44.101 +03:00 [INF] Aktif depo sayısı: 2
+2025-05-02 10:25:44.101 +03:00 [INF] Pasif depo sayısı: 0
+2025-05-02 10:25:44.101 +03:00 [INF] Silinmiş depo sayısı: 2
+2025-05-02 10:25:45.025 +03:00 [INF] Toplam depo sayısı: 4
+2025-05-02 10:25:45.026 +03:00 [INF] Aktif depo sayısı: 2
+2025-05-02 10:25:45.026 +03:00 [INF] Pasif depo sayısı: 0
+2025-05-02 10:25:45.026 +03:00 [INF] Silinmiş depo sayısı: 2
+2025-05-02 10:25:46.103 +03:00 [INF] Toplam depo sayısı: 4
+2025-05-02 10:25:46.103 +03:00 [INF] Aktif depo sayısı: 2
+2025-05-02 10:25:46.103 +03:00 [INF] Pasif depo sayısı: 0
+2025-05-02 10:25:46.103 +03:00 [INF] Silinmiş depo sayısı: 2
+2025-05-02 10:25:47.089 +03:00 [INF] Toplam depo sayısı: 4
+2025-05-02 10:25:47.089 +03:00 [INF] Aktif depo sayısı: 2
+2025-05-02 10:25:47.089 +03:00 [INF] Pasif depo sayısı: 0
+2025-05-02 10:25:47.089 +03:00 [INF] Silinmiş depo sayısı: 2
+2025-05-02 10:25:48.334 +03:00 [INF] Toplam depo sayısı: 4
+2025-05-02 10:25:48.334 +03:00 [INF] Aktif depo sayısı: 2
+2025-05-02 10:25:48.334 +03:00 [INF] Pasif depo sayısı: 0
+2025-05-02 10:25:48.334 +03:00 [INF] Silinmiş depo sayısı: 2
+2025-05-02 10:25:49.640 +03:00 [INF] Toplam depo sayısı: 4
+2025-05-02 10:25:49.640 +03:00 [INF] Aktif depo sayısı: 2
+2025-05-02 10:25:49.640 +03:00 [INF] Pasif depo sayısı: 0
+2025-05-02 10:25:49.640 +03:00 [INF] Silinmiş depo sayısı: 2
+2025-05-02 10:25:57.989 +03:00 [INF] Birim sayısı: Aktif=1, Pasif=0, Silinmiş=0
+2025-05-02 10:26:05.663 +03:00 [ERR] Failed executing DbCommand (4ms) [Parameters=[@p0='?' (Size = 4000), @p1='?' (DbType = Boolean), @p2='?' (Size = 4000), @p3='?' (Size = 50), @p4='?' (DbType = DateTime2), @p5='?' (Size = 50), @p6='?' (Size = 250), @p7='?' (DbType = Guid), @p8='?' (Size = 4000), @p9='?' (DbType = Guid), @p10='?' (Size = 128) (DbType = AnsiString), @p11='?' (DbType = Guid), @p12='?' (Size = 50), @p13='?' (DbType = Int32), @p14='?' (Size = 2000), @p15='?' (DbType = DateTime2), @p16='?' (Size = 250), @p17='?' (Size = 250)], CommandType='"Text"', CommandTimeout='120']
+SET IMPLICIT_TRANSACTIONS OFF;
+SET NOCOUNT ON;
+INSERT INTO [SistemLoglar] ([Aciklama], [Basarili], [HataMesaji], [IPAdresi], [IslemTarihi], [IslemTuru], [KayitAdi], [KayitID], [KullaniciAdi], [KullaniciID], [KullaniciId], [LogID], [LogTuru], [LogTuruInt], [Mesaj], [OlusturmaTarihi], [Sayfa], [TabloAdi])
+OUTPUT INSERTED.[Id]
+VALUES (@p0, @p1, @p2, @p3, @p4, @p5, @p6, @p7, @p8, @p9, @p10, @p11, @p12, @p13, @p14, @p15, @p16, @p17);
+2025-05-02 10:26:05.664 +03:00 [ERR] An exception occurred in the database while saving changes for context type 'MuhasebeStokWebApp.Data.ApplicationDbContext'.
+Microsoft.EntityFrameworkCore.DbUpdateException: An error occurred while saving the entity changes. See the inner exception for details.
+ ---> Microsoft.Data.SqlClient.SqlException (0x80131904): The column name 'KullaniciId' is specified more than once in the SET clause or column list of an INSERT. A column cannot be assigned more than one value in the same clause. Modify the clause to make sure that a column is updated only once. If this statement updates or inserts columns into a view, column aliasing can conceal the duplication in your code.
+   at System.Threading.Tasks.ContinuationResultTaskFromResultTask`2.InnerInvoke()
+   at System.Threading.ExecutionContext.RunInternal(ExecutionContext executionContext, ContextCallback callback, Object state)
+--- End of stack trace from previous location ---
+   at System.Threading.ExecutionContext.RunInternal(ExecutionContext executionContext, ContextCallback callback, Object state)
+   at System.Threading.Tasks.Task.ExecuteWithThreadLocal(Task& currentTaskSlot, Thread threadPoolThread)
+--- End of stack trace from previous location ---
+   at Microsoft.EntityFrameworkCore.Storage.RelationalCommand.ExecuteReaderAsync(RelationalCommandParameterObject parameterObject, CancellationToken cancellationToken)
+   at Microsoft.EntityFrameworkCore.Storage.RelationalCommand.ExecuteReaderAsync(RelationalCommandParameterObject parameterObject, CancellationToken cancellationToken)
+   at Microsoft.EntityFrameworkCore.Update.ReaderModificationCommandBatch.ExecuteAsync(IRelationalConnection connection, CancellationToken cancellationToken)
+ClientConnectionId:ea0fc858-4ab8-4568-8281-ea9971ce3e06
+Error Number:264,State:1,Class:16
+   --- End of inner exception stack trace ---
+   at Microsoft.EntityFrameworkCore.Update.ReaderModificationCommandBatch.ExecuteAsync(IRelationalConnection connection, CancellationToken cancellationToken)
+   at Microsoft.EntityFrameworkCore.SqlServer.Update.Internal.SqlServerModificationCommandBatch.ExecuteAsync(IRelationalConnection connection, CancellationToken cancellationToken)
+   at Microsoft.EntityFrameworkCore.Update.Internal.BatchExecutor.ExecuteAsync(IEnumerable`1 commandBatches, IRelationalConnection connection, CancellationToken cancellationToken)
+   at Microsoft.EntityFrameworkCore.Update.Internal.BatchExecutor.ExecuteAsync(IEnumerable`1 commandBatches, IRelationalConnection connection, CancellationToken cancellationToken)
+   at Microsoft.EntityFrameworkCore.Update.Internal.BatchExecutor.ExecuteAsync(IEnumerable`1 commandBatches, IRelationalConnection connection, CancellationToken cancellationToken)
+   at Microsoft.EntityFrameworkCore.Storage.RelationalDatabase.SaveChangesAsync(IList`1 entries, CancellationToken cancellationToken)
+   at Microsoft.EntityFrameworkCore.ChangeTracking.Internal.StateManager.SaveChangesAsync(IList`1 entriesToSave, CancellationToken cancellationToken)
+   at Microsoft.EntityFrameworkCore.ChangeTracking.Internal.StateManager.SaveChangesAsync(StateManager stateManager, Boolean acceptAllChangesOnSuccess, CancellationToken cancellationToken)
+   at Microsoft.EntityFrameworkCore.SqlServer.Storage.Internal.SqlServerExecutionStrategy.ExecuteAsync[TState,TResult](TState state, Func`4 operation, Func`4 verifySucceeded, CancellationToken cancellationToken)
+   at Microsoft.EntityFrameworkCore.DbContext.SaveChangesAsync(Boolean acceptAllChangesOnSuccess, CancellationToken cancellationToken)
+Microsoft.EntityFrameworkCore.DbUpdateException: An error occurred while saving the entity changes. See the inner exception for details.
+ ---> Microsoft.Data.SqlClient.SqlException (0x80131904): The column name 'KullaniciId' is specified more than once in the SET clause or column list of an INSERT. A column cannot be assigned more than one value in the same clause. Modify the clause to make sure that a column is updated only once. If this statement updates or inserts columns into a view, column aliasing can conceal the duplication in your code.
+   at System.Threading.Tasks.ContinuationResultTaskFromResultTask`2.InnerInvoke()
+   at System.Threading.ExecutionContext.RunInternal(ExecutionContext executionContext, ContextCallback callback, Object state)
+--- End of stack trace from previous location ---
+   at System.Threading.ExecutionContext.RunInternal(ExecutionContext executionContext, ContextCallback callback, Object state)
+   at System.Threading.Tasks.Task.ExecuteWithThreadLocal(Task& currentTaskSlot, Thread threadPoolThread)
+--- End of stack trace from previous location ---
+   at Microsoft.EntityFrameworkCore.Storage.RelationalCommand.ExecuteReaderAsync(RelationalCommandParameterObject parameterObject, CancellationToken cancellationToken)
+   at Microsoft.EntityFrameworkCore.Storage.RelationalCommand.ExecuteReaderAsync(RelationalCommandParameterObject parameterObject, CancellationToken cancellationToken)
+   at Microsoft.EntityFrameworkCore.Update.ReaderModificationCommandBatch.ExecuteAsync(IRelationalConnection connection, CancellationToken cancellationToken)
+ClientConnectionId:ea0fc858-4ab8-4568-8281-ea9971ce3e06
+Error Number:264,State:1,Class:16
+   --- End of inner exception stack trace ---
+   at Microsoft.EntityFrameworkCore.Update.ReaderModificationCommandBatch.ExecuteAsync(IRelationalConnection connection, CancellationToken cancellationToken)
+   at Microsoft.EntityFrameworkCore.SqlServer.Update.Internal.SqlServerModificationCommandBatch.ExecuteAsync(IRelationalConnection connection, CancellationToken cancellationToken)
+   at Microsoft.EntityFrameworkCore.Update.Internal.BatchExecutor.ExecuteAsync(IEnumerable`1 commandBatches, IRelationalConnection connection, CancellationToken cancellationToken)
+   at Microsoft.EntityFrameworkCore.Update.Internal.BatchExecutor.ExecuteAsync(IEnumerable`1 commandBatches, IRelationalConnection connection, CancellationToken cancellationToken)
+   at Microsoft.EntityFrameworkCore.Update.Internal.BatchExecutor.ExecuteAsync(IEnumerable`1 commandBatches, IRelationalConnection connection, CancellationToken cancellationToken)
+   at Microsoft.EntityFrameworkCore.Storage.RelationalDatabase.SaveChangesAsync(IList`1 entries, CancellationToken cancellationToken)
+   at Microsoft.EntityFrameworkCore.ChangeTracking.Internal.StateManager.SaveChangesAsync(IList`1 entriesToSave, CancellationToken cancellationToken)
+   at Microsoft.EntityFrameworkCore.ChangeTracking.Internal.StateManager.SaveChangesAsync(StateManager stateManager, Boolean acceptAllChangesOnSuccess, CancellationToken cancellationToken)
+   at Microsoft.EntityFrameworkCore.SqlServer.Storage.Internal.SqlServerExecutionStrategy.ExecuteAsync[TState,TResult](TState state, Func`4 operation, Func`4 verifySucceeded, CancellationToken cancellationToken)
+   at Microsoft.EntityFrameworkCore.DbContext.SaveChangesAsync(Boolean acceptAllChangesOnSuccess, CancellationToken cancellationToken)
+2025-05-02 10:26:05.664 +03:00 [ERR] Log ekleme hatası: Birim oluşturma: Bu isimde bir birim zaten mevcut. - An error occurred while saving the entity changes. See the inner exception for details.
+Microsoft.EntityFrameworkCore.DbUpdateException: An error occurred while saving the entity changes. See the inner exception for details.
+ ---> Microsoft.Data.SqlClient.SqlException (0x80131904): The column name 'KullaniciId' is specified more than once in the SET clause or column list of an INSERT. A column cannot be assigned more than one value in the same clause. Modify the clause to make sure that a column is updated only once. If this statement updates or inserts columns into a view, column aliasing can conceal the duplication in your code.
+   at System.Threading.Tasks.ContinuationResultTaskFromResultTask`2.InnerInvoke()
+   at System.Threading.ExecutionContext.RunInternal(ExecutionContext executionContext, ContextCallback callback, Object state)
+--- End of stack trace from previous location ---
+   at System.Threading.ExecutionContext.RunInternal(ExecutionContext executionContext, ContextCallback callback, Object state)
+   at System.Threading.Tasks.Task.ExecuteWithThreadLocal(Task& currentTaskSlot, Thread threadPoolThread)
+--- End of stack trace from previous location ---
+   at Microsoft.EntityFrameworkCore.Storage.RelationalCommand.ExecuteReaderAsync(RelationalCommandParameterObject parameterObject, CancellationToken cancellationToken)
+   at Microsoft.EntityFrameworkCore.Storage.RelationalCommand.ExecuteReaderAsync(RelationalCommandParameterObject parameterObject, CancellationToken cancellationToken)
+   at Microsoft.EntityFrameworkCore.Update.ReaderModificationCommandBatch.ExecuteAsync(IRelationalConnection connection, CancellationToken cancellationToken)
+ClientConnectionId:ea0fc858-4ab8-4568-8281-ea9971ce3e06
+Error Number:264,State:1,Class:16
+   --- End of inner exception stack trace ---
+   at Microsoft.EntityFrameworkCore.Update.ReaderModificationCommandBatch.ExecuteAsync(IRelationalConnection connection, CancellationToken cancellationToken)
+   at Microsoft.EntityFrameworkCore.SqlServer.Update.Internal.SqlServerModificationCommandBatch.ExecuteAsync(IRelationalConnection connection, CancellationToken cancellationToken)
+   at Microsoft.EntityFrameworkCore.Update.Internal.BatchExecutor.ExecuteAsync(IEnumerable`1 commandBatches, IRelationalConnection connection, CancellationToken cancellationToken)
+   at Microsoft.EntityFrameworkCore.Update.Internal.BatchExecutor.ExecuteAsync(IEnumerable`1 commandBatches, IRelationalConnection connection, CancellationToken cancellationToken)
+   at Microsoft.EntityFrameworkCore.Update.Internal.BatchExecutor.ExecuteAsync(IEnumerable`1 commandBatches, IRelationalConnection connection, CancellationToken cancellationToken)
+   at Microsoft.EntityFrameworkCore.Storage.RelationalDatabase.SaveChangesAsync(IList`1 entries, CancellationToken cancellationToken)
+   at Microsoft.EntityFrameworkCore.ChangeTracking.Internal.StateManager.SaveChangesAsync(IList`1 entriesToSave, CancellationToken cancellationToken)
+   at Microsoft.EntityFrameworkCore.ChangeTracking.Internal.StateManager.SaveChangesAsync(StateManager stateManager, Boolean acceptAllChangesOnSuccess, CancellationToken cancellationToken)
+   at Microsoft.EntityFrameworkCore.SqlServer.Storage.Internal.SqlServerExecutionStrategy.ExecuteAsync[TState,TResult](TState state, Func`4 operation, Func`4 verifySucceeded, CancellationToken cancellationToken)
+   at Microsoft.EntityFrameworkCore.DbContext.SaveChangesAsync(Boolean acceptAllChangesOnSuccess, CancellationToken cancellationToken)
+   at Microsoft.EntityFrameworkCore.DbContext.SaveChangesAsync(Boolean acceptAllChangesOnSuccess, CancellationToken cancellationToken)
+   at MuhasebeStokWebApp.Services.LogService.LogEkleAsync(String mesaj, LogTuru logTuru, String detay) in /Users/muhammetkocaman/MuhasebeStokWebApp/Services/LogService.cs:line 65
+2025-05-02 10:26:29.975 +03:00 [INF] Birim sayısı: Aktif=1, Pasif=0, Silinmiş=0
+2025-05-02 10:42:23.389 +03:00 [WRN] Entity 'Cari' has a global query filter defined and is the required end of a relationship with the entity 'Sozlesme'. This may lead to unexpected results when the required entity is filtered out. Either configure the navigation as optional, or define matching query filters for both entities in the navigation. See https://go.microsoft.com/fwlink/?linkid=2131316 for more information.
+2025-05-02 10:42:23.441 +03:00 [ERR] Veritabanı oluşturulurken veya migrationlar uygulanırken bir hata oluştu.
+System.InvalidOperationException: Cannot use table 'KurDegerleri' for entity type 'KurDegeri' since it is being used for entity type 'KurDegeri' and potentially other entity types, but there is no linking relationship. Add a foreign key to 'KurDegeri' on the primary key properties and pointing to the primary key on another entity type mapped to 'KurDegerleri'.
+   at Microsoft.EntityFrameworkCore.Infrastructure.RelationalModelValidator.ValidateSharedTableCompatibility(IReadOnlyList`1 mappedTypes, StoreObjectIdentifier& storeObject, IDiagnosticsLogger`1 logger)
+   at Microsoft.EntityFrameworkCore.SqlServer.Infrastructure.Internal.SqlServerModelValidator.ValidateSharedTableCompatibility(IReadOnlyList`1 mappedTypes, StoreObjectIdentifier& storeObject, IDiagnosticsLogger`1 logger)
+   at Microsoft.EntityFrameworkCore.Infrastructure.RelationalModelValidator.ValidateSharedTableCompatibility(IModel model, IDiagnosticsLogger`1 logger)
+   at Microsoft.EntityFrameworkCore.Infrastructure.RelationalModelValidator.Validate(IModel model, IDiagnosticsLogger`1 logger)
+   at Microsoft.EntityFrameworkCore.SqlServer.Infrastructure.Internal.SqlServerModelValidator.Validate(IModel model, IDiagnosticsLogger`1 logger)
+   at Microsoft.EntityFrameworkCore.Infrastructure.ModelRuntimeInitializer.Initialize(IModel model, Boolean designTime, IDiagnosticsLogger`1 validationLogger)
+   at Microsoft.EntityFrameworkCore.Infrastructure.ModelSource.CreateModel(DbContext context, ModelCreationDependencies modelCreationDependencies, Boolean designTime)
+   at Microsoft.EntityFrameworkCore.Infrastructure.ModelSource.GetModel(DbContext context, ModelCreationDependencies modelCreationDependencies, Boolean designTime)
+   at Microsoft.EntityFrameworkCore.Internal.DbContextServices.CreateModel(Boolean designTime)
+   at Microsoft.EntityFrameworkCore.Internal.DbContextServices.get_Model()
+   at Microsoft.EntityFrameworkCore.Infrastructure.EntityFrameworkServicesBuilder.<>c.<TryAddCoreServices>b__8_4(IServiceProvider p)
+   at Microsoft.Extensions.DependencyInjection.ServiceLookup.CallSiteRuntimeResolver.VisitFactory(FactoryCallSite factoryCallSite, RuntimeResolverContext context)
+   at Microsoft.Extensions.DependencyInjection.ServiceLookup.CallSiteVisitor`2.VisitCallSiteMain(ServiceCallSite callSite, TArgument argument)
+   at Microsoft.Extensions.DependencyInjection.ServiceLookup.CallSiteRuntimeResolver.VisitCache(ServiceCallSite callSite, RuntimeResolverContext context, ServiceProviderEngineScope serviceProviderEngine, RuntimeResolverLock lockType)
+   at Microsoft.Extensions.DependencyInjection.ServiceLookup.CallSiteRuntimeResolver.VisitScopeCache(ServiceCallSite callSite, RuntimeResolverContext context)
+   at Microsoft.Extensions.DependencyInjection.ServiceLookup.CallSiteVisitor`2.VisitCallSite(ServiceCallSite callSite, TArgument argument)
+   at Microsoft.Extensions.DependencyInjection.ServiceLookup.CallSiteRuntimeResolver.VisitConstructor(ConstructorCallSite constructorCallSite, RuntimeResolverContext context)
+   at Microsoft.Extensions.DependencyInjection.ServiceLookup.CallSiteVisitor`2.VisitCallSiteMain(ServiceCallSite callSite, TArgument argument)
+   at Microsoft.Extensions.DependencyInjection.ServiceLookup.CallSiteRuntimeResolver.VisitCache(ServiceCallSite callSite, RuntimeResolverContext context, ServiceProviderEngineScope serviceProviderEngine, RuntimeResolverLock lockType)
+   at Microsoft.Extensions.DependencyInjection.ServiceLookup.CallSiteRuntimeResolver.VisitScopeCache(ServiceCallSite callSite, RuntimeResolverContext context)
+   at Microsoft.Extensions.DependencyInjection.ServiceLookup.CallSiteVisitor`2.VisitCallSite(ServiceCallSite callSite, TArgument argument)
+   at Microsoft.Extensions.DependencyInjection.ServiceLookup.CallSiteRuntimeResolver.VisitConstructor(ConstructorCallSite constructorCallSite, RuntimeResolverContext context)
+   at Microsoft.Extensions.DependencyInjection.ServiceLookup.CallSiteVisitor`2.VisitCallSiteMain(ServiceCallSite callSite, TArgument argument)
+   at Microsoft.Extensions.DependencyInjection.ServiceLookup.CallSiteRuntimeResolver.VisitCache(ServiceCallSite callSite, RuntimeResolverContext context, ServiceProviderEngineScope serviceProviderEngine, RuntimeResolverLock lockType)
+   at Microsoft.Extensions.DependencyInjection.ServiceLookup.CallSiteRuntimeResolver.VisitScopeCache(ServiceCallSite callSite, RuntimeResolverContext context)
+   at Microsoft.Extensions.DependencyInjection.ServiceLookup.CallSiteVisitor`2.VisitCallSite(ServiceCallSite callSite, TArgument argument)
+   at Microsoft.Extensions.DependencyInjection.ServiceLookup.CallSiteRuntimeResolver.VisitConstructor(ConstructorCallSite constructorCallSite, RuntimeResolverContext context)
+   at Microsoft.Extensions.DependencyInjection.ServiceLookup.CallSiteVisitor`2.VisitCallSiteMain(ServiceCallSite callSite, TArgument argument)
+   at Microsoft.Extensions.DependencyInjection.ServiceLookup.CallSiteRuntimeResolver.VisitCache(ServiceCallSite callSite, RuntimeResolverContext context, ServiceProviderEngineScope serviceProviderEngine, RuntimeResolverLock lockType)
+   at Microsoft.Extensions.DependencyInjection.ServiceLookup.CallSiteRuntimeResolver.VisitScopeCache(ServiceCallSite callSite, RuntimeResolverContext context)
+   at Microsoft.Extensions.DependencyInjection.ServiceLookup.CallSiteVisitor`2.VisitCallSite(ServiceCallSite callSite, TArgument argument)
+   at Microsoft.Extensions.DependencyInjection.ServiceLookup.CallSiteRuntimeResolver.VisitConstructor(ConstructorCallSite constructorCallSite, RuntimeResolverContext context)
+   at Microsoft.Extensions.DependencyInjection.ServiceLookup.CallSiteVisitor`2.VisitCallSiteMain(ServiceCallSite callSite, TArgument argument)
+   at Microsoft.Extensions.DependencyInjection.ServiceLookup.CallSiteRuntimeResolver.VisitCache(ServiceCallSite callSite, RuntimeResolverContext context, ServiceProviderEngineScope serviceProviderEngine, RuntimeResolverLock lockType)
+   at Microsoft.Extensions.DependencyInjection.ServiceLookup.CallSiteRuntimeResolver.VisitScopeCache(ServiceCallSite callSite, RuntimeResolverContext context)
+   at Microsoft.Extensions.DependencyInjection.ServiceLookup.CallSiteVisitor`2.VisitCallSite(ServiceCallSite callSite, TArgument argument)
+   at Microsoft.Extensions.DependencyInjection.ServiceLookup.CallSiteRuntimeResolver.VisitConstructor(ConstructorCallSite constructorCallSite, RuntimeResolverContext context)
+   at Microsoft.Extensions.DependencyInjection.ServiceLookup.CallSiteVisitor`2.VisitCallSiteMain(ServiceCallSite callSite, TArgument argument)
+   at Microsoft.Extensions.DependencyInjection.ServiceLookup.CallSiteRuntimeResolver.VisitCache(ServiceCallSite callSite, RuntimeResolverContext context, ServiceProviderEngineScope serviceProviderEngine, RuntimeResolverLock lockType)
+   at Microsoft.Extensions.DependencyInjection.ServiceLookup.CallSiteRuntimeResolver.VisitScopeCache(ServiceCallSite callSite, RuntimeResolverContext context)
+   at Microsoft.Extensions.DependencyInjection.ServiceLookup.CallSiteVisitor`2.VisitCallSite(ServiceCallSite callSite, TArgument argument)
+   at Microsoft.Extensions.DependencyInjection.ServiceLookup.CallSiteRuntimeResolver.Resolve(ServiceCallSite callSite, ServiceProviderEngineScope scope)
+   at Microsoft.Extensions.DependencyInjection.ServiceLookup.DynamicServiceProviderEngine.<>c__DisplayClass2_0.<RealizeService>b__0(ServiceProviderEngineScope scope)
+   at Microsoft.Extensions.DependencyInjection.ServiceProvider.GetService(ServiceIdentifier serviceIdentifier, ServiceProviderEngineScope serviceProviderEngineScope)
+   at Microsoft.Extensions.DependencyInjection.ServiceLookup.ServiceProviderEngineScope.GetService(Type serviceType)
+   at Microsoft.Extensions.DependencyInjection.ServiceProviderServiceExtensions.GetRequiredService(IServiceProvider provider, Type serviceType)
+   at Microsoft.Extensions.DependencyInjection.ServiceProviderServiceExtensions.GetRequiredService[T](IServiceProvider provider)
+   at Microsoft.EntityFrameworkCore.DbContext.get_DbContextDependencies()
+   at Microsoft.EntityFrameworkCore.DbContext.get_ContextServices()
+   at Microsoft.EntityFrameworkCore.DbContext.get_InternalServiceProvider()
+   at Microsoft.EntityFrameworkCore.DbContext.Microsoft.EntityFrameworkCore.Infrastructure.IInfrastructure<System.IServiceProvider>.get_Instance()
+   at Microsoft.EntityFrameworkCore.Infrastructure.Internal.InfrastructureExtensions.GetService(IInfrastructure`1 accessor, Type serviceType)
+   at Microsoft.EntityFrameworkCore.Infrastructure.Internal.InfrastructureExtensions.GetService[TService](IInfrastructure`1 accessor)
+   at Microsoft.EntityFrameworkCore.Infrastructure.AccessorExtensions.GetService[TService](IInfrastructure`1 accessor)
+   at Microsoft.EntityFrameworkCore.Infrastructure.DatabaseFacade.get_Dependencies()
+   at Microsoft.EntityFrameworkCore.Infrastructure.DatabaseFacade.CanConnect()
+   at Program.<Main>$(String[] args) in /Users/muhammetkocaman/MuhasebeStokWebApp/Program.cs:line 355
+2025-05-02 10:42:23.513 +03:00 [FTL] Application startup exception
+System.InvalidOperationException: Cannot resolve scoped service 'MuhasebeStokWebApp.Exceptions.ExceptionStrategyFactory' from root provider.
+   at Microsoft.Extensions.DependencyInjection.ServiceLookup.CallSiteValidator.ValidateResolution(ServiceCallSite callSite, IServiceScope scope, IServiceScope rootScope)
+   at Microsoft.Extensions.DependencyInjection.ServiceProvider.OnResolve(ServiceCallSite callSite, IServiceScope scope)
+   at Microsoft.Extensions.DependencyInjection.ServiceProvider.GetService(ServiceIdentifier serviceIdentifier, ServiceProviderEngineScope serviceProviderEngineScope)
+   at Microsoft.Extensions.DependencyInjection.ServiceProvider.GetService(Type serviceType)
+   at Microsoft.Extensions.DependencyInjection.ActivatorUtilities.ConstructorInfoEx.GetService(IServiceProvider serviceProvider, Int32 parameterIndex)
+   at Microsoft.Extensions.DependencyInjection.ActivatorUtilities.ConstructorMatcher.CreateInstance(IServiceProvider provider)
+   at Microsoft.Extensions.DependencyInjection.ActivatorUtilities.CreateInstance(IServiceProvider provider, Type instanceType, Object[] parameters)
+   at Microsoft.AspNetCore.Builder.UseMiddlewareExtensions.ReflectionMiddlewareBinder.CreateMiddleware(RequestDelegate next)
+   at Microsoft.AspNetCore.Builder.ApplicationBuilder.Build()
+   at Microsoft.AspNetCore.Builder.ApplicationBuilder.Build()
+   at Microsoft.AspNetCore.Hosting.GenericWebHostService.StartAsync(CancellationToken cancellationToken)
+2025-05-02 10:42:23.514 +03:00 [ERR] Hosting failed to start
+System.InvalidOperationException: Cannot resolve scoped service 'MuhasebeStokWebApp.Exceptions.ExceptionStrategyFactory' from root provider.
+   at Microsoft.Extensions.DependencyInjection.ServiceLookup.CallSiteValidator.ValidateResolution(ServiceCallSite callSite, IServiceScope scope, IServiceScope rootScope)
+   at Microsoft.Extensions.DependencyInjection.ServiceProvider.OnResolve(ServiceCallSite callSite, IServiceScope scope)
+   at Microsoft.Extensions.DependencyInjection.ServiceProvider.GetService(ServiceIdentifier serviceIdentifier, ServiceProviderEngineScope serviceProviderEngineScope)
+   at Microsoft.Extensions.DependencyInjection.ServiceProvider.GetService(Type serviceType)
+   at Microsoft.Extensions.DependencyInjection.ActivatorUtilities.ConstructorInfoEx.GetService(IServiceProvider serviceProvider, Int32 parameterIndex)
+   at Microsoft.Extensions.DependencyInjection.ActivatorUtilities.ConstructorMatcher.CreateInstance(IServiceProvider provider)
+   at Microsoft.Extensions.DependencyInjection.ActivatorUtilities.CreateInstance(IServiceProvider provider, Type instanceType, Object[] parameters)
+   at Microsoft.AspNetCore.Builder.UseMiddlewareExtensions.ReflectionMiddlewareBinder.CreateMiddleware(RequestDelegate next)
+   at Microsoft.AspNetCore.Builder.ApplicationBuilder.Build()
+   at Microsoft.AspNetCore.Builder.ApplicationBuilder.Build()
+   at Microsoft.AspNetCore.Hosting.GenericWebHostService.StartAsync(CancellationToken cancellationToken)
+   at Microsoft.Extensions.Hosting.Internal.Host.<StartAsync>b__14_1(IHostedService service, CancellationToken token)
+   at Microsoft.Extensions.Hosting.Internal.Host.ForeachService[T](IEnumerable`1 services, CancellationToken token, Boolean concurrent, Boolean abortOnFirstException, List`1 exceptions, Func`3 operation)
+2025-05-02 10:45:33.036 +03:00 [WRN] Entity 'Cari' has a global query filter defined and is the required end of a relationship with the entity 'Sozlesme'. This may lead to unexpected results when the required entity is filtered out. Either configure the navigation as optional, or define matching query filters for both entities in the navigation. See https://go.microsoft.com/fwlink/?linkid=2131316 for more information.
+2025-05-02 10:45:33.091 +03:00 [ERR] Veritabanı oluşturulurken veya migrationlar uygulanırken bir hata oluştu.
+System.InvalidOperationException: Cannot use table 'ParaBirimleri' for entity type 'ParaBirimi' since it is being used for entity type 'ParaBirimi' and potentially other entity types, but there is no linking relationship. Add a foreign key to 'ParaBirimi' on the primary key properties and pointing to the primary key on another entity type mapped to 'ParaBirimleri'.
+   at Microsoft.EntityFrameworkCore.Infrastructure.RelationalModelValidator.ValidateSharedTableCompatibility(IReadOnlyList`1 mappedTypes, StoreObjectIdentifier& storeObject, IDiagnosticsLogger`1 logger)
+   at Microsoft.EntityFrameworkCore.SqlServer.Infrastructure.Internal.SqlServerModelValidator.ValidateSharedTableCompatibility(IReadOnlyList`1 mappedTypes, StoreObjectIdentifier& storeObject, IDiagnosticsLogger`1 logger)
+   at Microsoft.EntityFrameworkCore.Infrastructure.RelationalModelValidator.ValidateSharedTableCompatibility(IModel model, IDiagnosticsLogger`1 logger)
+   at Microsoft.EntityFrameworkCore.Infrastructure.RelationalModelValidator.Validate(IModel model, IDiagnosticsLogger`1 logger)
+   at Microsoft.EntityFrameworkCore.SqlServer.Infrastructure.Internal.SqlServerModelValidator.Validate(IModel model, IDiagnosticsLogger`1 logger)
+   at Microsoft.EntityFrameworkCore.Infrastructure.ModelRuntimeInitializer.Initialize(IModel model, Boolean designTime, IDiagnosticsLogger`1 validationLogger)
+   at Microsoft.EntityFrameworkCore.Infrastructure.ModelSource.CreateModel(DbContext context, ModelCreationDependencies modelCreationDependencies, Boolean designTime)
+   at Microsoft.EntityFrameworkCore.Infrastructure.ModelSource.GetModel(DbContext context, ModelCreationDependencies modelCreationDependencies, Boolean designTime)
+   at Microsoft.EntityFrameworkCore.Internal.DbContextServices.CreateModel(Boolean designTime)
+   at Microsoft.EntityFrameworkCore.Internal.DbContextServices.get_Model()
+   at Microsoft.EntityFrameworkCore.Infrastructure.EntityFrameworkServicesBuilder.<>c.<TryAddCoreServices>b__8_4(IServiceProvider p)
+   at Microsoft.Extensions.DependencyInjection.ServiceLookup.CallSiteRuntimeResolver.VisitFactory(FactoryCallSite factoryCallSite, RuntimeResolverContext context)
+   at Microsoft.Extensions.DependencyInjection.ServiceLookup.CallSiteVisitor`2.VisitCallSiteMain(ServiceCallSite callSite, TArgument argument)
+   at Microsoft.Extensions.DependencyInjection.ServiceLookup.CallSiteRuntimeResolver.VisitCache(ServiceCallSite callSite, RuntimeResolverContext context, ServiceProviderEngineScope serviceProviderEngine, RuntimeResolverLock lockType)
+   at Microsoft.Extensions.DependencyInjection.ServiceLookup.CallSiteRuntimeResolver.VisitScopeCache(ServiceCallSite callSite, RuntimeResolverContext context)
+   at Microsoft.Extensions.DependencyInjection.ServiceLookup.CallSiteVisitor`2.VisitCallSite(ServiceCallSite callSite, TArgument argument)
+   at Microsoft.Extensions.DependencyInjection.ServiceLookup.CallSiteRuntimeResolver.VisitConstructor(ConstructorCallSite constructorCallSite, RuntimeResolverContext context)
+   at Microsoft.Extensions.DependencyInjection.ServiceLookup.CallSiteVisitor`2.VisitCallSiteMain(ServiceCallSite callSite, TArgument argument)
+   at Microsoft.Extensions.DependencyInjection.ServiceLookup.CallSiteRuntimeResolver.VisitCache(ServiceCallSite callSite, RuntimeResolverContext context, ServiceProviderEngineScope serviceProviderEngine, RuntimeResolverLock lockType)
+   at Microsoft.Extensions.DependencyInjection.ServiceLookup.CallSiteRuntimeResolver.VisitScopeCache(ServiceCallSite callSite, RuntimeResolverContext context)
+   at Microsoft.Extensions.DependencyInjection.ServiceLookup.CallSiteVisitor`2.VisitCallSite(ServiceCallSite callSite, TArgument argument)
+   at Microsoft.Extensions.DependencyInjection.ServiceLookup.CallSiteRuntimeResolver.VisitConstructor(ConstructorCallSite constructorCallSite, RuntimeResolverContext context)
+   at Microsoft.Extensions.DependencyInjection.ServiceLookup.CallSiteVisitor`2.VisitCallSiteMain(ServiceCallSite callSite, TArgument argument)
+   at Microsoft.Extensions.DependencyInjection.ServiceLookup.CallSiteRuntimeResolver.VisitCache(ServiceCallSite callSite, RuntimeResolverContext context, ServiceProviderEngineScope serviceProviderEngine, RuntimeResolverLock lockType)
+   at Microsoft.Extensions.DependencyInjection.ServiceLookup.CallSiteRuntimeResolver.VisitScopeCache(ServiceCallSite callSite, RuntimeResolverContext context)
+   at Microsoft.Extensions.DependencyInjection.ServiceLookup.CallSiteVisitor`2.VisitCallSite(ServiceCallSite callSite, TArgument argument)
+   at Microsoft.Extensions.DependencyInjection.ServiceLookup.CallSiteRuntimeResolver.VisitConstructor(ConstructorCallSite constructorCallSite, RuntimeResolverContext context)
+   at Microsoft.Extensions.DependencyInjection.ServiceLookup.CallSiteVisitor`2.VisitCallSiteMain(ServiceCallSite callSite, TArgument argument)
+   at Microsoft.Extensions.DependencyInjection.ServiceLookup.CallSiteRuntimeResolver.VisitCache(ServiceCallSite callSite, RuntimeResolverContext context, ServiceProviderEngineScope serviceProviderEngine, RuntimeResolverLock lockType)
+   at Microsoft.Extensions.DependencyInjection.ServiceLookup.CallSiteRuntimeResolver.VisitScopeCache(ServiceCallSite callSite, RuntimeResolverContext context)
+   at Microsoft.Extensions.DependencyInjection.ServiceLookup.CallSiteVisitor`2.VisitCallSite(ServiceCallSite callSite, TArgument argument)
+   at Microsoft.Extensions.DependencyInjection.ServiceLookup.CallSiteRuntimeResolver.VisitConstructor(ConstructorCallSite constructorCallSite, RuntimeResolverContext context)
+   at Microsoft.Extensions.DependencyInjection.ServiceLookup.CallSiteVisitor`2.VisitCallSiteMain(ServiceCallSite callSite, TArgument argument)
+   at Microsoft.Extensions.DependencyInjection.ServiceLookup.CallSiteRuntimeResolver.VisitCache(ServiceCallSite callSite, RuntimeResolverContext context, ServiceProviderEngineScope serviceProviderEngine, RuntimeResolverLock lockType)
+   at Microsoft.Extensions.DependencyInjection.ServiceLookup.CallSiteRuntimeResolver.VisitScopeCache(ServiceCallSite callSite, RuntimeResolverContext context)
+   at Microsoft.Extensions.DependencyInjection.ServiceLookup.CallSiteVisitor`2.VisitCallSite(ServiceCallSite callSite, TArgument argument)
+   at Microsoft.Extensions.DependencyInjection.ServiceLookup.CallSiteRuntimeResolver.VisitConstructor(ConstructorCallSite constructorCallSite, RuntimeResolverContext context)
+   at Microsoft.Extensions.DependencyInjection.ServiceLookup.CallSiteVisitor`2.VisitCallSiteMain(ServiceCallSite callSite, TArgument argument)
+   at Microsoft.Extensions.DependencyInjection.ServiceLookup.CallSiteRuntimeResolver.VisitCache(ServiceCallSite callSite, RuntimeResolverContext context, ServiceProviderEngineScope serviceProviderEngine, RuntimeResolverLock lockType)
+   at Microsoft.Extensions.DependencyInjection.ServiceLookup.CallSiteRuntimeResolver.VisitScopeCache(ServiceCallSite callSite, RuntimeResolverContext context)
+   at Microsoft.Extensions.DependencyInjection.ServiceLookup.CallSiteVisitor`2.VisitCallSite(ServiceCallSite callSite, TArgument argument)
+   at Microsoft.Extensions.DependencyInjection.ServiceLookup.CallSiteRuntimeResolver.Resolve(ServiceCallSite callSite, ServiceProviderEngineScope scope)
+   at Microsoft.Extensions.DependencyInjection.ServiceLookup.DynamicServiceProviderEngine.<>c__DisplayClass2_0.<RealizeService>b__0(ServiceProviderEngineScope scope)
+   at Microsoft.Extensions.DependencyInjection.ServiceProvider.GetService(ServiceIdentifier serviceIdentifier, ServiceProviderEngineScope serviceProviderEngineScope)
+   at Microsoft.Extensions.DependencyInjection.ServiceLookup.ServiceProviderEngineScope.GetService(Type serviceType)
+   at Microsoft.Extensions.DependencyInjection.ServiceProviderServiceExtensions.GetRequiredService(IServiceProvider provider, Type serviceType)
+   at Microsoft.Extensions.DependencyInjection.ServiceProviderServiceExtensions.GetRequiredService[T](IServiceProvider provider)
+   at Microsoft.EntityFrameworkCore.DbContext.get_DbContextDependencies()
+   at Microsoft.EntityFrameworkCore.DbContext.get_ContextServices()
+   at Microsoft.EntityFrameworkCore.DbContext.get_InternalServiceProvider()
+   at Microsoft.EntityFrameworkCore.DbContext.Microsoft.EntityFrameworkCore.Infrastructure.IInfrastructure<System.IServiceProvider>.get_Instance()
+   at Microsoft.EntityFrameworkCore.Infrastructure.Internal.InfrastructureExtensions.GetService(IInfrastructure`1 accessor, Type serviceType)
+   at Microsoft.EntityFrameworkCore.Infrastructure.Internal.InfrastructureExtensions.GetService[TService](IInfrastructure`1 accessor)
+   at Microsoft.EntityFrameworkCore.Infrastructure.AccessorExtensions.GetService[TService](IInfrastructure`1 accessor)
+   at Microsoft.EntityFrameworkCore.Infrastructure.DatabaseFacade.get_Dependencies()
+   at Microsoft.EntityFrameworkCore.Infrastructure.DatabaseFacade.CanConnect()
+   at Program.<Main>$(String[] args) in /Users/muhammetkocaman/MuhasebeStokWebApp/Program.cs:line 355
+2025-05-02 10:51:00.192 +03:00 [WRN] Entity 'Cari' has a global query filter defined and is the required end of a relationship with the entity 'Sozlesme'. This may lead to unexpected results when the required entity is filtered out. Either configure the navigation as optional, or define matching query filters for both entities in the navigation. See https://go.microsoft.com/fwlink/?linkid=2131316 for more information.
+2025-05-02 10:51:00.384 +03:00 [INF] Veritabanına bağlantı başarılı. Migrationlar uygulanıyor...
+2025-05-02 10:51:00.728 +03:00 [INF] Veritabanı işlemleri başarıyla tamamlandı.
+2025-05-02 10:51:00.948 +03:00 [ERR] Hosting failed to start
+System.IO.IOException: Failed to bind to address https://127.0.0.1:7118: address already in use.
+ ---> Microsoft.AspNetCore.Connections.AddressInUseException: Address already in use
+ ---> System.Net.Sockets.SocketException (48): Address already in use
+   at System.Net.Sockets.Socket.DoBind(EndPoint endPointSnapshot, SocketAddress socketAddress)
+   at System.Net.Sockets.Socket.Bind(EndPoint localEP)
+   at Microsoft.AspNetCore.Server.Kestrel.Transport.Sockets.SocketTransportOptions.CreateDefaultBoundListenSocket(EndPoint endpoint)
+   at Microsoft.AspNetCore.Server.Kestrel.Transport.Sockets.SocketConnectionListener.Bind()
+   --- End of inner exception stack trace ---
+   at Microsoft.AspNetCore.Server.Kestrel.Transport.Sockets.SocketConnectionListener.Bind()
+   at Microsoft.AspNetCore.Server.Kestrel.Transport.Sockets.SocketTransportFactory.BindAsync(EndPoint endpoint, CancellationToken cancellationToken)
+   at Microsoft.AspNetCore.Server.Kestrel.Core.Internal.Infrastructure.TransportManager.BindAsync(EndPoint endPoint, ConnectionDelegate connectionDelegate, EndpointConfig endpointConfig, CancellationToken cancellationToken)
+   at Microsoft.AspNetCore.Server.Kestrel.Core.KestrelServerImpl.<>c__DisplayClass28_0`1.<<StartAsync>g__OnBind|0>d.MoveNext()
+--- End of stack trace from previous location ---
+   at Microsoft.AspNetCore.Server.Kestrel.Core.Internal.AddressBinder.BindEndpointAsync(ListenOptions endpoint, AddressBindContext context, CancellationToken cancellationToken)
+   --- End of inner exception stack trace ---
+   at Microsoft.AspNetCore.Server.Kestrel.Core.Internal.AddressBinder.BindEndpointAsync(ListenOptions endpoint, AddressBindContext context, CancellationToken cancellationToken)
+   at Microsoft.AspNetCore.Server.Kestrel.Core.LocalhostListenOptions.BindAsync(AddressBindContext context, CancellationToken cancellationToken)
+   at Microsoft.AspNetCore.Server.Kestrel.Core.Internal.AddressBinder.AddressesStrategy.BindAsync(AddressBindContext context, CancellationToken cancellationToken)
+   at Microsoft.AspNetCore.Server.Kestrel.Core.KestrelServerImpl.BindAsync(CancellationToken cancellationToken)
+   at Microsoft.AspNetCore.Server.Kestrel.Core.KestrelServerImpl.StartAsync[TContext](IHttpApplication`1 application, CancellationToken cancellationToken)
+   at Microsoft.AspNetCore.Hosting.GenericWebHostService.StartAsync(CancellationToken cancellationToken)
+   at Microsoft.Extensions.Hosting.Internal.Host.<StartAsync>b__14_1(IHostedService service, CancellationToken token)
+   at Microsoft.Extensions.Hosting.Internal.Host.ForeachService[T](IEnumerable`1 services, CancellationToken token, Boolean concurrent, Boolean abortOnFirstException, List`1 exceptions, Func`3 operation)
+2025-05-02 10:51:44.553 +03:00 [WRN] Entity 'Cari' has a global query filter defined and is the required end of a relationship with the entity 'Sozlesme'. This may lead to unexpected results when the required entity is filtered out. Either configure the navigation as optional, or define matching query filters for both entities in the navigation. See https://go.microsoft.com/fwlink/?linkid=2131316 for more information.
+2025-05-02 10:51:44.757 +03:00 [INF] Veritabanına bağlantı başarılı. Migrationlar uygulanıyor...
+2025-05-02 10:51:45.093 +03:00 [INF] Veritabanı işlemleri başarıyla tamamlandı.
+2025-05-02 10:51:54.518 +03:00 [INF] Giriş denemesi: admin
+2025-05-02 10:51:54.624 +03:00 [INF] Admin kullanıcısı başarıyla giriş yaptı: admin
+2025-05-02 10:51:54.624 +03:00 [INF] Admin session oluşturuldu: UserID=fc704594-5ae7-463d-bbba-6be38187613c, UserName=admin
+2025-05-02 10:51:54.624 +03:00 [INF] Yönlendirme adresi: /Urun
+2025-05-02 10:51:54.624 +03:00 [INF] Admin kullanıcısı /Urun adresine yönlendiriliyor
+2025-05-02 10:52:06.369 +03:00 [INF] Birim sayısı: Aktif=3, Pasif=0, Silinmiş=0
+2025-05-02 10:52:07.504 +03:00 [INF] Birim sayısı: Aktif=3, Pasif=0, Silinmiş=0
+2025-05-02 10:52:08.745 +03:00 [INF] Birim sayısı: Aktif=3, Pasif=0, Silinmiş=0
+2025-05-02 10:52:10.143 +03:00 [INF] Toplam depo sayısı: 4
+2025-05-02 10:52:10.143 +03:00 [INF] Aktif depo sayısı: 2
+2025-05-02 10:52:10.143 +03:00 [INF] Pasif depo sayısı: 0
+2025-05-02 10:52:10.143 +03:00 [INF] Silinmiş depo sayısı: 2
+2025-05-02 10:52:11.096 +03:00 [INF] Toplam depo sayısı: 4
+2025-05-02 10:52:11.097 +03:00 [INF] Aktif depo sayısı: 2
+2025-05-02 10:52:11.097 +03:00 [INF] Pasif depo sayısı: 0
+2025-05-02 10:52:11.097 +03:00 [INF] Silinmiş depo sayısı: 2
+2025-05-02 10:52:12.384 +03:00 [INF] Toplam depo sayısı: 4
+2025-05-02 10:52:12.384 +03:00 [INF] Aktif depo sayısı: 2
+2025-05-02 10:52:12.384 +03:00 [INF] Pasif depo sayısı: 0
+2025-05-02 10:52:12.384 +03:00 [INF] Silinmiş depo sayısı: 2
+2025-05-02 10:52:38.476 +03:00 [ERR] Failed executing DbCommand (10ms) [Parameters=[], CommandType='"Text"', CommandTimeout='120']
+SELECT [p].[ParaBirimiID], [p].[Aciklama], [p].[Ad], [p].[Aktif], [p].[AnaParaBirimiMi], [p].[BinlikAyraci], [p].[GuncellemeTarihi], [p].[Kod], [p].[OlusturanKullaniciID], [p].[OlusturmaTarihi], [p].[OndalikAyraci], [p].[OndalikHassasiyet], [p].[Sembol], [p].[Silindi], [p].[Sira], [p].[SonGuncelleyenKullaniciID]
+FROM [ParaBirimiModuluParaBirimleri] AS [p]
+WHERE [p].[Silindi] = CAST(0 AS bit) AND [p].[Aktif] = CAST(1 AS bit)
+ORDER BY [p].[Sira], [p].[Kod]
+2025-05-02 10:52:38.486 +03:00 [ERR] An exception occurred while iterating over the results of a query for context type 'MuhasebeStokWebApp.Data.ApplicationDbContext'.
+Microsoft.Data.SqlClient.SqlException (0x80131904): Invalid object name 'ParaBirimiModuluParaBirimleri'.
+   at System.Threading.Tasks.ContinuationResultTaskFromResultTask`2.InnerInvoke()
+   at System.Threading.ExecutionContext.RunInternal(ExecutionContext executionContext, ContextCallback callback, Object state)
+--- End of stack trace from previous location ---
+   at System.Threading.ExecutionContext.RunInternal(ExecutionContext executionContext, ContextCallback callback, Object state)
+   at System.Threading.Tasks.Task.ExecuteWithThreadLocal(Task& currentTaskSlot, Thread threadPoolThread)
+--- End of stack trace from previous location ---
+   at Microsoft.EntityFrameworkCore.Storage.RelationalCommand.ExecuteReaderAsync(RelationalCommandParameterObject parameterObject, CancellationToken cancellationToken)
+   at Microsoft.EntityFrameworkCore.Storage.RelationalCommand.ExecuteReaderAsync(RelationalCommandParameterObject parameterObject, CancellationToken cancellationToken)
+   at Microsoft.EntityFrameworkCore.Query.Internal.SplitQueryingEnumerable`1.AsyncEnumerator.InitializeReaderAsync(AsyncEnumerator enumerator, CancellationToken cancellationToken)
+   at Microsoft.EntityFrameworkCore.SqlServer.Storage.Internal.SqlServerExecutionStrategy.ExecuteAsync[TState,TResult](TState state, Func`4 operation, Func`4 verifySucceeded, CancellationToken cancellationToken)
+   at Microsoft.EntityFrameworkCore.Query.Internal.SplitQueryingEnumerable`1.AsyncEnumerator.MoveNextAsync()
+ClientConnectionId:b8a34525-ac80-450e-8d41-72e23ff65c4e
+Error Number:208,State:1,Class:16
+Microsoft.Data.SqlClient.SqlException (0x80131904): Invalid object name 'ParaBirimiModuluParaBirimleri'.
+   at System.Threading.Tasks.ContinuationResultTaskFromResultTask`2.InnerInvoke()
+   at System.Threading.ExecutionContext.RunInternal(ExecutionContext executionContext, ContextCallback callback, Object state)
+--- End of stack trace from previous location ---
+   at System.Threading.ExecutionContext.RunInternal(ExecutionContext executionContext, ContextCallback callback, Object state)
+   at System.Threading.Tasks.Task.ExecuteWithThreadLocal(Task& currentTaskSlot, Thread threadPoolThread)
+--- End of stack trace from previous location ---
+   at Microsoft.EntityFrameworkCore.Storage.RelationalCommand.ExecuteReaderAsync(RelationalCommandParameterObject parameterObject, CancellationToken cancellationToken)
+   at Microsoft.EntityFrameworkCore.Storage.RelationalCommand.ExecuteReaderAsync(RelationalCommandParameterObject parameterObject, CancellationToken cancellationToken)
+   at Microsoft.EntityFrameworkCore.Query.Internal.SplitQueryingEnumerable`1.AsyncEnumerator.InitializeReaderAsync(AsyncEnumerator enumerator, CancellationToken cancellationToken)
+   at Microsoft.EntityFrameworkCore.SqlServer.Storage.Internal.SqlServerExecutionStrategy.ExecuteAsync[TState,TResult](TState state, Func`4 operation, Func`4 verifySucceeded, CancellationToken cancellationToken)
+   at Microsoft.EntityFrameworkCore.Query.Internal.SplitQueryingEnumerable`1.AsyncEnumerator.MoveNextAsync()
+ClientConnectionId:b8a34525-ac80-450e-8d41-72e23ff65c4e
+Error Number:208,State:1,Class:16
+2025-05-02 10:52:38.490 +03:00 [ERR] Hata: 00-b001f3c421aae8044d404e015ae1f286-79daf93b5bef79c8-00, Kullanıcı: admin, Path: /Cari, Method: GET, QueryString: , IP: ::1, UserAgent: Mozilla/5.0 (Macintosh; Intel Mac OS X 10_15_7) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/135.0.0.0 Safari/537.36
+Microsoft.Data.SqlClient.SqlException (0x80131904): Invalid object name 'ParaBirimiModuluParaBirimleri'.
+   at System.Threading.Tasks.ContinuationResultTaskFromResultTask`2.InnerInvoke()
+   at System.Threading.ExecutionContext.RunInternal(ExecutionContext executionContext, ContextCallback callback, Object state)
+--- End of stack trace from previous location ---
+   at System.Threading.ExecutionContext.RunInternal(ExecutionContext executionContext, ContextCallback callback, Object state)
+   at System.Threading.Tasks.Task.ExecuteWithThreadLocal(Task& currentTaskSlot, Thread threadPoolThread)
+--- End of stack trace from previous location ---
+   at Microsoft.EntityFrameworkCore.Storage.RelationalCommand.ExecuteReaderAsync(RelationalCommandParameterObject parameterObject, CancellationToken cancellationToken)
+   at Microsoft.EntityFrameworkCore.Storage.RelationalCommand.ExecuteReaderAsync(RelationalCommandParameterObject parameterObject, CancellationToken cancellationToken)
+   at Microsoft.EntityFrameworkCore.Query.Internal.SplitQueryingEnumerable`1.AsyncEnumerator.InitializeReaderAsync(AsyncEnumerator enumerator, CancellationToken cancellationToken)
+   at Microsoft.EntityFrameworkCore.SqlServer.Storage.Internal.SqlServerExecutionStrategy.ExecuteAsync[TState,TResult](TState state, Func`4 operation, Func`4 verifySucceeded, CancellationToken cancellationToken)
+   at Microsoft.EntityFrameworkCore.Query.Internal.SplitQueryingEnumerable`1.AsyncEnumerator.MoveNextAsync()
+   at Microsoft.EntityFrameworkCore.EntityFrameworkQueryableExtensions.ToListAsync[TSource](IQueryable`1 source, CancellationToken cancellationToken)
+   at Microsoft.EntityFrameworkCore.EntityFrameworkQueryableExtensions.ToListAsync[TSource](IQueryable`1 source, CancellationToken cancellationToken)
+   at MuhasebeStokWebApp.Services.ParaBirimiModulu.ParaBirimiService.GetAllParaBirimleriAsync(Boolean aktiflerOnly) in /Users/muhammetkocaman/MuhasebeStokWebApp/Services/ParaBirimiModulu/ParaBirimiService.cs:line 47
+   at MuhasebeStokWebApp.Controllers.CariController.Index() in /Users/muhammetkocaman/MuhasebeStokWebApp/Controllers/CariController.cs:line 67
+   at Microsoft.AspNetCore.Mvc.Infrastructure.ActionMethodExecutor.TaskOfIActionResultExecutor.Execute(ActionContext actionContext, IActionResultTypeMapper mapper, ObjectMethodExecutor executor, Object controller, Object[] arguments)
+   at Microsoft.AspNetCore.Mvc.Infrastructure.ControllerActionInvoker.<InvokeActionMethodAsync>g__Awaited|12_0(ControllerActionInvoker invoker, ValueTask`1 actionResultValueTask)
+   at Microsoft.AspNetCore.Mvc.Infrastructure.ControllerActionInvoker.<InvokeNextActionFilterAsync>g__Awaited|10_0(ControllerActionInvoker invoker, Task lastTask, State next, Scope scope, Object state, Boolean isCompleted)
+   at Microsoft.AspNetCore.Mvc.Infrastructure.ControllerActionInvoker.Rethrow(ActionExecutedContextSealed context)
+   at Microsoft.AspNetCore.Mvc.Infrastructure.ControllerActionInvoker.Next(State& next, Scope& scope, Object& state, Boolean& isCompleted)
+   at Microsoft.AspNetCore.Mvc.Infrastructure.ControllerActionInvoker.<InvokeInnerFilterAsync>g__Awaited|13_0(ControllerActionInvoker invoker, Task lastTask, State next, Scope scope, Object state, Boolean isCompleted)
+   at Microsoft.AspNetCore.Mvc.Infrastructure.ResourceInvoker.<InvokeNextResourceFilter>g__Awaited|25_0(ResourceInvoker invoker, Task lastTask, State next, Scope scope, Object state, Boolean isCompleted)
+   at Microsoft.AspNetCore.Mvc.Infrastructure.ResourceInvoker.Rethrow(ResourceExecutedContextSealed context)
+   at Microsoft.AspNetCore.Mvc.Infrastructure.ResourceInvoker.Next(State& next, Scope& scope, Object& state, Boolean& isCompleted)
+   at Microsoft.AspNetCore.Mvc.Infrastructure.ResourceInvoker.<InvokeFilterPipelineAsync>g__Awaited|20_0(ResourceInvoker invoker, Task lastTask, State next, Scope scope, Object state, Boolean isCompleted)
+   at Microsoft.AspNetCore.Mvc.Infrastructure.ResourceInvoker.<InvokeAsync>g__Awaited|17_0(ResourceInvoker invoker, Task task, IDisposable scope)
+   at Microsoft.AspNetCore.Mvc.Infrastructure.ResourceInvoker.<InvokeAsync>g__Awaited|17_0(ResourceInvoker invoker, Task task, IDisposable scope)
+   at Microsoft.AspNetCore.Localization.RequestLocalizationMiddleware.Invoke(HttpContext context)
+   at MuhasebeStokWebApp.Middleware.GlobalExceptionHandlingMiddleware.InvokeAsync(HttpContext context) in /Users/muhammetkocaman/MuhasebeStokWebApp/Middleware/GlobalExceptionHandlingMiddleware.cs:line 38
+ClientConnectionId:b8a34525-ac80-450e-8d41-72e23ff65c4e
+Error Number:208,State:1,Class:16
+2025-05-02 10:53:29.661 +03:00 [INF] Aktif session bulundu: UserID=fc704594-5ae7-463d-bbba-6be38187613c, UserName=admin
+2025-05-02 10:53:29.663 +03:00 [INF] Admin kullanıcısı tespit edildi
+2025-05-02 10:53:29.663 +03:00 [INF] Kimlik doğrulanmış kullanıcı: admin
+2025-05-02 10:53:29.747 +03:00 [ERR] Failed executing DbCommand (5ms) [Parameters=[@__kod_0='?' (Size = 10)], CommandType='"Text"', CommandTimeout='120']
+SELECT TOP(1) [p].[ParaBirimiID], [p].[Aciklama], [p].[Ad], [p].[Aktif], [p].[AnaParaBirimiMi], [p].[BinlikAyraci], [p].[GuncellemeTarihi], [p].[Kod], [p].[OlusturanKullaniciID], [p].[OlusturmaTarihi], [p].[OndalikAyraci], [p].[OndalikHassasiyet], [p].[Sembol], [p].[Silindi], [p].[Sira], [p].[SonGuncelleyenKullaniciID]
+FROM [ParaBirimiModuluParaBirimleri] AS [p]
+WHERE [p].[Kod] = @__kod_0 AND [p].[Silindi] = CAST(0 AS bit)
+2025-05-02 10:53:29.748 +03:00 [ERR] An exception occurred while iterating over the results of a query for context type 'MuhasebeStokWebApp.Data.ApplicationDbContext'.
+Microsoft.Data.SqlClient.SqlException (0x80131904): Invalid object name 'ParaBirimiModuluParaBirimleri'.
+   at System.Threading.Tasks.ContinuationResultTaskFromResultTask`2.InnerInvoke()
+   at System.Threading.ExecutionContext.RunInternal(ExecutionContext executionContext, ContextCallback callback, Object state)
+--- End of stack trace from previous location ---
+   at System.Threading.ExecutionContext.RunInternal(ExecutionContext executionContext, ContextCallback callback, Object state)
+   at System.Threading.Tasks.Task.ExecuteWithThreadLocal(Task& currentTaskSlot, Thread threadPoolThread)
+--- End of stack trace from previous location ---
+   at Microsoft.EntityFrameworkCore.Storage.RelationalCommand.ExecuteReaderAsync(RelationalCommandParameterObject parameterObject, CancellationToken cancellationToken)
+   at Microsoft.EntityFrameworkCore.Storage.RelationalCommand.ExecuteReaderAsync(RelationalCommandParameterObject parameterObject, CancellationToken cancellationToken)
+   at Microsoft.EntityFrameworkCore.Query.Internal.SplitQueryingEnumerable`1.AsyncEnumerator.InitializeReaderAsync(AsyncEnumerator enumerator, CancellationToken cancellationToken)
+   at Microsoft.EntityFrameworkCore.SqlServer.Storage.Internal.SqlServerExecutionStrategy.ExecuteAsync[TState,TResult](TState state, Func`4 operation, Func`4 verifySucceeded, CancellationToken cancellationToken)
+   at Microsoft.EntityFrameworkCore.Query.Internal.SplitQueryingEnumerable`1.AsyncEnumerator.MoveNextAsync()
+ClientConnectionId:b8a34525-ac80-450e-8d41-72e23ff65c4e
+Error Number:208,State:1,Class:16
+Microsoft.Data.SqlClient.SqlException (0x80131904): Invalid object name 'ParaBirimiModuluParaBirimleri'.
+   at System.Threading.Tasks.ContinuationResultTaskFromResultTask`2.InnerInvoke()
+   at System.Threading.ExecutionContext.RunInternal(ExecutionContext executionContext, ContextCallback callback, Object state)
+--- End of stack trace from previous location ---
+   at System.Threading.ExecutionContext.RunInternal(ExecutionContext executionContext, ContextCallback callback, Object state)
+   at System.Threading.Tasks.Task.ExecuteWithThreadLocal(Task& currentTaskSlot, Thread threadPoolThread)
+--- End of stack trace from previous location ---
+   at Microsoft.EntityFrameworkCore.Storage.RelationalCommand.ExecuteReaderAsync(RelationalCommandParameterObject parameterObject, CancellationToken cancellationToken)
+   at Microsoft.EntityFrameworkCore.Storage.RelationalCommand.ExecuteReaderAsync(RelationalCommandParameterObject parameterObject, CancellationToken cancellationToken)
+   at Microsoft.EntityFrameworkCore.Query.Internal.SplitQueryingEnumerable`1.AsyncEnumerator.InitializeReaderAsync(AsyncEnumerator enumerator, CancellationToken cancellationToken)
+   at Microsoft.EntityFrameworkCore.SqlServer.Storage.Internal.SqlServerExecutionStrategy.ExecuteAsync[TState,TResult](TState state, Func`4 operation, Func`4 verifySucceeded, CancellationToken cancellationToken)
+   at Microsoft.EntityFrameworkCore.Query.Internal.SplitQueryingEnumerable`1.AsyncEnumerator.MoveNextAsync()
+ClientConnectionId:b8a34525-ac80-450e-8d41-72e23ff65c4e
+Error Number:208,State:1,Class:16
+2025-05-02 10:53:29.748 +03:00 [ERR] Kur hesaplanırken hata oluştu: TRY -> USD
+Microsoft.Data.SqlClient.SqlException (0x80131904): Invalid object name 'ParaBirimiModuluParaBirimleri'.
+   at System.Threading.Tasks.ContinuationResultTaskFromResultTask`2.InnerInvoke()
+   at System.Threading.ExecutionContext.RunInternal(ExecutionContext executionContext, ContextCallback callback, Object state)
+--- End of stack trace from previous location ---
+   at System.Threading.ExecutionContext.RunInternal(ExecutionContext executionContext, ContextCallback callback, Object state)
+   at System.Threading.Tasks.Task.ExecuteWithThreadLocal(Task& currentTaskSlot, Thread threadPoolThread)
+--- End of stack trace from previous location ---
+   at Microsoft.EntityFrameworkCore.Storage.RelationalCommand.ExecuteReaderAsync(RelationalCommandParameterObject parameterObject, CancellationToken cancellationToken)
+   at Microsoft.EntityFrameworkCore.Storage.RelationalCommand.ExecuteReaderAsync(RelationalCommandParameterObject parameterObject, CancellationToken cancellationToken)
+   at Microsoft.EntityFrameworkCore.Query.Internal.SplitQueryingEnumerable`1.AsyncEnumerator.InitializeReaderAsync(AsyncEnumerator enumerator, CancellationToken cancellationToken)
+   at Microsoft.EntityFrameworkCore.SqlServer.Storage.Internal.SqlServerExecutionStrategy.ExecuteAsync[TState,TResult](TState state, Func`4 operation, Func`4 verifySucceeded, CancellationToken cancellationToken)
+   at Microsoft.EntityFrameworkCore.Query.Internal.SplitQueryingEnumerable`1.AsyncEnumerator.MoveNextAsync()
+   at Microsoft.EntityFrameworkCore.Query.ShapedQueryCompilingExpressionVisitor.SingleOrDefaultAsync[TSource](IAsyncEnumerable`1 asyncEnumerable, CancellationToken cancellationToken)
+   at Microsoft.EntityFrameworkCore.Query.ShapedQueryCompilingExpressionVisitor.SingleOrDefaultAsync[TSource](IAsyncEnumerable`1 asyncEnumerable, CancellationToken cancellationToken)
+   at MuhasebeStokWebApp.Services.ParaBirimiModulu.ParaBirimiService.GetParaBirimiByKodAsync(String kod) in /Users/muhammetkocaman/MuhasebeStokWebApp/Services/ParaBirimiModulu/ParaBirimiService.cs:line 75
+   at MuhasebeStokWebApp.Services.ParaBirimiModulu.DovizKuruServiceAdapter.HesaplaKurDegeriByKodAsync(String kaynakKod, String hedefKod, Nullable`1 tarih) in /Users/muhammetkocaman/MuhasebeStokWebApp/Services/ParaBirimiModulu/DovizKuruServiceAdapter.cs:line 330
+ClientConnectionId:b8a34525-ac80-450e-8d41-72e23ff65c4e
+Error Number:208,State:1,Class:16
+2025-05-02 10:53:29.749 +03:00 [ERR] Kur hesaplanırken hata oluştu: TRY -> USD
+Microsoft.Data.SqlClient.SqlException (0x80131904): Invalid object name 'ParaBirimiModuluParaBirimleri'.
+   at System.Threading.Tasks.ContinuationResultTaskFromResultTask`2.InnerInvoke()
+   at System.Threading.ExecutionContext.RunInternal(ExecutionContext executionContext, ContextCallback callback, Object state)
+--- End of stack trace from previous location ---
+   at System.Threading.ExecutionContext.RunInternal(ExecutionContext executionContext, ContextCallback callback, Object state)
+   at System.Threading.Tasks.Task.ExecuteWithThreadLocal(Task& currentTaskSlot, Thread threadPoolThread)
+--- End of stack trace from previous location ---
+   at Microsoft.EntityFrameworkCore.Storage.RelationalCommand.ExecuteReaderAsync(RelationalCommandParameterObject parameterObject, CancellationToken cancellationToken)
+   at Microsoft.EntityFrameworkCore.Storage.RelationalCommand.ExecuteReaderAsync(RelationalCommandParameterObject parameterObject, CancellationToken cancellationToken)
+   at Microsoft.EntityFrameworkCore.Query.Internal.SplitQueryingEnumerable`1.AsyncEnumerator.InitializeReaderAsync(AsyncEnumerator enumerator, CancellationToken cancellationToken)
+   at Microsoft.EntityFrameworkCore.SqlServer.Storage.Internal.SqlServerExecutionStrategy.ExecuteAsync[TState,TResult](TState state, Func`4 operation, Func`4 verifySucceeded, CancellationToken cancellationToken)
+   at Microsoft.EntityFrameworkCore.Query.Internal.SplitQueryingEnumerable`1.AsyncEnumerator.MoveNextAsync()
+   at Microsoft.EntityFrameworkCore.Query.ShapedQueryCompilingExpressionVisitor.SingleOrDefaultAsync[TSource](IAsyncEnumerable`1 asyncEnumerable, CancellationToken cancellationToken)
+   at Microsoft.EntityFrameworkCore.Query.ShapedQueryCompilingExpressionVisitor.SingleOrDefaultAsync[TSource](IAsyncEnumerable`1 asyncEnumerable, CancellationToken cancellationToken)
+   at MuhasebeStokWebApp.Services.ParaBirimiModulu.ParaBirimiService.GetParaBirimiByKodAsync(String kod) in /Users/muhammetkocaman/MuhasebeStokWebApp/Services/ParaBirimiModulu/ParaBirimiService.cs:line 75
+   at MuhasebeStokWebApp.Services.ParaBirimiModulu.DovizKuruServiceAdapter.HesaplaKurDegeriByKodAsync(String kaynakKod, String hedefKod, Nullable`1 tarih) in /Users/muhammetkocaman/MuhasebeStokWebApp/Services/ParaBirimiModulu/DovizKuruServiceAdapter.cs:line 330
+   at MuhasebeStokWebApp.Services.ParaBirimiModulu.DovizKuruServiceAdapter.GetGuncelKurAsync(String kaynakKod, String hedefKod, Nullable`1 tarih) in /Users/muhammetkocaman/MuhasebeStokWebApp/Services/ParaBirimiModulu/DovizKuruServiceAdapter.cs:line 78
+ClientConnectionId:b8a34525-ac80-450e-8d41-72e23ff65c4e
+Error Number:208,State:1,Class:16
+2025-05-02 10:53:29.750 +03:00 [ERR] Döviz kuru alınırken hata oluştu. Varsayılan değerler kullanılacak.
+Microsoft.Data.SqlClient.SqlException (0x80131904): Invalid object name 'ParaBirimiModuluParaBirimleri'.
+   at System.Threading.Tasks.ContinuationResultTaskFromResultTask`2.InnerInvoke()
+   at System.Threading.ExecutionContext.RunInternal(ExecutionContext executionContext, ContextCallback callback, Object state)
+--- End of stack trace from previous location ---
+   at System.Threading.ExecutionContext.RunInternal(ExecutionContext executionContext, ContextCallback callback, Object state)
+   at System.Threading.Tasks.Task.ExecuteWithThreadLocal(Task& currentTaskSlot, Thread threadPoolThread)
+--- End of stack trace from previous location ---
+   at Microsoft.EntityFrameworkCore.Storage.RelationalCommand.ExecuteReaderAsync(RelationalCommandParameterObject parameterObject, CancellationToken cancellationToken)
+   at Microsoft.EntityFrameworkCore.Storage.RelationalCommand.ExecuteReaderAsync(RelationalCommandParameterObject parameterObject, CancellationToken cancellationToken)
+   at Microsoft.EntityFrameworkCore.Query.Internal.SplitQueryingEnumerable`1.AsyncEnumerator.InitializeReaderAsync(AsyncEnumerator enumerator, CancellationToken cancellationToken)
+   at Microsoft.EntityFrameworkCore.SqlServer.Storage.Internal.SqlServerExecutionStrategy.ExecuteAsync[TState,TResult](TState state, Func`4 operation, Func`4 verifySucceeded, CancellationToken cancellationToken)
+   at Microsoft.EntityFrameworkCore.Query.Internal.SplitQueryingEnumerable`1.AsyncEnumerator.MoveNextAsync()
+   at Microsoft.EntityFrameworkCore.Query.ShapedQueryCompilingExpressionVisitor.SingleOrDefaultAsync[TSource](IAsyncEnumerable`1 asyncEnumerable, CancellationToken cancellationToken)
+   at Microsoft.EntityFrameworkCore.Query.ShapedQueryCompilingExpressionVisitor.SingleOrDefaultAsync[TSource](IAsyncEnumerable`1 asyncEnumerable, CancellationToken cancellationToken)
+   at MuhasebeStokWebApp.Services.ParaBirimiModulu.ParaBirimiService.GetParaBirimiByKodAsync(String kod) in /Users/muhammetkocaman/MuhasebeStokWebApp/Services/ParaBirimiModulu/ParaBirimiService.cs:line 75
+   at MuhasebeStokWebApp.Services.ParaBirimiModulu.DovizKuruServiceAdapter.HesaplaKurDegeriByKodAsync(String kaynakKod, String hedefKod, Nullable`1 tarih) in /Users/muhammetkocaman/MuhasebeStokWebApp/Services/ParaBirimiModulu/DovizKuruServiceAdapter.cs:line 330
+   at MuhasebeStokWebApp.Services.ParaBirimiModulu.DovizKuruServiceAdapter.GetGuncelKurAsync(String kaynakKod, String hedefKod, Nullable`1 tarih) in /Users/muhammetkocaman/MuhasebeStokWebApp/Services/ParaBirimiModulu/DovizKuruServiceAdapter.cs:line 78
+   at MuhasebeStokWebApp.Controllers.HomeController.LoadDashboardDataAsync() in /Users/muhammetkocaman/MuhasebeStokWebApp/Controllers/HomeController.cs:line 307
+ClientConnectionId:b8a34525-ac80-450e-8d41-72e23ff65c4e
+Error Number:208,State:1,Class:16
+2025-05-02 10:53:29.765 +03:00 [ERR] Failed executing DbCommand (5ms) [Parameters=[], CommandType='"Text"', CommandTimeout='120']
+SELECT [p].[KurDegeriID], [p].[Aciklama], [p].[Aktif], [p].[Alis], [p].[DekontNo], [p].[EfektifAlis], [p].[EfektifSatis], [p].[GuncellemeTarihi], [p].[OlusturanKullaniciID], [p].[OlusturmaTarihi], [p].[ParaBirimiID], [p].[Satis], [p].[Silindi], [p].[SonGuncelleyenKullaniciID], [p].[Tarih], [p0].[ParaBirimiID], [p0].[Aciklama], [p0].[Ad], [p0].[Aktif], [p0].[AnaParaBirimiMi], [p0].[BinlikAyraci], [p0].[GuncellemeTarihi], [p0].[Kod], [p0].[OlusturanKullaniciID], [p0].[OlusturmaTarihi], [p0].[OndalikAyraci], [p0].[OndalikHassasiyet], [p0].[Sembol], [p0].[Silindi], [p0].[Sira], [p0].[SonGuncelleyenKullaniciID]
+FROM [ParaBirimiModuluKurDegerleri] AS [p]
+INNER JOIN [ParaBirimiModuluParaBirimleri] AS [p0] ON [p].[ParaBirimiID] = [p0].[ParaBirimiID]
+WHERE [p].[Silindi] = CAST(0 AS bit)
+ORDER BY [p].[Tarih] DESC, [p0].[Kod]
+2025-05-02 10:53:29.766 +03:00 [ERR] An exception occurred while iterating over the results of a query for context type 'MuhasebeStokWebApp.Data.ApplicationDbContext'.
+Microsoft.Data.SqlClient.SqlException (0x80131904): Invalid object name 'ParaBirimiModuluKurDegerleri'.
+   at System.Threading.Tasks.ContinuationResultTaskFromResultTask`2.InnerInvoke()
+   at System.Threading.ExecutionContext.RunInternal(ExecutionContext executionContext, ContextCallback callback, Object state)
+--- End of stack trace from previous location ---
+   at System.Threading.ExecutionContext.RunInternal(ExecutionContext executionContext, ContextCallback callback, Object state)
+   at System.Threading.Tasks.Task.ExecuteWithThreadLocal(Task& currentTaskSlot, Thread threadPoolThread)
+--- End of stack trace from previous location ---
+   at Microsoft.EntityFrameworkCore.Storage.RelationalCommand.ExecuteReaderAsync(RelationalCommandParameterObject parameterObject, CancellationToken cancellationToken)
+   at Microsoft.EntityFrameworkCore.Storage.RelationalCommand.ExecuteReaderAsync(RelationalCommandParameterObject parameterObject, CancellationToken cancellationToken)
+   at Microsoft.EntityFrameworkCore.Query.Internal.SplitQueryingEnumerable`1.AsyncEnumerator.InitializeReaderAsync(AsyncEnumerator enumerator, CancellationToken cancellationToken)
+   at Microsoft.EntityFrameworkCore.SqlServer.Storage.Internal.SqlServerExecutionStrategy.ExecuteAsync[TState,TResult](TState state, Func`4 operation, Func`4 verifySucceeded, CancellationToken cancellationToken)
+   at Microsoft.EntityFrameworkCore.Query.Internal.SplitQueryingEnumerable`1.AsyncEnumerator.MoveNextAsync()
+ClientConnectionId:b8a34525-ac80-450e-8d41-72e23ff65c4e
+Error Number:208,State:1,Class:16
+Microsoft.Data.SqlClient.SqlException (0x80131904): Invalid object name 'ParaBirimiModuluKurDegerleri'.
+   at System.Threading.Tasks.ContinuationResultTaskFromResultTask`2.InnerInvoke()
+   at System.Threading.ExecutionContext.RunInternal(ExecutionContext executionContext, ContextCallback callback, Object state)
+--- End of stack trace from previous location ---
+   at System.Threading.ExecutionContext.RunInternal(ExecutionContext executionContext, ContextCallback callback, Object state)
+   at System.Threading.Tasks.Task.ExecuteWithThreadLocal(Task& currentTaskSlot, Thread threadPoolThread)
+--- End of stack trace from previous location ---
+   at Microsoft.EntityFrameworkCore.Storage.RelationalCommand.ExecuteReaderAsync(RelationalCommandParameterObject parameterObject, CancellationToken cancellationToken)
+   at Microsoft.EntityFrameworkCore.Storage.RelationalCommand.ExecuteReaderAsync(RelationalCommandParameterObject parameterObject, CancellationToken cancellationToken)
+   at Microsoft.EntityFrameworkCore.Query.Internal.SplitQueryingEnumerable`1.AsyncEnumerator.InitializeReaderAsync(AsyncEnumerator enumerator, CancellationToken cancellationToken)
+   at Microsoft.EntityFrameworkCore.SqlServer.Storage.Internal.SqlServerExecutionStrategy.ExecuteAsync[TState,TResult](TState state, Func`4 operation, Func`4 verifySucceeded, CancellationToken cancellationToken)
+   at Microsoft.EntityFrameworkCore.Query.Internal.SplitQueryingEnumerable`1.AsyncEnumerator.MoveNextAsync()
+ClientConnectionId:b8a34525-ac80-450e-8d41-72e23ff65c4e
+Error Number:208,State:1,Class:16
+2025-05-02 10:53:29.766 +03:00 [ERR] Dashboard verileri yüklenirken hata oluştu
+Microsoft.Data.SqlClient.SqlException (0x80131904): Invalid object name 'ParaBirimiModuluKurDegerleri'.
+   at System.Threading.Tasks.ContinuationResultTaskFromResultTask`2.InnerInvoke()
+   at System.Threading.ExecutionContext.RunInternal(ExecutionContext executionContext, ContextCallback callback, Object state)
+--- End of stack trace from previous location ---
+   at System.Threading.ExecutionContext.RunInternal(ExecutionContext executionContext, ContextCallback callback, Object state)
+   at System.Threading.Tasks.Task.ExecuteWithThreadLocal(Task& currentTaskSlot, Thread threadPoolThread)
+--- End of stack trace from previous location ---
+   at Microsoft.EntityFrameworkCore.Storage.RelationalCommand.ExecuteReaderAsync(RelationalCommandParameterObject parameterObject, CancellationToken cancellationToken)
+   at Microsoft.EntityFrameworkCore.Storage.RelationalCommand.ExecuteReaderAsync(RelationalCommandParameterObject parameterObject, CancellationToken cancellationToken)
+   at Microsoft.EntityFrameworkCore.Query.Internal.SplitQueryingEnumerable`1.AsyncEnumerator.InitializeReaderAsync(AsyncEnumerator enumerator, CancellationToken cancellationToken)
+   at Microsoft.EntityFrameworkCore.SqlServer.Storage.Internal.SqlServerExecutionStrategy.ExecuteAsync[TState,TResult](TState state, Func`4 operation, Func`4 verifySucceeded, CancellationToken cancellationToken)
+   at Microsoft.EntityFrameworkCore.Query.Internal.SplitQueryingEnumerable`1.AsyncEnumerator.MoveNextAsync()
+   at Microsoft.EntityFrameworkCore.EntityFrameworkQueryableExtensions.ToListAsync[TSource](IQueryable`1 source, CancellationToken cancellationToken)
+   at Microsoft.EntityFrameworkCore.EntityFrameworkQueryableExtensions.ToListAsync[TSource](IQueryable`1 source, CancellationToken cancellationToken)
+   at MuhasebeStokWebApp.Services.ParaBirimiModulu.ParaBirimiService.GetAllKurDegerleriAsync(Nullable`1 tarih) in /Users/muhammetkocaman/MuhasebeStokWebApp/Services/ParaBirimiModulu/ParaBirimiService.cs:line 233
+   at MuhasebeStokWebApp.Services.ParaBirimiModulu.DovizKuruServiceAdapter.GetLatestRatesAsync(Int32 count) in /Users/muhammetkocaman/MuhasebeStokWebApp/Services/ParaBirimiModulu/DovizKuruServiceAdapter.cs:line 108
+   at MuhasebeStokWebApp.Controllers.HomeController.LoadDashboardDataAsync() in /Users/muhammetkocaman/MuhasebeStokWebApp/Controllers/HomeController.cs:line 383
+   at MuhasebeStokWebApp.Controllers.HomeController.Index(String auth) in /Users/muhammetkocaman/MuhasebeStokWebApp/Controllers/HomeController.cs:line 137
+ClientConnectionId:b8a34525-ac80-450e-8d41-72e23ff65c4e
+Error Number:208,State:1,Class:16
+2025-05-02 10:53:33.938 +03:00 [ERR] An exception occurred while iterating over the results of a query for context type 'MuhasebeStokWebApp.Data.ApplicationDbContext'.
+System.InvalidCastException: Unable to cast object of type 'System.String' to type 'System.Guid'.
+   at Microsoft.Data.SqlClient.SqlBuffer.get_Guid()
+   at Microsoft.EntityFrameworkCore.Query.Internal.BufferedDataReader.BufferedDataRecord.ReadGuid(DbDataReader reader, Int32 ordinal, ReaderColumn column)
+   at Microsoft.EntityFrameworkCore.Query.Internal.BufferedDataReader.BufferedDataRecord.ReadRow()
+   at Microsoft.EntityFrameworkCore.Query.Internal.BufferedDataReader.BufferedDataRecord.InitializeAsync(DbDataReader reader, IReadOnlyList`1 columns, CancellationToken cancellationToken)
+   at Microsoft.EntityFrameworkCore.Query.Internal.BufferedDataReader.InitializeAsync(IReadOnlyList`1 columns, CancellationToken cancellationToken)
+   at Microsoft.EntityFrameworkCore.Query.Internal.BufferedDataReader.InitializeAsync(IReadOnlyList`1 columns, CancellationToken cancellationToken)
+   at Microsoft.EntityFrameworkCore.Storage.RelationalCommand.ExecuteReaderAsync(RelationalCommandParameterObject parameterObject, CancellationToken cancellationToken)
+   at Microsoft.EntityFrameworkCore.Storage.RelationalCommand.ExecuteReaderAsync(RelationalCommandParameterObject parameterObject, CancellationToken cancellationToken)
+   at Microsoft.EntityFrameworkCore.Query.Internal.SplitQueryingEnumerable`1.AsyncEnumerator.InitializeReaderAsync(AsyncEnumerator enumerator, CancellationToken cancellationToken)
+   at Microsoft.EntityFrameworkCore.SqlServer.Storage.Internal.SqlServerExecutionStrategy.ExecuteAsync[TState,TResult](TState state, Func`4 operation, Func`4 verifySucceeded, CancellationToken cancellationToken)
+   at Microsoft.EntityFrameworkCore.Query.Internal.SplitQueryingEnumerable`1.AsyncEnumerator.MoveNextAsync()
+System.InvalidCastException: Unable to cast object of type 'System.String' to type 'System.Guid'.
+   at Microsoft.Data.SqlClient.SqlBuffer.get_Guid()
+   at Microsoft.EntityFrameworkCore.Query.Internal.BufferedDataReader.BufferedDataRecord.ReadGuid(DbDataReader reader, Int32 ordinal, ReaderColumn column)
+   at Microsoft.EntityFrameworkCore.Query.Internal.BufferedDataReader.BufferedDataRecord.ReadRow()
+   at Microsoft.EntityFrameworkCore.Query.Internal.BufferedDataReader.BufferedDataRecord.InitializeAsync(DbDataReader reader, IReadOnlyList`1 columns, CancellationToken cancellationToken)
+   at Microsoft.EntityFrameworkCore.Query.Internal.BufferedDataReader.InitializeAsync(IReadOnlyList`1 columns, CancellationToken cancellationToken)
+   at Microsoft.EntityFrameworkCore.Query.Internal.BufferedDataReader.InitializeAsync(IReadOnlyList`1 columns, CancellationToken cancellationToken)
+   at Microsoft.EntityFrameworkCore.Storage.RelationalCommand.ExecuteReaderAsync(RelationalCommandParameterObject parameterObject, CancellationToken cancellationToken)
+   at Microsoft.EntityFrameworkCore.Storage.RelationalCommand.ExecuteReaderAsync(RelationalCommandParameterObject parameterObject, CancellationToken cancellationToken)
+   at Microsoft.EntityFrameworkCore.Query.Internal.SplitQueryingEnumerable`1.AsyncEnumerator.InitializeReaderAsync(AsyncEnumerator enumerator, CancellationToken cancellationToken)
+   at Microsoft.EntityFrameworkCore.SqlServer.Storage.Internal.SqlServerExecutionStrategy.ExecuteAsync[TState,TResult](TState state, Func`4 operation, Func`4 verifySucceeded, CancellationToken cancellationToken)
+   at Microsoft.EntityFrameworkCore.Query.Internal.SplitQueryingEnumerable`1.AsyncEnumerator.MoveNextAsync()
+2025-05-02 10:53:33.938 +03:00 [ERR] SistemLog Index sayfası yüklenirken hata oluştu
+System.InvalidCastException: Unable to cast object of type 'System.String' to type 'System.Guid'.
+   at Microsoft.Data.SqlClient.SqlBuffer.get_Guid()
+   at Microsoft.EntityFrameworkCore.Query.Internal.BufferedDataReader.BufferedDataRecord.ReadGuid(DbDataReader reader, Int32 ordinal, ReaderColumn column)
+   at Microsoft.EntityFrameworkCore.Query.Internal.BufferedDataReader.BufferedDataRecord.ReadRow()
+   at Microsoft.EntityFrameworkCore.Query.Internal.BufferedDataReader.BufferedDataRecord.InitializeAsync(DbDataReader reader, IReadOnlyList`1 columns, CancellationToken cancellationToken)
+   at Microsoft.EntityFrameworkCore.Query.Internal.BufferedDataReader.InitializeAsync(IReadOnlyList`1 columns, CancellationToken cancellationToken)
+   at Microsoft.EntityFrameworkCore.Query.Internal.BufferedDataReader.InitializeAsync(IReadOnlyList`1 columns, CancellationToken cancellationToken)
+   at Microsoft.EntityFrameworkCore.Storage.RelationalCommand.ExecuteReaderAsync(RelationalCommandParameterObject parameterObject, CancellationToken cancellationToken)
+   at Microsoft.EntityFrameworkCore.Storage.RelationalCommand.ExecuteReaderAsync(RelationalCommandParameterObject parameterObject, CancellationToken cancellationToken)
+   at Microsoft.EntityFrameworkCore.Query.Internal.SplitQueryingEnumerable`1.AsyncEnumerator.InitializeReaderAsync(AsyncEnumerator enumerator, CancellationToken cancellationToken)
+   at Microsoft.EntityFrameworkCore.SqlServer.Storage.Internal.SqlServerExecutionStrategy.ExecuteAsync[TState,TResult](TState state, Func`4 operation, Func`4 verifySucceeded, CancellationToken cancellationToken)
+   at Microsoft.EntityFrameworkCore.Query.Internal.SplitQueryingEnumerable`1.AsyncEnumerator.MoveNextAsync()
+   at Microsoft.EntityFrameworkCore.EntityFrameworkQueryableExtensions.ToListAsync[TSource](IQueryable`1 source, CancellationToken cancellationToken)
+   at Microsoft.EntityFrameworkCore.EntityFrameworkQueryableExtensions.ToListAsync[TSource](IQueryable`1 source, CancellationToken cancellationToken)
+   at MuhasebeStokWebApp.Controllers.SistemLogController.Index(String searchString, String islemTuru, Nullable`1 baslangicTarihi, Nullable`1 bitisTarihi, Int32 page, Int32 pageSize) in /Users/muhammetkocaman/MuhasebeStokWebApp/Controllers/SistemLogController.cs:line 98
+2025-05-02 11:06:30.349 +03:00 [WRN] Entity 'Cari' has a global query filter defined and is the required end of a relationship with the entity 'Sozlesme'. This may lead to unexpected results when the required entity is filtered out. Either configure the navigation as optional, or define matching query filters for both entities in the navigation. See https://go.microsoft.com/fwlink/?linkid=2131316 for more information.
+2025-05-02 11:06:30.531 +03:00 [INF] Veritabanına bağlantı başarılı. Migrationlar uygulanıyor...
+2025-05-02 11:06:30.845 +03:00 [INF] Veritabanı işlemleri başarıyla tamamlandı.
+2025-05-02 11:06:32.165 +03:00 [ERR] An exception occurred while iterating over the results of a query for context type 'MuhasebeStokWebApp.Data.ApplicationDbContext'.
+System.InvalidCastException: Unable to cast object of type 'System.String' to type 'System.Guid'.
+   at Microsoft.Data.SqlClient.SqlBuffer.get_Guid()
+   at Microsoft.Data.SqlClient.SqlDataReader.GetGuid(Int32 i)
+   at Microsoft.EntityFrameworkCore.Query.Internal.BufferedDataReader.BufferedDataRecord.ReadGuid(DbDataReader reader, Int32 ordinal, ReaderColumn column)
+   at Microsoft.EntityFrameworkCore.Query.Internal.BufferedDataReader.BufferedDataRecord.ReadRow()
+   at Microsoft.EntityFrameworkCore.Query.Internal.BufferedDataReader.BufferedDataRecord.InitializeAsync(DbDataReader reader, IReadOnlyList`1 columns, CancellationToken cancellationToken)
+   at Microsoft.EntityFrameworkCore.Query.Internal.BufferedDataReader.InitializeAsync(IReadOnlyList`1 columns, CancellationToken cancellationToken)
+   at Microsoft.EntityFrameworkCore.Query.Internal.BufferedDataReader.InitializeAsync(IReadOnlyList`1 columns, CancellationToken cancellationToken)
+   at Microsoft.EntityFrameworkCore.Storage.RelationalCommand.ExecuteReaderAsync(RelationalCommandParameterObject parameterObject, CancellationToken cancellationToken)
+   at Microsoft.EntityFrameworkCore.Storage.RelationalCommand.ExecuteReaderAsync(RelationalCommandParameterObject parameterObject, CancellationToken cancellationToken)
+   at Microsoft.EntityFrameworkCore.Query.Internal.SplitQueryingEnumerable`1.AsyncEnumerator.InitializeReaderAsync(AsyncEnumerator enumerator, CancellationToken cancellationToken)
+   at Microsoft.EntityFrameworkCore.SqlServer.Storage.Internal.SqlServerExecutionStrategy.ExecuteAsync[TState,TResult](TState state, Func`4 operation, Func`4 verifySucceeded, CancellationToken cancellationToken)
+   at Microsoft.EntityFrameworkCore.Query.Internal.SplitQueryingEnumerable`1.AsyncEnumerator.MoveNextAsync()
+System.InvalidCastException: Unable to cast object of type 'System.String' to type 'System.Guid'.
+   at Microsoft.Data.SqlClient.SqlBuffer.get_Guid()
+   at Microsoft.Data.SqlClient.SqlDataReader.GetGuid(Int32 i)
+   at Microsoft.EntityFrameworkCore.Query.Internal.BufferedDataReader.BufferedDataRecord.ReadGuid(DbDataReader reader, Int32 ordinal, ReaderColumn column)
+   at Microsoft.EntityFrameworkCore.Query.Internal.BufferedDataReader.BufferedDataRecord.ReadRow()
+   at Microsoft.EntityFrameworkCore.Query.Internal.BufferedDataReader.BufferedDataRecord.InitializeAsync(DbDataReader reader, IReadOnlyList`1 columns, CancellationToken cancellationToken)
+   at Microsoft.EntityFrameworkCore.Query.Internal.BufferedDataReader.InitializeAsync(IReadOnlyList`1 columns, CancellationToken cancellationToken)
+   at Microsoft.EntityFrameworkCore.Query.Internal.BufferedDataReader.InitializeAsync(IReadOnlyList`1 columns, CancellationToken cancellationToken)
+   at Microsoft.EntityFrameworkCore.Storage.RelationalCommand.ExecuteReaderAsync(RelationalCommandParameterObject parameterObject, CancellationToken cancellationToken)
+   at Microsoft.EntityFrameworkCore.Storage.RelationalCommand.ExecuteReaderAsync(RelationalCommandParameterObject parameterObject, CancellationToken cancellationToken)
+   at Microsoft.EntityFrameworkCore.Query.Internal.SplitQueryingEnumerable`1.AsyncEnumerator.InitializeReaderAsync(AsyncEnumerator enumerator, CancellationToken cancellationToken)
+   at Microsoft.EntityFrameworkCore.SqlServer.Storage.Internal.SqlServerExecutionStrategy.ExecuteAsync[TState,TResult](TState state, Func`4 operation, Func`4 verifySucceeded, CancellationToken cancellationToken)
+   at Microsoft.EntityFrameworkCore.Query.Internal.SplitQueryingEnumerable`1.AsyncEnumerator.MoveNextAsync()
+2025-05-02 11:06:32.166 +03:00 [ERR] SistemLog Index sayfası yüklenirken hata oluştu
+System.InvalidCastException: Unable to cast object of type 'System.String' to type 'System.Guid'.
+   at Microsoft.Data.SqlClient.SqlBuffer.get_Guid()
+   at Microsoft.Data.SqlClient.SqlDataReader.GetGuid(Int32 i)
+   at Microsoft.EntityFrameworkCore.Query.Internal.BufferedDataReader.BufferedDataRecord.ReadGuid(DbDataReader reader, Int32 ordinal, ReaderColumn column)
+   at Microsoft.EntityFrameworkCore.Query.Internal.BufferedDataReader.BufferedDataRecord.ReadRow()
+   at Microsoft.EntityFrameworkCore.Query.Internal.BufferedDataReader.BufferedDataRecord.InitializeAsync(DbDataReader reader, IReadOnlyList`1 columns, CancellationToken cancellationToken)
+   at Microsoft.EntityFrameworkCore.Query.Internal.BufferedDataReader.InitializeAsync(IReadOnlyList`1 columns, CancellationToken cancellationToken)
+   at Microsoft.EntityFrameworkCore.Query.Internal.BufferedDataReader.InitializeAsync(IReadOnlyList`1 columns, CancellationToken cancellationToken)
+   at Microsoft.EntityFrameworkCore.Storage.RelationalCommand.ExecuteReaderAsync(RelationalCommandParameterObject parameterObject, CancellationToken cancellationToken)
+   at Microsoft.EntityFrameworkCore.Storage.RelationalCommand.ExecuteReaderAsync(RelationalCommandParameterObject parameterObject, CancellationToken cancellationToken)
+   at Microsoft.EntityFrameworkCore.Query.Internal.SplitQueryingEnumerable`1.AsyncEnumerator.InitializeReaderAsync(AsyncEnumerator enumerator, CancellationToken cancellationToken)
+   at Microsoft.EntityFrameworkCore.SqlServer.Storage.Internal.SqlServerExecutionStrategy.ExecuteAsync[TState,TResult](TState state, Func`4 operation, Func`4 verifySucceeded, CancellationToken cancellationToken)
+   at Microsoft.EntityFrameworkCore.Query.Internal.SplitQueryingEnumerable`1.AsyncEnumerator.MoveNextAsync()
+   at Microsoft.EntityFrameworkCore.EntityFrameworkQueryableExtensions.ToListAsync[TSource](IQueryable`1 source, CancellationToken cancellationToken)
+   at Microsoft.EntityFrameworkCore.EntityFrameworkQueryableExtensions.ToListAsync[TSource](IQueryable`1 source, CancellationToken cancellationToken)
+   at MuhasebeStokWebApp.Controllers.SistemLogController.Index(String searchString, String islemTuru, Nullable`1 baslangicTarihi, Nullable`1 bitisTarihi, Int32 page, Int32 pageSize) in /Users/muhammetkocaman/MuhasebeStokWebApp/Controllers/SistemLogController.cs:line 98
+2025-05-02 11:07:31.505 +03:00 [INF] Fatura oluşturma sayfası yükleniyor: Kullanıcı=admin
+2025-05-02 11:07:31.523 +03:00 [INF] Cari listesi yüklendi, toplam 0 adet cari bulundu.
+2025-05-02 11:07:31.539 +03:00 [INF] Sözleşme listesi yüklendi, toplam 0 adet sözleşme bulundu.
+2025-05-02 11:07:31.608 +03:00 [INF] Ürün listesi yüklendi, toplam 2 adet ürün bulundu.
+2025-05-02 11:07:31.623 +03:00 [INF] Depo listesi yüklendi, toplam 2 adet depo bulundu.
+2025-05-02 11:07:31.624 +03:00 [INF] Ürün select list oluşturuldu, toplam 2 adet öğe içeriyor.
+2025-05-02 11:07:31.641 +03:00 [INF] Para birimi listesi yüklendi, toplam 3 adet para birimi bulundu.
+2025-05-02 11:17:35.299 +03:00 [WRN] Entity 'Cari' has a global query filter defined and is the required end of a relationship with the entity 'Sozlesme'. This may lead to unexpected results when the required entity is filtered out. Either configure the navigation as optional, or define matching query filters for both entities in the navigation. See https://go.microsoft.com/fwlink/?linkid=2131316 for more information.
+2025-05-02 11:17:35.487 +03:00 [INF] Veritabanına bağlantı başarılı. Migrationlar uygulanıyor...
+2025-05-02 11:17:35.819 +03:00 [INF] Veritabanı işlemleri başarıyla tamamlandı.
+2025-05-02 11:17:43.821 +03:00 [ERR] Hata: 00-ff83b492800623f1d45ca2d76a84eecc-9f02a8b5fda15fd6-00, Kullanıcı: admin, Path: /Fatura/Create, Method: GET, QueryString: , IP: ::1, UserAgent: Mozilla/5.0 (Macintosh; Intel Mac OS X 10_15_7) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/135.0.0.0 Safari/537.36
+System.InvalidOperationException: Unable to resolve service for type 'MuhasebeStokWebApp.Services.Interfaces.IFaturaNumaralandirmaService' while attempting to activate 'MuhasebeStokWebApp.Controllers.FaturaController'.
+   at Microsoft.Extensions.DependencyInjection.ActivatorUtilities.ThrowHelperUnableToResolveService(Type type, Type requiredBy)
+   at lambda_method537(Closure, IServiceProvider, Object[])
+   at Microsoft.AspNetCore.Mvc.Controllers.ControllerFactoryProvider.<>c__DisplayClass6_0.<CreateControllerFactory>g__CreateController|0(ControllerContext controllerContext)
+   at Microsoft.AspNetCore.Mvc.Infrastructure.ControllerActionInvoker.Next(State& next, Scope& scope, Object& state, Boolean& isCompleted)
+   at Microsoft.AspNetCore.Mvc.Infrastructure.ControllerActionInvoker.InvokeInnerFilterAsync()
+--- End of stack trace from previous location ---
+   at Microsoft.AspNetCore.Mvc.Infrastructure.ResourceInvoker.<InvokeNextResourceFilter>g__Awaited|25_0(ResourceInvoker invoker, Task lastTask, State next, Scope scope, Object state, Boolean isCompleted)
+   at Microsoft.AspNetCore.Mvc.Infrastructure.ResourceInvoker.Rethrow(ResourceExecutedContextSealed context)
+   at Microsoft.AspNetCore.Mvc.Infrastructure.ResourceInvoker.Next(State& next, Scope& scope, Object& state, Boolean& isCompleted)
+   at Microsoft.AspNetCore.Mvc.Infrastructure.ResourceInvoker.InvokeFilterPipelineAsync()
+--- End of stack trace from previous location ---
+   at Microsoft.AspNetCore.Mvc.Infrastructure.ResourceInvoker.<InvokeAsync>g__Awaited|17_0(ResourceInvoker invoker, Task task, IDisposable scope)
+   at Microsoft.AspNetCore.Mvc.Infrastructure.ResourceInvoker.<InvokeAsync>g__Awaited|17_0(ResourceInvoker invoker, Task task, IDisposable scope)
+   at Microsoft.AspNetCore.Localization.RequestLocalizationMiddleware.Invoke(HttpContext context)
+   at MuhasebeStokWebApp.Middleware.GlobalExceptionHandlingMiddleware.InvokeAsync(HttpContext context) in /Users/muhammetkocaman/MuhasebeStokWebApp/Middleware/GlobalExceptionHandlingMiddleware.cs:line 38
+2025-05-02 11:17:50.460 +03:00 [ERR] Hata: 00-ea4b86788bcb51793ab24fa35ffdfc1f-1db74b94f0f3d65e-00, Kullanıcı: admin, Path: /Fatura, Method: GET, QueryString: , IP: ::1, UserAgent: Mozilla/5.0 (Macintosh; Intel Mac OS X 10_15_7) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/135.0.0.0 Safari/537.36
+System.InvalidOperationException: Unable to resolve service for type 'MuhasebeStokWebApp.Services.Interfaces.IFaturaNumaralandirmaService' while attempting to activate 'MuhasebeStokWebApp.Controllers.FaturaController'.
+   at Microsoft.Extensions.DependencyInjection.ActivatorUtilities.ThrowHelperUnableToResolveService(Type type, Type requiredBy)
+   at lambda_method545(Closure, IServiceProvider, Object[])
+   at Microsoft.AspNetCore.Mvc.Controllers.ControllerFactoryProvider.<>c__DisplayClass6_0.<CreateControllerFactory>g__CreateController|0(ControllerContext controllerContext)
+   at Microsoft.AspNetCore.Mvc.Infrastructure.ControllerActionInvoker.Next(State& next, Scope& scope, Object& state, Boolean& isCompleted)
+   at Microsoft.AspNetCore.Mvc.Infrastructure.ControllerActionInvoker.InvokeInnerFilterAsync()
+--- End of stack trace from previous location ---
+   at Microsoft.AspNetCore.Mvc.Infrastructure.ResourceInvoker.<InvokeNextResourceFilter>g__Awaited|25_0(ResourceInvoker invoker, Task lastTask, State next, Scope scope, Object state, Boolean isCompleted)
+   at Microsoft.AspNetCore.Mvc.Infrastructure.ResourceInvoker.Rethrow(ResourceExecutedContextSealed context)
+   at Microsoft.AspNetCore.Mvc.Infrastructure.ResourceInvoker.Next(State& next, Scope& scope, Object& state, Boolean& isCompleted)
+   at Microsoft.AspNetCore.Mvc.Infrastructure.ResourceInvoker.InvokeFilterPipelineAsync()
+--- End of stack trace from previous location ---
+   at Microsoft.AspNetCore.Mvc.Infrastructure.ResourceInvoker.<InvokeAsync>g__Awaited|17_0(ResourceInvoker invoker, Task task, IDisposable scope)
+   at Microsoft.AspNetCore.Mvc.Infrastructure.ResourceInvoker.<InvokeAsync>g__Awaited|17_0(ResourceInvoker invoker, Task task, IDisposable scope)
+   at Microsoft.AspNetCore.Localization.RequestLocalizationMiddleware.Invoke(HttpContext context)
+   at MuhasebeStokWebApp.Middleware.GlobalExceptionHandlingMiddleware.InvokeAsync(HttpContext context) in /Users/muhammetkocaman/MuhasebeStokWebApp/Middleware/GlobalExceptionHandlingMiddleware.cs:line 38
+2025-05-02 11:17:55.915 +03:00 [WRN] Session bulunamadı, kullanıcı giriş yapmamış olabilir
+2025-05-02 11:17:55.918 +03:00 [INF] Kimlik doğrulanmış kullanıcı: admin
+2025-05-02 11:17:59.296 +03:00 [INF] Birim sayısı: Aktif=3, Pasif=0, Silinmiş=0
+2025-05-02 11:18:00.672 +03:00 [INF] Toplam depo sayısı: 4
+2025-05-02 11:18:00.672 +03:00 [INF] Aktif depo sayısı: 2
+2025-05-02 11:18:00.672 +03:00 [INF] Pasif depo sayısı: 0
+2025-05-02 11:18:00.672 +03:00 [INF] Silinmiş depo sayısı: 2
+2025-05-02 11:18:11.097 +03:00 [WRN] Session bulunamadı, kullanıcı giriş yapmamış olabilir
+2025-05-02 11:18:11.098 +03:00 [INF] Kimlik doğrulanmış kullanıcı: admin
+2025-05-02 11:18:11.109 +03:00 [INF] Kur değeri önbellekten alındı: TRY -> USD
+2025-05-02 11:18:11.110 +03:00 [INF] Kur değeri önbellekten alındı: UZS -> USD
+2025-05-02 11:18:18.227 +03:00 [ERR] An exception occurred while iterating over the results of a query for context type 'MuhasebeStokWebApp.Data.ApplicationDbContext'.
+System.InvalidCastException: Unable to cast object of type 'System.String' to type 'System.Guid'.
+   at Microsoft.Data.SqlClient.SqlBuffer.get_Guid()
+   at Microsoft.EntityFrameworkCore.Query.Internal.BufferedDataReader.BufferedDataRecord.ReadGuid(DbDataReader reader, Int32 ordinal, ReaderColumn column)
+   at Microsoft.EntityFrameworkCore.Query.Internal.BufferedDataReader.BufferedDataRecord.ReadRow()
+   at Microsoft.EntityFrameworkCore.Query.Internal.BufferedDataReader.BufferedDataRecord.InitializeAsync(DbDataReader reader, IReadOnlyList`1 columns, CancellationToken cancellationToken)
+   at Microsoft.EntityFrameworkCore.Query.Internal.BufferedDataReader.InitializeAsync(IReadOnlyList`1 columns, CancellationToken cancellationToken)
+   at Microsoft.EntityFrameworkCore.Query.Internal.BufferedDataReader.InitializeAsync(IReadOnlyList`1 columns, CancellationToken cancellationToken)
+   at Microsoft.EntityFrameworkCore.Storage.RelationalCommand.ExecuteReaderAsync(RelationalCommandParameterObject parameterObject, CancellationToken cancellationToken)
+   at Microsoft.EntityFrameworkCore.Storage.RelationalCommand.ExecuteReaderAsync(RelationalCommandParameterObject parameterObject, CancellationToken cancellationToken)
+   at Microsoft.EntityFrameworkCore.Query.Internal.SplitQueryingEnumerable`1.AsyncEnumerator.InitializeReaderAsync(AsyncEnumerator enumerator, CancellationToken cancellationToken)
+   at Microsoft.EntityFrameworkCore.SqlServer.Storage.Internal.SqlServerExecutionStrategy.ExecuteAsync[TState,TResult](TState state, Func`4 operation, Func`4 verifySucceeded, CancellationToken cancellationToken)
+   at Microsoft.EntityFrameworkCore.Query.Internal.SplitQueryingEnumerable`1.AsyncEnumerator.MoveNextAsync()
+System.InvalidCastException: Unable to cast object of type 'System.String' to type 'System.Guid'.
+   at Microsoft.Data.SqlClient.SqlBuffer.get_Guid()
+   at Microsoft.EntityFrameworkCore.Query.Internal.BufferedDataReader.BufferedDataRecord.ReadGuid(DbDataReader reader, Int32 ordinal, ReaderColumn column)
+   at Microsoft.EntityFrameworkCore.Query.Internal.BufferedDataReader.BufferedDataRecord.ReadRow()
+   at Microsoft.EntityFrameworkCore.Query.Internal.BufferedDataReader.BufferedDataRecord.InitializeAsync(DbDataReader reader, IReadOnlyList`1 columns, CancellationToken cancellationToken)
+   at Microsoft.EntityFrameworkCore.Query.Internal.BufferedDataReader.InitializeAsync(IReadOnlyList`1 columns, CancellationToken cancellationToken)
+   at Microsoft.EntityFrameworkCore.Query.Internal.BufferedDataReader.InitializeAsync(IReadOnlyList`1 columns, CancellationToken cancellationToken)
+   at Microsoft.EntityFrameworkCore.Storage.RelationalCommand.ExecuteReaderAsync(RelationalCommandParameterObject parameterObject, CancellationToken cancellationToken)
+   at Microsoft.EntityFrameworkCore.Storage.RelationalCommand.ExecuteReaderAsync(RelationalCommandParameterObject parameterObject, CancellationToken cancellationToken)
+   at Microsoft.EntityFrameworkCore.Query.Internal.SplitQueryingEnumerable`1.AsyncEnumerator.InitializeReaderAsync(AsyncEnumerator enumerator, CancellationToken cancellationToken)
+   at Microsoft.EntityFrameworkCore.SqlServer.Storage.Internal.SqlServerExecutionStrategy.ExecuteAsync[TState,TResult](TState state, Func`4 operation, Func`4 verifySucceeded, CancellationToken cancellationToken)
+   at Microsoft.EntityFrameworkCore.Query.Internal.SplitQueryingEnumerable`1.AsyncEnumerator.MoveNextAsync()
+2025-05-02 11:18:18.227 +03:00 [ERR] SistemLog Index sayfası yüklenirken hata oluştu
+System.InvalidCastException: Unable to cast object of type 'System.String' to type 'System.Guid'.
+   at Microsoft.Data.SqlClient.SqlBuffer.get_Guid()
+   at Microsoft.EntityFrameworkCore.Query.Internal.BufferedDataReader.BufferedDataRecord.ReadGuid(DbDataReader reader, Int32 ordinal, ReaderColumn column)
+   at Microsoft.EntityFrameworkCore.Query.Internal.BufferedDataReader.BufferedDataRecord.ReadRow()
+   at Microsoft.EntityFrameworkCore.Query.Internal.BufferedDataReader.BufferedDataRecord.InitializeAsync(DbDataReader reader, IReadOnlyList`1 columns, CancellationToken cancellationToken)
+   at Microsoft.EntityFrameworkCore.Query.Internal.BufferedDataReader.InitializeAsync(IReadOnlyList`1 columns, CancellationToken cancellationToken)
+   at Microsoft.EntityFrameworkCore.Query.Internal.BufferedDataReader.InitializeAsync(IReadOnlyList`1 columns, CancellationToken cancellationToken)
+   at Microsoft.EntityFrameworkCore.Storage.RelationalCommand.ExecuteReaderAsync(RelationalCommandParameterObject parameterObject, CancellationToken cancellationToken)
+   at Microsoft.EntityFrameworkCore.Storage.RelationalCommand.ExecuteReaderAsync(RelationalCommandParameterObject parameterObject, CancellationToken cancellationToken)
+   at Microsoft.EntityFrameworkCore.Query.Internal.SplitQueryingEnumerable`1.AsyncEnumerator.InitializeReaderAsync(AsyncEnumerator enumerator, CancellationToken cancellationToken)
+   at Microsoft.EntityFrameworkCore.SqlServer.Storage.Internal.SqlServerExecutionStrategy.ExecuteAsync[TState,TResult](TState state, Func`4 operation, Func`4 verifySucceeded, CancellationToken cancellationToken)
+   at Microsoft.EntityFrameworkCore.Query.Internal.SplitQueryingEnumerable`1.AsyncEnumerator.MoveNextAsync()
+   at Microsoft.EntityFrameworkCore.EntityFrameworkQueryableExtensions.ToListAsync[TSource](IQueryable`1 source, CancellationToken cancellationToken)
+   at Microsoft.EntityFrameworkCore.EntityFrameworkQueryableExtensions.ToListAsync[TSource](IQueryable`1 source, CancellationToken cancellationToken)
+   at MuhasebeStokWebApp.Controllers.SistemLogController.Index(String searchString, String islemTuru, Nullable`1 baslangicTarihi, Nullable`1 bitisTarihi, Int32 page, Int32 pageSize) in /Users/muhammetkocaman/MuhasebeStokWebApp/Controllers/SistemLogController.cs:line 98
+2025-05-02 11:18:33.510 +03:00 [ERR] Hata: 00-975eff7d7d6a53052ab30e8aed57f190-6e8acf5edb7663dc-00, Kullanıcı: admin, Path: /Fatura, Method: GET, QueryString: , IP: ::1, UserAgent: Mozilla/5.0 (Macintosh; Intel Mac OS X 10_15_7) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/135.0.0.0 Safari/537.36
+System.InvalidOperationException: Unable to resolve service for type 'MuhasebeStokWebApp.Services.Interfaces.IFaturaNumaralandirmaService' while attempting to activate 'MuhasebeStokWebApp.Controllers.FaturaController'.
+   at Microsoft.Extensions.DependencyInjection.ActivatorUtilities.ThrowHelperUnableToResolveService(Type type, Type requiredBy)
+   at lambda_method545(Closure, IServiceProvider, Object[])
+   at Microsoft.AspNetCore.Mvc.Controllers.ControllerFactoryProvider.<>c__DisplayClass6_0.<CreateControllerFactory>g__CreateController|0(ControllerContext controllerContext)
+   at Microsoft.AspNetCore.Mvc.Infrastructure.ControllerActionInvoker.Next(State& next, Scope& scope, Object& state, Boolean& isCompleted)
+   at Microsoft.AspNetCore.Mvc.Infrastructure.ControllerActionInvoker.InvokeInnerFilterAsync()
+--- End of stack trace from previous location ---
+   at Microsoft.AspNetCore.Mvc.Infrastructure.ResourceInvoker.<InvokeNextResourceFilter>g__Awaited|25_0(ResourceInvoker invoker, Task lastTask, State next, Scope scope, Object state, Boolean isCompleted)
+   at Microsoft.AspNetCore.Mvc.Infrastructure.ResourceInvoker.Rethrow(ResourceExecutedContextSealed context)
+   at Microsoft.AspNetCore.Mvc.Infrastructure.ResourceInvoker.Next(State& next, Scope& scope, Object& state, Boolean& isCompleted)
+   at Microsoft.AspNetCore.Mvc.Infrastructure.ResourceInvoker.InvokeFilterPipelineAsync()
+--- End of stack trace from previous location ---
+   at Microsoft.AspNetCore.Mvc.Infrastructure.ResourceInvoker.<InvokeAsync>g__Awaited|17_0(ResourceInvoker invoker, Task task, IDisposable scope)
+   at Microsoft.AspNetCore.Mvc.Infrastructure.ResourceInvoker.<InvokeAsync>g__Awaited|17_0(ResourceInvoker invoker, Task task, IDisposable scope)
+   at Microsoft.AspNetCore.Localization.RequestLocalizationMiddleware.Invoke(HttpContext context)
+   at MuhasebeStokWebApp.Middleware.GlobalExceptionHandlingMiddleware.InvokeAsync(HttpContext context) in /Users/muhammetkocaman/MuhasebeStokWebApp/Middleware/GlobalExceptionHandlingMiddleware.cs:line 38
+2025-05-02 11:19:07.536 +03:00 [WRN] Entity 'Cari' has a global query filter defined and is the required end of a relationship with the entity 'Sozlesme'. This may lead to unexpected results when the required entity is filtered out. Either configure the navigation as optional, or define matching query filters for both entities in the navigation. See https://go.microsoft.com/fwlink/?linkid=2131316 for more information.
+2025-05-02 11:19:07.715 +03:00 [INF] Veritabanına bağlantı başarılı. Migrationlar uygulanıyor...
+2025-05-02 11:19:08.022 +03:00 [INF] Veritabanı işlemleri başarıyla tamamlandı.
+2025-05-02 11:19:21.678 +03:00 [WRN] Entity 'Cari' has a global query filter defined and is the required end of a relationship with the entity 'Sozlesme'. This may lead to unexpected results when the required entity is filtered out. Either configure the navigation as optional, or define matching query filters for both entities in the navigation. See https://go.microsoft.com/fwlink/?linkid=2131316 for more information.
+2025-05-02 11:19:21.861 +03:00 [INF] Veritabanına bağlantı başarılı. Migrationlar uygulanıyor...
+2025-05-02 11:19:22.161 +03:00 [INF] Veritabanı işlemleri başarıyla tamamlandı.
+2025-05-02 11:19:39.426 +03:00 [INF] Giriş denemesi: admin
+2025-05-02 11:19:39.523 +03:00 [INF] Admin kullanıcısı başarıyla giriş yaptı: admin
+2025-05-02 11:19:39.523 +03:00 [INF] Admin session oluşturuldu: UserID=fc704594-5ae7-463d-bbba-6be38187613c, UserName=admin
+2025-05-02 11:19:39.523 +03:00 [INF] Yönlendirme adresi: /
+2025-05-02 11:19:39.523 +03:00 [INF] Admin kullanıcısı / adresine yönlendiriliyor
+2025-05-02 11:19:39.621 +03:00 [INF] Aktif session bulundu: UserID=fc704594-5ae7-463d-bbba-6be38187613c, UserName=admin
+2025-05-02 11:19:39.622 +03:00 [INF] Admin kullanıcısı tespit edildi
+2025-05-02 11:19:39.622 +03:00 [INF] Kimlik doğrulanmış kullanıcı: admin
+2025-05-02 11:19:43.353 +03:00 [INF] Birim sayısı: Aktif=3, Pasif=0, Silinmiş=0
+2025-05-02 11:19:46.896 +03:00 [INF] Toplam depo sayısı: 4
+2025-05-02 11:19:46.897 +03:00 [INF] Aktif depo sayısı: 2
+2025-05-02 11:19:46.897 +03:00 [INF] Pasif depo sayısı: 0
+2025-05-02 11:19:46.897 +03:00 [INF] Silinmiş depo sayısı: 2
+2025-05-02 11:19:49.571 +03:00 [INF] Birim sayısı: Aktif=3, Pasif=0, Silinmiş=0
+2025-05-02 11:19:56.347 +03:00 [INF] Birim sayısı: Aktif=3, Pasif=0, Silinmiş=0
+2025-05-02 11:20:00.712 +03:00 [INF] Birim sayısı: Aktif=3, Pasif=0, Silinmiş=0
+2025-05-02 11:20:01.738 +03:00 [INF] Birim sayısı: Aktif=3, Pasif=0, Silinmiş=0
+2025-05-02 11:20:03.880 +03:00 [INF] Birim sayısı: Aktif=3, Pasif=0, Silinmiş=0
+2025-05-02 11:20:10.233 +03:00 [INF] Birim sayısı: Aktif=3, Pasif=0, Silinmiş=0
+2025-05-02 11:20:26.236 +03:00 [ERR] Hata: 00-f82adde6f9043de3893c1cdb9db6f0b7-879bc68ea7cceaee-00, Kullanıcı: admin, Path: /Fatura, Method: GET, QueryString: , IP: ::1, UserAgent: Mozilla/5.0 (Macintosh; Intel Mac OS X 10_15_7) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/136.0.0.0 Safari/537.36
+System.InvalidOperationException: Unable to resolve service for type 'MuhasebeStokWebApp.Services.Interfaces.IFaturaNumaralandirmaService' while attempting to activate 'MuhasebeStokWebApp.Controllers.FaturaController'.
+   at Microsoft.Extensions.DependencyInjection.ActivatorUtilities.ThrowHelperUnableToResolveService(Type type, Type requiredBy)
+   at lambda_method3246(Closure, IServiceProvider, Object[])
+   at Microsoft.AspNetCore.Mvc.Controllers.ControllerFactoryProvider.<>c__DisplayClass6_0.<CreateControllerFactory>g__CreateController|0(ControllerContext controllerContext)
+   at Microsoft.AspNetCore.Mvc.Infrastructure.ControllerActionInvoker.Next(State& next, Scope& scope, Object& state, Boolean& isCompleted)
+   at Microsoft.AspNetCore.Mvc.Infrastructure.ControllerActionInvoker.InvokeInnerFilterAsync()
+--- End of stack trace from previous location ---
+   at Microsoft.AspNetCore.Mvc.Infrastructure.ResourceInvoker.<InvokeNextResourceFilter>g__Awaited|25_0(ResourceInvoker invoker, Task lastTask, State next, Scope scope, Object state, Boolean isCompleted)
+   at Microsoft.AspNetCore.Mvc.Infrastructure.ResourceInvoker.Rethrow(ResourceExecutedContextSealed context)
+   at Microsoft.AspNetCore.Mvc.Infrastructure.ResourceInvoker.Next(State& next, Scope& scope, Object& state, Boolean& isCompleted)
+   at Microsoft.AspNetCore.Mvc.Infrastructure.ResourceInvoker.InvokeFilterPipelineAsync()
+--- End of stack trace from previous location ---
+   at Microsoft.AspNetCore.Mvc.Infrastructure.ResourceInvoker.<InvokeAsync>g__Awaited|17_0(ResourceInvoker invoker, Task task, IDisposable scope)
+   at Microsoft.AspNetCore.Mvc.Infrastructure.ResourceInvoker.<InvokeAsync>g__Awaited|17_0(ResourceInvoker invoker, Task task, IDisposable scope)
+   at Microsoft.AspNetCore.Localization.RequestLocalizationMiddleware.Invoke(HttpContext context)
+   at MuhasebeStokWebApp.Middleware.GlobalExceptionHandlingMiddleware.InvokeAsync(HttpContext context) in /Users/muhammetkocaman/MuhasebeStokWebApp/Middleware/GlobalExceptionHandlingMiddleware.cs:line 38
+2025-05-02 11:20:56.304 +03:00 [INF] Aktif session bulundu: UserID=fc704594-5ae7-463d-bbba-6be38187613c, UserName=admin
+2025-05-02 11:20:56.305 +03:00 [INF] Admin kullanıcısı tespit edildi
+2025-05-02 11:20:56.305 +03:00 [INF] Kimlik doğrulanmış kullanıcı: admin
+2025-05-02 11:20:56.313 +03:00 [INF] Kur değeri önbellekten alındı: TRY -> USD
+2025-05-02 11:20:56.314 +03:00 [INF] Kur değeri önbellekten alındı: UZS -> USD
+2025-05-02 11:21:04.727 +03:00 [INF] 0 adet para birimi ilişkisi listelendi.
+2025-05-02 11:21:07.754 +03:00 [INF] Birim sayısı: Aktif=3, Pasif=0, Silinmiş=0
+2025-05-02 11:31:13.449 +03:00 [WRN] Entity 'Cari' has a global query filter defined and is the required end of a relationship with the entity 'Sozlesme'. This may lead to unexpected results when the required entity is filtered out. Either configure the navigation as optional, or define matching query filters for both entities in the navigation. See https://go.microsoft.com/fwlink/?linkid=2131316 for more information.
+2025-05-02 11:31:13.646 +03:00 [INF] Veritabanına bağlantı başarılı. Migrationlar uygulanıyor...
+2025-05-02 11:31:13.963 +03:00 [INF] Veritabanı işlemleri başarıyla tamamlandı.
+2025-05-02 11:31:38.795 +03:00 [INF] İrsaliye oluşturma sayfası yükleniyor
+2025-05-02 11:31:38.826 +03:00 [INF] Yeni irsaliye numarası oluşturuldu: IRS-250502-0001
+2025-05-02 11:31:51.312 +03:00 [INF] Fatura oluşturma sayfası yükleniyor: Kullanıcı=admin
+2025-05-02 11:31:51.342 +03:00 [INF] Yeni numara oluşturuldu: FTR-250502-001
+2025-05-02 11:31:51.345 +03:00 [INF] Yeni numara oluşturuldu: SIP-250502-001
+2025-05-02 11:31:51.361 +03:00 [INF] Cari listesi yüklendi, toplam 0 adet cari bulundu.
+2025-05-02 11:31:51.372 +03:00 [INF] Sözleşme listesi yüklendi, toplam 0 adet sözleşme bulundu.
+2025-05-02 11:31:51.395 +03:00 [INF] Ürün listesi yüklendi, toplam 2 adet ürün bulundu.
+2025-05-02 11:31:51.410 +03:00 [INF] Depo listesi yüklendi, toplam 2 adet depo bulundu.
+2025-05-02 11:31:51.411 +03:00 [INF] Ürün select list oluşturuldu, toplam 2 adet öğe içeriyor.
+2025-05-02 11:31:51.428 +03:00 [INF] Para birimi listesi yüklendi, toplam 3 adet para birimi bulundu.
+2025-05-02 11:33:04.441 +03:00 [INF] Birim sayısı: Aktif=4, Pasif=0, Silinmiş=0
+2025-05-02 11:33:09.001 +03:00 [INF] ClearCacheAsync metodu başlatıldı. Parametre yok
+2025-05-02 11:33:09.023 +03:00 [INF] Tüm birim, ürün ve ilgili önbellekler başarıyla temizlendi
+2025-05-02 11:33:09.023 +03:00 [INF] ClearCacheAsync metodu tamamlandı. Sonuç: True
+2025-05-02 11:33:09.903 +03:00 [INF] Birim sayısı: Aktif=3, Pasif=0, Silinmiş=1
+2025-05-02 11:33:15.303 +03:00 [INF] ClearCacheAsync metodu başlatıldı. Parametre yok
+2025-05-02 11:33:15.306 +03:00 [INF] Tüm birim, ürün ve ilgili önbellekler başarıyla temizlendi
+2025-05-02 11:33:15.306 +03:00 [INF] ClearCacheAsync metodu tamamlandı. Sonuç: True
+2025-05-02 11:33:16.422 +03:00 [INF] Birim sayısı: Aktif=2, Pasif=0, Silinmiş=2
+2025-05-02 11:33:17.356 +03:00 [INF] Birim sayısı: Aktif=2, Pasif=0, Silinmiş=2
+2025-05-02 11:33:18.591 +03:00 [INF] Birim sayısı: Aktif=2, Pasif=0, Silinmiş=2
+2025-05-02 11:33:19.868 +03:00 [INF] Birim sayısı: Aktif=2, Pasif=0, Silinmiş=2
+2025-05-02 11:33:27.685 +03:00 [WRN] Session bulunamadı, kullanıcı giriş yapmamış olabilir
+2025-05-02 11:33:27.685 +03:00 [INF] Kimlik doğrulanmış kullanıcı: admin
+2025-05-02 11:33:31.340 +03:00 [ERR] An exception occurred while iterating over the results of a query for context type 'MuhasebeStokWebApp.Data.ApplicationDbContext'.
+System.InvalidCastException: Unable to cast object of type 'System.String' to type 'System.Guid'.
+   at Microsoft.Data.SqlClient.SqlBuffer.get_Guid()
+   at Microsoft.EntityFrameworkCore.Query.Internal.BufferedDataReader.BufferedDataRecord.ReadGuid(DbDataReader reader, Int32 ordinal, ReaderColumn column)
+   at Microsoft.EntityFrameworkCore.Query.Internal.BufferedDataReader.BufferedDataRecord.ReadRow()
+   at Microsoft.EntityFrameworkCore.Query.Internal.BufferedDataReader.BufferedDataRecord.InitializeAsync(DbDataReader reader, IReadOnlyList`1 columns, CancellationToken cancellationToken)
+   at Microsoft.EntityFrameworkCore.Query.Internal.BufferedDataReader.InitializeAsync(IReadOnlyList`1 columns, CancellationToken cancellationToken)
+   at Microsoft.EntityFrameworkCore.Query.Internal.BufferedDataReader.InitializeAsync(IReadOnlyList`1 columns, CancellationToken cancellationToken)
+   at Microsoft.EntityFrameworkCore.Storage.RelationalCommand.ExecuteReaderAsync(RelationalCommandParameterObject parameterObject, CancellationToken cancellationToken)
+   at Microsoft.EntityFrameworkCore.Storage.RelationalCommand.ExecuteReaderAsync(RelationalCommandParameterObject parameterObject, CancellationToken cancellationToken)
+   at Microsoft.EntityFrameworkCore.Query.Internal.SplitQueryingEnumerable`1.AsyncEnumerator.InitializeReaderAsync(AsyncEnumerator enumerator, CancellationToken cancellationToken)
+   at Microsoft.EntityFrameworkCore.SqlServer.Storage.Internal.SqlServerExecutionStrategy.ExecuteAsync[TState,TResult](TState state, Func`4 operation, Func`4 verifySucceeded, CancellationToken cancellationToken)
+   at Microsoft.EntityFrameworkCore.Query.Internal.SplitQueryingEnumerable`1.AsyncEnumerator.MoveNextAsync()
+System.InvalidCastException: Unable to cast object of type 'System.String' to type 'System.Guid'.
+   at Microsoft.Data.SqlClient.SqlBuffer.get_Guid()
+   at Microsoft.EntityFrameworkCore.Query.Internal.BufferedDataReader.BufferedDataRecord.ReadGuid(DbDataReader reader, Int32 ordinal, ReaderColumn column)
+   at Microsoft.EntityFrameworkCore.Query.Internal.BufferedDataReader.BufferedDataRecord.ReadRow()
+   at Microsoft.EntityFrameworkCore.Query.Internal.BufferedDataReader.BufferedDataRecord.InitializeAsync(DbDataReader reader, IReadOnlyList`1 columns, CancellationToken cancellationToken)
+   at Microsoft.EntityFrameworkCore.Query.Internal.BufferedDataReader.InitializeAsync(IReadOnlyList`1 columns, CancellationToken cancellationToken)
+   at Microsoft.EntityFrameworkCore.Query.Internal.BufferedDataReader.InitializeAsync(IReadOnlyList`1 columns, CancellationToken cancellationToken)
+   at Microsoft.EntityFrameworkCore.Storage.RelationalCommand.ExecuteReaderAsync(RelationalCommandParameterObject parameterObject, CancellationToken cancellationToken)
+   at Microsoft.EntityFrameworkCore.Storage.RelationalCommand.ExecuteReaderAsync(RelationalCommandParameterObject parameterObject, CancellationToken cancellationToken)
+   at Microsoft.EntityFrameworkCore.Query.Internal.SplitQueryingEnumerable`1.AsyncEnumerator.InitializeReaderAsync(AsyncEnumerator enumerator, CancellationToken cancellationToken)
+   at Microsoft.EntityFrameworkCore.SqlServer.Storage.Internal.SqlServerExecutionStrategy.ExecuteAsync[TState,TResult](TState state, Func`4 operation, Func`4 verifySucceeded, CancellationToken cancellationToken)
+   at Microsoft.EntityFrameworkCore.Query.Internal.SplitQueryingEnumerable`1.AsyncEnumerator.MoveNextAsync()
+2025-05-02 11:33:31.340 +03:00 [ERR] SistemLog Index sayfası yüklenirken hata oluştu
+System.InvalidCastException: Unable to cast object of type 'System.String' to type 'System.Guid'.
+   at Microsoft.Data.SqlClient.SqlBuffer.get_Guid()
+   at Microsoft.EntityFrameworkCore.Query.Internal.BufferedDataReader.BufferedDataRecord.ReadGuid(DbDataReader reader, Int32 ordinal, ReaderColumn column)
+   at Microsoft.EntityFrameworkCore.Query.Internal.BufferedDataReader.BufferedDataRecord.ReadRow()
+   at Microsoft.EntityFrameworkCore.Query.Internal.BufferedDataReader.BufferedDataRecord.InitializeAsync(DbDataReader reader, IReadOnlyList`1 columns, CancellationToken cancellationToken)
+   at Microsoft.EntityFrameworkCore.Query.Internal.BufferedDataReader.InitializeAsync(IReadOnlyList`1 columns, CancellationToken cancellationToken)
+   at Microsoft.EntityFrameworkCore.Query.Internal.BufferedDataReader.InitializeAsync(IReadOnlyList`1 columns, CancellationToken cancellationToken)
+   at Microsoft.EntityFrameworkCore.Storage.RelationalCommand.ExecuteReaderAsync(RelationalCommandParameterObject parameterObject, CancellationToken cancellationToken)
+   at Microsoft.EntityFrameworkCore.Storage.RelationalCommand.ExecuteReaderAsync(RelationalCommandParameterObject parameterObject, CancellationToken cancellationToken)
+   at Microsoft.EntityFrameworkCore.Query.Internal.SplitQueryingEnumerable`1.AsyncEnumerator.InitializeReaderAsync(AsyncEnumerator enumerator, CancellationToken cancellationToken)
+   at Microsoft.EntityFrameworkCore.SqlServer.Storage.Internal.SqlServerExecutionStrategy.ExecuteAsync[TState,TResult](TState state, Func`4 operation, Func`4 verifySucceeded, CancellationToken cancellationToken)
+   at Microsoft.EntityFrameworkCore.Query.Internal.SplitQueryingEnumerable`1.AsyncEnumerator.MoveNextAsync()
+   at Microsoft.EntityFrameworkCore.EntityFrameworkQueryableExtensions.ToListAsync[TSource](IQueryable`1 source, CancellationToken cancellationToken)
+   at Microsoft.EntityFrameworkCore.EntityFrameworkQueryableExtensions.ToListAsync[TSource](IQueryable`1 source, CancellationToken cancellationToken)
+   at MuhasebeStokWebApp.Controllers.SistemLogController.Index(String searchString, String islemTuru, Nullable`1 baslangicTarihi, Nullable`1 bitisTarihi, Int32 page, Int32 pageSize) in /Users/muhammetkocaman/MuhasebeStokWebApp/Controllers/SistemLogController.cs:line 98
+2025-05-02 11:33:39.739 +03:00 [WRN] Session bulunamadı, kullanıcı giriş yapmamış olabilir
+2025-05-02 11:33:39.739 +03:00 [INF] Kimlik doğrulanmış kullanıcı: admin
+2025-05-02 11:33:39.747 +03:00 [INF] Kur değeri önbellekten alındı: TRY -> USD
+2025-05-02 11:33:39.747 +03:00 [INF] Kur değeri önbellekten alındı: UZS -> USD
+2025-05-02 11:33:41.382 +03:00 [INF] Birim sayısı: Aktif=2, Pasif=0, Silinmiş=2
+2025-05-02 11:33:47.043 +03:00 [INF] Birim sayısı: Aktif=2, Pasif=0, Silinmiş=2
+2025-05-02 11:35:01.769 +03:00 [WRN] Session bulunamadı, kullanıcı giriş yapmamış olabilir
+2025-05-02 11:35:01.769 +03:00 [INF] Kimlik doğrulanmış kullanıcı: admin
+2025-05-02 11:35:01.775 +03:00 [INF] Kur değeri önbellekten alındı: TRY -> USD
+2025-05-02 11:35:01.775 +03:00 [INF] Kur değeri önbellekten alındı: UZS -> USD
+2025-05-02 11:35:04.163 +03:00 [INF] Birim sayısı: Aktif=2, Pasif=0, Silinmiş=2
+2025-05-02 11:35:06.634 +03:00 [INF] Birim sayısı: Aktif=2, Pasif=0, Silinmiş=2
+2025-05-02 11:35:07.430 +03:00 [INF] Birim sayısı: Aktif=2, Pasif=0, Silinmiş=2
+2025-05-02 11:35:08.295 +03:00 [INF] Toplam depo sayısı: 4
+2025-05-02 11:35:08.295 +03:00 [INF] Aktif depo sayısı: 2
+2025-05-02 11:35:08.295 +03:00 [INF] Pasif depo sayısı: 0
+2025-05-02 11:35:08.295 +03:00 [INF] Silinmiş depo sayısı: 2
+2025-05-02 11:35:09.759 +03:00 [INF] Toplam depo sayısı: 4
+2025-05-02 11:35:09.759 +03:00 [INF] Aktif depo sayısı: 2
+2025-05-02 11:35:09.759 +03:00 [INF] Pasif depo sayısı: 0
+2025-05-02 11:35:09.759 +03:00 [INF] Silinmiş depo sayısı: 2
+2025-05-02 11:35:11.284 +03:00 [INF] Toplam depo sayısı: 4
+2025-05-02 11:35:11.284 +03:00 [INF] Aktif depo sayısı: 2
+2025-05-02 11:35:11.284 +03:00 [INF] Pasif depo sayısı: 0
+2025-05-02 11:35:11.284 +03:00 [INF] Silinmiş depo sayısı: 2
+2025-05-02 11:37:22.681 +03:00 [WRN] Session bulunamadı, kullanıcı giriş yapmamış olabilir
+2025-05-02 11:37:22.682 +03:00 [INF] Kimlik doğrulanmış kullanıcı: admin
+2025-05-02 11:37:22.692 +03:00 [INF] Kur değeri önbellekten alındı: TRY -> USD
+2025-05-02 11:37:22.693 +03:00 [INF] Kur değeri önbellekten alındı: UZS -> USD
+2025-05-02 11:37:26.256 +03:00 [INF] Birim sayısı: Aktif=2, Pasif=0, Silinmiş=2
+2025-05-02 11:37:27.933 +03:00 [INF] Birim sayısı: Aktif=2, Pasif=0, Silinmiş=2
+2025-05-02 11:37:28.689 +03:00 [INF] Birim sayısı: Aktif=2, Pasif=0, Silinmiş=2
+2025-05-02 11:37:30.051 +03:00 [INF] Birim sayısı: Aktif=2, Pasif=0, Silinmiş=2
+2025-05-02 11:37:30.957 +03:00 [INF] Birim sayısı: Aktif=2, Pasif=0, Silinmiş=2
+2025-05-02 11:39:28.333 +03:00 [WRN] Entity 'Cari' has a global query filter defined and is the required end of a relationship with the entity 'Sozlesme'. This may lead to unexpected results when the required entity is filtered out. Either configure the navigation as optional, or define matching query filters for both entities in the navigation. See https://go.microsoft.com/fwlink/?linkid=2131316 for more information.
+2025-05-02 11:39:28.526 +03:00 [INF] Veritabanına bağlantı başarılı. Migrationlar uygulanıyor...
+2025-05-02 11:39:28.845 +03:00 [INF] Veritabanı işlemleri başarıyla tamamlandı.
+2025-05-02 11:39:38.296 +03:00 [INF] Birim sayısı: Aktif=2, Pasif=0, Silinmiş=2
+2025-05-02 11:39:39.065 +03:00 [INF] Birim sayısı: Aktif=2, Pasif=0, Silinmiş=2
+2025-05-02 11:39:40.456 +03:00 [INF] Birim sayısı: Aktif=2, Pasif=0, Silinmiş=2
+2025-05-02 11:39:45.578 +03:00 [INF] ClearCacheAsync metodu başlatıldı. Parametre yok
+2025-05-02 11:39:45.578 +03:00 [INF] Birim önbellekleri temizleniyor...
+2025-05-02 11:39:45.596 +03:00 [INF] Tüm birim, ürün ve ilgili önbellekler başarıyla temizlendi
+2025-05-02 11:39:45.596 +03:00 [INF] ClearCacheAsync metodu tamamlandı. Sonuç: True
+2025-05-02 11:39:48.096 +03:00 [INF] Birim sayısı: Aktif=2, Pasif=0, Silinmiş=2
+2025-05-02 11:40:08.976 +03:00 [INF] ClearCacheAsync metodu başlatıldı. Parametre yok
+2025-05-02 11:40:08.977 +03:00 [INF] Birim önbellekleri temizleniyor...
+2025-05-02 11:40:08.981 +03:00 [INF] Tüm birim, ürün ve ilgili önbellekler başarıyla temizlendi
+2025-05-02 11:40:08.981 +03:00 [INF] ClearCacheAsync metodu tamamlandı. Sonuç: True
+2025-05-02 11:40:10.302 +03:00 [INF] Birim sayısı: Aktif=3, Pasif=0, Silinmiş=2
+2025-05-02 11:40:13.145 +03:00 [INF] c49de6c3-9d88-41e4-b64c-c835bb38e469 metodu başlatıldı. Parametre yok
+2025-05-02 11:40:13.184 +03:00 [INF] ClearCacheAsync metodu başlatıldı. Parametre yok
+2025-05-02 11:40:13.184 +03:00 [INF] Birim önbellekleri temizleniyor...
+2025-05-02 11:40:13.187 +03:00 [INF] Tüm birim, ürün ve ilgili önbellekler başarıyla temizlendi
+2025-05-02 11:40:13.187 +03:00 [INF] ClearCacheAsync metodu tamamlandı. Sonuç: True
+2025-05-02 11:40:13.188 +03:00 [INF] Birim silme işlemi tamamlandı: ID=c49de6c3-9d88-41e4-b64c-c835bb38e469
+2025-05-02 11:40:13.195 +03:00 [INF] ClearCacheAsync metodu başlatıldı. Parametre yok
+2025-05-02 11:40:13.195 +03:00 [INF] Birim önbellekleri temizleniyor...
+2025-05-02 11:40:13.198 +03:00 [INF] Tüm birim, ürün ve ilgili önbellekler başarıyla temizlendi
+2025-05-02 11:40:13.198 +03:00 [INF] ClearCacheAsync metodu tamamlandı. Sonuç: True
+2025-05-02 11:40:14.394 +03:00 [INF] Birim sayısı: Aktif=2, Pasif=0, Silinmiş=3
+2025-05-02 13:54:36.955 +03:00 [INF] Giriş denemesi: admin
+2025-05-02 13:54:37.052 +03:00 [INF] Admin kullanıcısı başarıyla giriş yaptı: admin
+2025-05-02 13:54:37.052 +03:00 [INF] Admin session oluşturuldu: UserID=fc704594-5ae7-463d-bbba-6be38187613c, UserName=admin
+2025-05-02 13:54:37.052 +03:00 [INF] Yönlendirme adresi: /Urun
+2025-05-02 13:54:37.052 +03:00 [INF] Admin kullanıcısı /Urun adresine yönlendiriliyor
+2025-05-02 13:54:46.052 +03:00 [INF] Birim sayısı: Aktif=2, Pasif=0, Silinmiş=3
+2025-05-02 13:54:48.769 +03:00 [INF] Toplam depo sayısı: 4
+2025-05-02 13:54:48.770 +03:00 [INF] Aktif depo sayısı: 2
+2025-05-02 13:54:48.770 +03:00 [INF] Pasif depo sayısı: 0
+2025-05-02 13:54:48.770 +03:00 [INF] Silinmiş depo sayısı: 2
+2025-05-02 13:54:50.712 +03:00 [INF] Birim sayısı: Aktif=2, Pasif=0, Silinmiş=3
+2025-05-02 13:56:35.726 +03:00 [INF] Birim sayısı: Aktif=2, Pasif=0, Silinmiş=3
+2025-05-02 14:05:06.009 +03:00 [WRN] Entity 'Cari' has a global query filter defined and is the required end of a relationship with the entity 'Sozlesme'. This may lead to unexpected results when the required entity is filtered out. Either configure the navigation as optional, or define matching query filters for both entities in the navigation. See https://go.microsoft.com/fwlink/?linkid=2131316 for more information.
+2025-05-02 14:05:06.211 +03:00 [INF] Veritabanına bağlantı başarılı. Migrationlar uygulanıyor...
+2025-05-02 14:05:06.536 +03:00 [INF] Veritabanı işlemleri başarıyla tamamlandı.
+2025-05-02 14:06:14.952 +03:00 [INF] Toplam depo sayısı: 4
+2025-05-02 14:06:14.955 +03:00 [INF] Aktif depo sayısı: 2
+2025-05-02 14:06:14.955 +03:00 [INF] Pasif depo sayısı: 0
+2025-05-02 14:06:14.955 +03:00 [INF] Silinmiş depo sayısı: 2
+2025-05-02 14:06:18.463 +03:00 [INF] Birim sayısı: Aktif=2, Pasif=0, Silinmiş=3
+2025-05-02 14:07:06.969 +03:00 [INF] Yeni ürün oluşturma işlemi başlatılıyor: Kullanıcı=admin
+2025-05-02 14:07:18.220 +03:00 [INF] ClearCacheAsync metodu başlatıldı. Parametre yok
+2025-05-02 14:07:18.220 +03:00 [INF] Birim önbellekleri temizleniyor...
+2025-05-02 14:07:18.232 +03:00 [INF] Tüm birim, ürün ve ilgili önbellekler başarıyla temizlendi
+2025-05-02 14:07:18.233 +03:00 [INF] ClearCacheAsync metodu tamamlandı. Sonuç: True
+2025-05-02 14:07:26.704 +03:00 [WRN] RestoreByIdAsync: 7356a5ec-e41f-463e-b3f1-92224dcb9181 ID'li entity bulunamadı
+2025-05-02 14:07:29.894 +03:00 [WRN] RestoreByIdAsync: 7356a5ec-e41f-463e-b3f1-92224dcb9181 ID'li entity bulunamadı
+2025-05-02 14:12:38.122 +03:00 [WRN] RestoreByIdAsync: 7356a5ec-e41f-463e-b3f1-92224dcb9181 ID'li entity bulunamadı
+2025-05-02 14:15:14.224 +03:00 [WRN] Entity 'Cari' has a global query filter defined and is the required end of a relationship with the entity 'Sozlesme'. This may lead to unexpected results when the required entity is filtered out. Either configure the navigation as optional, or define matching query filters for both entities in the navigation. See https://go.microsoft.com/fwlink/?linkid=2131316 for more information.
+2025-05-02 14:15:14.416 +03:00 [INF] Veritabanına bağlantı başarılı. Migrationlar uygulanıyor...
+2025-05-02 14:15:14.728 +03:00 [INF] Veritabanı işlemleri başarıyla tamamlandı.
+2025-05-02 14:15:14.941 +03:00 [ERR] Hosting failed to start
+System.IO.IOException: Failed to bind to address https://127.0.0.1:7118: address already in use.
+ ---> Microsoft.AspNetCore.Connections.AddressInUseException: Address already in use
+ ---> System.Net.Sockets.SocketException (48): Address already in use
+   at System.Net.Sockets.Socket.DoBind(EndPoint endPointSnapshot, SocketAddress socketAddress)
+   at System.Net.Sockets.Socket.Bind(EndPoint localEP)
+   at Microsoft.AspNetCore.Server.Kestrel.Transport.Sockets.SocketTransportOptions.CreateDefaultBoundListenSocket(EndPoint endpoint)
+   at Microsoft.AspNetCore.Server.Kestrel.Transport.Sockets.SocketConnectionListener.Bind()
+   --- End of inner exception stack trace ---
+   at Microsoft.AspNetCore.Server.Kestrel.Transport.Sockets.SocketConnectionListener.Bind()
+   at Microsoft.AspNetCore.Server.Kestrel.Transport.Sockets.SocketTransportFactory.BindAsync(EndPoint endpoint, CancellationToken cancellationToken)
+   at Microsoft.AspNetCore.Server.Kestrel.Core.Internal.Infrastructure.TransportManager.BindAsync(EndPoint endPoint, ConnectionDelegate connectionDelegate, EndpointConfig endpointConfig, CancellationToken cancellationToken)
+   at Microsoft.AspNetCore.Server.Kestrel.Core.KestrelServerImpl.<>c__DisplayClass28_0`1.<<StartAsync>g__OnBind|0>d.MoveNext()
+--- End of stack trace from previous location ---
+   at Microsoft.AspNetCore.Server.Kestrel.Core.Internal.AddressBinder.BindEndpointAsync(ListenOptions endpoint, AddressBindContext context, CancellationToken cancellationToken)
+   --- End of inner exception stack trace ---
+   at Microsoft.AspNetCore.Server.Kestrel.Core.Internal.AddressBinder.BindEndpointAsync(ListenOptions endpoint, AddressBindContext context, CancellationToken cancellationToken)
+   at Microsoft.AspNetCore.Server.Kestrel.Core.LocalhostListenOptions.BindAsync(AddressBindContext context, CancellationToken cancellationToken)
+   at Microsoft.AspNetCore.Server.Kestrel.Core.Internal.AddressBinder.AddressesStrategy.BindAsync(AddressBindContext context, CancellationToken cancellationToken)
+   at Microsoft.AspNetCore.Server.Kestrel.Core.KestrelServerImpl.BindAsync(CancellationToken cancellationToken)
+   at Microsoft.AspNetCore.Server.Kestrel.Core.KestrelServerImpl.StartAsync[TContext](IHttpApplication`1 application, CancellationToken cancellationToken)
+   at Microsoft.AspNetCore.Hosting.GenericWebHostService.StartAsync(CancellationToken cancellationToken)
+   at Microsoft.Extensions.Hosting.Internal.Host.<StartAsync>b__14_1(IHostedService service, CancellationToken token)
+   at Microsoft.Extensions.Hosting.Internal.Host.ForeachService[T](IEnumerable`1 services, CancellationToken token, Boolean concurrent, Boolean abortOnFirstException, List`1 exceptions, Func`3 operation)
+2025-05-02 14:15:55.107 +03:00 [WRN] Entity 'Cari' has a global query filter defined and is the required end of a relationship with the entity 'Sozlesme'. This may lead to unexpected results when the required entity is filtered out. Either configure the navigation as optional, or define matching query filters for both entities in the navigation. See https://go.microsoft.com/fwlink/?linkid=2131316 for more information.
+2025-05-02 14:15:55.289 +03:00 [INF] Veritabanına bağlantı başarılı. Migrationlar uygulanıyor...
+2025-05-02 14:15:55.591 +03:00 [INF] Veritabanı işlemleri başarıyla tamamlandı.
+2025-05-02 14:16:13.827 +03:00 [INF] Giriş denemesi: admin
+2025-05-02 14:16:13.928 +03:00 [INF] Admin kullanıcısı başarıyla giriş yaptı: admin
+2025-05-02 14:16:13.928 +03:00 [INF] Admin session oluşturuldu: UserID=fc704594-5ae7-463d-bbba-6be38187613c, UserName=admin
+2025-05-02 14:16:13.928 +03:00 [INF] Yönlendirme adresi: /Urun
+2025-05-02 14:16:13.928 +03:00 [INF] Admin kullanıcısı /Urun adresine yönlendiriliyor
+2025-05-02 14:17:45.542 +03:00 [INF] ClearCacheAsync metodu başlatıldı. Parametre yok
+2025-05-02 14:17:45.543 +03:00 [INF] Birim önbellekleri temizleniyor...
+2025-05-02 14:17:45.555 +03:00 [INF] Tüm birim, ürün ve ilgili önbellekler başarıyla temizlendi
+2025-05-02 14:17:45.555 +03:00 [INF] ClearCacheAsync metodu tamamlandı. Sonuç: True
+2025-05-02 14:17:49.935 +03:00 [INF] ClearCacheAsync metodu başlatıldı. Parametre yok
+2025-05-02 14:17:49.935 +03:00 [INF] Birim önbellekleri temizleniyor...
+2025-05-02 14:17:49.940 +03:00 [INF] Tüm birim, ürün ve ilgili önbellekler başarıyla temizlendi
+2025-05-02 14:17:49.940 +03:00 [INF] ClearCacheAsync metodu tamamlandı. Sonuç: True
+2025-05-02 14:27:30.166 +03:00 [WRN] Entity 'Cari' has a global query filter defined and is the required end of a relationship with the entity 'Sozlesme'. This may lead to unexpected results when the required entity is filtered out. Either configure the navigation as optional, or define matching query filters for both entities in the navigation. See https://go.microsoft.com/fwlink/?linkid=2131316 for more information.
+2025-05-02 14:27:30.332 +03:00 [INF] Veritabanına bağlantı başarılı. Migrationlar uygulanıyor...
+2025-05-02 14:27:30.623 +03:00 [INF] Veritabanı işlemleri başarıyla tamamlandı.
+2025-05-02 14:27:36.900 +03:00 [WRN] RestoreByIdAsync: 7356a5ec-e41f-463e-b3f1-92224dcb9181 ID'li entity bulunamadı
+2025-05-02 14:28:51.434 +03:00 [INF] Yeni ürün oluşturma işlemi başlatılıyor: Kullanıcı=admin
+2025-05-02 14:29:04.762 +03:00 [WRN] RestoreByIdAsync: 7356a5ec-e41f-463e-b3f1-92224dcb9181 ID'li entity bulunamadı
+2025-05-02 14:29:22.748 +03:00 [INF] Yeni ürün oluşturma işlemi başlatılıyor: Kullanıcı=admin
+2025-05-02 14:29:56.764 +03:00 [INF] Yeni ürün oluşturma işlemi başlatılıyor: Kullanıcı=admin
+2025-05-02 14:41:24.478 +03:00 [WRN] Entity 'Cari' has a global query filter defined and is the required end of a relationship with the entity 'Sozlesme'. This may lead to unexpected results when the required entity is filtered out. Either configure the navigation as optional, or define matching query filters for both entities in the navigation. See https://go.microsoft.com/fwlink/?linkid=2131316 for more information.
+2025-05-02 14:41:24.682 +03:00 [INF] Veritabanına bağlantı başarılı. Migrationlar uygulanıyor...
+2025-05-02 14:41:25.017 +03:00 [INF] Veritabanı işlemleri başarıyla tamamlandı.
+2025-05-02 14:42:09.421 +03:00 [INF] Ürün silme işlemi başlatılıyor: UrunID=39f31380-4db1-4b88-8c51-9184271140e1, Kullanıcı=admin
+2025-05-02 14:42:09.551 +03:00 [INF] Urun ID: 39f31380-4db1-4b88-8c51-9184271140e1 soft delete yapıldı
+2025-05-02 14:42:09.551 +03:00 [INF] Ürün başarıyla silindi: UrunID=39f31380-4db1-4b88-8c51-9184271140e1, Kullanıcı=admin
+2025-05-02 14:42:24.157 +03:00 [INF] Ürün geri getirildi: UrunID=39f31380-4db1-4b88-8c51-9184271140e1, Kullanıcı=admin
+2025-05-02 14:42:45.469 +03:00 [INF] Ürün geri getirildi: UrunID=7356a5ec-e41f-463e-b3f1-92224dcb9181, Kullanıcı=admin
+2025-05-02 14:42:56.415 +03:00 [INF] Ürün silme işlemi başlatılıyor: UrunID=ac833f4a-c343-4ddf-8b8f-ea43391ce847, Kullanıcı=admin
+2025-05-02 14:42:56.440 +03:00 [INF] Urun ID: ac833f4a-c343-4ddf-8b8f-ea43391ce847 soft delete yapıldı
+2025-05-02 14:42:56.440 +03:00 [INF] Ürün başarıyla silindi: UrunID=ac833f4a-c343-4ddf-8b8f-ea43391ce847, Kullanıcı=admin
+2025-05-02 14:47:18.724 +03:00 [WRN] Entity 'Cari' has a global query filter defined and is the required end of a relationship with the entity 'Sozlesme'. This may lead to unexpected results when the required entity is filtered out. Either configure the navigation as optional, or define matching query filters for both entities in the navigation. See https://go.microsoft.com/fwlink/?linkid=2131316 for more information.
+2025-05-02 14:47:18.924 +03:00 [INF] Veritabanına bağlantı başarılı. Migrationlar uygulanıyor...
+2025-05-02 14:47:19.435 +03:00 [INF] Veritabanı işlemleri başarıyla tamamlandı.
+2025-05-02 14:48:03.153 +03:00 [INF] Giriş denemesi: admin
+2025-05-02 14:48:03.253 +03:00 [INF] Admin kullanıcısı başarıyla giriş yaptı: admin
+2025-05-02 14:48:03.253 +03:00 [INF] Admin session oluşturuldu: UserID=fc704594-5ae7-463d-bbba-6be38187613c, UserName=admin
+2025-05-02 14:48:03.253 +03:00 [INF] Yönlendirme adresi: /Urun?tab=aktif
+2025-05-02 14:48:03.253 +03:00 [INF] Admin kullanıcısı /Urun?tab=aktif adresine yönlendiriliyor
+2025-05-02 14:48:17.098 +03:00 [INF] Urun ID: 383d2a5c-116f-49e9-a452-ce0f435d858b soft delete yapıldı
+2025-05-02 14:48:30.825 +03:00 [INF] Ürün geri getirildi: UrunID=383d2a5c-116f-49e9-a452-ce0f435d858b, Kullanıcı=admin
+2025-05-02 14:48:37.081 +03:00 [INF] Urun ID: 383d2a5c-116f-49e9-a452-ce0f435d858b soft delete yapıldı
+2025-05-02 14:49:06.983 +03:00 [INF] Urun ID: 39f31380-4db1-4b88-8c51-9184271140e1 soft delete yapıldı
+2025-05-02 14:49:15.191 +03:00 [INF] Ürün geri getirildi: UrunID=39f31380-4db1-4b88-8c51-9184271140e1, Kullanıcı=admin
+2025-05-02 19:39:05.358 +03:00 [WRN] Entity 'Cari' has a global query filter defined and is the required end of a relationship with the entity 'Sozlesme'. This may lead to unexpected results when the required entity is filtered out. Either configure the navigation as optional, or define matching query filters for both entities in the navigation. See https://go.microsoft.com/fwlink/?linkid=2131316 for more information.
+2025-05-02 19:39:05.554 +03:00 [INF] Veritabanına bağlantı başarılı. Migrationlar uygulanıyor...
+2025-05-02 19:39:05.876 +03:00 [INF] Veritabanı işlemleri başarıyla tamamlandı.
+2025-05-02 19:41:17.091 +03:00 [INF] Giriş denemesi: admin
+2025-05-02 19:41:17.185 +03:00 [INF] Admin kullanıcısı başarıyla giriş yaptı: admin
+2025-05-02 19:41:17.186 +03:00 [INF] Admin session oluşturuldu: UserID=fc704594-5ae7-463d-bbba-6be38187613c, UserName=admin
+2025-05-02 19:41:17.186 +03:00 [INF] Yönlendirme adresi: /Urun
+2025-05-02 19:41:17.186 +03:00 [INF] Admin kullanıcısı /Urun adresine yönlendiriliyor
+2025-05-02 19:41:20.605 +03:00 [INF] Aktif session bulundu: UserID=fc704594-5ae7-463d-bbba-6be38187613c, UserName=admin
+2025-05-02 19:41:20.607 +03:00 [INF] Admin kullanıcısı tespit edildi
+2025-05-02 19:41:20.608 +03:00 [INF] Kimlik doğrulanmış kullanıcı: admin
+2025-05-02 19:41:22.607 +03:00 [INF] Birim sayısı: Aktif=2, Pasif=0, Silinmiş=3
+2025-05-02 19:41:31.399 +03:00 [INF] ClearCacheAsync metodu başlatıldı. Parametre yok
+2025-05-02 19:41:31.400 +03:00 [INF] Birim önbellekleri temizleniyor...
+2025-05-02 19:41:31.418 +03:00 [INF] Tüm birim, ürün ve ilgili önbellekler başarıyla temizlendi
+2025-05-02 19:41:31.418 +03:00 [INF] ClearCacheAsync metodu tamamlandı. Sonuç: True
+2025-05-02 19:41:32.327 +03:00 [INF] Birim sayısı: Aktif=2, Pasif=0, Silinmiş=3
+2025-05-02 19:41:35.618 +03:00 [INF] Birim sayısı: Aktif=2, Pasif=0, Silinmiş=3
+2025-05-02 19:41:37.098 +03:00 [INF] Birim sayısı: Aktif=2, Pasif=0, Silinmiş=3
+2025-05-02 19:41:41.064 +03:00 [INF] ClearCacheAsync metodu başlatıldı. Parametre yok
+2025-05-02 19:41:41.065 +03:00 [INF] Birim önbellekleri temizleniyor...
+2025-05-02 19:41:41.070 +03:00 [INF] Tüm birim, ürün ve ilgili önbellekler başarıyla temizlendi
+2025-05-02 19:41:41.070 +03:00 [INF] ClearCacheAsync metodu tamamlandı. Sonuç: True
+2025-05-02 19:41:41.125 +03:00 [ERR] An exception occurred in the database while saving changes for context type 'MuhasebeStokWebApp.Data.ApplicationDbContext'.
+Microsoft.EntityFrameworkCore.DbUpdateException: An error occurred while saving the entity changes. See the inner exception for details.
+ ---> Microsoft.Data.SqlClient.SqlException (0x80131904): The INSERT statement conflicted with the FOREIGN KEY constraint "FK_SistemLoglar_AspNetUsers_KullaniciId". The conflict occurred in database "MuhasebeStokDB", table "dbo.AspNetUsers", column 'Id'.
+   at Microsoft.Data.SqlClient.SqlConnection.OnError(SqlException exception, Boolean breakConnection, Action`1 wrapCloseInAction)
+   at Microsoft.Data.SqlClient.SqlInternalConnection.OnError(SqlException exception, Boolean breakConnection, Action`1 wrapCloseInAction)
+   at Microsoft.Data.SqlClient.TdsParser.ThrowExceptionAndWarning(TdsParserStateObject stateObj, Boolean callerHasConnectionLock, Boolean asyncClose)
+   at Microsoft.Data.SqlClient.TdsParser.TryRun(RunBehavior runBehavior, SqlCommand cmdHandler, SqlDataReader dataStream, BulkCopySimpleResultSet bulkCopyHandler, TdsParserStateObject stateObj, Boolean& dataReady)
+   at Microsoft.Data.SqlClient.SqlDataReader.TryHasMoreRows(Boolean& moreRows)
+   at Microsoft.Data.SqlClient.SqlDataReader.TryReadInternal(Boolean setTimeout, Boolean& more)
+   at Microsoft.Data.SqlClient.SqlDataReader.ReadAsyncExecute(Task task, Object state)
+   at Microsoft.Data.SqlClient.SqlDataReader.InvokeAsyncCall[T](SqlDataReaderBaseAsyncCallContext`1 context)
+--- End of stack trace from previous location ---
+   at Microsoft.EntityFrameworkCore.Update.AffectedCountModificationCommandBatch.ConsumeResultSetAsync(Int32 startCommandIndex, RelationalDataReader reader, CancellationToken cancellationToken)
+ClientConnectionId:175ca16d-c6b7-4c14-9d51-b747fb3857b4
+Error Number:547,State:0,Class:16
+   --- End of inner exception stack trace ---
+   at Microsoft.EntityFrameworkCore.Update.AffectedCountModificationCommandBatch.ConsumeResultSetAsync(Int32 startCommandIndex, RelationalDataReader reader, CancellationToken cancellationToken)
+   at Microsoft.EntityFrameworkCore.Update.AffectedCountModificationCommandBatch.ConsumeAsync(RelationalDataReader reader, CancellationToken cancellationToken)
+   at Microsoft.EntityFrameworkCore.Update.ReaderModificationCommandBatch.ExecuteAsync(IRelationalConnection connection, CancellationToken cancellationToken)
+   at Microsoft.EntityFrameworkCore.Update.ReaderModificationCommandBatch.ExecuteAsync(IRelationalConnection connection, CancellationToken cancellationToken)
+   at Microsoft.EntityFrameworkCore.SqlServer.Update.Internal.SqlServerModificationCommandBatch.ExecuteAsync(IRelationalConnection connection, CancellationToken cancellationToken)
+   at Microsoft.EntityFrameworkCore.Update.Internal.BatchExecutor.ExecuteAsync(IEnumerable`1 commandBatches, IRelationalConnection connection, CancellationToken cancellationToken)
+   at Microsoft.EntityFrameworkCore.Update.Internal.BatchExecutor.ExecuteAsync(IEnumerable`1 commandBatches, IRelationalConnection connection, CancellationToken cancellationToken)
+   at Microsoft.EntityFrameworkCore.Update.Internal.BatchExecutor.ExecuteAsync(IEnumerable`1 commandBatches, IRelationalConnection connection, CancellationToken cancellationToken)
+   at Microsoft.EntityFrameworkCore.Storage.RelationalDatabase.SaveChangesAsync(IList`1 entries, CancellationToken cancellationToken)
+   at Microsoft.EntityFrameworkCore.ChangeTracking.Internal.StateManager.SaveChangesAsync(IList`1 entriesToSave, CancellationToken cancellationToken)
+   at Microsoft.EntityFrameworkCore.ChangeTracking.Internal.StateManager.SaveChangesAsync(StateManager stateManager, Boolean acceptAllChangesOnSuccess, CancellationToken cancellationToken)
+   at Microsoft.EntityFrameworkCore.SqlServer.Storage.Internal.SqlServerExecutionStrategy.ExecuteAsync[TState,TResult](TState state, Func`4 operation, Func`4 verifySucceeded, CancellationToken cancellationToken)
+   at Microsoft.EntityFrameworkCore.DbContext.SaveChangesAsync(Boolean acceptAllChangesOnSuccess, CancellationToken cancellationToken)
+Microsoft.EntityFrameworkCore.DbUpdateException: An error occurred while saving the entity changes. See the inner exception for details.
+ ---> Microsoft.Data.SqlClient.SqlException (0x80131904): The INSERT statement conflicted with the FOREIGN KEY constraint "FK_SistemLoglar_AspNetUsers_KullaniciId". The conflict occurred in database "MuhasebeStokDB", table "dbo.AspNetUsers", column 'Id'.
+   at Microsoft.Data.SqlClient.SqlConnection.OnError(SqlException exception, Boolean breakConnection, Action`1 wrapCloseInAction)
+   at Microsoft.Data.SqlClient.SqlInternalConnection.OnError(SqlException exception, Boolean breakConnection, Action`1 wrapCloseInAction)
+   at Microsoft.Data.SqlClient.TdsParser.ThrowExceptionAndWarning(TdsParserStateObject stateObj, Boolean callerHasConnectionLock, Boolean asyncClose)
+   at Microsoft.Data.SqlClient.TdsParser.TryRun(RunBehavior runBehavior, SqlCommand cmdHandler, SqlDataReader dataStream, BulkCopySimpleResultSet bulkCopyHandler, TdsParserStateObject stateObj, Boolean& dataReady)
+   at Microsoft.Data.SqlClient.SqlDataReader.TryHasMoreRows(Boolean& moreRows)
+   at Microsoft.Data.SqlClient.SqlDataReader.TryReadInternal(Boolean setTimeout, Boolean& more)
+   at Microsoft.Data.SqlClient.SqlDataReader.ReadAsyncExecute(Task task, Object state)
+   at Microsoft.Data.SqlClient.SqlDataReader.InvokeAsyncCall[T](SqlDataReaderBaseAsyncCallContext`1 context)
+--- End of stack trace from previous location ---
+   at Microsoft.EntityFrameworkCore.Update.AffectedCountModificationCommandBatch.ConsumeResultSetAsync(Int32 startCommandIndex, RelationalDataReader reader, CancellationToken cancellationToken)
+ClientConnectionId:175ca16d-c6b7-4c14-9d51-b747fb3857b4
+Error Number:547,State:0,Class:16
+   --- End of inner exception stack trace ---
+   at Microsoft.EntityFrameworkCore.Update.AffectedCountModificationCommandBatch.ConsumeResultSetAsync(Int32 startCommandIndex, RelationalDataReader reader, CancellationToken cancellationToken)
+   at Microsoft.EntityFrameworkCore.Update.AffectedCountModificationCommandBatch.ConsumeAsync(RelationalDataReader reader, CancellationToken cancellationToken)
+   at Microsoft.EntityFrameworkCore.Update.ReaderModificationCommandBatch.ExecuteAsync(IRelationalConnection connection, CancellationToken cancellationToken)
+   at Microsoft.EntityFrameworkCore.Update.ReaderModificationCommandBatch.ExecuteAsync(IRelationalConnection connection, CancellationToken cancellationToken)
+   at Microsoft.EntityFrameworkCore.SqlServer.Update.Internal.SqlServerModificationCommandBatch.ExecuteAsync(IRelationalConnection connection, CancellationToken cancellationToken)
+   at Microsoft.EntityFrameworkCore.Update.Internal.BatchExecutor.ExecuteAsync(IEnumerable`1 commandBatches, IRelationalConnection connection, CancellationToken cancellationToken)
+   at Microsoft.EntityFrameworkCore.Update.Internal.BatchExecutor.ExecuteAsync(IEnumerable`1 commandBatches, IRelationalConnection connection, CancellationToken cancellationToken)
+   at Microsoft.EntityFrameworkCore.Update.Internal.BatchExecutor.ExecuteAsync(IEnumerable`1 commandBatches, IRelationalConnection connection, CancellationToken cancellationToken)
+   at Microsoft.EntityFrameworkCore.Storage.RelationalDatabase.SaveChangesAsync(IList`1 entries, CancellationToken cancellationToken)
+   at Microsoft.EntityFrameworkCore.ChangeTracking.Internal.StateManager.SaveChangesAsync(IList`1 entriesToSave, CancellationToken cancellationToken)
+   at Microsoft.EntityFrameworkCore.ChangeTracking.Internal.StateManager.SaveChangesAsync(StateManager stateManager, Boolean acceptAllChangesOnSuccess, CancellationToken cancellationToken)
+   at Microsoft.EntityFrameworkCore.SqlServer.Storage.Internal.SqlServerExecutionStrategy.ExecuteAsync[TState,TResult](TState state, Func`4 operation, Func`4 verifySucceeded, CancellationToken cancellationToken)
+   at Microsoft.EntityFrameworkCore.DbContext.SaveChangesAsync(Boolean acceptAllChangesOnSuccess, CancellationToken cancellationToken)
+2025-05-02 19:41:41.126 +03:00 [ERR] Log eklenirken hata oluştu: An error occurred while saving the entity changes. See the inner exception for details.
+Microsoft.EntityFrameworkCore.DbUpdateException: An error occurred while saving the entity changes. See the inner exception for details.
+ ---> Microsoft.Data.SqlClient.SqlException (0x80131904): The INSERT statement conflicted with the FOREIGN KEY constraint "FK_SistemLoglar_AspNetUsers_KullaniciId". The conflict occurred in database "MuhasebeStokDB", table "dbo.AspNetUsers", column 'Id'.
+   at Microsoft.Data.SqlClient.SqlConnection.OnError(SqlException exception, Boolean breakConnection, Action`1 wrapCloseInAction)
+   at Microsoft.Data.SqlClient.SqlInternalConnection.OnError(SqlException exception, Boolean breakConnection, Action`1 wrapCloseInAction)
+   at Microsoft.Data.SqlClient.TdsParser.ThrowExceptionAndWarning(TdsParserStateObject stateObj, Boolean callerHasConnectionLock, Boolean asyncClose)
+   at Microsoft.Data.SqlClient.TdsParser.TryRun(RunBehavior runBehavior, SqlCommand cmdHandler, SqlDataReader dataStream, BulkCopySimpleResultSet bulkCopyHandler, TdsParserStateObject stateObj, Boolean& dataReady)
+   at Microsoft.Data.SqlClient.SqlDataReader.TryHasMoreRows(Boolean& moreRows)
+   at Microsoft.Data.SqlClient.SqlDataReader.TryReadInternal(Boolean setTimeout, Boolean& more)
+   at Microsoft.Data.SqlClient.SqlDataReader.ReadAsyncExecute(Task task, Object state)
+   at Microsoft.Data.SqlClient.SqlDataReader.InvokeAsyncCall[T](SqlDataReaderBaseAsyncCallContext`1 context)
+--- End of stack trace from previous location ---
+   at Microsoft.EntityFrameworkCore.Update.AffectedCountModificationCommandBatch.ConsumeResultSetAsync(Int32 startCommandIndex, RelationalDataReader reader, CancellationToken cancellationToken)
+ClientConnectionId:175ca16d-c6b7-4c14-9d51-b747fb3857b4
+Error Number:547,State:0,Class:16
+   --- End of inner exception stack trace ---
+   at Microsoft.EntityFrameworkCore.Update.AffectedCountModificationCommandBatch.ConsumeResultSetAsync(Int32 startCommandIndex, RelationalDataReader reader, CancellationToken cancellationToken)
+   at Microsoft.EntityFrameworkCore.Update.AffectedCountModificationCommandBatch.ConsumeAsync(RelationalDataReader reader, CancellationToken cancellationToken)
+   at Microsoft.EntityFrameworkCore.Update.ReaderModificationCommandBatch.ExecuteAsync(IRelationalConnection connection, CancellationToken cancellationToken)
+   at Microsoft.EntityFrameworkCore.Update.ReaderModificationCommandBatch.ExecuteAsync(IRelationalConnection connection, CancellationToken cancellationToken)
+   at Microsoft.EntityFrameworkCore.SqlServer.Update.Internal.SqlServerModificationCommandBatch.ExecuteAsync(IRelationalConnection connection, CancellationToken cancellationToken)
+   at Microsoft.EntityFrameworkCore.Update.Internal.BatchExecutor.ExecuteAsync(IEnumerable`1 commandBatches, IRelationalConnection connection, CancellationToken cancellationToken)
+   at Microsoft.EntityFrameworkCore.Update.Internal.BatchExecutor.ExecuteAsync(IEnumerable`1 commandBatches, IRelationalConnection connection, CancellationToken cancellationToken)
+   at Microsoft.EntityFrameworkCore.Update.Internal.BatchExecutor.ExecuteAsync(IEnumerable`1 commandBatches, IRelationalConnection connection, CancellationToken cancellationToken)
+   at Microsoft.EntityFrameworkCore.Storage.RelationalDatabase.SaveChangesAsync(IList`1 entries, CancellationToken cancellationToken)
+   at Microsoft.EntityFrameworkCore.ChangeTracking.Internal.StateManager.SaveChangesAsync(IList`1 entriesToSave, CancellationToken cancellationToken)
+   at Microsoft.EntityFrameworkCore.ChangeTracking.Internal.StateManager.SaveChangesAsync(StateManager stateManager, Boolean acceptAllChangesOnSuccess, CancellationToken cancellationToken)
+   at Microsoft.EntityFrameworkCore.SqlServer.Storage.Internal.SqlServerExecutionStrategy.ExecuteAsync[TState,TResult](TState state, Func`4 operation, Func`4 verifySucceeded, CancellationToken cancellationToken)
+   at Microsoft.EntityFrameworkCore.DbContext.SaveChangesAsync(Boolean acceptAllChangesOnSuccess, CancellationToken cancellationToken)
+   at Microsoft.EntityFrameworkCore.DbContext.SaveChangesAsync(Boolean acceptAllChangesOnSuccess, CancellationToken cancellationToken)
+   at MuhasebeStokWebApp.Services.LogService.AddLogAsync(String tableName, String operation, String details, String entityId) in /Users/muhammetkocaman/MuhasebeStokWebApp/Services/LogService.cs:line 1172
+2025-05-02 19:41:42.061 +03:00 [INF] Birim sayısı: Aktif=3, Pasif=0, Silinmiş=2
+2025-05-02 19:41:43.360 +03:00 [INF] Birim sayısı: Aktif=3, Pasif=0, Silinmiş=2
+2025-05-02 19:41:47.624 +03:00 [INF] 41fe5e6d-652e-485c-8308-49f1d82bb95c metodu başlatıldı. Parametre yok
+2025-05-02 19:41:47.653 +03:00 [INF] ClearCacheAsync metodu başlatıldı. Parametre yok
+2025-05-02 19:41:47.653 +03:00 [INF] Birim önbellekleri temizleniyor...
+2025-05-02 19:41:47.660 +03:00 [INF] Tüm birim, ürün ve ilgili önbellekler başarıyla temizlendi
+2025-05-02 19:41:47.660 +03:00 [INF] ClearCacheAsync metodu tamamlandı. Sonuç: True
+2025-05-02 19:41:47.661 +03:00 [INF] Birim silme işlemi tamamlandı: ID=41fe5e6d-652e-485c-8308-49f1d82bb95c
+2025-05-02 19:41:47.673 +03:00 [INF] ClearCacheAsync metodu başlatıldı. Parametre yok
+2025-05-02 19:41:47.673 +03:00 [INF] Birim önbellekleri temizleniyor...
+2025-05-02 19:41:47.677 +03:00 [INF] Tüm birim, ürün ve ilgili önbellekler başarıyla temizlendi
+2025-05-02 19:41:47.677 +03:00 [INF] ClearCacheAsync metodu tamamlandı. Sonuç: True
+2025-05-02 19:41:48.640 +03:00 [INF] Birim sayısı: Aktif=2, Pasif=0, Silinmiş=3
+2025-05-02 19:41:52.642 +03:00 [INF] Birim sayısı: Aktif=2, Pasif=0, Silinmiş=3
+2025-05-02 19:41:58.141 +03:00 [INF] Birim sayısı: Aktif=2, Pasif=0, Silinmiş=3
+2025-05-02 19:41:58.980 +03:00 [INF] Birim sayısı: Aktif=2, Pasif=0, Silinmiş=3
+2025-05-02 19:42:02.891 +03:00 [INF] Birim sayısı: Aktif=2, Pasif=0, Silinmiş=3
+2025-05-02 19:42:29.090 +03:00 [INF] Birim sayısı: Aktif=2, Pasif=0, Silinmiş=3
+2025-05-02 19:42:30.335 +03:00 [INF] Toplam depo sayısı: 4
+2025-05-02 19:42:30.335 +03:00 [INF] Aktif depo sayısı: 2
+2025-05-02 19:42:30.335 +03:00 [INF] Pasif depo sayısı: 0
+2025-05-02 19:42:30.335 +03:00 [INF] Silinmiş depo sayısı: 2
+2025-05-02 19:42:38.510 +03:00 [INF] Toplam depo sayısı: 4
+2025-05-02 19:42:38.511 +03:00 [INF] Aktif depo sayısı: 2
+2025-05-02 19:42:38.511 +03:00 [INF] Pasif depo sayısı: 0
+2025-05-02 19:42:38.511 +03:00 [INF] Silinmiş depo sayısı: 2
+2025-05-02 19:42:42.322 +03:00 [INF] Toplam depo sayısı: 4
+2025-05-02 19:42:42.322 +03:00 [INF] Aktif depo sayısı: 3
+2025-05-02 19:42:42.323 +03:00 [INF] Pasif depo sayısı: 0
+2025-05-02 19:42:42.323 +03:00 [INF] Silinmiş depo sayısı: 1
+2025-05-02 19:42:43.098 +03:00 [INF] Toplam depo sayısı: 4
+2025-05-02 19:42:43.098 +03:00 [INF] Aktif depo sayısı: 3
+2025-05-02 19:42:43.098 +03:00 [INF] Pasif depo sayısı: 0
+2025-05-02 19:42:43.098 +03:00 [INF] Silinmiş depo sayısı: 1
+2025-05-02 19:42:47.077 +03:00 [INF] Toplam depo sayısı: 4
+2025-05-02 19:42:47.077 +03:00 [INF] Aktif depo sayısı: 2
+2025-05-02 19:42:47.077 +03:00 [INF] Pasif depo sayısı: 0
+2025-05-02 19:42:47.077 +03:00 [INF] Silinmiş depo sayısı: 2
+2025-05-02 19:45:11.094 +03:00 [ERR] An exception occurred while iterating over the results of a query for context type 'MuhasebeStokWebApp.Data.ApplicationDbContext'.
+System.InvalidCastException: Unable to cast object of type 'System.String' to type 'System.Guid'.
+   at Microsoft.Data.SqlClient.SqlBuffer.get_Guid()
+   at Microsoft.EntityFrameworkCore.Query.Internal.BufferedDataReader.BufferedDataRecord.ReadGuid(DbDataReader reader, Int32 ordinal, ReaderColumn column)
+   at Microsoft.EntityFrameworkCore.Query.Internal.BufferedDataReader.BufferedDataRecord.ReadRow()
+   at Microsoft.EntityFrameworkCore.Query.Internal.BufferedDataReader.BufferedDataRecord.InitializeAsync(DbDataReader reader, IReadOnlyList`1 columns, CancellationToken cancellationToken)
+   at Microsoft.EntityFrameworkCore.Query.Internal.BufferedDataReader.InitializeAsync(IReadOnlyList`1 columns, CancellationToken cancellationToken)
+   at Microsoft.EntityFrameworkCore.Query.Internal.BufferedDataReader.InitializeAsync(IReadOnlyList`1 columns, CancellationToken cancellationToken)
+   at Microsoft.EntityFrameworkCore.Storage.RelationalCommand.ExecuteReaderAsync(RelationalCommandParameterObject parameterObject, CancellationToken cancellationToken)
+   at Microsoft.EntityFrameworkCore.Storage.RelationalCommand.ExecuteReaderAsync(RelationalCommandParameterObject parameterObject, CancellationToken cancellationToken)
+   at Microsoft.EntityFrameworkCore.Query.Internal.SplitQueryingEnumerable`1.AsyncEnumerator.InitializeReaderAsync(AsyncEnumerator enumerator, CancellationToken cancellationToken)
+   at Microsoft.EntityFrameworkCore.SqlServer.Storage.Internal.SqlServerExecutionStrategy.ExecuteAsync[TState,TResult](TState state, Func`4 operation, Func`4 verifySucceeded, CancellationToken cancellationToken)
+   at Microsoft.EntityFrameworkCore.Query.Internal.SplitQueryingEnumerable`1.AsyncEnumerator.MoveNextAsync()
+System.InvalidCastException: Unable to cast object of type 'System.String' to type 'System.Guid'.
+   at Microsoft.Data.SqlClient.SqlBuffer.get_Guid()
+   at Microsoft.EntityFrameworkCore.Query.Internal.BufferedDataReader.BufferedDataRecord.ReadGuid(DbDataReader reader, Int32 ordinal, ReaderColumn column)
+   at Microsoft.EntityFrameworkCore.Query.Internal.BufferedDataReader.BufferedDataRecord.ReadRow()
+   at Microsoft.EntityFrameworkCore.Query.Internal.BufferedDataReader.BufferedDataRecord.InitializeAsync(DbDataReader reader, IReadOnlyList`1 columns, CancellationToken cancellationToken)
+   at Microsoft.EntityFrameworkCore.Query.Internal.BufferedDataReader.InitializeAsync(IReadOnlyList`1 columns, CancellationToken cancellationToken)
+   at Microsoft.EntityFrameworkCore.Query.Internal.BufferedDataReader.InitializeAsync(IReadOnlyList`1 columns, CancellationToken cancellationToken)
+   at Microsoft.EntityFrameworkCore.Storage.RelationalCommand.ExecuteReaderAsync(RelationalCommandParameterObject parameterObject, CancellationToken cancellationToken)
+   at Microsoft.EntityFrameworkCore.Storage.RelationalCommand.ExecuteReaderAsync(RelationalCommandParameterObject parameterObject, CancellationToken cancellationToken)
+   at Microsoft.EntityFrameworkCore.Query.Internal.SplitQueryingEnumerable`1.AsyncEnumerator.InitializeReaderAsync(AsyncEnumerator enumerator, CancellationToken cancellationToken)
+   at Microsoft.EntityFrameworkCore.SqlServer.Storage.Internal.SqlServerExecutionStrategy.ExecuteAsync[TState,TResult](TState state, Func`4 operation, Func`4 verifySucceeded, CancellationToken cancellationToken)
+   at Microsoft.EntityFrameworkCore.Query.Internal.SplitQueryingEnumerable`1.AsyncEnumerator.MoveNextAsync()
+2025-05-02 19:45:11.095 +03:00 [ERR] SistemLog Index sayfası yüklenirken hata oluştu
+System.InvalidCastException: Unable to cast object of type 'System.String' to type 'System.Guid'.
+   at Microsoft.Data.SqlClient.SqlBuffer.get_Guid()
+   at Microsoft.EntityFrameworkCore.Query.Internal.BufferedDataReader.BufferedDataRecord.ReadGuid(DbDataReader reader, Int32 ordinal, ReaderColumn column)
+   at Microsoft.EntityFrameworkCore.Query.Internal.BufferedDataReader.BufferedDataRecord.ReadRow()
+   at Microsoft.EntityFrameworkCore.Query.Internal.BufferedDataReader.BufferedDataRecord.InitializeAsync(DbDataReader reader, IReadOnlyList`1 columns, CancellationToken cancellationToken)
+   at Microsoft.EntityFrameworkCore.Query.Internal.BufferedDataReader.InitializeAsync(IReadOnlyList`1 columns, CancellationToken cancellationToken)
+   at Microsoft.EntityFrameworkCore.Query.Internal.BufferedDataReader.InitializeAsync(IReadOnlyList`1 columns, CancellationToken cancellationToken)
+   at Microsoft.EntityFrameworkCore.Storage.RelationalCommand.ExecuteReaderAsync(RelationalCommandParameterObject parameterObject, CancellationToken cancellationToken)
+   at Microsoft.EntityFrameworkCore.Storage.RelationalCommand.ExecuteReaderAsync(RelationalCommandParameterObject parameterObject, CancellationToken cancellationToken)
+   at Microsoft.EntityFrameworkCore.Query.Internal.SplitQueryingEnumerable`1.AsyncEnumerator.InitializeReaderAsync(AsyncEnumerator enumerator, CancellationToken cancellationToken)
+   at Microsoft.EntityFrameworkCore.SqlServer.Storage.Internal.SqlServerExecutionStrategy.ExecuteAsync[TState,TResult](TState state, Func`4 operation, Func`4 verifySucceeded, CancellationToken cancellationToken)
+   at Microsoft.EntityFrameworkCore.Query.Internal.SplitQueryingEnumerable`1.AsyncEnumerator.MoveNextAsync()
+   at Microsoft.EntityFrameworkCore.EntityFrameworkQueryableExtensions.ToListAsync[TSource](IQueryable`1 source, CancellationToken cancellationToken)
+   at Microsoft.EntityFrameworkCore.EntityFrameworkQueryableExtensions.ToListAsync[TSource](IQueryable`1 source, CancellationToken cancellationToken)
+   at MuhasebeStokWebApp.Controllers.SistemLogController.Index(String searchString, String islemTuru, Nullable`1 baslangicTarihi, Nullable`1 bitisTarihi, Int32 page, Int32 pageSize) in /Users/muhammetkocaman/MuhasebeStokWebApp/Controllers/SistemLogController.cs:line 98

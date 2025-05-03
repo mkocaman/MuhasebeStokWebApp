@@ -141,6 +141,11 @@ namespace MuhasebeStokWebApp.Services.ParaBirimiModulu
         /// İki para birimi arasında dönüşüm yapar
         /// </summary>
         Task<decimal> CevirmeTutarAsync(decimal tutar, Guid kaynakParaBirimiId, Guid hedefParaBirimiId, DateTime? tarih = null);
+        
+        /// <summary>
+        /// Güncel kur değerini döndürür
+        /// </summary>
+        Task<decimal> GetCurrentExchangeRateAsync(string sourceCurrency, string targetCurrency);
         #endregion
 
         Task<IEnumerable<ParaBirimi>> GetAllAsync();

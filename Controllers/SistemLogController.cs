@@ -13,6 +13,7 @@ using MuhasebeStokWebApp.ViewModels.Menu;
 using MuhasebeStokWebApp.Data.Entities;
 using MuhasebeStokWebApp.Services.Interfaces;
 using Microsoft.Extensions.Logging;
+using MuhasebeStokWebApp.Models;
 
 namespace MuhasebeStokWebApp.Controllers
 {
@@ -39,110 +40,145 @@ namespace MuhasebeStokWebApp.Controllers
         // GET: SistemLog
         public async Task<IActionResult> Index(string searchString, string islemTuru, DateTime? baslangicTarihi, DateTime? bitisTarihi, int page = 1, int pageSize = 20)
         {
-            // SistemLog için özel menü kontrolü
-            await _logService.LogInfoAsync("SistemLogController.Index", "SistemLog sayfası açılıyor");
-            
-            ViewBag.SearchString = searchString;
-            ViewBag.IslemTuru = islemTuru;
-            ViewBag.BaslangicTarihi = baslangicTarihi;
-            ViewBag.BitisTarihi = bitisTarihi;
-            
-            // İşlem türlerini ViewBag'e ekle
-            var islemTurleri = await _context.SistemLoglar
-                .Select(l => l.IslemTuru)
-                .Distinct()
-                .OrderBy(t => t)
-                .ToListAsync();
-            
-            ViewBag.IslemTurleri = islemTurleri;
-            
-            // Filtreleme
-            var query = _context.SistemLoglar.AsQueryable();
-            
-            if (!string.IsNullOrEmpty(searchString))
+            try 
             {
-                query = query.Where(l => 
-                    l.KayitAdi.Contains(searchString) || 
-                    l.Aciklama.Contains(searchString) || 
-                    l.KullaniciAdi.Contains(searchString) ||
-                    l.TabloAdi.Contains(searchString));
+                // SistemLog için özel menü kontrolü (log kaydı oluşturan satır kaldırıldı)
+                
+                ViewBag.SearchString = searchString;
+                ViewBag.IslemTuru = islemTuru;
+                ViewBag.BaslangicTarihi = baslangicTarihi;
+                ViewBag.BitisTarihi = bitisTarihi;
+                
+                // İşlem türlerini ViewBag'e ekle
+                var islemTurleri = await _context.SistemLoglar
+                    .Select(l => l.IslemTuru)
+                    .Distinct()
+                    .OrderBy(t => t)
+                    .ToListAsync();
+                
+                ViewBag.IslemTurleri = islemTurleri;
+                
+                // Filtreleme
+                var query = _context.SistemLoglar.AsQueryable();
+                
+                if (!string.IsNullOrEmpty(searchString))
+                {
+                    query = query.Where(l => 
+                        (l.KayitAdi != null && l.KayitAdi.Contains(searchString)) || 
+                        l.Aciklama.Contains(searchString) || 
+                        l.KullaniciAdi.Contains(searchString) ||
+                        l.TabloAdi.Contains(searchString));
+                }
+                
+                if (!string.IsNullOrEmpty(islemTuru))
+                {
+                    query = query.Where(l => l.IslemTuru == islemTuru);
+                }
+                
+                if (baslangicTarihi.HasValue)
+                {
+                    query = query.Where(l => l.IslemTarihi >= baslangicTarihi.Value);
+                }
+                
+                if (bitisTarihi.HasValue)
+                {
+                    // Bitiş tarihini günün sonuna ayarla
+                    var bitisTarihiSonu = bitisTarihi.Value.Date.AddDays(1).AddSeconds(-1);
+                    query = query.Where(l => l.IslemTarihi <= bitisTarihiSonu);
+                }
+                
+                // Sıralama
+                query = query.OrderByDescending(l => l.IslemTarihi);
+                
+                // Toplam kayıt sayısı
+                var totalItems = await query.CountAsync();
+                
+                // Sayfalama
+                var logs = await query
+                    .Skip((page - 1) * pageSize)
+                    .Take(pageSize)
+                    .ToListAsync();
+                
+                // ViewModel oluştur
+                var viewModel = new SistemLogListViewModel
+                {
+                    Logs = logs,
+                    CurrentPage = page,
+                    PageSize = pageSize,
+                    TotalItems = totalItems,
+                    TotalPages = (int)Math.Ceiling(totalItems / (double)pageSize)
+                };
+                
+                return View(viewModel);
             }
-            
-            if (!string.IsNullOrEmpty(islemTuru))
+            catch (Exception ex)
             {
-                query = query.Where(l => l.IslemTuru == islemTuru);
+                _logger.LogError(ex, "SistemLog Index sayfası yüklenirken hata oluştu");
+                return View("Error", new ErrorViewModel { RequestId = System.Diagnostics.Activity.Current?.Id ?? HttpContext.TraceIdentifier });
             }
-            
-            if (baslangicTarihi.HasValue)
-            {
-                query = query.Where(l => l.IslemTarihi >= baslangicTarihi.Value);
-            }
-            
-            if (bitisTarihi.HasValue)
-            {
-                // Bitiş tarihini günün sonuna ayarla
-                var bitisTarihiSonu = bitisTarihi.Value.Date.AddDays(1).AddSeconds(-1);
-                query = query.Where(l => l.IslemTarihi <= bitisTarihiSonu);
-            }
-            
-            // Sıralama
-            query = query.OrderByDescending(l => l.IslemTarihi);
-            
-            // Toplam kayıt sayısı
-            var totalItems = await query.CountAsync();
-            
-            // Sayfalama
-            var logs = await query
-                .Skip((page - 1) * pageSize)
-                .Take(pageSize)
-                .ToListAsync();
-            
-            // ViewModel oluştur
-            var viewModel = new SistemLogListViewModel
-            {
-                Logs = logs,
-                CurrentPage = page,
-                PageSize = pageSize,
-                TotalItems = totalItems,
-                TotalPages = (int)Math.Ceiling(totalItems / (double)pageSize)
-            };
-            
-            return View(viewModel);
         }
 
         // GET: SistemLog/Details/5
-        public async Task<IActionResult> Details(Guid id)
+        public async Task<IActionResult> Details(int id)
         {
-            var log = await _context.SistemLoglar
-                .FirstOrDefaultAsync(l => l.LogID == id);
-            
-            if (log == null)
+            try
             {
-                return NotFound();
+                var log = await _context.SistemLoglar
+                    .FirstOrDefaultAsync(l => l.Id == id);
+                
+                if (log == null)
+                {
+                    return NotFound();
+                }
+                
+                // AJAX isteği için modal içeriği döndür
+                if (Request.Headers["X-Requested-With"] == "XMLHttpRequest")
+                {
+                    return PartialView("_DetailsPartial", log);
+                }
+                
+                return View(log);
             }
-            
-            return View(log);
+            catch (Exception ex)
+            {
+                _logger.LogError(ex, $"SistemLog Details sayfası yüklenirken hata oluştu. LogID: {id}");
+                return View("Error", new ErrorViewModel { RequestId = System.Diagnostics.Activity.Current?.Id ?? HttpContext.TraceIdentifier });
+            }
         }
         
         // GET: SistemLog/CariLogs
-        public async Task<IActionResult> CariLogs(Guid cariId)
+        public async Task<IActionResult> CariLogs(string cariId)
         {
-            var cari = await _context.Cariler.FindAsync(cariId);
-            
-            if (cari == null)
+            try
             {
+                if (Guid.TryParse(cariId, out Guid cariGuid))
+                {
+                    var cari = await _context.Cariler.FindAsync(cariGuid);
+                    
+                    if (cari == null)
+                    {
+                        return NotFound();
+                    }
+                    
+                    // KayitID string olarak saklandığı için string karşılaştırması yapıyoruz
+                    var logs = await _context.SistemLoglar
+                        .Where(l => l.KayitID == cariId) 
+                        .OrderByDescending(l => l.IslemTarihi)
+                        .ToListAsync();
+                    
+                    ViewBag.CariAdi = cari.Ad;
+                    ViewBag.CariID = cari.CariID;
+                    
+                    return View(logs);
+                }
+                
                 return NotFound();
             }
-            
-            var logs = await _context.SistemLoglar
-                .Where(l => l.KayitID == cariId)
-                .OrderByDescending(l => l.IslemTarihi)
-                .ToListAsync();
-            
-            ViewBag.CariAdi = cari.Ad;
-            ViewBag.CariID = cari.CariID;
-            
-            return View(logs);
+            catch (Exception ex)
+            {
+                _logger.LogError(ex, $"CariLogs sayfası yüklenirken hata oluştu. CariID: {cariId}");
+                return View("Error", new ErrorViewModel { RequestId = System.Diagnostics.Activity.Current?.Id ?? HttpContext.TraceIdentifier });
+            }
         }
     }
 } 

@@ -51,6 +51,11 @@ namespace MuhasebeStokWebApp.ViewModels.Urun
         [Range(0, 100, ErrorMessage = "KDV oranı 0-100 arasında bir değer olmalıdır")]
         public decimal KDVOrani { get; set; }
         
+        [Required(ErrorMessage = "Kritik stok seviyesi zorunludur.")]
+        [Range(0, 10000, ErrorMessage = "Kritik stok seviyesi 0 ile 10000 arasında olmalıdır.")]
+        [Display(Name = "Kritik Stok Seviyesi")]
+        public decimal KritikStokSeviyesi { get; set; }
+        
         [Display(Name = "Aktif")]
         public bool Aktif { get; set; }
         
@@ -63,8 +68,12 @@ namespace MuhasebeStokWebApp.ViewModels.Urun
         [Display(Name = "Güncelleme Tarihi")]
         public DateTime? GuncellemeTarihi { get; set; }
         
-        // Dropdown listeler için - zorunlu değil
-        public List<SelectListItem> BirimListesi { get; set; }
-        public List<SelectListItem> KategoriListesi { get; set; }
+        // Dropdown listeler için yeni özellikler
+        public List<SelectListItem> Birimler { get; set; } = new List<SelectListItem>();
+        public List<SelectListItem> Kategoriler { get; set; } = new List<SelectListItem>();
+        
+        // Geriye uyumluluk için mevcut özellikleri koruyoruz
+        public List<SelectListItem> BirimListesi { get; set; } = new List<SelectListItem>();
+        public List<SelectListItem> KategoriListesi { get; set; } = new List<SelectListItem>();
     }
 } 

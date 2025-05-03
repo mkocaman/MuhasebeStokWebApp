@@ -23,6 +23,16 @@ namespace MuhasebeStokWebApp.Services.Interfaces
         Task<CariHareket> CreateFromBankaHareketAsync(BankaHesapHareket bankaHareket, bool borcMu);
 
         /// <summary>
+        /// Fatura için cari hareket kaydı oluşturur
+        /// </summary>
+        Task<CariHareket> CreateFromFaturaAsync(Fatura fatura, Guid? kullaniciId);
+
+        /// <summary>
+        /// Fatura silme işlemi için cari hareket kaydını iptal eder
+        /// </summary>
+        Task<bool> IptalEtCariHareketAsync(Guid faturaId);
+
+        /// <summary>
         /// ID'ye göre cari hareket getirir
         /// </summary>
         Task<CariHareket> GetByIdAsync(Guid id);

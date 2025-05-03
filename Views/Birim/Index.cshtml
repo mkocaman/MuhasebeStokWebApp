@@ -1,7 +1,8 @@
-@model IEnumerable<MuhasebeStokWebApp.ViewModels.Birim.BirimViewModel>
+@model MuhasebeStokWebApp.ViewModels.Birim.BirimListViewModel
 @{
     ViewData["Title"] = "Birimler";
     Layout = "~/Views/Shared/_Layout.cshtml";
+    bool isAdmin = User.IsInRole("Admin");
 }
 
 <div class="container-fluid">
@@ -34,21 +35,29 @@
             <!-- Sekme Başlıkları -->
             <ul class="nav nav-tabs mb-3" id="birimTabs" role="tablist">
                 <li class="nav-item" role="presentation">
-                    <button class="nav-link active" id="aktif-tab" data-bs-toggle="tab" data-bs-target="#aktif" type="button" role="tab" aria-controls="aktif" aria-selected="true">
+                    <a class="nav-link @(ViewBag.AktifTab == "aktif" ? "active" : "")" id="aktif-tab" href="@Url.Action("Index", new { tab = "aktif" })" role="tab" aria-controls="aktif" aria-selected="@(ViewBag.AktifTab == "aktif" ? "true" : "false")">
                         <i class="fas fa-check-circle text-success"></i> Aktif Birimler
-                    </button>
+                    </a>
                 </li>
+                @if (isAdmin)
+                {
                 <li class="nav-item" role="presentation">
-                    <button class="nav-link" id="pasif-tab" data-bs-toggle="tab" data-bs-target="#pasif" type="button" role="tab" aria-controls="pasif" aria-selected="false">
+                        <a class="nav-link @(ViewBag.AktifTab == "pasif" ? "active" : "")" id="pasif-tab" href="@Url.Action("Index", new { tab = "pasif" })" role="tab" aria-controls="pasif" aria-selected="@(ViewBag.AktifTab == "pasif" ? "true" : "false")">
                         <i class="fas fa-times-circle text-danger"></i> Pasif Birimler
-                    </button>
+                        </a>
+                    </li>
+                    <li class="nav-item" role="presentation">
+                        <a class="nav-link @(ViewBag.AktifTab == "silindi" ? "active" : "")" id="silindi-tab" href="@Url.Action("Index", new { tab = "silindi" })" role="tab" aria-controls="silindi" aria-selected="@(ViewBag.AktifTab == "silindi" ? "true" : "false")">
+                            <i class="fas fa-trash text-danger"></i> Silinmiş Birimler
+                        </a>
                 </li>
+                }
             </ul>
             
             <!-- Sekme İçerikleri -->
             <div class="tab-content" id="birimTabsContent">
                 <!-- Aktif Birimler Sekmesi -->
-                <div class="tab-pane fade show active" id="aktif" role="tabpanel" aria-labelledby="aktif-tab">
+                <div class="tab-pane fade @(ViewBag.AktifTab == "aktif" ? "show active" : "")" id="aktif" role="tabpanel" aria-labelledby="aktif-tab">
                     <div class="table-responsive">
                         <table class="table table-bordered table-hover" id="aktifBirimTable">
                             <thead class="table-light">
@@ -59,7 +68,7 @@
                                 </tr>
                             </thead>
                             <tbody>
-                                @foreach (var item in Model.Where(b => b.Aktif))
+                                @foreach (var item in Model.Birimler.Where(b => b.Aktif && !b.Silindi))
                                 {
                                     <tr>
                                         <td>@item.BirimAdi</td>
@@ -69,12 +78,12 @@
                                                 <button type="button" class="btn btn-sm btn-info btn-edit-birim" data-id="@item.BirimID">
                                                     <i class="fas fa-edit"></i>
                                                 </button>
-                                                <a asp-action="Details" asp-route-id="@item.BirimID" class="btn btn-sm btn-primary">
+                                                <button type="button" class="btn btn-sm btn-primary btn-details-birim" data-id="@item.BirimID">
                                                     <i class="fas fa-info-circle"></i>
-                                                </a>
-                                                <a asp-action="Delete" asp-route-id="@item.BirimID" class="btn btn-sm btn-danger">
+                                                </button>
+                                                <button type="button" class="btn btn-sm btn-danger btn-delete-birim" data-id="@item.BirimID">
                                                     <i class="fas fa-trash"></i>
-                                                </a>
+                                                </button>
                                             </div>
                                         </td>
                                     </tr>
@@ -85,33 +94,36 @@
                 </div>
                 
                 <!-- Pasif Birimler Sekmesi -->
-                <div class="tab-pane fade" id="pasif" role="tabpanel" aria-labelledby="pasif-tab">
+                @if (isAdmin)
+                {
+                <div class="tab-pane fade @(ViewBag.AktifTab == "pasif" ? "show active" : "")" id="pasif" role="tabpanel" aria-labelledby="pasif-tab">
                     <div class="table-responsive">
                         <table class="table table-bordered table-hover" id="pasifBirimTable">
                             <thead class="table-light">
                                 <tr>
                                     <th>Birim Adı</th>
                                     <th>Açıklama</th>
+                                    <th>Durum</th>
                                     <th>İşlemler</th>
                                 </tr>
                             </thead>
                             <tbody>
-                                @foreach (var item in Model.Where(b => !b.Aktif))
+                                @foreach (var item in Model.Birimler.Where(b => !b.Aktif && !b.Silindi))
                                 {
                                     <tr>
                                         <td>@item.BirimAdi</td>
                                         <td>@item.Aciklama</td>
+                                        <td>
+                                            <span class="badge bg-warning">Pasif</span>
+                                        </td>
                                         <td class="text-center">
                                             <div class="btn-group" role="group">
-                                                <button type="button" class="btn btn-sm btn-info btn-edit-birim" data-id="@item.BirimID">
-                                                    <i class="fas fa-edit"></i>
-                                                </button>
-                                                <a asp-action="Details" asp-route-id="@item.BirimID" class="btn btn-sm btn-primary">
+                                                <button type="button" class="btn btn-sm btn-primary btn-details-birim" data-id="@item.BirimID">
                                                     <i class="fas fa-info-circle"></i>
-                                                </a>
-                                                <a asp-action="Delete" asp-route-id="@item.BirimID" class="btn btn-sm btn-danger">
-                                                    <i class="fas fa-trash"></i>
-                                                </a>
+                                                </button>
+                                                <button type="button" class="btn btn-sm btn-success" onclick="confirmActivate('@item.BirimID', '@item.BirimAdi')">
+                                                    <i class="fas fa-check"></i>
+                                                </button>
                                             </div>
                                         </td>
                                     </tr>
@@ -120,6 +132,42 @@
                         </table>
                     </div>
                 </div>
+
+                    <!-- Silinmiş Birimler Sekmesi -->
+                    <div class="tab-pane fade @(ViewBag.AktifTab == "silindi" ? "show active" : "")" id="silindi" role="tabpanel" aria-labelledby="silindi-tab">
+                        <div class="table-responsive">
+                            <table class="table table-bordered table-hover" id="silinmisBirimTable">
+                                <thead class="table-light">
+                                    <tr>
+                                        <th>Birim Adı</th>
+                                        <th>Açıklama</th>
+                                        <th>Durum</th>
+                                        <th>İşlemler</th>
+                                    </tr>
+                                </thead>
+                                <tbody>
+                                    @foreach (var item in Model.Birimler.Where(b => b.Silindi))
+                                    {
+                                        <tr>
+                                            <td>@item.BirimAdi</td>
+                                            <td>@item.Aciklama</td>
+                                            <td>
+                                                <span class="badge bg-danger">Silinmiş</span>
+                                            </td>
+                                            <td class="text-center">
+                                                <div class="btn-group" role="group">
+                                                    <button type="button" class="btn btn-sm btn-success btn-restore-birim" data-id="@item.BirimID">
+                                                        <i class="fas fa-undo"></i>
+                                                    </button>
+                                                </div>
+                                            </td>
+                                        </tr>
+                                    }
+                                </tbody>
+                            </table>
+                        </div>
+                    </div>
+                }
             </div>
         </div>
     </div>
@@ -182,29 +230,116 @@
     </div>
 </div>
 
+<!-- Birim Silme Modal -->
+<div class="modal fade" id="deleteBirimModal" tabindex="-1" aria-labelledby="deleteBirimModalLabel" aria-hidden="true">
+    <div class="modal-dialog">
+        <div class="modal-content">
+            <div class="modal-header bg-danger text-white">
+                <h5 class="modal-title" id="deleteBirimModalLabel">Birim Sil</h5>
+                <button type="button" class="btn-close btn-close-white" data-bs-dismiss="modal" aria-label="Close"></button>
+            </div>
+            <div class="modal-body">
+                <div class="alert alert-warning">
+                    <i class="fas fa-exclamation-triangle"></i> Dikkat! Bu birimi silmek istediğinize emin misiniz?
+                </div>
+                <p>Silmek istediğiniz birim: <strong id="deleteBirimName"></strong></p>
+                <input type="hidden" id="deleteBirimID" value="" />
+            </div>
+            <div class="modal-footer">
+                <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">İptal</button>
+                <button type="button" class="btn btn-danger" id="confirmDeleteBirim">
+                    <i class="fas fa-trash"></i> Sil
+                </button>
+            </div>
+        </div>
+    </div>
+</div>
+
+<!-- Birim Detay Modal -->
+<div class="modal fade" id="detailsBirimModal" tabindex="-1" aria-labelledby="detailsBirimModalLabel" aria-hidden="true">
+    <div class="modal-dialog">
+        <div class="modal-content">
+            <div class="modal-header bg-primary text-white">
+                <h5 class="modal-title" id="detailsBirimModalLabel">Birim Detayları</h5>
+                <button type="button" class="btn-close btn-close-white" data-bs-dismiss="modal" aria-label="Close"></button>
+            </div>
+            <div id="detailsBirimModalContent">
+                <div class="modal-body text-center">
+                    <div class="spinner-border" role="status">
+                        <span class="visually-hidden">Yükleniyor...</span>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+
 @section Scripts {
     <script>
         $(document).ready(function() {
             // DataTable uyarılarını gizle
             $.fn.dataTable.ext.errMode = 'none';
             
+            // Aktif sekmeyi belirle
+            var aktifTab = '@ViewBag.AktifTab';
+            
             // Aktif Birimler DataTable başlatma
             try {
-                $('#aktifBirimTable').DataTable({
-                    language: {
-                        url: '/js/dataTables.turkish.json'
-                    },
-                    responsive: true,
-                    retrieve: true
-                });
+                // Aktif sekmedeki tabloyu başlat
+                if (aktifTab === 'aktif') {
+                    $('#aktifBirimTable').DataTable({
+                        language: {
+                            url: '/js/dataTables.turkish.json'
+                        },
+                        responsive: true,
+                        retrieve: true
+                    });
+                } else if (aktifTab === 'pasif') {
+                    $('#pasifBirimTable').DataTable({
+                        language: {
+                            url: '/js/dataTables.turkish.json'
+                        },
+                        responsive: true,
+                        retrieve: true
+                    });
+                } else if (aktifTab === 'silindi') {
+                    $('#silinmisBirimTable').DataTable({
+                        language: {
+                            url: '/js/dataTables.turkish.json'
+                        },
+                        responsive: true,
+                        retrieve: true
+                    });
+                }
                 
-                // Pasif Birimler DataTable başlatma
-                $('#pasifBirimTable').DataTable({
-                    language: {
-                        url: '/js/dataTables.turkish.json'
-                    },
-                    responsive: true,
-                    retrieve: true
+                // Tab değişikliğinde DataTable'ı başlat
+                $('a[data-bs-toggle="tab"]').on('shown.bs.tab', function (e) {
+                    var targetId = $(e.target).attr("href").substring(1);
+                    if (targetId === 'aktif' && !$.fn.dataTable.isDataTable('#aktifBirimTable')) {
+                        $('#aktifBirimTable').DataTable({
+                            language: {
+                                url: '/js/dataTables.turkish.json'
+                            },
+                            responsive: true,
+                            retrieve: true
+                        });
+                    } else if (targetId === 'pasif' && !$.fn.dataTable.isDataTable('#pasifBirimTable')) {
+                        $('#pasifBirimTable').DataTable({
+                            language: {
+                                url: '/js/dataTables.turkish.json'
+                            },
+                            responsive: true,
+                            retrieve: true
+                        });
+                    } else if (targetId === 'silindi' && !$.fn.dataTable.isDataTable('#silinmisBirimTable')) {
+                        $('#silinmisBirimTable').DataTable({
+                            language: {
+                                url: '/js/dataTables.turkish.json'
+                            },
+                            responsive: true,
+                            retrieve: true
+                        });
+                    }
                 });
             } catch (e) {
                 console.error("DataTable başlatma hatası:", e);
@@ -249,104 +384,172 @@
                         // AJAX hatası olursa Sweet Alert göster
                         Swal.fire({
                             icon: 'error',
-                            title: 'AJAX Hatası!',
-                            text: 'Birim oluşturulurken bir hata oluştu: ' + error,
+                            title: 'Hata!',
+                            text: 'Birim oluşturulurken bir hata oluştu. Lütfen tekrar deneyin.',
                             confirmButtonText: 'Tamam'
                         });
                     }
                 });
             });
             
-            // Birim düzenleme modalı açma
+            // Birim düzenleme modal'ını aç
             $('.btn-edit-birim').on('click', function() {
-                var birimId = $(this).data('id');
+                var birimID = $(this).data('id');
                 
-                // Modalın içeriğini temizle ve loading göster
-                $('#editBirimModalContent').html('<div class="modal-body text-center"><div class="spinner-border text-primary" role="status"><span class="visually-hidden">Yükleniyor...</span></div></div>');
-                
-                // Modalı aç
-                $('#editBirimModal').modal('show');
-                
-                // AJAX ile düzenleme formunu yükle
+                // Modal içeriğini yükle
                 $.ajax({
-                    url: '/Birim/Edit/' + birimId,
+                    url: '@Url.Action("Edit", "Birim")/' + birimID,
                     type: 'GET',
                     headers: {
                         'X-Requested-With': 'XMLHttpRequest'
                     },
                     success: function(data) {
                         $('#editBirimModalContent').html(data);
-                        
-                        // Düzenleme formunun gönderimini ele al
-                        $('#editBirimForm').on('submit', function(e) {
-                            e.preventDefault();
-                            
-                            var formData = {
-                                BirimID: $('#BirimID').val(),
-                                BirimAdi: $('#BirimAdi').val(),
-                                Aciklama: $('#Aciklama').val(),
-                                Aktif: $('#Aktif').is(':checked')
-                            };
-                            
-                            $.ajax({
-                                url: $(this).attr('action'),
-                                type: 'POST',
-                                data: formData,
-                                headers: {
-                                    'X-Requested-With': 'XMLHttpRequest',
-                                    'X-CSRF-TOKEN': $('input[name="__RequestVerificationToken"]').val()
-                                },
-                                success: function(response) {
-                                    if (response.success) {
-                                        Swal.fire({
-                                            icon: 'success',
-                                            title: 'Başarılı!',
-                                            text: response.message || 'Birim başarıyla güncellendi.',
-                                            confirmButtonText: 'Tamam'
-                                        }).then((result) => {
-                                            $('#editBirimModal').modal('hide');
-                                            location.reload();
-                                        });
-                                    } else {
-                                        Swal.fire({
-                                            icon: 'error',
-                                            title: 'Hata!',
-                                            text: response.message || 'Birim güncellenirken bir hata oluştu.',
-                                            confirmButtonText: 'Tamam'
-                                        });
-                                    }
-                                },
-                                error: function(xhr, status, error) {
-                                    Swal.fire({
-                                        icon: 'error',
-                                        title: 'AJAX Hatası!',
-                                        text: 'Birim güncellenirken bir hata oluştu: ' + error,
-                                        confirmButtonText: 'Tamam'
-                                    });
-                                }
-                            });
-                        });
+                        $('#editBirimModal').modal('show');
                     },
                     error: function(xhr, status, error) {
-                        $('#editBirimModalContent').html('<div class="modal-body"><div class="alert alert-danger">Birim düzenleme formu yüklenirken bir hata oluştu: ' + error + '</div></div>');
+                        Swal.fire({
+                            icon: 'error',
+                            title: 'Hata!',
+                            text: 'Birim bilgileri yüklenirken bir hata oluştu.',
+                            confirmButtonText: 'Tamam'
+                        });
                     }
                 });
             });
             
-            // Yeni Birim Ekleme modalı açıldığında formun içini temizle
-            $('#createBirimModal').on('show.bs.modal', function() {
-                $('#BirimAdi').val('');
-                $('#Aciklama').val('');
-                $('#Aktif').prop('checked', true);
-                $('#createFormAlert').addClass('d-none');
+            // Birim silme modal'ını aç
+            $(document).on('click', '.btn-delete-birim', function() {
+                var birimID = $(this).data('id');
+                var row = $(this).closest('tr');
+                var birimAdi = row.find('td:first').text();
+                
+                $('#deleteBirimID').val(birimID);
+                $('#deleteBirimName').text(birimAdi);
+                $('#deleteBirimModal').modal('show');
             });
             
-            // Otomatik kapanan alertler
-            window.setTimeout(function() {
-                $('.alert:not(#createFormAlert, #editFormAlert)').fadeTo(500, 0).slideUp(500, function() {
-                    $(this).remove();
+            // Birim silme işlemini gerçekleştir
+            $('#confirmDeleteBirim').on('click', function() {
+                var birimID = $('#deleteBirimID').val();
+                
+                $.ajax({
+                    url: '@Url.Action("DeleteBirim", "Birim")',
+                    type: 'POST',
+                    data: { id: birimID },
+                    headers: {
+                        'RequestVerificationToken': $('input[name="__RequestVerificationToken"]').val()
+                    },
+                    success: function(response) {
+                        if (response.success) {
+                            Swal.fire({
+                                icon: 'success',
+                                title: 'Başarılı!',
+                                text: response.message || 'Birim başarıyla silindi.',
+                                confirmButtonText: 'Tamam'
+                            }).then(() => {
+                                $('#deleteBirimModal').modal('hide');
+                                location.reload();
+                            });
+                        } else {
+                            Swal.fire({
+                                icon: 'error',
+                                title: 'Hata!',
+                                text: response.message || 'Birim silinirken bir hata oluştu.',
+                                confirmButtonText: 'Tamam'
+                            });
+                        }
+                    },
+                    error: function() {
+                        Swal.fire({
+                            icon: 'error',
+                            title: 'Hata!',
+                            text: 'İşlem sırasında bir hata oluştu.',
+                            confirmButtonText: 'Tamam'
+                        });
+                    }
                 });
-            }, 4000);
+            });
+            
+            // Geri alma butonu işlemleri
+            $(document).on('click', '.btn-restore-birim', function() {
+                var birimID = $(this).data('id');
+                
+                // Onay dialogu göster
+                Swal.fire({
+                    title: 'Emin misiniz?',
+                    text: 'Bu birimi aktif duruma getirmek istediğinize emin misiniz?',
+                    icon: 'question',
+                    showCancelButton: true,
+                    confirmButtonText: 'Evet, Aktif Yap',
+                    cancelButtonText: 'İptal'
+                }).then((result) => {
+                    if (result.isConfirmed) {
+                        // AJAX isteği ile birimi aktif yap
+                        $.ajax({
+                            url: '@Url.Action("RestoreUnit", "Birim")',
+                            type: 'POST',
+                            data: { id: birimID },
+                            headers: {
+                                'RequestVerificationToken': $('input[name="__RequestVerificationToken"]').val()
+                            },
+                            success: function(response) {
+                                if (response.success) {
+                                    Swal.fire({
+                                        icon: 'success',
+                                        title: 'Başarılı!',
+                                        text: response.message || 'Birim başarıyla aktif edildi.',
+                                        confirmButtonText: 'Tamam'
+                                    }).then(() => {
+                                        location.reload();
+                                    });
+                                } else {
+                                    Swal.fire({
+                                        icon: 'error',
+                                        title: 'Hata!',
+                                        text: response.message || 'Birim aktif edilirken bir hata oluştu.',
+                                        confirmButtonText: 'Tamam'
+                                    });
+                                }
+                            },
+                            error: function() {
+                                Swal.fire({
+                                    icon: 'error',
+                                    title: 'Hata!',
+                                    text: 'İşlem sırasında bir hata oluştu.',
+                                    confirmButtonText: 'Tamam'
+                                });
+                            }
+                        });
+                    }
+                });
+            });
+
+            // Birim detay modal'ını aç
+            $(document).on('click', '.btn-details-birim', function() {
+                var birimID = $(this).data('id');
+                
+                // Modal içeriğini yükle
+                $.ajax({
+                    url: '@Url.Action("Details", "Birim")/' + birimID,
+                    type: 'GET',
+                    headers: {
+                        'X-Requested-With': 'XMLHttpRequest'
+                    },
+                    success: function(data) {
+                        $('#detailsBirimModalContent').html(data);
+                        $('#detailsBirimModal').modal('show');
+                    },
+                    error: function(xhr, status, error) {
+                        Swal.fire({
+                            icon: 'error',
+                            title: 'Hata!',
+                            text: 'Birim detayları yüklenirken bir hata oluştu.',
+                            confirmButtonText: 'Tamam'
+                        });
+                    }
+                });
+            });
         });
     </script>
 } 

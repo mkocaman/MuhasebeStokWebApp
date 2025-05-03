@@ -23,7 +23,7 @@
         
         <div class="mb-3">
             <label asp-for="KategoriID" class="form-label">Kategori</label>
-            <select asp-for="KategoriID" asp-items="ViewBag.Kategoriler" class="form-select" required>
+            <select asp-for="KategoriID" asp-items="Model.Kategoriler" class="form-select" required>
                 <option value="">-- Kategori Seçin --</option>
             </select>
             <span asp-validation-for="KategoriID" class="text-danger"></span>
@@ -31,7 +31,7 @@
         
         <div class="mb-3">
             <label asp-for="BirimID" class="form-label">Birim</label>
-            <select asp-for="BirimID" asp-items="ViewBag.Birimler" class="form-select" required>
+            <select asp-for="BirimID" asp-items="Model.Birimler" class="form-select" required>
                 <option value="">-- Birim Seçin --</option>
             </select>
             <span asp-validation-for="BirimID" class="text-danger"></span>
@@ -39,21 +39,22 @@
         
         <div class="mb-3">
             <label asp-for="KDVOrani" class="form-label">KDV Oranı (%)</label>
-            <input asp-for="KDVOrani" class="form-control kdv-input" type="text" value="12" />
+            <input asp-for="KDVOrani" class="form-control" type="number" min="0" max="100" step="0.01" />
             <span asp-validation-for="KDVOrani" class="text-danger"></span>
         </div>
         
         <div class="mb-3">
             <label asp-for="Aciklama" class="form-label">Açıklama</label>
-            <textarea asp-for="Aciklama" class="form-control" maxlength="500"></textarea>
+            <textarea asp-for="Aciklama" class="form-control" rows="3" maxlength="500"></textarea>
             <span asp-validation-for="Aciklama" class="text-danger"></span>
         </div>
         
         <div class="form-check mb-3">
-            <input asp-for="Aktif" class="form-check-input" checked />
+            <input asp-for="Aktif" class="form-check-input" type="checkbox" checked />
             <label asp-for="Aktif" class="form-check-label">Aktif</label>
         </div>
     </div>
+    
     <div class="modal-footer">
         <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">İptal</button>
         <button type="submit" class="btn btn-primary">Kaydet</button>
@@ -61,39 +62,67 @@
 </form>
 
 <script>
-    $(document).ready(function() {
-        // KDV alanı için numerik input kontrolü
-        $('.kdv-input').on('input', function() {
-            var value = $(this).val().replace(/[^\d]/g, '');
-            if (value > 100) value = 100;
-            $(this).val(value);
-        });
-        
-        $('.kdv-input').on('blur', function() {
-            if (this.value === '') {
-                this.value = '12';
-            }
-        });
-        
-        // Numerik alanlar için ondalık format
-        $('.numeric-input').on('input', function() {
-            formatNumericInput(this, 2); // 2 ondalık basamak
+    $(document).ready(function () {
+        // Form submit işlemini ele al
+        $('#createUrunForm').submit(function (e) {
+            e.preventDefault();
+            
+            // Form verilerini al
+            var formData = $(this).serialize();
+            
+            // AJAX ile form verilerini gönder
+            $.ajax({
+                url: '@Url.Action("Create", "Urun")',
+                type: 'POST',
+                data: formData,
+                success: function (response) {
+                    if (response.success) {
+                        // Başarılı olursa Sweet Alert göster
+                        Swal.fire({
+                            icon: 'success',
+                            title: 'Başarılı!',
+                            text: response.message || 'Ürün başarıyla oluşturuldu.',
+                            confirmButtonText: 'Tamam'
+                        }).then((result) => {
+                            // Modal'ı kapat ve sayfayı yenile
+                            $('#urunModal').modal('hide');
+                            location.reload();
+                        });
+                    } else {
+                        // Başarısız olursa Sweet Alert göster
+                        Swal.fire({
+                            icon: 'error',
+                            title: 'Hata!',
+                            text: response.message || 'Ürün oluşturulurken bir hata oluştu.',
+                            confirmButtonText: 'Tamam'
+                        });
+                        
+                        // Hata mesajlarını göster (varsa)
+                        if (response.errors && response.errors.length > 0) {
+                            var errorList = '';
+                            $.each(response.errors, function(index, error) {
+                                errorList += error + '<br>';
+                            });
+                            
+                            $('#createFormAlert').html(errorList).removeClass('d-none');
+                        }
+                    }
+                },
+                error: function (xhr, status, error) {
+                    // AJAX hatası olursa Sweet Alert göster
+                    Swal.fire({
+                        icon: 'error',
+                        title: 'Hata!',
+                        text: 'Ürün oluşturulurken bir hata oluştu. Lütfen tekrar deneyin.',
+                        confirmButtonText: 'Tamam'
+                    });
+                    
+                    // Hata mesajını göster
+                    $('#createFormAlert').text('Ürün kaydı sırasında bir hata oluştu: ' + error).removeClass('d-none');
+                }
+            });
         });
     });
-    
-    // Numerik input formatı (ondalık için)
-    function formatNumericInput(input, decimalPlaces) {
-        var value = $(input).val().replace(/[^\d.,]/g, '').replace(/,/g, '.');
-        var parts = value.split('.');
-        
-        if (parts.length > 1) {
-            // Sadece bir ondalık nokta olsun
-            parts[1] = parts[1].slice(0, decimalPlaces);
-            value = parts[0] + '.' + parts[1];
-        }
-        
-        $(input).val(value);
-    }
 </script>
 
 @section Scripts {

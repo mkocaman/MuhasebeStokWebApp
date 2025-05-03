@@ -31,6 +31,8 @@ namespace MuhasebeStokWebApp.Data.Entities
         
         public Guid? FaturaID { get; set; }
         
+        public Guid? DepoID { get; set; }
+        
         [StringLength(500)]
         public string Aciklama { get; set; }
         
@@ -54,6 +56,9 @@ namespace MuhasebeStokWebApp.Data.Entities
         
         [ForeignKey("FaturaID")]
         public virtual Fatura Fatura { get; set; }
+        
+        [ForeignKey("DepoID")]
+        public virtual Depo Depo { get; set; }
         
         public virtual ICollection<IrsaliyeDetay> IrsaliyeDetaylari { get; set; }
     }

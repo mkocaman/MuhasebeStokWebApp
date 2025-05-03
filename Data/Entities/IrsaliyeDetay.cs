@@ -13,6 +13,8 @@ namespace MuhasebeStokWebApp.Data.Entities
         
         public Guid UrunID { get; set; }
         
+        public Guid? DepoID { get; set; }
+        
         [Required]
         public decimal Miktar { get; set; }
         
@@ -55,6 +57,9 @@ namespace MuhasebeStokWebApp.Data.Entities
         
         [ForeignKey("UrunID")]
         public virtual Urun Urun { get; set; }
+        
+        [ForeignKey("DepoID")]
+        public virtual Depo Depo { get; set; }
         
         public IrsaliyeDetay()
         {

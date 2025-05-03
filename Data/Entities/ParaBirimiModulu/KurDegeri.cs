@@ -9,7 +9,7 @@ namespace MuhasebeStokWebApp.Data.Entities.ParaBirimiModulu
     /// <summary>
     /// Döviz kuru değeri entity class'ı
     /// </summary>
-    [Table("KurDegerleri")]
+    [Table("ParaBirimiModuluKurDegerleri")]
     public class KurDegeri : BaseEntity
     {
         /// <summary>
@@ -48,6 +48,20 @@ namespace MuhasebeStokWebApp.Data.Entities.ParaBirimiModulu
         [Display(Name = "Satış")]
         [Column(TypeName = "decimal(18,6)")]
         public decimal Satis { get; set; }
+        
+        /// <summary>
+        /// Efektif alış fiyatı
+        /// </summary>
+        [Display(Name = "Efektif Alış")]
+        [Column(TypeName = "decimal(18,6)")]
+        public decimal EfektifAlis { get; set; }
+        
+        /// <summary>
+        /// Efektif satış fiyatı
+        /// </summary>
+        [Display(Name = "Efektif Satış")]
+        [Column(TypeName = "decimal(18,6)")]
+        public decimal EfektifSatis { get; set; }
         
         /// <summary>
         /// Aktif mi

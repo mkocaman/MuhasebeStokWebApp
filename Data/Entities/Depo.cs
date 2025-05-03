@@ -14,7 +14,7 @@ namespace MuhasebeStokWebApp.Data.Entities
         public string DepoAdi { get; set; }
         
         [StringLength(200)]
-        public string Adres { get; set; }
+        public string Adres { get; set; } = string.Empty;
         
         public bool Aktif { get; set; }
         
@@ -33,6 +33,12 @@ namespace MuhasebeStokWebApp.Data.Entities
         
         public Depo()
         {
+            DepoID = Guid.NewGuid();
+            DepoAdi = string.Empty;
+            Adres = string.Empty;
+            Aktif = true;
+            Silindi = false;
+            OlusturmaTarihi = DateTime.Now;
             StokHareketleri = new HashSet<StokHareket>();
         }
     }
