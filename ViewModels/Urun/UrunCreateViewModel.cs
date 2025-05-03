@@ -54,6 +54,11 @@ namespace MuhasebeStokWebApp.ViewModels.Urun
         [Display(Name = "KDV (%)")]
         public decimal KDVOrani { get; set; }
         
+        [Required(ErrorMessage = "Kritik stok seviyesi zorunludur.")]
+        [Range(0, 10000, ErrorMessage = "Kritik stok seviyesi 0 ile 10000 arasında olmalıdır.")]
+        [Display(Name = "Kritik Stok Seviyesi")]
+        public decimal KritikStokSeviyesi { get; set; } = 10;
+        
         [Display(Name = "Aktif")]
         public bool Aktif { get; set; } = true;
         

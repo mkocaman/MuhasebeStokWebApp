@@ -19,6 +19,10 @@ namespace MuhasebeStokWebApp.ViewModels.Urun
         [Display(Name = "Ürün Adı")]
         public string UrunAdi { get; set; }
         
+        [StringLength(500, ErrorMessage = "Açıklama en fazla 500 karakter olabilir.")]
+        [Display(Name = "Açıklama")]
+        public string Aciklama { get; set; }
+        
         [StringLength(50, ErrorMessage = "Birim en fazla 50 karakter olabilir.")]
         [Display(Name = "Birim")]
         public string Birim { get; set; }
@@ -46,6 +50,12 @@ namespace MuhasebeStokWebApp.ViewModels.Urun
         
         [Display(Name = "Satış Fiyatı (USD)")]
         public decimal? DovizliSatisFiyati { get; set; }
+        
+        [Display(Name = "KDV Oranı")]
+        public int KdvOrani { get; set; }
+        
+        [Display(Name = "Kritik Stok Seviyesi")]
+        public decimal KritikStokSeviyesi { get; set; }
         
         [Display(Name = "Aktif")]
         public bool Aktif { get; set; }

@@ -80,11 +80,13 @@ namespace MuhasebeStokWebApp.ViewModels.Aklama
         public string BirimAdi { get; set; } = "";
         public List<AklamaKuyrukViewModel> BekleyenKayitlar { get; set; }
         public List<AklamaKuyrukViewModel> AklanmisKayitlar { get; set; }
+        public UrunAklamaDurumuViewModel UrunAklamaDurumu { get; set; }
 
         public UrunAklamaGecmisiViewModel()
         {
             BekleyenKayitlar = new List<AklamaKuyrukViewModel>();
             AklanmisKayitlar = new List<AklamaKuyrukViewModel>();
+            UrunAklamaDurumu = new UrunAklamaDurumuViewModel();
         }
     }
     

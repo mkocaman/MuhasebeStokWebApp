@@ -13,6 +13,10 @@ namespace MuhasebeStokWebApp.ViewModels.Irsaliye
         [Display(Name = "Ürün")]
         public Guid UrunID { get; set; }
         
+        [Required(ErrorMessage = "Depo seçimi zorunludur.")]
+        [Display(Name = "Depo")]
+        public Guid DepoID { get; set; }
+        
         [Required(ErrorMessage = "Miktar girilmesi zorunludur.")]
         [Range(0.01, double.MaxValue, ErrorMessage = "Miktar 0'dan büyük olmalıdır.")]
         [Display(Name = "Miktar")]

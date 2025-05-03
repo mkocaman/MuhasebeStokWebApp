@@ -158,6 +158,9 @@ namespace MuhasebeStokWebApp.Controllers
                     _context.Add(depo);
                     await _context.SaveChangesAsync();
                     
+                    // Log kaydı ekle
+                    await _logService.DepoOlusturmaLogOlustur(depo.DepoID.ToString(), depo.DepoAdi);
+                    
                     // AJAX isteği için başarılı sonuç döndür
                     return Json(new { success = true, message = "Depo başarıyla oluşturuldu." });
                 }
@@ -237,6 +240,9 @@ namespace MuhasebeStokWebApp.Controllers
 
                     _context.Update(depo);
                     await _context.SaveChangesAsync();
+
+                    // Log kaydı ekle
+                    await _logService.DepoGuncellemeLogOlustur(depo.DepoID.ToString(), depo.DepoAdi);
 
                     if (Request.Headers["X-Requested-With"] == "XMLHttpRequest")
                     {
@@ -327,6 +333,9 @@ namespace MuhasebeStokWebApp.Controllers
                 _context.Update(depo);
                 await _context.SaveChangesAsync();
 
+                // Log kaydı ekle
+                await _logService.DepoSilmeLogOlustur(depo.DepoID.ToString(), depo.DepoAdi);
+
                 if (Request.Headers["X-Requested-With"] == "XMLHttpRequest")
                 {
                     return Json(new { success = true, message = "Depo başarıyla silindi." });
@@ -369,6 +378,9 @@ namespace MuhasebeStokWebApp.Controllers
 
                 await _context.SaveChangesAsync();
                 
+                // Log kaydı ekle
+                await _logService.DepoSilmeLogOlustur(depo.DepoID.ToString(), depo.DepoAdi);
+
                 return Json(new { success = true, message = "Depo başarıyla silindi." });
             }
             catch (Exception ex)
@@ -405,7 +417,11 @@ namespace MuhasebeStokWebApp.Controllers
 
                 await _context.SaveChangesAsync();
                 
-                return Json(new { success = true, message = "Depo başarıyla aktif edildi." });
+                // Log kaydı ekle
+                await _logService.DepoOlusturmaLogOlustur(depo.DepoID.ToString(), depo.DepoAdi + " (geri yüklendi)");
+                
+                // AJAX isteği için başarılı sonuç döndür
+                return Json(new { success = true, message = "Depo başarıyla geri yüklendi." });
             }
             catch (Exception ex)
             {
@@ -448,8 +464,12 @@ namespace MuhasebeStokWebApp.Controllers
                 _context.Update(depo);
                 await _context.SaveChangesAsync();
                 
-                var durum = depo.Aktif ? "aktif" : "pasif";
-                return Json(new { success = true, message = $"Depo başarıyla {durum} edildi." });
+                // Log kaydı ekle
+                await _logService.DepoDurumDegisikligiLogOlustur(depo.DepoID.ToString(), depo.DepoAdi, depo.Aktif);
+                
+                // AJAX isteği için başarılı sonuç döndür
+                var durumMesaj = depo.Aktif ? "aktif" : "pasif";
+                return Json(new { success = true, message = $"Depo başarıyla {durumMesaj} edildi." });
             }
             catch (Exception ex)
             {

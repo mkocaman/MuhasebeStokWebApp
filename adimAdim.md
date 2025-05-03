@@ -85,38 +85,46 @@ Bu liste, uygulamadaki kod analiz raporuna göre yapılması gereken tüm düzel
 - [x] Yorum satırı haline getirilmiş eski kodları temizleyerek kod kalabalığını azalt.
 - [x] Tekrar eden kod parçacıklarını ortak metotlara veya extension metotlara taşıyarak kod tekrarını azalt.
 
-> Not: Birim testleri ekleme ve uygulamayı çalıştırma görevleri, başka bir sprint'e bırakılmıştır.
+- **Strategy Pattern (Strateji Deseni)**: GlobalExceptionHandlingMiddleware sınıfında strateji deseni uygulanarak farklı hata tiplerinin farklı stratejiler kullanarak işlenmesi sağlandı. Bu sayede yeni bir hata tipi eklemek istediğimizde sadece ilgili stratejinin oluşturulması yeterli olacak.
 
-### Yapılan İyileştirmelerin Özeti
+- **Template Method Pattern (Şablon Metot Deseni)**: BaseController sınıfında template method deseni uygulandı. OnActionExecutionAsync metodu bir şablon metot olarak tanımlandı ve alt sınıfların davranışlarını özelleştirmesi için çeşitli hook metodlar eklendi.
 
-Bu görevlerle MuhasebeStokWebApp projesinde aşağıdaki önemli iyileştirmeler yapılmıştır:
+- **Interface Segregation Principle (Arayüz Ayrım Prensibi)**: Büyük ve karmaşık IStokFifoService arayüzü, daha küçük ve odaklanmış arayüzlere bölündü:
+  - IStokGirisService: Stok giriş işlemleri için
+  - IStokCikisService: Stok çıkış işlemleri için
+  - IStokSorguService: Stok sorgulama işlemleri için
+  - IStokConcurrencyService: Eşzamanlılık kontrolü için
 
-1. **Mimari İyileştirmeler**:
-   - Single Responsibility Principle uygulanarak sınıflar tek bir sorumluluğa sahip hale getirildi
-   - Open/Closed Principle uygulanarak sınıflar değişikliğe kapalı, genişletmeye açık hale getirildi
-   - Liskov Substitution Principle uygulanarak alt sınıfların üst sınıfların davranışlarını değiştirmemesi sağlandı
-   - Interface Segregation Principle uygulanarak büyük arayüzler daha küçük ve odaklanmış arayüzlere bölündü
-   - Dependency Inversion Principle uygulanarak yüksek seviyeli modüllerin düşük seviyeli modüllere bağımlılığı azaltıldı
+- **Single Responsibility Principle (Tek Sorumluluk Prensibi)**: Para birimi dönüşüm işlemlerini FifoService'den ayırarak ParaBirimiDonusumHelper sınıfına taşıdık.
 
-2. **Tasarım Desenleri**:
-   - Strategy Pattern: Exception yönetimi için strateji deseni kullanıldı
-   - Template Method Pattern: BaseController sınıfında şablon metot deseni uygulandı
-   - Factory Pattern: ExceptionStrategyFactory ile strateji nesneleri oluşturulması merkezi hale getirildi
-   - Repository Pattern: IUnitOfWork arayüzü kullanılarak veritabanı işlemleri soyutlandı
+- **FaturaService**: SOLID prensiplerine uygun olarak FaturaService sınıfı daha küçük, odaklanmış servislere bölündü:
+  - IFaturaCrudService: Temel CRUD işlemleri
+  - IFaturaNumaralandirmaService: Fatura ve sipariş numarası oluşturma
+  - IFaturaTransactionService: Transaction yönetimi
+  - IFaturaOrchestrationService: Orkestrasyon işlemleri
+  
+- **XML Dokümantasyon**: Kod tabanı için standart bir XML dokümantasyon formatı belirlendi ve Docs/XMLDokumanStandardi.md dosyasında tanımlandı.
 
-3. **Kod Kalitesi İyileştirmeleri**:
-   - XML dokümantasyon standardı tanımlandı
-   - İsimlendirme standardı tanımlandı
-   - Karmaşık sınıflar daha küçük ve odaklanmış sınıflara bölündü
-   - Tekrar eden kod parçacıkları extension metotlar ve helper sınıflarına taşındı
-   - Kullanılmayan kodlar temizlendi
+- **İsimlendirme Standardı**: Tutarlı bir isimlendirme için rehber hazırlandı ve Docs/IsimlendirmeStandardi.md dosyasında dokümante edildi.
 
-4. **Test Edilebilirlik İyileştirmeleri**:
-   - Dependency Injection kullanımı yaygınlaştırıldı
-   - Interface'ler tanımlanarak bağımlılıklar azaltıldı
-   - Sınıflar ve metotlar daha küçük ve odaklanmış hale getirildi
+- **Birim Testleri**: Kodun güvenilirliğini artırmak ve regresyon hatalarını önlemek için birim testleri eklendi:
+  - MuhasebeStokWebApp.Tests projesi oluşturuldu
+  - Para birimi dönüşümü testleri (ParaBirimiDonusumHelperTests)
+  - Stok FIFO yönetim testleri (StokGirisServiceTests, StokCikisServiceTests)
+  - Exception stratejileri testleri (ExceptionStrategyTests)
+  - Test dokümantasyonu Docs/testler.md'de tanımlandı
 
-Bu değişiklikler sayesinde MuhasebeStokWebApp projesi daha sürdürülebilir, test edilebilir ve genişletilebilir hale getirilmiştir. İlerideki sprint'lerde birim testleri eklenmesi ve uygulamanın canlı ortamda test edilmesi planlanmaktadır.
+- **Kod Kapsamı Hedefi**: Kritik bileşenler için %90 ve üzeri, genel proje için %85 kod kapsamı hedeflendi.
+
+### 8. Performans Optimizasyonu
+
+- [x] Sorgularda gereksiz veya çok sayıda `Include` kullanımını optimize et. Sadece gerekli navigation property'leri include et.
+- [x] `FirstOrDefault` ile birlikte `Include` kullanımını düzelt. Önce `FirstOrDefault` ile entity'yi getir, sonra gerekirse ayrı bir sorgu ile ilişkili entity'leri getir.
+- [x] N+1 sorgu problemini önlemek için navigation property kullanımını optimize et. Gerekirse eager loading veya explicit loading kullan.
+- [x] Tüm servislerde transaction yönetimini standartlaştır. `UnitOfWork` pattern'ini tutarlı bir şekilde kullan.
+- [x] Servislerde nested transaction riskini gidermek için transaction yönetimini merkezi hale getir.
+- [x] FIFO işlemlerinde concurrency yönetimini standartlaştır. Tüm FIFO işlemlerinde retry mekanizmasını tutarlı bir şekilde kullan.
+- [x] Stok işlemlerinde kilitlenme riskini azaltmak için `IsolationLevel.Snapshot` kullan.
 
 # MuhasebeStokWebApp Kod Analizi Raporu
 

@@ -10,6 +10,10 @@ namespace MuhasebeStokWebApp.ViewModels.Cari
         [Display(Name = "Cari Adı")]
         public required string Ad { get; set; }
 
+        [StringLength(100, ErrorMessage = "Cari ünvanı en fazla 100 karakter olabilir.")]
+        [Display(Name = "Cari Ünvanı")]
+        public string? CariUnvani { get; set; }
+
         [StringLength(11, MinimumLength = 0, ErrorMessage = "Vergi numarası en fazla 11 karakter olabilir.")]
         [Display(Name = "Vergi No")]
         public string? VergiNo { get; set; }

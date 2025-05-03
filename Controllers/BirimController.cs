@@ -180,6 +180,12 @@ namespace MuhasebeStokWebApp.Controllers
                     // Log işlemini burada yapmak yerine, önce kaydet
                     await _context.SaveChangesAsync();
                     
+                    // Önbelleği temizle
+                    await _birimService.ClearCacheAsync();
+                    
+                    // Log oluştur
+                    await _logService.BirimOlusturmaLogOlustur(birim.BirimID.ToString(), birim.BirimAdi);
+                    
                     return Json(new { success = true, message = "Birim başarıyla oluşturuldu." });
                 }
                 catch (DbUpdateException ex)
@@ -271,6 +277,12 @@ namespace MuhasebeStokWebApp.Controllers
                 _context.Update(birim);
                 await _context.SaveChangesAsync();
                 
+                // Önbelleği temizle
+                await _birimService.ClearCacheAsync();
+                
+                // Log oluştur
+                await _logService.BirimGuncellemeLogOlustur(id.ToString(), birim.BirimAdi);
+
                 return Json(new { success = true, message = "Birim başarıyla güncellendi." });
             }
             catch (DbUpdateConcurrencyException ex)
@@ -323,64 +335,51 @@ namespace MuhasebeStokWebApp.Controllers
                 return NotFound();
             }
             
-            // Soft delete işlemi
+            // Silme işlemini gerçekleştir
+            //_context.Birimler.Remove(birim);
+            
+            // Soft delete yap
             birim.Silindi = true;
             birim.Aktif = false;
             birim.GuncellemeTarihi = DateTime.Now;
-            
-            // Güncelleyen kullanıcı ID'sini al
-            var updateUserId = User.FindFirst(System.Security.Claims.ClaimTypes.NameIdentifier)?.Value;
-            birim.SonGuncelleyenKullaniciID = string.IsNullOrEmpty(updateUserId) ? null : (Guid?)Guid.Parse(updateUserId);
+            birim.SonGuncelleyenKullaniciID = Guid.Parse(User.FindFirst(System.Security.Claims.ClaimTypes.NameIdentifier).Value);
             
             _context.Update(birim);
             await _context.SaveChangesAsync();
-            
+
             // Önbelleği temizle
             await _birimService.ClearCacheAsync();
             
-            if (Request.Headers["X-Requested-With"] == "XMLHttpRequest")
-            {
-                return Json(new { success = true, message = "Birim başarıyla silindi." });
-            }
-            
+            // Log oluştur
+            await _logService.BirimSilmeLogOlustur(id.ToString(), birim.BirimAdi);
+                
             TempData["SuccessMessage"] = "Birim başarıyla silindi.";
             return RedirectToAction(nameof(Index));
         }
-        
-        // AJAX için silme metodu
+
         [HttpPost]
         public async Task<IActionResult> DeleteBirim(Guid id)
         {
             try
             {
-                var birim = await _context.Birimler.FindAsync(id);
-                if (birim == null)
+                var result = await _birimService.DeleteAsync(id);
+                
+                if (result)
                 {
-                    return Json(new { success = false, message = "Birim bulunamadı." });
+                    // Önbelleği temizle
+                    await _birimService.ClearCacheAsync();
+                    
+                    return Json(new { success = true, message = "Birim başarıyla silindi." });
                 }
-                
-                // Soft delete işlemi
-                birim.Silindi = true;
-                birim.Aktif = false;
-                birim.GuncellemeTarihi = DateTime.Now;
-                
-                // Güncelleyen kullanıcı ID'sini al
-                var updateUserId = User.FindFirst(System.Security.Claims.ClaimTypes.NameIdentifier)?.Value;
-                birim.SonGuncelleyenKullaniciID = string.IsNullOrEmpty(updateUserId) ? null : (Guid?)Guid.Parse(updateUserId);
-                
-                _context.Update(birim);
-                await _context.SaveChangesAsync();
-                
-                // Önbelleği temizle
-                await _birimService.ClearCacheAsync();
-                
-                return Json(new { success = true, message = "Birim başarıyla silindi." });
+                else
+                {
+                    return Json(new { success = false, message = "Birim silinemedi. Bu birim ürünlerde kullanılıyor olabilir." });
+                }
             }
             catch (Exception ex)
             {
-                var message = "Birim silinirken bir hata oluştu.";
-                _logger.LogError(message, ex);
-                return Json(new { success = false, message = message });
+                _logger.LogError(ex, "Birim silinirken bir hata oluştu. BirimID: {BirimID}", id);
+                return Json(new { success = false, message = "Birim silinirken bir hata oluştu." });
             }
         }
 
@@ -421,31 +420,31 @@ namespace MuhasebeStokWebApp.Controllers
         {
             try
             {
-                var birim = await _context.Birimler
-                    .IgnoreQueryFilters() // Global filtreleri devre dışı bırak
-                    .FirstOrDefaultAsync(b => b.BirimID == id);
-                    
+                var birim = await _context.Birimler.FindAsync(id);
                 if (birim == null)
                 {
                     return Json(new { success = false, message = "Birim bulunamadı." });
                 }
-
-                // Durumu tersine çevir
+                
+                // Aktiflik durumunu değiştir
                 birim.Aktif = !birim.Aktif;
                 birim.GuncellemeTarihi = DateTime.Now;
                 
                 // Güncelleyen kullanıcı ID'sini al
                 var updateUserId = User.FindFirst(System.Security.Claims.ClaimTypes.NameIdentifier)?.Value;
                 birim.SonGuncelleyenKullaniciID = string.IsNullOrEmpty(updateUserId) ? null : (Guid?)Guid.Parse(updateUserId);
-
+                
                 _context.Update(birim);
                 await _context.SaveChangesAsync();
                 
                 // Önbelleği temizle
                 await _birimService.ClearCacheAsync();
                 
-                var durum = birim.Aktif ? "aktif" : "pasif";
-                return Json(new { success = true, message = $"Birim başarıyla {durum} edildi." });
+                // Log oluştur
+                await _logService.BirimDurumDegisikligiLogOlustur(id.ToString(), birim.BirimAdi, birim.Aktif);
+
+                var durumText = birim.Aktif ? "aktif" : "pasif";
+                return Json(new { success = true, message = $"Birim başarıyla {durumText} duruma getirildi.", isActive = birim.Aktif });
             }
             catch (Exception ex)
             {
@@ -476,26 +475,33 @@ namespace MuhasebeStokWebApp.Controllers
                 {
                     return Json(new { success = false, message = "Birim bulunamadı." });
                 }
-
-                // Birimi aktif et
-                birim.Aktif = true;
-                birim.Silindi = false; // Eğer silindiyse, silindi durumunu da false yap
+                
+                // Silindi durumunu false yap
+                birim.Silindi = false;
+                birim.Aktif = true; // Aktifleştir
                 birim.GuncellemeTarihi = DateTime.Now;
                 
                 // Güncelleyen kullanıcı ID'sini al
                 var updateUserId = User.FindFirst(System.Security.Claims.ClaimTypes.NameIdentifier)?.Value;
                 birim.SonGuncelleyenKullaniciID = string.IsNullOrEmpty(updateUserId) ? null : (Guid?)Guid.Parse(updateUserId);
-
+                
+                _context.Update(birim);
                 await _context.SaveChangesAsync();
                 
                 // Önbelleği temizle
                 await _birimService.ClearCacheAsync();
                 
-                return Json(new { success = true, message = "Birim başarıyla aktif edildi." });
+                await _logService.AddLogAsync(
+                    "Bilgi", 
+                    $"'{birim.BirimAdi}' birimi geri yüklendi.", 
+                    "BirimController/RestoreUnit",
+                    id.ToString());
+                    
+                return Json(new { success = true, message = "Birim başarıyla geri yüklendi." });
             }
             catch (Exception ex)
             {
-                var message = "Birim aktif edilirken bir hata oluştu.";
+                var message = "Birim geri yüklenirken bir hata oluştu.";
                 _logger.LogError(message, ex);
                 return Json(new { success = false, message = message });
             }

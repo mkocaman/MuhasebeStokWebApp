@@ -1,0 +1,67 @@
+@model MuhasebeStokWebApp.ViewModels.Urun.UrunViewModel
+
+<div class="modal-body">
+    <div class="row">
+        <div class="col-md-6">
+            <dl class="row">
+                <dt class="col-sm-4">Ürün Adı</dt>
+                <dd class="col-sm-8">@Model.UrunAdi</dd>
+                
+                <dt class="col-sm-4">Ürün Kodu</dt>
+                <dd class="col-sm-8">@Model.UrunKodu</dd>
+                
+                <dt class="col-sm-4">Kategori</dt>
+                <dd class="col-sm-8">@Model.KategoriAdi</dd>
+                
+                <dt class="col-sm-4">Birim</dt>
+                <dd class="col-sm-8">@Model.Birim</dd>
+                
+                <dt class="col-sm-4">Stok Miktarı</dt>
+                <dd class="col-sm-8">
+                    @Model.Miktar.ToString("N2") @Model.Birim
+                </dd>
+            </dl>
+        </div>
+        <div class="col-md-6">
+            <dl class="row">
+                <dt class="col-sm-4">Liste Fiyatı</dt>
+                <dd class="col-sm-8">@Model.ListeFiyati.ToString("N2") ₺</dd>
+                
+                <dt class="col-sm-4">Maliyet Fiyatı</dt>
+                <dd class="col-sm-8">@Model.MaliyetFiyati.ToString("N2") ₺</dd>
+                
+                <dt class="col-sm-4">Satış Fiyatı</dt>
+                <dd class="col-sm-8">@Model.SatisFiyati.ToString("N2") ₺</dd>
+                
+                <dt class="col-sm-4">Durum</dt>
+                <dd class="col-sm-8">
+                    @if (Model.Aktif)
+                    {
+                        <span class="badge bg-success">Aktif</span>
+                    }
+                    else
+                    {
+                        <span class="badge bg-danger">Pasif</span>
+                    }
+                </dd>
+                
+                <dt class="col-sm-4">KDV Oranı</dt>
+                <dd class="col-sm-8">%@Model.KdvOrani</dd>
+            </dl>
+        </div>
+    </div>
+    
+    @if (!string.IsNullOrEmpty(Model.Aciklama))
+    {
+        <div class="row mt-3">
+            <div class="col-12">
+                <h5>Açıklama</h5>
+                <p>@Model.Aciklama</p>
+            </div>
+        </div>
+    }
+</div>
+<div class="modal-footer">
+    <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Kapat</button>
+    <button type="button" class="btn btn-primary btn-edit-urun" data-id="@Model.UrunID" data-bs-dismiss="modal">Düzenle</button>
+</div> 

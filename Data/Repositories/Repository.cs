@@ -31,9 +31,21 @@ namespace MuhasebeStokWebApp.Data.Repositories
         public virtual async Task<IEnumerable<TEntity>> GetAllAsync(
             Expression<Func<TEntity, bool>> filter = null,
             Func<IQueryable<TEntity>, IOrderedQueryable<TEntity>> orderBy = null,
-            string includeProperties = "")
+            string includeProperties = "", 
+            bool ignoreQueryFilters = false, 
+            bool asNoTracking = false)
         {
             IQueryable<TEntity> query = _dbSet;
+            
+            if (ignoreQueryFilters)
+            {
+                query = query.IgnoreQueryFilters();
+            }
+            
+            if (asNoTracking)
+            {
+                query = query.AsNoTracking();
+            }
 
             if (filter != null)
             {
@@ -76,9 +88,21 @@ namespace MuhasebeStokWebApp.Data.Repositories
 
         public virtual async Task<TEntity> GetFirstOrDefaultAsync(
             Expression<Func<TEntity, bool>> filter = null,
-            string includeProperties = "")
+            string includeProperties = "",
+            bool ignoreQueryFilters = false,
+            bool asNoTracking = false)
         {
             IQueryable<TEntity> query = _dbSet;
+            
+            if (ignoreQueryFilters)
+            {
+                query = query.IgnoreQueryFilters();
+            }
+            
+            if (asNoTracking)
+            {
+                query = query.AsNoTracking();
+            }
 
             if (filter != null)
             {
@@ -238,6 +262,80 @@ namespace MuhasebeStokWebApp.Data.Repositories
         public async Task<List<TEntity>> GetAllByPredicateAsync(Expression<Func<TEntity, bool>> predicate)
         {
             return await _context.Set<TEntity>().Where(predicate).ToListAsync();
+        }
+        
+        public async Task<int> CountAsync(Expression<Func<TEntity, bool>> filter = null, bool asNoTracking = false)
+        {
+            IQueryable<TEntity> query = _dbSet;
+            
+            if (asNoTracking)
+            {
+                query = query.AsNoTracking();
+            }
+            
+            if (filter != null)
+            {
+                query = query.Where(filter);
+            }
+            
+            return await query.CountAsync();
+        }
+        
+        public async Task<bool> AnyAsync(Expression<Func<TEntity, bool>> filter = null)
+        {
+            if (filter == null)
+            {
+                return await _dbSet.AnyAsync();
+            }
+            
+            return await _dbSet.AnyAsync(filter);
+        }
+        
+        public IQueryable<TEntity> Query()
+        {
+            return _dbSet;
+        }
+        
+        public async Task<IEnumerable<TResult>> GetAllAsync<TResult>(
+            Expression<Func<TEntity, bool>> filter = null,
+            Expression<Func<TEntity, TResult>> selector = null,
+            Func<IQueryable<TEntity>, IOrderedQueryable<TEntity>> orderBy = null,
+            string includeProperties = "",
+            bool asNoTracking = false)
+        {
+            IQueryable<TEntity> query = _dbSet;
+            
+            if (asNoTracking)
+            {
+                query = query.AsNoTracking();
+            }
+            
+            if (filter != null)
+            {
+                query = query.Where(filter);
+            }
+            
+            if (!string.IsNullOrEmpty(includeProperties))
+            {
+                foreach (var includeProperty in includeProperties.Split
+                    (new char[] { ',' }, StringSplitOptions.RemoveEmptyEntries))
+                {
+                    query = query.Include(includeProperty);
+                }
+            }
+            
+            if (orderBy != null)
+            {
+                query = orderBy(query);
+            }
+            
+            if (selector != null)
+            {
+                return await query.Select(selector).ToListAsync();
+            }
+            
+            // Selector null ise, TResult ve TEntity aynı tip olmalı
+            return await query.Cast<TResult>().ToListAsync();
         }
     }
 } 

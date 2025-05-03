@@ -87,11 +87,21 @@
                     </div>
                     <div class="col-md-4">
                         <div class="form-group">
+                            <label asp-for="SiparisNumarasi" class="control-label">Sipariş Numarası</label>
+                            <input asp-for="SiparisNumarasi" class="form-control" />
+                            <span asp-validation-for="SiparisNumarasi" class="text-danger"></span>
+                        </div>
+                    </div>
+                    <div class="col-md-4">
+                        <div class="form-group">
                             <label asp-for="FaturaTarihi" class="control-label">Fatura Tarihi</label>
                             <input asp-for="FaturaTarihi" class="form-control" type="date" />
                             <span asp-validation-for="FaturaTarihi" class="text-danger"></span>
                         </div>
                     </div>
+                </div>
+                
+                <div class="row mb-3">
                     <div class="col-md-4">
                         <div class="form-group">
                             <label asp-for="VadeTarihi" class="control-label">Vade Tarihi</label>
@@ -99,6 +109,7 @@
                             <span asp-validation-for="VadeTarihi" class="text-danger"></span>
                         </div>
                     </div>
+                    <!-- Diğer alanlar burada olacak -->
                 </div>
                 
                 <!-- 2. Satır: Cari, Fatura Türü, Döviz Türü, Döviz Kuru -->

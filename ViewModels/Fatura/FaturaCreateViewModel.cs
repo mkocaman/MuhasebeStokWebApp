@@ -7,6 +7,32 @@ using MuhasebeStokWebApp.Data.Entities;
 
 namespace MuhasebeStokWebApp.ViewModels.Fatura
 {
+    // ParaBirimi sınıfını burada tanımlayalım (eksik referansı gidermek için)
+    public class ParaBirimi
+    {
+        public string Kod { get; set; }
+        public string Ad { get; set; }
+        public string Sembol { get; set; }
+        public bool AnaParaBirimiMi { get; set; }
+    }
+
+    // FaturaDetayViewModel sınıfını burada tanımlayalım (eksik referansı gidermek için)
+    public class FaturaDetayViewModel
+    {
+        public Guid? FaturaDetayID { get; set; }
+        public Guid? FaturaID { get; set; }
+        public Guid? UrunID { get; set; }
+        public string UrunAdi { get; set; }
+        public decimal Miktar { get; set; }
+        public string Birim { get; set; }
+        public decimal BirimFiyat { get; set; }
+        public decimal KDVOrani { get; set; }
+        public decimal KDVTutari { get; set; }
+        public decimal AraToplam { get; set; }
+        public decimal GenelToplam { get; set; }
+        public string Aciklama { get; set; }
+    }
+
     public class FaturaCreateViewModel
     {
         public FaturaCreateViewModel()
@@ -23,6 +49,11 @@ namespace MuhasebeStokWebApp.ViewModels.Fatura
         [Display(Name = "Fatura Numarası")]
         [StringLength(50, ErrorMessage = "Fatura numarası en fazla 50 karakter olabilir.")]
         public string FaturaNumarasi { get; set; }
+
+        [Required(ErrorMessage = "Sipariş numarası zorunludur.")]
+        [Display(Name = "Sipariş Numarası")]
+        [StringLength(50, ErrorMessage = "Sipariş numarası en fazla 50 karakter olabilir.")]
+        public string SiparisNumarasi { get; set; }
 
         [Required(ErrorMessage = "Fatura tarihi zorunludur.")]
         [Display(Name = "Fatura Tarihi")]
@@ -48,6 +79,10 @@ namespace MuhasebeStokWebApp.ViewModels.Fatura
         [Display(Name = "Fatura Notu")]
         [StringLength(500, ErrorMessage = "Fatura notu en fazla 500 karakter olabilir.")]
         public string FaturaNotu { get; set; }
+
+        [Display(Name = "Açıklama")]
+        [StringLength(500, ErrorMessage = "Açıklama en fazla 500 karakter olabilir.")]
+        public string Aciklama { get; set; }
 
         [Display(Name = "Ara Toplam")]
         [DisplayFormat(DataFormatString = "{0:N2}", ApplyFormatInEditMode = false)]

@@ -232,16 +232,16 @@ namespace MuhasebeStokWebApp.Services
                 if (paraBirimiId.HasValue && paraBirimiId != cari.VarsayilanParaBirimiId && cari.VarsayilanParaBirimiId.HasValue)
                 {
                     // Hedef para birimi kodunu getir
-                    var hedefParaBirimi = await _paraBirimiService.GetByIdAsync(paraBirimiId.Value);
-                    var kaynakParaBirimi = await _paraBirimiService.GetByIdAsync(cari.VarsayilanParaBirimiId.Value);
+                    var hedefParaBirimi = await _paraBirimiService.GetParaBirimiByIdAsync(paraBirimiId.Value);
+                    var kaynakParaBirimi = await _paraBirimiService.GetParaBirimiByIdAsync(cari.VarsayilanParaBirimiId.Value);
                     
                     if (hedefParaBirimi != null && kaynakParaBirimi != null)
                     {
                         // Para birimi dönüşümü
-                        bakiye = await _paraBirimiCevirici.TutarDonusturAsync(
+                        bakiye = await _paraBirimiCevirici.TutarCevirAsync(
                             bakiye, 
-                            kaynakParaBirimi.ParaBirimiKodu, 
-                            hedefParaBirimi.ParaBirimiKodu);
+                            kaynakParaBirimi.Kod, 
+                            hedefParaBirimi.Kod);
                     }
                 }
                 
@@ -376,44 +376,44 @@ namespace MuhasebeStokWebApp.Services
                 if (paraBirimiId.HasValue && cari.VarsayilanParaBirimiId.HasValue && paraBirimiId.Value != cari.VarsayilanParaBirimiId.Value)
                 {
                     // Para birimlerini bul
-                    var kaynakParaBirimi = await _paraBirimiService.GetByIdAsync(cari.VarsayilanParaBirimiId.Value);
-                    var hedefParaBirimi = await _paraBirimiService.GetByIdAsync(paraBirimiId.Value);
+                    var kaynakParaBirimi = await _paraBirimiService.GetParaBirimiByIdAsync(cari.VarsayilanParaBirimiId.Value);
+                    var hedefParaBirimi = await _paraBirimiService.GetParaBirimiByIdAsync(paraBirimiId.Value);
                     
                     if (kaynakParaBirimi != null && hedefParaBirimi != null)
                     {
                         // Başlangıç bakiyesini çevir
                         baslangicBakiyesi = await _paraBirimiCevirici.TutarCevirAsync(
                             baslangicBakiyesi, 
-                            kaynakParaBirimi.ParaBirimiKodu, 
-                            hedefParaBirimi.ParaBirimiKodu);
+                            kaynakParaBirimi.Kod, 
+                            hedefParaBirimi.Kod);
                         
                         // Son bakiyeyi çevir
                         bakiye = await _paraBirimiCevirici.TutarCevirAsync(
                             bakiye, 
-                            kaynakParaBirimi.ParaBirimiKodu, 
-                            hedefParaBirimi.ParaBirimiKodu);
+                            kaynakParaBirimi.Kod, 
+                            hedefParaBirimi.Kod);
                         
                         // Hareketleri çevir
                         await _paraBirimiCevirici.EntityKoleksiyonuCevirAsync(
                             gosterilecekHareketler,
                             hareket => hareket.Tutar,
                             (hareket, deger) => hareket.Tutar = deger,
-                            kaynakParaBirimi.ParaBirimiKodu,
-                            hedefParaBirimi.ParaBirimiKodu);
+                            kaynakParaBirimi.Kod,
+                            hedefParaBirimi.Kod);
                         
                         await _paraBirimiCevirici.EntityKoleksiyonuCevirAsync(
                             gosterilecekHareketler,
                             hareket => hareket.Borc,
                             (hareket, deger) => hareket.Borc = deger,
-                            kaynakParaBirimi.ParaBirimiKodu,
-                            hedefParaBirimi.ParaBirimiKodu);
+                            kaynakParaBirimi.Kod,
+                            hedefParaBirimi.Kod);
                         
                         await _paraBirimiCevirici.EntityKoleksiyonuCevirAsync(
                             gosterilecekHareketler,
                             hareket => hareket.Alacak,
                             (hareket, deger) => hareket.Alacak = deger,
-                            kaynakParaBirimi.ParaBirimiKodu,
-                            hedefParaBirimi.ParaBirimiKodu);
+                            kaynakParaBirimi.Kod,
+                            hedefParaBirimi.Kod);
                         
                         // Sözlükteki bakiye değerlerini güncelle
                         foreach (var hareket in gosterilecekHareketler)
@@ -422,8 +422,8 @@ namespace MuhasebeStokWebApp.Services
                             {
                                 _bakiyeSozlugu[hareket.CariHareketID] = await _paraBirimiCevirici.TutarCevirAsync(
                                     _bakiyeSozlugu[hareket.CariHareketID],
-                                    kaynakParaBirimi.ParaBirimiKodu,
-                                    hedefParaBirimi.ParaBirimiKodu);
+                                    kaynakParaBirimi.Kod,
+                                    hedefParaBirimi.Kod);
                             }
                         }
                     }

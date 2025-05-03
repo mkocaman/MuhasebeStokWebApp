@@ -9,7 +9,7 @@ namespace MuhasebeStokWebApp.Data.Entities.ParaBirimiModulu
     /// <summary>
     /// Para birimleri arası ilişki entity class'ı
     /// </summary>
-    [Table("ParaBirimiIliskileri")]
+    [Table("ParaBirimiModuluParaBirimiIliskileri")]
     public class ParaBirimiIliski : BaseEntity
     {
         /// <summary>

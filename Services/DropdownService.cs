@@ -104,7 +104,7 @@ namespace MuhasebeStokWebApp.Services
         // Kategori dropdown'ları için metod
         public async Task<SelectList> GetKategoriSelectListAsync(Guid? selectedKategoriId = null)
         {
-            var kategoriler = await _context.UrunKategoriler
+            var kategoriler = await _context.UrunKategorileri
                 .Where(k => k.Aktif && !k.Silindi)
                 .OrderBy(k => k.KategoriAdi)
                 .ToListAsync();
@@ -115,7 +115,7 @@ namespace MuhasebeStokWebApp.Services
         // UrunController için kategori dropdown metodu
         public async Task<List<SelectListItem>> GetKategoriSelectItemsAsync(Guid? selectedKategoriId = null)
         {
-            var kategoriler = await _context.UrunKategoriler
+            var kategoriler = await _context.UrunKategorileri
                 .Where(k => k.Aktif && !k.Silindi)
                 .OrderBy(k => k.KategoriAdi)
                 .ToListAsync();

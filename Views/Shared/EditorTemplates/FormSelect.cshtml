@@ -26,7 +26,14 @@
             {
                 foreach (var item in Model.Items)
                 {
-                    <option value="@item.Value" @(item.Selected ? "selected" : "")>@item.Text</option>
+                    if (item.Selected)
+                    {
+                        <option value="@item.Value" selected>@item.Text</option>
+                    }
+                    else
+                    {
+                        <option value="@item.Value">@item.Text</option>
+                    }
                 }
             }
         </select>

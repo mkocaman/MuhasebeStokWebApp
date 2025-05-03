@@ -60,38 +60,44 @@ namespace MuhasebeStokWebApp.Controllers
     public class IrsaliyeController : BaseController
     {
         private readonly IUnitOfWork _unitOfWork;
-        private readonly ILogger<IrsaliyeController> _logger;
         private readonly ApplicationDbContext _context;
+        private readonly ILogger<IrsaliyeController> _logger;
+        private readonly UserManager<ApplicationUser> _userManager;
+        private readonly IIrsaliyeService _irsaliyeService;
+        private readonly IIrsaliyeNumaralandirmaService _irsaliyeNumaralandirmaService;
         private readonly StokFifoService _stokFifoService;
         private readonly IDovizKuruService _dovizKuruService;
-        private new readonly ILogService _logService;
+        private readonly ILogService _logService;
         private readonly IWebHostEnvironment _env;
         private readonly IDropdownService _dropdownService;
-        protected new readonly UserManager<ApplicationUser> _userManager;
         protected new readonly RoleManager<IdentityRole> _roleManager;
 
         public IrsaliyeController(
             IUnitOfWork unitOfWork,
-            ILogger<IrsaliyeController> logger,
             ApplicationDbContext context,
+            ILogger<IrsaliyeController> logger,
+            ILogService logService,
             IMenuService menuService,
+            UserManager<ApplicationUser> userManager,
+            RoleManager<IdentityRole> roleManager,
+            IIrsaliyeService irsaliyeService,
+            IIrsaliyeNumaralandirmaService irsaliyeNumaralandirmaService,
             StokFifoService stokFifoService,
             IDovizKuruService dovizKuruService,
-            ILogService logService,
             IWebHostEnvironment env,
-            IDropdownService dropdownService,
-            UserManager<ApplicationUser> userManager,
-            RoleManager<IdentityRole> roleManager) : base(menuService, userManager, roleManager, logService)
+            IDropdownService dropdownService)
+            : base(menuService, userManager, roleManager, logService)
         {
             _unitOfWork = unitOfWork;
-            _logger = logger;
             _context = context;
+            _logger = logger;
+            _userManager = userManager;
+            _irsaliyeService = irsaliyeService;
+            _irsaliyeNumaralandirmaService = irsaliyeNumaralandirmaService;
             _stokFifoService = stokFifoService;
             _dovizKuruService = dovizKuruService;
-            _logService = logService;
             _env = env;
             _dropdownService = dropdownService;
-            _userManager = userManager;
             _roleManager = roleManager;
         }
 
@@ -254,20 +260,35 @@ namespace MuhasebeStokWebApp.Controllers
             return View(viewModel);
         }
 
-        // Yeni irsaliye oluşturma formu
-        [HttpGet]
+        // GET: Irsaliye/Create
         public async Task<IActionResult> Create()
         {
-            var model = new IrsaliyeCreateViewModel
+            try
             {
-                IrsaliyeTarihi = DateTime.Now,
-                Aktif = true
-            };
-
-            // ViewBag'i direkt doldur
-            await PrepareViewBagForCreate();
-            
-            return View(model);
+                _logger.LogInformation("İrsaliye oluşturma sayfası yükleniyor");
+                
+                // Yeni irsaliye numarası oluştur
+                string irsaliyeNumarasi = await _irsaliyeNumaralandirmaService.GenerateIrsaliyeNumarasiAsync();
+                
+                var viewModel = new IrsaliyeCreateViewModel
+                {
+                    IrsaliyeNumarasi = irsaliyeNumarasi,
+                    IrsaliyeTarihi = DateTime.Today,
+                    Aktif = true,
+                    IrsaliyeDetaylari = new List<IrsaliyeVM.IrsaliyeDetayViewModel>()
+                };
+                
+                // Dropdownları doldur
+                await PopulateDropdownsAsync(viewModel);
+                
+                return View(viewModel);
+            }
+            catch (Exception ex)
+            {
+                _logger.LogError(ex, "İrsaliye oluşturma sayfası yüklenirken hata oluştu");
+                TempData["ErrorMessage"] = "İrsaliye oluşturma sayfası yüklenirken bir hata oluştu.";
+                return RedirectToAction("Index");
+            }
         }
 
         // Yeni irsaliye oluşturma işlemi
@@ -329,7 +350,7 @@ namespace MuhasebeStokWebApp.Controllers
                 }
             }
 
-            await PrepareViewBagForCreate();
+            await PopulateDropdownsAsync(model);
             return View(model);
         }
 
@@ -631,43 +652,20 @@ namespace MuhasebeStokWebApp.Controllers
                 .Any(e => e.IrsaliyeID.Equals(id) && e.Aktif);
         }
         
-        // Otomatik irsaliye numarası oluşturma
+        /// <summary>
+        /// Yeni irsaliye numarası oluşturur
+        /// </summary>
         private async Task<string> GenerateNewIrsaliyeNumber()
         {
             try
             {
-                // Bugünün tarihini al ve formatla (YYMMDD)
-                string dateFormat = DateTime.Now.ToString("yyMMdd");
-                
-                // Son irsaliye numarasını bul
-                var lastIrsaliye = await _unitOfWork.Repository<DEntityIrsaliye>().GetAsync(
-                    orderBy: q => q.OrderByDescending(i => i.OlusturmaTarihi)
-                );
-                
-                int sequence = 1;
-                
-                if (lastIrsaliye.Any())
-                {
-                    var lastNumber = lastIrsaliye.First().IrsaliyeNumarasi;
-                    
-                    // Son irsaliye numarasından sıra numarasını çıkarmaya çalış
-                    if (lastNumber != null && lastNumber.StartsWith("IRS-") && lastNumber.Length >= 14)
-                    {
-                        string lastSequence = lastNumber.Substring(11); // Son 3 karakter
-                        if (int.TryParse(lastSequence, out int lastSeq))
-                        {
-                            sequence = lastSeq + 1;
-                        }
-                    }
-                }
-                
-                // Yeni irsaliye numarası oluştur (IRS-YYMMDD-001 formatında)
-                return $"IRS-{dateFormat}-{sequence:000}";
+                return await _irsaliyeNumaralandirmaService.GenerateIrsaliyeNumarasiAsync();
             }
-            catch (Exception)
+            catch (Exception ex)
             {
                 // Hata durumunda varsayılan bir numara döndür
-                return $"IRS-{DateTime.Now.ToString("yyMMdd")}-001";
+                _logger.LogError(ex, "İrsaliye numarası oluşturulurken hata oluştu.");
+                return $"IRS-{DateTime.Now.ToString("yyMMdd")}-0001";
             }
         }
 
@@ -696,7 +694,7 @@ namespace MuhasebeStokWebApp.Controllers
         }
 
         // ViewBag hazırlama yardımcı metodu
-        private async Task PrepareViewBagForCreate()
+        private async Task PopulateDropdownsAsync(IrsaliyeCreateViewModel model)
         {
             // Cari listesini hazırla
             ViewBag.Cariler = new SelectList(await _context.Cariler

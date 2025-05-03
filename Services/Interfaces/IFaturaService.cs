@@ -1,25 +1,14 @@
 using System;
-using System.Collections.Generic;
-using System.Threading.Tasks;
-using MuhasebeStokWebApp.Data.Entities;
-using MuhasebeStokWebApp.ViewModels.Fatura;
+using MuhasebeStokWebApp.Services.Interfaces;
 
 namespace MuhasebeStokWebApp.Services.Interfaces
 {
-    public interface IFaturaService
+    /// <summary>
+    /// Fatura servisi arayüzü. 
+    /// Bu arayüz, diğer fatura servislerini bir araya getirerek bir facade oluşturur.
+    /// </summary>
+    public interface IFaturaService : IFaturaOrchestrationService, IFaturaCrudService
     {
-        Task<IEnumerable<Fatura>> GetAllAsync();
-        Task<Fatura> GetByIdAsync(Guid id);
-        Task<Fatura> AddAsync(Fatura fatura);
-        Task<Fatura> UpdateAsync(Fatura fatura);
-        Task<bool> DeleteAsync(Guid id);
-        
-        Task<FaturaDetailViewModel> GetFaturaDetailViewModelAsync(Guid id);
-        Task<List<FaturaViewModel>> GetAllFaturaViewModelsAsync();
-        Task<bool> IsFaturaInUseAsync(Guid id);
-        
-        Task<Guid> CreateFatura(FaturaCreateViewModel viewModel, Guid? currentUserId);
-        Task<Guid> UpdateFatura(Guid id, FaturaEditViewModel viewModel, Guid? currentUserId);
-        Task<bool> DeleteFatura(Guid id, Guid? currentUserId);
+        // Tüm gerekli metotlar alt arayüzlerde tanımlandı
     }
 } 

@@ -90,7 +90,7 @@
                                                 <button type="button" class="btn btn-sm btn-info" onclick="getEditDetails('@item.KategoriID')">
                                                     <i class="fas fa-edit"></i>
                                                 </button>
-                                                <button type="button" class="btn btn-sm btn-primary" onclick="getDetails('@item.KategoriID')">
+                                                <button type="button" class="btn btn-sm btn-primary btn-details-kategori" data-id="@item.KategoriID">
                                                     <i class="fas fa-info-circle"></i>
                                                 </button>
                                                 <button type="button" class="btn btn-sm btn-danger" onclick="confirmDelete('@item.KategoriID', '@item.KategoriAdi')">
@@ -208,13 +208,10 @@
 <!-- Kategori Detay Modal -->
 <div class="modal fade" id="detailsKategoriModal" tabindex="-1" aria-labelledby="detailsKategoriModalLabel" aria-hidden="true">
     <div class="modal-dialog">
-        <div class="modal-content">
-            <div id="detailsKategoriModalContent">
-                <!-- İçerik AJAX ile yüklenecek -->
-                <div class="modal-body text-center">
-                    <div class="spinner-border text-primary" role="status">
-                        <span class="visually-hidden">Yükleniyor...</span>
-                    </div>
+        <div class="modal-content" id="detailsKategoriModalContent">
+            <div class="modal-body text-center">
+                <div class="spinner-border" role="status">
+                    <span class="visually-hidden">Yükleniyor...</span>
                 </div>
             </div>
         </div>

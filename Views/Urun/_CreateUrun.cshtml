@@ -76,13 +76,48 @@
                 type: 'POST',
                 data: formData,
                 success: function (response) {
-                    // İşlem başarılı ise modal'ı kapat ve tabloyu güncelle
-                    $('#urunModal').modal('hide');
-                    // Ürün listesini yenile
-                    location.reload();
+                    if (response.success) {
+                        // Başarılı olursa Sweet Alert göster
+                        Swal.fire({
+                            icon: 'success',
+                            title: 'Başarılı!',
+                            text: response.message || 'Ürün başarıyla oluşturuldu.',
+                            confirmButtonText: 'Tamam'
+                        }).then((result) => {
+                            // Modal'ı kapat ve sayfayı yenile
+                            $('#urunModal').modal('hide');
+                            location.reload();
+                        });
+                    } else {
+                        // Başarısız olursa Sweet Alert göster
+                        Swal.fire({
+                            icon: 'error',
+                            title: 'Hata!',
+                            text: response.message || 'Ürün oluşturulurken bir hata oluştu.',
+                            confirmButtonText: 'Tamam'
+                        });
+                        
+                        // Hata mesajlarını göster (varsa)
+                        if (response.errors && response.errors.length > 0) {
+                            var errorList = '';
+                            $.each(response.errors, function(index, error) {
+                                errorList += error + '<br>';
+                            });
+                            
+                            $('#createFormAlert').html(errorList).removeClass('d-none');
+                        }
+                    }
                 },
                 error: function (xhr, status, error) {
-                    // Hata durumunda uyarı göster
+                    // AJAX hatası olursa Sweet Alert göster
+                    Swal.fire({
+                        icon: 'error',
+                        title: 'Hata!',
+                        text: 'Ürün oluşturulurken bir hata oluştu. Lütfen tekrar deneyin.',
+                        confirmButtonText: 'Tamam'
+                    });
+                    
+                    // Hata mesajını göster
                     $('#createFormAlert').text('Ürün kaydı sırasında bir hata oluştu: ' + error).removeClass('d-none');
                 }
             });

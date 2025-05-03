@@ -1,0 +1,354 @@
+@model IEnumerable<MuhasebeStokWebApp.Data.Entities.Cari>
+@{
+    ViewData["Title"] = "Pasif Cariler";
+    Layout = "~/Views/Shared/_Layout.cshtml";
+    
+    // Admin rolüne sahip kullanıcıları kontrol et
+    var isAdmin = User.IsInRole("Admin");
+}
+
+<div class="container-fluid">
+    <div class="page-header">
+        <div class="row">
+            <div class="col">
+                <div class="page-header-left">
+                    <h3>Pasif Cari Yönetimi</h3>
+                    <ol class="breadcrumb">
+                        <li class="breadcrumb-item"><a href="/Home"><i class="fa fa-home"></i></a></li>
+                        <li class="breadcrumb-item">Cari Yönetimi</li>
+                        <li class="breadcrumb-item active">Pasif Cariler</li>
+                    </ol>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+
+<div class="container-fluid">
+    <div class="row">
+        <div class="col-sm-12">
+            <div class="card">
+                <div class="card-header bg-primary">
+                    <div class="d-flex justify-content-between align-items-center">
+                        <h5 class="text-white">Pasif Cariler</h5>
+                        <div class="btn-group">
+                            <a href="@Url.Action("Index")" class="btn btn-light">Tüm Cariler</a>
+                            <a href="@Url.Action("Musteriler")" class="btn btn-light">Müşteriler</a>
+                            <a href="@Url.Action("Tedarikciler")" class="btn btn-light">Tedarikçiler</a>
+                            <a href="@Url.Action("Pasifler")" class="btn btn-warning">Pasif Cariler</a>
+                        </div>
+                    </div>
+                </div>
+                <div class="card-body">
+                    <ul class="nav nav-tabs" id="myTab" role="tablist">
+                        <li class="nav-item" role="presentation">
+                            <button class="nav-link active" id="pasif-tab" data-bs-toggle="tab" data-bs-target="#pasif" type="button" role="tab" aria-controls="pasif" aria-selected="true">
+                                Pasif Cariler <span class="badge bg-secondary">@Model.Count(x => !x.AktifMi && !x.Silindi)</span>
+                            </button>
+                        </li>
+                        <li class="nav-item" role="presentation">
+                            <button class="nav-link" id="silinen-tab" data-bs-toggle="tab" data-bs-target="#silinen" type="button" role="tab" aria-controls="silinen" aria-selected="false">
+                                Silinmiş Cariler <span class="badge bg-danger">@Model.Count(x => x.Silindi)</span>
+                            </button>
+                        </li>
+                    </ul>
+                    <div class="tab-content" id="myTabContent">
+                        <div class="tab-pane fade show active" id="pasif" role="tabpanel" aria-labelledby="pasif-tab">
+                            <div class="table-responsive mt-3">
+                                <table class="table table-bordered table-striped" id="pasifCariler">
+                                    <thead>
+                                        <tr>
+                                            <th>Cari Adı</th>
+                                            <th>Yetkili</th>
+                                            <th>Telefon</th>
+                                            <th>Bakiye</th>
+                                            <th>Durum</th>
+                                            <th>İşlemler</th>
+                                        </tr>
+                                    </thead>
+                                    <tbody>
+                                        @foreach (var cari in Model.Where(x => !x.AktifMi && !x.Silindi))
+                                        {
+                                            string paraBirimiSembol = "₺";
+                                            if (cari.VarsayilanParaBirimiId.HasValue && ViewBag.ParaBirimleri != null)
+                                            {
+                                                foreach (var pb in ViewBag.ParaBirimleri)
+                                                {
+                                                    if (pb.ParaBirimiID == cari.VarsayilanParaBirimiId)
+                                                    {
+                                                        paraBirimiSembol = pb.Sembol;
+                                                        break;
+                                                    }
+                                                }
+                                            }
+                                            
+                                            <tr>
+                                                <td>
+                                                    <a href="@Url.Action("Details", new { id = cari.CariID })" class="font-weight-bold text-primary">
+                                                        @cari.Ad
+                                                    </a>
+                                                </td>
+                                                <td>@(string.IsNullOrEmpty(cari.Yetkili) ? "-" : cari.Yetkili)</td>
+                                                <td>@(string.IsNullOrEmpty(cari.Telefon) ? "-" : cari.Telefon)</td>
+                                                <td class="text-end @(cari.BaslangicBakiye >= 0 ? "text-success" : "text-danger")">
+                                                    @cari.BaslangicBakiye.ToString("N2") @paraBirimiSembol
+                                                </td>
+                                                <td class="text-center">
+                                                    <span class="badge bg-danger">Pasif</span>
+                                                </td>
+                                                <td class="text-center">
+                                                    <div class="btn-group">
+                                                        <a href="@Url.Action("Details", new { id = cari.CariID })" class="btn btn-info btn-sm" title="Detay">
+                                                            <i class="fa fa-eye"></i>
+                                                        </a>
+                                                        <button class="btn btn-sm btn-primary edit-cari-btn" data-id="@cari.CariID" title="Düzenle">
+                                                            <i class="fa fa-edit"></i>
+                                                        </button>
+                                                        <button class="btn btn-sm btn-success set-active-btn" data-id="@cari.CariID" data-name="@cari.Ad" title="Aktif Yap">
+                                                            <i class="fa fa-check"></i>
+                                                        </button>
+                                                        @if (isAdmin)
+                                                        {
+                                                            <button class="btn btn-sm btn-danger delete-cari-btn" data-id="@cari.CariID" data-name="@cari.Ad" title="Sil">
+                                                                <i class="fa fa-trash"></i>
+                                                            </button>
+                                                        }
+                                                    </div>
+                                                </td>
+                                            </tr>
+                                        }
+                                    </tbody>
+                                </table>
+                            </div>
+                        </div>
+                        <div class="tab-pane fade" id="silinen" role="tabpanel" aria-labelledby="silinen-tab">
+                            <div class="table-responsive mt-3">
+                                <table class="table table-bordered table-striped" id="silinenCariler">
+                                    <thead>
+                                        <tr>
+                                            <th>Cari Adı</th>
+                                            <th>Yetkili</th>
+                                            <th>Telefon</th>
+                                            <th>Bakiye</th>
+                                            <th>Durum</th>
+                                            <th>İşlemler</th>
+                                        </tr>
+                                    </thead>
+                                    <tbody>
+                                        @foreach (var cari in Model.Where(x => x.Silindi))
+                                        {
+                                            string paraBirimiSembol = "₺";
+                                            if (cari.VarsayilanParaBirimiId.HasValue && ViewBag.ParaBirimleri != null)
+                                            {
+                                                foreach (var pb in ViewBag.ParaBirimleri)
+                                                {
+                                                    if (pb.ParaBirimiID == cari.VarsayilanParaBirimiId)
+                                                    {
+                                                        paraBirimiSembol = pb.Sembol;
+                                                        break;
+                                                    }
+                                                }
+                                            }
+                                            
+                                            <tr>
+                                                <td>@cari.Ad</td>
+                                                <td>@(string.IsNullOrEmpty(cari.Yetkili) ? "-" : cari.Yetkili)</td>
+                                                <td>@(string.IsNullOrEmpty(cari.Telefon) ? "-" : cari.Telefon)</td>
+                                                <td class="text-end @(cari.BaslangicBakiye >= 0 ? "text-success" : "text-danger")">
+                                                    @cari.BaslangicBakiye.ToString("N2") @paraBirimiSembol
+                                                </td>
+                                                <td class="text-center">
+                                                    <span class="badge bg-danger">Silinmiş</span>
+                                                </td>
+                                                <td class="text-center">
+                                                    @if (isAdmin)
+                                                    {
+                                                        <button class="btn btn-sm btn-success restore-cari-btn" data-id="@cari.CariID" data-name="@cari.Ad" title="Geri Yükle">
+                                                            <i class="fa fa-undo"></i>
+                                                        </button>
+                                                    }
+                                                </td>
+                                            </tr>
+                                        }
+                                    </tbody>
+                                </table>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+
+<!-- Modal alanları -->
+<div class="modal fade" id="cariModal" tabindex="-1" role="dialog" aria-labelledby="cariModalLabel" aria-hidden="true">
+    <div class="modal-dialog modal-lg" role="document">
+        <div class="modal-content">
+            <div id="cariModalContent">
+                <!-- İçerik AJAX ile doldurulacak -->
+            </div>
+        </div>
+    </div>
+</div>
+
+<!-- Onay Modali -->
+<div class="modal fade" id="confirmModal" tabindex="-1" role="dialog" aria-labelledby="confirmModalLabel" aria-hidden="true">
+    <div class="modal-dialog" role="document">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h5 class="modal-title" id="confirmModalLabel">İşlem Onayı</h5>
+                <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+            </div>
+            <div class="modal-body">
+                <p id="confirmModalMessage"></p>
+            </div>
+            <div class="modal-footer">
+                <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">İptal</button>
+                <button type="button" class="btn btn-primary" id="confirmModalConfirmBtn">Onay</button>
+            </div>
+        </div>
+    </div>
+</div>
+
+@section Scripts {
+    <script>
+        $(document).ready(function() {
+            // DataTable ayarları
+            $('#pasifCariler, #silinenCariler').DataTable({
+                language: {
+                    url: '/assets/datatables/Turkish.json'
+                },
+                responsive: true,
+                pageLength: 25,
+                order: [[0, "asc"]]
+            });
+            
+            // Düzenle butonu tıklandığında
+            $(document).on('click', '.edit-cari-btn', function() {
+                var cariID = $(this).data('id');
+                $.ajax({
+                    url: '@Url.Action("Edit", "Cari")/' + cariID,
+                    type: 'GET',
+                    success: function(response) {
+                        $('#cariModalContent').html(response);
+                        $('#cariModal').modal('show');
+                    },
+                    error: function(error) {
+                        console.error('Hata:', error);
+                        toastr.error('Bir hata oluştu: ' + error.statusText);
+                    }
+                });
+            });
+            
+            // Aktif Yap butonu tıklandığında
+            $(document).on('click', '.set-active-btn', function() {
+                var cariID = $(this).data('id');
+                var cariAdi = $(this).data('name');
+                
+                $('#confirmModalLabel').text('Aktif Etme Onayı');
+                $('#confirmModalMessage').text(cariAdi + ' carisini aktif duruma almak istediğinizden emin misiniz?');
+                $('#confirmModalConfirmBtn').removeClass().addClass('btn btn-success').text('Aktif Yap');
+                
+                $('#confirmModalConfirmBtn').off('click').on('click', function() {
+                    $.ajax({
+                        url: '@Url.Action("SetActive", "Cari")',
+                        type: 'POST',
+                        data: { id: cariID },
+                        dataType: 'json',
+                        success: function(response) {
+                            if (response.success) {
+                                toastr.success(response.message);
+                                setTimeout(function() {
+                                    window.location.reload();
+                                }, 1500);
+                            } else {
+                                toastr.error(response.message);
+                            }
+                            $('#confirmModal').modal('hide');
+                        },
+                        error: function(error) {
+                            console.error('Hata:', error);
+                            toastr.error('Bir hata oluştu: ' + error.statusText);
+                            $('#confirmModal').modal('hide');
+                        }
+                    });
+                });
+                
+                $('#confirmModal').modal('show');
+            });
+
+            // Geri Yükle butonu tıklandığında
+            $(document).on('click', '.restore-cari-btn', function() {
+                var cariID = $(this).data('id');
+                var cariAdi = $(this).data('name');
+                
+                $('#confirmModalLabel').text('Geri Yükleme Onayı');
+                $('#confirmModalMessage').text(cariAdi + ' carisini geri yüklemek istediğinizden emin misiniz?');
+                $('#confirmModalConfirmBtn').removeClass().addClass('btn btn-success').text('Geri Yükle');
+                
+                $('#confirmModalConfirmBtn').off('click').on('click', function() {
+                    $.ajax({
+                        url: '@Url.Action("RestoreCari", "Cari")',
+                        type: 'POST',
+                        data: { id: cariID },
+                        success: function(response) {
+                            if (response.success) {
+                                toastr.success(response.message);
+                                setTimeout(function() {
+                                    window.location.reload();
+                                }, 1500);
+                            } else {
+                                toastr.error(response.message);
+                            }
+                            $('#confirmModal').modal('hide');
+                        },
+                        error: function(error) {
+                            console.error('Hata:', error);
+                            toastr.error('Bir hata oluştu: ' + error.statusText);
+                            $('#confirmModal').modal('hide');
+                        }
+                    });
+                });
+                
+                $('#confirmModal').modal('show');
+            });
+            
+            // Sil butonu tıklandığında
+            $(document).on('click', '.delete-cari-btn', function() {
+                var cariID = $(this).data('id');
+                var cariAdi = $(this).data('name');
+                
+                $('#confirmModalLabel').text('Silme Onayı');
+                $('#confirmModalMessage').text(cariAdi + ' carisini silmek istediğinizden emin misiniz? Bu işlem geri alınamaz.');
+                $('#confirmModalConfirmBtn').removeClass().addClass('btn btn-danger').text('Sil');
+                
+                $('#confirmModalConfirmBtn').off('click').on('click', function() {
+                    $.ajax({
+                        url: '@Url.Action("SetDelete", "Cari")',
+                        type: 'POST',
+                        data: { id: cariID },
+                        success: function(response) {
+                            if (response.success) {
+                                toastr.success(response.message);
+                                setTimeout(function() {
+                                    window.location.reload();
+                                }, 1500);
+                            } else {
+                                toastr.error(response.message);
+                            }
+                            $('#confirmModal').modal('hide');
+                        },
+                        error: function(error) {
+                            console.error('Hata:', error);
+                            toastr.error('Bir hata oluştu: ' + error.statusText);
+                            $('#confirmModal').modal('hide');
+                        }
+                    });
+                });
+                
+                $('#confirmModal').modal('show');
+            });
+        });
+    </script>
+} 

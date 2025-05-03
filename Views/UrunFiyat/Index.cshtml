@@ -2,60 +2,68 @@
 
 @{
     ViewData["Title"] = Model.SelectedUrunID.HasValue ? $"{Model.UrunAdi} Fiyat Listesi" : "Ürün Fiyatları";
+    Layout = "~/Views/Shared/_Layout.cshtml";
 }
 
-<div class="container">
-    <div class="row mb-3">
-        <div class="col">
-            <h2>@ViewData["Title"]</h2>
+<div class="container-fluid">
+    <div class="card">
+        <div class="card-header bg-primary text-white">
+            <div class="d-flex justify-content-between align-items-center">
+                <h4 class="mb-0">@ViewData["Title"]</h4>
+                <div>
+                    @if (Model.SelectedUrunID.HasValue)
+                    {
+                        <button type="button" class="btn btn-success" data-bs-toggle="modal" data-bs-target="#createFiyatModal">
+                            <i class="fas fa-plus"></i> Yeni Fiyat Ekle
+                        </button>
+                        <a asp-controller="Urun" asp-action="Index" class="btn btn-light">
+                            <i class="fas fa-arrow-left"></i> Ürün Listesine Dön
+                        </a>
+                    }
+                    else
+                    {
+                        <button type="button" class="btn btn-success" data-bs-toggle="modal" data-bs-target="#createFiyatModal">
+                            <i class="fas fa-plus"></i> Yeni Fiyat Ekle
+                        </button>
+                    }
+                </div>
+            </div>
         </div>
-        <div class="col-auto">
-            @if (Model.SelectedUrunID.HasValue)
+        <div class="card-body">
+            @if (TempData["SuccessMessage"] != null)
             {
-                <a asp-action="Create" asp-route-urunId="@Model.SelectedUrunID" class="btn btn-primary">
-                    <i class="bi bi-plus-circle"></i> Yeni Fiyat Ekle
-                </a>
-                <a asp-controller="Urun" asp-action="Index" class="btn btn-secondary">
-                    <i class="bi bi-arrow-left"></i> Ürün Listesine Dön
-                </a>
+                <div class="alert alert-success alert-dismissible fade show" role="alert">
+                    @TempData["SuccessMessage"]
+                    <button type="button" class="btn-close" data-bs-dismiss="alert" aria-label="Close"></button>
+                </div>
+            }
+            
+            @if (TempData["ErrorMessage"] != null)
+            {
+                <div class="alert alert-danger alert-dismissible fade show" role="alert">
+                    @TempData["ErrorMessage"]
+                    <button type="button" class="btn-close" data-bs-dismiss="alert" aria-label="Close"></button>
+                </div>
+            }
+            
+            @if (Model.UrunFiyatlari.Count == 0)
+            {
+                <div class="alert alert-info">
+                    @if (Model.SelectedUrunID.HasValue)
+                    {
+                        <p>Bu ürüne ait kayıtlı fiyat bulunamadı.</p>
+                    }
+                    else
+                    {
+                        <p>Sistemde kayıtlı ürün fiyatı bulunamadı.</p>
+                    }
+                </div>
             }
             else
             {
-                <a asp-action="Create" class="btn btn-primary">
-                    <i class="bi bi-plus-circle"></i> Yeni Fiyat Ekle
-                </a>
-            }
-        </div>
-    </div>
-    
-    @if (TempData["SuccessMessage"] != null)
-    {
-        <div class="alert alert-success alert-dismissible fade show" role="alert">
-            @TempData["SuccessMessage"]
-            <button type="button" class="btn-close" data-bs-dismiss="alert" aria-label="Close"></button>
-        </div>
-    }
-    
-    @if (Model.UrunFiyatlari.Count == 0)
-    {
-        <div class="alert alert-info">
-            @if (Model.SelectedUrunID.HasValue)
-            {
-                <p>Bu ürüne ait kayıtlı fiyat bulunamadı.</p>
-            }
-            else
-            {
-                <p>Sistemde kayıtlı ürün fiyatı bulunamadı.</p>
-            }
-        </div>
-    }
-    else
-    {
-        <div class="card">
-            <div class="card-body">
                 <div class="table-responsive">
-                    <table class="table table-striped table-hover">
-                        <thead>
+                    <table class="table table-bordered table-hover" id="fiyatlarTablosu">
+                        <thead class="table-light">
                             <tr>
                                 <th>Ürün Kodu</th>
                                 <th>Ürün Adı</th>
@@ -73,9 +81,9 @@
                                     <td>@item.UrunKodu</td>
                                     <td>@item.UrunAdi</td>
                                     <td>@item.FiyatTipiAdi</td>
-                                    <td>@item.Fiyat.ToString("N2") ₺</td>
+                                    <td class="text-end">@item.Fiyat.ToString("N2") ₺</td>
                                     <td>@item.GecerliTarih.ToString("dd.MM.yyyy")</td>
-                                    <td>
+                                    <td class="text-center">
                                         @if (item.Aktif)
                                         {
                                             <span class="badge bg-success">Aktif</span>
@@ -85,14 +93,14 @@
                                             <span class="badge bg-danger">Pasif</span>
                                         }
                                     </td>
-                                    <td>
-                                        <div class="btn-group">
-                                            <a asp-action="Edit" asp-route-id="@item.FiyatID" class="btn btn-sm btn-primary">
-                                                <i class="bi bi-pencil"></i>
-                                            </a>
-                                            <a asp-action="Delete" asp-route-id="@item.FiyatID" class="btn btn-sm btn-danger">
-                                                <i class="bi bi-trash"></i>
-                                            </a>
+                                    <td class="text-center">
+                                        <div class="btn-group" role="group">
+                                            <button type="button" class="btn btn-sm btn-info btn-edit-fiyat" data-id="@item.FiyatID">
+                                                <i class="fas fa-edit"></i>
+                                            </button>
+                                            <button type="button" class="btn btn-sm btn-danger btn-delete-fiyat" data-id="@item.FiyatID" data-urun="@item.UrunAdi" data-fiyat="@item.Fiyat.ToString("N2") ₺">
+                                                <i class="fas fa-trash"></i>
+                                            </button>
                                         </div>
                                     </td>
                                 </tr>
@@ -100,26 +108,275 @@
                         </tbody>
                     </table>
                 </div>
+            }
+        </div>
+    </div>
+</div>
+
+<!-- Yeni Fiyat Ekle Modal -->
+<div class="modal fade" id="createFiyatModal" tabindex="-1" aria-labelledby="createFiyatModalLabel" aria-hidden="true">
+    <div class="modal-dialog">
+        <div class="modal-content">
+            <div class="modal-header bg-primary text-white">
+                <h5 class="modal-title" id="createFiyatModalLabel">Yeni Fiyat Ekle</h5>
+                <button type="button" class="btn-close btn-close-white" data-bs-dismiss="modal" aria-label="Close"></button>
+            </div>
+            <div id="fiyatCreateModalContent">
+                <!-- İçerik AJAX ile doldurulacak -->
+                <div class="d-flex justify-content-center p-5">
+                    <div class="spinner-border text-primary" role="status">
+                        <span class="visually-hidden">Yükleniyor...</span>
+                    </div>
+                </div>
             </div>
         </div>
-    }
+    </div>
+</div>
+
+<!-- Fiyat Düzenleme Modal -->
+<div class="modal fade" id="editFiyatModal" tabindex="-1" aria-labelledby="editFiyatModalLabel" aria-hidden="true">
+    <div class="modal-dialog">
+        <div class="modal-content">
+            <div class="modal-header bg-primary text-white">
+                <h5 class="modal-title" id="editFiyatModalLabel">Fiyat Düzenle</h5>
+                <button type="button" class="btn-close btn-close-white" data-bs-dismiss="modal" aria-label="Close"></button>
+            </div>
+            <div id="editFiyatModalContent">
+                <!-- İçerik AJAX ile yüklenecek -->
+                <div class="modal-body text-center">
+                    <div class="spinner-border text-primary" role="status">
+                        <span class="visually-hidden">Yükleniyor...</span>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+
+<!-- Fiyat Silme Modal -->
+<div class="modal fade" id="deleteFiyatModal" tabindex="-1" aria-labelledby="deleteFiyatModalLabel" aria-hidden="true">
+    <div class="modal-dialog">
+        <div class="modal-content">
+            <div class="modal-header bg-danger text-white">
+                <h5 class="modal-title" id="deleteFiyatModalLabel">Fiyat Sil</h5>
+                <button type="button" class="btn-close btn-close-white" data-bs-dismiss="modal" aria-label="Close"></button>
+            </div>
+            <div class="modal-body">
+                <div class="alert alert-danger">
+                    <i class="fas fa-exclamation-triangle"></i> Dikkat! Bu fiyatı silmek istediğinize emin misiniz?
+                </div>
+                <p>Silmek istediğiniz fiyat: <strong id="deleteFiyatInfo"></strong></p>
+                <input type="hidden" id="deleteFiyatID" value="" />
+            </div>
+            <div class="modal-footer">
+                <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">İptal</button>
+                <button type="button" class="btn btn-danger" id="confirmDeleteFiyat">
+                    <i class="fas fa-trash"></i> Sil
+                </button>
+            </div>
+        </div>
+    </div>
 </div>
 
 @section Scripts {
     <script>
         $(document).ready(function() {
-            $('.table').DataTable({
+            // DataTable uyarılarını gizle
+            $.fn.dataTable.ext.errMode = 'none';
+            
+            // DataTable başlat
+            $('#fiyatlarTablosu').DataTable({
                 language: {
-                    url: '/lib/datatables/tr.json'
+                    url: '/js/dataTables.turkish.json'
                 },
                 ordering: true,
                 paging: true,
                 responsive: true,
                 columnDefs: [
-                    { responsivePriority: 1, targets: 0 },
-                    { responsivePriority: 2, targets: 1 },
-                    { responsivePriority: 3, targets: 3 }
+                    { responsivePriority: 1, targets: 1 }, // Ürün Adı
+                    { responsivePriority: 2, targets: 2 }, // Fiyat Tipi
+                    { responsivePriority: 3, targets: 3 }, // Fiyat
+                    { orderable: false, targets: -1 } // Son sütun (İşlemler) sıralanamaz
                 ]
+            });
+            
+            // Yeni fiyat ekleme modal
+            $('#createFiyatModal').on('shown.bs.modal', function() {
+                $.get('@Url.Action("Create")@(Model.SelectedUrunID.HasValue ? "?urunId=" + Model.SelectedUrunID : "")', function(data) {
+                    $('#fiyatCreateModalContent').html(data);
+                    
+                    // Form submit AJAX işlemini ekle
+                    $(document).on('submit', '#createFiyatForm', function(e) {
+                        e.preventDefault();
+                        
+                        var formData = new FormData(this);
+                        
+                        $.ajax({
+                            url: $(this).attr('action'),
+                            type: 'POST',
+                            data: formData,
+                            contentType: false,
+                            processData: false,
+                            success: function(response) {
+                                if (response.success) {
+                                    // Başarılı olursa Sweet Alert göster
+                                    Swal.fire({
+                                        icon: 'success',
+                                        title: 'Başarılı!',
+                                        text: response.message || 'Fiyat başarıyla oluşturuldu.',
+                                        confirmButtonText: 'Tamam'
+                                    }).then((result) => {
+                                        // Modal'ı kapat ve sayfayı yenile
+                                        $('#createFiyatModal').modal('hide');
+                                        location.reload();
+                                    });
+                                } else {
+                                    // Başarısız olursa Sweet Alert göster
+                                    Swal.fire({
+                                        icon: 'error',
+                                        title: 'Hata!',
+                                        text: response.message || 'Fiyat oluşturulurken bir hata oluştu.',
+                                        confirmButtonText: 'Tamam'
+                                    });
+                                }
+                            },
+                            error: function(xhr, status, error) {
+                                // AJAX hatası olursa Sweet Alert göster
+                                Swal.fire({
+                                    icon: 'error',
+                                    title: 'Hata!',
+                                    text: 'Fiyat oluşturulurken bir hata oluştu. Lütfen tekrar deneyin.',
+                                    confirmButtonText: 'Tamam'
+                                });
+                            }
+                        });
+                    });
+                });
+            });
+            
+            // Fiyat düzenleme modal
+            $(document).on('click', '.btn-edit-fiyat', function() {
+                var id = $(this).data('id');
+                
+                // Modal içeriğini yükle
+                $.ajax({
+                    url: '@Url.Action("Edit")/' + id,
+                    type: 'GET',
+                    headers: {
+                        'X-Requested-With': 'XMLHttpRequest'
+                    },
+                    success: function(data) {
+                        $('#editFiyatModalContent').html(data);
+                        $('#editFiyatModal').modal('show');
+                        
+                        // Form submit AJAX işlemini ekle
+                        $(document).on('submit', '#editFiyatForm', function(e) {
+                            e.preventDefault();
+                            
+                            var formData = new FormData(this);
+                            
+                            $.ajax({
+                                url: $(this).attr('action'),
+                                type: 'POST',
+                                data: formData,
+                                contentType: false,
+                                processData: false,
+                                success: function(response) {
+                                    if (response.success) {
+                                        // Başarılı olursa Sweet Alert göster
+                                        Swal.fire({
+                                            icon: 'success',
+                                            title: 'Başarılı!',
+                                            text: response.message || 'Fiyat başarıyla güncellendi.',
+                                            confirmButtonText: 'Tamam'
+                                        }).then((result) => {
+                                            // Modal'ı kapat ve sayfayı yenile
+                                            $('#editFiyatModal').modal('hide');
+                                            location.reload();
+                                        });
+                                    } else {
+                                        // Başarısız olursa Sweet Alert göster
+                                        Swal.fire({
+                                            icon: 'error',
+                                            title: 'Hata!',
+                                            text: response.message || 'Fiyat güncellenirken bir hata oluştu.',
+                                            confirmButtonText: 'Tamam'
+                                        });
+                                    }
+                                },
+                                error: function(xhr, status, error) {
+                                    // AJAX hatası olursa Sweet Alert göster
+                                    Swal.fire({
+                                        icon: 'error',
+                                        title: 'Hata!',
+                                        text: 'Fiyat güncellenirken bir hata oluştu. Lütfen tekrar deneyin.',
+                                        confirmButtonText: 'Tamam'
+                                    });
+                                }
+                            });
+                        });
+                    },
+                    error: function(xhr, status, error) {
+                        Swal.fire({
+                            icon: 'error',
+                            title: 'Hata!',
+                            text: 'Fiyat bilgileri yüklenirken bir hata oluştu.',
+                            confirmButtonText: 'Tamam'
+                        });
+                    }
+                });
+            });
+            
+            // Fiyat silme modal'ını aç
+            $(document).on('click', '.btn-delete-fiyat', function() {
+                var fiyatID = $(this).data('id');
+                var urunAdi = $(this).data('urun');
+                var fiyatBilgisi = $(this).data('fiyat');
+                
+                $('#deleteFiyatID').val(fiyatID);
+                $('#deleteFiyatInfo').text(urunAdi + ' - ' + fiyatBilgisi);
+                $('#deleteFiyatModal').modal('show');
+            });
+            
+            // Fiyat silme işlemini gerçekleştir
+            $('#confirmDeleteFiyat').on('click', function() {
+                var fiyatID = $('#deleteFiyatID').val();
+                
+                $.ajax({
+                    url: '@Url.Action("Delete")/' + fiyatID,
+                    type: 'POST',
+                    headers: {
+                        'RequestVerificationToken': $('input[name="__RequestVerificationToken"]').val()
+                    },
+                    success: function(response) {
+                        if (response.success) {
+                            Swal.fire({
+                                icon: 'success',
+                                title: 'Başarılı!',
+                                text: response.message || 'Fiyat başarıyla silindi.',
+                                confirmButtonText: 'Tamam'
+                            }).then(() => {
+                                $('#deleteFiyatModal').modal('hide');
+                                location.reload();
+                            });
+                        } else {
+                            Swal.fire({
+                                icon: 'error',
+                                title: 'Hata!',
+                                text: response.message || 'Fiyat silinirken bir hata oluştu.',
+                                confirmButtonText: 'Tamam'
+                            });
+                        }
+                    },
+                    error: function() {
+                        Swal.fire({
+                            icon: 'error',
+                            title: 'Hata!',
+                            text: 'İşlem sırasında bir hata oluştu.',
+                            confirmButtonText: 'Tamam'
+                        });
+                    }
+                });
             });
         });
     </script>

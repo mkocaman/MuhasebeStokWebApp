@@ -7,6 +7,7 @@ namespace MuhasebeStokWebApp.Data.Entities.DovizModulu
     /// <summary>
     /// Kur Değeri entity sınıfı
     /// </summary>
+    [Table("DovizModuluKurDegerleri")]
     public class KurDegeri
     {
         /// <summary>

@@ -244,7 +244,7 @@ namespace MuhasebeStokWebApp.Services
                 await _unitOfWork.StokHareketRepository.AddAsync(stokHareket);
 
                 // Ürün stok miktarını güncelle
-                urun.StokMiktari += viewModel.Miktar;
+                urun.StokMiktar += viewModel.Miktar;
                 urun.GuncellemeTarihi = DateTime.Now;
                 
                 _unitOfWork.UrunRepository.Update(urun);
@@ -299,7 +299,7 @@ namespace MuhasebeStokWebApp.Services
                 await _unitOfWork.StokHareketRepository.AddAsync(stokHareket);
 
                 // Ürün stok miktarını güncelle
-                urun.StokMiktari -= viewModel.Miktar;
+                urun.StokMiktar -= viewModel.Miktar;
                 urun.GuncellemeTarihi = DateTime.Now;
                 
                 _unitOfWork.UrunRepository.Update(urun);
@@ -372,7 +372,7 @@ namespace MuhasebeStokWebApp.Services
                 await _unitOfWork.StokHareketRepository.AddAsync(girisHareket);
 
                 // Ürün stok miktarını güncelle
-                urun.StokMiktari += viewModel.Miktar;
+                urun.StokMiktar += viewModel.Miktar;
                 urun.GuncellemeTarihi = DateTime.Now;
                 
                 _unitOfWork.UrunRepository.Update(urun);

@@ -23,7 +23,8 @@ namespace MuhasebeStokWebApp.Data.Entities
         /// <summary>
         /// Log kaydının benzersiz GUID değeri
         /// </summary>
-        public Guid LogID { get; set; } = Guid.NewGuid();
+        [Column(TypeName = "nvarchar(max)")]
+        public string LogID { get; set; } = Guid.NewGuid().ToString();
         
         /// <summary>
         /// Log türü (Bilgi, Uyarı, Hata, Kritik, vb.)
@@ -105,12 +106,13 @@ namespace MuhasebeStokWebApp.Data.Entities
         /// İşlem yapılan kaydın adı
         /// </summary>
         [StringLength(250)]
-        public string KayitAdi { get; set; } = string.Empty;
+        public string? KayitAdi { get; set; }
         
         /// <summary>
         /// İşlem yapılan kaydın ID'si
         /// </summary>
-        public Guid? KayitID { get; set; }
+        [Column(TypeName = "nvarchar(max)")]
+        public string? KayitID { get; set; }
         
         /// <summary>
         /// İşlemi yapan kullanıcının ID'si (IdentityUser ID)

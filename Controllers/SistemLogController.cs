@@ -42,8 +42,7 @@ namespace MuhasebeStokWebApp.Controllers
         {
             try 
             {
-                // SistemLog için özel menü kontrolü
-                await _logService.LogInfoAsync("SistemLogController.Index", "SistemLog sayfası açılıyor");
+                // SistemLog için özel menü kontrolü (log kaydı oluşturan satır kaldırıldı)
                 
                 ViewBag.SearchString = searchString;
                 ViewBag.IslemTuru = islemTuru;
@@ -65,7 +64,7 @@ namespace MuhasebeStokWebApp.Controllers
                 if (!string.IsNullOrEmpty(searchString))
                 {
                     query = query.Where(l => 
-                        l.KayitAdi.Contains(searchString) || 
+                        (l.KayitAdi != null && l.KayitAdi.Contains(searchString)) || 
                         l.Aciklama.Contains(searchString) || 
                         l.KullaniciAdi.Contains(searchString) ||
                         l.TabloAdi.Contains(searchString));
@@ -120,16 +119,22 @@ namespace MuhasebeStokWebApp.Controllers
         }
 
         // GET: SistemLog/Details/5
-        public async Task<IActionResult> Details(Guid id)
+        public async Task<IActionResult> Details(int id)
         {
             try
             {
                 var log = await _context.SistemLoglar
-                    .FirstOrDefaultAsync(l => l.LogID == id);
+                    .FirstOrDefaultAsync(l => l.Id == id);
                 
                 if (log == null)
                 {
                     return NotFound();
+                }
+                
+                // AJAX isteği için modal içeriği döndür
+                if (Request.Headers["X-Requested-With"] == "XMLHttpRequest")
+                {
+                    return PartialView("_DetailsPartial", log);
                 }
                 
                 return View(log);
@@ -142,27 +147,32 @@ namespace MuhasebeStokWebApp.Controllers
         }
         
         // GET: SistemLog/CariLogs
-        public async Task<IActionResult> CariLogs(Guid cariId)
+        public async Task<IActionResult> CariLogs(string cariId)
         {
             try
             {
-                var cari = await _context.Cariler.FindAsync(cariId);
-                
-                if (cari == null)
+                if (Guid.TryParse(cariId, out Guid cariGuid))
                 {
-                    return NotFound();
+                    var cari = await _context.Cariler.FindAsync(cariGuid);
+                    
+                    if (cari == null)
+                    {
+                        return NotFound();
+                    }
+                    
+                    // KayitID string olarak saklandığı için string karşılaştırması yapıyoruz
+                    var logs = await _context.SistemLoglar
+                        .Where(l => l.KayitID == cariId) 
+                        .OrderByDescending(l => l.IslemTarihi)
+                        .ToListAsync();
+                    
+                    ViewBag.CariAdi = cari.Ad;
+                    ViewBag.CariID = cari.CariID;
+                    
+                    return View(logs);
                 }
                 
-                // KayitID'yi Guid olarak kullanarak sorgulama yapalım
-                var logs = await _context.SistemLoglar
-                    .Where(l => l.KayitID == cariId)
-                    .OrderByDescending(l => l.IslemTarihi)
-                    .ToListAsync();
-                
-                ViewBag.CariAdi = cari.Ad;
-                ViewBag.CariID = cari.CariID;
-                
-                return View(logs);
+                return NotFound();
             }
             catch (Exception ex)
             {

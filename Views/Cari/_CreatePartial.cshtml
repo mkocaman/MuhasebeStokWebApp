@@ -1,59 +1,147 @@
 @model MuhasebeStokWebApp.ViewModels.Cari.CariCreateViewModel
 
 <div class="modal-header">
-    <h5 class="modal-title">Yeni Cari Ekle</h5>
+    <h5 class="modal-title" id="cariModalLabel">Yeni Cari Ekle</h5>
     <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
 </div>
-<form id="createCariForm" method="post" asp-action="Create" asp-controller="Cari">
+
+<form id="createCariForm" asp-controller="Cari" asp-action="Create" method="post">
     <div class="modal-body">
+        <div id="createFormAlert" class="alert alert-danger d-none" role="alert"></div>
         <div asp-validation-summary="ModelOnly" class="text-danger"></div>
-        <div class="row">
+
+        <div class="row mb-3">
             <div class="col-md-6">
-                <div class="form-group mb-3">
-                    <label asp-for="Ad" class="control-label">Cari Adı</label>
+                <div class="mb-3">
+                    <label asp-for="CariKodu" class="form-label">Cari Kodu</label>
+                    <input asp-for="CariKodu" class="form-control" />
+                    <span asp-validation-for="CariKodu" class="text-danger"></span>
+                </div>
+
+                <div class="mb-3">
+                    <label asp-for="Ad" class="form-label">Cari Adı</label>
                     <input asp-for="Ad" class="form-control" />
                     <span asp-validation-for="Ad" class="text-danger"></span>
                 </div>
-                <div class="form-group mb-3">
-                    <label asp-for="VergiNo" class="control-label">Vergi No</label>
+
+                <div class="mb-3">
+                    <label asp-for="CariUnvani" class="form-label">Ünvan</label>
+                    <input asp-for="CariUnvani" class="form-control" />
+                    <span asp-validation-for="CariUnvani" class="text-danger"></span>
+                </div>
+
+                <div class="mb-3">
+                    <label asp-for="CariTipi" class="form-label">Cari Tipi</label>
+                    <select asp-for="CariTipi" class="form-select">
+                        <option value="Müşteri">Müşteri</option>
+                        <option value="Tedarikçi">Tedarikçi</option>
+                        <option value="MüşteriVeTedarikçi">Müşteri ve Tedarikçi</option>
+                    </select>
+                    <span asp-validation-for="CariTipi" class="text-danger"></span>
+                </div>
+
+                <div class="mb-3">
+                    <label asp-for="VergiNo" class="form-label">Vergi Numarası</label>
                     <input asp-for="VergiNo" class="form-control" />
                     <span asp-validation-for="VergiNo" class="text-danger"></span>
                 </div>
-                <div class="form-group mb-3">
-                    <label asp-for="Telefon" class="control-label">Telefon</label>
+
+                <div class="mb-3">
+                    <label asp-for="VergiDairesi" class="form-label">Vergi Dairesi</label>
+                    <input asp-for="VergiDairesi" class="form-control" />
+                    <span asp-validation-for="VergiDairesi" class="text-danger"></span>
+                </div>
+            </div>
+
+            <div class="col-md-6">
+                <div class="mb-3">
+                    <label asp-for="Telefon" class="form-label">Telefon</label>
                     <input asp-for="Telefon" class="form-control" />
                     <span asp-validation-for="Telefon" class="text-danger"></span>
                 </div>
-                <div class="form-group mb-3">
-                    <label asp-for="Email" class="control-label">Email</label>
+
+                <div class="mb-3">
+                    <label asp-for="Email" class="form-label">E-posta</label>
                     <input asp-for="Email" class="form-control" />
                     <span asp-validation-for="Email" class="text-danger"></span>
                 </div>
-            </div>
-            <div class="col-md-6">
-                <div class="form-group mb-3">
-                    <label asp-for="Yetkili" class="control-label">Yetkili</label>
+
+                <div class="mb-3">
+                    <label asp-for="WebSitesi" class="form-label">Web Sitesi</label>
+                    <input asp-for="WebSitesi" class="form-control" />
+                    <span asp-validation-for="WebSitesi" class="text-danger"></span>
+                </div>
+
+                <div class="mb-3">
+                    <label asp-for="Yetkili" class="form-label">Yetkili</label>
                     <input asp-for="Yetkili" class="form-control" />
                     <span asp-validation-for="Yetkili" class="text-danger"></span>
                 </div>
-                <div class="form-group mb-3">
-                    <label asp-for="BaslangicBakiye" class="control-label">Bakiye</label>
-                    <input asp-for="BaslangicBakiye" type="number" step="0.01" class="form-control" />
+
+                <div class="mb-3">
+                    <label asp-for="BaslangicBakiye" class="form-label">Başlangıç Bakiyesi</label>
+                    <input asp-for="BaslangicBakiye" class="form-control" value="0.00" />
                     <span asp-validation-for="BaslangicBakiye" class="text-danger"></span>
                 </div>
-                <div class="form-group mb-3">
-                    <label asp-for="Adres" class="control-label">Adres</label>
-                    <textarea asp-for="Adres" class="form-control" rows="2"></textarea>
+
+                <div class="mb-3">
+                    <label asp-for="VarsayilanParaBirimiId" class="form-label">Para Birimi</label>
+                    <select asp-for="VarsayilanParaBirimiId" class="form-select">
+                        <option value="">Para Birimi Seçiniz</option>
+                        @foreach (var paraBirimi in ViewBag.ParaBirimleri)
+                        {
+                            <option value="@paraBirimi.ParaBirimiID">@paraBirimi.Ad (@paraBirimi.Sembol)</option>
+                        }
+                    </select>
+                    <span asp-validation-for="VarsayilanParaBirimiId" class="text-danger"></span>
+                </div>
+            </div>
+        </div>
+
+        <div class="row mb-3">
+            <div class="col-md-6">
+                <div class="mb-3">
+                    <label asp-for="Ulke" class="form-label">Ülke</label>
+                    <input asp-for="Ulke" class="form-control" value="Türkiye" />
+                    <span asp-validation-for="Ulke" class="text-danger"></span>
+                </div>
+
+                <div class="mb-3">
+                    <label asp-for="Il" class="form-label">İl</label>
+                    <input asp-for="Il" class="form-control" />
+                    <span asp-validation-for="Il" class="text-danger"></span>
+                </div>
+
+                <div class="mb-3">
+                    <label asp-for="Ilce" class="form-label">İlçe</label>
+                    <input asp-for="Ilce" class="form-control" />
+                    <span asp-validation-for="Ilce" class="text-danger"></span>
+                </div>
+
+                <div class="mb-3">
+                    <label asp-for="PostaKodu" class="form-label">Posta Kodu</label>
+                    <input asp-for="PostaKodu" class="form-control" />
+                    <span asp-validation-for="PostaKodu" class="text-danger"></span>
+                </div>
+            </div>
+
+            <div class="col-md-6">
+                <div class="mb-3">
+                    <label asp-for="Adres" class="form-label">Adres</label>
+                    <textarea asp-for="Adres" class="form-control" rows="4"></textarea>
                     <span asp-validation-for="Adres" class="text-danger"></span>
                 </div>
-                <div class="form-group mb-3">
-                    <label asp-for="Aciklama" class="control-label">Açıklama</label>
+
+                <div class="mb-3">
+                    <label asp-for="Aciklama" class="form-label">Açıklama</label>
                     <textarea asp-for="Aciklama" class="form-control" rows="2"></textarea>
                     <span asp-validation-for="Aciklama" class="text-danger"></span>
                 </div>
-                <div class="form-check mb-3">
-                    <input asp-for="Aktif" class="form-check-input" />
-                    <label asp-for="Aktif" class="form-check-label">Aktif</label>
+
+                <div class="mb-3">
+                    <label asp-for="Notlar" class="form-label">Notlar</label>
+                    <textarea asp-for="Notlar" class="form-control" rows="2"></textarea>
+                    <span asp-validation-for="Notlar" class="text-danger"></span>
                 </div>
             </div>
         </div>
@@ -65,98 +153,38 @@
 </form>
 
 <script>
-    $(document).ready(function () {
-        // Form validasyonunu aktif et
-        $.validator.unobtrusive.parse("#createCariForm");
-        
-        // AJAX form gönderimi
-        $("#createCariForm").submit(function (e) {
+    $(document).ready(function() {
+        $('#createCariForm').on('submit', function(e) {
             e.preventDefault();
             
-            if (!$(this).valid()) {
-                return false;
-            }
+            $('#createFormAlert').addClass('d-none');
             
-            // Form verilerini topla
             var formData = $(this).serialize();
             
-            // Butonu devre dışı bırak ve yükleniyor göster
-            var submitBtn = $(this).find('button[type="submit"]');
-            var originalText = submitBtn.text();
-            submitBtn.prop('disabled', true).html('<span class="spinner-border spinner-border-sm" role="status" aria-hidden="true"></span> Kaydediliyor...');
-            
             $.ajax({
-                url: $(this).attr("action"),
-                type: "POST",
+                url: '@Url.Action("Create", "Cari")',
+                type: 'POST',
                 data: formData,
-                success: function (response) {
-                    // JSON yanıtını SweetAlert2 ile göster
+                success: function(response) {
                     if (response.success) {
-                        // Başarılı ise bildirim göster ve sayfa yenile
-                        Swal.fire({
-                            title: 'Başarılı!',
-                            text: response.message || 'Cari başarıyla eklendi.',
-                            icon: 'success',
-                            confirmButtonText: 'Tamam'
-                        }).then(function() {
-                            // Modalı kapat
-                            $('#cariCreateModal').modal('hide');
-                            // Sayfayı yenile
+                        toastr.success(response.message);
+                        setTimeout(function() {
                             window.location.reload();
-                        });
+                        }, 1500);
                     } else {
-                        // Hata mesajını göster
-                        Swal.fire({
-                            title: 'Hata!',
-                            text: response.message || 'Cari eklenirken bir hata oluştu.',
-                            icon: 'error',
-                            confirmButtonText: 'Tamam'
-                        });
-                        
-                        // Hata mesajlarını göster (varsa)
-                        if (response.errors && response.errors.length > 0) {
-                            var errorList = '<ul>';
-                            $.each(response.errors, function(index, error) {
-                                errorList += '<li>' + error + '</li>';
-                            });
-                            errorList += '</ul>';
-                            
-                            $('.validation-summary-errors').html(errorList);
-                        }
+                        $('#createFormAlert').removeClass('d-none').text(response.message);
                     }
-                    
-                    // Butonu normal duruma getir
-                    submitBtn.prop('disabled', false).text(originalText);
                 },
-                error: function (xhr, status, error) {
-                    // Hata durumunda
-                    console.error(xhr.responseText);
+                error: function(xhr, status, error) {
+                    var errorMessage = 'Bir hata oluştu. Lütfen tüm alanları kontrol ediniz.';
                     
-                    // JSON yanıtını analiz etmeye çalış
-                    var errorMessage = 'İşlem sırasında beklenmeyen bir hata oluştu.';
-                    try {
-                        var jsonResponse = JSON.parse(xhr.responseText);
-                        if (jsonResponse && jsonResponse.message) {
-                            errorMessage = jsonResponse.message;
-                        }
-                    } catch (e) {
-                        // JSON parse hatası - varsayılan mesajı kullan
+                    if (xhr.responseJSON && xhr.responseJSON.errors) {
+                        errorMessage = Object.values(xhr.responseJSON.errors).flat().join('<br>');
                     }
                     
-                    // Hata mesajını göster
-                    Swal.fire({
-                        title: 'Hata!',
-                        text: errorMessage,
-                        icon: 'error',
-                        confirmButtonText: 'Tamam'
-                    });
-                    
-                    // Butonu normal duruma getir
-                    submitBtn.prop('disabled', false).text(originalText);
+                    $('#createFormAlert').removeClass('d-none').html(errorMessage);
                 }
             });
-            
-            return false;
         });
     });
 </script> 

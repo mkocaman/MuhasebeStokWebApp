@@ -83,7 +83,8 @@ namespace MuhasebeStokWebApp.Controllers
                     StokMiktar = dinamikStokMiktari,
                     Kategori = u.Kategori?.KategoriAdi ?? "Kategorisiz",
                     BirimID = (Guid?)(object)u.BirimID,
-                    KategoriID = u.KategoriID
+                    KategoriID = u.KategoriID,
+                    KritikStokSeviyesi = u.KritikStokSeviyesi // KritikStokSeviyesi'ni ürün nesnesinden al
                 });
             }
             
@@ -254,7 +255,7 @@ namespace MuhasebeStokWebApp.Controllers
             {
                 Tarih = DateTime.Now,
                 HareketTuru = StokHareketiTipi.Giris,
-                ParaBirimi = "TRY",
+                ParaBirimi = "USD",
                 DovizKuru = 1
             };
             
@@ -272,7 +273,7 @@ namespace MuhasebeStokWebApp.Controllers
                 orderBy: q => q.OrderBy(u => u.UrunAdi)
             );
             
-            viewModel.Urunler = new SelectList(urunler, "UrunID", "UrunAdi");
+            viewModel.Urunler = new SelectList(urunler, "UrunID", "UrunAdi").ToList();
             
             // Depoları getir
             var depolar = await _unitOfWork.Repository<Depo>().GetAsync(
@@ -280,7 +281,7 @@ namespace MuhasebeStokWebApp.Controllers
                 orderBy: q => q.OrderBy(d => d.DepoAdi)
             );
             
-            viewModel.Depolar = new SelectList(depolar, "DepoID", "DepoAdi");
+            viewModel.Depolar = new SelectList(depolar, "DepoID", "DepoAdi").ToList();
             
             // Birimleri getir
             var birimler = await _unitOfWork.Repository<Birim>().GetAsync(
@@ -288,7 +289,7 @@ namespace MuhasebeStokWebApp.Controllers
                 orderBy: q => q.OrderBy(b => b.BirimAdi)
             );
             
-            viewModel.Birimler = new SelectList(birimler, "BirimID", "BirimAdi");
+            viewModel.Birimler = new SelectList(birimler, "BirimID", "BirimAdi").ToList();
             
             // Ürün birim bilgilerini hazırla
             viewModel.UrunBirimBilgileri = new Dictionary<string, string>();
@@ -346,14 +347,14 @@ namespace MuhasebeStokWebApp.Controllers
 
                     // FIFO stok girişi yap
                     // Döviz kurunu al
-                    decimal kurDegeri = viewModel.DovizKuru;
+                    decimal kurDegeri = viewModel.DovizKuru ?? 1m;
                     if (kurDegeri <= 0)
                     {
                         // Hatalı kur değeri durumunda güncel kuru almaya çalış
                         try
                         {
                             // Kaynak para birimi ve dolar kuru ilişkisini belirle
-                            string paraBirimi = "TRY"; // Default para birimi
+                            string paraBirimi = "USD"; // Default para birimi
                             if (!string.IsNullOrEmpty(viewModel.ParaBirimi))
                             {
                                 paraBirimi = viewModel.ParaBirimi;
@@ -812,7 +813,7 @@ namespace MuhasebeStokWebApp.Controllers
             foreach (var urun in urunler)
             {
                 decimal maliyet = await _stokFifoService.GetOrtalamaMaliyet(urun.UrunID);
-                decimal maliyetTL = await _stokFifoService.GetOrtalamaMaliyet(urun.UrunID, "TRY");
+                decimal maliyetTL = await _stokFifoService.GetOrtalamaMaliyet(urun.UrunID, "USD");
                 
                 // Dinamik stok miktarını hesapla
                 decimal dinamikStokMiktari = await _stokService.GetDinamikStokMiktari(urun.UrunID);
@@ -1247,7 +1248,7 @@ namespace MuhasebeStokWebApp.Controllers
             ViewBag.Birimler = new SelectList(birimler, "BirimID", "BirimAdi");
             
             // Para birimleri için temel değerleri ayarla
-            ViewBag.ParaBirimleri = new List<string> { "TRY", "USD", "EUR", "UZS" };
+            ViewBag.ParaBirimleri = new List<string> { "TRY", "USD", "UZS" };
         }
 
         private async Task PrepareViewBagForStokSayim()
@@ -1260,7 +1261,7 @@ namespace MuhasebeStokWebApp.Controllers
             ViewBag.Depolar = new SelectList(depolar, "DepoID", "DepoAdi");
             
             // Para birimlerini getir
-            ViewBag.ParaBirimleri = new SelectList(new List<string> { "TRY", "USD", "EUR" });
+            ViewBag.ParaBirimleri = new SelectList(new List<string> { "TRY", "USD","UZS" });
         }
 
         private bool IsStokGirisi(StokHareket hareket)
@@ -1296,10 +1297,8 @@ namespace MuhasebeStokWebApp.Controllers
             {
                 case "USD":
                     return "$";
-                case "EUR":
-                    return "€";
                 case "TRY":
-                    return "₺";
+                    return "TL";
                 case "UZS":
                     return "so'm";
                 default:

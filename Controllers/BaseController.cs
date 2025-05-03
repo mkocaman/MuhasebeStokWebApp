@@ -818,9 +818,9 @@ namespace MuhasebeStokWebApp.Controllers
                     var user = await _userManager.FindByIdAsync(userIdStr);
                     if (user != null)
                     {
-                        viewModel.CurrentUserName = user.UserName;
-                        viewModel.CurrentUserFullName = $"{user.Name} {user.Surname}".Trim();
-                        viewModel.CurrentUserEmail = user.Email;
+                        viewModel.CurrentUserName = user.UserName ?? string.Empty;
+                        viewModel.CurrentUserFullName = $"{user.Ad ?? string.Empty} {user.Soyad ?? string.Empty}".Trim();
+                        viewModel.CurrentUserEmail = user.Email ?? string.Empty;
                         
                         if (_userManager != null)
                         {
@@ -844,6 +844,65 @@ namespace MuhasebeStokWebApp.Controllers
         protected virtual bool IsAjaxRequest()
         {
             return Request.Headers["X-Requested-With"] == "XMLHttpRequest";
+        }
+
+        protected virtual void PopulateCurrentUserInfo(BaseViewModel viewModel)
+        {
+            if (User.Identity.IsAuthenticated)
+            {
+                var user = _userManager.GetUserAsync(User).Result;
+                if (user != null)
+                {
+                    // Eğer BaseViewModel'de bu özellikler bulunmuyorsa, 
+                    // dinamik olarak property'lerin varlığını kontrol edip varsa değer atayalım
+                    var type = viewModel.GetType();
+                    
+                    // CurrentUserId
+                    var propertyCurrentUserId = type.GetProperty("CurrentUserId");
+                    if (propertyCurrentUserId != null)
+                    {
+                        propertyCurrentUserId.SetValue(viewModel, user.Id);
+                    }
+                    
+                    // CurrentUserName
+                    var propertyCurrentUserName = type.GetProperty("CurrentUserName");
+                    if (propertyCurrentUserName != null)
+                    {
+                        propertyCurrentUserName.SetValue(viewModel, user.UserName ?? string.Empty);
+                    }
+                    
+                    // CurrentUserFullName
+                    var propertyCurrentUserFullName = type.GetProperty("CurrentUserFullName");
+                    if (propertyCurrentUserFullName != null)
+                    {
+                        // ApplicationUser'da Ad ve Soyad özelliklerini kullan
+                        propertyCurrentUserFullName.SetValue(viewModel, $"{user.Ad ?? string.Empty} {user.Soyad ?? string.Empty}".Trim()); 
+                    }
+                    
+                    // CurrentUserEmail
+                    var propertyCurrentUserEmail = type.GetProperty("CurrentUserEmail");
+                    if (propertyCurrentUserEmail != null)
+                    {
+                        propertyCurrentUserEmail.SetValue(viewModel, user.Email ?? string.Empty);
+                    }
+                    
+                    // CurrentUserRoles
+                    var propertyCurrentUserRoles = type.GetProperty("CurrentUserRoles");
+                    if (propertyCurrentUserRoles != null)
+                    {
+                        var roles = _userManager.GetRolesAsync(user).Result;
+                        propertyCurrentUserRoles.SetValue(viewModel, roles);
+                    }
+                    
+                    // IsAdmin
+                    var propertyIsAdmin = type.GetProperty("IsAdmin");
+                    if (propertyIsAdmin != null)
+                    {
+                        var isAdmin = User.IsInRole("Admin");
+                        propertyIsAdmin.SetValue(viewModel, isAdmin);
+                    }
+                }
+            }
         }
     }
 } 

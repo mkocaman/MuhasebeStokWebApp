@@ -6,11 +6,11 @@
 
 <div class="container-fluid">
     <div class="card">
-        <div class="card-header bg-success text-white">
+        <div class="card-header bg-primary text-white">
             <div class="d-flex justify-content-between align-items-center">
                 <h4 class="mb-0"><i class="fas fa-boxes"></i> Stok Yönetimi</h4>
                 <div>
-                    <a asp-controller="StokGiris" asp-action="Create" class="btn btn-light">
+                    <a asp-controller="StokGiris" asp-action="Create" class="btn btn-success">
                         <i class="fas fa-arrow-down"></i> Stok Girişi
                     </a>
                     <a asp-controller="StokCikis" asp-action="Create" class="btn btn-light">
@@ -19,9 +19,9 @@
                     <a asp-controller="StokTransfer" asp-action="Create" class="btn btn-light">
                         <i class="fas fa-exchange-alt"></i> Stok Transferi
                     </a>
-                    <a href="#" class="btn btn-warning" id="excelExportBtn">
+                    <button type="button" class="btn btn-warning" id="excelExportBtn">
                         <i class="fas fa-file-export"></i> Excel'e Aktar
-                    </a>
+                    </button>
                 </div>
             </div>
         </div>
@@ -92,16 +92,16 @@
             </form>
 
             <!-- Stok Sekmeleri -->
-            <ul class="nav nav-tabs" id="stokTabs" role="tablist">
+            <ul class="nav nav-tabs mb-3" id="stokTabs" role="tablist">
                 <li class="nav-item" role="presentation">
-                    <button class="nav-link active" id="tum-stoklar-tab" data-bs-toggle="tab" data-bs-target="#tum-stoklar" type="button" role="tab" aria-controls="tum-stoklar" aria-selected="true">
+                    <a class="nav-link active" id="tum-stoklar-tab" data-bs-toggle="tab" data-bs-target="#tum-stoklar" type="button" role="tab" aria-controls="tum-stoklar" aria-selected="true">
                         <i class="fas fa-boxes text-success"></i> Tüm Stoklar
-                    </button>
+                    </a>
                 </li>
                 <li class="nav-item" role="presentation">
-                    <button class="nav-link" id="kritik-stoklar-tab" data-bs-toggle="tab" data-bs-target="#kritik-stoklar" type="button" role="tab" aria-controls="kritik-stoklar" aria-selected="false">
+                    <a class="nav-link" id="kritik-stoklar-tab" data-bs-toggle="tab" data-bs-target="#kritik-stoklar" type="button" role="tab" aria-controls="kritik-stoklar" aria-selected="false">
                         <i class="fas fa-exclamation-triangle text-danger"></i> Kritik Stoklar
-                    </button>
+                    </a>
                 </li>
             </ul>
             
@@ -109,9 +109,9 @@
             <div class="tab-content" id="stokTabsContent">
                 <!-- Tüm Stoklar Sekmesi -->
                 <div class="tab-pane fade show active" id="tum-stoklar" role="tabpanel" aria-labelledby="tum-stoklar-tab">
-                    <div class="table-responsive mt-3">
+                    <div class="table-responsive">
                         <table class="table table-bordered table-hover" id="tumStoklarTablosu">
-                            <thead class="table-success">
+                            <thead class="table-light">
                                 <tr>
                                     <th>Ürün Kodu</th>
                                     <th>Ürün Adı</th>
@@ -133,7 +133,7 @@
                                         <td>@item.DepoAdi</td>
                                         <td>@item.Birim</td>
                                         <td class="text-end">@item.StokMiktar.ToString("N2") @item.Birim</td>
-                                        <td>
+                                        <td class="text-center">
                                             @if (item.StokMiktar <= item.KritikStokSeviyesi)
                                             {
                                                 <span class="badge bg-danger">Kritik</span>
@@ -147,8 +147,8 @@
                                                 <span class="badge bg-success">Normal</span>
                                             }
                                         </td>
-                                        <td>
-                                            <div class="btn-group">
+                                        <td class="text-center">
+                                            <div class="btn-group" role="group">
                                                 <a asp-action="Hareketler" asp-route-id="@item.UrunID" class="btn btn-sm btn-info" title="Stok Hareketleri">
                                                     <i class="fas fa-history"></i>
                                                 </a>
@@ -158,7 +158,7 @@
                                                 <a asp-controller="StokCikis" asp-action="Create" asp-route-urunId="@item.UrunID" class="btn btn-sm btn-danger" title="Stok Çıkışı">
                                                     <i class="fas fa-arrow-up"></i>
                                                 </a>
-                                                <a asp-controller="Urun" asp-action="Details" asp-route-id="@item.UrunID" class="btn btn-sm btn-secondary" title="Ürün Detayları">
+                                                <a asp-controller="Urun" asp-action="Details" asp-route-id="@item.UrunID" class="btn btn-sm btn-primary" title="Ürün Detayları">
                                                     <i class="fas fa-box-open"></i>
                                                 </a>
                                             </div>
@@ -172,9 +172,9 @@
                 
                 <!-- Kritik Stoklar Sekmesi -->
                 <div class="tab-pane fade" id="kritik-stoklar" role="tabpanel" aria-labelledby="kritik-stoklar-tab">
-                    <div class="table-responsive mt-3">
+                    <div class="table-responsive">
                         <table class="table table-bordered table-hover" id="kritikStoklarTablosu">
-                            <thead class="table-danger">
+                            <thead class="table-light">
                                 <tr>
                                     <th>Ürün Kodu</th>
                                     <th>Ürün Adı</th>
@@ -197,16 +197,16 @@
                                         <td>@item.Birim</td>
                                         <td class="text-end text-danger fw-bold">@item.StokMiktar.ToString("N2") @item.Birim</td>
                                         <td class="text-end">@item.KritikStokSeviyesi.ToString("N2") @item.Birim</td>
-                                        <td>
-                                            <div class="btn-group">
-                                                <a asp-controller="StokGiris" asp-action="Create" asp-route-urunId="@item.UrunID" class="btn btn-sm btn-success" title="Acil Stok Girişi">
+                                        <td class="text-center">
+                                            <div class="btn-group" role="group">
+                                                <a asp-controller="StokGiris" asp-action="Create" asp-route-urunId="@item.UrunID" class="btn btn-sm btn-success" title="Stok Girişi">
                                                     <i class="fas fa-arrow-down"></i>
                                                 </a>
+                                                <button type="button" class="btn btn-sm btn-warning open-alarm-modal" data-id="@item.UrunID" data-urun="@item.UrunAdi" data-miktar="@item.StokMiktar.ToString("N2")" data-birim="@item.Birim">
+                                                    <i class="fas fa-bell"></i>
+                                                </button>
                                                 <a asp-action="Hareketler" asp-route-id="@item.UrunID" class="btn btn-sm btn-info" title="Stok Hareketleri">
                                                     <i class="fas fa-history"></i>
-                                                </a>
-                                                <a asp-controller="Urun" asp-action="Details" asp-route-id="@item.UrunID" class="btn btn-sm btn-secondary" title="Ürün Detayları">
-                                                    <i class="fas fa-box-open"></i>
                                                 </a>
                                             </div>
                                         </td>
@@ -221,45 +221,217 @@
     </div>
 </div>
 
+<!-- Stok Bildirim Modal -->
+<div class="modal fade" id="stokBildirimModal" tabindex="-1" aria-labelledby="stokBildirimModalLabel" aria-hidden="true">
+    <div class="modal-dialog">
+        <div class="modal-content">
+            <div class="modal-header bg-warning text-white">
+                <h5 class="modal-title" id="stokBildirimModalLabel">Stok Bildirim Oluştur</h5>
+                <button type="button" class="btn-close btn-close-white" data-bs-dismiss="modal" aria-label="Close"></button>
+            </div>
+            <div class="modal-body">
+                <div class="alert alert-warning">
+                    <i class="fas fa-exclamation-triangle"></i> <span id="urunBilgisi"></span> ürünü kritik stok seviyesinin altında!
+                </div>
+                <form id="stokBildirimForm">
+                    <div class="mb-3">
+                        <label for="bildirimNotu" class="form-label">Bildirim Notu</label>
+                        <textarea class="form-control" id="bildirimNotu" rows="3" placeholder="Bu ürünün acilen tedarik edilmesi gerekiyor..."></textarea>
+                    </div>
+                    <div class="mb-3">
+                        <label class="form-label">Bildirim Alıcıları</label>
+                        <div class="form-check">
+                            <input class="form-check-input" type="checkbox" value="satinalma" id="satinalmaCheckbox" checked>
+                            <label class="form-check-label" for="satinalmaCheckbox">
+                                Satın Alma Departmanı
+                            </label>
+                        </div>
+                        <div class="form-check">
+                            <input class="form-check-input" type="checkbox" value="yonetim" id="yonetimCheckbox">
+                            <label class="form-check-label" for="yonetimCheckbox">
+                                Yönetim
+                            </label>
+                        </div>
+                        <div class="form-check">
+                            <input class="form-check-input" type="checkbox" value="depo" id="depoCheckbox">
+                            <label class="form-check-label" for="depoCheckbox">
+                                Depo Sorumlusu
+                            </label>
+                        </div>
+                    </div>
+                    <input type="hidden" id="bildirimdekiUrunID" value="" />
+                </form>
+            </div>
+            <div class="modal-footer">
+                <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">İptal</button>
+                <button type="button" class="btn btn-warning" id="submitStokBildirim">
+                    <i class="fas fa-paper-plane"></i> Bildirimi Gönder
+                </button>
+            </div>
+        </div>
+    </div>
+</div>
+
+<!-- Stok Hareket Detay Modal -->
+<div class="modal fade" id="stokHareketDetayModal" tabindex="-1" aria-labelledby="stokHareketDetayModalLabel" aria-hidden="true">
+    <div class="modal-dialog modal-lg">
+        <div class="modal-content">
+            <div class="modal-header bg-primary text-white">
+                <h5 class="modal-title" id="stokHareketDetayModalLabel">Stok Hareketi Detayları</h5>
+                <button type="button" class="btn-close btn-close-white" data-bs-dismiss="modal" aria-label="Close"></button>
+            </div>
+            <div id="stokHareketDetayModalContent">
+                <!-- İçerik AJAX ile yüklenecek -->
+                <div class="modal-body text-center">
+                    <div class="spinner-border text-primary" role="status">
+                        <span class="visually-hidden">Yükleniyor...</span>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+
 @section Scripts {
     <script>
         $(document).ready(function() {
-            // DataTables başlatma
-            $('#tumStoklarTablosu').DataTable({
+            // DataTable uyarılarını gizle
+            $.fn.dataTable.ext.errMode = 'none';
+            
+            // Tüm stoklar tablosunu başlat
+            var tumStoklarTable = $('#tumStoklarTablosu').DataTable({
                 language: {
-                    url: '//cdn.datatables.net/plug-ins/1.13.7/i18n/tr.json'
+                    url: '/js/dataTables.turkish.json'
                 },
                 responsive: true,
-                retrieve: true,
-                order: [[1, 'asc']] // Ürün adına göre artan sıralama
+                order: [[5, 'asc']], // Stok miktarına göre sırala
+                columnDefs: [
+                    { responsivePriority: 1, targets: 1 }, // Ürün adı
+                    { responsivePriority: 2, targets: 5 }, // Stok miktarı
+                    { responsivePriority: 3, targets: 6 }, // Durum
+                    { orderable: false, targets: -1 } // Son sütun (İşlemler)
+                ]
             });
             
-            $('#kritikStoklarTablosu').DataTable({
+            // Kritik stoklar tablosunu başlat
+            var kritikStoklarTable = $('#kritikStoklarTablosu').DataTable({
                 language: {
-                    url: '//cdn.datatables.net/plug-ins/1.13.7/i18n/tr.json'
+                    url: '/js/dataTables.turkish.json'
                 },
                 responsive: true,
-                retrieve: true,
-                order: [[1, 'asc']] // Ürün adına göre artan sıralama
+                order: [[5, 'asc']], // Stok miktarına göre sırala (en az olanlar önce)
+                columnDefs: [
+                    { responsivePriority: 1, targets: 1 }, // Ürün adı
+                    { responsivePriority: 2, targets: 5 }, // Stok miktarı
+                    { orderable: false, targets: -1 } // Son sütun (İşlemler)
+                ]
             });
-
-            // Filtreler değiştiğinde sayfayı yenile
-            $('#depoFilter, #kategoriFilter').change(function() {
+            
+            // Filtreler değiştiğinde otomatik olarak formu submit et
+            $('#depoFilter, #kategoriFilter').on('change', function() {
                 $(this).closest('form').submit();
             });
             
-            // Excel'e Aktar butonu
-            $('#excelExportBtn').click(function(e) {
-                e.preventDefault();
-                window.location.href = '@Url.Action("ExportToExcel", "Stok")';
+            // Stok Tab değişikliği
+            $('a[data-bs-toggle="tab"]').on('shown.bs.tab', function (e) {
+                // DataTable responsive düzenleme
+                $.fn.dataTable.tables({ visible: true, api: true }).columns.adjust();
             });
             
-            // Otomatik kapanan alertler
-            window.setTimeout(function() {
-                $(".alert").fadeTo(500, 0).slideUp(500, function() {
-                    $(this).remove();
+            // Bildirim modal'ını aç
+            $(document).on('click', '.open-alarm-modal', function() {
+                var urunID = $(this).data('id');
+                var urunAdi = $(this).data('urun');
+                var stokMiktar = $(this).data('miktar');
+                var birim = $(this).data('birim');
+                
+                $('#bildirimdekiUrunID').val(urunID);
+                $('#urunBilgisi').text(urunAdi + ' (' + stokMiktar + ' ' + birim + ')');
+                $('#stokBildirimModal').modal('show');
+            });
+            
+            // Bildirim gönder
+            $('#submitStokBildirim').on('click', function() {
+                var urunID = $('#bildirimdekiUrunID').val();
+                var bildirimNotu = $('#bildirimNotu').val();
+                var bildirimAlicilar = [];
+                
+                // Seçili alıcıları al
+                $('input[type=checkbox]:checked').each(function() {
+                    bildirimAlicilar.push($(this).val());
                 });
-            }, 4000);
+                
+                if (bildirimAlicilar.length === 0) {
+                    Swal.fire({
+                        icon: 'warning',
+                        title: 'Uyarı!',
+                        text: 'Lütfen en az bir alıcı seçin.',
+                        confirmButtonText: 'Tamam'
+                    });
+                    return;
+                }
+                
+                // AJAX ile bildirimi gönder
+                $.ajax({
+                    url: '@Url.Action("SendStokBildirim", "Stok")',
+                    type: 'POST',
+                    data: {
+                        urunID: urunID,
+                        bildirimNotu: bildirimNotu,
+                        bildirimAlicilar: bildirimAlicilar
+                    },
+                    headers: {
+                        'RequestVerificationToken': $('input[name="__RequestVerificationToken"]').val()
+                    },
+                    success: function(response) {
+                        if (response.success) {
+                            Swal.fire({
+                                icon: 'success',
+                                title: 'Başarılı!',
+                                text: response.message || 'Stok bildirimi başarıyla gönderildi.',
+                                confirmButtonText: 'Tamam'
+                            }).then(() => {
+                                $('#stokBildirimModal').modal('hide');
+                                // Form alanlarını temizle
+                                $('#bildirimNotu').val('');
+                                $('#bildirimdekiUrunID').val('');
+                            });
+                        } else {
+                            Swal.fire({
+                                icon: 'error',
+                                title: 'Hata!',
+                                text: response.message || 'Stok bildirimi gönderilirken bir hata oluştu.',
+                                confirmButtonText: 'Tamam'
+                            });
+                        }
+                    },
+                    error: function() {
+                        Swal.fire({
+                            icon: 'error',
+                            title: 'Hata!',
+                            text: 'İşlem sırasında bir hata oluştu.',
+                            confirmButtonText: 'Tamam'
+                        });
+                    }
+                });
+            });
+            
+            // Excel'e aktar butonu
+            $('#excelExportBtn').on('click', function() {
+                // Parametreleri al
+                var searchString = $('input[name="searchString"]').val() || '';
+                var depoID = $('#depoFilter').val() || '';
+                var kategoriID = $('#kategoriFilter').val() || '';
+                
+                // Excel indirme URL'i oluştur
+                var url = '@Url.Action("ExportToExcel", "Stok")';
+                url += '?searchString=' + encodeURIComponent(searchString);
+                url += '&depoID=' + encodeURIComponent(depoID);
+                url += '&kategoriID=' + encodeURIComponent(kategoriID);
+                
+                // Yeni pencerede aç
+                window.location.href = url;
+            });
         });
     </script>
 } 

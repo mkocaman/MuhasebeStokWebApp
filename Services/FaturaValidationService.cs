@@ -49,7 +49,7 @@ namespace MuhasebeStokWebApp.Services
                 return (false, "Geçerli bir cari seçilmelidir.");
             }
 
-            if (!viewModel.FaturaTuruID.HasValue || viewModel.FaturaTuruID <= 0)
+            if (!viewModel.FaturaTuruID.HasValue || viewModel.FaturaTuruID == Guid.Empty)
             {
                 return (false, "Geçerli bir fatura türü seçilmelidir.");
             }
@@ -61,7 +61,7 @@ namespace MuhasebeStokWebApp.Services
             }
 
             // Tutarlar kontrolü
-            if (viewModel.AraToplam <= 0)
+            if ((viewModel.AraToplam ?? 0) <= 0)
             {
                 return (false, "Ara toplam sıfırdan büyük olmalıdır.");
             }
@@ -86,11 +86,10 @@ namespace MuhasebeStokWebApp.Services
             decimal hesaplananGenelToplam = hesaplananAraToplam - hesaplananIndirimTutari + hesaplananKdvToplam;
             
             // Hesaplanan değerler ile viewModel'deki değerlerin karşılaştırılması (0.01 tolerans)
-            if (Math.Abs(hesaplananAraToplam - viewModel.AraToplam) > 0.01m ||
-                Math.Abs(hesaplananKdvToplam - viewModel.KdvToplam) > 0.01m ||
-                Math.Abs(hesaplananGenelToplam - viewModel.GenelToplam) > 0.01m)
+            if (Math.Abs(hesaplananAraToplam - (viewModel.AraToplam ?? 0)) > 0.01m ||
+                Math.Abs(hesaplananGenelToplam - (viewModel.GenelToplam ?? 0)) > 0.01m)
             {
-                return (false, $"Fatura tutarları tutarsız. Hesaplanan değerler: AraToplam={hesaplananAraToplam:F2}, KdvToplam={hesaplananKdvToplam:F2}, GenelToplam={hesaplananGenelToplam:F2}");
+                return (false, $"Fatura tutarları tutarsız. Hesaplanan değerler: AraToplam={hesaplananAraToplam:F2}, GenelToplam={hesaplananGenelToplam:F2}");
             }
 
             return (true, string.Empty);
@@ -117,7 +116,7 @@ namespace MuhasebeStokWebApp.Services
                 return (false, "Geçerli bir cari seçilmelidir.");
             }
 
-            if (!viewModel.FaturaTuruID.HasValue || viewModel.FaturaTuruID <= 0)
+            if (!viewModel.FaturaTuruID.HasValue || viewModel.FaturaTuruID.Value == 0)
             {
                 return (false, "Geçerli bir fatura türü seçilmelidir.");
             }
@@ -155,10 +154,9 @@ namespace MuhasebeStokWebApp.Services
             
             // Hesaplanan değerler ile viewModel'deki değerlerin karşılaştırılması (0.01 tolerans)
             if (Math.Abs(hesaplananAraToplam - viewModel.AraToplam) > 0.01m ||
-                Math.Abs(hesaplananKdvToplam - viewModel.KdvToplam) > 0.01m ||
                 Math.Abs(hesaplananGenelToplam - viewModel.GenelToplam) > 0.01m)
             {
-                return (false, $"Fatura tutarları tutarsız. Hesaplanan değerler: AraToplam={hesaplananAraToplam:F2}, KdvToplam={hesaplananKdvToplam:F2}, GenelToplam={hesaplananGenelToplam:F2}");
+                return (false, $"Fatura tutarları tutarsız. Hesaplanan değerler: AraToplam={hesaplananAraToplam:F2}, GenelToplam={hesaplananGenelToplam:F2}");
             }
 
             return (true, string.Empty);

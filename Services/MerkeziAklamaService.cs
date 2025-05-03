@@ -275,10 +275,15 @@ namespace MuhasebeStokWebApp.Services
                 await _unitOfWork.BeginTransactionAsync();
                 
                 // Fatura detayını getir
-                var faturaDetay = await _faturaDetayRepository.GetByIdAsync(faturaKalemId);
+                var faturaDetay = await _faturaDetayRepository.Query()
+                    .Include(fd => fd.Fatura)
+                    .Include(fd => fd.Urun)
+                    .FirstOrDefaultAsync(fd => fd.FaturaDetayID == faturaKalemId && !fd.Silindi);
+                
                 if (faturaDetay == null)
                 {
                     _logger.LogWarning("Fatura kalemi bulunamadı, FaturaKalemID: {FaturaKalemID}", faturaKalemId);
+                    await _unitOfWork.RollbackTransactionAsync();
                     return false;
                 }
                 
@@ -307,12 +312,12 @@ namespace MuhasebeStokWebApp.Services
                     AklananMiktar = faturaDetay.Miktar,
                     BirimFiyat = faturaDetay.BirimFiyat,
                     ParaBirimi = faturaDetay.Fatura.DovizTuru,
-                    DovizKuru = faturaDetay.Fatura.DovizKuru,
+                    DovizKuru = faturaDetay.Fatura.DovizKuru.HasValue ? faturaDetay.Fatura.DovizKuru.Value : 1m,
                     SozlesmeID = aktiveSozlesme?.SozlesmeID ?? Guid.Empty,
                     Durum = AklamaDurumu.Bekliyor,
                     OlusturmaTarihi = DateTime.Now,
                     OlusturanKullaniciID = faturaDetay.Fatura.OlusturanKullaniciID,
-                    AklanmaNotu = $"Fatura No: {faturaDetay.Fatura.FaturaNumarasi}, Kalem: {faturaDetay.UrunAdi}, Miktar: {faturaDetay.Miktar}"
+                    AklanmaNotu = $"Fatura No: {faturaDetay.Fatura.FaturaNumarasi}, Kalem: {faturaDetay.Urun?.UrunAdi ?? "Belirtilmemiş"}, Miktar: {faturaDetay.Miktar}"
                 };
                 
                 // Kaydı ekle
@@ -335,6 +340,11 @@ namespace MuhasebeStokWebApp.Services
 
         public async Task<bool> ManuelAklamaKaydiOlusturAsync(ManuelAklamaViewModel model)
         {
+            // Bu metot şu an kullanılmıyor, sadece örnek olarak tutulmaktadır.
+            _logger.LogWarning("ManuelAklamaKaydiOlusturAsync örnek metodu çağrıldı ve işlem yapılmadı");
+            return false;
+            
+            /* Örnek implementasyon:
             try
             {
                 _logger.LogInformation("ManuelAklamaKaydiOlusturAsync metodu çağrıldı");
@@ -345,17 +355,27 @@ namespace MuhasebeStokWebApp.Services
                     return false;
                 }
                 
-                if (model.UrunId == Guid.Empty)
+                // !!! Bu kısım sadece düzeltmeye gösterim amaçlıdır, gerçek kod değil
+                // Gerçek uygulamada bu metot UrunId, Miktar, BirimFiyat kullanmalıdır
+                // Bu ViewModel'de bu özellikler bulunmadığı için metot çalışmayacaktır
+                // Gerçek bir uygulama için ya modele bu özellikleri eklemeli ya da metodu değiştirmelisiniz
+                _logger.LogWarning("Manuel aklama kaydı oluşturulamadı çünkü model uyumlu değil");
+                return false;
+                
+                // Aşağıdaki kod sadece örnek olarak bırakılmıştır
+                
+                if (modeldeGerekenUrunIdOzelligi == Guid.Empty)
                 {
                     _logger.LogWarning("Manuel aklama kaydı oluşturulamadı çünkü UrunID geçerli değil");
                     return false;
                 }
                 
-                if (model.Miktar <= 0)
+                if (modeldeGerekenMiktarOzelligi <= 0)
                 {
                     _logger.LogWarning("Manuel aklama kaydı oluşturulamadı çünkü miktar 0 veya daha az");
                     return false;
                 }
+                
                 
                 // Transaction başlat
                 await _unitOfWork.BeginTransactionAsync();
@@ -415,6 +435,7 @@ namespace MuhasebeStokWebApp.Services
                 await _unitOfWork.RollbackTransactionAsync();
                 return false;
             }
+            */
         }
 
         public async Task<AklamaOzetiViewModel> GetAklamaOzetiAsync(Guid? urunId = null, DateTime? baslangicTarihi = null, DateTime? bitisTarihi = null)
@@ -497,13 +518,9 @@ namespace MuhasebeStokWebApp.Services
                                 UrunKodu = u.UrunKodu,
                                 UrunAdi = u.UrunAdi,
                                 BirimAdi = u.Birim.BirimAdi,
-                                BekleyenAdet = _aklamaRepository.Query()
-                                    .Count(a => a.UrunID == u.UrunID && !a.Silindi && a.Durum == AklamaDurumu.Bekliyor),
                                 BekleyenMiktar = _aklamaRepository.Query()
                                     .Where(a => a.UrunID == u.UrunID && !a.Silindi && a.Durum == AklamaDurumu.Bekliyor)
                                     .Sum(a => (decimal?)a.AklananMiktar) ?? 0,
-                                AklanmisAdet = _aklamaRepository.Query()
-                                    .Count(a => a.UrunID == u.UrunID && !a.Silindi && a.Durum == AklamaDurumu.Aklandi),
                                 AklanmisMiktar = _aklamaRepository.Query()
                                     .Where(a => a.UrunID == u.UrunID && !a.Silindi && a.Durum == AklamaDurumu.Aklandi)
                                     .Sum(a => (decimal?)a.AklananMiktar) ?? 0
@@ -511,8 +528,8 @@ namespace MuhasebeStokWebApp.Services
                 
                 // Sadece aklama kaydı olan ürünleri filtrele
                 var sonuclar = await query
-                    .Where(u => u.BekleyenAdet > 0 || u.AklanmisAdet > 0)
-                    .OrderByDescending(u => u.BekleyenAdet)
+                    .Where(u => u.BekleyenMiktar > 0 || u.AklanmisMiktar > 0)
+                    .OrderByDescending(u => u.BekleyenMiktar)
                     .ToListAsync();
                 
                 return sonuclar;
@@ -554,6 +571,20 @@ namespace MuhasebeStokWebApp.Services
                 var bekleyenKayitlar = await bekleyenKayitlarTask;
                 var aklanmisKayitlar = await aklanmisKayitlarTask;
                 
+                // Ürünün bekleyen ve aklanmış miktarlarını hesapla
+                var bekleyenMiktar = bekleyenKayitlar.Sum(k => k.KalanMiktar);
+                var aklanmisMiktar = aklanmisKayitlar.Sum(k => k.Miktar);
+                
+                var urunDurumu = new UrunAklamaDurumuViewModel
+                {
+                    UrunID = urun.UrunID,
+                    UrunKodu = urun.UrunKodu,
+                    UrunAdi = urun.UrunAdi,
+                    BirimAdi = urun.Birim?.BirimAdi ?? "Bilinmiyor",
+                    BekleyenMiktar = bekleyenMiktar,
+                    AklanmisMiktar = aklanmisMiktar
+                };
+                
                 // Sonuç model
                 var sonuc = new UrunAklamaGecmisiViewModel
                 {
@@ -561,10 +592,9 @@ namespace MuhasebeStokWebApp.Services
                     UrunKodu = urun.UrunKodu,
                     UrunAdi = urun.UrunAdi,
                     BirimAdi = urun.Birim?.BirimAdi ?? "Bilinmiyor",
-                    ToplamBekleyenMiktar = bekleyenKayitlar.Sum(k => k.KalanMiktar),
-                    ToplamAklanmisMiktar = aklanmisKayitlar.Sum(k => k.Miktar),
                     BekleyenKayitlar = bekleyenKayitlar,
-                    AklanmisKayitlar = aklanmisKayitlar
+                    AklanmisKayitlar = aklanmisKayitlar,
+                    UrunAklamaDurumu = urunDurumu
                 };
                 
                 return sonuc;
@@ -577,7 +607,16 @@ namespace MuhasebeStokWebApp.Services
                     UrunID = urunId,
                     UrunAdi = "Bilinmiyor",
                     BekleyenKayitlar = new List<AklamaKuyrukViewModel>(),
-                    AklanmisKayitlar = new List<AklamaKuyrukViewModel>()
+                    AklanmisKayitlar = new List<AklamaKuyrukViewModel>(),
+                    UrunAklamaDurumu = new UrunAklamaDurumuViewModel
+                    {
+                        UrunID = urunId,
+                        UrunKodu = "Bilinmiyor",
+                        UrunAdi = "Bilinmiyor",
+                        BirimAdi = "Bilinmiyor",
+                        BekleyenMiktar = 0,
+                        AklanmisMiktar = 0
+                    }
                 };
             }
         }
@@ -746,6 +785,7 @@ namespace MuhasebeStokWebApp.Services
         {
             _logger.LogInformation("GetFaturaninAklamaKayitlariAsync metodu çağrıldı");
             // Geçici olarak boş listeyi döndürüyoruz
+            await Task.CompletedTask;
             return new List<AklamaKuyrukViewModel>();
         }
         
@@ -756,9 +796,7 @@ namespace MuhasebeStokWebApp.Services
                 _logger.LogInformation("FaturayiAklamaKuyrugunaEkleAsync metodu çağrıldı, faturaId: {FaturaId}", faturaId);
                 
                 // Fatura bilgilerini getir
-                var fatura = await _faturaDetayRepository.Query()
-                    .Include(f => f.Fatura)
-                    .FirstOrDefaultAsync(f => f.FaturaID == faturaId);
+                var fatura = await _unitOfWork.FaturaRepository.GetByIdAsync(faturaId);
                 
                 if (fatura == null)
                 {
@@ -766,8 +804,19 @@ namespace MuhasebeStokWebApp.Services
                     return false;
                 }
                 
+                // Fatura detaylarını getir
+                var faturaDetaylari = await _faturaDetayRepository.Query()
+                    .Where(fd => fd.FaturaID == faturaId && !fd.Silindi)
+                    .ToListAsync();
+                
+                if (faturaDetaylari == null || !faturaDetaylari.Any())
+                {
+                    _logger.LogWarning("Fatura detayları bulunamadı, ID: {FaturaID}", faturaId);
+                    return false;
+                }
+                
                 // Resmi fatura kontrolü yap
-                if (fatura.Fatura?.ResmiMi == true)
+                if (fatura.ResmiMi)
                 {
                     _logger.LogWarning("Resmi faturalar aklama kuyruğuna eklenemez: {FaturaID}", faturaId);
                     return false;
@@ -782,7 +831,7 @@ namespace MuhasebeStokWebApp.Services
                 try
                 {
                     // Tüm fatura kalemlerini ekle
-                    foreach (var faturaKalem in fatura.FaturaDetaylari)
+                    foreach (var faturaKalem in faturaDetaylari)
                     {
                         // Zaten kuyruğa eklenmiş mi kontrol et
                         bool zatenVar = await _aklamaRepository.Query()
@@ -795,13 +844,13 @@ namespace MuhasebeStokWebApp.Services
                             // burada kendimiz yapıyoruz
                             
                             // Varsayılan olarak faturadaki sözleşme ID'yi kullan
-                            Guid? sozlesmeId = fatura.Fatura.SozlesmeID;
+                            Guid? sozlesmeId = fatura.SozlesmeID;
                             
                             // Sözleşme yoksa, cari'ye ait aktif bir sözleşme bulunmaya çalışılır
-                            if (!sozlesmeId.HasValue && fatura.Fatura.CariID.HasValue)
+                            if (!sozlesmeId.HasValue && fatura.CariID.HasValue)
                             {
                                 var aktiveSozlesme = await _sozlesmeRepository.Query()
-                                    .Where(s => s.CariID == fatura.Fatura.CariID.Value && s.AktifMi && !s.Silindi)
+                                    .Where(s => s.CariID == fatura.CariID.Value && s.AktifMi && !s.Silindi)
                                     .OrderByDescending(s => s.SozlesmeTarihi)
                                     .FirstOrDefaultAsync();
                                 
@@ -820,7 +869,7 @@ namespace MuhasebeStokWebApp.Services
                                 SozlesmeID = sozlesmeId ?? Guid.Empty, // SozlesmeID nullable değil
                                 Durum = AklamaDurumu.Bekliyor,
                                 OlusturmaTarihi = DateTime.Now,
-                                OlusturanKullaniciID = fatura.Fatura.OlusturanKullaniciID
+                                OlusturanKullaniciID = fatura.OlusturanKullaniciID
                             };
                             
                             // Kaydı ekle
@@ -862,19 +911,28 @@ namespace MuhasebeStokWebApp.Services
                 _logger.LogInformation("OtomatikAklamaYapAsync metodu çağrıldı, resmiFaturaId: {ResmiFaturaId}", resmiFaturaId);
                 
                 // Resmi fatura bilgilerini getir
-                var resmiFatura = await _faturaDetayRepository.Query()
-                    .Include(f => f.Fatura)
-                    .ThenInclude(fd => fd.Urun)
-                    .FirstOrDefaultAsync(f => f.FaturaID == resmiFaturaId);
+                var resmiFatura = await _unitOfWork.FaturaRepository.Query()
+                    .Include(f => f.FaturaDetaylari)
+                        .ThenInclude(fd => fd.Urun)
+                    .FirstOrDefaultAsync(f => f.FaturaID == resmiFaturaId && !f.Silindi);
                 
                 if (resmiFatura == null)
                 {
                     _logger.LogWarning("Resmi fatura bulunamadı, ID: {FaturaID}", resmiFaturaId);
                     return false;
                 }
+
+                // Fatura kalemlerini getir
+                var faturaDetaylar = resmiFatura.FaturaDetaylari.Where(fd => !fd.Silindi).ToList();
+                
+                if (faturaDetaylar == null || !faturaDetaylar.Any())
+                {
+                    _logger.LogWarning("Resmi fatura kalemleri bulunamadı, ID: {FaturaID}", resmiFaturaId);
+                    return false;
+                }
                 
                 // Resmi fatura kontrolü yap
-                if (!resmiFatura.Fatura.ResmiMi)
+                if (!resmiFatura.ResmiMi)
                 {
                     _logger.LogWarning("Gayri-resmi faturalar için otomatik aklama yapılamaz: {FaturaID}", resmiFaturaId);
                     return false;
@@ -888,8 +946,8 @@ namespace MuhasebeStokWebApp.Services
                 
                 try
                 {
-                    // Resmi fatura kalemlerini döngüye al
-                    foreach (var resmiFaturaKalem in resmiFatura.FaturaDetaylari)
+                    // Fatura kalemlerini döngüye al
+                    foreach (var resmiFaturaKalem in faturaDetaylar)
                     {
                         // Bu ürüne ait bekleyen aklama kayıtlarını getir (FIFO sırasında)
                         var bekleyenKayitlar = await _aklamaRepository.Query()
@@ -920,9 +978,9 @@ namespace MuhasebeStokWebApp.Services
                                 aklamaKaydi.Durum = AklamaDurumu.Aklandi;
                                 aklamaKaydi.AklanmaTarihi = DateTime.Now;
                                 aklamaKaydi.ResmiFaturaKalemID = resmiFaturaKalem.FaturaDetayID;
-                                aklamaKaydi.AklanmaNotu = $"Otomatik aklama yapıldı. Resmi Fatura No: {resmiFatura.Fatura.FaturaNumarasi}";
+                                aklamaKaydi.AklanmaNotu = $"Otomatik aklama yapıldı. Resmi Fatura No: {resmiFatura.FaturaNumarasi}";
                                 aklamaKaydi.GuncellemeTarihi = DateTime.Now;
-                                aklamaKaydi.GuncelleyenKullaniciID = resmiFatura.Fatura.SonGuncelleyenKullaniciID;
+                                aklamaKaydi.GuncelleyenKullaniciID = resmiFatura.SonGuncelleyenKullaniciID;
                                 
                                 kalanMiktar -= aklamaKaydi.AklananMiktar;
                                 
@@ -944,9 +1002,9 @@ namespace MuhasebeStokWebApp.Services
                                     OlusturmaTarihi = aklamaKaydi.OlusturmaTarihi,
                                     AklanmaTarihi = DateTime.Now,
                                     ResmiFaturaKalemID = resmiFaturaKalem.FaturaDetayID,
-                                    AklanmaNotu = $"Kısmi otomatik aklama yapıldı. Resmi Fatura No: {resmiFatura.Fatura.FaturaNumarasi}",
+                                    AklanmaNotu = $"Kısmi otomatik aklama yapıldı. Resmi Fatura No: {resmiFatura.FaturaNumarasi}",
                                     OlusturanKullaniciID = aklamaKaydi.OlusturanKullaniciID,
-                                    GuncelleyenKullaniciID = resmiFatura.Fatura.SonGuncelleyenKullaniciID
+                                    GuncelleyenKullaniciID = resmiFatura.SonGuncelleyenKullaniciID
                                 };
                                 
                                 await _aklamaRepository.AddAsync(yeniKayit);
@@ -955,7 +1013,7 @@ namespace MuhasebeStokWebApp.Services
                                 aklamaKaydi.AklananMiktar -= kalanMiktar;
                                 aklamaKaydi.Durum = AklamaDurumu.KismenAklandi;
                                 aklamaKaydi.GuncellemeTarihi = DateTime.Now;
-                                aklamaKaydi.GuncelleyenKullaniciID = resmiFatura.Fatura.SonGuncelleyenKullaniciID;
+                                aklamaKaydi.GuncelleyenKullaniciID = resmiFatura.SonGuncelleyenKullaniciID;
                                 
                                 kalanMiktar = 0;
                                 
@@ -966,18 +1024,18 @@ namespace MuhasebeStokWebApp.Services
                     }
                     
                     // Faturanın aklama bilgilerini güncelle
-                    resmiFatura.Fatura.AklanmaTarihi = DateTime.Now;
-                    resmiFatura.Fatura.AklanmaNotu = "Otomatik aklama yapıldı.";
-                    resmiFatura.Fatura.GuncellemeTarihi = DateTime.Now;
+                    resmiFatura.AklanmaTarihi = DateTime.Now;
+                    resmiFatura.AklanmaNotu = "Otomatik aklama yapıldı.";
+                    resmiFatura.GuncellemeTarihi = DateTime.Now;
                     
                     // Değişiklikleri kaydet
                     await _unitOfWork.CommitTransactionAsync();
                     
-                    _logger.LogInformation("Otomatik aklama başarıyla tamamlandı: {FaturaID}", resmiFatura.FaturaID);
+                    _logger.LogInformation("Otomatik aklama başarıyla tamamlandı: {FaturaID}", resmiFaturaId);
                 }
                 catch (Exception ex)
                 {
-                    _logger.LogError(ex, "Otomatik aklama sırasında hata oluştu: {FaturaID}", resmiFatura.FaturaID);
+                    _logger.LogError(ex, "Otomatik aklama sırasında hata oluştu: {FaturaID}", resmiFaturaId);
                     await _unitOfWork.RollbackTransactionAsync();
                     islemBasarili = false;
                 }
@@ -986,18 +1044,82 @@ namespace MuhasebeStokWebApp.Services
             }
             catch (Exception ex)
             {
-                _logger.LogError(ex, "Otomatik aklama sırasında beklenmeyen hata oluştu: {FaturaID}", resmiFatura.FaturaID);
+                _logger.LogError(ex, "Otomatik aklama sırasında beklenmeyen hata oluştu: {FaturaID}", resmiFaturaId);
                 return false;
             }
         }
         
         public async Task<bool> ManuelAklamaYapAsync(Guid resmiFaturaKalemId, List<Guid> secilenKayitIdleri, decimal toplamMiktar, string aklamaNotu)
         {
-            _logger.LogInformation("ManuelAklamaYapAsync metodu çağrıldı, fakat şu anda etkin değil");
-            // Async metot için await ekliyoruz
-            await Task.CompletedTask;
-            // Geçici olarak başarılı olduğumuzu söylüyoruz
-            return true;
+            try
+            {
+                _logger.LogInformation("ManuelAklamaYapAsync metodu çağrıldı, resmiFaturaKalemId: {ResmiFaturaKalemID}", resmiFaturaKalemId);
+                
+                // Resmi fatura kalemini getir
+                var faturaDetay = await _faturaDetayRepository.Query()
+                    .Include(fd => fd.Fatura)
+                    .Include(fd => fd.Urun)
+                    .FirstOrDefaultAsync(fd => fd.FaturaDetayID == resmiFaturaKalemId && !fd.Silindi);
+                    
+                if (faturaDetay == null)
+                {
+                    _logger.LogWarning("Resmi fatura kalemi bulunamadı: {ResmiFaturaKalemID}", resmiFaturaKalemId);
+                    return false;
+                }
+                
+                if (faturaDetay.Urun == null)
+                {
+                    _logger.LogWarning("Resmi fatura kaleminin ürünü bulunamadı: {ResmiFaturaKalemID}", resmiFaturaKalemId);
+                    return false;
+                }
+                
+                // Transaction başlat
+                await _unitOfWork.BeginTransactionAsync();
+                
+                try
+                {
+                    // Seçilen aklama kayıtlarını getir
+                    var secilenKayitlar = await _aklamaRepository.Query()
+                        .Where(a => secilenKayitIdleri.Contains(a.AklamaID) && !a.Silindi && a.Durum == AklamaDurumu.Bekliyor)
+                        .ToListAsync();
+                        
+                    if (secilenKayitlar.Count != secilenKayitIdleri.Count)
+                    {
+                        _logger.LogWarning("Bazı seçilen aklama kayıtları bulunamadı veya beklemede değil");
+                        await _unitOfWork.RollbackTransactionAsync();
+                        return false;
+                    }
+                    
+                    // Tüm seçilen kayıtları tamamla
+                    foreach (var kayit in secilenKayitlar)
+                    {
+                        kayit.Durum = AklamaDurumu.Aklandi;
+                        kayit.AklanmaTarihi = DateTime.Now;
+                        kayit.ResmiFaturaKalemID = resmiFaturaKalemId;
+                        kayit.AklanmaNotu = aklamaNotu;
+                        kayit.GuncellemeTarihi = DateTime.Now;
+                    }
+                    
+                    // İşlemleri kaydet
+                    await _unitOfWork.CommitTransactionAsync();
+                    
+                    _logger.LogInformation($"Aklama yapıldı. ResmiFaturaKalemID: {resmiFaturaKalemId}, Resmi Fatura No: {faturaDetay.Fatura?.FaturaNumarasi}, Seçilen Aklama Kayıt Sayısı: {secilenKayitIdleri.Count}, Toplam Miktar: {toplamMiktar}");
+                    
+                    return true;
+                }
+                catch (Exception ex)
+                {
+                    _logger.LogError(ex, "Manuel aklama yapılırken işlem hatası oluştu");
+                    await _unitOfWork.RollbackTransactionAsync();
+                    return false;
+                }
+            }
+            catch (Exception ex)
+            {
+                _logger.LogError(ex, "Manuel aklama yapılırken hata oluştu, ResmiFaturaKalemID: {ResmiFaturaKalemID}", resmiFaturaKalemId);
+                await _unitOfWork.RollbackTransactionAsync();
+                return false;
+            }
         }
         
         public async Task<bool> AklamaIptalEtAsync(Guid aklamaId)

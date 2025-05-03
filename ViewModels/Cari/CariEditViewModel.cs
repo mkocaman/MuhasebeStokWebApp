@@ -5,12 +5,16 @@ namespace MuhasebeStokWebApp.ViewModels.Cari
 {
     public class CariEditViewModel
     {
-        public Guid Id { get; set; }
+        public Guid CariID { get; set; }
 
         [Required(ErrorMessage = "Cari adı zorunludur.")]
         [StringLength(100, ErrorMessage = "Cari adı en fazla 100 karakter olabilir.")]
         [Display(Name = "Cari Adı")]
         public required string Ad { get; set; }
+
+        [StringLength(100, ErrorMessage = "Cari ünvanı en fazla 100 karakter olabilir.")]
+        [Display(Name = "Cari Ünvanı")]
+        public string? CariUnvani { get; set; }
 
         [StringLength(15, MinimumLength = 0, ErrorMessage = "Vergi numarası 0 ve 15 karakter arasında olmalıdır.")]
         [Display(Name = "Vergi No")]

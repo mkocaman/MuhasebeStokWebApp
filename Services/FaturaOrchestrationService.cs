@@ -11,13 +11,13 @@ namespace MuhasebeStokWebApp.Services
 {
     public class FaturaOrchestrationService : IFaturaOrchestrationService
     {
-        private readonly IFaturaService _faturaService;
+        private readonly IFaturaCrudService _faturaService;
         private readonly IStokFifoService _stokFifoService;
         private readonly ILogger<FaturaOrchestrationService> _logger;
         private readonly IUnitOfWork _unitOfWork;
 
         public FaturaOrchestrationService(
-            IFaturaService faturaService,
+            IFaturaCrudService faturaService,
             IStokFifoService stokFifoService,
             ILogger<FaturaOrchestrationService> logger,
             IUnitOfWork unitOfWork)
@@ -35,9 +35,29 @@ namespace MuhasebeStokWebApp.Services
         {
             try
             {
-                // FaturaService zaten transaction yönetimi yapıyor, ilişkili kayıtları da oluşturuyor
-                // Bu metot şu an sadece FaturaService'i çağırıyor, ileride genişletilebilir
-                return await _faturaService.CreateFatura(viewModel, currentUserId);
+                // Fatura entity'sini oluştur ve veritabanına ekle
+                var fatura = new Fatura
+                {
+                    FaturaID = Guid.NewGuid(),
+                    FaturaNumarasi = viewModel.FaturaNumarasi,
+                    SiparisNumarasi = viewModel.SiparisNumarasi,
+                    FaturaTarihi = viewModel.FaturaTarihi,
+                    CariID = viewModel.CariID,
+                    FaturaTuruID = viewModel.FaturaTuruID.HasValue ? int.Parse(viewModel.FaturaTuruID.Value.ToString().Substring(0, 8), System.Globalization.NumberStyles.HexNumber) % 1000 : (int?)null,
+                    OlusturmaTarihi = DateTime.Now,
+                    GuncellemeTarihi = DateTime.Now,
+                    OlusturanKullaniciID = currentUserId,
+                    SonGuncelleyenKullaniciID = currentUserId,
+                    FaturaNotu = viewModel.Aciklama,
+                    AraToplam = viewModel.AraToplam ?? 0,
+                    GenelToplam = viewModel.GenelToplam ?? 0,
+                    IndirimTutari = 0,
+                    Silindi = false
+                };
+                
+                await _faturaService.AddAsync(fatura);
+                
+                return fatura.FaturaID;
             }
             catch (Exception ex)
             {
@@ -53,9 +73,28 @@ namespace MuhasebeStokWebApp.Services
         {
             try
             {
-                // FaturaService zaten transaction yönetimi yapıyor, ilişkili kayıtları da güncelliyor
-                // Bu metot şu an sadece FaturaService'i çağırıyor, ileride genişletilebilir
-                return await _faturaService.UpdateFatura(id, viewModel, currentUserId);
+                // Mevcut faturayı al
+                var fatura = await _faturaService.GetByIdAsync(id);
+                if (fatura == null)
+                {
+                    throw new Exception($"Güncellenecek fatura bulunamadı (ID: {id})");
+                }
+                
+                // Fatura bilgilerini güncelle
+                fatura.FaturaNumarasi = viewModel.FaturaNumarasi;
+                fatura.FaturaTarihi = viewModel.FaturaTarihi;
+                fatura.CariID = viewModel.CariID;
+                fatura.FaturaTuruID = viewModel.FaturaTuruID.HasValue ? int.Parse(viewModel.FaturaTuruID.Value.ToString().Substring(0, 8), System.Globalization.NumberStyles.HexNumber) % 1000 : (int?)null;
+                fatura.GuncellemeTarihi = DateTime.Now;
+                fatura.SonGuncelleyenKullaniciID = currentUserId;
+                fatura.FaturaNotu = viewModel.Aciklama;
+                fatura.AraToplam = viewModel.AraToplam;
+                fatura.GenelToplam = viewModel.GenelToplam;
+                fatura.IndirimTutari = viewModel.IndirimTutari;
+                
+                await _faturaService.UpdateAsync(fatura);
+                
+                return fatura.FaturaID;
             }
             catch (Exception ex)
             {
@@ -72,8 +111,7 @@ namespace MuhasebeStokWebApp.Services
             try
             {
                 // FaturaService zaten transaction yönetimi yapıyor, ilişkili kayıtları da siliyor
-                // Bu metot şu an sadece FaturaService'i çağırıyor, ileride genişletilebilir
-                return await _faturaService.DeleteFatura(id, currentUserId);
+                return await _faturaService.DeleteAsync(id);
             }
             catch (Exception ex)
             {

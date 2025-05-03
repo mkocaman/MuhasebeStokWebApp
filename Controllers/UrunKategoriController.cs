@@ -99,6 +99,9 @@ namespace MuhasebeStokWebApp.Controllers
                     // Kategoriyi veritabanına ekle ve değişiklikleri kaydet
                     _context.Add(kategori);
                     await _context.SaveChangesAsync();
+                    
+                    // Log kaydı ekle
+                    await _logService.KategoriOlusturmaLogOlustur(kategori.KategoriID.ToString(), kategori.KategoriAdi);
             
                     if (Request.Headers["X-Requested-With"] == "XMLHttpRequest")
                     {
@@ -220,6 +223,9 @@ namespace MuhasebeStokWebApp.Controllers
 
                     // Değişiklikleri kaydet
                     await _context.SaveChangesAsync();
+                    
+                    // Log kaydı ekle
+                    await _logService.KategoriGuncellemeLogOlustur(existingKategori.KategoriID.ToString(), existingKategori.KategoriAdi);
             
                     if (Request.Headers["X-Requested-With"] == "XMLHttpRequest")
                     {
@@ -307,6 +313,9 @@ namespace MuhasebeStokWebApp.Controllers
                 
                 await _context.SaveChangesAsync();
                 
+                // Log kaydı ekle
+                await _logService.KategoriSilmeLogOlustur(kategori.KategoriID.ToString(), kategori.KategoriAdi);
+                
                 if (Request.Headers["X-Requested-With"] == "XMLHttpRequest")
                 {
                     return Json(new { success = true, message = "Kategori başarıyla silindi." });
@@ -352,10 +361,13 @@ namespace MuhasebeStokWebApp.Controllers
                 
                 await _context.SaveChangesAsync();
                 
-                string durumMesaji = kategori.Aktif ? "aktifleştirildi" : "pasifleştirildi";
+                // Log kaydı ekle
+                await _logService.KategoriDurumDegisikligiLogOlustur(kategori.KategoriID.ToString(), kategori.KategoriAdi, kategori.Aktif);
+                
+                var durumText = kategori.Aktif ? "aktifleştirildi" : "pasifleştirildi";
                 return Json(new { 
                     success = true, 
-                    message = $"{kategori.KategoriAdi} kategorisi başarıyla {durumMesaji}." 
+                    message = $"{kategori.KategoriAdi} kategorisi başarıyla {durumText}." 
                 });
             }
             catch (Exception ex)
@@ -390,6 +402,9 @@ namespace MuhasebeStokWebApp.Controllers
                 kategori.GuncellemeTarihi = DateTime.Now;
                 
                 await _context.SaveChangesAsync();
+                
+                // Log kaydı ekle
+                await _logService.KategoriOlusturmaLogOlustur(kategori.KategoriID.ToString(), kategori.KategoriAdi + " (geri yüklendi)");
                 
                 if (Request.Headers["X-Requested-With"] == "XMLHttpRequest")
                 {

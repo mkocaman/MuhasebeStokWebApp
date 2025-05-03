@@ -2,11 +2,13 @@ using System;
 using System.Collections.Generic;
 using System.Data;
 using Microsoft.Data.SqlClient;
+using System.Data.Common;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Storage;
 using Microsoft.Extensions.Logging;
 using MuhasebeStokWebApp.Data;
 using MuhasebeStokWebApp.Services.Interfaces;
+using System.Threading.Tasks;
 
 namespace MuhasebeStokWebApp.Services
 {
@@ -134,6 +136,66 @@ namespace MuhasebeStokWebApp.Services
             }
             
             return false;
+        }
+
+        /// <inheritdoc/>
+        public async Task<T> HandleExceptionAsync<T>(Func<Task<T>> func, string logContext, params object[] logParams)
+        {
+            try
+            {
+                return await func();
+            }
+            catch (Exception ex)
+            {
+                string parameters = logParams.Length > 0 ? $" Parametreler: {string.Join(", ", logParams)}" : "";
+                _logger.LogError(ex, $"{logContext}{parameters}");
+                
+                return default;
+            }
+        }
+
+        /// <inheritdoc/>
+        public async Task HandleExceptionAsync(Func<Task> func, string logContext, params object[] logParams)
+        {
+            try
+            {
+                await func();
+            }
+            catch (Exception ex)
+            {
+                string parameters = logParams.Length > 0 ? $" Parametreler: {string.Join(", ", logParams)}" : "";
+                _logger.LogError(ex, $"{logContext}{parameters}");
+            }
+        }
+
+        /// <inheritdoc/>
+        public T HandleException<T>(Func<T> func, string logContext, params object[] logParams)
+        {
+            try
+            {
+                return func();
+            }
+            catch (Exception ex)
+            {
+                string parameters = logParams.Length > 0 ? $" Parametreler: {string.Join(", ", logParams)}" : "";
+                _logger.LogError(ex, $"{logContext}{parameters}");
+                
+                return default;
+            }
+        }
+
+        /// <inheritdoc/>
+        public void HandleException(Action action, string logContext, params object[] logParams)
+        {
+            try
+            {
+                action();
+            }
+            catch (Exception ex)
+            {
+                string parameters = logParams.Length > 0 ? $" Parametreler: {string.Join(", ", logParams)}" : "";
+                _logger.LogError(ex, $"{logContext}{parameters}");
+            }
         }
         
         // SQL hata kodlarına göre özel mesajlar

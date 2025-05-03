@@ -159,16 +159,16 @@ namespace MuhasebeStokWebApp.Controllers
 
         // Ürün detaylarını gösterir
         public async Task<IActionResult> Details(Guid id, bool returnView = true)
-            {
-                var urunRepository = _unitOfWork.Repository<Urun>();
-                var kategoriRepository = _unitOfWork.Repository<UrunKategori>();
+        {
+            var urunRepository = _unitOfWork.Repository<Urun>();
+            var kategoriRepository = _unitOfWork.Repository<UrunKategori>();
             var urunFiyatRepository = _unitOfWork.Repository<UrunFiyat>();
 
             var urun = await urunRepository.GetFirstOrDefaultAsync(u => u.UrunID == id && u.Silindi == false, includeProperties: "Birim");
-                if (urun == null)
-                {
-                    return NotFound();
-                }
+            if (urun == null)
+            {
+                return NotFound();
+            }
 
             // Kategori bilgisi
             UrunKategori? kategori = null;
@@ -177,42 +177,48 @@ namespace MuhasebeStokWebApp.Controllers
                 kategori = await kategoriRepository.GetByIdAsync(urun.KategoriID.Value);
             }
             
-                var viewModel = new UrunViewModel
-                {
-                    UrunID = urun.UrunID,
-                    UrunKodu = urun.UrunKodu,
-                    UrunAdi = urun.UrunAdi,
-                    Birim = urun.Birim != null ? urun.Birim.BirimAdi : string.Empty,
+            var viewModel = new UrunViewModel
+            {
+                UrunID = urun.UrunID,
+                UrunKodu = urun.UrunKodu,
+                UrunAdi = urun.UrunAdi,
+                Birim = urun.Birim != null ? urun.Birim.BirimAdi : string.Empty,
                 Miktar = urun.StokMiktar,
-                    // Ürün için en güncel liste fiyatını getir
+                // Ürün için en güncel liste fiyatını getir
                 ListeFiyati = urunFiyatRepository.GetAllAsync().Result
                     .Where(uf => uf.UrunID == urun.UrunID && uf.FiyatTipiID == 1 && uf.Silindi == false)
-                        .OrderByDescending(uf => uf.GecerliTarih)
-                        .FirstOrDefault()?.Fiyat ?? 0m,
-                    // Ürün için en güncel maliyet fiyatını getir
+                    .OrderByDescending(uf => uf.GecerliTarih)
+                    .FirstOrDefault()?.Fiyat ?? 0m,
+                // Ürün için en güncel maliyet fiyatını getir
                 MaliyetFiyati = urunFiyatRepository.GetAllAsync().Result
                     .Where(uf => uf.UrunID == urun.UrunID && uf.FiyatTipiID == 2 && uf.Silindi == false)
-                        .OrderByDescending(uf => uf.GecerliTarih)
-                        .FirstOrDefault()?.Fiyat ?? 0m,
-                    // Ürün için en güncel satış fiyatını getir
+                    .OrderByDescending(uf => uf.GecerliTarih)
+                    .FirstOrDefault()?.Fiyat ?? 0m,
+                // Ürün için en güncel satış fiyatını getir
                 SatisFiyati = urunFiyatRepository.GetAllAsync().Result
                     .Where(uf => uf.UrunID == urun.UrunID && uf.FiyatTipiID == 3 && uf.Silindi == false)
-                        .OrderByDescending(uf => uf.GecerliTarih)
-                        .FirstOrDefault()?.Fiyat ?? 0m,
-                    Aktif = urun.Aktif,
-                    OlusturmaTarihi = urun.OlusturmaTarihi,
-                    KategoriID = urun.KategoriID,
-                    KategoriAdi = kategori?.KategoriAdi ?? "Kategorisiz"
-                };
-
-            if (returnView)
+                    .OrderByDescending(uf => uf.GecerliTarih)
+                    .FirstOrDefault()?.Fiyat ?? 0m,
+                KategoriAdi = kategori?.KategoriAdi ?? "Kategorisiz",
+                OlusturmaTarihi = urun.OlusturmaTarihi,
+                GuncellemeTarihi = urun.GuncellemeTarihi,
+                Aktif = urun.Aktif,
+                KdvOrani = urun.KDVOrani,
+                KritikStokSeviyesi = urun.KritikStokSeviyesi,
+                Aciklama = urun.Aciklama
+            };
+            
+            // AJAX isteği için modal içeriği döndür
+            if (Request.Headers["X-Requested-With"] == "XMLHttpRequest")
             {
-                return View(viewModel);
+                return PartialView("_DetailsPartial", viewModel);
             }
-            else
+            
+            if (!returnView)
             {
-                return Json(viewModel);
+                return Ok(viewModel);
             }
+            return View(viewModel);
         }
 
         // Yeni ürün oluşturma formu
@@ -226,6 +232,8 @@ namespace MuhasebeStokWebApp.Controllers
             var model = new UrunCreateViewModel
             {
                 Aktif = true,
+                KDVOrani = 12, // Varsayılan KDV oranı 12 olarak ayarlandı
+                KritikStokSeviyesi = 100, // Varsayılan kritik stok seviyesi 100 olarak ayarlandı
                 Kategoriler = kategoriler,
                 Birimler = birimler,
                 // Geriye uyumluluk için eski listeler de doldurulur
@@ -236,7 +244,7 @@ namespace MuhasebeStokWebApp.Controllers
             // AJAX isteğiyse partial view döndür
             if (Request.Headers["X-Requested-With"] == "XMLHttpRequest")
             {
-                return PartialView("_CreateUrun", model);
+                return PartialView("_CreatePartial", model);
             }
             
             return View(model);
@@ -307,13 +315,14 @@ namespace MuhasebeStokWebApp.Controllers
                         UrunID = Guid.NewGuid(),
                         UrunKodu = model.UrunKodu,
                         UrunAdi = model.UrunAdi,
-                    Aciklama = model.Aciklama ?? string.Empty,
+                        Aciklama = model.Aciklama ?? string.Empty,
                         BirimID = model.BirimID,
                         KategoriID = model.KategoriID,
                         KDVOrani = (int)model.KDVOrani,
+                        KritikStokSeviyesi = model.KritikStokSeviyesi,
                         Aktif = model.Aktif,
                         OlusturmaTarihi = DateTime.Now,
-                    OlusturanKullaniciID = GetCurrentUserId()
+                        OlusturanKullaniciID = GetCurrentUserId()
                     };
                     
                 await urunRepository.AddAsync(yeniUrun);
@@ -321,10 +330,11 @@ namespace MuhasebeStokWebApp.Controllers
                 // Veritabanına kaydet
                     await _unitOfWork.SaveAsync();
                     
-                // Log oluştur
-                await _logService.LogInfoAsync(
-                    "UrunController.Create",
-                    $"Yeni ürün oluşturuldu: {yeniUrun.UrunAdi}, ID: {yeniUrun.UrunID}"
+                // Log oluştur - Daha detaylı bir log için UrunOlusturmaLogOlustur metodunu kullanıyoruz
+                await _logService.UrunOlusturmaLogOlustur(
+                    yeniUrun.UrunID.ToString(),
+                    yeniUrun.UrunAdi,
+                    $"Ürün Kodu: {yeniUrun.UrunKodu}, Kategori: {model.KategoriID}, Birim: {model.BirimID}, KDV Oranı: %{yeniUrun.KDVOrani}, Kritik Stok: {yeniUrun.KritikStokSeviyesi}, Açıklama: {yeniUrun.Aciklama}"
                 );
                 
                 // Eğer AJAX isteği ise başarı mesajı döndür
@@ -380,6 +390,7 @@ namespace MuhasebeStokWebApp.Controllers
                 KategoriID = urun.KategoriID,
                 BirimID = urun.BirimID,
                 KDVOrani = urun.KDVOrani,
+                KritikStokSeviyesi = urun.KritikStokSeviyesi,
                 Aktif = urun.Aktif,
                 
                 // Dropdown listeleri doğrudan ViewModel içine ekle
@@ -394,7 +405,7 @@ namespace MuhasebeStokWebApp.Controllers
             // AJAX isteği ise partial view döndür
             if (Request.Headers["X-Requested-With"] == "XMLHttpRequest")
             {
-                return PartialView("_EditUrun", viewModel);
+                return PartialView("_EditPartial", viewModel);
             }
             
             return View(viewModel);
@@ -455,33 +466,30 @@ namespace MuhasebeStokWebApp.Controllers
                     urun.KategoriID = model.KategoriID;
                 urun.BirimID = model.BirimID;
                     urun.KDVOrani = (int)model.KDVOrani;
+                    urun.KritikStokSeviyesi = model.KritikStokSeviyesi;
                     urun.Aktif = model.Aktif;
                     urun.GuncellemeTarihi = DateTime.Now;
-                
-                // Kullanıcı ID'sini guid olarak ayarla
-                if (Guid.TryParse(User.Identity.Name, out Guid kullaniciID))
-                {
-                    urun.SonGuncelleyenKullaniciID = kullaniciID;
-                }
+                    urun.SonGuncelleyenKullaniciID = GetCurrentUserId();
                 
                 await urunRepository.UpdateAsync(urun);
                 
                     await _unitOfWork.SaveAsync();
                     
-                    // Log oluştur
-                await _logService.LogInfoAsync(
-                    "UrunController.Edit",
-                    $"Ürün güncellendi: {urun.UrunAdi}, ID: {urun.UrunID}"
-                );
-                
-                // AJAX isteği ise başarı mesajı döndür
-                if (Request.Headers["X-Requested-With"] == "XMLHttpRequest")
-                {
-                    return Json(new { success = true, message = "Ürün başarıyla güncellendi." });
-                }
-                
-                TempData["SuccessMessage"] = $"{urun.UrunAdi} ürünü başarıyla güncellendi.";
-                return RedirectToAction(nameof(Index));
+                    // Log oluştur - Daha detaylı bir log için UrunGuncellemeLogOlustur metodunu kullanıyoruz
+                    await _logService.UrunGuncellemeLogOlustur(
+                        urun.UrunID.ToString(),
+                        urun.UrunAdi,
+                        $"Ürün Kodu: {urun.UrunKodu}, Kategori: {model.KategoriID}, Birim: {model.BirimID}, KDV Oranı: %{urun.KDVOrani}, Kritik Stok: {urun.KritikStokSeviyesi}, Aktif: {urun.Aktif}, Açıklama: {urun.Aciklama}"
+                    );
+                    
+                    // AJAX isteği ise başarı mesajı döndür
+                    if (Request.Headers["X-Requested-With"] == "XMLHttpRequest")
+                    {
+                        return Json(new { success = true, message = "Ürün başarıyla güncellendi." });
+                    }
+                    
+                    TempData["SuccessMessage"] = $"{urun.UrunAdi} ürünü başarıyla güncellendi.";
+                    return RedirectToAction(nameof(Index));
                 }
                 catch (Exception ex)
                 {
@@ -790,9 +798,9 @@ namespace MuhasebeStokWebApp.Controllers
             }
         }
 
-        // Ürün pasife alma metodu
+        // Ürün pasife alma metodu (SetPassive adıyla)
         [HttpPost]
-        public async Task<IActionResult> SetInactive(Guid id)
+        public async Task<IActionResult> SetPassive(Guid id)
         {
             try
             {
@@ -806,9 +814,13 @@ namespace MuhasebeStokWebApp.Controllers
                 
                 urun.Aktif = false;
                 urun.GuncellemeTarihi = DateTime.Now;
+                urun.SonGuncelleyenKullaniciID = GetCurrentUserId();
                 
                 await urunRepository.UpdateAsync(urun);
                 await _unitOfWork.SaveAsync();
+                
+                // Pasife alma işlemi için log kaydı
+                await _logService.UrunPasifleştirmeLogOlustur(urun.UrunID.ToString(), urun.UrunAdi);
                 
                 return Json(new { 
                     success = true, 
@@ -845,6 +857,9 @@ namespace MuhasebeStokWebApp.Controllers
                 _context.Urunler.Update(urun);
                 await _context.SaveChangesAsync();
                 
+                // Aktife alma işlemi için log kaydı
+                await _logService.UrunAktifleştirmeLogOlustur(urun.UrunID.ToString(), urun.UrunAdi);
+                
                 return Json(new { 
                     success = true, 
                     message = $"{urun.UrunAdi} ürünü başarıyla aktifleştirildi." 
@@ -852,6 +867,7 @@ namespace MuhasebeStokWebApp.Controllers
             }
             catch (Exception ex)
             {
+                _logger.LogError(ex, "Ürün aktifleştirilirken hata: {Message}", ex.Message);
                 return Json(new { success = false, message = $"Ürün aktifleştirilirken bir hata oluştu: {ex.Message}" });
             }
         }
@@ -889,6 +905,14 @@ namespace MuhasebeStokWebApp.Controllers
                     _context.Urunler.Update(urun);
                     await _context.SaveChangesAsync();
                     
+                    _logger.LogInformation($"Urun ID: {id} soft delete yapıldı");
+                    
+                    // İlişkili kayıtlarla beraber silme işlemi için log kaydı
+                    await _logService.UrunSilmeLogOlustur(
+                        urun.UrunID.ToString(), 
+                        urun.UrunAdi, 
+                        "İlişkili kayıtlar nedeniyle soft delete yapıldı");
+                    
                     return Json(new { 
                         success = true, 
                         message = $"{urun.UrunAdi} ürünü diğer kayıtlarda kullanıldığı için pasife alındı." 
@@ -904,6 +928,14 @@ namespace MuhasebeStokWebApp.Controllers
                     _context.Urunler.Update(urun);
                     await _context.SaveChangesAsync();
                     
+                    _logger.LogInformation($"Urun ID: {id} soft delete yapıldı");
+                    
+                    // Normal silme işlemi için log kaydı
+                    await _logService.UrunSilmeLogOlustur(
+                        urun.UrunID.ToString(), 
+                        urun.UrunAdi, 
+                        "Soft delete yapıldı");
+                    
                     return Json(new { 
                         success = true, 
                         message = $"{urun.UrunAdi} ürünü başarıyla silindi." 
@@ -912,6 +944,7 @@ namespace MuhasebeStokWebApp.Controllers
             }
             catch (Exception ex)
             {
+                _logger.LogError(ex, "Ürün silinirken hata: {Message}", ex.Message);
                 return Json(new { success = false, message = $"Ürün silinirken bir hata oluştu: {ex.Message}" });
             }
         }
@@ -1393,36 +1426,75 @@ namespace MuhasebeStokWebApp.Controllers
         // Silinmiş ürünü geri getirme metodu
         [HttpPost]
         [Authorize(Roles = "Admin")]
+        public async Task<IActionResult> Restore(Guid id)
+        {
+            try
+            {
+                // Doğrudan DbContext kullanarak IgnoreQueryFilters ile silinmiş ürünü bul
+                var entity = await _context.Urunler
+                    .IgnoreQueryFilters()
+                    .FirstOrDefaultAsync(u => u.UrunID == id && u.Silindi);
+                
+                if (entity == null)
+                {
+                    return Json(new { success = false, message = "Silinmiş ürün bulunamadı." });
+                }
+
+                // Entity'yi güncelle
+                entity.Silindi = false;
+                entity.Aktif = true; // Geri yüklenen ürünü aktif yap
+                entity.GuncellemeTarihi = DateTime.Now;
+                entity.SonGuncelleyenKullaniciID = GetCurrentUserId();
+
+                _context.Urunler.Update(entity);
+                await _context.SaveChangesAsync();
+                
+                _logger.LogInformation($"Ürün geri getirildi: UrunID={id}, Kullanıcı={User.Identity.Name}");
+                
+                return Json(new { 
+                    success = true, 
+                    message = $"{entity.UrunAdi} ürünü başarıyla geri getirildi." 
+                });
+            }
+            catch (Exception ex)
+            {
+                _logger.LogError(ex, "Ürün geri getirilirken hata: {Message}", ex.Message);
+                return Json(new { success = false, message = $"Ürün geri getirilirken bir hata oluştu: {ex.Message}" });
+            }
+        }
+        
+        // Silinmiş ürünü geri getirme metodu (RestoreDeleted adıyla da çalışması için eklendi)
+        [HttpPost]
+        [Authorize(Roles = "Admin")]
         public async Task<IActionResult> RestoreDeleted(Guid id)
         {
             try
             {
-                // SoftDeleteService üzerinden işlem yap
-                var softDeleteService = HttpContext.RequestServices.GetService<ISoftDeleteService<Urun>>();
-                if (softDeleteService == null)
-                {
-                    return Json(new { success = false, message = "Geri getirme işlemi için gerekli servis bulunamadı." });
-                }
+                // Doğrudan DbContext kullanarak IgnoreQueryFilters ile silinmiş ürünü bul
+                var entity = await _context.Urunler
+                    .IgnoreQueryFilters()
+                    .FirstOrDefaultAsync(u => u.UrunID == id && u.Silindi);
                 
-                bool success = await softDeleteService.RestoreByIdAsync(id);
+                if (entity == null)
+                {
+                    return Json(new { success = false, message = "Silinmiş ürün bulunamadı." });
+                }
+
+                // Entity'yi güncelle
+                entity.Silindi = false;
+                entity.Aktif = true; // Geri yüklenen ürünü aktif yap
+                entity.GuncellemeTarihi = DateTime.Now;
+                entity.SonGuncelleyenKullaniciID = GetCurrentUserId();
+
+                _context.Urunler.Update(entity);
+                await _context.SaveChangesAsync();
                 
-                if (success)
-                {
-                    _logger.LogInformation($"Ürün geri getirildi: UrunID={id}, Kullanıcı={User.Identity.Name}");
-                    
-                    // Geri getirilen ürünün adını bulmak için
-                    var urun = await _unitOfWork.Repository<Urun>().GetByIdAsync(id);
-                    string urunAdi = urun?.UrunAdi ?? "Ürün";
-                    
-                    return Json(new { 
-                        success = true, 
-                        message = $"{urunAdi} ürünü başarıyla geri getirildi." 
-                    });
-                }
-                else
-                {
-                    return Json(new { success = false, message = "Silinmiş ürün bulunamadı veya geri getirilemedi." });
-                }
+                _logger.LogInformation($"Ürün geri getirildi: UrunID={id}, Kullanıcı={User.Identity.Name}");
+                
+                return Json(new { 
+                    success = true, 
+                    message = $"{entity.UrunAdi} ürünü başarıyla geri getirildi." 
+                });
             }
             catch (Exception ex)
             {

@@ -78,9 +78,9 @@
                                                 <button type="button" class="btn btn-sm btn-info btn-edit-birim" data-id="@item.BirimID">
                                                     <i class="fas fa-edit"></i>
                                                 </button>
-                                                <a asp-action="Details" asp-route-id="@item.BirimID" class="btn btn-sm btn-primary">
+                                                <button type="button" class="btn btn-sm btn-primary btn-details-birim" data-id="@item.BirimID">
                                                     <i class="fas fa-info-circle"></i>
-                                                </a>
+                                                </button>
                                                 <button type="button" class="btn btn-sm btn-danger btn-delete-birim" data-id="@item.BirimID">
                                                     <i class="fas fa-trash"></i>
                                                 </button>
@@ -259,10 +259,13 @@
 <div class="modal fade" id="detailsBirimModal" tabindex="-1" aria-labelledby="detailsBirimModalLabel" aria-hidden="true">
     <div class="modal-dialog">
         <div class="modal-content">
+            <div class="modal-header bg-primary text-white">
+                <h5 class="modal-title" id="detailsBirimModalLabel">Birim Detayları</h5>
+                <button type="button" class="btn-close btn-close-white" data-bs-dismiss="modal" aria-label="Close"></button>
+            </div>
             <div id="detailsBirimModalContent">
-                <!-- İçerik AJAX ile yüklenecek -->
                 <div class="modal-body text-center">
-                    <div class="spinner-border text-primary" role="status">
+                    <div class="spinner-border" role="status">
                         <span class="visually-hidden">Yükleniyor...</span>
                     </div>
                 </div>
@@ -522,7 +525,7 @@
                 });
             });
 
-            // Birim detay açma
+            // Birim detay modal'ını aç
             $(document).on('click', '.btn-details-birim', function() {
                 var birimID = $(this).data('id');
                 
@@ -541,7 +544,7 @@
                         Swal.fire({
                             icon: 'error',
                             title: 'Hata!',
-                            text: 'Birim bilgileri yüklenirken bir hata oluştu.',
+                            text: 'Birim detayları yüklenirken bir hata oluştu.',
                             confirmButtonText: 'Tamam'
                         });
                     }

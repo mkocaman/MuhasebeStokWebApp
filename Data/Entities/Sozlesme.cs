@@ -20,10 +20,9 @@ namespace MuhasebeStokWebApp.Data.Entities
         public DateTime? BitisTarihi { get; set; }
         
         [ForeignKey("Cari")]
-        [Required]
-        public Guid CariID { get; set; }
+        public Guid? CariID { get; set; }
         
-        public virtual Cari Cari { get; set; } = null!;
+        public virtual Cari? Cari { get; set; }
         
         public bool VekaletGeldiMi { get; set; } = false;
         

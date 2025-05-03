@@ -9,7 +9,7 @@ namespace MuhasebeStokWebApp.Data.Entities.ParaBirimiBirlesikModul
     /// <summary>
     /// Para birimi kur değerleri entity class'ı
     /// </summary>
-    [Table("KurDegerleri")]
+    [Table("BirlesikModulKurDegerleri")]
     public class KurDegeri
     {
         /// <summary>

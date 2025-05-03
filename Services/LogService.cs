@@ -13,6 +13,7 @@ using ESistemLog = MuhasebeStokWebApp.Data.Entities.SistemLog;
 using MSistemLog = MuhasebeStokWebApp.Models.SistemLog;
 using MuhasebeStokWebApp.Enums;
 using MuhasebeStokWebApp.Services.Interfaces;
+using MuhasebeStokWebApp.Data.Repositories;
 
 namespace MuhasebeStokWebApp.Services
 {
@@ -21,12 +22,14 @@ namespace MuhasebeStokWebApp.Services
         private readonly ApplicationDbContext _context;
         private readonly IHttpContextAccessor _httpContextAccessor;
         private readonly ILogger<LogService> _logger;
+        private readonly IUnitOfWork _unitOfWork;
 
-        public LogService(ApplicationDbContext context, IHttpContextAccessor httpContextAccessor, ILogger<LogService> logger)
+        public LogService(ApplicationDbContext context, IHttpContextAccessor httpContextAccessor, ILogger<LogService> logger, IUnitOfWork unitOfWork)
         {
             _context = context;
             _httpContextAccessor = httpContextAccessor;
             _logger = logger;
+            _unitOfWork = unitOfWork;
         }
 
         public async Task<bool> LogEkleAsync(string mesaj, MuhasebeStokWebApp.Enums.LogTuru logTuru, string detay = null)
@@ -45,7 +48,7 @@ namespace MuhasebeStokWebApp.Services
 
                 var log = new ESistemLog
                 {
-                    LogID = Guid.NewGuid(),
+                    LogID = Guid.NewGuid().ToString(),
                     LogTuru = logTuru.ToString(),
                     LogTuruInt = (int)logTuru,
                     IslemTuru = logTuru.ToString(),
@@ -62,7 +65,7 @@ namespace MuhasebeStokWebApp.Services
                     KullaniciGuid = kullaniciId != null ? Guid.TryParse(kullaniciId, out Guid guidResult) ? guidResult : (Guid?)null : null
                 };
 
-                _context.SistemLoglar.Add(log);
+                await _context.SistemLoglar.AddAsync(log);
                 await _context.SaveChangesAsync();
                 
                 return true;
@@ -184,38 +187,43 @@ namespace MuhasebeStokWebApp.Services
                 return "Diğer";
         }
 
-        // LogOlustur metodunda
-        public async Task<bool> LogOlustur(string mesaj, MuhasebeStokWebApp.Enums.LogTuru logTuru, string tabloAdi, string kayitAdi, Guid? kayitID, string kullaniciAdi = null, bool basarili = true, string kategori = null)
+        // LogOlustur metodu (public olarak tanımlandı)
+        public async Task<bool> LogOlustur(
+            string mesaj,
+            MuhasebeStokWebApp.Enums.LogTuru logTuru,
+            string? tabloAdi = null,
+            string? kayitAdi = null,
+            string? kayitID = null,
+            string? kullaniciAdi = null,
+            bool basarili = true,
+            string? kategori = null,
+            string? aciklama = null
+        )
         {
             try
             {
-                var log = new ESistemLog
+                var sistemLog = new ESistemLog
                 {
-                    LogID = Guid.NewGuid(),
-                    LogTuru = logTuru.ToString(),
-                    LogTuruInt = (int)logTuru,
-                    IslemTuru = logTuru.ToString(),
-                    Aciklama = mesaj,
-                    KullaniciAdi = kullaniciAdi ?? "Sistem",
+                    LogID = Guid.NewGuid().ToString(),
                     IslemTarihi = DateTime.Now,
-                    Basarili = basarili,
+                    Mesaj = mesaj,
+                    LogTuru = logTuru.ToString(),
                     TabloAdi = tabloAdi,
                     KayitAdi = kayitAdi,
                     KayitID = kayitID,
-                    Mesaj = mesaj,
-                    HataMesaji = string.Empty,
-                    KullaniciId = kayitID?.ToString(),
-                    KullaniciGuid = kayitID
+                    KullaniciAdi = kullaniciAdi ?? _httpContextAccessor.HttpContext?.User?.Identity?.Name ?? "Sistem",
+                    Basarili = basarili,
+                    Aciklama = aciklama
                 };
 
-                _context.SistemLoglar.Add(log);
+                await _context.SistemLoglar.AddAsync(sistemLog);
                 await _context.SaveChangesAsync();
+
                 return true;
             }
             catch (Exception ex)
             {
-                // Loglama hatası
-                _logger.LogError(ex, "Log oluşturma hatası: {Message}", ex.Message);
+                _logger.LogError(ex, "Log kaydı oluşturulurken hata: {Message}", ex.Message);
                 return false;
             }
         }
@@ -277,12 +285,12 @@ namespace MuhasebeStokWebApp.Services
 
                 var log = new ESistemLog
                 {
-                    LogID = Guid.NewGuid(),
+                    LogID = Guid.NewGuid().ToString(),
                     IslemTuru = "Oturum Açma",
                     LogTuruInt = (int)MuhasebeStokWebApp.Enums.LogTuru.Giris,
                     TabloAdi = "AspNetUsers",
                     KayitAdi = kullaniciAdi,
-                    KayitID = Guid.TryParse(kullaniciID, out Guid guidResult) ? guidResult : (Guid?)null,
+                    KayitID = kullaniciID,
                     Aciklama = $"{kullaniciAdi} kullanıcısı sisteme giriş yaptı.",
                     HataMesaji = "İşlem başarılı", // HataMesaji alanını ekliyoruz
                     KullaniciAdi = kullaniciAdi,
@@ -294,7 +302,7 @@ namespace MuhasebeStokWebApp.Services
                     KullaniciGuid = Guid.TryParse(kullaniciID, out Guid guidValue) ? guidValue : (Guid?)null
                 };
 
-                _context.SistemLoglar.Add(log);
+                await _context.SistemLoglar.AddAsync(log);
                 await _context.SaveChangesAsync();
             }
             catch (Exception ex)
@@ -331,53 +339,79 @@ namespace MuhasebeStokWebApp.Services
         }
         
         public async Task<List<MSistemLog>> GetLogsByTurAsync(MuhasebeStokWebApp.Enums.LogTuru logTuru, DateTime? baslangicTarihi = null, DateTime? bitisTarihi = null)
+        {
+            try
             {
                 var query = _context.SistemLoglar.AsQueryable();
-
-            query = query.Where(l => l.IslemTuru == logTuru.ToString());
-
+                
+                // LogTuru filtreleme
+                query = query.Where(l => l.LogTuru == logTuru.ToString());
+                
+                // Tarih aralığı filtreleme
                 if (baslangicTarihi.HasValue)
+                {
                     query = query.Where(l => l.IslemTarihi >= baslangicTarihi.Value);
-
+                }
+                
                 if (bitisTarihi.HasValue)
-                query = query.Where(l => l.IslemTarihi <= bitisTarihi.Value);
-
-            var logs = await query.OrderByDescending(l => l.IslemTarihi).ToListAsync();
-            
-            return logs.Select(l => new MSistemLog
+                {
+                    query = query.Where(l => l.IslemTarihi <= bitisTarihi.Value);
+                }
+                
+                // Sıralama ve çekme
+                var logs = await query
+                    .OrderByDescending(l => l.IslemTarihi)
+                    .ToListAsync();
+                
+                return logs.Select(l => new MSistemLog
+                {
+                    LogID = l.LogID,
+                    IslemTuru = l.IslemTuru,
+                    Aciklama = l.Aciklama,
+                    TabloAdi = l.TabloAdi,
+                    KayitAdi = l.KayitAdi,
+                    KayitID = l.KayitID,
+                    KullaniciAdi = l.KullaniciAdi,
+                    IPAdresi = l.IPAdresi,
+                    IslemTarihi = l.IslemTarihi,
+                    LogTuru = l.LogTuru
+                }).ToList();
+            }
+            catch (Exception ex)
             {
-                SistemLogID = l.LogID.GetHashCode(),
-                        IslemTuru = l.IslemTuru,
-                        Aciklama = l.Aciklama,
-                        KullaniciAdi = l.KullaniciAdi,
-                        IPAdresi = l.IPAdresi,
-                        IslemTarihi = l.IslemTarihi,
-                Tarayici = l.HataMesaji // En yakın eşleşme
-            }).ToList();
+                _logger.LogError(ex, "Log bilgileri alınırken hata: {Message}", ex.Message);
+                return new List<MSistemLog>();
+            }
         }
         
-        public async Task<List<MSistemLog>> GetCariLogsAsync(Guid cariId)
+        public async Task<List<MSistemLog>> GetCariLogsAsync(string cariId)
         {
-            var query = _context.SistemLoglar.AsQueryable();
+            try
+            {
+                var logs = await _context.SistemLoglar
+                    .Where(l => l.TabloAdi == "Cari" && l.KayitID == cariId)
+                    .OrderByDescending(l => l.IslemTarihi)
+                    .ToListAsync();
 
-            // Cari ID'sine göre filtreleme - string yerine doğrudan GUID ile karşılaştırma
-            query = query.Where(l => l.KayitID == cariId);
-
-            var logs = await query.OrderByDescending(l => l.IslemTarihi).ToListAsync();
-
-            return logs.Select(l => new MSistemLog
-                    {
-                        LogID = l.LogID,
-                SistemLogID = l.LogID.GetHashCode(),
-                        IslemTuru = l.IslemTuru,
-                        Aciklama = l.Aciklama,
-                        KullaniciAdi = l.KullaniciAdi,
-                        IPAdresi = l.IPAdresi,
-                        IslemTarihi = l.IslemTarihi,
-                        TabloAdi = l.TabloAdi,
-                        KayitAdi = l.KayitAdi,
-                IlgiliID = l.KayitID // KayitID alanını kullanıyoruz
-            }).ToList();
+                return logs.Select(l => new MSistemLog
+                {
+                    LogID = l.LogID,
+                    IslemTuru = l.IslemTuru,
+                    Aciklama = l.Aciklama,
+                    TabloAdi = l.TabloAdi,
+                    KayitAdi = l.KayitAdi,
+                    KayitID = l.KayitID,
+                    KullaniciAdi = l.KullaniciAdi,
+                    IPAdresi = l.IPAdresi,
+                    IslemTarihi = l.IslemTarihi,
+                    LogTuru = l.LogTuru
+                }).ToList();
+            }
+            catch (Exception ex)
+            {
+                _logger.LogError(ex, "Cari logları alınamadı, ID: {CariID}, Hata: {Message}", cariId, ex.Message);
+                return new List<MSistemLog>();
+            }
         }
 
         public async Task ClearLogsAsync()
@@ -398,413 +432,182 @@ namespace MuhasebeStokWebApp.Services
                 return false;
         }
         
-        public async Task CariOlusturmaLogOlustur(Guid cariID, string ad, string aciklama)
+        public async Task CariOlusturmaLogOlustur(string cariID, string cariAdi, string aciklama)
         {
-            try 
-            {
-                string kullaniciAdi = _httpContextAccessor.HttpContext?.User?.Identity?.Name ?? "Sistem";
-                string ipAdresi = _httpContextAccessor.HttpContext?.Connection?.RemoteIpAddress?.ToString() ?? "0.0.0.0";
-                string? kullaniciId = _httpContextAccessor.HttpContext?.User.FindFirstValue(ClaimTypes.NameIdentifier);
-
-                var log = new ESistemLog
-                {
-                    LogID = Guid.NewGuid(),
-                    LogTuru = "Bilgi",
-                    IslemTuru = "Cari Oluşturma",
-                    LogTuruInt = (int)MuhasebeStokWebApp.Enums.LogTuru.Bilgi,
-                    Aciklama = $"{ad} isimli cari kaydı oluşturuldu. {aciklama}",
-                    KullaniciAdi = kullaniciAdi,
-                    IPAdresi = ipAdresi,
-                    IslemTarihi = DateTime.Now,
-                    Basarili = true,
-                    TabloAdi = "Cariler",
-                    KayitAdi = ad,
-                    KayitID = cariID,
-                    Mesaj = $"Cari Kaydı Eklendi: {ad}",
-                    HataMesaji = string.Empty,
-                    KullaniciId = kullaniciId,
-                    KullaniciGuid = kullaniciId != null ? Guid.TryParse(kullaniciId, out Guid guidResult) ? guidResult : (Guid?)null : null
-                };
-
-                _context.SistemLoglar.Add(log);
-                await _context.SaveChangesAsync();
-            }
-            catch (Exception ex)
-            {
-                await LogErrorAsync("CariOlusturmaLogOlustur", ex.StackTrace, ex);
-            }
+            await LogOlustur(
+                mesaj: $"Yeni cari kaydı oluşturuldu",
+                logTuru: MuhasebeStokWebApp.Enums.LogTuru.Bilgi,
+                tabloAdi: "Cari",
+                kayitAdi: cariAdi,
+                kayitID: cariID,
+                kullaniciAdi: _httpContextAccessor.HttpContext?.User?.Identity?.Name ?? "Sistem",
+                basarili: true,
+                kategori: "Cari Yönetimi",
+                aciklama: aciklama
+            );
         }
         
-        public async Task CariGuncellemeLogOlustur(Guid cariID, string ad, string aciklama)
+        public async Task CariGuncellemeLogOlustur(string cariID, string cariAdi, string aciklama)
         {
-            try 
-            {
-                string kullaniciAdi = _httpContextAccessor.HttpContext?.User?.Identity?.Name ?? "Sistem";
-                string ipAdresi = _httpContextAccessor.HttpContext?.Connection?.RemoteIpAddress?.ToString() ?? "0.0.0.0";
-                string? kullaniciId = _httpContextAccessor.HttpContext?.User.FindFirstValue(ClaimTypes.NameIdentifier);
-
-                var log = new ESistemLog
-                {
-                    LogID = Guid.NewGuid(),
-                    LogTuru = "Bilgi",
-                    IslemTuru = "Cari Güncelleme",
-                    LogTuruInt = (int)MuhasebeStokWebApp.Enums.LogTuru.Bilgi,
-                    Aciklama = $"{ad} isimli cari kaydı güncellendi. {aciklama}",
-                    KullaniciAdi = kullaniciAdi,
-                    IPAdresi = ipAdresi,
-                    IslemTarihi = DateTime.Now,
-                    Basarili = true,
-                    TabloAdi = "Cariler",
-                    KayitAdi = ad,
-                    KayitID = cariID,
-                    Mesaj = $"Cari Kaydı Güncellendi: {ad}",
-                    HataMesaji = string.Empty,
-                    KullaniciId = kullaniciId,
-                    KullaniciGuid = kullaniciId != null ? Guid.TryParse(kullaniciId, out Guid guidResult) ? guidResult : (Guid?)null : null
-                };
-
-                _context.SistemLoglar.Add(log);
-                await _context.SaveChangesAsync();
-            }
-            catch (Exception ex)
-            {
-                await LogErrorAsync("CariGuncellemeLogOlustur", ex.StackTrace, ex);
-            }
+            await LogOlustur(
+                mesaj: $"Cari kaydı güncellendi",
+                logTuru: MuhasebeStokWebApp.Enums.LogTuru.Bilgi,
+                tabloAdi: "Cari",
+                kayitAdi: cariAdi,
+                kayitID: cariID,
+                kullaniciAdi: _httpContextAccessor.HttpContext?.User?.Identity?.Name ?? "Sistem",
+                basarili: true,
+                kategori: "Cari Yönetimi",
+                aciklama: aciklama
+            );
         }
         
-        public async Task CariSilmeLogOlustur(Guid cariID, string ad, string aciklama)
+        public async Task CariSilmeLogOlustur(string cariID, string cariAdi, string aciklama)
         {
-            try
-            {
-                string kullaniciAdi = _httpContextAccessor.HttpContext?.User?.Identity?.Name ?? "Sistem";
-                string ipAdresi = _httpContextAccessor.HttpContext?.Connection?.RemoteIpAddress?.ToString() ?? "0.0.0.0";
-                string? kullaniciId = _httpContextAccessor.HttpContext?.User.FindFirstValue(ClaimTypes.NameIdentifier);
-
-                var log = new ESistemLog
-                {
-                    LogID = Guid.NewGuid(),
-                    LogTuru = "Bilgi",
-                    IslemTuru = "Cari Silme",
-                    LogTuruInt = (int)MuhasebeStokWebApp.Enums.LogTuru.Bilgi,
-                    Aciklama = $"{ad} isimli cari kaydı silindi. {aciklama}",
-                    KullaniciAdi = kullaniciAdi,
-                    IPAdresi = ipAdresi,
-                    IslemTarihi = DateTime.Now,
-                    Basarili = true,
-                    TabloAdi = "Cariler",
-                    KayitAdi = ad,
-                    KayitID = cariID,
-                    Mesaj = $"Cari Kaydı Silindi: {ad}",
-                    HataMesaji = string.Empty,
-                    KullaniciId = kullaniciId,
-                    KullaniciGuid = kullaniciId != null ? Guid.TryParse(kullaniciId, out Guid guidResult) ? guidResult : (Guid?)null : null
-                };
-
-                _context.SistemLoglar.Add(log);
-                await _context.SaveChangesAsync();
-            }
-            catch (Exception ex)
-            {
-                await LogErrorAsync("CariSilmeLogOlustur", ex.StackTrace, ex);
-            }
+            await LogOlustur(
+                mesaj: $"Cari kaydı silindi",
+                logTuru: MuhasebeStokWebApp.Enums.LogTuru.Uyari,
+                tabloAdi: "Cari",
+                kayitAdi: cariAdi,
+                kayitID: cariID,
+                kullaniciAdi: _httpContextAccessor.HttpContext?.User?.Identity?.Name ?? "Sistem",
+                basarili: true,
+                kategori: "Cari Yönetimi",
+                aciklama: aciklama
+            );
         }
         
-        public async Task CariPasifleştirmeLogOlustur(Guid cariID, string ad, string aciklama)
+        public async Task CariPasifleştirmeLogOlustur(string cariID, string cariAdi, string aciklama)
         {
-            try
-            {
-                var httpContext = _httpContextAccessor.HttpContext;
-                var kullaniciAdi = httpContext != null ? httpContext.User?.Identity?.Name ?? "Sistem" : "Sistem";
-                var kullaniciId = httpContext != null && httpContext.User?.Identity?.IsAuthenticated == true ?
-                    httpContext.User.FindFirst(ClaimTypes.NameIdentifier)?.Value : null;
-
-                var log = new ESistemLog
-                {
-                    LogID = Guid.NewGuid(),
-                    LogTuru = LogTuru.Bilgi.ToString(),
-                    LogTuruInt = (int)LogTuru.Bilgi,
-                    IslemTuru = "Cari Pasifleştirme",
-                    Aciklama = $"{ad} adlı cari pasif duruma getirildi: {aciklama}",
-                    KullaniciAdi = kullaniciAdi,
-                    IslemTarihi = DateTime.Now,
-                    Basarili = true,
-                    TabloAdi = "Cari",
-                    KayitAdi = ad,
-                    KayitID = cariID,
-                    KullaniciId = kullaniciId,
-                    KullaniciGuid = kullaniciId != null ? Guid.TryParse(kullaniciId, out Guid guidResult) ? guidResult : (Guid?)null : null
-                };
-
-                _context.SistemLoglar.Add(log);
-                await _context.SaveChangesAsync();
-            }
-            catch (Exception ex)
-            {
-                _logger.LogError(ex, "Cari pasife alma log oluşturma hatası: {Mesaj}", ex.Message);
-            }
+            await LogOlustur(
+                mesaj: $"Cari pasif duruma alındı",
+                logTuru: MuhasebeStokWebApp.Enums.LogTuru.Uyari,
+                tabloAdi: "Cari",
+                kayitAdi: cariAdi,
+                kayitID: cariID,
+                kullaniciAdi: _httpContextAccessor.HttpContext?.User?.Identity?.Name ?? "Sistem",
+                basarili: true,
+                kategori: "Cari Yönetimi",
+                aciklama: aciklama
+            );
         }
         
-        public async Task CariAktifleştirmeLogOlustur(Guid cariID, string ad, string aciklama)
+        public async Task CariAktifleştirmeLogOlustur(string cariID, string cariAdi, string aciklama)
         {
-            try
-            {
-                var httpContext = _httpContextAccessor.HttpContext;
-                var kullaniciAdi = httpContext != null ? httpContext.User?.Identity?.Name ?? "Sistem" : "Sistem";
-                var kullaniciId = httpContext != null && httpContext.User?.Identity?.IsAuthenticated == true ?
-                    httpContext.User.FindFirst(ClaimTypes.NameIdentifier)?.Value : null;
-
-                var log = new ESistemLog
-                {
-                    LogID = Guid.NewGuid(),
-                    LogTuru = LogTuru.Bilgi.ToString(),
-                    LogTuruInt = (int)LogTuru.Bilgi,
-                    IslemTuru = "Cari Aktifleştirme",
-                    Aciklama = $"{ad} adlı cari aktifleştirildi: {aciklama}",
-                    KullaniciAdi = kullaniciAdi,
-                    IslemTarihi = DateTime.Now,
-                    Basarili = true,
-                    TabloAdi = "Cari",
-                    KayitAdi = ad,
-                    KayitID = cariID,
-                    KullaniciId = kullaniciId,
-                    KullaniciGuid = kullaniciId != null ? Guid.TryParse(kullaniciId, out Guid guidResult) ? guidResult : (Guid?)null : null
-                };
-
-                _context.SistemLoglar.Add(log);
-                await _context.SaveChangesAsync();
-            }
-            catch (Exception ex)
-            {
-                _logger.LogError(ex, "Cari aktifleştirme log oluşturma hatası: {Mesaj}", ex.Message);
-            }
+            await LogOlustur(
+                mesaj: $"Cari aktif duruma alındı",
+                logTuru: MuhasebeStokWebApp.Enums.LogTuru.Bilgi,
+                tabloAdi: "Cari",
+                kayitAdi: cariAdi,
+                kayitID: cariID,
+                kullaniciAdi: _httpContextAccessor.HttpContext?.User?.Identity?.Name ?? "Sistem",
+                basarili: true,
+                kategori: "Cari Yönetimi",
+                aciklama: aciklama
+            );
         }
 
-        public async Task CariHareketEklemeLogOlustur(Guid cariID, string ad, string hareketTuru, decimal tutar, string aciklama)
+        public async Task CariHareketEklemeLogOlustur(string cariID, string ad, string hareketTuru, decimal tutar, string aciklama)
         {
-            try
-            {
-                string kullaniciAdi = _httpContextAccessor.HttpContext?.User?.Identity?.Name ?? "Sistem";
-                string ipAdresi = _httpContextAccessor.HttpContext?.Connection?.RemoteIpAddress?.ToString() ?? "0.0.0.0";
-                string? kullaniciId = _httpContextAccessor.HttpContext?.User.FindFirstValue(ClaimTypes.NameIdentifier);
-
-                var log = new ESistemLog
-                {
-                    LogID = Guid.NewGuid(),
-                    LogTuru = "Bilgi",
-                    IslemTuru = "Cari Hareket Ekleme",
-                    LogTuruInt = (int)MuhasebeStokWebApp.Enums.LogTuru.Bilgi,
-                    Aciklama = $"{ad} isimli cariye {tutar} TL tutarında {hareketTuru} hareketi eklendi. {aciklama}",
-                    KullaniciAdi = kullaniciAdi,
-                    IPAdresi = ipAdresi,
-                    IslemTarihi = DateTime.Now,
-                    Basarili = true,
-                    TabloAdi = "CariHareketler",
-                    KayitAdi = ad,
-                    KayitID = cariID,
-                    Mesaj = $"Cari Hareket Eklendi: {ad} - {tutar} TL {hareketTuru}",
-                    HataMesaji = string.Empty,
-                    KullaniciId = kullaniciId,
-                    KullaniciGuid = kullaniciId != null ? Guid.TryParse(kullaniciId, out Guid guidResult) ? guidResult : (Guid?)null : null
-                };
-
-                _context.SistemLoglar.Add(log);
-                await _context.SaveChangesAsync();
-            }
-            catch (Exception ex)
-            {
-                await LogErrorAsync("CariHareketEklemeLogOlustur", ex.StackTrace, ex);
-            }
+             await LogOlustur(
+                mesaj: $"{ad} carisine {tutar} tutarında {hareketTuru} hareketi eklendi.",
+                logTuru: MuhasebeStokWebApp.Enums.LogTuru.Bilgi,
+                tabloAdi: "CariHareket",
+                kayitAdi: $"{ad} - {hareketTuru}",
+                kayitID: cariID
+            );
         }
         
-        public async Task UrunOlusturmaLogOlustur(Guid urunID, string urunAdi, string aciklama)
+        public async Task UrunOlusturmaLogOlustur(string urunID, string urunAdi, string aciklama)
         {
-            try
-            {
-                var kullaniciAdi = _httpContextAccessor.HttpContext?.User?.Identity?.Name ?? "Sistem";
-                var ipAdresi = _httpContextAccessor.HttpContext?.Connection?.RemoteIpAddress?.ToString() ?? "Bilinmiyor";
-                
-                // Kullanıcı ID'sini al
-                string? kullaniciId = _httpContextAccessor.HttpContext?.User.FindFirstValue(ClaimTypes.NameIdentifier);
-
-                var log = new ESistemLog
-                {
-                    LogID = Guid.NewGuid(),
-                    IslemTuru = "Ürün Oluşturma",
-                    Aciklama = aciklama,
-                    HataMesaji = "İşlem başarılı", // HataMesaji alanını ekliyoruz
-                    KullaniciAdi = kullaniciAdi,
-                    IPAdresi = ipAdresi,
-                    IslemTarihi = DateTime.Now,
-                    TabloAdi = "Urunler",
-                    KayitAdi = urunAdi,
-                    KayitID = urunID, // Doğrudan GUID kullanımı
-                    Sayfa = string.Empty, // Sayfa alanını boş string ile dolduruyoruz
-                    KullaniciId = kullaniciId,
-                    KullaniciGuid = kullaniciId != null ? Guid.TryParse(kullaniciId, out Guid guidResult) ? guidResult : (Guid?)null : null
-                };
-
-                _context.SistemLoglar.Add(log);
-                await _context.SaveChangesAsync();
-            }
-            catch (Exception ex)
-            {
-                // Loglama hatası durumunda sessizce devam et
-                _logger.LogError(ex, "Ürün oluşturma logu oluşturulurken hata: {Message}", ex.Message);
-            }
+            await LogOlustur(
+                mesaj: $"Yeni ürün kaydı oluşturuldu",
+                logTuru: MuhasebeStokWebApp.Enums.LogTuru.Bilgi,
+                tabloAdi: "Urun",
+                kayitAdi: urunAdi,
+                kayitID: urunID,
+                kullaniciAdi: _httpContextAccessor.HttpContext?.User?.Identity?.Name ?? "Sistem",
+                basarili: true,
+                kategori: "Stok Yönetimi"
+            );
         }
         
-        public async Task UrunGuncellemeLogOlustur(Guid urunID, string urunAdi, string aciklama)
+        public async Task UrunGuncellemeLogOlustur(string urunID, string urunAdi, string aciklama)
         {
-            try
-            {
-                var kullaniciAdi = _httpContextAccessor.HttpContext?.User?.Identity?.Name ?? "Sistem";
-                var ipAdresi = _httpContextAccessor.HttpContext?.Connection?.RemoteIpAddress?.ToString() ?? "Bilinmiyor";
-                
-                // Kullanıcı ID'sini al
-                string? kullaniciId = _httpContextAccessor.HttpContext?.User.FindFirstValue(ClaimTypes.NameIdentifier);
-
-                var log = new ESistemLog
-                {
-                    LogID = Guid.NewGuid(),
-                    IslemTuru = "Ürün Güncelleme",
-                    Aciklama = aciklama,
-                    HataMesaji = "İşlem başarılı", // HataMesaji alanını ekliyoruz
-                    KullaniciAdi = kullaniciAdi,
-                    IPAdresi = ipAdresi,
-                    IslemTarihi = DateTime.Now,
-                    TabloAdi = "Urunler",
-                    KayitAdi = urunAdi,
-                    KayitID = urunID, // Doğrudan GUID kullanımı
-                    Sayfa = string.Empty, // Sayfa alanını boş string ile dolduruyoruz
-                    KullaniciId = kullaniciId,
-                    KullaniciGuid = kullaniciId != null ? Guid.TryParse(kullaniciId, out Guid guidResult) ? guidResult : (Guid?)null : null
-                };
-
-                _context.SistemLoglar.Add(log);
-                await _context.SaveChangesAsync();
-            }
-            catch (Exception ex)
-            {
-                // Loglama hatası durumunda sessizce devam et
-                _logger.LogError(ex, "Ürün güncelleme logu oluşturulurken hata: {Message}", ex.Message);
-            }
+            await LogOlustur(
+                mesaj: $"Ürün bilgileri güncellendi",
+                logTuru: MuhasebeStokWebApp.Enums.LogTuru.Bilgi,
+                tabloAdi: "Urun",
+                kayitAdi: urunAdi,
+                kayitID: urunID,
+                kullaniciAdi: _httpContextAccessor.HttpContext?.User?.Identity?.Name ?? "Sistem",
+                basarili: true,
+                kategori: "Stok Yönetimi"
+            );
         }
         
-        public async Task UrunSilmeLogOlustur(Guid urunID, string urunAdi, string aciklama)
+        public async Task UrunSilmeLogOlustur(string urunID, string urunAdi, string aciklama = null)
         {
-            try
-            {
-                var kullaniciAdi = _httpContextAccessor.HttpContext?.User?.Identity?.Name ?? "Sistem";
-                var ipAdresi = _httpContextAccessor.HttpContext?.Connection?.RemoteIpAddress?.ToString() ?? "Bilinmiyor";
-                
-                // Kullanıcı ID'sini al
-                string? kullaniciId = _httpContextAccessor.HttpContext?.User.FindFirstValue(ClaimTypes.NameIdentifier);
-
-                var log = new ESistemLog
-                {
-                    LogID = Guid.NewGuid(),
-                    IslemTuru = "Ürün Silme",
-                    Aciklama = aciklama,
-                    HataMesaji = "İşlem başarılı", // HataMesaji alanını ekliyoruz
-                    KullaniciAdi = kullaniciAdi,
-                    IPAdresi = ipAdresi,
-                    IslemTarihi = DateTime.Now,
-                    TabloAdi = "Urunler",
-                    KayitAdi = urunAdi,
-                    KayitID = urunID, // Doğrudan GUID kullanımı
-                    Sayfa = string.Empty, // Sayfa alanını boş string ile dolduruyoruz
-                    KullaniciId = kullaniciId,
-                    KullaniciGuid = kullaniciId != null ? Guid.TryParse(kullaniciId, out Guid guidResult) ? guidResult : (Guid?)null : null
-                };
-
-                _context.SistemLoglar.Add(log);
-                await _context.SaveChangesAsync();
-            }
-            catch (Exception ex)
-            {
-                // Loglama hatası durumunda sessizce devam et
-                _logger.LogError(ex, "Ürün silme logu oluşturulurken hata: {Message}", ex.Message);
-            }
+            await LogOlustur(
+                mesaj: $"Ürün silindi",
+                logTuru: MuhasebeStokWebApp.Enums.LogTuru.Uyari,
+                tabloAdi: "Urun",
+                kayitAdi: urunAdi,
+                kayitID: urunID,
+                kullaniciAdi: _httpContextAccessor.HttpContext?.User?.Identity?.Name ?? "Sistem",
+                basarili: true,
+                kategori: "Stok Yönetimi"
+            );
         }
         
-        public async Task StokGirisLogOlustur(Guid stokHareketID, Guid urunID, string urunAdi, decimal miktar, string aciklama)
+        public async Task UrunPasifleştirmeLogOlustur(string urunID, string urunAdi)
         {
-            try
-            {
-                var kullaniciAdi = _httpContextAccessor.HttpContext?.User?.Identity?.Name ?? "Sistem";
-                var ipAdresi = _httpContextAccessor.HttpContext?.Connection?.RemoteIpAddress?.ToString() ?? "Bilinmiyor";
-                
-                // Kullanıcı ID'sini al
-                string? kullaniciId = _httpContextAccessor.HttpContext?.User.FindFirstValue(ClaimTypes.NameIdentifier);
-
-                // Log oluştur
-                var log = new ESistemLog
-                {
-                    LogID = Guid.NewGuid(),
-                    IslemTuru = "Stok Giriş",
-                    LogTuruInt = (int)MuhasebeStokWebApp.Enums.LogTuru.Bilgi,
-                    KayitID = urunID, // urunID doğrudan Guid olarak kullan, ToString() yapmadan
-                    TabloAdi = "StokHareketler",
-                    KayitAdi = urunAdi,
-                    Aciklama = $"{urunAdi} ürününe {miktar} adet giriş yapıldı. Açıklama: {aciklama}",
-                    HataMesaji = "İşlem başarılı",
-                    KullaniciAdi = kullaniciAdi,
-                    IPAdresi = ipAdresi,
-                    IslemTarihi = DateTime.Now,
-                    Basarili = true,
-                    Sayfa = string.Empty, // Sayfa alanını boş string ile dolduruyoruz
-                    KullaniciId = kullaniciId,
-                    KullaniciGuid = kullaniciId != null ? Guid.TryParse(kullaniciId, out Guid guidResult) ? guidResult : (Guid?)null : null
-                };
-                
-                // Veritabanına kaydet
-                _context.SistemLoglar.Add(log);
-                await _context.SaveChangesAsync();
-            }
-            catch (Exception ex)
-            {
-                _logger.LogError(ex, "Stok giriş logu oluşturulurken hata: {Message}", ex.Message);
-            }
+            await LogOlustur(
+                mesaj: $"{urunAdi} isimli ürün pasifleştirildi.",
+                logTuru: MuhasebeStokWebApp.Enums.LogTuru.Bilgi,
+                tabloAdi: "Urun",
+                kayitAdi: urunAdi,
+                kayitID: urunID,
+                kullaniciAdi: _httpContextAccessor.HttpContext?.User?.Identity?.Name ?? "Sistem",
+                basarili: true,
+                kategori: "Stok Yönetimi"
+            );
         }
         
-        public async Task StokCikisLogOlustur(Guid stokHareketID, Guid urunID, string urunAdi, decimal miktar, string aciklama)
+        public async Task UrunAktifleştirmeLogOlustur(string urunID, string urunAdi)
         {
-            try
-            {
-                var kullaniciAdi = _httpContextAccessor.HttpContext?.User?.Identity?.Name ?? "Sistem";
-                var ipAdresi = _httpContextAccessor.HttpContext?.Connection?.RemoteIpAddress?.ToString() ?? "Bilinmiyor";
-                
-                // Kullanıcı ID'sini al
-                string? kullaniciId = _httpContextAccessor.HttpContext?.User.FindFirstValue(ClaimTypes.NameIdentifier);
-
-                // Log oluştur
-                var log = new ESistemLog
-                {
-                    LogID = Guid.NewGuid(),
-                    IslemTuru = "Stok Çıkış",
-                    LogTuruInt = (int)MuhasebeStokWebApp.Enums.LogTuru.Bilgi,
-                    KayitID = urunID, // urunID doğrudan Guid olarak kullan, ToString() yapmadan
-                    TabloAdi = "StokHareketler",
-                    KayitAdi = urunAdi,
-                    Aciklama = $"{urunAdi} ürününden {miktar} adet çıkış yapıldı. Açıklama: {aciklama}",
-                    HataMesaji = "İşlem başarılı",
-                    KullaniciAdi = kullaniciAdi,
-                    IPAdresi = ipAdresi,
-                    IslemTarihi = DateTime.Now,
-                    Basarili = true,
-                    Sayfa = string.Empty, // Sayfa alanını boş string ile dolduruyoruz
-                    KullaniciId = kullaniciId,
-                    KullaniciGuid = kullaniciId != null ? Guid.TryParse(kullaniciId, out Guid guidResult) ? guidResult : (Guid?)null : null
-                };
-                
-                // Veritabanına kaydet
-                _context.SistemLoglar.Add(log);
-                await _context.SaveChangesAsync();
-            }
-            catch (Exception ex)
-            {
-                _logger.LogError(ex, "Stok çıkış logu oluşturulurken hata: {Message}", ex.Message);
-            }
+            await LogOlustur(
+                mesaj: $"{urunAdi} isimli ürün aktifleştirildi.",
+                logTuru: MuhasebeStokWebApp.Enums.LogTuru.Bilgi,
+                tabloAdi: "Urun",
+                kayitAdi: urunAdi,
+                kayitID: urunID,
+                kullaniciAdi: _httpContextAccessor.HttpContext?.User?.Identity?.Name ?? "Sistem",
+                basarili: true,
+                kategori: "Stok Yönetimi"
+            );
+        }
+        
+        public async Task StokGirisLogOlustur(string stokHareketID, string urunID, string urunAdi, decimal miktar, string aciklama)
+        {
+            await LogOlustur(
+                mesaj: $"{urunAdi} ürününe {miktar} adet stok girişi yapıldı.",
+                logTuru: MuhasebeStokWebApp.Enums.LogTuru.Bilgi,
+                tabloAdi: "StokHareket",
+                kayitAdi: $"{urunAdi} - Giriş",
+                kayitID: stokHareketID
+            );
+        }
+        
+        public async Task StokCikisLogOlustur(string stokHareketID, string urunID, string urunAdi, decimal miktar, string aciklama)
+        {
+            await LogOlustur(
+                mesaj: $"{urunAdi} ürününden {miktar} adet stok çıkışı yapıldı.",
+                logTuru: MuhasebeStokWebApp.Enums.LogTuru.Bilgi,
+                tabloAdi: "StokHareket",
+                kayitAdi: $"{urunAdi} - Çıkış",
+                kayitID: stokHareketID
+            );
         }
         
         public async Task<bool> LogInfoAsync(string message, string detail = null)
@@ -860,41 +663,15 @@ namespace MuhasebeStokWebApp.Services
             await LogEkleAsync(operation + ": " + ex.Message, MuhasebeStokWebApp.Enums.LogTuru.Hata, stackTrace);
         }
 
-        public async Task FaturaOlusturmaLogOlustur(Guid faturaID, string faturaNo, string aciklama)
+        public async Task FaturaOlusturmaLogOlustur(string faturaID, string faturaNo, string aciklama)
         {
-            try
-            {
-                var kullaniciAdi = _httpContextAccessor.HttpContext?.User?.Identity?.Name ?? "Sistem";
-                var ipAdresi = _httpContextAccessor.HttpContext?.Connection?.RemoteIpAddress?.ToString() ?? "Bilinmiyor";
-                
-                // Kullanıcı ID'sini al
-                string? kullaniciId = _httpContextAccessor.HttpContext?.User.FindFirstValue(ClaimTypes.NameIdentifier);
-
-                var log = new ESistemLog
-                {
-                    LogID = Guid.NewGuid(),
-                    IslemTuru = "Fatura Oluşturma",
-                    Aciklama = aciklama,
-                    HataMesaji = "İşlem başarılı", // HataMesaji alanını ekliyoruz
-                    KullaniciAdi = kullaniciAdi,
-                    IPAdresi = ipAdresi,
-                    IslemTarihi = DateTime.Now,
-                    TabloAdi = "Faturalar",
-                    KayitAdi = faturaNo,
-                    KayitID = faturaID, // Doğrudan GUID kullanımı
-                    Sayfa = string.Empty, // Sayfa alanını boş string ile dolduruyoruz
-                    KullaniciId = kullaniciId,
-                    KullaniciGuid = kullaniciId != null ? Guid.TryParse(kullaniciId, out Guid guidResult) ? guidResult : (Guid?)null : null
-                };
-
-                _context.SistemLoglar.Add(log);
-                await _context.SaveChangesAsync();
-            }
-            catch (Exception ex)
-            {
-                // Loglama hatası durumunda sessizce devam et
-                _logger.LogError(ex, "Fatura oluşturma logu oluşturulurken hata: {Message}", ex.Message);
-            }
+             await LogOlustur(
+                mesaj: $"{faturaNo} numaralı yeni fatura oluşturuldu.",
+                logTuru: MuhasebeStokWebApp.Enums.LogTuru.Bilgi,
+                tabloAdi: "Fatura",
+                kayitAdi: faturaNo,
+                kayitID: faturaID
+            );
         }
         
         public async Task<List<MSistemLog>> GetLogsByTarihAsync(DateTime baslangicTarihi, DateTime bitisTarihi)
@@ -993,188 +770,115 @@ namespace MuhasebeStokWebApp.Services
                 return false;
         }
         
-        public async Task FaturaGuncellemeLogOlustur(Guid faturaID, string faturaNo, string aciklama)
+        public async Task FaturaGuncellemeLogOlustur(string faturaID, string faturaNo, string aciklama)
+        {
+             await LogOlustur(
+                mesaj: $"{faturaNo} numaralı fatura güncellendi.",
+                logTuru: MuhasebeStokWebApp.Enums.LogTuru.Bilgi,
+                tabloAdi: "Fatura",
+                kayitAdi: faturaNo,
+                kayitID: faturaID
+            );
+        }
+
+        public async Task FaturaSilmeLogOlustur(string faturaID, string faturaNo, string aciklama)
+        {
+            await LogOlustur(
+                mesaj: $"{faturaNo} numaralı fatura silindi.",
+                logTuru: MuhasebeStokWebApp.Enums.LogTuru.Uyari, 
+                tabloAdi: "Fatura",
+                kayitAdi: faturaNo,
+                kayitID: faturaID
+            );
+        }
+
+        public async Task<ESistemLog> DetayliLogEkleAsync(string mesaj, MuhasebeStokWebApp.Enums.LogTuru logTuru, string tabloAdi, string kayitAdi, string? kayitID, string detay = null)
         {
             try
             {
-                var httpContext = _httpContextAccessor.HttpContext;
-                var kullaniciAdi = httpContext != null ? httpContext.User?.Identity?.Name ?? "Sistem" : "Sistem";
-                var kullaniciId = httpContext != null && httpContext.User?.Identity?.IsAuthenticated == true ?
-                    httpContext.User.FindFirst(ClaimTypes.NameIdentifier)?.Value : null;
-
                 var log = new ESistemLog
                 {
-                    LogID = Guid.NewGuid(),
-                    LogTuru = LogTuru.Bilgi.ToString(),
-                    LogTuruInt = (int)LogTuru.Bilgi,
-                    IslemTuru = "Fatura Güncelleme",
-                    Aciklama = $"{faturaNo} numaralı fatura güncellendi: {aciklama}",
-                    KullaniciAdi = kullaniciAdi,
+                    LogID = Guid.NewGuid().ToString(),
+                    LogTuru = logTuru.ToString(),
+                    LogTuruInt = (int)logTuru,
+                    IslemTuru = logTuru.ToString(),
+                    Aciklama = mesaj,
+                    HataMesaji = detay ?? "",
+                    KullaniciAdi = _httpContextAccessor.HttpContext?.User?.Identity?.Name ?? "Sistem",
+                    IPAdresi = _httpContextAccessor.HttpContext?.Connection?.RemoteIpAddress?.ToString() ?? "0.0.0.0",
                     IslemTarihi = DateTime.Now,
-                    Basarili = true,
-                    TabloAdi = "Fatura",
-                    KayitAdi = faturaNo,
-                    KayitID = faturaID,
-                    KullaniciId = kullaniciId,
-                    KullaniciGuid = kullaniciId != null ? Guid.TryParse(kullaniciId, out Guid guidResult) ? guidResult : (Guid?)null : null
+                    TabloAdi = tabloAdi,
+                    KayitAdi = kayitAdi,
+                    KayitID = kayitID,
+                    Mesaj = mesaj,
+                    Sayfa = _httpContextAccessor.HttpContext?.Request?.Path.ToString() ?? "/",
+                    Basarili = true
                 };
 
-                _context.SistemLoglar.Add(log);
+                await _context.SistemLoglar.AddAsync(log);
                 await _context.SaveChangesAsync();
+                return log;
             }
             catch (Exception ex)
             {
-                _logger.LogError(ex, "Fatura güncelleme log oluşturma hatası: {Mesaj}", ex.Message);
+                _logger.LogError(ex, "Detaylı log ekleme hatası: {Message}", ex.Message);
+                return null;
             }
         }
 
-        public async Task FaturaSilmeLogOlustur(Guid faturaID, string faturaNo, string aciklama)
-        {
-            try
-            {
-                var kullaniciAdi = _httpContextAccessor.HttpContext?.User?.Identity?.Name ?? "Sistem";
-                var ipAdresi = _httpContextAccessor.HttpContext?.Connection?.RemoteIpAddress?.ToString() ?? "Bilinmiyor";
-                
-                // Kullanıcı ID'sini al
-                string? kullaniciId = _httpContextAccessor.HttpContext?.User.FindFirstValue(ClaimTypes.NameIdentifier);
-
-                var log = new ESistemLog
-                {
-                    LogID = Guid.NewGuid(),
-                    IslemTuru = "Fatura Silme",
-                    Aciklama = aciklama,
-                    HataMesaji = "İşlem başarılı", // HataMesaji alanını ekliyoruz
-                    KullaniciAdi = kullaniciAdi,
-                    IPAdresi = ipAdresi,
-                    IslemTarihi = DateTime.Now,
-                    TabloAdi = "Faturalar",
-                    KayitAdi = faturaNo,
-                    KayitID = faturaID, // Doğrudan GUID kullanımı
-                    Sayfa = string.Empty, // Sayfa alanını boş string ile dolduruyoruz
-                    KullaniciId = kullaniciId,
-                    KullaniciGuid = kullaniciId != null ? Guid.TryParse(kullaniciId, out Guid guidResult) ? guidResult : (Guid?)null : null
-                };
-
-                _context.SistemLoglar.Add(log);
-                await _context.SaveChangesAsync();
-            }
-            catch (Exception ex)
-            {
-                // Loglama hatası durumunda sessizce devam et
-                _logger.LogError(ex, "Fatura silme logu oluşturulurken hata: {Message}", ex.Message);
-            }
-        }
-
-        public async Task<ESistemLog> DetayliLogEkleAsync(string mesaj, MuhasebeStokWebApp.Enums.LogTuru logTuru, string tabloAdi, string kayitAdi, Guid? kayitID, string detay = null)
+        public async Task<bool> AddLogAsync(string tableName, string operation, string details, string? entityId = null)
         {
             try
             {
                 var httpContext = _httpContextAccessor.HttpContext;
                 var kullaniciAdi = httpContext != null ? httpContext.User?.Identity?.Name ?? "Anonim" : "Sistem";
                 var ipAdresi = httpContext != null ? httpContext.Connection?.RemoteIpAddress?.ToString() ?? "0.0.0.0" : "0.0.0.0";
-                var kullaniciIDString = httpContext != null && httpContext.User?.Identity?.IsAuthenticated == true ?
-                    httpContext.User.FindFirst(ClaimTypes.NameIdentifier)?.Value : null;
+                var sayfaAdresi = httpContext != null ? httpContext.Request?.Path.ToString() ?? "/" : "/";
+                string? kullaniciId = GetCurrentUserId();
+                Guid? kullaniciGuid = GetCurrentUserGuid();
+
+                // Log türünü belirle (varsayılan Information)
+                var logTuru = MuhasebeStokWebApp.Enums.LogTuru.Bilgi;
+                if (operation.Contains("Sil", StringComparison.OrdinalIgnoreCase) || operation.Contains("Delete", StringComparison.OrdinalIgnoreCase) || operation.Contains("Hata", StringComparison.OrdinalIgnoreCase))
+                {
+                    logTuru = MuhasebeStokWebApp.Enums.LogTuru.Uyari;
+                }
+                if (operation.Contains("Exception", StringComparison.OrdinalIgnoreCase) || operation.Contains("Error", StringComparison.OrdinalIgnoreCase))
+                {
+                    logTuru = MuhasebeStokWebApp.Enums.LogTuru.Hata;
+                }
+
+                // Kayıt adını bulmaya çalış (şimdilik ID'yi kullanalım)
+                string? kayitAdi = entityId;
 
                 var log = new ESistemLog
                 {
-                    LogID = Guid.NewGuid(),
+                    LogID = Guid.NewGuid().ToString(),
                     LogTuru = logTuru.ToString(),
                     LogTuruInt = (int)logTuru,
-                    IslemTuru = logTuru.ToString(),
-                    Aciklama = mesaj,
+                    IslemTuru = operation,
+                    Aciklama = details,
+                    HataMesaji = logTuru >= MuhasebeStokWebApp.Enums.LogTuru.Uyari ? details : "",
                     KullaniciAdi = kullaniciAdi,
                     IPAdresi = ipAdresi,
                     IslemTarihi = DateTime.Now,
-                    Basarili = true,
-                    TabloAdi = tabloAdi,
-                    KayitAdi = kayitAdi,
-                    KayitID = kayitID,
-                    Mesaj = mesaj,
-                    HataMesaji = detay ?? string.Empty,
-                    KullaniciId = kullaniciIDString,
-                    KullaniciGuid = kayitID
-                };
-
-                _context.SistemLoglar.Add(log);
-                await _context.SaveChangesAsync();
-                return log;
-            }
-            catch (Exception ex)
-            {
-                _logger.LogError(ex, "Log ekleme hatası: {Message}", ex.Message);
-                return null;
-            }
-        }
-
-        public async Task<bool> AddLogAsync(string tableName, string operation, string details, string entityId = null)
-        {
-            try
-            {
-                MuhasebeStokWebApp.Enums.LogTuru logTuru;
-                string entityIdString = entityId;
-                
-                // İşlem türünü belirle
-                switch (operation.ToLower())
-                {
-                    case "add":
-                    case "create":
-                    case "insert":
-                    case "oluştur":
-                    case "ekle":
-                        logTuru = MuhasebeStokWebApp.Enums.LogTuru.Bilgi;
-                        break;
-                    case "update":
-                    case "edit":
-                    case "güncelle":
-                    case "düzenle":
-                        logTuru = MuhasebeStokWebApp.Enums.LogTuru.Bilgi;
-                        break;
-                    case "delete":
-                    case "remove":
-                    case "sil":
-                    case "kaldır":
-                        logTuru = MuhasebeStokWebApp.Enums.LogTuru.Uyari;
-                        break;
-                    case "error":
-                    case "exception":
-                    case "hata":
-                        logTuru = MuhasebeStokWebApp.Enums.LogTuru.Hata;
-                        break;
-                    default:
-                        logTuru = MuhasebeStokWebApp.Enums.LogTuru.Bilgi;
-                        break;
-                }
-
-                // Kullanıcı bilgilerini al
-                var httpContext = _httpContextAccessor.HttpContext;
-                var kullaniciAdi = httpContext?.User?.Identity?.Name ?? "Sistem";
-                
-                var log = new ESistemLog
-                {
-                    LogID = Guid.NewGuid(),
-                    LogTuru = logTuru.ToString(),
-                    LogTuruInt = (int)logTuru,
-                    Aciklama = details,
-                    IslemTuru = operation,
                     TabloAdi = tableName,
-                    KayitAdi = details.Length > 50 ? details.Substring(0, 50) + "..." : details,
-                    Mesaj = $"{operation} - {tableName}",
-                    KullaniciAdi = kullaniciAdi,
-                    IPAdresi = httpContext?.Connection?.RemoteIpAddress?.ToString() ?? "0.0.0.0",
-                    IslemTarihi = DateTime.Now,
-                    Basarili = true,
-                    HataMesaji = string.Empty,
-                    KullaniciId = entityIdString,
-                    KullaniciGuid = entityIdString != null ? Guid.TryParse(entityIdString, out Guid guidResult) ? guidResult : (Guid?)null : null
+                    KayitAdi = kayitAdi ?? "Bilinmiyor",
+                    KayitID = entityId,
+                    Mesaj = details,
+                    Sayfa = sayfaAdresi,
+                    Basarili = logTuru < MuhasebeStokWebApp.Enums.LogTuru.Uyari,
+                    KullaniciId = kullaniciId,
+                    KullaniciGuid = kullaniciGuid
                 };
 
-                _context.SistemLoglar.Add(log);
+                await _context.SistemLoglar.AddAsync(log);
                 await _context.SaveChangesAsync();
                 return true;
             }
             catch (Exception ex)
             {
-                _logger.LogError(ex, "Log eklenirken hata oluştu: {Message}", ex.Message);
+                _logger.LogError(ex, "AddLogAsync hatası: {Message}", ex.Message);
                 return false;
             }
         }
@@ -1197,7 +901,7 @@ namespace MuhasebeStokWebApp.Services
                 
                 var log = new ESistemLog
                 {
-                    LogID = Guid.NewGuid(),
+                    LogID = Guid.NewGuid().ToString(),
                     LogTuru = logTuru.ToString(),
                     LogTuruInt = (int)logTuru,
                     IslemTuru = logTuru.ToString(),
@@ -1215,7 +919,7 @@ namespace MuhasebeStokWebApp.Services
                     KullaniciGuid = kullaniciId != null ? Guid.TryParse(kullaniciId, out Guid guidResult) ? guidResult : (Guid?)null : null
                 };
 
-                _context.SistemLoglar.Add(log);
+                await _context.SistemLoglar.AddAsync(log);
                 await _context.SaveChangesAsync();
                 return true;
             }
@@ -1232,7 +936,7 @@ namespace MuhasebeStokWebApp.Services
             {
                 var log = new ESistemLog
                 {
-                    LogID = Guid.NewGuid(),
+                    LogID = Guid.NewGuid().ToString(),
                     LogTuru = logTuru,
                     IslemTuru = logTuru,
                     Mesaj = mesaj,
@@ -1249,7 +953,7 @@ namespace MuhasebeStokWebApp.Services
                     KullaniciGuid = null
                 };
 
-                _context.SistemLoglar.Add(log);
+                await _context.SistemLoglar.AddAsync(log);
                 await _context.SaveChangesAsync();
             }
             catch (Exception ex)
@@ -1264,7 +968,7 @@ namespace MuhasebeStokWebApp.Services
             {
                 var log = new ESistemLog
                 {
-                    LogID = Guid.NewGuid(),
+                    LogID = Guid.NewGuid().ToString(),
                     LogTuru = "Bilgi",
                     IslemTuru = "Bilgi",
                     LogTuruInt = (int)MuhasebeStokWebApp.Enums.LogTuru.Bilgi,
@@ -1287,7 +991,6 @@ namespace MuhasebeStokWebApp.Services
             }
             catch (Exception ex)
             {
-                // Log eklerken oluşan hatayı sadece logla, uygulamanın çalışmasını etkilemesin
                 _logger.LogError(ex, $"Log ekleme hatası: {baslik} - {ex.Message}");
             }
         }
@@ -1298,7 +1001,7 @@ namespace MuhasebeStokWebApp.Services
             {
                 var log = new ESistemLog
                 {
-                    LogID = Guid.NewGuid(),
+                    LogID = Guid.NewGuid().ToString(),
                     LogTuru = "Uyarı",
                     IslemTuru = "Uyarı",
                     LogTuruInt = (int)MuhasebeStokWebApp.Enums.LogTuru.Uyari,
@@ -1321,7 +1024,6 @@ namespace MuhasebeStokWebApp.Services
             }
             catch (Exception ex)
             {
-                // Log eklerken oluşan hatayı sadece logla, uygulamanın çalışmasını etkilemesin
                 _logger.LogError(ex, $"Log ekleme hatası: {baslik} - {ex.Message}");
             }
         }
@@ -1332,7 +1034,7 @@ namespace MuhasebeStokWebApp.Services
             {
                 var log = new ESistemLog
                 {
-                    LogID = Guid.NewGuid(),
+                    LogID = Guid.NewGuid().ToString(),
                     LogTuru = "Hata",
                     IslemTuru = "Hata",
                     LogTuruInt = (int)MuhasebeStokWebApp.Enums.LogTuru.Hata,
@@ -1355,7 +1057,6 @@ namespace MuhasebeStokWebApp.Services
             }
             catch (Exception ex)
             {
-                // Log eklerken oluşan hatayı sadece logla, uygulamanın çalışmasını etkilemesin
                 _logger.LogError(ex, $"Log ekleme hatası: {baslik} - {ex.Message}");
             }
         }
@@ -1395,7 +1096,7 @@ namespace MuhasebeStokWebApp.Services
                 
                 var log = new ESistemLog
                 {
-                    LogID = Guid.NewGuid(),
+                    LogID = Guid.NewGuid().ToString(),
                     LogTuru = logTuru.ToString(),
                     LogTuruInt = (int)logTuru,
                     IslemTuru = logTuru.ToString(),
@@ -1413,7 +1114,7 @@ namespace MuhasebeStokWebApp.Services
                     KullaniciGuid = null
                 };
 
-                _context.SistemLoglar.Add(log);
+                await _context.SistemLoglar.AddAsync(log);
                 await _context.SaveChangesAsync();
                 return true;
             }
@@ -1422,6 +1123,200 @@ namespace MuhasebeStokWebApp.Services
                 _logger.LogError(ex, "AddLogAsync metodu çalışırken hata oluştu");
                 return false;
             }
+        }
+
+        // Birim loglama metodları
+        public async Task BirimOlusturmaLogOlustur(string birimID, string birimAdi)
+        {
+            await LogOlustur(
+                mesaj: $"Yeni birim kaydı oluşturuldu",
+                logTuru: MuhasebeStokWebApp.Enums.LogTuru.Bilgi,
+                tabloAdi: "Birim",
+                kayitAdi: birimAdi,
+                kayitID: birimID,
+                kullaniciAdi: _httpContextAccessor.HttpContext?.User?.Identity?.Name ?? "Sistem",
+                basarili: true,
+                kategori: "Tanımlama İşlemleri"
+            );
+        }
+
+        public async Task BirimGuncellemeLogOlustur(string birimID, string birimAdi)
+        {
+            await LogOlustur(
+                mesaj: $"Birim bilgileri güncellendi",
+                logTuru: MuhasebeStokWebApp.Enums.LogTuru.Bilgi,
+                tabloAdi: "Birim",
+                kayitAdi: birimAdi,
+                kayitID: birimID,
+                kullaniciAdi: _httpContextAccessor.HttpContext?.User?.Identity?.Name ?? "Sistem",
+                basarili: true,
+                kategori: "Tanımlama İşlemleri"
+            );
+        }
+
+        public async Task BirimSilmeLogOlustur(string birimID, string birimAdi)
+        {
+            await LogOlustur(
+                mesaj: $"Birim silindi",
+                logTuru: MuhasebeStokWebApp.Enums.LogTuru.Uyari,
+                tabloAdi: "Birim",
+                kayitAdi: birimAdi,
+                kayitID: birimID,
+                kullaniciAdi: _httpContextAccessor.HttpContext?.User?.Identity?.Name ?? "Sistem",
+                basarili: true,
+                kategori: "Tanımlama İşlemleri"
+            );
+        }
+
+        public async Task BirimDurumDegisikligiLogOlustur(string birimID, string birimAdi, bool yeniDurum)
+        {
+            string durum = yeniDurum ? "aktifleştirildi" : "pasifleştirildi";
+            await LogOlustur(
+                mesaj: $"{birimAdi} isimli birim {durum}.",
+                logTuru: MuhasebeStokWebApp.Enums.LogTuru.Bilgi,
+                tabloAdi: "Birim",
+                kayitAdi: birimAdi,
+                kayitID: birimID
+            );
+        }
+
+        // Kategori loglama metodları
+        public async Task KategoriOlusturmaLogOlustur(string kategoriID, string kategoriAdi)
+        {
+            await LogOlustur(
+                mesaj: $"Yeni kategori kaydı oluşturuldu",
+                logTuru: MuhasebeStokWebApp.Enums.LogTuru.Bilgi,
+                tabloAdi: "Kategori",
+                kayitAdi: kategoriAdi,
+                kayitID: kategoriID,
+                kullaniciAdi: _httpContextAccessor.HttpContext?.User?.Identity?.Name ?? "Sistem",
+                basarili: true,
+                kategori: "Tanımlama İşlemleri"
+            );
+        }
+
+        public async Task KategoriGuncellemeLogOlustur(string kategoriID, string kategoriAdi)
+        {
+            await LogOlustur(
+                mesaj: $"Kategori bilgileri güncellendi",
+                logTuru: MuhasebeStokWebApp.Enums.LogTuru.Bilgi,
+                tabloAdi: "Kategori",
+                kayitAdi: kategoriAdi,
+                kayitID: kategoriID,
+                kullaniciAdi: _httpContextAccessor.HttpContext?.User?.Identity?.Name ?? "Sistem",
+                basarili: true,
+                kategori: "Tanımlama İşlemleri"
+            );
+        }
+
+        public async Task KategoriSilmeLogOlustur(string kategoriID, string kategoriAdi)
+        {
+            await LogOlustur(
+                mesaj: $"Kategori silindi",
+                logTuru: MuhasebeStokWebApp.Enums.LogTuru.Uyari,
+                tabloAdi: "Kategori",
+                kayitAdi: kategoriAdi,
+                kayitID: kategoriID,
+                kullaniciAdi: _httpContextAccessor.HttpContext?.User?.Identity?.Name ?? "Sistem",
+                basarili: true,
+                kategori: "Tanımlama İşlemleri"
+            );
+        }
+
+        public async Task KategoriDurumDegisikligiLogOlustur(string kategoriID, string kategoriAdi, bool yeniDurum)
+        {
+            string durum = yeniDurum ? "aktifleştirildi" : "pasifleştirildi";
+            await LogOlustur(
+                mesaj: $"{kategoriAdi} isimli kategori {durum}.",
+                logTuru: MuhasebeStokWebApp.Enums.LogTuru.Bilgi,
+                tabloAdi: "Kategori",
+                kayitAdi: kategoriAdi,
+                kayitID: kategoriID
+            );
+        }
+
+        // Depo loglama metodları
+        public async Task DepoOlusturmaLogOlustur(string depoID, string depoAdi)
+        {
+            await LogOlustur(
+                mesaj: $"Yeni depo kaydı oluşturuldu",
+                logTuru: MuhasebeStokWebApp.Enums.LogTuru.Bilgi,
+                tabloAdi: "Depo",
+                kayitAdi: depoAdi,
+                kayitID: depoID,
+                kullaniciAdi: _httpContextAccessor.HttpContext?.User?.Identity?.Name ?? "Sistem",
+                basarili: true,
+                kategori: "Depo Yönetimi"
+            );
+        }
+
+        public async Task DepoGuncellemeLogOlustur(string depoID, string depoAdi)
+        {
+            await LogOlustur(
+                mesaj: $"Depo bilgileri güncellendi",
+                logTuru: MuhasebeStokWebApp.Enums.LogTuru.Bilgi,
+                tabloAdi: "Depo",
+                kayitAdi: depoAdi,
+                kayitID: depoID,
+                kullaniciAdi: _httpContextAccessor.HttpContext?.User?.Identity?.Name ?? "Sistem",
+                basarili: true,
+                kategori: "Depo Yönetimi"
+            );
+        }
+
+        public async Task DepoSilmeLogOlustur(string depoID, string depoAdi)
+        {
+            await LogOlustur(
+                mesaj: $"Depo silindi",
+                logTuru: MuhasebeStokWebApp.Enums.LogTuru.Uyari,
+                tabloAdi: "Depo",
+                kayitAdi: depoAdi,
+                kayitID: depoID,
+                kullaniciAdi: _httpContextAccessor.HttpContext?.User?.Identity?.Name ?? "Sistem",
+                basarili: true,
+                kategori: "Depo Yönetimi"
+            );
+        }
+
+        public async Task DepoDurumDegisikligiLogOlustur(string depoID, string depoAdi, bool yeniDurum)
+        {
+            string durum = yeniDurum ? "aktifleştirildi" : "pasifleştirildi";
+            await LogOlustur(
+                mesaj: $"{depoAdi} isimli depo {durum}.",
+                logTuru: MuhasebeStokWebApp.Enums.LogTuru.Bilgi,
+                tabloAdi: "Depo",
+                kayitAdi: depoAdi,
+                kayitID: depoID
+            );
+        }
+
+        // Stok kritik seviye log metodları
+        public async Task StokKritikSeviyeLogOlustur(string urunID, string urunAdi, decimal miktar, decimal kritikSeviye)
+        {
+            await LogOlustur(
+                mesaj: $"{urunAdi} ürününün stok seviyesi kritik seviyenin altına düştü: {miktar}/{kritikSeviye}",
+                logTuru: MuhasebeStokWebApp.Enums.LogTuru.Uyari,
+                tabloAdi: "Urun",
+                kayitAdi: urunAdi,
+                kayitID: urunID,
+                kullaniciAdi: _httpContextAccessor.HttpContext?.User?.Identity?.Name ?? "Sistem",
+                basarili: true,
+                kategori: "Stok Yönetimi"
+            );
+        }
+        
+        public async Task SistemAyarlariDegisiklikLogOlustur(string ayarAdi, string eskiDeger, string yeniDeger)
+        {
+            await LogOlustur(
+                mesaj: $"{ayarAdi} sistem ayarı değiştirildi: {eskiDeger} -> {yeniDeger}",
+                logTuru: MuhasebeStokWebApp.Enums.LogTuru.Bilgi,
+                tabloAdi: "SistemAyarlari",
+                kayitAdi: ayarAdi,
+                kayitID: null,
+                kullaniciAdi: _httpContextAccessor.HttpContext?.User?.Identity?.Name ?? "Sistem",
+                basarili: true,
+                kategori: "Sistem"
+            );
         }
 
         // DbContext'i yeni bir scope'a taşımak için yardımcı sınıf
@@ -1453,6 +1348,21 @@ namespace MuhasebeStokWebApp.Services
                     Context.Dispose();
                 }
             }
+        }
+
+        private string? GetCurrentUserId()
+        {
+            return _httpContextAccessor.HttpContext?.User?.FindFirstValue(ClaimTypes.NameIdentifier);
+        }
+
+        private Guid? GetCurrentUserGuid()
+        {
+            var userIdClaim = GetCurrentUserId();
+            if (Guid.TryParse(userIdClaim, out Guid userGuid))
+            {
+                return userGuid;
+            }
+            return null;
         }
     }
 } 

@@ -259,6 +259,10 @@ namespace MuhasebeStokWebApp.Services
             return await _exceptionHandler.HandleExceptionAsync(async () => 
             {
                 _logger.LogMethodStart();
+                
+                _logger.LogInformation("Birim önbellekleri temizleniyor...");
+                
+                // Ana birim listesi önbelleğini temizle
                 _cache.Remove(BirimlerCacheKey);
                 
                 // Tüm birim önbelleklerini temizle
@@ -272,6 +276,81 @@ namespace MuhasebeStokWebApp.Services
                     _cache.Remove($"Birim_{birimId}");
                 }
                 
+                // Ürün listesi ve ürün detay önbelleklerini temizle
+                _cache.Remove("UrunlerList");
+                _cache.Remove("AktifUrunlerList");
+                _cache.Remove("UrunDropdown");
+                
+                // Ürün listeleme ve detay önbelleklerini temizle
+                _cache.Remove("UrunlerTumu");
+                _cache.Remove("UrunlerAktif");
+                _cache.Remove("UrunlerPasif");
+                _cache.Remove("UrunlerSilinmis");
+                _cache.Remove("UrunlerTopN");
+                _cache.Remove("UrunlerSonEklenenler");
+                _cache.Remove("UrunlerStokDusuk");
+                _cache.Remove("UrunlerFiyatListesi");
+                
+                // UrunService özelleştirilmiş ürün listeleri
+                for (int i = 1; i <= 10; i++)
+                {
+                    _cache.Remove($"UrunlerPage_{i}");
+                    _cache.Remove($"UrunlerAktifPage_{i}");
+                    _cache.Remove($"UrunlerStokluPage_{i}");
+                }
+                
+                // Ürün kategorilere göre listeleme önbelleklerini temizle
+                var kategoriIds = await _unitOfWork.Repository<UrunKategori>().GetAllAsync(
+                    filter: null,
+                    selector: k => k.KategoriID,
+                    asNoTracking: true);
+                    
+                foreach (var kategoriId in kategoriIds)
+                {
+                    _cache.Remove($"UrunlerByKategori_{kategoriId}");
+                    _cache.Remove($"UrunlerSayisiByKategori_{kategoriId}");
+                    
+                    // Sayfalı kategorileri temizle
+                    for (int i = 1; i <= 10; i++)
+                    {
+                        _cache.Remove($"UrunlerByKategori_{kategoriId}_Page_{i}");
+                    }
+                }
+                
+                // Tüm ürünlerin detay önbelleklerini temizle
+                var urunIds = await _unitOfWork.Repository<Urun>().GetAllAsync(
+                    filter: null,
+                    selector: u => u.UrunID,
+                    asNoTracking: true);
+                    
+                foreach (var urunId in urunIds)
+                {
+                    _cache.Remove($"Urun_{urunId}");
+                    _cache.Remove($"UrunDetails_{urunId}");
+                    _cache.Remove($"UrunStok_{urunId}");
+                    _cache.Remove($"UrunFiyat_{urunId}");
+                    _cache.Remove($"UrunStokDurumu_{urunId}");
+                    _cache.Remove($"UrunKategoriler_{urunId}");
+                }
+                
+                // ViewComponent önbelleklerini temizle
+                _cache.Remove("UrunDropdown");
+                _cache.Remove("BirimDropdown");
+                _cache.Remove("KategoriDropdown");
+                _cache.Remove("DepoDropdown");
+                _cache.Remove("FiyatTipiDropdown");
+                
+                // Kategori önbelleklerini temizle
+                _cache.Remove("KategoriList");
+                _cache.Remove("AktifKategoriList");
+                _cache.Remove("KategoriListWithUrunCount");
+                
+                // İstatistik önbelleklerini temizle
+                _cache.Remove("UrunStokIstatistik");
+                _cache.Remove("BirimIstatistik");
+                _cache.Remove("KategoriIstatistik");
+                
+                _logger.LogInformation("Tüm birim, ürün ve ilgili önbellekler başarıyla temizlendi");
                 _logger.LogMethodEnd(true);
                 return true;
             }, "ClearCacheAsync");

@@ -107,6 +107,7 @@ namespace MuhasebeStokWebApp.Data.Entities
         public virtual ICollection<Fatura> Faturalar { get; set; } = new List<Fatura>();
         public virtual ICollection<Irsaliye> Irsaliyeler { get; set; } = new List<Irsaliye>();
         public virtual ICollection<CariHareket> CariHareketler { get; set; } = new List<CariHareket>();
+        public virtual ICollection<Sozlesme> Sozlesmeler { get; set; } = new List<Sozlesme>();
         
         // Aşağıdaki koleksiyon DB'de var mı kontrol edip ekleyebilirsiniz
         // Bu koleksiyon sadece detay view'inde kullanılabilir

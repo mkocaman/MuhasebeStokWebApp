@@ -9,7 +9,7 @@ namespace MuhasebeStokWebApp.Data.Entities.ParaBirimiModulu
     /// <summary>
     /// Döviz kuru değeri entity class'ı
     /// </summary>
-    [Table("KurDegerleri")]
+    [Table("ParaBirimiModuluKurDegerleri")]
     public class KurDegeri : BaseEntity
     {
         /// <summary>
