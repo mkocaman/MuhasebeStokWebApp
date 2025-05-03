@@ -1,0 +1,3 @@
+Bu bir test dosyasıdır.
+Commit işlemi için oluşturulmuştur.
+Tarih: 10.07.2024 
