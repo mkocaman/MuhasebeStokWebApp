@@ -12,19 +12,18 @@
         <div class="row">
             <div class="col">
                 <div class="page-header-left">
-                    <h3>Müşteriler</h3>
+                    <h3>Cari Yönetimi</h3>
                     <ol class="breadcrumb">
-                        <li class="breadcrumb-item"><a href="/Home"><i class="fa fa-home"></i></a></li>
-                        <li class="breadcrumb-item">Cari Yönetimi</li>
-                        <li class="breadcrumb-item active">Müşteriler</li>
+                        <li class="breadcrumb-item"><a href="/"><i class="fa fa-home"></i></a></li>
+                        <li class="breadcrumb-item active">Müşteri Listesi</li>
                     </ol>
                 </div>
             </div>
             <div class="col">
                 <div class="float-end">
-                    <a href="@Url.Action("Create", new { cariTipi = "Müşteri" })" class="btn btn-primary">
+                    <button id="btnAddCari" class="btn btn-primary">
                         <i class="fa fa-plus"></i> Yeni Müşteri Ekle
-                    </a>
+                    </button>
                 </div>
             </div>
         </div>
@@ -35,29 +34,14 @@
     <div class="row">
         <div class="col-sm-12">
             <div class="card">
-                <div class="card-header">
-                    <div class="row">
-                        <div class="col">
-                            <h5>Müşteri Listesi</h5>
-                        </div>
-                        <div class="col text-end">
-                            <div class="btn-group" role="group">
-                                <a href="@Url.Action("Index")" class="btn btn-outline-secondary">
-                                    <i class="fa fa-users"></i> Tüm Cariler
-                                </a>
-                                <a href="@Url.Action("Musteriler")" class="btn btn-primary">
-                                    <i class="fa fa-user"></i> Müşteriler
-                                </a>
-                                <a href="@Url.Action("Tedarikciler")" class="btn btn-outline-secondary">
-                                    <i class="fa fa-truck"></i> Tedarikçiler
-                                </a>
-                                @if (isAdmin)
-                                {
-                                    <a href="@Url.Action("Pasifler")" class="btn btn-outline-secondary">
-                                        <i class="fa fa-ban"></i> Pasif Cariler
-                                    </a>
-                                }
-                            </div>
+                <div class="card-header bg-primary">
+                    <div class="d-flex justify-content-between align-items-center">
+                        <h5 class="text-white">Müşteriler</h5>
+                        <div class="btn-group">
+                            <a href="@Url.Action("Index")" class="btn btn-light">Tüm Cariler</a>
+                            <a href="@Url.Action("Musteriler")" class="btn btn-warning">Müşteriler</a>
+                            <a href="@Url.Action("Tedarikciler")" class="btn btn-light">Tedarikçiler</a>
+                            <a href="@Url.Action("Pasifler")" class="btn btn-light">Pasif Cariler</a>
                         </div>
                     </div>
                 </div>
@@ -69,7 +53,7 @@
                                     <th>Cari Adı</th>
                                     <th>Yetkili</th>
                                     <th>Telefon</th>
-                                    <th>Bakiye</th>
+                                    <th>Para Birimi</th>
                                     <th>Durum</th>
                                     <th>İşlemler</th>
                                 </tr>
@@ -94,8 +78,8 @@
                                         <td>@item.Ad</td>
                                         <td>@(string.IsNullOrEmpty(item.Yetkili) ? "-" : item.Yetkili)</td>
                                         <td>@(string.IsNullOrEmpty(item.Telefon) ? "-" : item.Telefon)</td>
-                                        <td class="text-end @(item.BaslangicBakiye >= 0 ? "text-success" : "text-danger")">
-                                            @item.BaslangicBakiye.ToString("N2") @paraBirimiSembol
+                                        <td class="text-center">
+                                            @paraBirimiSembol
                                         </td>
                                         <td class="text-center">
                                             @if (item.AktifMi)
@@ -109,18 +93,24 @@
                                         </td>
                                         <td class="text-center">
                                             <div class="btn-group" role="group">
-                                                <a href="@Url.Action("Details", new { id = item.Id })" class="btn btn-info btn-sm">
+                                                <a href="@Url.Action("Details", new { id = item.CariID })" class="btn btn-info btn-sm" title="Detay">
                                                     <i class="fa fa-eye"></i>
                                                 </a>
-                                                <a href="@Url.Action("Edit", new { id = item.Id })" class="btn btn-primary btn-sm">
+                                                <button class="btn btn-sm btn-primary edit-cari-btn" data-id="@item.CariID" title="Düzenle">
                                                     <i class="fa fa-edit"></i>
-                                                </a>
-                                                <a href="@Url.Action("Ekstre", new { id = item.Id })" class="btn btn-secondary btn-sm">
+                                                </button>
+                                                <a href="@Url.Action("Ekstre", new { id = item.CariID })" class="btn btn-secondary btn-sm">
                                                     <i class="fa fa-file-alt"></i>
                                                 </a>
-                                                <a href="@Url.Action("Delete", new { id = item.Id })" class="btn btn-danger btn-sm">
-                                                    <i class="fa fa-trash"></i>
-                                                </a>
+                                                <button class="btn btn-sm btn-warning set-passive-btn" data-id="@item.CariID" data-name="@item.Ad" title="Pasif Yap">
+                                                    <i class="fa fa-ban"></i>
+                                                </button>
+                                                @if (isAdmin)
+                                                {
+                                                    <button class="btn btn-sm btn-danger delete-cari-btn" data-id="@item.CariID" data-name="@item.Ad" title="Sil">
+                                                        <i class="fa fa-trash"></i>
+                                                    </button>
+                                                }
                                             </div>
                                         </td>
                                     </tr>
@@ -134,15 +124,163 @@
     </div>
 </div>
 
+<!-- Modal alanları -->
+<div class="modal fade" id="cariModal" tabindex="-1" role="dialog" aria-labelledby="cariModalLabel" aria-hidden="true">
+    <div class="modal-dialog modal-lg" role="document">
+        <div class="modal-content">
+            <div id="cariModalContent">
+                <!-- İçerik AJAX ile doldurulacak -->
+            </div>
+        </div>
+    </div>
+</div>
+
+<!-- Onay Modali -->
+<div class="modal fade" id="confirmModal" tabindex="-1" role="dialog" aria-labelledby="confirmModalLabel" aria-hidden="true">
+    <div class="modal-dialog" role="document">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h5 class="modal-title" id="confirmModalLabel">Onay</h5>
+                <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+            </div>
+            <div class="modal-body">
+                <p id="confirmModalMessage"></p>
+            </div>
+            <div class="modal-footer">
+                <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">İptal</button>
+                <button type="button" class="btn btn-primary" id="confirmModalConfirmBtn">Onayla</button>
+            </div>
+        </div>
+    </div>
+</div>
+
 @section Scripts {
     <script>
         $(document).ready(function () {
             $('#cariTable').DataTable({
                 language: {
-                    url: '//cdn.datatables.net/plug-ins/1.13.7/i18n/tr.json'
+                    url: '//cdn.datatables.net/plug-ins/1.13.7/i18n/tr.json',
+                    paginate: {
+                        previous: "Önceki",
+                        next: "Sonraki"
+                    },
+                    info: "Sayfa _PAGE_ / _PAGES_",
+                    infoEmpty: "Kayıt bulunamadı",
+                    search: "Ara:",
+                    lengthMenu: "Sayfada _MENU_ kayıt göster"
                 },
                 responsive: true,
-                stateSave: true
+                stateSave: true,
+                dom: '<"row"<"col-sm-12 col-md-6"l><"col-sm-12 col-md-6"f>>' +
+                     '<"row"<"col-sm-12"tr>>' +
+                     '<"row"<"col-sm-12 col-md-5"i><"col-sm-12 col-md-7"p>>',
+                lengthMenu: [[10, 25, 50, -1], [10, 25, 50, "Tümü"]],
+                pageLength: 10
+            });
+            
+            // Yeni Cari Ekle butonu tıklandığında
+            $('#btnAddCari').click(function() {
+                $.ajax({
+                    url: '@Url.Action("Create", "Cari")',
+                    type: 'GET',
+                    success: function(response) {
+                        $('#cariModalContent').html(response);
+                        $('#cariModal').modal('show');
+                    },
+                    error: function(error) {
+                        console.error('Hata:', error);
+                        toastr.error('Bir hata oluştu: ' + error.statusText);
+                    }
+                });
+            });
+            
+            // Düzenle butonu tıklandığında
+            $(document).on('click', '.edit-cari-btn', function() {
+                var cariID = $(this).data('id');
+                $.ajax({
+                    url: '@Url.Action("Edit", "Cari")/' + cariID,
+                    type: 'GET',
+                    success: function(response) {
+                        $('#cariModalContent').html(response);
+                        $('#cariModal').modal('show');
+                    },
+                    error: function(error) {
+                        console.error('Hata:', error);
+                        toastr.error('Bir hata oluştu: ' + error.statusText);
+                    }
+                });
+            });
+            
+            // Pasif Yap butonu tıklandığında
+            $(document).on('click', '.set-passive-btn', function() {
+                var cariID = $(this).data('id');
+                var cariAdi = $(this).data('name');
+                
+                $('#confirmModalLabel').text('Pasife Alma Onayı');
+                $('#confirmModalMessage').text(cariAdi + ' carisini pasif duruma almak istediğinizden emin misiniz?');
+                $('#confirmModalConfirmBtn').removeClass().addClass('btn btn-warning').text('Pasif Yap');
+                
+                $('#confirmModalConfirmBtn').off('click').on('click', function() {
+                    $.ajax({
+                        url: '@Url.Action("SetPassive", "Cari")',
+                        type: 'POST',
+                        data: { id: cariID },
+                        success: function(response) {
+                            if (response.success) {
+                                toastr.success(response.message);
+                                setTimeout(function() {
+                                    window.location.reload();
+                                }, 1500);
+                            } else {
+                                toastr.error(response.message);
+                            }
+                            $('#confirmModal').modal('hide');
+                        },
+                        error: function(error) {
+                            console.error('Hata:', error);
+                            toastr.error('Bir hata oluştu: ' + error.statusText);
+                            $('#confirmModal').modal('hide');
+                        }
+                    });
+                });
+                
+                $('#confirmModal').modal('show');
+            });
+            
+            // Sil butonu tıklandığında
+            $(document).on('click', '.delete-cari-btn', function() {
+                var cariID = $(this).data('id');
+                var cariAdi = $(this).data('name');
+                
+                $('#confirmModalLabel').text('Silme Onayı');
+                $('#confirmModalMessage').text(cariAdi + ' carisini silmek istediğinizden emin misiniz?');
+                $('#confirmModalConfirmBtn').removeClass().addClass('btn btn-danger').text('Sil');
+                
+                $('#confirmModalConfirmBtn').off('click').on('click', function() {
+                    $.ajax({
+                        url: '@Url.Action("Delete", "Cari")',
+                        type: 'POST',
+                        data: { id: cariID },
+                        success: function(response) {
+                            if (response.success) {
+                                toastr.success(response.message);
+                                setTimeout(function() {
+                                    window.location.reload();
+                                }, 1500);
+                            } else {
+                                toastr.error(response.message);
+                            }
+                            $('#confirmModal').modal('hide');
+                        },
+                        error: function(error) {
+                            console.error('Hata:', error);
+                            toastr.error('Bir hata oluştu: ' + error.statusText);
+                            $('#confirmModal').modal('hide');
+                        }
+                    });
+                });
+                
+                $('#confirmModal').modal('show');
             });
         });
     </script>

@@ -61,7 +61,7 @@ namespace MuhasebeStokWebApp.Data.Entities
         public string OdemeDurumu { get; set; } = "";
         
         [StringLength(500)]
-        public string FaturaNotu { get; set; } = "";
+        public string? FaturaNotu { get; set; }
         
         [Required]
         public bool ResmiMi { get; set; } = false;
@@ -70,12 +70,15 @@ namespace MuhasebeStokWebApp.Data.Entities
         
         public virtual Sozlesme? Sozlesme { get; set; }
         
-        [StringLength(10)]
-        public string DovizTuru { get; set; } = "USD";
+        /// <summary>
+        /// Döviz türü (Sadece USD ve UZS desteklenir)
+        /// </summary>
+        [MaxLength(10)]
+        public string? DovizTuru { get; set; }
         
         // Para birimi
         [StringLength(10)]
-        public string ParaBirimi { get; set; } = "USD";
+        public string ParaBirimi { get; set; } = "USD"; // Sadece USD ve UZS desteklenir
         
         [Column(TypeName = "decimal(18,4)")]
         public decimal? DovizKuru { get; set; } = 1;
@@ -122,7 +125,7 @@ namespace MuhasebeStokWebApp.Data.Entities
             OdemeDurumu = "";
             FaturaNotu = "";
             DovizTuru = "USD";
-            ParaBirimi = "USD";
+            ParaBirimi = "USD"; // Sadece USD ve UZS desteklenir
             DovizKuru = 1;
             OlusturmaTarihi = DateTime.Now;
             Silindi = false;

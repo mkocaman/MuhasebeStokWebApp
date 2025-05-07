@@ -99,7 +99,6 @@ namespace MuhasebeStokWebApp.Data.Repositories.EntityRepositories
                 .Where(c => !c.Silindi && (
                     c.Ad.Contains(searchTerm) ||
                     c.CariKodu.Contains(searchTerm) ||
-                    c.CariUnvani.Contains(searchTerm) ||
                     c.Telefon.Contains(searchTerm) ||
                     c.Email.Contains(searchTerm) ||
                     c.Yetkili.Contains(searchTerm) ||

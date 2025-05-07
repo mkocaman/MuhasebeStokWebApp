@@ -14,10 +14,9 @@ namespace MuhasebeStokWebApp.Services
     public class CariSoftDeleteService : SoftDeleteService<Cari>
     {
         public CariSoftDeleteService(
-            IUnitOfWork unitOfWork,
-            ILogger<CariSoftDeleteService> logger,
-            ApplicationDbContext context) 
-            : base(unitOfWork, logger, context)
+            ApplicationDbContext context,
+            ILogger<CariSoftDeleteService> logger) 
+            : base(context, logger)
         {
         }
 

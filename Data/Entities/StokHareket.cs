@@ -7,6 +7,7 @@ using MuhasebeStokWebApp.Enums;
 
 namespace MuhasebeStokWebApp.Data.Entities
 {
+    [Table("StokHareketleri")]
     public class StokHareket
     {
         [Key]
@@ -27,7 +28,7 @@ namespace MuhasebeStokWebApp.Data.Entities
         public DateTime Tarih { get; set; } = DateTime.Now;
         
         [Required]
-        public StokHareketiTipi HareketTuru { get; set; } = StokHareketiTipi.Giris;
+        public StokHareketTipi HareketTuru { get; set; } = StokHareketTipi.Giris;
         
         [StringLength(50)]
         public string ReferansNo { get; set; } = string.Empty;
@@ -41,6 +42,12 @@ namespace MuhasebeStokWebApp.Data.Entities
         public string? Aciklama { get; set; }
         
         public decimal? BirimFiyat { get; set; }
+        
+        [Column(TypeName = "decimal(18,6)")]
+        public decimal? BirimFiyatUSD { get; set; }
+        
+        [Column(TypeName = "decimal(18,6)")]
+        public decimal? BirimFiyatUZS { get; set; }
         
         public Guid? IslemYapanKullaniciID { get; set; }
         

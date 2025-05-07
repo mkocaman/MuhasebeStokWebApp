@@ -9,6 +9,7 @@ using System.Threading.Tasks;
 using MuhasebeStokWebApp.Data.Repositories;
 using Microsoft.Extensions.Logging;
 using MuhasebeStokWebApp.Services.ParaBirimiModulu;
+using MuhasebeStokWebApp.Models;
 
 namespace MuhasebeStokWebApp.Services.Implementations
 {
@@ -57,28 +58,6 @@ namespace MuhasebeStokWebApp.Services.Implementations
             {
                 await _context.Cariler.AddAsync(cari);
                 await _context.SaveChangesAsync();
-                
-                // Açılış bakiyesi hareketi ekleme
-                if (cari.BaslangicBakiye != 0)
-                {
-                    var acilisBakiyeHareketi = new CariHareket
-                    {
-                        CariHareketID = Guid.NewGuid(),
-                        CariID = cari.CariID,
-                        Tarih = DateTime.Now,
-                        HareketTuru = "Açılış bakiyesi",
-                        Aciklama = "Açılış bakiyesi",
-                        Borc = cari.BaslangicBakiye < 0 ? Math.Abs(cari.BaslangicBakiye) : 0,
-                        Alacak = cari.BaslangicBakiye > 0 ? cari.BaslangicBakiye : 0,
-                        Tutar = Math.Abs(cari.BaslangicBakiye),
-                        OlusturmaTarihi = DateTime.Now,
-                        OlusturanKullaniciID = cari.OlusturanKullaniciId
-                    };
-                    
-                    await _context.CariHareketler.AddAsync(acilisBakiyeHareketi);
-                    await _context.SaveChangesAsync();
-                    _logger.LogInformation($"Cari açılış bakiye hareketi oluşturuldu: ID={acilisBakiyeHareketi.CariHareketID}, Tutar={cari.BaslangicBakiye}");
-                }
                 
                 await transaction.CommitAsync();
                 _logger.LogInformation($"Cari başarıyla oluşturuldu: ID={cari.CariID}, Ad={cari.Ad}");
@@ -195,10 +174,10 @@ namespace MuhasebeStokWebApp.Services.Implementations
                     .OrderBy(h => h.Tarih)
                     .FirstOrDefault();
                 
-                // Başlangıç bakiyesi - açılış bakiyesi hareketi yoksa carinin başlangıç bakiyesini kullan
+                // Başlangıç bakiyesi - açılış bakiyesi hareketi yoksa 0 olarak başla
                 decimal bakiye = acilisBakiyeHareketi != null 
                     ? acilisBakiyeHareketi.Alacak - acilisBakiyeHareketi.Borc
-                    : cari.BaslangicBakiye;
+                    : 0;
                 
                 // Diğer hareketlerin bakiyeye etkisini hesapla (açılış bakiyesi hariç)
                 foreach (var hareket in hareketler.Where(h => h.HareketTuru != "Açılış bakiyesi").OrderBy(h => h.Tarih))
@@ -248,11 +227,8 @@ namespace MuhasebeStokWebApp.Services.Implementations
                 throw;
             }
         }
-        
-        /// <summary>
-        /// Cari ekstresi için kümülatif bakiyeli hareketleri döndürür
-        /// </summary>
-        public async Task<(decimal BakiyeToplamı, List<CariHareket> Hareketler)> GetCariEkstreAsync(
+
+        public async Task<(decimal BakiyeToplamı, List<Data.Entities.CariHareket> Hareketler)> GetCariEkstreAsync(
             Guid cariId, 
             DateTime? baslangicTarihi = null, 
             DateTime? bitisTarihi = null, 
@@ -267,139 +243,301 @@ namespace MuhasebeStokWebApp.Services.Implementations
                 var endDate = bitisTarihi ?? DateTime.Now.Date.AddDays(1).AddSeconds(-1);
                 
                 // Cari varlığını kontrol et
-                var cari = await _unitOfWork.CariRepository.GetByIdAsync(cariId);
-                if (cari == null || cari.Silindi)
+                var cari = await _context.Cariler
+                    .FirstOrDefaultAsync(c => c.CariID == cariId && !c.Silindi);
+                
+                if (cari == null)
                 {
-                    _logger.LogWarning($"Cari ekstre alınamadı: Cari bulunamadı (ID: {cariId})");
-                    throw new Exception($"Cari bulunamadı (ID: {cariId})");
+                    _logger.LogWarning($"Cari bulunamadı: ID={cariId}");
+                    throw new Exception($"Cari bulunamadı: ID={cariId}");
                 }
                 
-                // Eğer paraBirimiId belirtilmemişse ve carinin varsayılan para birimi varsa onu kullan
-                if (!paraBirimiId.HasValue && cari.VarsayilanParaBirimiId.HasValue)
-                {
-                    paraBirimiId = cari.VarsayilanParaBirimiId.Value;
-                }
-                
-                // Tüm hareketleri getir - performans için AsNoTracking kullan
+                // Hareketleri getir
                 var tumHareketler = await _context.CariHareketler
                     .AsNoTracking()
-                    .Where(c => !c.Silindi && c.CariID == cariId)
+                    .Where(ch => ch.CariID == cariId && !ch.Silindi)
                     .ToListAsync();
                 
-                // Açılış bakiyesi hareketlerini ayrı al 
+                // Açılış bakiyesi hareketlerini bul
                 var acilisBakiyeHareketi = tumHareketler
                     .Where(h => h.HareketTuru == "Açılış bakiyesi")
                     .OrderBy(h => h.Tarih)
                     .FirstOrDefault();
                 
-                // Başlangıç bakiyesini hesapla
+                // Başlangıç bakiyesi
                 decimal baslangicBakiyesi = 0;
                 
-                // İlk açılış bakiyesi hareketi varsa onu kullan
+                // Açılış bakiyesi hareketi varsa kullan
                 if (acilisBakiyeHareketi != null)
                 {
                     baslangicBakiyesi = acilisBakiyeHareketi.Alacak - acilisBakiyeHareketi.Borc;
                 }
-                else
-                {
-                    baslangicBakiyesi = cari.BaslangicBakiye;
-                }
-                
-                // Başlangıç tarihinden önceki hareketlerin etkisini hesapla
-                decimal oncekiHareketlerinEtkisi = 0;
-                var oncekiHareketler = tumHareketler
-                    .Where(h => h.HareketTuru != "Açılış bakiyesi" && h.Tarih < startDate)
-                    .OrderBy(h => h.Tarih);
-                
-                foreach (var oncekiHareket in oncekiHareketler)
-                {
-                    // Hareket türüne göre bakiyeyi güncelle
-                    if (oncekiHareket.HareketTuru == "Bakiye Düzeltmesi")
-                    {
-                        oncekiHareketlerinEtkisi += oncekiHareket.Alacak - oncekiHareket.Borc;
-                    }
-                    else if (oncekiHareket.HareketTuru == "Ödeme" || oncekiHareket.HareketTuru == "Borç" || oncekiHareket.HareketTuru == "Çıkış")
-                    {
-                        oncekiHareketlerinEtkisi -= oncekiHareket.Tutar;
-                    }
-                    else if (oncekiHareket.HareketTuru == "Tahsilat" || oncekiHareket.HareketTuru == "Alacak" || oncekiHareket.HareketTuru == "Giriş")
-                    {
-                        oncekiHareketlerinEtkisi += oncekiHareket.Tutar;
-                    }
-                }
-                
-                // Başlangıç bakiyesine önceki hareketlerin etkisini ekle
-                baslangicBakiyesi += oncekiHareketlerinEtkisi;
                 
                 // Gösterilecek hareketleri tarih aralığına göre filtrele
-                var gosterilecekHareketler = tumHareketler
-                    .Where(h => h.HareketTuru != "Açılış bakiyesi" && h.Tarih >= startDate && h.Tarih <= endDate)
+                var filtrelenmisHareketler = tumHareketler
+                    .Where(h => h.Tarih >= startDate && h.Tarih <= endDate && h.HareketTuru != "Açılış bakiyesi")
                     .OrderBy(h => h.Tarih)
                     .ToList();
                 
-                // Her hareketin bakiyeye etkisini hesapla ve kümülatif bakiye bilgisini ekle
-                decimal bakiye = baslangicBakiyesi;
-                foreach (var hareket in gosterilecekHareketler)
+                // Bakiyeyi hesapla
+                decimal toplamBakiye = baslangicBakiyesi;
+                
+                foreach (var hareket in filtrelenmisHareketler)
                 {
-                    // Hareket türüne göre bakiyeyi güncelle
-                    decimal hareketTutari = 0;
-                    
                     if (hareket.HareketTuru == "Bakiye Düzeltmesi")
                     {
-                        hareketTutari = hareket.Alacak - hareket.Borc;
+                        toplamBakiye = hareket.Alacak - hareket.Borc;
                     }
                     else if (hareket.HareketTuru == "Ödeme" || hareket.HareketTuru == "Borç" || hareket.HareketTuru == "Çıkış")
                     {
-                        hareketTutari = -hareket.Tutar;
+                        toplamBakiye -= hareket.Tutar;
                     }
                     else if (hareket.HareketTuru == "Tahsilat" || hareket.HareketTuru == "Alacak" || hareket.HareketTuru == "Giriş")
                     {
-                        hareketTutari = hareket.Tutar;
-                    }
-                    
-                    bakiye += hareketTutari;
-                    
-                    // Bakiye değerini harekete ekle (metadataymış gibi)
-                    hareket.Bakiye = bakiye;
-                }
-                
-                // Para birimi dönüşümü
-                if (paraBirimiId.HasValue && cari.VarsayilanParaBirimiId.HasValue && paraBirimiId.Value != cari.VarsayilanParaBirimiId.Value)
-                {
-                    // Farklı para birimi seçilmişse dönüşüm yap
-                    // Kaynak para birimini al
-                    var kaynakParaBirimi = await _paraBirimiService.GetParaBirimiByIdAsync(cari.VarsayilanParaBirimiId.Value);
-                    // Hedef para birimini al
-                    var hedefParaBirimi = await _paraBirimiService.GetParaBirimiByIdAsync(paraBirimiId.Value);
-
-                    if (kaynakParaBirimi != null && hedefParaBirimi != null)
-                    {
-                        var dovizKuru = await _paraBirimiService.GetCurrentExchangeRateAsync(kaynakParaBirimi.Kod, hedefParaBirimi.Kod);
-                        if (dovizKuru > 0)
-                        {
-                            // Başlangıç bakiyesi ve her bir hareketin bakiyesini dönüştür
-                            baslangicBakiyesi = Math.Round(baslangicBakiyesi * dovizKuru, 2);
-                            
-                            foreach (var hareket in gosterilecekHareketler)
-                            {
-                                hareket.Bakiye = Math.Round(hareket.Bakiye * dovizKuru, 2);
-                                hareket.Tutar = Math.Round(hareket.Tutar * dovizKuru, 2);
-                                hareket.Borc = Math.Round(hareket.Borc * dovizKuru, 2);
-                                hareket.Alacak = Math.Round(hareket.Alacak * dovizKuru, 2);
-                            }
-                            
-                            bakiye = Math.Round(bakiye * dovizKuru, 2);
-                        }
+                        toplamBakiye += hareket.Tutar;
                     }
                 }
                 
-                _logger.LogInformation($"Cari ekstre başarıyla alındı: CariID={cariId}, Başlangıç bakiyesi={baslangicBakiyesi}, Son bakiye={bakiye}, Hareket sayısı={gosterilecekHareketler.Count}");
-                
-                return (bakiye, gosterilecekHareketler);
+                return (toplamBakiye, filtrelenmisHareketler);
             }
             catch (Exception ex)
             {
                 _logger.LogError(ex, $"Cari ekstre alınırken hata oluştu: {ex.Message}");
+                throw;
+            }
+        }
+
+        public async Task<CariDetayViewModel> GetCariDetaylar(Guid cariID)
+        {
+            try
+            {
+                var cari = await _context.Cariler
+                    .FirstOrDefaultAsync(c => c.CariID == cariID && !c.Silindi);
+                
+                if (cari == null)
+                {
+                    return null;
+                }
+                
+                // Cari hareketlerini getir
+                var hareketler = await _context.CariHareketler
+                    .Where(h => h.CariID == cariID && !h.Silindi)
+                    .ToListAsync();
+                
+                // Bakiyeleri hesapla
+                decimal toplamBorc = 0;
+                decimal toplamAlacak = 0;
+                
+                if (hareketler.Any())
+                {
+                    toplamBorc = hareketler.Sum(h => h.Borc);
+                    toplamAlacak = hareketler.Sum(h => h.Alacak);
+                }
+                
+                var viewModel = new CariDetayViewModel
+                {
+                    CariID = cari.CariID,
+                    CariAdi = cari.Ad,
+                    CariKodu = cari.CariKodu,
+                    CariTipi = cari.CariTipi,
+                    VergiNo = cari.VergiNo,
+                    VergiDairesi = cari.VergiDairesi,
+                    Telefon = cari.Telefon,
+                    Email = cari.Email,
+                    ToplamBorc = toplamBorc,
+                    ToplamAlacak = toplamAlacak,
+                    Bakiye = toplamAlacak - toplamBorc,
+                    ParaBirimi = "₺" // Varsayılan değer
+                };
+                
+                return viewModel;
+            }
+            catch (Exception ex)
+            {
+                _logger.LogError(ex, $"Cari detayları alınırken hata oluştu: {ex.Message}");
+                throw;
+            }
+        }
+
+        public async Task<List<CariListModel>> GetAllActiveCariler()
+        {
+            try
+            {
+                return await _context.Cariler
+                    .AsNoTracking()
+                    .Where(c => c.AktifMi && !c.Silindi)
+                    .OrderBy(c => c.Ad)
+                    .Select(c => new CariListModel
+                    {
+                        CariID = c.CariID,
+                        CariKodu = c.CariKodu,
+                        CariAdi = c.Ad,
+                        Telefon = c.Telefon,
+                        Email = c.Email,
+                        CariTipi = c.CariTipi
+                    })
+                    .ToListAsync();
+            }
+            catch (Exception ex)
+            {
+                _logger.LogError(ex, $"Aktif cariler listelenirken hata oluştu: {ex.Message}");
+                throw;
+            }
+        }
+
+        public async Task<List<CariListModel>> GetAllPasifCariler()
+        {
+            try
+            {
+                return await _context.Cariler
+                    .AsNoTracking()
+                    .Where(c => !c.AktifMi && !c.Silindi)
+                    .OrderBy(c => c.Ad)
+                    .Select(c => new CariListModel
+                    {
+                        CariID = c.CariID,
+                        CariKodu = c.CariKodu,
+                        CariAdi = c.Ad,
+                        Telefon = c.Telefon,
+                        Email = c.Email,
+                        CariTipi = c.CariTipi
+                    })
+                    .ToListAsync();
+            }
+            catch (Exception ex)
+            {
+                _logger.LogError(ex, $"Pasif cariler listelenirken hata oluştu: {ex.Message}");
+                throw;
+            }
+        }
+
+        public async Task<List<CariListModel>> GetSilinmisCariler()
+        {
+            try
+            {
+                return await _context.Cariler
+                    .AsNoTracking()
+                    .IgnoreQueryFilters()
+                    .Where(c => c.Silindi)
+                    .OrderBy(c => c.Ad)
+                    .Select(c => new CariListModel
+                    {
+                        CariID = c.CariID,
+                        CariKodu = c.CariKodu,
+                        CariAdi = c.Ad,
+                        Telefon = c.Telefon,
+                        Email = c.Email,
+                        CariTipi = c.CariTipi
+                    })
+                    .ToListAsync();
+            }
+            catch (Exception ex)
+            {
+                _logger.LogError(ex, $"Silinmiş cariler listelenirken hata oluştu: {ex.Message}");
+                throw;
+            }
+        }
+
+        public async Task<List<CariListModel>> GetMusteriler()
+        {
+            try
+            {
+                return await _context.Cariler
+                    .AsNoTracking()
+                    .Where(c => (c.CariTipi == "Müşteri" || c.CariTipi == "MüşteriVeTedarikçi") && !c.Silindi && c.AktifMi)
+                    .OrderBy(c => c.Ad)
+                    .Select(c => new CariListModel
+                    {
+                        CariID = c.CariID,
+                        CariKodu = c.CariKodu,
+                        CariAdi = c.Ad,
+                        Telefon = c.Telefon,
+                        Email = c.Email,
+                        CariTipi = c.CariTipi
+                    })
+                    .ToListAsync();
+            }
+            catch (Exception ex)
+            {
+                _logger.LogError(ex, $"Müşteriler listelenirken hata oluştu: {ex.Message}");
+                throw;
+            }
+        }
+
+        public async Task<List<CariListModel>> GetTedarikciler()
+        {
+            try
+            {
+                return await _context.Cariler
+                    .AsNoTracking()
+                    .Where(c => (c.CariTipi == "Tedarikçi" || c.CariTipi == "MüşteriVeTedarikçi") && !c.Silindi && c.AktifMi)
+                    .OrderBy(c => c.Ad)
+                    .Select(c => new CariListModel
+                    {
+                        CariID = c.CariID,
+                        CariKodu = c.CariKodu,
+                        CariAdi = c.Ad,
+                        Telefon = c.Telefon,
+                        Email = c.Email,
+                        CariTipi = c.CariTipi
+                    })
+                    .ToListAsync();
+            }
+            catch (Exception ex)
+            {
+                _logger.LogError(ex, $"Tedarikçiler listelenirken hata oluştu: {ex.Message}");
+                throw;
+            }
+        }
+
+        public async Task<List<CariListModel>> GetPasifMusteriler()
+        {
+            try
+            {
+                return await _context.Cariler
+                    .AsNoTracking()
+                    .Where(c => (c.CariTipi == "Müşteri" || c.CariTipi == "MüşteriVeTedarikçi") && !c.Silindi && !c.AktifMi)
+                    .OrderBy(c => c.Ad)
+                    .Select(c => new CariListModel
+                    {
+                        CariID = c.CariID,
+                        CariKodu = c.CariKodu,
+                        CariAdi = c.Ad,
+                        Telefon = c.Telefon,
+                        Email = c.Email,
+                        CariTipi = c.CariTipi
+                    })
+                    .ToListAsync();
+            }
+            catch (Exception ex)
+            {
+                _logger.LogError(ex, $"Pasif müşteriler listelenirken hata oluştu: {ex.Message}");
+                throw;
+            }
+        }
+
+        public async Task<List<CariListModel>> GetPasifTedarikciler()
+        {
+            try
+            {
+                return await _context.Cariler
+                    .AsNoTracking()
+                    .Where(c => (c.CariTipi == "Tedarikçi" || c.CariTipi == "MüşteriVeTedarikçi") && !c.Silindi && !c.AktifMi)
+                    .OrderBy(c => c.Ad)
+                    .Select(c => new CariListModel
+                    {
+                        CariID = c.CariID,
+                        CariKodu = c.CariKodu,
+                        CariAdi = c.Ad,
+                        Telefon = c.Telefon,
+                        Email = c.Email,
+                        CariTipi = c.CariTipi
+                    })
+                    .ToListAsync();
+            }
+            catch (Exception ex)
+            {
+                _logger.LogError(ex, $"Pasif tedarikçiler listelenirken hata oluştu: {ex.Message}");
                 throw;
             }
         }

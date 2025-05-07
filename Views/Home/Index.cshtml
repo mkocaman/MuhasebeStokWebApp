@@ -12,165 +12,304 @@
     </div>
 }
 
-<div class="container-fluid">
-    <!-- Finansal Durum Kartları -->
+<!-- Container-fluid başlangıç -->
+<div class="container-fluid dashboard-default-sec">
     <div class="row">
-        <div class="col-xl-3 col-md-6">
-            <div class="card">
-                <div class="card-body">
-                    <div class="d-flex align-items-center">
-                        <div class="flex-grow-1">
-                            <h6 class="text-muted mb-2">Toplam Gelir</h6>
-                            <h4 class="mb-0">@((ViewBag.TotalRevenue != null ? Convert.ToDecimal(ViewBag.TotalRevenue) : 0).ToString("N2")) $</h4>
+        <div class="col-xl-5 box-col-12 des-xl-100">
+            <div class="row">
+                <div class="col-xl-12 col-md-6 box-col-6 des-xl-50">
+                    <div class="card profile-greeting">
+                        <div class="card-header">
+                            <div class="header-top">
+                                <div class="setting-list">
+                                    <ul class="list-unstyled setting-option">
+                                        <li>
+                                            <div class="setting-primary"><i class="fa fa-cog"></i></div>
+                                            <ul class="setting-option">
+                                                <li><a href="#"><i class="fa fa-refresh"></i> Yenile</a></li>
+                                                <li><a href="#"><i class="fa fa-edit"></i> Düzenle</a></li>
+                                                <li><a href="#"><i class="fa fa-trash-o"></i> Sil</a></li>
+                                            </ul>
+                                        </li>
+                                        <li><i class="view-html fa fa-code font-white"></i></li>
+                                        <li><i data-feather="maximize" class="full-card font-white"></i></li>
+                                        <li><i data-feather="minus" class="minimize-card font-white"></i></li>
+                                        <li><i data-feather="refresh-cw" class="reload-card font-white"></i></li>
+                                        <li><i data-feather="x" class="close-card font-white"></i></li>
+                                    </ul>
                         </div>
-                        <div class="avatar">
-                            <div class="avatar-title rounded bg-light-primary">
-                                <i class="material-icons">trending_up</i>
+                            </div>
+                        </div>
+                        <div class="card-body text-center p-t-0">
+                            <h3 class="font-light">Hoş Geldiniz, @User.Identity?.Name!</h3>
+                            <p>Muhasebe Stok Web App'e hoş geldiniz! İşletmenizin büyümesine yardımcı olmaktan mutluluk duyarız.</p>
+                            <a asp-action="Profile" asp-controller="Account" class="btn btn-light">Profili Güncelle</a>
+                        </div>
+                        <div class="confetti">
+                            <div class="confetti-piece"></div>
+                            <div class="confetti-piece"></div>
+                            <div class="confetti-piece"></div>
+                            <div class="confetti-piece"></div>
+                            <div class="confetti-piece"></div>
+                            <div class="confetti-piece"></div>
+                            <div class="confetti-piece"></div>
+                            <div class="confetti-piece"></div>
+                            <div class="confetti-piece"></div>
+                            <div class="confetti-piece"></div>
+                            <div class="confetti-piece"></div>
+                            <div class="confetti-piece"></div>
+                            <div class="confetti-piece"></div>
+                        </div>
+                    </div>
+                </div>
+                <div class="col-xl-6 col-md-3 col-sm-6 box-col-3 des-xl-25 rate-sec">
+                    <div class="card income-card">
+                        <div class="card-body text-center">
+                            <div class="round-box card-green">
+                                <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="feather feather-trending-up">
+                                    <polyline points="23 6 13.5 15.5 8.5 10.5 1 18"></polyline>
+                                    <polyline points="17 6 23 6 23 12"></polyline>
+                                </svg>
+            </div>
+                            <h5>@((ViewBag.TotalRevenue != null ? Convert.ToDecimal(ViewBag.TotalRevenue) : 0).ToString("N2")) ₺</h5>
+                            <p>Toplam Gelir</p>
+                            <a class="btn-arrow arrow-success" href="javascript:void(0)">
+                                <i class="toprightarrow-success fa fa-arrow-up me-2"></i>95.54%
+                            </a>
+                            <div class="parrten">
+                                <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="feather feather-trending-up">
+                                    <polyline points="23 6 13.5 15.5 8.5 10.5 1 18"></polyline>
+                                    <polyline points="17 6 23 6 23 12"></polyline>
+                                </svg>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+                <div class="col-xl-6 col-md-3 col-sm-6 box-col-3 des-xl-25 rate-sec">
+                    <div class="card income-card">
+                        <div class="card-body text-center">
+                            <div class="round-box card-red">
+                                <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="feather feather-trending-down">
+                                    <polyline points="23 18 13.5 8.5 8.5 13.5 1 6"></polyline>
+                                    <polyline points="17 18 23 18 23 12"></polyline>
+                                </svg>
+            </div>
+                            <h5>@((ViewBag.TotalExpense != null ? Convert.ToDecimal(ViewBag.TotalExpense) : 0).ToString("N2")) ₺</h5>
+                            <p>Toplam Gider</p>
+                            <a class="btn-arrow arrow-danger" href="javascript:void(0)">
+                                <i class="toprightarrow-danger fa fa-arrow-up me-2"></i>90.54%
+                            </a>
+                            <div class="parrten">
+                                <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="feather feather-trending-down">
+                                    <polyline points="23 18 13.5 8.5 8.5 13.5 1 6"></polyline>
+                                    <polyline points="17 18 23 18 23 12"></polyline>
+                                </svg>
                             </div>
                         </div>
                     </div>
                 </div>
             </div>
         </div>
-        <div class="col-xl-3 col-md-6">
-            <div class="card">
-                <div class="card-body">
-                    <div class="d-flex align-items-center">
-                        <div class="flex-grow-1">
-                            <h6 class="text-muted mb-2">Toplam Gider</h6>
-                            <h4 class="mb-0">@((ViewBag.TotalExpense != null ? Convert.ToDecimal(ViewBag.TotalExpense) : 0).ToString("N2")) $</h4>
-                        </div>
-                        <div class="avatar">
-                            <div class="avatar-title rounded bg-light-danger">
-                                <i class="material-icons">trending_down</i>
-                            </div>
-                        </div>
-                    </div>
-                </div>
-            </div>
-        </div>
-        <div class="col-xl-3 col-md-6">
-            <div class="card">
-                <div class="card-body">
-                    <div class="d-flex align-items-center">
-                        <div class="flex-grow-1">
-                            <h6 class="text-muted mb-2">Net Kar</h6>
-                            <h4 class="mb-0">@(((ViewBag.TotalRevenue != null ? Convert.ToDecimal(ViewBag.TotalRevenue) : 0) - (ViewBag.TotalExpense != null ? Convert.ToDecimal(ViewBag.TotalExpense) : 0)).ToString("N2")) $</h4>
-                        </div>
-                        <div class="avatar">
-                            <div class="avatar-title rounded bg-light-success">
-                                <i class="material-icons">account_balance</i>
-                            </div>
-                        </div>
-                    </div>
-                </div>
-            </div>
-        </div>
-        <div class="col-xl-3 col-md-6">
-            <div class="card">
-                <div class="card-body">
-                    <div class="d-flex align-items-center">
-                        <div class="flex-grow-1">
-                            <h6 class="text-muted mb-2">Toplam İşlem</h6>
-                            <h4 class="mb-0">@((ViewBag.MonthlyData != null ? ViewBag.MonthlyData.Count : 0) + (ViewBag.MonthlyExpenses != null ? ViewBag.MonthlyExpenses.Count : 0))</h4>
-                        </div>
-                        <div class="avatar">
-                            <div class="avatar-title rounded bg-light-info">
-                                <i class="material-icons">receipt_long</i>
-                            </div>
-                        </div>
-                    </div>
-                </div>
-            </div>
-        </div>
-    </div>
-
-    <!-- Kur Bilgisi Kartı -->
-    <div class="row mb-4">
-        <div class="col-12">
-            <div class="card">
-                <div class="card-header d-flex justify-content-between align-items-center">
-                    <h5>Güncel Döviz Kurları</h5>
-                    <a href="@Url.Action("RefreshCurrencyRates", "Home")" class="btn btn-sm btn-primary">
-                        <i class="material-icons small">refresh</i> Kurları Yenile
-                    </a>
-                </div>
-                <div class="card-body">
-                    <div class="alert alert-info">
-                        <div class="row">
-                            <div class="col-md-6">
-                                <p class="mb-0"><strong>Not:</strong> Tüm finansal veriler USD ($) cinsinden gösterilmektedir.</p>
-                            </div>
-                            <div class="col-md-6 text-end">
-                                <p class="mb-0" id="kurBilgileri">
-                                    Güncel Kurlar: 1 $ = 
-                                    <strong id="tryKur">@((ViewBag.TryToUsdKur != null && ViewBag.TryToUsdKur != 0 ? (1/Convert.ToDecimal(ViewBag.TryToUsdKur)).ToString("N2") : "Yükleniyor...")) TL</strong>, 
-                                    1 $ = 
-                                    <strong id="uzsKur">@((ViewBag.UzsToUsdKur != null && ViewBag.UzsToUsdKur != 0 ? (1/Convert.ToDecimal(ViewBag.UzsToUsdKur)).ToString("N4") : "Yükleniyor...")) UZS</strong>
-                                </p>
-                            </div>
-                        </div>
-                    </div>
-                </div>
-            </div>
-        </div>
-    </div>
-
-    <!-- Grafik Kartları - 1. Satır -->
-    <div class="row">
-        <!-- Aylık Gelir-Gider Grafiği -->
-        <div class="col-xl-8">
-            <div class="card">
+        <div class="col-xl-7 box-col-12 des-xl-100 dashboard-sec">
+            <div class="card income-card">
                 <div class="card-header">
-                    <h5>Aylık Gelir-Gider Grafiği</h5>
+                    <div class="header-top d-sm-flex align-items-center">
+                        <h5>Satış Genel Bakış</h5>
+                        <div class="center-content">
+                            <p class="d-sm-flex align-items-center">
+                                <span class="font-primary m-r-10 f-w-700">@(((ViewBag.TotalRevenue != null ? Convert.ToDecimal(ViewBag.TotalRevenue) : 0) - (ViewBag.TotalExpense != null ? Convert.ToDecimal(ViewBag.TotalExpense) : 0)).ToString("N2")) ₺</span>
+                                <i class="toprightarrow-primary fa fa-arrow-up m-r-10"></i>86% Geçen yıla göre daha fazla
+                            </p>
+                        </div>
+                        <div class="setting-list">
+                            <ul class="list-unstyled setting-option">
+                                <li>
+                                    <div class="setting-primary"><i class="fa fa-cog"></i></div>
+                                </li>
+                                <li><i class="view-html fa fa-code font-primary"></i></li>
+                                <li><i class="icofont icofont-maximize full-card font-primary"></i></li>
+                                <li><i class="icofont icofont-minus minimize-card font-primary"></i></li>
+                                <li><i class="icofont icofont-refresh reload-card font-primary"></i></li>
+                                <li><i class="icofont icofont-error close-card font-primary"></i></li>
+                            </ul>
+                        </div>
+                    </div>
                 </div>
-                <div class="card-body">
-                    <canvas id="monthlyChart"></canvas>
-                </div>
-            </div>
-        </div>
-
-        <!-- Kategori Bazlı Gelir Grafiği -->
-        <div class="col-xl-4">
-            <div class="card">
-                <div class="card-header">
-                    <h5>Kategori Bazlı Gelir</h5>
-                </div>
-                <div class="card-body">
-                    <canvas id="categoryChart"></canvas>
-                </div>
-            </div>
-        </div>
-    </div>
-
-    <!-- Grafik Kartları - 2. Satır -->
-    <div class="row">
-        <!-- Son 6 Ay Trendi -->
-        <div class="col-xl-8">
-            <div class="card">
-                <div class="card-header">
-                    <h5>Son 6 Ay Gelir-Gider Trendi</h5>
-                </div>
-                <div class="card-body">
-                    <canvas id="trendChart"></canvas>
+                <div class="card-body p-0">
+                    <div id="chart-timeline-dashbord"></div>
                 </div>
             </div>
         </div>
-
-        <!-- En Çok Satılan Ürünler -->
-        <div class="col-xl-4">
+        <div class="col-xl-8 box-col-12 des-xl-100">
+            <div class="row">
+                <div class="col-xl-6 col-50 box-col-6 des-xl-50">
             <div class="card">
-                <div class="card-header">
-                    <h5>En Çok Satılan Ürünler</h5>
+                        <div class="card-header">
+                            <div class="header-top d-sm-flex align-items-center">
+                                <h5>Büyüme Genel Bakış</h5>
+                                <div class="center-content">
+                                    <p class="d-flex align-items-center">
+                                        <i class="toprightarrow-primary fa fa-arrow-up me-2"></i>80% Büyüme
+                                    </p>
                 </div>
+                                <div class="setting-list">
+                                    <ul class="list-unstyled setting-option">
+                                        <li>
+                                            <div class="setting-primary"><i class="fa fa-cog"></i></div>
+                                        </li>
+                                        <li><i class="view-html fa fa-code font-primary"></i></li>
+                                        <li><i class="icofont icofont-maximize full-card font-primary"></i></li>
+                                        <li><i class="icofont icofont-minus minimize-card font-primary"></i></li>
+                                        <li><i class="icofont icofont-refresh reload-card font-primary"></i></li>
+                                        <li><i class="icofont icofont-error close-card font-primary"></i></li>
+                                    </ul>
+                            </div>
+                            </div>
+                        </div>
+                        <div class="card-body p-0">
+                            <div id="chart-dashbord"></div>
+                        </div>
+                    </div>
+                </div>
+                <div class="col-xl-6 col-50 box-col-6 des-xl-50">
+                    <div class="card latest-update-sec">
+                <div class="card-header">
+                            <div class="header-top d-sm-flex align-items-center">
+                                <h5>Yapılacaklar (Todo)</h5>
+                                <div class="center-content">
+                                    <ul class="week-date">
+                                        <li class="font-primary">Bekleyenler</li>
+                                        <li><a href="@Url.Action("Index", "Todo")">Hepsini Gör</a></li>
+                                    </ul>
+                </div>
+                                <div class="setting-list">
+                                    <ul class="list-unstyled setting-option">
+                                        <li>
+                                            <div class="setting-primary"><i class="fa fa-cog"></i></div>
+                                        </li>
+                                        <li><i class="view-html fa fa-code font-primary"></i></li>
+                                        <li><i class="icofont icofont-maximize full-card font-primary"></i></li>
+                                        <li><i class="icofont icofont-minus minimize-card font-primary"></i></li>
+                                        <li><i class="icofont icofont-refresh reload-card font-primary"></i></li>
+                                        <li><i class="icofont icofont-error close-card font-primary"></i></li>
+                                    </ul>
+                </div>
+            </div>
+        </div>
+                        <div class="card-body">
+                            <div class="table-responsive">
+                                <table class="table table-bordernone">
+                                    <tbody>
+                                        @if (ViewBag.RecentTodos != null && ViewBag.RecentTodos.Count > 0)
+                                        {
+                                            var pendingTodos = new List<dynamic>();
+                                            foreach (var todo in ViewBag.RecentTodos)
+                                            {
+                                                if (!todo.IsCompleted)
+                                                {
+                                                    pendingTodos.Add(todo);
+                                                }
+                                            }
+                                            
+                                            if (pendingTodos.Any())
+                                            {
+                                                foreach (var todo in pendingTodos)
+                                                {
+                                                    <tr>
+                                                        <td>
+                                                            <div class="media">
+                                                                <i class="@todo.TaskIcon" style="font-size: 24px; margin-right: 10px;"></i>
+                                                                <div class="media-body">
+                                                                    <span>@todo.Title</span>
+                                                                    <p>
+                                                                        @if (todo.Deadline != null)
+                                                                        {
+                                                                            if (((DateTime)todo.Deadline).Date < DateTime.Now.Date && !todo.IsCompleted)
+                                                                            {
+                                                                                <span class="text-danger">Gecikmiş: @(((DateTime)todo.Deadline).ToString("dd MMM yyyy"))</span>
+                                                                            }
+                                                                            else
+                                                                            {
+                                                                                <span>Son Tarih: @(((DateTime)todo.Deadline).ToString("dd MMM yyyy"))</span>
+                                                                            }
+                                                                        }
+                                                                        else
+                                                                        {
+                                                                            <span>@todo.TaskCategory</span>
+                                                                        }
+                                                                    </p>
+                </div>
+            </div>
+                                                        </td>
+                                                        <td>
+                                                            <div class="d-flex">
+                                                                <button type="button" class="btn btn-sm btn-success me-2 complete-todo" data-id="@todo.Id" title="Tamamla">
+                                                                    <i class="fa fa-check"></i>
+                                                                </button>
+                                                                <button type="button" class="btn btn-sm btn-primary edit-todo" data-id="@todo.Id" title="Düzenle">
+                                                                    <i class="fa fa-edit"></i>
+                                                                </button>
+        </div>
+                                                        </td>
+                                                    </tr>
+                                                }
+                                            }
+                                            else
+                                            {
+                                                <tr>
+                                                    <td colspan="3" class="text-center">
+                                                        <p>Bekleyen görev bulunamadı.</p>
+                                                        <button type="button" class="btn btn-primary btn-sm" id="addNewTodo">
+                                                            <i class="fa fa-plus-circle me-1"></i> Yeni Görev Ekle
+                                                        </button>
+                                                    </td>
+                                                </tr>
+                                            }
+                                        }
+                                        else
+                                        {
+                                            <tr>
+                                                <td colspan="3" class="text-center">
+                                                    <p>Aktif görev bulunamadı.</p>
+                                                    <button type="button" class="btn btn-primary btn-sm" id="addNewTodo">
+                                                        <i class="fa fa-plus-circle me-1"></i> Yeni Görev Ekle
+                                                    </button>
+                                                </td>
+                                            </tr>
+                                        }
+                                    </tbody>
+                                </table>
+                </div>
+            </div>
+        </div>
+                </div>
+                <div class="col-xl-12 recent-order-sec">
+                    <div class="card">
                 <div class="card-body">
                     <div class="table-responsive">
-                        <table class="table table-hover">
+                                <h5>Son Siparişler</h5>
+                                <table class="table table-bordernone">
                             <thead>
                                 <tr>
                                     <th>Ürün</th>
-                                    <th>Satış</th>
+                                            <th>Tarih</th>
                                     <th>Miktar</th>
+                                            <th>Değer</th>
+                                            <th>Durum</th>
+                                            <th>
+                                                <div class="setting-list">
+                                                    <ul class="list-unstyled setting-option">
+                                                        <li>
+                                                            <div class="setting-primary"><i class="fa fa-cog"></i></div>
+                                                        </li>
+                                                        <li><i class="view-html fa fa-code font-primary"></i></li>
+                                                        <li><i class="icofont icofont-maximize full-card font-primary"></i></li>
+                                                        <li><i class="icofont icofont-minus minimize-card font-primary"></i></li>
+                                                        <li><i class="icofont icofont-refresh reload-card font-primary"></i></li>
+                                                        <li><i class="icofont icofont-error close-card font-primary"></i></li>
+                                                    </ul>
+                                                </div>
+                                            </th>
                                 </tr>
                             </thead>
                             <tbody>
@@ -179,16 +318,34 @@
                                     foreach (var product in ViewBag.TopProducts)
                                     {
                                         <tr>
-                                            <td>@product.ProductName</td>
-                                            <td>@product.TotalSales.ToString("N2") $</td>
-                                            <td>@product.TotalQuantity.ToString("N2")</td>
+                                                    <td>
+                                                        <div class="media">
+                                                            <img class="img-fluid rounded-circle" src="~/assets/images/dashboard/product-1.png" alt="" data-original-title="" title="">
+                                                            <div class="media-body">
+                                                                <a href="javascript:void(0)"><span>@product.ProductName</span></a>
+                                                            </div>
+                                                        </div>
+                                                    </td>
+                                                    <td>
+                                                        <p>@DateTime.Now.AddDays(-new Random().Next(1, 30)).ToString("dd MMMM")</p>
+                                                    </td>
+                                                    <td>
+                                                        <p>@product.TotalQuantity.ToString("N2")</p>
+                                                    </td>
+                                                    <td><img class="img-fluid" src="~/assets/images/dashboard/graph-1.png" alt="" data-original-title="" title=""></td>
+                                                    <td>
+                                                        <p>@product.TotalSales.ToString("N2") TL</p>
+                                                    </td>
+                                                    <td>
+                                                        <p>Tamamlandı</p>
+                                                    </td>
                                         </tr>
                                     }
                                 }
                                 else
                                 {
                                     <tr>
-                                        <td colspan="3" class="text-center">Veri bulunamadı</td>
+                                                <td colspan="6" class="text-center">Veri bulunamadı</td>
                                     </tr>
                                 }
                             </tbody>
@@ -196,454 +353,386 @@
                     </div>
                 </div>
             </div>
-        </div>
-    </div>
-
-    <!-- Grafik Kartları - 3. Satır (Yeni Eklenen) -->
-    <div class="row">
-        <!-- Kasa ve Banka Hesapları Toplam Bakiye -->
-        <div class="col-xl-6">
-            <div class="card">
-                <div class="card-header">
-                    <h5>Kasa ve Banka Hesapları Bakiyeleri</h5>
-                </div>
-                <div class="card-body">
-                    <canvas id="kasaBankaChart"></canvas>
                 </div>
             </div>
         </div>
-
-        <!-- Açık Alacak ve Borç Tutarları -->
-        <div class="col-xl-6">
+        <div class="col-xl-4 box-col-12 des-xl-100">
+            <div class="row">
+                <div class="col-xl-12 box-col-6 des-xl-50">
             <div class="card">
                 <div class="card-header">
-                    <h5>Açık Alacak ve Borç Tutarları</h5>
+                            <div class="header-top d-sm-flex align-items-center">
+                                <h5>Kullanıcı Aktiviteleri</h5>
+                                <div class="center-content">
+                                    <p>Yıllık Kullanıcı 24.65k</p>
                 </div>
-                <div class="card-body">
-                    <div class="row">
-                        <div class="col-md-6">
-                            <div class="card bg-light-primary border-0">
-                                <div class="card-body text-center">
-                                    <h6 class="text-muted">Açık Alacak</h6>
-                                    <h3>@((ViewBag.AcikAlacakTutari != null ? Convert.ToDecimal(ViewBag.AcikAlacakTutari) : 0).ToString("N2")) $</h3>
+                                <div class="setting-list">
+                                    <ul class="list-unstyled setting-option">
+                                        <li>
+                                            <div class="setting-primary"><i class="fa fa-cog"></i></div>
+                                        </li>
+                                        <li><i class="view-html fa fa-code font-primary"></i></li>
+                                        <li><i class="icofont icofont-maximize full-card font-primary"></i></li>
+                                        <li><i class="icofont icofont-minus minimize-card font-primary"></i></li>
+                                        <li><i class="icofont icofont-refresh reload-card font-primary"></i></li>
+                                        <li><i class="icofont icofont-error close-card font-primary"></i></li>
+                                    </ul>
                                 </div>
                             </div>
                         </div>
-                        <div class="col-md-6">
-                            <div class="card bg-light-danger border-0">
-                                <div class="card-body text-center">
-                                    <h6 class="text-muted">Açık Borç</h6>
-                                    <h3>@((ViewBag.AcikBorcTutari != null ? Convert.ToDecimal(ViewBag.AcikBorcTutari) : 0).ToString("N2")) $</h3>
+                        <div class="card-body p-0">
+                            <div id="user-activation-dash-2"></div>
+                        </div>
+                    </div>
+                </div>
+                <div class="col-xl-12 box-col-6 des-xl-50">
+                    <div class="card trasaction-sec">
+                        <div class="card-header">
+                            <div class="header-top d-sm-flex align-items-center">
+                                <h5>İşlemler</h5>
+                                <div class="center-content">
+                                    <p>5878 Başarılı İşlem</p>
+                                </div>
+                                <div class="setting-list">
+                                    <ul class="list-unstyled setting-option">
+                                        <li>
+                                            <div class="setting-secondary"><i class="fa fa-cog"></i></div>
+                                        </li>
+                                        <li><i class="view-html fa fa-code font-secondary"></i></li>
+                                        <li><i class="icofont icofont-maximize full-card font-secondary"></i></li>
+                                        <li><i class="icofont icofont-minus minimize-card font-secondary"></i></li>
+                                        <li><i class="icofont icofont-refresh reload-card font-secondary"></i></li>
+                                        <li><i class="icofont icofont-error close-card font-secondary"></i></li>
+                                    </ul>
                                 </div>
                             </div>
                         </div>
+                        <div class="transaction-totalbal">
+                            <h2>@(((ViewBag.TotalRevenue != null ? Convert.ToDecimal(ViewBag.TotalRevenue) : 0) - (ViewBag.TotalExpense != null ? Convert.ToDecimal(ViewBag.TotalExpense) : 0)).ToString("N2")) TL
+                                <span class="ms-3">
+                                    <a class="btn-arrow arrow-secondary" href="javascript:void(0)">
+                                        <i class="toprightarrow-secondary fa fa-arrow-up me-2"></i>98.54%
+                                    </a>
+                                </span>
+                            </h2>
+                            <p>Toplam Bakiye</p>
+                        </div>
+                        <div class="card-body p-0">
+                            <div id="chart-3dash"></div>
                     </div>
-                    <div class="mt-4">
-                        <canvas id="alacakYaslandirmaChart"></canvas>
                     </div>
                 </div>
             </div>
         </div>
     </div>
+</div>
+<!-- Container-fluid bitişi -->
 
-    <!-- Grafik Kartları - 4. Satır (Yeni Eklenen) -->
-    <div class="row">
-        <!-- Nakit Akış Projeksiyonu -->
-        <div class="col-xl-6">
-            <div class="card">
-                <div class="card-header">
-                    <h5>Nakit Akış Projeksiyonu (Gelecek 3 Ay)</h5>
+<!-- Todo Modal -->
+<div class="modal fade" id="todoModal" tabindex="-1" role="dialog" aria-labelledby="todoModalLabel" aria-hidden="true">
+    <div class="modal-dialog" role="document">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h5 class="modal-title" id="todoModalLabel">Görev Düzenle</h5>
+                <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+            </div>
+            <div class="modal-body">
+                <form id="todoForm">
+                    <input type="hidden" id="todoId" name="Id" />
+                    <div class="mb-3">
+                        <label for="todoTitle" class="form-label">Başlık</label>
+                        <input type="text" class="form-control" id="todoTitle" name="Title" required>
+                        <small class="text-muted">Başlık değiştirildiğinde kategori otomatik güncellenecektir.</small>
+                    </div>
+                    <div class="mb-3">
+                        <label for="todoCategory" class="form-label">Kategori</label>
+                        <input type="text" class="form-control" id="todoCategory" name="TaskCategory" readonly>
+                    </div>
+                    <div class="mb-3">
+                        <label for="todoDescription" class="form-label">Açıklama</label>
+                        <textarea class="form-control" id="todoDescription" name="Description" rows="3"></textarea>
+                    </div>
+                    <div class="mb-3">
+                        <label for="todoDeadline" class="form-label">Son Tarih</label>
+                        <input type="date" class="form-control" id="todoDeadline" name="Deadline">
+                    </div>
+                    <div class="form-check mb-3">
+                        <input class="form-check-input" type="checkbox" id="todoIsCompleted" name="IsCompleted">
+                        <label class="form-check-label" for="todoIsCompleted">
+                            Tamamlandı
+                        </label>
                 </div>
-                <div class="card-body">
-                    <canvas id="nakitAkisChart"></canvas>
+                </form>
+            </div>
+            <div class="modal-footer">
+                <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">İptal</button>
+                <button type="button" class="btn btn-primary" id="saveTodoBtn">Kaydet</button>
+            </div>
                 </div>
             </div>
         </div>
 
-        <!-- En Çok Satılan Ürünler Grafiği -->
-        <div class="col-xl-6">
-            <div class="card">
-                <div class="card-header">
-                    <h5>En Çok Satılan Ürünler (Son 30 Gün)</h5>
+<!-- Yeni Todo Modal -->
+<div class="modal fade" id="newTodoModal" tabindex="-1" role="dialog" aria-labelledby="newTodoModalLabel" aria-hidden="true">
+    <div class="modal-dialog" role="document">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h5 class="modal-title" id="newTodoModalLabel">Yeni Görev Ekle</h5>
+                <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+            </div>
+            <div class="modal-body">
+                <form id="newTodoForm">
+                    <div class="mb-3">
+                        <label for="newTodoTitle" class="form-label">Başlık</label>
+                        <input type="text" class="form-control" id="newTodoTitle" name="Title" required>
+                        <small class="text-muted">Başlık içeriğine göre kategori otomatik belirlenecektir.</small>
+                    </div>
+                    <div class="mb-3">
+                        <label for="newTodoDescription" class="form-label">Açıklama</label>
+                        <textarea class="form-control" id="newTodoDescription" name="Description" rows="3"></textarea>
+                    </div>
+                    <div class="mb-3">
+                        <label for="newTodoDeadline" class="form-label">Son Tarih</label>
+                        <input type="date" class="form-control" id="newTodoDeadline" name="Deadline">
                 </div>
-                <div class="card-body">
-                    <canvas id="enCokSatilanChart"></canvas>
+                </form>
                 </div>
+            <div class="modal-footer">
+                <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">İptal</button>
+                <button type="button" class="btn btn-primary" id="addTodoBtn">Ekle</button>
             </div>
         </div>
     </div>
 </div>
 
 @section Scripts {
+    <script src="~/assets/js/dashboard/default.js"></script>
+    <!-- Toastr Kütüphanesi -->
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/toastr.js/latest/toastr.min.js"></script>
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/toastr.js/latest/toastr.min.css">
     <script>
-        // Kur bilgilerini saklamak için değişkenler
-        var tryKur = "@(ViewBag.TryToUsdKur != null && ViewBag.TryToUsdKur != 0 ? (1/Convert.ToDecimal(ViewBag.TryToUsdKur)).ToString("N2") : "")";
-        var uzsKur = "@(ViewBag.UzsToUsdKur != null && ViewBag.UzsToUsdKur != 0 ? (1/Convert.ToDecimal(ViewBag.UzsToUsdKur)).ToString("N4") : "")";
-        
-        // Sayfa yüklendiğinde kur değerlerini local storage'a kaydedelim
-        $(document).ready(function() {
-            // Eğer kur değerleri geldi ise sakla
-            if (tryKur && tryKur !== "") {
-                localStorage.setItem("tryKur", tryKur);
-            }
-            if (uzsKur && uzsKur !== "") {
-                localStorage.setItem("uzsKur", uzsKur);
+        // Sayfa yüklendiğinde
+        $(document).ready(function () {
+            // Toastr ayarları
+            toastr.options = {
+                "closeButton": true,
+                "debug": false,
+                "newestOnTop": true,
+                "progressBar": true,
+                "positionClass": "toast-top-right",
+                "preventDuplicates": false,
+                "onclick": null,
+                "showDuration": "300",
+                "hideDuration": "1000",
+                "timeOut": "3000",
+                "extendedTimeOut": "1000",
+                "showEasing": "swing",
+                "hideEasing": "linear",
+                "showMethod": "fadeIn",
+                "hideMethod": "fadeOut"
+            };
+            
+            // Todo düzenleme modalını açma
+            $('.edit-todo').on('click', function () {
+                var todoId = $(this).data('id');
+                
+                // AJAX ile todo verilerini çekme
+                $.ajax({
+                    url: '@Url.Action("GetTodoDetails", "Todo")/' + todoId,
+                    type: 'GET',
+                    success: function (data) {
+                        if (data.success === false) {
+                            showNotification(data.message, 'error');
+                            return;
+                        }
+                        
+                        // Form alanlarını doldur
+                        $('#todoId').val(data.id);
+                        $('#todoTitle').val(data.title);
+                        $('#todoCategory').val(data.taskCategory);
+                        $('#todoDescription').val(data.description);
+                        
+                        // Deadline tarihini ayarla (varsa)
+                        if (data.deadline) {
+                            var date = new Date(data.deadline);
+                            var formattedDate = date.toISOString().split('T')[0];
+                            $('#todoDeadline').val(formattedDate);
+                        } else {
+                            $('#todoDeadline').val('');
+                        }
+                        
+                        $('#todoIsCompleted').prop('checked', data.isCompleted);
+                        
+                        // Modalı göster
+                        $('#todoModal').modal('show');
+                    },
+                    error: function (xhr, status, error) {
+                        console.error('Todo bilgileri alınırken hata oluştu:', error);
+                        showNotification('Görev bilgileri alınamadı. Lütfen tekrar deneyin.', 'error');
+                    }
+                });
+            });
+            
+            // Görevi Tamamlama
+            $('.complete-todo').on('click', function () {
+                var todoId = $(this).data('id');
+                var row = $(this).closest('tr');
+                
+                $.ajax({
+                    url: '@Url.Action("ToggleStatus", "Todo")/' + todoId,
+                    type: 'POST',
+                    success: function (data) {
+                        if (data.success) {
+                            // Satırı gizle (tamamlandığı için widget'tan kaldırılacak)
+                            row.fadeOut(300, function() { 
+                                $(this).remove(); 
+                                
+                                // Eğer başka görev kalmadıysa, "Görev bulunamadı" mesajını göster
+                                if ($('.table-responsive tbody tr').length === 0) {
+                                    var emptyMessage = `
+                                        <tr>
+                                            <td colspan="3" class="text-center">
+                                                <p>Bekleyen görev bulunamadı.</p>
+                                                <button type="button" class="btn btn-primary btn-sm" id="addNewTodo">
+                                                    <i class="fa fa-plus-circle me-1"></i> Yeni Görev Ekle
+                                                </button>
+                                            </td>
+                                        </tr>
+                                    `;
+                                    $('.table-responsive tbody').append(emptyMessage);
+                                    
+                                    // Yeni eklenen buton için event listener ekle
+                                    $('#addNewTodo').on('click', function() {
+                                        $('#newTodoModal').modal('show');
+                                    });
+                                }
+                            });
+                            
+                            // Başarı mesajı
+                            showNotification(data.message, 'success');
+                        } else {
+                            showNotification(data.message, 'error');
+                        }
+                    },
+                    error: function (xhr, status, error) {
+                        console.error('Görev tamamlanırken hata oluştu:', error);
+                        showNotification('Bir hata oluştu. Lütfen tekrar deneyin.', 'error');
+                    }
+                });
+            });
+            
+            // Todo kaydetme
+            $('#saveTodoBtn').on('click', function () {
+                var formData = $('#todoForm').serialize();
+                
+                $.ajax({
+                    url: '@Url.Action("Update", "Todo")',
+                    type: 'POST',
+                    data: formData,
+                    success: function (data) {
+                        if (data.success) {
+                            // Modalı kapat
+                            $('#todoModal').modal('hide');
+                            
+                            // Başarı bildirimi
+                            showNotification(data.message, 'success');
+                            
+                            // Sayfayı yenile (güncelleme görmek için)
+                            setTimeout(function() {
+                                window.location.reload();
+                            }, 1000);
+                        } else {
+                            showNotification(data.message || 'Görev güncellenemedi.', 'error');
+                        }
+                    },
+                    error: function (xhr, status, error) {
+                        console.error('Görev güncellenirken hata oluştu:', error);
+                        showNotification('Görev güncellenirken bir hata oluştu. Lütfen tekrar deneyin.', 'error');
+                    }
+                });
+            });
+            
+            // Yeni görev ekleme modalını açma
+            $(document).on('click', '#addNewTodo', function() {
+                $('#newTodoModal').modal('show');
+            });
+            
+            // Yeni görev ekleme
+            $('#addTodoBtn').on('click', function () {
+                var formData = $('#newTodoForm').serialize();
+                
+                $.ajax({
+                    url: '@Url.Action("Create", "Todo")',
+                    type: 'POST',
+                    data: formData,
+                    success: function (data) {
+                        if (data.success) {
+                            // Modalı kapat
+                            $('#newTodoModal').modal('hide');
+                            
+                            // Başarı bildirimi
+                            showNotification(data.message, 'success');
+                            
+                            // Sayfayı yenile (yeni görevi görmek için)
+                            setTimeout(function() {
+                                window.location.reload();
+                            }, 1000);
+                        } else {
+                            showNotification(data.message || 'Görev eklenemedi.', 'error');
+                        }
+                    },
+                    error: function (xhr, status, error) {
+                        console.error('Görev eklenirken hata oluştu:', error);
+                        showNotification('Görev eklenirken bir hata oluştu. Lütfen tekrar deneyin.', 'error');
+                    }
+                });
+            });
+            
+            // Bildirim gösterme fonksiyonu (Toastr kullanarak)
+            function showNotification(message, type) {
+                if (type === 'success') {
+                    toastr.success(message);
+                } else if (type === 'error') {
+                    toastr.error(message);
+                } else if (type === 'warning') {
+                    toastr.warning(message);
+                } else if (type === 'info') {
+                    toastr.info(message);
+                }
             }
             
-            // Kur bilgilerini saklanmış değerlerden göster
-            updateCurrencyDisplay();
+            // Tema değişikliğinde grafikleri yeniden çizdirelim
+            $('.mode').on('click', function () {
+                setTimeout(function () {
+                    window.dispatchEvent(new Event('resize'));
+                }, 500);
+            });
             
-            // Her 2 saniyede bir kur bilgilerini kontrol et ve güncelle
-            setInterval(updateCurrencyDisplay, 2000);
-        });
-        
-        // Kur bilgilerini kontrol edip güncelleyen fonksiyon
-        function updateCurrencyDisplay() {
-            var tryElement = $("#tryKur");
-            var uzsElement = $("#uzsKur");
+            // Stiller düzenlemeleri
+            $('.card-option li i, .setting-option li i').each(function() {
+                // Orjinal ikon sınıflarını koruyarak feather ikonları oluştur
+                var iconClass = $(this).attr('class');
+                if (iconClass.includes('icofont-maximize')) {
+                    $(this).addClass('feather').addClass('icon-maximize');
+                }
+                if (iconClass.includes('icofont-minus')) {
+                    $(this).addClass('feather').addClass('icon-minus');
+                }
+                if (iconClass.includes('icofont-plus')) {
+                    $(this).addClass('feather').addClass('icon-plus');
+                }
+                if (iconClass.includes('icofont-refresh')) {
+                    $(this).addClass('feather').addClass('icon-refresh-cw');
+                }
+                if (iconClass.includes('icofont-error')) {
+                    $(this).addClass('feather').addClass('icon-x');
+                }
+            });
             
-            // Eğer şu anki değerler boş veya "Yükleniyor..." ise saklanan değerleri kullan
-            if (tryElement.text() === "Yükleniyor..." || tryElement.text() === " TL") {
-                var savedTryKur = localStorage.getItem("tryKur");
-                if (savedTryKur && savedTryKur !== "") {
-                    tryElement.text(savedTryKur + " TL");
-                }
-            }
-            
-            if (uzsElement.text() === "Yükleniyor..." || uzsElement.text() === " UZS") {
-                var savedUzsKur = localStorage.getItem("uzsKur");
-                if (savedUzsKur && savedUzsKur !== "") {
-                    uzsElement.text(savedUzsKur + " UZS");
-                }
-            }
-        }
-        
-        // Veri doğrulama fonksiyonu
-        function safeJsonParse(jsonStr, defaultValue) {
-            try {
-                if (!jsonStr) return defaultValue;
-                return JSON.parse(jsonStr);
-            } catch (e) {
-                console.error("JSON parse hatası:", e);
-                return defaultValue;
-            }
-        }
-        
-        // Null güvenli veri alma
-        var days = safeJsonParse('@Html.Raw(Json.Serialize(ViewBag.Days))', []);
-        var revenues = safeJsonParse('@Html.Raw(Json.Serialize(ViewBag.Revenues))', []);
-        var expenses = safeJsonParse('@Html.Raw(Json.Serialize(ViewBag.Expenses))', []);
-        var categories = safeJsonParse('@Html.Raw(Json.Serialize(ViewBag.Categories))', []);
-        var categoryRevenues = safeJsonParse('@Html.Raw(Json.Serialize(ViewBag.CategoryRevenues))', []);
-        var last6MonthLabels = safeJsonParse('@Html.Raw(Json.Serialize(ViewBag.Last6MonthLabels))', []);
-        var trendRevenues = safeJsonParse('@Html.Raw(Json.Serialize(ViewBag.TrendRevenues))', []);
-        var trendExpenses = safeJsonParse('@Html.Raw(Json.Serialize(ViewBag.TrendExpenses))', []);
-        
-        // Yeni grafik verilerini al
-        var kasaBankaLabels = safeJsonParse('@Html.Raw(Json.Serialize(ViewBag.KasaBankaLabels))', []);
-        var kasaBankaBakiyeleri = safeJsonParse('@Html.Raw(Json.Serialize(ViewBag.KasaBankaBakiyeleri))', []);
-        var alacakYaslari = safeJsonParse('@Html.Raw(Json.Serialize(ViewBag.AlacakYaslari))', []);
-        var alacakYaslariMiktarlari = safeJsonParse('@Html.Raw(Json.Serialize(ViewBag.AlacakYaslariMiktarlari))', []);
-        var nakitAkisProjAylar = safeJsonParse('@Html.Raw(Json.Serialize(ViewBag.NakitAkisProjAylar))', []);
-        var nakitAkisProj = safeJsonParse('@Html.Raw(Json.Serialize(ViewBag.NakitAkisProj))', []);
-        var enCokSatilanUrunler = safeJsonParse('@Html.Raw(Json.Serialize(ViewBag.EnCokSatilanUrunler))', []);
-        var enCokSatilanUrunMiktarlari = safeJsonParse('@Html.Raw(Json.Serialize(ViewBag.EnCokSatilanUrunMiktarlari))', []);
-        
-        // CHART.JS RENKLERİ
-        const chartColors = {
-            primary: '#4CAF50',
-            secondary: '#2196F3',
-            success: '#00C851',
-            danger: '#F44336',
-            warning: '#FFC107',
-            info: '#33B5E5',
-            purple: '#9C27B0',
-            pink: '#E91E63',
-            indigo: '#3F51B5',
-            teal: '#009688',
-            orange: '#FF5722',
-            brown: '#795548',
-            gray: '#607D8B'
-        };
-        
-        // Bir renk paleti oluşturma fonksiyonu
-        function generateColorPalette(count) {
-            const colors = Object.values(chartColors);
-            let palette = [];
-            for (let i = 0; i < count; i++) {
-                palette.push(colors[i % colors.length]);
-            }
-            return palette;
-        }
-        
-        // Para birimi formatı
-        function formatCurrency(value) {
-            return value.toLocaleString('tr-TR', { style: 'currency', currency: 'USD' });
-        }
-        
-        // Aylık Gelir-Gider Grafiği
-        var monthlyCtx = document.getElementById('monthlyChart').getContext('2d');
-        new Chart(monthlyCtx, {
-            type: 'line',
-            data: {
-                labels: days,
-                datasets: [{
-                    label: 'Gelir',
-                    data: revenues,
-                    borderColor: chartColors.primary,
-                    backgroundColor: chartColors.primary + '33',
-                    tension: 0.1,
-                    fill: true
-                }, {
-                    label: 'Gider',
-                    data: expenses,
-                    borderColor: chartColors.danger,
-                    backgroundColor: chartColors.danger + '33',
-                    tension: 0.1,
-                    fill: true
-                }]
-            },
-            options: {
-                responsive: true,
-                plugins: {
-                    legend: {
-                        position: 'top',
-                    }
-                },
-                scales: {
-                    y: {
-                        beginAtZero: true,
-                        ticks: {
-                            callback: function(value) {
-                                return formatCurrency(value);
-                            }
-                        }
-                    }
-                }
-            }
-        });
-
-        // Kategori Bazlı Gelir Grafiği
-        var categoryCtx = document.getElementById('categoryChart').getContext('2d');
-        new Chart(categoryCtx, {
-            type: 'doughnut',
-            data: {
-                labels: categories,
-                datasets: [{
-                    data: categoryRevenues,
-                    backgroundColor: generateColorPalette(categories.length)
-                }]
-            },
-            options: {
-                responsive: true,
-                plugins: {
-                    legend: {
-                        position: 'right',
-                    },
-                    tooltip: {
-                        callbacks: {
-                            label: function(context) {
-                                let label = context.label || '';
-                                let value = context.raw || 0;
-                                return label + ': ' + formatCurrency(value);
-                            }
-                        }
-                    }
-                }
-            }
-        });
-
-        // Son 6 Ay Trendi
-        var trendCtx = document.getElementById('trendChart').getContext('2d');
-        new Chart(trendCtx, {
-            type: 'bar',
-            data: {
-                labels: last6MonthLabels,
-                datasets: [{
-                    label: 'Gelir',
-                    data: trendRevenues,
-                    backgroundColor: chartColors.primary
-                }, {
-                    label: 'Gider',
-                    data: trendExpenses,
-                    backgroundColor: chartColors.danger
-                }]
-            },
-            options: {
-                responsive: true,
-                plugins: {
-                    legend: {
-                        position: 'top',
-                    }
-                },
-                scales: {
-                    y: {
-                        beginAtZero: true,
-                        ticks: {
-                            callback: function(value) {
-                                return formatCurrency(value);
-                            }
-                        }
-                    }
-                }
-            }
-        });
-        
-        // Kasa ve Banka Bakiyeleri Grafiği
-        var kasaBankaCtx = document.getElementById('kasaBankaChart').getContext('2d');
-        new Chart(kasaBankaCtx, {
-            type: 'bar',
-            data: {
-                labels: kasaBankaLabels,
-                datasets: [{
-                    label: 'Bakiye',
-                    data: kasaBankaBakiyeleri,
-                    backgroundColor: generateColorPalette(kasaBankaLabels.length)
-                }]
-            },
-            options: {
-                responsive: true,
-                indexAxis: 'y',
-                plugins: {
-                    legend: {
-                        display: false
-                    },
-                    tooltip: {
-                        callbacks: {
-                            label: function(context) {
-                                let value = context.raw || 0;
-                                return formatCurrency(value);
-                            }
-                        }
-                    }
-                },
-                scales: {
-                    x: {
-                        beginAtZero: true,
-                        ticks: {
-                            callback: function(value) {
-                                return formatCurrency(value);
-                            }
-                        }
-                    }
-                }
-            }
-        });
-        
-        // Alacak Yaşlandırma Grafiği
-        var alacakYaslandirmaCtx = document.getElementById('alacakYaslandirmaChart').getContext('2d');
-        new Chart(alacakYaslandirmaCtx, {
-            type: 'bar',
-            data: {
-                labels: alacakYaslari,
-                datasets: [{
-                    label: 'Vadesi Geçmiş Alacaklar',
-                    data: alacakYaslariMiktarlari,
-                    backgroundColor: [
-                        chartColors.success,
-                        chartColors.warning,
-                        chartColors.orange,
-                        chartColors.danger
-                    ]
-                }]
-            },
-            options: {
-                responsive: true,
-                plugins: {
-                    legend: {
-                        display: false
-                    },
-                    tooltip: {
-                        callbacks: {
-                            label: function(context) {
-                                let value = context.raw || 0;
-                                return 'Tutar: ' + formatCurrency(value);
-                            }
-                        }
-                    }
-                },
-                scales: {
-                    y: {
-                        beginAtZero: true,
-                        ticks: {
-                            callback: function(value) {
-                                return formatCurrency(value);
-                            }
-                        }
-                    }
-                }
-            }
-        });
-        
-        // Nakit Akış Projeksiyonu Grafiği
-        var nakitAkisCtx = document.getElementById('nakitAkisChart').getContext('2d');
-        new Chart(nakitAkisCtx, {
-            type: 'line',
-            data: {
-                labels: nakitAkisProjAylar,
-                datasets: [{
-                    label: 'Nakit Akışı',
-                    data: nakitAkisProj,
-                    borderColor: chartColors.indigo,
-                    backgroundColor: chartColors.indigo + '33',
-                    fill: true,
-                    tension: 0.4
-                }]
-            },
-            options: {
-                responsive: true,
-                plugins: {
-                    legend: {
-                        display: false
-                    },
-                    tooltip: {
-                        callbacks: {
-                            label: function(context) {
-                                let value = context.raw || 0;
-                                return 'Nakit Akışı: ' + formatCurrency(value);
-                            }
-                        }
-                    }
-                },
-                scales: {
-                    y: {
-                        beginAtZero: false,
-                        ticks: {
-                            callback: function(value) {
-                                return formatCurrency(value);
-                            }
-                        }
-                    }
-                }
-            }
-        });
-        
-        // En Çok Satılan Ürünler Grafiği
-        var enCokSatilanCtx = document.getElementById('enCokSatilanChart').getContext('2d');
-        new Chart(enCokSatilanCtx, {
-            type: 'horizontalBar',
-            data: {
-                labels: enCokSatilanUrunler,
-                datasets: [{
-                    label: 'Satış Miktarı',
-                    data: enCokSatilanUrunMiktarlari,
-                    backgroundColor: generateColorPalette(enCokSatilanUrunler.length)
-                }]
-            },
-            options: {
-                responsive: true,
-                indexAxis: 'y',
-                plugins: {
-                    legend: {
-                        display: false
-                    }
-                },
-                scales: {
-                    x: {
-                        beginAtZero: true
-                    }
-                }
-            }
+            // Setting ikonu için stiller
+            $('.setting-primary i, .setting-secondary i').each(function() {
+                $(this).addClass('icon-settings');
+            });
         });
     </script>
 }

@@ -61,44 +61,40 @@ namespace MuhasebeStokWebApp.Controllers
     {
         private readonly IUnitOfWork _unitOfWork;
         private readonly ApplicationDbContext _context;
-        private readonly ILogger<IrsaliyeController> _logger;
-        private readonly UserManager<ApplicationUser> _userManager;
         private readonly IIrsaliyeService _irsaliyeService;
-        private readonly IIrsaliyeNumaralandirmaService _irsaliyeNumaralandirmaService;
-        private readonly StokFifoService _stokFifoService;
-        private readonly IDovizKuruService _dovizKuruService;
+        private readonly ILogger<IrsaliyeController> _logger;
+        private readonly IStokFifoService _stokFifoService;
         private readonly ILogService _logService;
         private readonly IWebHostEnvironment _env;
         private readonly IDropdownService _dropdownService;
+        private readonly IIrsaliyeNumaralandirmaService _irsaliyeNumaralandirmaService;
         protected new readonly RoleManager<IdentityRole> _roleManager;
 
         public IrsaliyeController(
             IUnitOfWork unitOfWork,
             ApplicationDbContext context,
+            IIrsaliyeService irsaliyeService,
             ILogger<IrsaliyeController> logger,
-            ILogService logService,
+            IStokFifoService stokFifoService,
             IMenuService menuService,
             UserManager<ApplicationUser> userManager,
             RoleManager<IdentityRole> roleManager,
-            IIrsaliyeService irsaliyeService,
-            IIrsaliyeNumaralandirmaService irsaliyeNumaralandirmaService,
-            StokFifoService stokFifoService,
-            IDovizKuruService dovizKuruService,
+            ILogService logService,
             IWebHostEnvironment env,
-            IDropdownService dropdownService)
+            IDropdownService dropdownService,
+            IIrsaliyeNumaralandirmaService irsaliyeNumaralandirmaService)
             : base(menuService, userManager, roleManager, logService)
         {
             _unitOfWork = unitOfWork;
             _context = context;
-            _logger = logger;
-            _userManager = userManager;
             _irsaliyeService = irsaliyeService;
-            _irsaliyeNumaralandirmaService = irsaliyeNumaralandirmaService;
+            _logger = logger;
             _stokFifoService = stokFifoService;
-            _dovizKuruService = dovizKuruService;
             _env = env;
             _dropdownService = dropdownService;
+            _irsaliyeNumaralandirmaService = irsaliyeNumaralandirmaService;
             _roleManager = roleManager;
+            _logService = logService;
         }
 
         // İrsaliyelerin listelendiği ana sayfa
@@ -221,7 +217,7 @@ namespace MuhasebeStokWebApp.Controllers
         {
             var irsaliye = await _unitOfWork.Repository<DEntityIrsaliye>().GetFirstOrDefaultAsync(
                 filter: i => i.IrsaliyeID.Equals(id),
-                includeProperties: "Cari,Fatura,IrsaliyeDetaylari.Urun");
+                includeProperties: "Cari,Fatura,IrsaliyeDetaylari.Urun,IrsaliyeDetaylari.Urun.Birim");
 
             if (irsaliye == null)
             {
@@ -252,7 +248,7 @@ namespace MuhasebeStokWebApp.Controllers
                     UrunAdi = id.Urun?.UrunAdi ?? string.Empty,
                     UrunKodu = id.Urun?.UrunKodu ?? string.Empty,
                     Miktar = id.Miktar,
-                    Birim = id.Birim ?? string.Empty,
+                    Birim = id.Urun?.Birim?.BirimAdi ?? id.Birim ?? string.Empty,
                     Aciklama = id.Aciklama ?? string.Empty
                 }).ToList()
             };
@@ -483,7 +479,7 @@ namespace MuhasebeStokWebApp.Controllers
                 GuncellemeTarihi = irsaliye.GuncellemeTarihi
             };
 
-            return View(viewModel);
+            return PartialView("_DeleteModal", viewModel);
         }
 
         // POST: Irsaliye/Delete/5
@@ -496,20 +492,26 @@ namespace MuhasebeStokWebApp.Controllers
                 return Problem("Entity set 'ApplicationDbContext.Irsaliyeler' is null.");
             }
 
+            // İrsaliyeyi bul
+            var irsaliye = await _context.Irsaliyeler
+                .Include(i => i.IrsaliyeDetaylari)
+                .FirstOrDefaultAsync(i => i.IrsaliyeID.Equals(id) && i.Aktif);
+
+            if (irsaliye == null)
+            {
+                return Json(new { success = false, message = "İrsaliye bulunamadı." });
+            }
+
+            // İrsaliyenin bağlı faturası var mı kontrol et
+            if (irsaliye.FaturaID.HasValue)
+            {
+                return Json(new { success = false, message = "Bu irsaliye bir faturaya bağlı olduğu için silinemez. Önce bağlı olduğu faturayı silmelisiniz." });
+            }
+
             // Transaction başlat
             using var transaction = await _context.Database.BeginTransactionAsync();
             try
             {
-                // İrsaliyeyi bul
-                var irsaliye = await _context.Irsaliyeler
-                    .Include(i => i.IrsaliyeDetaylari)
-                    .FirstOrDefaultAsync(i => i.IrsaliyeID.Equals(id) && i.Aktif);
-
-                if (irsaliye == null)
-                {
-                    return NotFound();
-                }
-
                 // İrsaliyeyi pasife al
                 irsaliye.Aktif = false;
                 irsaliye.GuncellemeTarihi = DateTime.Now;
@@ -528,15 +530,13 @@ namespace MuhasebeStokWebApp.Controllers
                 await _context.SaveChangesAsync();
                 await transaction.CommitAsync();
                 
-                TempData["SuccessMessage"] = "İrsaliye başarıyla pasife alındı.";
-                return RedirectToAction(nameof(Index));
+                return Json(new { success = true, message = "İrsaliye başarıyla pasife alındı." });
             }
             catch (Exception ex)
             {
                 await transaction.RollbackAsync();
                 _logger.LogError(ex, "İrsaliye silme işlemi sırasında hata oluştu: {Id}", id);
-                TempData["ErrorMessage"] = "İrsaliye silinirken bir hata oluştu.";
-                return RedirectToAction(nameof(Index));
+                return Json(new { success = false, message = $"İrsaliye silinirken bir hata oluştu: {ex.Message}" });
             }
         }
 
@@ -763,7 +763,7 @@ namespace MuhasebeStokWebApp.Controllers
                     UrunAdi = id.Urun.UrunAdi ?? string.Empty,
                     UrunKodu = id.Urun.UrunKodu ?? string.Empty,
                     Miktar = id.Miktar,
-                    Birim = id.Birim ?? string.Empty,
+                    Birim = id.Urun?.Birim?.BirimAdi ?? id.Birim ?? string.Empty,
                     Aciklama = id.Aciklama ?? string.Empty
                 }).ToList()
             };

@@ -1,4 +1,4 @@
-@model MuhasebeStokWebApp.ViewModels.Cari.CariEkstreViewModel
+@model MuhasebeStokWebApp.ViewModels.Cari.CariEkstreRaporViewModel
 
 <div class="row mb-3">
     <div class="col-md-12">
@@ -52,7 +52,7 @@
                         <div class="card">
                             <div class="card-body text-center bg-light">
                                 <h6 class="card-title">Başlangıç Bakiyesi</h6>
-                                <h4 class="text-primary">@Model.BaslangicBakiye.ToString("N2") TL</h4>
+                                <h4 class="text-primary">@Model.BaslangicBakiye.ToString("N2") @Model.ParaBirimiSembolu</h4>
                             </div>
                         </div>
                     </div>
@@ -60,8 +60,8 @@
                         <div class="card">
                             <div class="card-body text-center bg-light">
                                 <h6 class="card-title">Güncel Bakiye</h6>
-                                <h4 class="@(Model.BitisGuncelBakiye >= 0 ? "text-success" : "text-danger")">
-                                    @Model.BitisGuncelBakiye.ToString("N2") TL
+                                <h4 class="@(Model.Bakiye >= 0 ? "text-success" : "text-danger")">
+                                    @Model.Bakiye.ToString("N2") @Model.ParaBirimiSembolu
                                 </h4>
                             </div>
                         </div>
@@ -88,7 +88,7 @@
                                 <td><strong>Açılış Bakiyesi</strong></td>
                                 <td>-</td>
                                 <td>-</td>
-                                <td><strong>@Model.BaslangicBakiye.ToString("N2") TL</strong></td>
+                                <td><strong>@Model.BaslangicBakiye.ToString("N2") @Model.ParaBirimiSembolu</strong></td>
                             </tr>
 
                             @if (Model.Hareketler != null && Model.Hareketler.Any())
@@ -97,7 +97,7 @@
                                 
                                 @foreach (var hareket in Model.Hareketler.OrderBy(h => h.Tarih))
                                 {
-                                    bakiye += hareket.Alacak - hareket.Borc;
+                                    bakiye = hareket.Bakiye;
                                     
                                     <tr>
                                         <td>@hareket.Tarih.ToString("dd.MM.yyyy")</td>
@@ -105,7 +105,7 @@
                                         <td>@hareket.Aciklama</td>
                                         <td>@(hareket.Borc > 0 ? hareket.Borc.ToString("N2") : "-")</td>
                                         <td>@(hareket.Alacak > 0 ? hareket.Alacak.ToString("N2") : "-")</td>
-                                        <td>@bakiye.ToString("N2") TL</td>
+                                        <td>@bakiye.ToString("N2") @Model.ParaBirimiSembolu</td>
                                     </tr>
                                 }
                             }
@@ -119,9 +119,9 @@
                         <tfoot>
                             <tr class="table-info">
                                 <td colspan="3" class="text-end"><strong>TOPLAM:</strong></td>
-                                <td><strong>@Model.ToplamBorc.ToString("N2") TL</strong></td>
-                                <td><strong>@Model.ToplamAlacak.ToString("N2") TL</strong></td>
-                                <td><strong>@Model.BitisGuncelBakiye.ToString("N2") TL</strong></td>
+                                <td><strong>@Model.ToplamBorc.ToString("N2") @Model.ParaBirimiSembolu</strong></td>
+                                <td><strong>@Model.ToplamAlacak.ToString("N2") @Model.ParaBirimiSembolu</strong></td>
+                                <td><strong>@Model.Bakiye.ToString("N2") @Model.ParaBirimiSembolu</strong></td>
                             </tr>
                         </tfoot>
                     </table>
@@ -147,7 +147,7 @@
 
         // Filtre uygula
         $("#btnApplyFilter").click(function () {
-            var cariId = '@Model.CariID';
+            var cariId = '@Model.Id';
             var startDate = $("#startDate").val();
             var endDate = $("#endDate").val();
 
@@ -167,7 +167,7 @@
 
         // Filtreyi sıfırla
         $("#btnResetFilter").click(function () {
-            var cariId = '@Model.CariID';
+            var cariId = '@Model.Id';
             $.ajax({
                 url: '@Url.Action("Ekstre", "Cari")',
                 data: { id: cariId },

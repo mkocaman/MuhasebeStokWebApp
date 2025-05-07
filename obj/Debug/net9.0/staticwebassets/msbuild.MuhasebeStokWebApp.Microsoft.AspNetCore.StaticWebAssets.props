@@ -19380,8 +19380,8 @@
       <RelatedAsset></RelatedAsset>
       <AssetTraitName></AssetTraitName>
       <AssetTraitValue></AssetTraitValue>
-      <Fingerprint>ybi05gnyhf</Fingerprint>
-      <Integrity>zrE2oaT16p9Zfqisnh4fN5nCkk6PhRqjaPO1CAOV+qs=</Integrity>
+      <Fingerprint>4r9e2o7byn</Fingerprint>
+      <Integrity>IAU/Ch+b2rfCbkwyFgweTOpCnCTzChPM4/AE0LsVJ1g=</Integrity>
       <CopyToOutputDirectory>Never</CopyToOutputDirectory>
       <CopyToPublishDirectory>PreserveNewest</CopyToPublishDirectory>
       <OriginalItemSpec>$([System.IO.Path]::GetFullPath('$(MSBuildThisFileDirectory)..\staticwebassets\assets\js\custom-card\custom-card.js'))</OriginalItemSpec>
@@ -19434,8 +19434,8 @@
       <RelatedAsset></RelatedAsset>
       <AssetTraitName></AssetTraitName>
       <AssetTraitValue></AssetTraitValue>
-      <Fingerprint>nfw6objp59</Fingerprint>
-      <Integrity>TYIjbe52ZgTXbO5+X1FeCofVzAcFoKvKxQmV6D+Kr0g=</Integrity>
+      <Fingerprint>2eqmwhqor6</Fingerprint>
+      <Integrity>GtMZbfbromNErgzb5zl+yCvNQnK2YZ/jrXzRHBENeQg=</Integrity>
       <CopyToOutputDirectory>Never</CopyToOutputDirectory>
       <CopyToPublishDirectory>PreserveNewest</CopyToPublishDirectory>
       <OriginalItemSpec>$([System.IO.Path]::GetFullPath('$(MSBuildThisFileDirectory)..\staticwebassets\assets\js\dashboard\default.js'))</OriginalItemSpec>
@@ -29568,8 +29568,8 @@
       <RelatedAsset></RelatedAsset>
       <AssetTraitName></AssetTraitName>
       <AssetTraitValue></AssetTraitValue>
-      <Fingerprint>jfzvqdfxo1</Fingerprint>
-      <Integrity>4VygvJFe7lSX1lk2rObJApb7QPFxB6do3x+od90tPO8=</Integrity>
+      <Fingerprint>n9apcs3bor</Fingerprint>
+      <Integrity>O2xtnh5TUkQiCvrnA7z3yd1SoSViQPBbC2sBpBCZmJs=</Integrity>
       <CopyToOutputDirectory>Never</CopyToOutputDirectory>
       <CopyToPublishDirectory>PreserveNewest</CopyToPublishDirectory>
       <OriginalItemSpec>$([System.IO.Path]::GetFullPath('$(MSBuildThisFileDirectory)..\staticwebassets\assets\js\script.js'))</OriginalItemSpec>
@@ -46542,11 +46542,47 @@
       <RelatedAsset></RelatedAsset>
       <AssetTraitName></AssetTraitName>
       <AssetTraitValue></AssetTraitValue>
-      <Fingerprint>y5u67bv5qp</Fingerprint>
-      <Integrity>yn46GpdpYTnG7WzHmTWjv5OfdpMD+GCI7BBxf7uhTQA=</Integrity>
+      <Fingerprint>5o8qpu048s</Fingerprint>
+      <Integrity>ZZ8zOmvJKpdEagd4CAUN9WyuBKGvsJVKpWaPf3m5ZAI=</Integrity>
       <CopyToOutputDirectory>Never</CopyToOutputDirectory>
       <CopyToPublishDirectory>PreserveNewest</CopyToPublishDirectory>
       <OriginalItemSpec>$([System.IO.Path]::GetFullPath('$(MSBuildThisFileDirectory)..\staticwebassets\css\site.css'))</OriginalItemSpec>
+    </StaticWebAsset>
+    <StaticWebAsset Include="$([System.IO.Path]::GetFullPath('$(MSBuildThisFileDirectory)..\staticwebassets\css\site.css.bak'))">
+      <SourceType>Package</SourceType>
+      <SourceId>MuhasebeStokWebApp</SourceId>
+      <ContentRoot>$(MSBuildThisFileDirectory)..\staticwebassets\</ContentRoot>
+      <BasePath>_content/MuhasebeStokWebApp</BasePath>
+      <RelativePath>css/site.css.bak</RelativePath>
+      <AssetKind>All</AssetKind>
+      <AssetMode>All</AssetMode>
+      <AssetRole>Primary</AssetRole>
+      <RelatedAsset></RelatedAsset>
+      <AssetTraitName></AssetTraitName>
+      <AssetTraitValue></AssetTraitValue>
+      <Fingerprint>l6jhbpihi4</Fingerprint>
+      <Integrity>ozWM5jUw6R/KsTyQOdV/7JwKhLgvX12hf8IvhFLY7Dc=</Integrity>
+      <CopyToOutputDirectory>Never</CopyToOutputDirectory>
+      <CopyToPublishDirectory>PreserveNewest</CopyToPublishDirectory>
+      <OriginalItemSpec>$([System.IO.Path]::GetFullPath('$(MSBuildThisFileDirectory)..\staticwebassets\css\site.css.bak'))</OriginalItemSpec>
+    </StaticWebAsset>
+    <StaticWebAsset Include="$([System.IO.Path]::GetFullPath('$(MSBuildThisFileDirectory)..\staticwebassets\css\site.css.bak2'))">
+      <SourceType>Package</SourceType>
+      <SourceId>MuhasebeStokWebApp</SourceId>
+      <ContentRoot>$(MSBuildThisFileDirectory)..\staticwebassets\</ContentRoot>
+      <BasePath>_content/MuhasebeStokWebApp</BasePath>
+      <RelativePath>css/site.css.bak2</RelativePath>
+      <AssetKind>All</AssetKind>
+      <AssetMode>All</AssetMode>
+      <AssetRole>Primary</AssetRole>
+      <RelatedAsset></RelatedAsset>
+      <AssetTraitName></AssetTraitName>
+      <AssetTraitValue></AssetTraitValue>
+      <Fingerprint>rz5qvrrrhz</Fingerprint>
+      <Integrity>KSRPzaE8DJ6AB0OIE57zLmjyzhuAtEFXtjJs/n+kPYQ=</Integrity>
+      <CopyToOutputDirectory>Never</CopyToOutputDirectory>
+      <CopyToPublishDirectory>PreserveNewest</CopyToPublishDirectory>
+      <OriginalItemSpec>$([System.IO.Path]::GetFullPath('$(MSBuildThisFileDirectory)..\staticwebassets\css\site.css.bak2'))</OriginalItemSpec>
     </StaticWebAsset>
     <StaticWebAsset Include="$([System.IO.Path]::GetFullPath('$(MSBuildThisFileDirectory)..\staticwebassets\favicon.ico'))">
       <SourceType>Package</SourceType>
@@ -46632,8 +46668,8 @@
       <RelatedAsset></RelatedAsset>
       <AssetTraitName></AssetTraitName>
       <AssetTraitValue></AssetTraitValue>
-      <Fingerprint>cl9gumma3e</Fingerprint>
-      <Integrity>cJVUVKeFj++xVFPW4TRdWzom8K9oV8/76LEcz5EJLRY=</Integrity>
+      <Fingerprint>0kiq3tf46i</Fingerprint>
+      <Integrity>kLjCQOcoDY2O8FdPgM8JyJb0Aw8RlLFj2nfKCIqJQvU=</Integrity>
       <CopyToOutputDirectory>Never</CopyToOutputDirectory>
       <CopyToPublishDirectory>PreserveNewest</CopyToPublishDirectory>
       <OriginalItemSpec>$([System.IO.Path]::GetFullPath('$(MSBuildThisFileDirectory)..\staticwebassets\js\site.js'))</OriginalItemSpec>
@@ -48113,6 +48149,24 @@
       <CopyToOutputDirectory>Never</CopyToOutputDirectory>
       <CopyToPublishDirectory>PreserveNewest</CopyToPublishDirectory>
       <OriginalItemSpec>$([System.IO.Path]::GetFullPath('$(MSBuildThisFileDirectory)..\staticwebassets\MuhasebeStokWebApp.bllhhmol5h.bundle.scp.css'))</OriginalItemSpec>
+    </StaticWebAsset>
+    <StaticWebAsset Include="$([System.IO.Path]::GetFullPath('$(MSBuildThisFileDirectory)..\staticwebassets\profilePhotos\8b547a04-134c-4578-99bb-f831a55b400d_638822481606163490.jpeg'))">
+      <SourceType>Package</SourceType>
+      <SourceId>MuhasebeStokWebApp</SourceId>
+      <ContentRoot>$(MSBuildThisFileDirectory)..\staticwebassets\</ContentRoot>
+      <BasePath>_content/MuhasebeStokWebApp</BasePath>
+      <RelativePath>profilePhotos/8b547a04-134c-4578-99bb-f831a55b400d_638822481606163490.jpeg</RelativePath>
+      <AssetKind>All</AssetKind>
+      <AssetMode>All</AssetMode>
+      <AssetRole>Primary</AssetRole>
+      <RelatedAsset></RelatedAsset>
+      <AssetTraitName></AssetTraitName>
+      <AssetTraitValue></AssetTraitValue>
+      <Fingerprint>jlxj8zpfgy</Fingerprint>
+      <Integrity>KQsKLoPkwlb2yvQVxvGoeMUgI8s7tVQjLt0p1sEdBZM=</Integrity>
+      <CopyToOutputDirectory>Never</CopyToOutputDirectory>
+      <CopyToPublishDirectory>PreserveNewest</CopyToPublishDirectory>
+      <OriginalItemSpec>$([System.IO.Path]::GetFullPath('$(MSBuildThisFileDirectory)..\staticwebassets\profilePhotos\8b547a04-134c-4578-99bb-f831a55b400d_638822481606163490.jpeg'))</OriginalItemSpec>
     </StaticWebAsset>
   </ItemGroup>
 </Project>

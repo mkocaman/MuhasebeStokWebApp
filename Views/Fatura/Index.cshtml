@@ -68,27 +68,28 @@
                                             "EUR" => "€",
                                             "GBP" => "£",
                                             "TRY" => "₺",
+                                            "UZS" => "so'm",
                                             _ => item.DovizTuru
                                         };
                                     }
-                                    @((item.GenelToplam / 100).ToString("N2")) @currencySymbol
+                                    @(item.GenelToplam.ToString("N2")) @currencySymbol
                                 </td>
                                 <td>
                                     @Html.OdemeDurumuBadge(item.OdemeDurumu)
                                 </td>
                                 <td>
                                     <div class="btn-group" role="group">
-                                        <a asp-action="Details" asp-route-id="@item.FaturaID" class="btn btn-sm btn-info">
-                                            <i class="fas fa-eye"></i>
+                                        <a asp-action="Details" asp-route-id="@item.FaturaID" class="btn btn-primary btn-sm">
+                                            <i class="fas fa-eye"></i> Detay
                                         </a>
-                                        <a asp-action="Edit" asp-route-id="@item.FaturaID" class="btn btn-sm btn-warning">
-                                            <i class="fas fa-edit"></i>
+                                        <a asp-action="Edit" asp-route-id="@item.FaturaID" class="btn btn-warning btn-sm">
+                                            <i class="fas fa-edit"></i> Düzenle
                                         </a>
-                                        <a asp-action="Print" asp-route-id="@item.FaturaID" class="btn btn-sm btn-secondary" target="_blank">
+                                        <a asp-action="Print" asp-route-id="@item.FaturaID" class="btn btn-secondary btn-sm" target="_blank">
                                             <i class="fas fa-print"></i>
                                         </a>
-                                        <a asp-action="Delete" asp-route-id="@item.FaturaID" class="btn btn-sm btn-danger">
-                                            <i class="fas fa-trash"></i>
+                                        <a href="javascript:void(0);" class="btn btn-danger btn-sm btn-delete" data-id="@item.FaturaID">
+                                            <i class="fas fa-trash"></i> Sil
                                         </a>
                                     </div>
                                 </td>
@@ -182,6 +183,20 @@
                 });
                 </text>
             }
+
+            // Silme butonuna tıklandığında
+            $('.btn-delete').click(function () {
+                var id = $(this).data('id');
+                
+                // Modal'ı yükle ve göster
+                $.get('/Fatura/Delete/' + id, function (data) {
+                    $('#modal-container').html(data);
+                    $('#deleteModal').modal('show');
+                });
+            });
         });
     </script>
 }
+
+<!-- Modal için container ekleyelim -->
+<div id="modal-container"></div>

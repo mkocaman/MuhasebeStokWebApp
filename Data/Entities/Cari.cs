@@ -19,9 +19,6 @@ namespace MuhasebeStokWebApp.Data.Entities
         [StringLength(100)]
         public string Ad { get; set; } = string.Empty;
         
-        [StringLength(100)]
-        public string? CariUnvani { get; set; }
-        
         [Required]
         [StringLength(20)]
         public string CariKodu { get; set; } = string.Empty;
@@ -48,8 +45,6 @@ namespace MuhasebeStokWebApp.Data.Entities
         [StringLength(50)]
         public string Yetkili { get; set; } = string.Empty;
         
-        public decimal BaslangicBakiye { get; set; }
-        
         [Required]
         [StringLength(250)]
         public string Adres { get; set; } = string.Empty;
@@ -75,10 +70,6 @@ namespace MuhasebeStokWebApp.Data.Entities
         
         [StringLength(100)]
         public string? WebSitesi { get; set; }
-        
-        [Required]
-        [StringLength(1000)]
-        public string Notlar { get; set; } = string.Empty;
         
         // Cari para birimi alanları
         public Guid? VarsayilanParaBirimiId { get; set; }

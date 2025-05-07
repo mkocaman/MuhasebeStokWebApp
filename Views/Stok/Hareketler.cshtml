@@ -67,6 +67,10 @@
                                     <th>Toplam Stok Değeri (UZS):</th>
                                     <td class="text-end">@((Model.OrtalamaMaliyetUZS * Model.StokMiktar).ToString("N2")) so'm</td>
                                 </tr>
+                                <tr>
+                                    <th>Toplam Stok Değeri (USD):</th>
+                                    <td class="text-end">@((Model.OrtalamaMaliyetUSD * Model.StokMiktar).ToString("N2")) $</td>
+                                </tr>
                             </table>
                         </div>
                     </div>
@@ -140,11 +144,11 @@
                                     <tr>
                                         <td>@hareket.Tarih.ToString("dd.MM.yyyy HH:mm")</td>
                                         <td>
-                                            @if (hareket.HareketTuru == StokHareketiTipi.Giris)
+                                            @if (hareket.HareketTuru == StokHareketTipi.Giris)
                                             {
                                                 <span class="badge bg-success">Giriş</span>
                                             }
-                                            else if (hareket.HareketTuru == StokHareketiTipi.Cikis)
+                                            else if (hareket.HareketTuru == StokHareketTipi.Cikis)
                                             {
                                                 <span class="badge bg-danger">Çıkış</span>
                                             }
@@ -183,6 +187,7 @@
                                     <th>Son Çıkış</th>
                                     <th>Miktar</th>
                                     <th>Kalan</th>
+                                    <th>Birim Fiyat (Orijinal)</th>
                                     <th>Birim Fiyat (UZS)</th>
                                     <th>Birim Fiyat (USD)</th>
                                     <th>Döviz Kuru</th>
@@ -208,6 +213,7 @@
                                         <td class="text-end">@fifo.Miktar.ToString("N2")</td>
                                         <td class="text-end">@fifo.KalanMiktar.ToString("N2")</td>
                                         <td class="text-end">@fifo.BirimFiyat.ToString("N2") @fifo.ParaBirimiSembol</td>
+                                        <td class="text-end">@fifo.BirimFiyatUZS.ToString("N2") so'm</td>
                                         <td class="text-end">@fifo.BirimFiyatUSD.ToString("N2") $</td>
                                         <td class="text-end">@fifo.DovizKuru.ToString("N6")</td>
                                         <td>

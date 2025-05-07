@@ -9,6 +9,7 @@ using MuhasebeStokWebApp.Data.Entities;
 using MuhasebeStokWebApp.Data.Repositories;
 using MuhasebeStokWebApp.Services.Interfaces;
 using MuhasebeStokWebApp.ViewModels.Fatura;
+using MuhasebeStokWebApp.Enums;
 
 namespace MuhasebeStokWebApp.Services
 {
@@ -49,7 +50,7 @@ namespace MuhasebeStokWebApp.Services
                 return (false, "Geçerli bir cari seçilmelidir.");
             }
 
-            if (!viewModel.FaturaTuruID.HasValue || viewModel.FaturaTuruID == Guid.Empty)
+            if (!viewModel.FaturaTuruID.HasValue || viewModel.FaturaTuruID == 0)
             {
                 return (false, "Geçerli bir fatura türü seçilmelidir.");
             }
@@ -189,8 +190,8 @@ namespace MuhasebeStokWebApp.Services
 
             // Stok hareket tipinin doğruluğu
             var beklenenHareketTipi = fatura.FaturaTuru?.HareketTuru == "Giriş"
-                ? Enums.StokHareketiTipi.Giris
-                : Enums.StokHareketiTipi.Cikis;
+                ? StokHareketTipi.Giris
+                : StokHareketTipi.Cikis;
 
             foreach (var hareket in stokHareketleri)
             {
@@ -210,7 +211,7 @@ namespace MuhasebeStokWebApp.Services
                 }
 
                 // Miktar tutarlılığı
-                decimal beklenenMiktar = beklenenHareketTipi == Enums.StokHareketiTipi.Cikis
+                decimal beklenenMiktar = beklenenHareketTipi == StokHareketTipi.Cikis
                     ? -detay.Miktar  // Çıkış hareketinde miktar negatif olmalı
                     : detay.Miktar;  // Giriş hareketinde miktar pozitif olmalı
 

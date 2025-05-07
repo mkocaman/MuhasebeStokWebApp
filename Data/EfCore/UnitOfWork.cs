@@ -1,7 +1,9 @@
 using System;
+using System.Data;
 using System.Threading.Tasks;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Storage;
+using Microsoft.Extensions.Logging;
 using MuhasebeStokWebApp.Data.Entities;
 using MuhasebeStokWebApp.Data.Repositories;
 using MuhasebeStokWebApp.Data.Repositories.EntityRepositories;
@@ -11,7 +13,8 @@ namespace MuhasebeStokWebApp.Data.EfCore
     public class UnitOfWork : IUnitOfWork
     {
         private readonly ApplicationDbContext _context;
-        private IDbContextTransaction? _transaction;
+        private readonly ILogger<UnitOfWork> _logger;
+        private IDbContextTransaction _transaction;
         
         // Generic repository instances
         private IRepository<Fatura>? _faturaRepository;
@@ -47,9 +50,10 @@ namespace MuhasebeStokWebApp.Data.EfCore
         private IRepository<CariHareket>? _entityCariHareketRepository;
         private IRepository<Depo>? _entityDepolarRepository;
         
-        public UnitOfWork(ApplicationDbContext context)
+        public UnitOfWork(ApplicationDbContext context, ILogger<UnitOfWork> logger)
         {
             _context = context;
+            _logger = logger;
         }
         
         // Generic Repository Properties
@@ -101,6 +105,18 @@ namespace MuhasebeStokWebApp.Data.EfCore
             }
             
             _transaction = await _context.Database.BeginTransactionAsync();
+        }
+        
+        public async Task<IDbContextTransaction> BeginTransactionAsync(IsolationLevel isolationLevel)
+        {
+            if (_transaction != null)
+            {
+                return _transaction;
+            }
+            
+            _transaction = await _context.Database.BeginTransactionAsync(isolationLevel);
+            _logger.LogInformation($"Yeni transaction başlatıldı (Isolation level: {isolationLevel})");
+            return _transaction;
         }
         
         public async Task CommitTransactionAsync()

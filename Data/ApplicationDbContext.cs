@@ -61,6 +61,7 @@ namespace MuhasebeStokWebApp.Data
 
         // Stok entity'leri
         public virtual DbSet<Entities.StokFifo> StokFifoKayitlari { get; set; }
+        public virtual DbSet<Entities.StokFifoCikis> StokFifoCikislari { get; set; }
         public virtual DbSet<Entities.StokHareket> StokHareketleri { get; set; }
         public virtual DbSet<Entities.StokCikisDetay> StokCikisDetaylari { get; set; }
         public virtual DbSet<Entities.Urun> Urunler { get; set; }
@@ -82,6 +83,12 @@ namespace MuhasebeStokWebApp.Data
         
         // Merkezi aklama veritabanı nesneleri
         public virtual DbSet<FaturaAklamaKuyruk> FaturaAklamaKuyrugu { get; set; }
+        
+        // Todo yapılacaklar listesi
+        public virtual DbSet<TodoItem> TodoItems { get; set; }
+        
+        // Todo yorumları
+        public virtual DbSet<TodoComment> TodoComments { get; set; }
 
         protected override void OnConfiguring(DbContextOptionsBuilder optionsBuilder)
         {
@@ -356,11 +363,6 @@ namespace MuhasebeStokWebApp.Data
                 .WithMany(m => m.MenuRoller)
                 .HasForeignKey(mr => mr.MenuId);
 
-            // Cari entity konfigürasyonu
-            modelBuilder.Entity<Cari>()
-                .Property(c => c.BaslangicBakiye)
-                .HasColumnType("decimal(18,2)");
-
             // Global query filtre uygulamasını kaldırıyoruz
             // Sadece yeni kayıt oluşturma veya listeleme ekranlarında filtreleme yapacağız
             // modelBuilder.Entity<Cari>().HasQueryFilter(x => !x.Silindi && x.AktifMi);
@@ -435,15 +437,11 @@ namespace MuhasebeStokWebApp.Data
                 .HasColumnType("decimal(18,2)");
                 
             modelBuilder.Entity<Entities.StokFifo>()
-                .Property(s => s.TLBirimFiyat)
+                .Property(s => s.BirimFiyatUSD)
                 .HasColumnType("decimal(18,2)");
                 
             modelBuilder.Entity<Entities.StokFifo>()
-                .Property(s => s.USDBirimFiyat)
-                .HasColumnType("decimal(18,2)");
-                
-            modelBuilder.Entity<Entities.StokFifo>()
-                .Property(s => s.UZSBirimFiyat)
+                .Property(s => s.BirimFiyatUZS)
                 .HasColumnType("decimal(18,2)");
                 
             modelBuilder.Entity<Entities.StokFifo>()
@@ -717,10 +715,10 @@ namespace MuhasebeStokWebApp.Data
                 .HasForeignKey(f => f.CariID)
                 .OnDelete(DeleteBehavior.Restrict);
 
-            // StokCikisDetay - StokFifo ilişkisini opsiyonel hale getirme
+            // StokCikisDetay - StokFifo ilişkisini düzenleme  
             modelBuilder.Entity<Entities.StokCikisDetay>()
                 .HasOne(s => s.StokFifo)
-                .WithMany()
+                .WithMany(f => f.StokCikisDetaylari)
                 .HasForeignKey(s => s.StokFifoID)
                 .OnDelete(DeleteBehavior.SetNull)
                 .IsRequired(false);
@@ -757,6 +755,35 @@ namespace MuhasebeStokWebApp.Data
                 
             modelBuilder.Entity<Entities.ParaBirimiBirlesikModul.ParaBirimiIliski>()
                 .HasCheckConstraint("CK_BirlesikModulDovizIliski_DifferentCurrencies", "KaynakParaBirimiID <> HedefParaBirimiID");
+
+            // StokFifoCikis için decimal property'leri tanımla
+            modelBuilder.Entity<Entities.StokFifoCikis>()
+                .Property(s => s.CikisMiktar)
+                .HasColumnType("decimal(18,2)");
+                
+            modelBuilder.Entity<Entities.StokFifoCikis>()
+                .Property(s => s.BirimFiyatUSD)
+                .HasColumnType("decimal(18,2)");
+                
+            modelBuilder.Entity<Entities.StokFifoCikis>()
+                .Property(s => s.BirimFiyatUZS)
+                .HasColumnType("decimal(18,2)");
+                
+            modelBuilder.Entity<Entities.StokFifoCikis>()
+                .Property(s => s.DovizKuru)
+                .HasColumnType("decimal(18,6)");
+                
+            // StokFifoCikis - StokFifo ilişkisini yeniden yapılandır
+            modelBuilder.Entity<Entities.StokFifoCikis>()
+                .HasOne(s => s.StokFifo)
+                .WithMany()
+                .HasForeignKey(s => s.StokFifoID)
+                .OnDelete(DeleteBehavior.SetNull)
+                .IsRequired(false);
+                
+            // StokFifoCikis için query filter ekle
+            modelBuilder.Entity<Entities.StokFifoCikis>()
+                .HasQueryFilter(s => !s.StokFifoID.HasValue || (s.StokFifo != null && !s.StokFifo.Silindi && s.StokFifo.Aktif && !s.StokFifo.Iptal));
         }
 
         // GetDbContextOptions metodunu ekle

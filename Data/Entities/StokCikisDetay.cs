@@ -48,17 +48,17 @@ namespace MuhasebeStokWebApp.Data.Entities
         public string ParaBirimi { get; set; } = "USD";
         
         [StringLength(50)]
-        public string ReferansNo { get; set; }
+        public string? ReferansNo { get; set; }
         
         [StringLength(50)]
-        public string ReferansTuru { get; set; }
+        public string? ReferansTuru { get; set; }
         
         public Guid ReferansID { get; set; }
         
         public DateTime CikisTarihi { get; set; }
         
         [StringLength(500)]
-        public string Aciklama { get; set; }
+        public string? Aciklama { get; set; }
         
         public DateTime OlusturmaTarihi { get; set; }
         
@@ -67,7 +67,7 @@ namespace MuhasebeStokWebApp.Data.Entities
         public DateTime? IptalTarihi { get; set; }
         
         [StringLength(500)]
-        public string IptalAciklama { get; set; }
+        public string? IptalAciklama { get; set; }
         
         // Navigation property
         [ForeignKey("StokFifoID")]

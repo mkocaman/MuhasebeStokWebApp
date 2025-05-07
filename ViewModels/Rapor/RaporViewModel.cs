@@ -60,6 +60,7 @@ namespace MuhasebeStokWebApp.ViewModels.Rapor
         public string KasaAdi { get; set; }
         public DateTime Tarih { get; set; }
         public string HareketTuru { get; set; }
+        public string HareketTuruAdi { get; set; }
         public decimal Tutar { get; set; }
         public string ReferansNo { get; set; }
         public string ReferansTuru { get; set; }
@@ -80,6 +81,7 @@ namespace MuhasebeStokWebApp.ViewModels.Rapor
         public string BankaAdi { get; set; }
         public DateTime Tarih { get; set; }
         public string HareketTuru { get; set; }
+        public string HareketTuruAdi { get; set; }
         public decimal Tutar { get; set; }
         public string ParaBirimi { get; set; }
         public string ReferansNo { get; set; }
@@ -101,6 +103,7 @@ namespace MuhasebeStokWebApp.ViewModels.Rapor
         public string CariAdi { get; set; }
         public DateTime Tarih { get; set; }
         public string HareketTuru { get; set; }
+        public string HareketTuruAdi { get; set; }
         public decimal Tutar { get; set; }
         public string ReferansNo { get; set; }
         public string ReferansTuru { get; set; }
@@ -120,6 +123,7 @@ namespace MuhasebeStokWebApp.ViewModels.Rapor
         public string UrunAdi { get; set; }
         public DateTime Tarih { get; set; }
         public string HareketTuru { get; set; }
+        public string HareketTuruAdi { get; set; }
         public decimal Miktar { get; set; }
         public string Birim { get; set; }
         public decimal BirimFiyat { get; set; }

@@ -77,7 +77,7 @@ namespace MuhasebeStokWebApp.Services
                     await _unitOfWork.BeginTransactionAsync();
                     try
                     {
-                        // Yeni irsaliye oluştur
+                        // Otomatik irsaliye oluştur
                         var irsaliye = new Irsaliye
                         {
                             IrsaliyeID = Guid.NewGuid(),
@@ -86,7 +86,8 @@ namespace MuhasebeStokWebApp.Services
                             CariID = cariID,
                             FaturaID = faturaWithDetails.FaturaID,
                             DepoID = depoID,
-                            IrsaliyeTuru = irsaliyeTuru,
+                            // Fatura türüne göre irsaliye türünü belirle (1: Alış -> Giriş, 2: Satış -> Çıkış)
+                            IrsaliyeTuru = faturaWithDetails.FaturaTuruID == 1 ? "Giriş" : "Çıkış",
                             Aciklama = $"{faturaWithDetails.FaturaNumarasi ?? ""} numaralı faturaya ait otomatik oluşturulan {irsaliyeTuru} irsaliyesi",
                             OlusturmaTarihi = DateTime.Now,
                             OlusturanKullaniciId = currentUserId,
@@ -334,6 +335,54 @@ namespace MuhasebeStokWebApp.Services
                     throw;
                 }
             }, "UpdateIrsaliyeDetaylarAsync", irsaliyeID);
+        }
+
+        /// <summary>
+        /// İrsaliye detayı ekler
+        /// </summary>
+        public async Task<IrsaliyeDetay> AddIrsaliyeDetayAsync(IrsaliyeDetay irsaliyeDetay)
+        {
+            // Birim adını çek
+            if (irsaliyeDetay.UrunID != Guid.Empty)
+            {
+                var urun = await _unitOfWork.Repository<Urun>().GetByIdAsync(irsaliyeDetay.UrunID);
+                if (urun != null && urun.BirimID.HasValue)
+                {
+                    var birim = await _unitOfWork.Repository<Birim>().GetByIdAsync(urun.BirimID.Value);
+                    if (birim != null)
+                    {
+                        irsaliyeDetay.Birim = birim.BirimAdi; // BirimID yerine BirimAdi'nı kullan
+                    }
+                }
+            }
+
+            await _unitOfWork.IrsaliyeDetayRepository.AddAsync(irsaliyeDetay);
+            await _unitOfWork.SaveChangesAsync();
+            return irsaliyeDetay;
+        }
+
+        /// <summary>
+        /// İrsaliye detayı günceller
+        /// </summary>
+        public async Task<IrsaliyeDetay> UpdateIrsaliyeDetayAsync(IrsaliyeDetay irsaliyeDetay)
+        {
+            // Birim adını çek
+            if (irsaliyeDetay.UrunID != Guid.Empty)
+            {
+                var urun = await _unitOfWork.Repository<Urun>().GetByIdAsync(irsaliyeDetay.UrunID);
+                if (urun != null && urun.BirimID.HasValue)
+                {
+                    var birim = await _unitOfWork.Repository<Birim>().GetByIdAsync(urun.BirimID.Value);
+                    if (birim != null)
+                    {
+                        irsaliyeDetay.Birim = birim.BirimAdi; // BirimID yerine BirimAdi'nı kullan
+                    }
+                }
+            }
+
+            _unitOfWork.IrsaliyeDetayRepository.Update(irsaliyeDetay);
+            await _unitOfWork.SaveChangesAsync();
+            return irsaliyeDetay;
         }
     }
 } 

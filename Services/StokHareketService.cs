@@ -41,7 +41,7 @@ namespace MuhasebeStokWebApp.Services
             if (faturaDetaylari == null) throw new ArgumentNullException(nameof(faturaDetaylari));
 
             // Fatura türüne göre stok hareket tipini belirle
-            var stokHareketTipi = StokHareketiTipi.Giris; // Varsayılan değer
+            var stokHareketTipi = StokHareketTipi.Giris; // Varsayılan değer
             
             // Fatura türünü yükle (eğer yüklenmemişse)
             if (fatura.FaturaTuru == null && fatura.FaturaTuruID.HasValue)
@@ -52,21 +52,53 @@ namespace MuhasebeStokWebApp.Services
             if (fatura.FaturaTuru != null)
             {
                 stokHareketTipi = fatura.FaturaTuru.HareketTuru == "Çıkış" 
-                    ? StokHareketiTipi.Cikis 
-                    : StokHareketiTipi.Giris;
+                    ? StokHareketTipi.Cikis 
+                    : StokHareketTipi.Giris;
+            }
+            else
+            {
+                // Fatura türü bilinmiyor, ID'ye göre belirle (1: Alış = Giriş, 2: Satış = Çıkış)
+                stokHareketTipi = fatura.FaturaTuruID == 1 
+                    ? StokHareketTipi.Giris 
+                    : StokHareketTipi.Cikis;
             }
             
-            string irsaliyeTuruStr = stokHareketTipi == StokHareketiTipi.Giris ? "Giriş" : "Çıkış";
+            string irsaliyeTuruStr = stokHareketTipi == StokHareketTipi.Giris ? "Giriş" : "Çıkış";
             
             var stokHareketleri = new List<StokHareket>();
             foreach (var detay in faturaDetaylari)
             {
+                // Döviz hesaplamaları
+                decimal birimFiyatUSD, birimFiyatUZS;
+                
+                // Para birimi USD ise: BirimFiyat × DovizKuru = UZS BirimFiyat
+                // Para birimi UZS ise: BirimFiyat ÷ DovizKuru = USD BirimFiyat
+                if (fatura.ParaBirimi == "USD")
+                {
+                    birimFiyatUSD = detay.BirimFiyat;
+                    birimFiyatUZS = detay.BirimFiyat * (fatura.DovizKuru ?? 13000); // Varsayılan kur değeri
+                    _logger.LogInformation($"USD -> UZS dönüşümü: {detay.BirimFiyat} USD * {fatura.DovizKuru ?? 13000} = {birimFiyatUZS} UZS");
+                }
+                else if (fatura.ParaBirimi == "UZS")
+                {
+                    birimFiyatUZS = detay.BirimFiyat;
+                    birimFiyatUSD = detay.BirimFiyat / (fatura.DovizKuru ?? 13000); // Varsayılan kur değeri
+                    _logger.LogInformation($"UZS -> USD dönüşümü: {detay.BirimFiyat} UZS / {fatura.DovizKuru ?? 13000} = {birimFiyatUSD} USD");
+                }
+                else
+                {
+                    // Desteklenmeyen para birimi
+                    birimFiyatUSD = detay.BirimFiyat;
+                    birimFiyatUZS = detay.BirimFiyat * (fatura.DovizKuru ?? 13000);
+                    _logger.LogWarning($"Desteklenmeyen para birimi: {fatura.ParaBirimi}. USD olarak devam ediliyor.");
+                }
+                
                 var stokHareket = new StokHareket
                 {
                     StokHareketID = Guid.NewGuid(),
                     UrunID = detay.UrunID,
                     DepoID = null, // Fatura'da DepoID olmadığı için null
-                    Miktar = stokHareketTipi == StokHareketiTipi.Cikis ? -detay.Miktar : detay.Miktar,
+                    Miktar = stokHareketTipi == StokHareketTipi.Cikis ? -detay.Miktar : detay.Miktar,
                     Birim = detay.Birim ?? "Adet",
                     HareketTuru = stokHareketTipi,
                     Tarih = fatura.FaturaTarihi ?? DateTime.Now,
@@ -76,18 +108,33 @@ namespace MuhasebeStokWebApp.Services
                     FaturaID = fatura.FaturaID,
                     Aciklama = $"{fatura.FaturaNumarasi} numaralı fatura",
                     BirimFiyat = detay.BirimFiyat,
+                    BirimFiyatUSD = birimFiyatUSD,
+                    BirimFiyatUZS = birimFiyatUZS,
                     OlusturmaTarihi = DateTime.Now,
                     IslemYapanKullaniciID = kullaniciId,
                     IrsaliyeID = null,
                     IrsaliyeTuru = irsaliyeTuruStr,
-                    ParaBirimi = fatura.DovizTuru ?? "TRY"
+                    ParaBirimi = fatura.ParaBirimi ?? "USD"
                 };
                 
                 stokHareketleri.Add(stokHareket);
+                
+                _logger.LogInformation($"Stok hareketi oluşturuldu: UrunID={detay.UrunID}, Miktar={(stokHareketTipi == StokHareketTipi.Cikis ? -detay.Miktar : detay.Miktar)}, BirimFiyat={detay.BirimFiyat} {fatura.ParaBirimi}, USD={birimFiyatUSD}, UZS={birimFiyatUZS}");
             }
             
             // Stok hareketlerini ekle
             await _unitOfWork.StokHareketRepository.AddRangeAsync(stokHareketleri);
+            // Transaction dıştan yönetiliyorsa değişiklikleri kaydet
+            if (_context.Database.CurrentTransaction != null)
+            {
+                _logger.LogInformation($"Stok hareketleri mevcut transaction içinde kaydedildi: {stokHareketleri.Count} adet");
+            }
+            else
+            {
+                // Transaction yoksa hemen kaydet
+                await _unitOfWork.SaveChangesAsync();
+                _logger.LogInformation($"Stok hareketleri veritabanına kaydedildi: {stokHareketleri.Count} adet");
+            }
             
             return stokHareketleri;
         }
@@ -117,13 +164,13 @@ namespace MuhasebeStokWebApp.Services
                 return;
             }
             
-            var stokHareketTipi = StokHareketiTipi.Giris; // Varsayılan değer
+            var stokHareketTipi = StokHareketTipi.Giris; // Varsayılan değer
             
             if (fatura.FaturaTuru != null)
             {
                 stokHareketTipi = fatura.FaturaTuru.HareketTuru == "Çıkış" 
-                    ? StokHareketiTipi.Cikis 
-                    : StokHareketiTipi.Giris;
+                    ? StokHareketTipi.Cikis 
+                    : StokHareketTipi.Giris;
             }
             
             foreach (var detay in fatura.FaturaDetaylari)
@@ -132,7 +179,7 @@ namespace MuhasebeStokWebApp.Services
                 if (urun != null)
                 {
                     // Stok hareketine göre miktarı ekle veya çıkar
-                    if (stokHareketTipi == StokHareketiTipi.Giris)
+                    if (stokHareketTipi == StokHareketTipi.Giris)
                     {
                         urun.StokMiktar += detay.Miktar;
                     }
@@ -155,10 +202,11 @@ namespace MuhasebeStokWebApp.Services
             var result = await _stokFifoService.StokCikisiYap(
                 urunId,
                 miktar,
-                referansId.HasValue ? referansId.ToString() : "Manuel",
-                "StokCikis",
+                StokHareketTipi.Cikis,
                 referansId,
-                aciklama ?? $"Stok çıkışı: {miktar}"
+                aciklama ?? $"Stok çıkışı: {miktar}",
+                "USD", // Varsayılan para birimi USD
+                false
             );
             
             // Ürün stok miktarını güncelle
@@ -167,6 +215,31 @@ namespace MuhasebeStokWebApp.Services
             {
                 urun.StokMiktar -= miktar;
                 _context.Urunler.Update(urun);
+                
+                // Stok hareketi oluştur
+                var stokHareket = new StokHareket
+                {
+                    StokHareketID = Guid.NewGuid(),
+                    UrunID = urunId,
+                    DepoID = null,
+                    Miktar = -miktar, // Eksi değer (çıkış)
+                    Birim = urun.Birim?.ToString() ?? "Adet",
+                    HareketTuru = StokHareketTipi.Cikis,
+                    Tarih = DateTime.Now,
+                    ReferansNo = referansId?.ToString() ?? "Manuel",
+                    ReferansTuru = "StokCikis",
+                    ReferansID = referansId ?? Guid.Empty,
+                    Aciklama = aciklama ?? $"Stok çıkışı: {miktar}",
+                    BirimFiyat = result.ToplamMaliyet / miktar, // Birim maliyet
+                    BirimFiyatUSD = result.ToplamMaliyet / miktar, // USD cinsinden maliyet
+                    BirimFiyatUZS = (result.ToplamMaliyet / miktar) * 13000, // UZS cinsinden maliyet (varsayılan kur)
+                    OlusturmaTarihi = DateTime.Now,
+                    ParaBirimi = "USD"
+                };
+                
+                // Stok hareketini ekle
+                await _unitOfWork.StokHareketRepository.AddAsync(stokHareket);
+                _logger.LogInformation($"Stok çıkış hareketi oluşturuldu: UrunID={urunId}, Miktar={-miktar}, Maliyet={result.ToplamMaliyet}");
             }
             
             return result.ToplamMaliyet;
@@ -175,26 +248,46 @@ namespace MuhasebeStokWebApp.Services
         /// <summary>
         /// Fatura detaylarından stok girişi yapar
         /// </summary>
-        public async Task<decimal> StokGirisiYap(Guid urunId, decimal miktar, Guid? referansId = null, string aciklama = null)
+        public async Task<decimal> StokGirisiYap(Guid urunId, decimal miktar, decimal birimFiyat, string paraBirimi = "USD", decimal? dovizKuru = null, Guid? referansId = null, string aciklama = null)
         {
-            // Ürünün son birim fiyatını al
-            var sonFiyat = await _context.StokHareketleri
-                .Where(sh => sh.UrunID == urunId && !sh.Silindi)
-                .OrderByDescending(sh => sh.Tarih)
-                .Select(sh => sh.BirimFiyat)
-                .FirstOrDefaultAsync() ?? 0;
+            // Döviz kuru kontrolü
+            dovizKuru = dovizKuru ?? 13000; // Varsayılan kur değeri
+            
+            // Döviz hesaplamaları
+            decimal birimFiyatUSD, birimFiyatUZS;
+            
+            // Para birimi USD ise: BirimFiyat × DovizKuru = UZS BirimFiyat
+            // Para birimi UZS ise: BirimFiyat ÷ DovizKuru = USD BirimFiyat
+            if (paraBirimi == "USD")
+            {
+                birimFiyatUSD = birimFiyat;
+                birimFiyatUZS = birimFiyat * dovizKuru.Value;
+            }
+            else if (paraBirimi == "UZS")
+            {
+                birimFiyatUZS = birimFiyat;
+                birimFiyatUSD = birimFiyat / dovizKuru.Value;
+            }
+            else
+            {
+                // Desteklenmeyen para birimi
+                birimFiyatUSD = birimFiyat;
+                birimFiyatUZS = birimFiyat * dovizKuru.Value;
+                _logger.LogWarning($"Desteklenmeyen para birimi: {paraBirimi}. USD olarak devam ediliyor.");
+                paraBirimi = "USD";
+            }
             
             var fifoKaydi = await _stokFifoService.StokGirisiYap(
                 urunId,
                 miktar,
-                sonFiyat,
+                birimFiyat,
                 "Adet",
                 referansId.HasValue ? referansId.ToString() : "Manuel",
                 "StokGiris",
                 referansId,
                 aciklama ?? $"Stok girişi: {miktar}",
-                "TRY",
-                1
+                paraBirimi,
+                dovizKuru
             );
             
             // Ürün stok miktarını güncelle
@@ -203,9 +296,47 @@ namespace MuhasebeStokWebApp.Services
             {
                 urun.StokMiktar += miktar;
                 _context.Urunler.Update(urun);
+                
+                // Stok hareketi oluştur
+                var stokHareket = new StokHareket
+                {
+                    StokHareketID = Guid.NewGuid(),
+                    UrunID = urunId,
+                    DepoID = null,
+                    Miktar = miktar, // Artı değer (giriş)
+                    Birim = urun.Birim?.ToString() ?? "Adet",
+                    HareketTuru = StokHareketTipi.Giris,
+                    Tarih = DateTime.Now,
+                    ReferansNo = referansId?.ToString() ?? "Manuel",
+                    ReferansTuru = "StokGiris",
+                    ReferansID = referansId ?? Guid.Empty,
+                    Aciklama = aciklama ?? $"Stok girişi: {miktar}",
+                    BirimFiyat = birimFiyat,
+                    BirimFiyatUSD = birimFiyatUSD,
+                    BirimFiyatUZS = birimFiyatUZS,
+                    OlusturmaTarihi = DateTime.Now,
+                    ParaBirimi = paraBirimi
+                };
+                
+                // Stok hareketini ekle
+                await _unitOfWork.StokHareketRepository.AddAsync(stokHareket);
+                _logger.LogInformation($"Stok giriş hareketi oluşturuldu: UrunID={urunId}, Miktar={miktar}, BirimFiyat={birimFiyat} {paraBirimi}, USD={birimFiyatUSD}, UZS={birimFiyatUZS}");
             }
             
-            return sonFiyat * miktar;
+            return birimFiyat * miktar;
+        }
+
+        // Eski metot için overload, eski kodları etkilememek için
+        public async Task<decimal> StokGirisiYap(Guid urunId, decimal miktar, Guid? referansId = null, string aciklama = null)
+        {
+            // Ürünün son birim fiyatını al
+            var sonFiyat = await _context.StokHareketleri
+                .Where(sh => sh.UrunID == urunId && !sh.Silindi)
+                .OrderByDescending(sh => sh.Tarih)
+                .Select(sh => sh.BirimFiyat)
+                .FirstOrDefaultAsync() ?? 0;
+                
+            return await StokGirisiYap(urunId, miktar, sonFiyat, "USD", null, referansId, aciklama);
         }
 
         /// <summary>

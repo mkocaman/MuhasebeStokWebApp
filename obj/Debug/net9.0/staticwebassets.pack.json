@@ -10349,6 +10349,14 @@
       "PackagePath": "staticwebassets/css/site.css"
     },
     {
+      "Id": "/Users/muhammetkocaman/MuhasebeStokWebApp/wwwroot/css/site.css.bak",
+      "PackagePath": "staticwebassets/css/site.css.bak"
+    },
+    {
+      "Id": "/Users/muhammetkocaman/MuhasebeStokWebApp/wwwroot/css/site.css.bak2",
+      "PackagePath": "staticwebassets/css/site.css.bak2"
+    },
+    {
       "Id": "/Users/muhammetkocaman/MuhasebeStokWebApp/wwwroot/favicon.ico",
       "PackagePath": "staticwebassets/favicon.ico"
     },
@@ -10691,6 +10699,10 @@
     {
       "Id": "/Users/muhammetkocaman/MuhasebeStokWebApp/wwwroot/lib/toastr/toastr.min.js",
       "PackagePath": "staticwebassets/lib/toastr/toastr.min.js"
+    },
+    {
+      "Id": "/Users/muhammetkocaman/MuhasebeStokWebApp/wwwroot/profilePhotos/8b547a04-134c-4578-99bb-f831a55b400d_638822481606163490.jpeg",
+      "PackagePath": "staticwebassets/profilePhotos/8b547a04-134c-4578-99bb-f831a55b400d_638822481606163490.jpeg"
     },
     {
       "Id": "obj/Debug/net9.0/staticwebassets/msbuild.MuhasebeStokWebApp.Microsoft.AspNetCore.StaticWebAssetEndpoints.props",

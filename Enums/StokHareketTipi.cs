@@ -7,10 +7,6 @@ namespace MuhasebeStokWebApp.Enums
     {
         Giris = 1,
         Cikis = 2,
-        Transfer = 3,
-        Sayim = 4,
-        Iade = 5,
-        FireZayi = 6,
-        Diger = 99
+
     }
 } 

@@ -17,6 +17,7 @@ using MuhasebeStokWebApp.Services.Notification;
 using MuhasebeStokWebApp.Hubs;
 using MuhasebeStokWebApp.Services.Report;
 using MuhasebeStokWebApp.Services.Email;
+using MuhasebeStokWebApp.Services.Implementations;
 using Serilog;
 using Serilog.Events;
 using Microsoft.Extensions.Localization;
@@ -189,7 +190,14 @@ builder.Services.AddScoped<MuhasebeStokWebApp.Services.Filters.UrunFilterService
 builder.Services.AddScoped<MuhasebeStokWebApp.Services.UserManager>();
 
 // StokFifoService'i ekliyoruz
-builder.Services.AddScoped<StokFifoService>();
+builder.Services.AddScoped<IStokConcurrencyService, StokFifoService>();
+builder.Services.AddScoped<IStokGirisService, StokFifoService>();
+builder.Services.AddScoped<IStokCikisService, StokFifoService>();
+builder.Services.AddScoped<IStokSorguService, StokFifoService>();
+builder.Services.AddScoped<IStokFifoService, StokFifoService>();
+
+// TodoService'i ekliyoruz
+builder.Services.AddScoped<ITodoService, TodoService>();
 
 // MaliyetHesaplamaService'i ekliyoruz
 builder.Services.AddScoped<IMaliyetHesaplamaService, MaliyetHesaplamaService>();
@@ -198,10 +206,16 @@ builder.Services.AddScoped<IMaliyetHesaplamaService, MaliyetHesaplamaService>();
 builder.Services.AddScoped<IDropdownService, DropdownService>();
 
 // CariService'i ekliyoruz
-builder.Services.AddScoped<ICariService, CariService>();
+builder.Services.AddScoped<ICariService, MuhasebeStokWebApp.Services.Implementations.CariService>();
 
 // CariHareketService'i ekliyoruz
-builder.Services.AddScoped<ICariHareketService, CariHareketService>();
+builder.Services.AddScoped<ICariHareketService, MuhasebeStokWebApp.Services.CariHareketService>();
+
+// CariEkstreService'i ekliyoruz
+builder.Services.AddScoped<ICariEkstreService, MuhasebeStokWebApp.Services.Implementations.CariEkstreService>();
+
+// CariNumaralandirmaService'i ekliyoruz
+builder.Services.AddScoped<ICariNumaralandirmaService, MuhasebeStokWebApp.Services.CariNumaralandirmaService>();
 
 // FaturaService'i ekliyoruz
 builder.Services.AddScoped<IFaturaService, FaturaService>();

@@ -9,6 +9,8 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Threading.Tasks;
 using Microsoft.Extensions.Logging;
+using MuhasebeStokWebApp.Models;
+using MuhasebeStokWebApp.ViewModels.Cari;
 
 namespace MuhasebeStokWebApp.Services
 {
@@ -20,6 +22,7 @@ namespace MuhasebeStokWebApp.Services
         private readonly IExceptionHandlingService _exceptionHandler;
         private readonly ITransactionManagerService _transactionManager;
         private readonly IParaBirimiCeviriciService _paraBirimiCevirici;
+        private readonly ICariHareketService _cariHareketService;
         // Bakiye değerlerini geçici olarak saklamak için Dictionary
         private readonly Dictionary<Guid, decimal> _bakiyeSozlugu = new Dictionary<Guid, decimal>();
 
@@ -29,7 +32,8 @@ namespace MuhasebeStokWebApp.Services
             IParaBirimiService paraBirimiService,
             IExceptionHandlingService exceptionHandler,
             ITransactionManagerService transactionManager,
-            IParaBirimiCeviriciService paraBirimiCevirici)
+            IParaBirimiCeviriciService paraBirimiCevirici,
+            ICariHareketService cariHareketService)
         {
             _unitOfWork = unitOfWork;
             _logger = logger;
@@ -37,6 +41,7 @@ namespace MuhasebeStokWebApp.Services
             _exceptionHandler = exceptionHandler;
             _transactionManager = transactionManager;
             _paraBirimiCevirici = paraBirimiCevirici;
+            _cariHareketService = cariHareketService;
         }
 
         public async Task<IEnumerable<Cari>> GetAllAsync()
@@ -64,27 +69,6 @@ namespace MuhasebeStokWebApp.Services
                     await _unitOfWork.CariRepository.AddAsync(cari);
                     await _unitOfWork.SaveChangesAsync();
                     
-                    // Açılış bakiyesi hareketi ekleme
-                    if (cari.BaslangicBakiye != 0)
-                    {
-                        var acilisBakiyeHareketi = new CariHareket
-                        {
-                            CariHareketID = Guid.NewGuid(),
-                            CariID = cari.CariID,
-                            Tarih = DateTime.Now,
-                            HareketTuru = "Açılış bakiyesi",
-                            Aciklama = "Açılış bakiyesi",
-                            Borc = cari.BaslangicBakiye < 0 ? Math.Abs(cari.BaslangicBakiye) : 0,
-                            Alacak = cari.BaslangicBakiye > 0 ? cari.BaslangicBakiye : 0,
-                            Tutar = Math.Abs(cari.BaslangicBakiye),
-                            OlusturmaTarihi = DateTime.Now,
-                            OlusturanKullaniciID = cari.OlusturanKullaniciId
-                        };
-                        
-                        await _unitOfWork.CariHareketRepository.AddAsync(acilisBakiyeHareketi);
-                        await _unitOfWork.SaveChangesAsync();
-                    }
-                    
                     // Transaction'ı commit et
                     await _unitOfWork.CommitTransactionAsync();
                     return cari;
@@ -95,7 +79,7 @@ namespace MuhasebeStokWebApp.Services
                     await _unitOfWork.RollbackTransactionAsync();
                     throw;
                 }
-            }, "AddAsync", cari.CariID, cari.Ad, cari.BaslangicBakiye);
+            }, "AddAsync", cari.CariID, cari.Ad);
         }
 
         public async Task<Cari> UpdateAsync(Cari cari)
@@ -207,10 +191,10 @@ namespace MuhasebeStokWebApp.Services
                     .OrderBy(h => h.Tarih)
                     .FirstOrDefault();
                 
-                // Başlangıç bakiyesi - açılış bakiyesi hareketi yoksa carinin başlangıç bakiyesini kullan
+                // Başlangıç bakiyesi - açılış bakiyesi hareketi yoksa 0 olarak başla
                 decimal bakiye = acilisBakiyeHareketi != null 
                     ? acilisBakiyeHareketi.Alacak - acilisBakiyeHareketi.Borc
-                    : cari.BaslangicBakiye;
+                    : 0;
                 
                 // Diğer hareketlerin bakiyeye etkisini hesapla (açılış bakiyesi hariç)
                 foreach (var hareket in hareketler
@@ -262,7 +246,7 @@ namespace MuhasebeStokWebApp.Services
         /// <summary>
         /// Cari ekstresi için kümülatif bakiyeli hareketleri döndürür
         /// </summary>
-        public async Task<(decimal BakiyeToplamı, List<CariHareket> Hareketler)> GetCariEkstreAsync(
+        public async Task<(decimal BakiyeToplamı, List<Data.Entities.CariHareket> Hareketler)> GetCariEkstreAsync(
             Guid cariId, 
             DateTime? baslangicTarihi = null, 
             DateTime? bitisTarihi = null, 
@@ -306,10 +290,6 @@ namespace MuhasebeStokWebApp.Services
                 if (acilisBakiyeHareketi != null)
                 {
                     baslangicBakiyesi = acilisBakiyeHareketi.Alacak - acilisBakiyeHareketi.Borc;
-                }
-                else
-                {
-                    baslangicBakiyesi = cari.BaslangicBakiye;
                 }
                 
                 // Başlangıç tarihinden önceki hareketlerin etkisini hesapla
@@ -445,6 +425,255 @@ namespace MuhasebeStokWebApp.Services
         public decimal GetHareketBakiye(Guid hareketId)
         {
             return _bakiyeSozlugu.TryGetValue(hareketId, out decimal bakiye) ? bakiye : 0;
+        }
+
+        public async Task<Models.CariDetayViewModel> GetCariDetaylar(Guid cariID)
+        {
+            try
+            {
+                var cari = await _unitOfWork.CariRepository
+                    .GetFirstOrDefaultAsync(c => c.CariID == cariID && !c.Silindi);
+
+                if (cari == null)
+                {
+                    return null;
+                }
+
+                decimal toplamBorc = 0;
+                decimal toplamAlacak = 0;
+                decimal bakiye = 0;
+
+                // Cari hareketleri getir
+                var hareketler = await _unitOfWork.CariHareketRepository
+                    .GetAllAsync(h => h.CariID == cariID && !h.Silindi);
+
+                if (hareketler.Any())
+                {
+                    toplamBorc = hareketler.Sum(h => h.Borc);
+                    toplamAlacak = hareketler.Sum(h => h.Alacak);
+                    bakiye = toplamAlacak - toplamBorc;
+                }
+
+                var detay = new Models.CariDetayViewModel
+                {
+                    CariID = cari.CariID,
+                    CariAdi = cari.Ad,
+                    CariKodu = cari.CariKodu,
+                    CariTipi = cari.CariTipi,
+                    VergiNo = cari.VergiNo,
+                    VergiDairesi = cari.VergiDairesi,
+                    Telefon = cari.Telefon,
+                    Email = cari.Email,
+                    ToplamBorc = toplamBorc,
+                    ToplamAlacak = toplamAlacak,
+                    Bakiye = bakiye,
+                    ParaBirimi = "₺" // Varsayılan değer, ileride değiştirilebilir
+                };
+
+                return detay;
+            }
+            catch (Exception ex)
+            {
+                _logger.LogError(ex, "Cari detayları getirilirken hata oluştu: {HataDetay}", ex.Message);
+                throw;
+            }
+        }
+
+        public async Task<List<Models.CariListModel>> GetAllActiveCariler()
+        {
+            try
+            {
+                var cariler = await _unitOfWork.CariRepository
+                    .GetAll()
+                    .Where(c => c.AktifMi && !c.Silindi)
+                    .OrderBy(c => c.Ad)
+                    .Select(c => new Models.CariListModel
+                    {
+                        CariID = c.CariID,
+                        CariKodu = c.CariKodu,
+                        CariAdi = c.Ad,
+                        Telefon = c.Telefon,
+                        Email = c.Email,
+                        CariTipi = c.CariTipi
+                    })
+                    .ToListAsync();
+
+                return cariler;
+            }
+            catch (Exception ex)
+            {
+                _logger.LogError(ex, "Aktif cariler listelenirken hata oluştu: {HataDetay}", ex.Message);
+                throw;
+            }
+        }
+
+        public async Task<List<Models.CariListModel>> GetAllPasifCariler()
+        {
+            try
+            {
+                var cariler = await _unitOfWork.CariRepository
+                    .GetAll()
+                    .Where(c => !c.AktifMi && !c.Silindi)
+                    .OrderBy(c => c.Ad)
+                    .Select(c => new Models.CariListModel
+                    {
+                        CariID = c.CariID,
+                        CariKodu = c.CariKodu,
+                        CariAdi = c.Ad,
+                        Telefon = c.Telefon,
+                        Email = c.Email,
+                        CariTipi = c.CariTipi
+                    })
+                    .ToListAsync();
+
+                return cariler;
+            }
+            catch (Exception ex)
+            {
+                _logger.LogError(ex, "Pasif cariler listelenirken hata oluştu: {HataDetay}", ex.Message);
+                throw;
+            }
+        }
+
+        public async Task<List<Models.CariListModel>> GetSilinmisCariler()
+        {
+            try
+            {
+                var cariler = await _unitOfWork.CariRepository
+                    .GetAll()
+                    .IgnoreQueryFilters()
+                    .Where(c => c.Silindi)
+                    .OrderBy(c => c.Ad)
+                    .Select(c => new Models.CariListModel
+                    {
+                        CariID = c.CariID,
+                        CariKodu = c.CariKodu,
+                        CariAdi = c.Ad,
+                        Telefon = c.Telefon,
+                        Email = c.Email,
+                        CariTipi = c.CariTipi
+                    })
+                    .ToListAsync();
+
+                return cariler;
+            }
+            catch (Exception ex)
+            {
+                _logger.LogError(ex, "Silinmiş cariler listelenirken hata oluştu: {HataDetay}", ex.Message);
+                throw;
+            }
+        }
+
+        public async Task<List<Models.CariListModel>> GetMusteriler()
+        {
+            try
+            {
+                var musteriler = await _unitOfWork.CariRepository
+                    .GetAll()
+                    .Where(c => (c.CariTipi == "Müşteri" || c.CariTipi == "MüşteriVeTedarikçi") && !c.Silindi && c.AktifMi)
+                    .OrderBy(c => c.Ad)
+                    .Select(c => new Models.CariListModel
+                    {
+                        CariID = c.CariID,
+                        CariKodu = c.CariKodu,
+                        CariAdi = c.Ad,
+                        Telefon = c.Telefon,
+                        Email = c.Email,
+                        CariTipi = c.CariTipi
+                    })
+                    .ToListAsync();
+
+                return musteriler;
+            }
+            catch (Exception ex)
+            {
+                _logger.LogError(ex, "Müşteriler listelenirken hata oluştu: {HataDetay}", ex.Message);
+                throw;
+            }
+        }
+
+        public async Task<List<Models.CariListModel>> GetTedarikciler()
+        {
+            try
+            {
+                var tedarikciler = await _unitOfWork.CariRepository
+                    .GetAll()
+                    .Where(c => (c.CariTipi == "Tedarikçi" || c.CariTipi == "MüşteriVeTedarikçi") && !c.Silindi && c.AktifMi)
+                    .OrderBy(c => c.Ad)
+                    .Select(c => new Models.CariListModel
+                    {
+                        CariID = c.CariID,
+                        CariKodu = c.CariKodu,
+                        CariAdi = c.Ad,
+                        Telefon = c.Telefon,
+                        Email = c.Email,
+                        CariTipi = c.CariTipi
+                    })
+                    .ToListAsync();
+
+                return tedarikciler;
+            }
+            catch (Exception ex)
+            {
+                _logger.LogError(ex, "Tedarikçiler listelenirken hata oluştu: {HataDetay}", ex.Message);
+                throw;
+            }
+        }
+
+        public async Task<List<Models.CariListModel>> GetPasifMusteriler()
+        {
+            try
+            {
+                var musteriler = await _unitOfWork.CariRepository
+                    .GetAll()
+                    .Where(c => (c.CariTipi == "Müşteri" || c.CariTipi == "MüşteriVeTedarikçi") && !c.Silindi && !c.AktifMi)
+                    .OrderBy(c => c.Ad)
+                    .Select(c => new Models.CariListModel
+                    {
+                        CariID = c.CariID,
+                        CariKodu = c.CariKodu,
+                        CariAdi = c.Ad,
+                        Telefon = c.Telefon,
+                        Email = c.Email,
+                        CariTipi = c.CariTipi
+                    })
+                    .ToListAsync();
+
+                return musteriler;
+            }
+            catch (Exception ex)
+            {
+                _logger.LogError(ex, "Pasif müşteriler listelenirken hata oluştu: {HataDetay}", ex.Message);
+                throw;
+            }
+        }
+
+        public async Task<List<Models.CariListModel>> GetPasifTedarikciler()
+        {
+            try
+            {
+                var tedarikciler = await _unitOfWork.CariRepository
+                    .GetAll()
+                    .Where(c => (c.CariTipi == "Tedarikçi" || c.CariTipi == "MüşteriVeTedarikçi") && !c.Silindi && !c.AktifMi)
+                    .OrderBy(c => c.Ad)
+                    .Select(c => new Models.CariListModel
+                    {
+                        CariID = c.CariID,
+                        CariKodu = c.CariKodu,
+                        CariAdi = c.Ad,
+                        Telefon = c.Telefon,
+                        Email = c.Email,
+                        CariTipi = c.CariTipi
+                    })
+                    .ToListAsync();
+
+                return tedarikciler;
+            }
+            catch (Exception ex)
+            {
+                _logger.LogError(ex, "Pasif tedarikçiler listelenirken hata oluştu: {HataDetay}", ex.Message);
+                throw;
+            }
         }
     }
 } 

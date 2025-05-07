@@ -949,7 +949,7 @@ namespace MuhasebeStokWebApp.Controllers
                 // Cari listesini getir
                 var cariler = await _context.Cariler
                     .Where(c => !c.Silindi && c.AktifMi)
-                    .OrderBy(c => c.CariUnvani)
+                    .OrderBy(c => c.Ad)
                     .ToListAsync();
                 
                 ViewBag.Cariler = cariler;
@@ -999,7 +999,7 @@ namespace MuhasebeStokWebApp.Controllers
                 ReferansTuru = hareket.ReferansTuru ?? "",
                 Aciklama = hareket.Aciklama ?? "",
                 CariID = hareket.CariID,
-                CariUnvani = hareket.Cari?.CariUnvani ?? "",
+                CariUnvani = hareket.Cari?.Ad ?? "",
                 OlusturmaTarihi = hareket.OlusturmaTarihi,
                 OlusturanKullaniciAdi = "Sistem",
                 SonGuncellemeTarihi = hareket.GuncellemeTarihi,
@@ -1095,7 +1095,7 @@ namespace MuhasebeStokWebApp.Controllers
                         (h.DekontNo != null && h.DekontNo.Contains(search)) ||
                         (h.ReferansTuru != null && h.ReferansTuru.Contains(search)) ||
                         (h.Aciklama != null && h.Aciklama.Contains(search)) ||
-                        (h.Cari != null && h.Cari.CariUnvani != null && h.Cari.CariUnvani.Contains(search))
+                        (h.Cari != null && h.Cari.Ad != null && h.Cari.Ad.Contains(search))
                     );
                 }
                 
@@ -1169,7 +1169,7 @@ namespace MuhasebeStokWebApp.Controllers
                         tarih = h.Tarih.ToString("dd.MM.yyyy"),
                         hareketTuru = h.HareketTuru ?? "",
                         tutar = h.Tutar.ToString("N2"),
-                        cari = h.Cari != null ? h.Cari.CariUnvani : "",
+                        cari = h.Cari != null ? h.Cari.Ad : "",
                         dekontNo = h.DekontNo ?? "",
                         referansNo = h.ReferansNo ?? "",
                         referansTuru = h.ReferansTuru ?? "",

@@ -1,0 +1,567 @@
+@model MuhasebeStokWebApp.ViewModels.Todo.TodoViewModel
+@using MuhasebeStokWebApp.Enums
+@addTagHelper *, Microsoft.AspNetCore.Mvc.TagHelpers
+@{
+    ViewData["Title"] = "Yapılacaklar Listesi";
+    Layout = "~/Views/Shared/_Layout.cshtml";
+}
+
+<div class="container-fluid">
+    <div class="page-header">
+        <div class="row">
+            <div class="col-sm-6">
+                <h3>Yapılacaklar Listesi</h3>
+                <ol class="breadcrumb">
+                    <li class="breadcrumb-item"><a href="/">Ana Sayfa</a></li>
+                    <li class="breadcrumb-item active">Yapılacaklar</li>
+                </ol>
+            </div>
+        </div>
+    </div>
+</div>
+
+<div class="container-fluid">
+    @if (TempData["SuccessMessage"] != null)
+    {
+        <div class="alert alert-success alert-dismissible fade show" role="alert">
+            <strong>Başarılı!</strong> @TempData["SuccessMessage"]
+            <button type="button" class="btn-close" data-bs-dismiss="alert" aria-label="Close"></button>
+        </div>
+    }
+
+    @if (TempData["ErrorMessage"] != null)
+    {
+        <div class="alert alert-danger alert-dismissible fade show" role="alert">
+            <strong>Hata!</strong> @TempData["ErrorMessage"]
+            <button type="button" class="btn-close" data-bs-dismiss="alert" aria-label="Close"></button>
+        </div>
+    }
+
+    <div class="row">
+        <div class="col-sm-12">
+            <div class="card">
+                <div class="card-header pb-0">
+                    <div class="row">
+                        <div class="col-6">
+                            <h5>Görevlerim</h5>
+                        </div>
+                        <div class="col-6 text-end">
+                            <button class="btn btn-primary" type="button" data-bs-toggle="modal" data-bs-target="#addTodoModal">
+                                <i class="fa fa-plus-square me-1"></i> Yeni Görev
+                            </button>
+                        </div>
+                    </div>
+                    <div class="row pt-3">
+                        <div class="col-md-12">
+                            <div class="btn-group" role="group">
+                                <a href="@Url.Action("Index", "Todo", new { filterOption = "all" })" 
+                                   class="btn @(Model.FilterOption == "all" ? "btn-primary" : "btn-outline-primary")">
+                                    Tümü
+                                </a>
+                                <a href="@Url.Action("Index", "Todo", new { filterOption = "pending" })" 
+                                   class="btn @(Model.FilterOption == "pending" ? "btn-primary" : "btn-outline-primary")">
+                                    Bekleyenler
+                                </a>
+                                <a href="@Url.Action("Index", "Todo", new { filterOption = "completed" })" 
+                                   class="btn @(Model.FilterOption == "completed" ? "btn-primary" : "btn-outline-primary")">
+                                    Tamamlananlar
+                                </a>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+                <div class="card-body">
+                    <div class="table-responsive">
+                        <table class="table table-striped">
+                            <thead>
+                                <tr>
+                                    <th>Durum</th>
+                                    <th>Öncelik</th>
+                                    <th>Kategori</th>
+                                    <th>Başlık</th>
+                                    <th>Açıklama</th>
+                                    <th>Oluşturulma</th>
+                                    <th>Son Tarih</th>
+                                    <th>İşlemler</th>
+                                </tr>
+                            </thead>
+                            <tbody>
+                                @if (Model.TodoItems.Count == 0)
+                                {
+                                    <tr>
+                                        <td colspan="8" class="text-center">Görev bulunamadı.</td>
+                                    </tr>
+                                }
+                                @foreach (var item in Model.TodoItems.OrderByDescending(t => t.PriorityLevel).ThenByDescending(t => t.CreatedAt))
+                                {
+                                    var priorityClass = "";
+                                    switch (item.PriorityLevel)
+                                    {
+                                        case PriorityLevel.High:
+                                            priorityClass = "border-danger";
+                                            break;
+                                        case PriorityLevel.Medium:
+                                            priorityClass = "border-warning";
+                                            break;
+                                        case PriorityLevel.Low:
+                                            priorityClass = "border-secondary";
+                                            break;
+                                    }
+                                    
+                                    <tr class="@(item.IsCompleted ? "table-success" : "") @priorityClass">
+                                        <td>
+                                            <div class="form-check form-switch">
+                                                <input class="form-check-input todo-status-toggle" type="checkbox" 
+                                                       id="status-@item.Id" data-todo-id="@item.Id" 
+                                                       @(item.IsCompleted ? "checked" : "")>
+                                            </div>
+                                        </td>
+                                        <td>
+                                            @switch (item.PriorityLevel)
+                                            {
+                                                case PriorityLevel.High:
+                                                    <span class="badge bg-danger">Yüksek</span>
+                                                    break;
+                                                case PriorityLevel.Medium:
+                                                    <span class="badge bg-warning text-dark">Orta</span>
+                                                    break;
+                                                case PriorityLevel.Low:
+                                                    <span class="badge bg-secondary">Düşük</span>
+                                                    break;
+                                            }
+                                        </td>
+                                        <td>
+                                            <i class="@item.TaskIcon" data-bs-toggle="tooltip" data-bs-placement="top" 
+                                               title="Kategori: @item.TaskCategory"></i>
+                                        </td>
+                                        <td>@item.Title</td>
+                                        <td>
+                                            @if (!string.IsNullOrEmpty(item.Description))
+                                            {
+                                                if (item.Description.Length > 50)
+                                                {
+                                                    @item.Description.Substring(0, 50)<text>...</text>
+                                                }
+                                                else
+                                                {
+                                                    @item.Description
+                                                }
+                                            }
+                                        </td>
+                                        <td>@item.CreatedAt.ToString("dd.MM.yyyy HH:mm")</td>
+                                        <td>
+                                            @if (item.Deadline.HasValue)
+                                            {
+                                                <span class="@(item.Deadline.Value.Date < DateTime.Now.Date && !item.IsCompleted ? "text-danger fw-bold" : "")">
+                                                    @item.Deadline.Value.ToString("dd.MM.yyyy")
+                                                </span>
+                                            }
+                                            else
+                                            {
+                                                <span>-</span>
+                                            }
+                                        </td>
+                                        <td>
+                                            <div class="btn-group" role="group">
+                                                <button type="button" class="btn btn-sm btn-primary view-todo" 
+                                                        data-todo-id="@item.Id" title="Görüntüle">
+                                                    <i class="fa fa-eye"></i>
+                                                </button>
+                                                <button type="button" class="btn btn-sm btn-info edit-todo" 
+                                                        data-todo-id="@item.Id" title="Düzenle">
+                                                    <i class="fa fa-edit"></i>
+                                                </button>
+                                                <button type="button" class="btn btn-sm btn-danger delete-todo" 
+                                                        data-todo-id="@item.Id" data-todo-title="@item.Title" title="Sil">
+                                                    <i class="fa fa-trash"></i>
+                                                </button>
+                                            </div>
+                                        </td>
+                                    </tr>
+                                }
+                            </tbody>
+                        </table>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+
+<!-- Yeni Görev Ekleme Modal -->
+<div class="modal fade" id="addTodoModal" tabindex="-1" aria-labelledby="addTodoModalLabel" aria-hidden="true">
+    <div class="modal-dialog modal-dialog-centered">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h5 class="modal-title" id="addTodoModalLabel">Yeni Görev Ekle</h5>
+                <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Kapat"></button>
+            </div>
+            <form asp-action="Create" asp-controller="Todo" method="post">
+                <div class="modal-body">
+                    <div class="mb-3">
+                        <label for="Title" class="form-label">Başlık <span class="text-danger">*</span></label>
+                        <input type="text" class="form-control" id="Title" name="Title" required maxlength="200">
+                        <small class="form-text text-muted">Başlık içeriğine göre otomatik kategori belirlenecektir.</small>
+                    </div>
+                    <div class="mb-3">
+                        <label for="Description" class="form-label">Açıklama</label>
+                        <textarea class="form-control" id="Description" name="Description" rows="3" maxlength="1000"></textarea>
+                    </div>
+                    <div class="mb-3">
+                        <label for="PriorityLevel" class="form-label">Öncelik <span class="text-danger">*</span></label>
+                        <select class="form-select" id="PriorityLevel" name="PriorityLevel">
+                            <option value="@((int)PriorityLevel.Low)">Düşük</option>
+                            <option value="@((int)PriorityLevel.Medium)" selected>Orta</option>
+                            <option value="@((int)PriorityLevel.High)">Yüksek</option>
+                        </select>
+                    </div>
+                    <div class="mb-3">
+                        <label for="Deadline" class="form-label">Son Tarih</label>
+                        <input type="date" class="form-control" id="Deadline" name="Deadline" min="@DateTime.Now.ToString("yyyy-MM-dd")">
+                    </div>
+                    <div class="mb-3">
+                        <label for="AssignedToUserId" class="form-label">Atanan Kullanıcı</label>
+                        <select class="form-select" id="AssignedToUserId" name="AssignedToUserId">
+                            @foreach (var user in Model.Users)
+                            {
+                                <option value="@user.Value">@user.Text</option>
+                            }
+                        </select>
+                    </div>
+                </div>
+                <div class="modal-footer">
+                    <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">İptal</button>
+                    <button type="submit" class="btn btn-primary">Kaydet</button>
+                </div>
+            </form>
+        </div>
+    </div>
+</div>
+
+<!-- Görev Düzenleme Modal -->
+<div class="modal fade" id="editTodoModal" tabindex="-1" aria-labelledby="editTodoModalLabel" aria-hidden="true">
+    <div class="modal-dialog modal-dialog-centered">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h5 class="modal-title" id="editTodoModalLabel">Görev Düzenle</h5>
+                <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Kapat"></button>
+            </div>
+            <div id="editTodoContent">
+                <!-- Partial View ile doldurulacak -->
+            </div>
+        </div>
+    </div>
+</div>
+
+<!-- Görev Detay Modal -->
+<div class="modal fade" id="viewTodoModal" tabindex="-1" aria-labelledby="viewTodoModalLabel" aria-hidden="true">
+    <div class="modal-dialog modal-dialog-centered modal-lg">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h5 class="modal-title" id="viewTodoModalLabel">Görev Detayları</h5>
+                <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Kapat"></button>
+            </div>
+            <div class="modal-body">
+                <div class="row">
+                    <div class="col-md-6">
+                        <div class="mb-3">
+                            <label class="form-label fw-bold">Başlık:</label>
+                            <p id="viewTitle"></p>
+                        </div>
+                        <div class="mb-3">
+                            <label class="form-label fw-bold">Kategori:</label>
+                            <p><i id="viewCategoryIcon"></i> <span id="viewCategory"></span></p>
+                        </div>
+                        <div class="mb-3">
+                            <label class="form-label fw-bold">Öncelik:</label>
+                            <p id="viewPriority"></p>
+                        </div>
+                        <div class="mb-3">
+                            <label class="form-label fw-bold">Açıklama:</label>
+                            <p id="viewDescription"></p>
+                        </div>
+                    </div>
+                    <div class="col-md-6">
+                        <div class="mb-3">
+                            <label class="form-label fw-bold">Oluşturulma Tarihi:</label>
+                            <p id="viewCreatedAt"></p>
+                        </div>
+                        <div class="mb-3">
+                            <label class="form-label fw-bold">Son Tarih:</label>
+                            <p id="viewDeadline"></p>
+                        </div>
+                        <div class="mb-3">
+                            <label class="form-label fw-bold">Durum:</label>
+                            <p id="viewStatus"></p>
+                        </div>
+                        <div class="mb-3">
+                            <label class="form-label fw-bold">Atanan Kullanıcı:</label>
+                            <p id="viewAssignedUser"></p>
+                        </div>
+                    </div>
+                </div>
+                
+                <hr />
+                
+                <!-- Yorumlar Bölümü -->
+                <div class="row">
+                    <div class="col-md-12">
+                        <h5>Yorumlar</h5>
+                        <div class="mb-3">
+                            <div class="input-group">
+                                <input type="text" class="form-control" id="commentContent" placeholder="Yorum yazın..." maxlength="1000">
+                                <input type="hidden" id="commentTodoId" value="">
+                                <button class="btn btn-primary" type="button" id="addCommentBtn">Gönder</button>
+                            </div>
+                        </div>
+                        
+                        <div class="comments-container">
+                            <div id="commentsList" class="list-group">
+                                <!-- Yorumlar burada listelenecek -->
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+            <div class="modal-footer">
+                <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Kapat</button>
+            </div>
+        </div>
+    </div>
+</div>
+
+<!-- Görev Silme Onay Modal -->
+<div class="modal fade" id="deleteTodoModal" tabindex="-1" aria-labelledby="deleteTodoModalLabel" aria-hidden="true">
+    <div class="modal-dialog modal-dialog-centered">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h5 class="modal-title" id="deleteTodoModalLabel">Görevi Sil</h5>
+                <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Kapat"></button>
+            </div>
+            <div class="modal-body">
+                <p>Bu görevi silmek istediğinizden emin misiniz?</p>
+                <p><strong id="deleteTodoTitle"></strong></p>
+            </div>
+            <div class="modal-footer">
+                <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">İptal</button>
+                <form asp-action="Delete" asp-controller="Todo" method="post" id="deleteTodoForm">
+                    <input type="hidden" id="deleteTodoId" name="id" value="" />
+                    @Html.AntiForgeryToken()
+                    <button type="submit" class="btn btn-danger">Sil</button>
+                </form>
+            </div>
+        </div>
+    </div>
+</div>
+
+@section Scripts {
+    <script>
+        $(document).ready(function() {
+            // Tooltip'leri etkinleştir
+            var tooltipTriggerList = [].slice.call(document.querySelectorAll('[data-bs-toggle="tooltip"]'))
+            var tooltipList = tooltipTriggerList.map(function (tooltipTriggerEl) {
+                return new bootstrap.Tooltip(tooltipTriggerEl)
+            });
+            
+            // Görev detayını getir
+            $(".view-todo").click(function() {
+                var todoId = $(this).data("todo-id");
+                $("#commentTodoId").val(todoId);
+                
+                $.ajax({
+                    url: '@Url.Action("GetTodoDetails", "Todo")/' + todoId,
+                    type: "GET",
+                    success: function(response) {
+                        if (response.success) {
+                            var todo = response.data;
+                            $("#viewTitle").text(todo.title);
+                            $("#viewCategory").text(todo.taskCategory);
+                            $("#viewCategoryIcon").attr("class", todo.taskIcon);
+                            
+                            // Öncelik seviyesi
+                            var priorityText = "";
+                            var priorityBadge = "";
+                            switch (todo.priorityLevel) {
+                                case 0:
+                                    priorityText = "Düşük";
+                                    priorityBadge = '<span class="badge bg-secondary">Düşük</span>';
+                                    break;
+                                case 1:
+                                    priorityText = "Orta";
+                                    priorityBadge = '<span class="badge bg-warning text-dark">Orta</span>';
+                                    break;
+                                case 2:
+                                    priorityText = "Yüksek";
+                                    priorityBadge = '<span class="badge bg-danger">Yüksek</span>';
+                                    break;
+                            }
+                            $("#viewPriority").html(priorityBadge);
+                            
+                            $("#viewDescription").text(todo.description || "");
+                            $("#viewCreatedAt").text(new Date(todo.createdAt).toLocaleString('tr-TR'));
+                            
+                            if (todo.deadline) {
+                                $("#viewDeadline").text(new Date(todo.deadline).toLocaleDateString('tr-TR'));
+                            } else {
+                                $("#viewDeadline").text("-");
+                            }
+                            
+                            $("#viewStatus").text(todo.isCompleted ? "Tamamlandı" : "Bekliyor");
+                            $("#viewAssignedUser").text(todo.assignedToUserName);
+                            
+                            // Yorumları listele
+                            loadComments(todoId);
+                            
+                            $("#viewTodoModal").modal("show");
+                        } else {
+                            alert("Hata: " + response.message);
+                        }
+                    },
+                    error: function() {
+                        alert("Görev detayları alınırken bir hata oluştu.");
+                    }
+                });
+            });
+            
+            // Görev düzenleme sayfasını getir
+            $(".edit-todo").click(function() {
+                var todoId = $(this).data("todo-id");
+                $.ajax({
+                    url: '@Url.Action("Edit", "Todo")/' + todoId,
+                    type: "GET",
+                    success: function(response) {
+                        $("#editTodoContent").html(response);
+                        $("#editTodoModal").modal("show");
+                    },
+                    error: function() {
+                        alert("Görev düzenleme sayfası yüklenirken bir hata oluştu.");
+                    }
+                });
+            });
+            
+            // Görev silme onayı
+            $(".delete-todo").click(function() {
+                var todoId = $(this).data("todo-id");
+                var todoTitle = $(this).data("todo-title");
+                
+                if (confirm('"' + todoTitle + '" görevini silmek istediğinize emin misiniz?')) {
+                    var form = $('<form action="@Url.Action("Delete", "Todo")/' + todoId + '" method="post"></form>');
+                    form.append('@Html.AntiForgeryToken()');
+                    form.appendTo('body').submit().remove();
+                }
+            });
+            
+            // Görev durumu değiştir
+            $(".todo-status-toggle").change(function() {
+                var todoId = $(this).data("todo-id");
+                
+                var form = $('<form action="@Url.Action("ToggleStatus", "Todo")/' + todoId + '" method="post"></form>');
+                form.append('@Html.AntiForgeryToken()');
+                form.appendTo('body').submit().remove();
+            });
+            
+            // Yorum ekleme
+            $("#addCommentBtn").click(function() {
+                var content = $("#commentContent").val().trim();
+                var todoId = $("#commentTodoId").val();
+                
+                if (content === "") {
+                    alert("Lütfen bir yorum yazın.");
+                    return;
+                }
+                
+                $.ajax({
+                    url: '@Url.Action("AddComment", "Todo")',
+                    type: "POST",
+                    data: {
+                        TodoItemId: todoId,
+                        Content: content
+                    },
+                    success: function(response) {
+                        if (response.success) {
+                            // Yorumu listeye ekle
+                            $("#commentContent").val("");
+                            loadComments(todoId);
+                        } else {
+                            alert("Hata: " + response.message);
+                        }
+                    },
+                    error: function() {
+                        alert("Yorum eklenirken bir hata oluştu.");
+                    }
+                });
+            });
+            
+            // Yorumları yükle
+            function loadComments(todoId) {
+                $.ajax({
+                    url: '@Url.Action("GetComments", "Todo")?todoId=' + todoId,
+                    type: "GET",
+                    success: function(response) {
+                        if (response.success) {
+                            var comments = response.data;
+                            var commentsList = $("#commentsList");
+                            commentsList.empty();
+                            
+                            if (comments.length === 0) {
+                                commentsList.append('<div class="list-group-item">Henüz yorum yapılmamış.</div>');
+                            } else {
+                                $.each(comments, function(index, comment) {
+                                    var commentHtml = `
+                                        <div class="list-group-item">
+                                            <div class="d-flex w-100 justify-content-between">
+                                                <h6 class="mb-1">${comment.userName}</h6>
+                                                <small>${new Date(comment.createdAt).toLocaleString('tr-TR')}</small>
+                                            </div>
+                                            <p class="mb-1">${comment.content}</p>
+                                            <div class="text-end">
+                                                <button class="btn btn-sm btn-danger delete-comment" data-comment-id="${comment.id}">
+                                                    <i class="fa fa-trash"></i> Sil
+                                                </button>
+                                            </div>
+                                        </div>
+                                    `;
+                                    commentsList.append(commentHtml);
+                                });
+                                
+                                // Yorum silme butonlarına olay ekle
+                                $(".delete-comment").click(function() {
+                                    var commentId = $(this).data("comment-id");
+                                    deleteComment(commentId, todoId);
+                                });
+                            }
+                        } else {
+                            alert("Hata: " + response.message);
+                        }
+                    },
+                    error: function() {
+                        alert("Yorumlar alınırken bir hata oluştu.");
+                    }
+                });
+            }
+            
+            // Yorum silme
+            function deleteComment(commentId, todoId) {
+                if (confirm("Bu yorumu silmek istediğinizden emin misiniz?")) {
+                    $.ajax({
+                        url: '@Url.Action("DeleteComment", "Todo")',
+                        type: "POST",
+                        data: {
+                            commentId: commentId
+                        },
+                        success: function(response) {
+                            if (response.success) {
+                                loadComments(todoId);
+                            } else {
+                                alert("Hata: " + response.message);
+                            }
+                        },
+                        error: function() {
+                            alert("Yorum silinirken bir hata oluştu.");
+                        }
+                    });
+                }
+            }
+        });
+    </script>
+} 

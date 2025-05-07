@@ -248,67 +248,71 @@ document.addEventListener('DOMContentLoaded', function() {
 
         // DataTables için kontrol
         if (typeof $.fn.dataTable !== 'undefined') {
-            // DataTables ayarları
+            // DataTable Türkçe dil ayarları
             $.extend(true, $.fn.dataTable.defaults, {
-                "language": {
-                    "url": "/lib/datatables/i18n/Turkish.json"
+                language: {
+                    url: 'https://cdn.datatables.net/plug-ins/1.13.7/i18n/tr.json'
                 },
-                "responsive": true,
-                "pagingType": "full_numbers",
-                "scrollY": "calc(100vh - 350px)", // Ekran yüksekliğine göre dinamik tablo yüksekliği
-                "scrollCollapse": true,  // Scroll alanını içeriğe göre ayarlar
-                "dom": "<'row'<'col-sm-12 col-md-6'l><'col-sm-12 col-md-6'f>>" +
-                       "<'row'<'col-sm-12'tr>>" +
-                       "<'row'<'col-sm-12 col-md-5'i><'col-sm-12 col-md-7'p>>",
-                "lengthMenu": [[10, 25, 50, 100, -1], [10, 25, 50, 100, "Tümü"]]
+                responsive: true,
+                pageLength: 10,
+                lengthMenu: [[5, 10, 25, 50, -1], [5, 10, 25, 50, "Tümü"]],
+                order: [],
+                columnDefs: [
+                    { targets: 'no-sort', orderable: false }
+                ]
             });
             
-            console.log("DataTables başarıyla yüklendi ve konfigüre edildi.");
-        } else {
-            console.error("DataTables kütüphanesi yüklenemedi! Lütfen JavaScript konsolunu kontrol edin.");
+            // Var olan DataTable'ları başlat
+            $('.table-datatable').DataTable();
         }
-
-        // Select2 initialization
+        
+        // Select2 için kontrol
         if (typeof $.fn.select2 !== 'undefined') {
-            $('.select2').select2();
+            $('.select2').select2({
+                theme: 'bootstrap-5',
+                language: 'tr',
+                placeholder: 'Seçiniz...',
+                allowClear: true
+            });
         }
         
-        // Auto-hide alerts after 5 seconds
-        setTimeout(function() {
-            $('.alert').fadeOut('slow');
-        }, 5000);
+        // Tooltips
+        if (typeof bootstrap.Tooltip !== 'undefined') {
+            const tooltipTriggerList = [].slice.call(document.querySelectorAll('[data-bs-toggle="tooltip"]'));
+            tooltipTriggerList.map(function (tooltipTriggerEl) {
+                return new bootstrap.Tooltip(tooltipTriggerEl);
+            });
+        }
         
-        // Initialize all tooltips
-        var tooltipTriggerList = [].slice.call(document.querySelectorAll('[data-bs-toggle="tooltip"]'))
-        var tooltipList = tooltipTriggerList.map(function (tooltipTriggerEl) {
-            return new bootstrap.Tooltip(tooltipTriggerEl)
-        });
-        
-        // Initialize all popovers
-        var popoverTriggerList = [].slice.call(document.querySelectorAll('[data-bs-toggle="popover"]'))
-        var popoverList = popoverTriggerList.map(function (popoverTriggerEl) {
-            return new bootstrap.Popover(popoverTriggerEl)
-        });
+        // Popover
+        if (typeof bootstrap.Popover !== 'undefined') {
+            const popoverTriggerList = [].slice.call(document.querySelectorAll('[data-bs-toggle="popover"]'));
+            popoverTriggerList.map(function (popoverTriggerEl) {
+                return new bootstrap.Popover(popoverTriggerEl);
+            });
+        }
     });
 });
 
-// Para formatı için yardımcı fonksiyon
+// Para birimi formatını yerelleştirme
 function formatCurrency(value) {
-    if (value == null) return "-";
-    return new Intl.NumberFormat('tr-TR', { style: 'currency', currency: 'TRY' }).format(value);
+    return new Intl.NumberFormat('tr-TR', {
+        style: 'currency',
+        currency: 'TRY'
+    }).format(value);
 }
 
-// Tarih formatı için yardımcı fonksiyon
+// Tarihi yerelleştirme
 function formatDate(dateString) {
-    if (!dateString) return "-";
-    const date = new Date(dateString);
-    return new Intl.DateTimeFormat('tr-TR', {
-        day: '2-digit',
-        month: '2-digit',
-        year: 'numeric',
+    const options = { 
+        year: 'numeric', 
+        month: 'long', 
+        day: 'numeric',
         hour: '2-digit',
         minute: '2-digit'
-    }).format(date);
+    };
+    
+    return new Date(dateString).toLocaleDateString('tr-TR', options);
 }
 
 // Sayfa yüklendiğinde sidebar aktif menü öğesini işaretleme
@@ -352,41 +356,6 @@ document.addEventListener('DOMContentLoaded', function() {
             sidenav.classList.remove('show');
         });
     }
-});
-
-// Tema değiştirme fonksiyonları
-function initTheme() {
-    const savedTheme = localStorage.getItem('theme') || 'light';
-    document.documentElement.setAttribute('data-theme', savedTheme);
-    updateThemeIcon(savedTheme);
-}
-
-function toggleTheme() {
-    const currentTheme = document.documentElement.getAttribute('data-theme');
-    const newTheme = currentTheme === 'light' ? 'dark' : 'light';
-    
-    document.documentElement.setAttribute('data-theme', newTheme);
-    localStorage.setItem('theme', newTheme);
-    updateThemeIcon(newTheme);
-}
-
-function updateThemeIcon(theme) {
-    const icon = document.querySelector('.theme-toggle i');
-    if (icon) {
-        icon.className = theme === 'light' ? 'fas fa-moon' : 'fas fa-sun';
-    }
-}
-
-// Sayfa yüklendiğinde tema ayarını uygula
-document.addEventListener('DOMContentLoaded', function() {
-    initTheme();
-    
-    // Tema değiştirme butonunu ekle
-    const themeToggle = document.createElement('button');
-    themeToggle.className = 'theme-toggle';
-    themeToggle.innerHTML = '<i class="fas fa-moon"></i>';
-    themeToggle.onclick = toggleTheme;
-    document.body.appendChild(themeToggle);
 });
 
 // Push Bildirimleri

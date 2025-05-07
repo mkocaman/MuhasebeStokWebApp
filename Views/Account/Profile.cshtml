@@ -1,0 +1,201 @@
+@model MuhasebeStokWebApp.ViewModels.Account.ProfileViewModel
+@{
+    ViewData["Title"] = "Profil Sayfası";
+    Layout = "~/Views/Shared/_Layout.cshtml";
+}
+
+<div class="container-fluid">
+    <div class="page-header">
+        <div class="row">
+            <div class="col-sm-6">
+                <h3>Profil Sayfası</h3>
+                <ol class="breadcrumb">
+                    <li class="breadcrumb-item"><a href="/">Ana Sayfa</a></li>
+                    <li class="breadcrumb-item active">Profil</li>
+                </ol>
+            </div>
+        </div>
+    </div>
+</div>
+
+<div class="container-fluid">
+    @if (TempData["SuccessMessage"] != null)
+    {
+        <div class="alert alert-success alert-dismissible fade show" role="alert">
+            <strong>Başarılı!</strong> @TempData["SuccessMessage"]
+            <button type="button" class="btn-close" data-bs-dismiss="alert" aria-label="Close"></button>
+        </div>
+    }
+    @if (TempData["ErrorMessage"] != null)
+    {
+        <div class="alert alert-danger alert-dismissible fade show" role="alert">
+            <strong>Hata!</strong> @TempData["ErrorMessage"]
+            <button type="button" class="btn-close" data-bs-dismiss="alert" aria-label="Close"></button>
+        </div>
+    }
+
+    <div class="row">
+        <!-- Profil Kartı -->
+        <div class="col-xl-4">
+            <div class="card">
+                <div class="card-header pb-0">
+                    <h5 class="card-title mb-0">Profil Bilgileri</h5>
+                </div>
+                <div class="card-body">
+                    <div class="profile-img text-center mb-4">
+                        <img src="@Model.ProfileImage" alt="Profil Resmi" class="img-100 rounded-circle">
+                    </div>
+                    <div class="text-center">
+                        <h4>@Model.FullName</h4>
+                    </div>
+                    <hr>
+                    <div class="mt-4">
+                        <div class="mb-3">
+                            <label class="form-label"><i class="fa fa-user me-2"></i>Kullanıcı Adı</label>
+                            <div>@Model.UserName</div>
+                        </div>
+                        <div class="mb-3">
+                            <label class="form-label"><i class="fa fa-envelope me-2"></i>E-posta</label>
+                            <div>@Model.Email</div>
+                        </div>
+                        <div class="mb-3">
+                            <label class="form-label"><i class="fa fa-phone me-2"></i>Telefon</label>
+                            <div>@(string.IsNullOrEmpty(Model.PhoneNumber) ? "Belirtilmemiş" : Model.PhoneNumber)</div>
+                        </div>
+                        <div class="mb-3">
+                            <label class="form-label"><i class="fa fa-shield me-2"></i>Roller</label>
+                            <div>
+                                @foreach (var role in Model.Roles)
+                                {
+                                    <span class="badge bg-primary me-1">@role</span>
+                                }
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <!-- Profil Detayları ve Düzenleme -->
+        <div class="col-xl-8">
+            <div class="card">
+                <div class="card-header pb-0">
+                    <div class="card-options">
+                        <ul class="nav nav-tabs" id="profileTab" role="tablist">
+                            <li class="nav-item">
+                                <a class="nav-link active" id="profile-tab" data-bs-toggle="tab" href="#profile" role="tab" aria-controls="profile" aria-selected="true">Profil Bilgilerim</a>
+                            </li>
+                            <li class="nav-item">
+                                <a class="nav-link" id="password-tab" data-bs-toggle="tab" href="#password" role="tab" aria-controls="password" aria-selected="false">Şifre Değiştir</a>
+                            </li>
+                            <li class="nav-item">
+                                <a class="nav-link" id="activity-tab" data-bs-toggle="tab" href="#activity" role="tab" aria-controls="activity" aria-selected="false">Son Aktiviteler</a>
+                            </li>
+                        </ul>
+                    </div>
+                </div>
+                <div class="card-body">
+                    <div class="tab-content" id="profileTabContent">
+                        <!-- Profil Bilgileri -->
+                        <div class="tab-pane fade show active" id="profile" role="tabpanel" aria-labelledby="profile-tab">
+                            <form asp-action="UpdateProfile" asp-controller="Account" method="post" enctype="multipart/form-data">
+                                <input type="hidden" asp-for="Id" />
+                                <input type="hidden" asp-for="UserName" />
+
+                                <div asp-validation-summary="ModelOnly" class="text-danger"></div>
+
+                                <div class="row">
+                                    <div class="col-md-6">
+                                        <div class="mb-3">
+                                            <label asp-for="FullName" class="form-label">Ad Soyad</label>
+                                            <input asp-for="FullName" class="form-control" />
+                                            <span asp-validation-for="FullName" class="text-danger"></span>
+                                        </div>
+                                    </div>
+                                    <div class="col-md-6">
+                                        <div class="mb-3">
+                                            <label asp-for="Email" class="form-label">E-posta</label>
+                                            <input asp-for="Email" class="form-control" />
+                                            <span asp-validation-for="Email" class="text-danger"></span>
+                                        </div>
+                                    </div>
+                                </div>
+
+                                <div class="mb-3">
+                                    <label asp-for="PhoneNumber" class="form-label">Telefon</label>
+                                    <input asp-for="PhoneNumber" class="form-control" />
+                                    <span asp-validation-for="PhoneNumber" class="text-danger"></span>
+                                </div>
+
+                                <div class="mb-3">
+                                    <label asp-for="Bio" class="form-label">Hakkımda</label>
+                                    <textarea asp-for="Bio" class="form-control" rows="3"></textarea>
+                                    <span asp-validation-for="Bio" class="text-danger"></span>
+                                    <small class="form-text text-muted">İsteğe bağlı olarak kendiniz hakkında kısa bir bilgi girebilirsiniz.</small>
+                                </div>
+
+                                <div class="mb-3">
+                                    <label asp-for="ProfilePhoto" class="form-label">Profil Fotoğrafı</label>
+                                    <input asp-for="ProfilePhoto" type="file" class="form-control" accept=".jpg,.jpeg,.png,.gif" />
+                                    <span asp-validation-for="ProfilePhoto" class="text-danger"></span>
+                                    <small class="form-text text-muted">En fazla 5MB boyutunda .jpg, .jpeg, .png veya .gif dosyası yükleyebilirsiniz.</small>
+                                </div>
+
+                                <div class="mb-3">
+                                    <label class="form-label">Mevcut Profil Resmi</label>
+                                    <div>
+                                        <img src="@Model.ProfileImage" alt="Mevcut Profil Resmi" class="img-fluid" style="max-height: 100px; max-width: 100px;" />
+                                    </div>
+                                    <input type="hidden" asp-for="ProfileImage" />
+                                </div>
+
+                                <div class="text-end">
+                                    <button type="submit" class="btn btn-primary">Kaydet</button>
+                                </div>
+                            </form>
+                        </div>
+
+                        <!-- Şifre Değiştirme -->
+                        <div class="tab-pane fade" id="password" role="tabpanel" aria-labelledby="password-tab">
+                            <form asp-action="ChangePassword" asp-controller="Account" method="post">
+                                <div asp-validation-summary="ModelOnly" class="text-danger"></div>
+
+                                <div class="mb-3">
+                                    <label for="OldPassword" class="form-label">Mevcut Şifre</label>
+                                    <input type="password" id="OldPassword" name="OldPassword" class="form-control" required />
+                                </div>
+
+                                <div class="mb-3">
+                                    <label for="NewPassword" class="form-label">Yeni Şifre</label>
+                                    <input type="password" id="NewPassword" name="NewPassword" class="form-control" required />
+                                </div>
+
+                                <div class="mb-3">
+                                    <label for="ConfirmPassword" class="form-label">Yeni Şifre (Tekrar)</label>
+                                    <input type="password" id="ConfirmPassword" name="ConfirmPassword" class="form-control" required />
+                                </div>
+
+                                <div class="text-end">
+                                    <button type="submit" class="btn btn-primary">Şifre Değiştir</button>
+                                </div>
+                            </form>
+                        </div>
+
+                        <!-- Son Aktiviteler -->
+                        <div class="tab-pane fade" id="activity" role="tabpanel" aria-labelledby="activity-tab">
+                            <div class="activity-timeline">
+                                <div class="alert alert-info">
+                                    Bu bölüm henüz aktif değildir. Yakında son aktivitelerinizi burada görebileceksiniz.
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+
+@section Scripts {
+    @{await Html.RenderPartialAsync("_ValidationScriptsPartial");}
+} 

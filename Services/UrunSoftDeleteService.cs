@@ -14,10 +14,9 @@ namespace MuhasebeStokWebApp.Services
     public class UrunSoftDeleteService : SoftDeleteService<Urun>
     {
         public UrunSoftDeleteService(
-            IUnitOfWork unitOfWork,
-            ILogger<UrunSoftDeleteService> logger,
-            ApplicationDbContext context) 
-            : base(unitOfWork, logger, context)
+            ApplicationDbContext context,
+            ILogger<UrunSoftDeleteService> logger) 
+            : base(context, logger)
         {
         }
 

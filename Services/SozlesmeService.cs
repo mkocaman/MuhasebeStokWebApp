@@ -358,6 +358,7 @@ namespace MuhasebeStokWebApp.Services
             if (sozlesme == null)
                 return null;
                 
+            // SozlesmeViewModel içindeki özellikleri manuel olarak ayarlayalım
             var viewModel = new SozlesmeViewModel
             {
                 SozlesmeID = sozlesme.SozlesmeID.ToString(),
@@ -365,7 +366,7 @@ namespace MuhasebeStokWebApp.Services
                 SozlesmeTarihi = sozlesme.SozlesmeTarihi,
                 BitisTarihi = sozlesme.BitisTarihi,
                 CariID = sozlesme.CariID.ToString(),
-                CariAdi = sozlesme.Cari?.CariUnvani,
+                CariAdi = sozlesme.Cari?.Ad,
                 VekaletGeldiMi = sozlesme.VekaletGeldiMi,
                 ResmiFaturaKesildiMi = sozlesme.ResmiFaturaKesildiMi,
                 SozlesmeDosyaYolu = sozlesme.SozlesmeDosyaYolu,
@@ -495,7 +496,7 @@ namespace MuhasebeStokWebApp.Services
                     SozlesmeNo = sozlesme.SozlesmeNo,
                     SozlesmeTarihi = sozlesme.SozlesmeTarihi,
                     BitisTarihi = sozlesme.BitisTarihi,
-                    CariAdi = sozlesme.Cari?.CariUnvani,
+                    CariAdi = sozlesme.Cari?.Ad,
                     SozlesmeTutari = sozlesme.SozlesmeTutari,
                     SozlesmeDovizTuru = sozlesme.SozlesmeDovizTuru,
                     VekaletGeldiMi = sozlesme.VekaletGeldiMi,
@@ -545,7 +546,7 @@ namespace MuhasebeStokWebApp.Services
                     SozlesmeTarihi = sozlesme.SozlesmeTarihi,
                     BitisTarihi = sozlesme.BitisTarihi,
                     CariID = sozlesme.CariID.ToString(),
-                    CariAdi = sozlesme.Cari?.CariUnvani,
+                    CariAdi = sozlesme.Cari?.Ad,
                     VekaletGeldiMi = sozlesme.VekaletGeldiMi,
                     ResmiFaturaKesildiMi = sozlesme.ResmiFaturaKesildiMi,
                     SozlesmeDosyaYolu = sozlesme.SozlesmeDosyaYolu,

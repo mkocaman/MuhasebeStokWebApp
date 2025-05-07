@@ -1,0 +1,55 @@
+@model MuhasebeStokWebApp.Controllers.Todo.EditTodoViewModel
+@using MuhasebeStokWebApp.Enums
+@addTagHelper *, Microsoft.AspNetCore.Mvc.TagHelpers
+
+<form asp-action="Edit" asp-controller="Todo" method="post">
+    <div class="modal-body">
+        <input type="hidden" asp-for="TodoItem.Id" />
+        <input type="hidden" asp-for="TodoItem.TaskCategory" />
+        
+        <div class="mb-3">
+            <label asp-for="TodoItem.Title" class="form-label">Başlık <span class="text-danger">*</span></label>
+            <input asp-for="TodoItem.Title" class="form-control" required maxlength="200" />
+            <small class="form-text text-muted">Başlık değiştirildiğinde kategori otomatik güncellenecektir.</small>
+        </div>
+        
+        <div class="mb-3">
+            <label asp-for="TodoItem.TaskCategory" class="form-label">Kategori</label>
+            <div class="input-group">
+                <span class="input-group-text"><i class="@Model.TodoItem.TaskIcon"></i></span>
+                <input type="text" class="form-control" readonly value="@Model.TodoItem.TaskCategory" />
+            </div>
+        </div>
+        
+        <div class="mb-3">
+            <label asp-for="TodoItem.PriorityLevel" class="form-label">Öncelik <span class="text-danger">*</span></label>
+            <select asp-for="TodoItem.PriorityLevel" class="form-select" asp-items="Html.GetEnumSelectList<PriorityLevel>()"></select>
+        </div>
+        
+        <div class="mb-3">
+            <label asp-for="TodoItem.Description" class="form-label">Açıklama</label>
+            <textarea asp-for="TodoItem.Description" class="form-control" rows="3" maxlength="1000"></textarea>
+        </div>
+        
+        <div class="mb-3">
+            <label asp-for="TodoItem.Deadline" class="form-label">Son Tarih</label>
+            <input asp-for="TodoItem.Deadline" type="date" class="form-control" />
+        </div>
+        
+        <div class="mb-3">
+            <label asp-for="TodoItem.AssignedToUserId" class="form-label">Atanan Kullanıcı</label>
+            <select asp-for="TodoItem.AssignedToUserId" asp-items="Model.Users" class="form-select">
+                <option value="">-- Kullanıcı Seçiniz --</option>
+            </select>
+        </div>
+        
+        <div class="mb-3 form-check">
+            <input asp-for="TodoItem.IsCompleted" class="form-check-input" type="checkbox" />
+            <label asp-for="TodoItem.IsCompleted" class="form-check-label">Tamamlandı</label>
+        </div>
+    </div>
+    <div class="modal-footer">
+        <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">İptal</button>
+        <button type="submit" class="btn btn-primary">Kaydet</button>
+    </div>
+</form> 

@@ -1,4 +1,6 @@
 using System;
+using System.Collections.Generic;
+using MuhasebeStokWebApp.Data.Entities;
 
 namespace MuhasebeStokWebApp.ViewModels
 {
@@ -11,5 +13,12 @@ namespace MuhasebeStokWebApp.ViewModels
         public decimal GirisMiktari { get; set; }
         public decimal CikisMiktari { get; set; }
         public decimal StokMiktari => GirisMiktari - CikisMiktari;
+    }
+
+    public class StokCikisInfo
+    {
+        public decimal ToplamMaliyet { get; set; }
+        public decimal BirimMaliyet { get; set; }
+        public List<StokFifo> KullanilanFifoKayitlari { get; set; } = new List<StokFifo>();
     }
 } 

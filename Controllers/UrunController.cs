@@ -28,6 +28,7 @@ namespace MuhasebeStokWebApp.Controllers
         private readonly ApplicationDbContext _context;
         private readonly ILogger<UrunController> _logger;
         private readonly IDropdownService _dropdownService;
+        private readonly IStokService _stokService;
 
         // Constructor: Repository ve veritabanı bağlantısını DI ile alır
         public UrunController(
@@ -38,13 +39,15 @@ namespace MuhasebeStokWebApp.Controllers
             RoleManager<IdentityRole> roleManager,
             ILogService logService,
             ILogger<UrunController> logger,
-            IDropdownService dropdownService)
+            IDropdownService dropdownService,
+            IStokService stokService)
             : base(menuService, userManager, roleManager, logService)
         {
             _unitOfWork = unitOfWork;
             _context = context;
             _logger = logger;
             _dropdownService = dropdownService;
+            _stokService = stokService;
         }
 
         // Ürünlerin listelendiği ana sayfa
@@ -73,45 +76,54 @@ namespace MuhasebeStokWebApp.Controllers
             // Ürün listesi görünüm modeli oluştur
             var viewModel = new UrunListViewModel
             {
-                Urunler = tümUrunler.Select(u => new UrunViewModel
-                    {
-                        UrunID = u.UrunID,
-                        UrunKodu = u.UrunKodu,
-                        UrunAdi = u.UrunAdi,
-                        Birim = u.Birim != null ? u.Birim.BirimAdi : string.Empty,
-                        Miktar = u.StokMiktar,
-                        // Her ürün için en güncel liste fiyatını getir
-                        ListeFiyati = urunFiyatlar
-                            .Where(uf => uf.UrunID == u.UrunID && uf.FiyatTipiID == 1 && uf.Silindi == false)
-                            .OrderByDescending(uf => uf.GecerliTarih)
-                            .FirstOrDefault()?.Fiyat ?? 0m,
-                        // Her ürün için en güncel maliyet fiyatını getir
-                        MaliyetFiyati = urunFiyatlar
-                            .Where(uf => uf.UrunID == u.UrunID && uf.FiyatTipiID == 2 && uf.Silindi == false)
-                            .OrderByDescending(uf => uf.GecerliTarih)
-                            .FirstOrDefault()?.Fiyat ?? 0m,
-                        // Her ürün için en güncel satış fiyatını getir
-                        SatisFiyati = urunFiyatlar
-                            .Where(uf => uf.UrunID == u.UrunID && uf.FiyatTipiID == 3 && uf.Silindi == false)
-                            .OrderByDescending(uf => uf.GecerliTarih)
-                            .FirstOrDefault()?.Fiyat ?? 0m,
-                        Aktif = u.Aktif,
-                        Silindi = u.Silindi,
-                        OlusturmaTarihi = u.OlusturmaTarihi,
-                        KategoriID = u.KategoriID,
-                        // Ürün kategorisinin adını bul
-                        KategoriAdi = u.KategoriID.HasValue ? 
-                            kategoriler.FirstOrDefault(k => k.KategoriID == u.KategoriID)?.KategoriAdi : "Kategorisiz"
-                }).ToList(),
-                
-                // Filtre özellikleri ViewModel'e taşındı
-                KategoriID = kategoriID,
-                UrunAdi = urunAdi,
-                UrunKodu = urunKodu,
-                AktifMi = aktifMi,
-                AktifTab = tab
+                Urunler = new List<UrunViewModel>()
             };
-            
+
+            // Her ürün için dinamik stok miktarını hesapla
+            foreach (var u in tümUrunler)
+            {
+                // Dinamik stok miktarını hesapla
+                decimal stokMiktari = await _stokService.GetDinamikStokMiktari(u.UrunID);
+                
+                viewModel.Urunler.Add(new UrunViewModel
+                {
+                    UrunID = u.UrunID,
+                    UrunKodu = u.UrunKodu,
+                    UrunAdi = u.UrunAdi,
+                    Birim = u.Birim != null ? u.Birim.BirimAdi : string.Empty,
+                    Miktar = stokMiktari, // Dinamik hesaplanan stok miktarı
+                    // Her ürün için en güncel liste fiyatını getir
+                    ListeFiyati = urunFiyatlar
+                        .Where(uf => uf.UrunID == u.UrunID && uf.FiyatTipiID == 1 && uf.Silindi == false)
+                        .OrderByDescending(uf => uf.GecerliTarih)
+                        .FirstOrDefault()?.Fiyat ?? 0m,
+                    // Her ürün için en güncel maliyet fiyatını getir
+                    MaliyetFiyati = urunFiyatlar
+                        .Where(uf => uf.UrunID == u.UrunID && uf.FiyatTipiID == 2 && uf.Silindi == false)
+                        .OrderByDescending(uf => uf.GecerliTarih)
+                        .FirstOrDefault()?.Fiyat ?? 0m,
+                    // Her ürün için en güncel satış fiyatını getir
+                    SatisFiyati = urunFiyatlar
+                        .Where(uf => uf.UrunID == u.UrunID && uf.FiyatTipiID == 3 && uf.Silindi == false)
+                        .OrderByDescending(uf => uf.GecerliTarih)
+                        .FirstOrDefault()?.Fiyat ?? 0m,
+                    Aktif = u.Aktif,
+                    Silindi = u.Silindi,
+                    OlusturmaTarihi = u.OlusturmaTarihi,
+                    KategoriID = u.KategoriID,
+                    // Ürün kategorisinin adını bul
+                    KategoriAdi = u.KategoriID.HasValue ? 
+                        kategoriler.FirstOrDefault(k => k.KategoriID == u.KategoriID)?.KategoriAdi : "Kategorisiz"
+                });
+            }
+
+            // Filtre özellikleri ViewModel'e taşındı
+            viewModel.KategoriID = kategoriID;
+            viewModel.UrunAdi = urunAdi;
+            viewModel.UrunKodu = urunKodu;
+            viewModel.AktifMi = aktifMi;
+            viewModel.AktifTab = tab;
+                
             // Kategorileri DropdownService üzerinden al
             viewModel.Kategoriler = await _dropdownService.GetKategoriSelectItemsAsync(kategoriID);
 
@@ -177,13 +189,16 @@ namespace MuhasebeStokWebApp.Controllers
                 kategori = await kategoriRepository.GetByIdAsync(urun.KategoriID.Value);
             }
             
+            // Dinamik stok miktarını hesapla
+            decimal stokMiktari = await _stokService.GetDinamikStokMiktari(urun.UrunID);
+            
             var viewModel = new UrunViewModel
             {
                 UrunID = urun.UrunID,
                 UrunKodu = urun.UrunKodu,
                 UrunAdi = urun.UrunAdi,
                 Birim = urun.Birim != null ? urun.Birim.BirimAdi : string.Empty,
-                Miktar = urun.StokMiktar,
+                Miktar = stokMiktari, // Dinamik hesaplanan stok miktarı
                 // Ürün için en güncel liste fiyatını getir
                 ListeFiyati = urunFiyatRepository.GetAllAsync().Result
                     .Where(uf => uf.UrunID == urun.UrunID && uf.FiyatTipiID == 1 && uf.Silindi == false)
@@ -782,11 +797,11 @@ namespace MuhasebeStokWebApp.Controllers
                 }
 
                 var girisler = await stokHareketleriQuery
-                    .Where(sh => sh.HareketTuru == StokHareketiTipi.Giris)
+                    .Where(sh => sh.HareketTuru == StokHareketTipi.Giris)
                     .SumAsync(sh => sh.Miktar);
 
                 var cikislar = await stokHareketleriQuery
-                    .Where(sh => sh.HareketTuru == StokHareketiTipi.Cikis)
+                    .Where(sh => sh.HareketTuru == StokHareketTipi.Cikis)
                     .SumAsync(sh => Math.Abs(sh.Miktar)); // Mutlak değer olarak alıyoruz
 
                 return girisler - cikislar; // Çıkışları çıkararak hesaplıyoruz

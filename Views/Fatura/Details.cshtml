@@ -18,7 +18,8 @@
     }
     
     string currencySymbol = GetCurrencySymbol(Model.DovizTuru);
-    string dovizSymbol = Model.DovizTuru == "USD" ? "so'm" : "$";
+    // USD fatura ise döviz alanında UZS göster, UZS fatura ise döviz alanında USD göster
+    string dovizSymbol = Model.DovizTuru == "UZS" ? "$" : "so'm";
     
     // Cari silinmiş mi kontrolü - hem model hem de viewbag'den kontrol edelim
     bool cariSilindi = (ViewBag.CariSilindi != null && (bool)ViewBag.CariSilindi) || Model.CariSilindi;
@@ -27,6 +28,7 @@
 @functions {
     public static string FormatDecimal(decimal value)
     {
+        // Türk kültürünü ayarla: binlik ayracı nokta, ondalık ayracı virgül
         return value.ToString("N2", new System.Globalization.CultureInfo("tr-TR"));
     }
 }
@@ -260,7 +262,14 @@
                     <h5 class="mb-0">Açıklama</h5>
                 </div>
                 <div class="card-body">
-                    <p>@(string.IsNullOrEmpty(Model.Aciklama) ? "Açıklama bulunmamaktadır." : Model.Aciklama)</p>
+                    @if (string.IsNullOrEmpty(Model.Aciklama))
+                    {
+                        <p>Açıklama bulunmamaktadır.</p>
+                    }
+                    else
+                    {
+                        <p>@Model.Aciklama</p>
+                    }
                 </div>
             </div>
         </div>
@@ -550,6 +559,36 @@
                     }
                 });
             });
+
+            // Sayfa yüklendikten sonra KDV ve döviz bilgilerini otomatik doldur
+            if ($('#dovizParaBirimi').text() != '' && parseFloat('@Model.DovizKuru') > 0) {
+                var dovizKuru = parseFloat('@Model.DovizKuru');
+                
+                // Eğer döviz KDV toplamı 0 ise hesapla
+                if (parseFloat('@Model.KdvTutariDoviz') === 0) {
+                    var kdvTutari = parseFloat('@Model.KdvTutari'.replace(',', '.'));
+                    var kdvTutariDoviz = '@Model.DovizTuru' === 'USD' ? 
+                        kdvTutari * dovizKuru : 
+                        kdvTutari / dovizKuru;
+                    
+                    $('.dovizKDV').text(formatMoney(kdvTutariDoviz));
+                }
+                
+                // İndirim tutarı için aynı işlem
+                if (parseFloat('@Model.IndirimTutariDoviz') === 0) {
+                    var indirimTutari = parseFloat('@Model.IndirimTutari'.replace(',', '.'));
+                    var indirimTutariDoviz = '@Model.DovizTuru' === 'USD' ? 
+                        indirimTutari * dovizKuru : 
+                        indirimTutari / dovizKuru;
+                    
+                    $('.dovizIndirim').text(formatMoney(indirimTutariDoviz));
+                }
+            }
         });
+        
+        // Para formatı
+        function formatMoney(amount) {
+            return new Intl.NumberFormat('tr-TR', { minimumFractionDigits: 2, maximumFractionDigits: 2 }).format(amount);
+        }
     </script>
 } 

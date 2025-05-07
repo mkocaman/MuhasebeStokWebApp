@@ -10,10 +10,14 @@ namespace MuhasebeStokWebApp.ViewModels.Fatura
     // ParaBirimi sınıfını burada tanımlayalım (eksik referansı gidermek için)
     public class ParaBirimi
     {
+        [Required(ErrorMessage = "Para birimi kodu gereklidir")]
         public string Kod { get; set; }
+        
+        [Required(ErrorMessage = "Para birimi adı gereklidir")]
         public string Ad { get; set; }
+        
+        [Required(ErrorMessage = "Para birimi sembolü gereklidir")]
         public string Sembol { get; set; }
-        public bool AnaParaBirimiMi { get; set; }
     }
 
     // FaturaDetayViewModel sınıfını burada tanımlayalım (eksik referansı gidermek için)
@@ -74,15 +78,15 @@ namespace MuhasebeStokWebApp.ViewModels.Fatura
 
         [Required(ErrorMessage = "Fatura türü zorunludur.")]
         [Display(Name = "Fatura Türü")]
-        public Guid? FaturaTuruID { get; set; }
+        public int? FaturaTuruID { get; set; }
 
         [Display(Name = "Fatura Notu")]
         [StringLength(500, ErrorMessage = "Fatura notu en fazla 500 karakter olabilir.")]
-        public string FaturaNotu { get; set; }
+        public string? FaturaNotu { get; set; }
 
         [Display(Name = "Açıklama")]
         [StringLength(500, ErrorMessage = "Açıklama en fazla 500 karakter olabilir.")]
-        public string Aciklama { get; set; }
+        public string? Aciklama { get; set; }
 
         [Display(Name = "Ara Toplam")]
         [DisplayFormat(DataFormatString = "{0:N2}", ApplyFormatInEditMode = false)]
@@ -92,19 +96,41 @@ namespace MuhasebeStokWebApp.ViewModels.Fatura
         [DisplayFormat(DataFormatString = "{0:N2}", ApplyFormatInEditMode = false)]
         public decimal? KDVToplam { get; set; }
 
+        [Display(Name = "İndirim Tutarı")]
+        [DisplayFormat(DataFormatString = "{0:N2}", ApplyFormatInEditMode = false)]
+        public decimal? IndirimTutari { get; set; }
+
         [Display(Name = "Genel Toplam")]
         [DisplayFormat(DataFormatString = "{0:N2}", ApplyFormatInEditMode = false)]
         public decimal? GenelToplam { get; set; }
 
+        [Display(Name = "Dövizli Ara Toplam")]
+        [DisplayFormat(DataFormatString = "{0:N2}", ApplyFormatInEditMode = false)]
+        public decimal? AraToplamDoviz { get; set; }
+
+        [Display(Name = "Dövizli KDV Toplam")]
+        [DisplayFormat(DataFormatString = "{0:N2}", ApplyFormatInEditMode = false)]
+        public decimal? KDVToplamDoviz { get; set; }
+
+        [Display(Name = "Dövizli İndirim Tutarı")]
+        [DisplayFormat(DataFormatString = "{0:N2}", ApplyFormatInEditMode = false)]
+        public decimal? IndirimTutariDoviz { get; set; }
+
+        [Display(Name = "Dövizli Genel Toplam")]
+        [DisplayFormat(DataFormatString = "{0:N2}", ApplyFormatInEditMode = false)]
+        public decimal? GenelToplamDoviz { get; set; }
+
         [Display(Name = "Ödeme Durumu")]
         public string OdemeDurumu { get; set; } = "Ödenmedi";
 
-        [Display(Name = "Döviz Türü")]
-        public string DovizTuru { get; set; } = "TRY";
+        // Döviz Türü - Sadece USD ve UZS desteklenir
+        [Display(Name = "Para Birimi")]
+        [Required(ErrorMessage = "Para birimi seçilmelidir")]
+        public string? DovizTuru { get; set; }
 
-        [Display(Name = "Döviz Kuru")]
+        [Display(Name = "Döviz Kuru (1 USD = X UZS)")]
         [DisplayFormat(DataFormatString = "{0:N4}", ApplyFormatInEditMode = false)]
-        public decimal? DovizKuru { get; set; } = 1;
+        public decimal? DovizKuru { get; set; }
 
         [Display(Name = "Resmi mi?")]
         public bool ResmiMi { get; set; } = true;

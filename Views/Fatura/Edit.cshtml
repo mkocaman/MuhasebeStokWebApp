@@ -272,25 +272,25 @@
                                     <tr>
                                         <th style="width: 200px;">Ara Toplam</th>
                                         <td class="text-right">
-                                            <input id="AraToplam" name="AraToplam" class="form-control text-right" readonly />
+                                            <input id="AraToplam" name="AraToplam" class="form-control text-right" value="@Model.AraToplam.ToString()" readonly />
                                         </td>
                                     </tr>
                                     <tr>
                                         <th>KDV Tutarı</th>
                                         <td class="text-right">
-                                            <input id="KdvTutari" name="KdvToplam" class="form-control text-right" readonly />
+                                            <input id="KdvTutari" name="KdvToplam" class="form-control text-right" value="@Model.KdvToplam.ToString()" readonly />
                                         </td>
                                     </tr>
                                     <tr>
                                         <th>İndirim Tutarı</th>
                                         <td class="text-right">
-                                            <input id="toplamIndirimTutari" class="form-control text-right" readonly />
+                                            <input id="toplamIndirimTutari" name="IndirimTutari" class="form-control text-right" value="@Model.IndirimTutari.ToString()" readonly />
                                         </td>
                                     </tr>
                                     <tr class="table-primary">
                                         <th>Genel Toplam</th>
                                         <td class="text-right">
-                                            <input id="GenelToplam" name="GenelToplam" class="form-control text-right font-weight-bold" readonly />
+                                            <input id="GenelToplam" name="GenelToplam" class="form-control text-right font-weight-bold" value="@Model.GenelToplam.ToString()" readonly />
                                         </td>
                                     </tr>
                                 </tbody>
@@ -564,10 +564,10 @@
                 // Net tutar (KDV dahil)
                 var netTutar = tutar + kdvTutari;
                 
-                // Değerleri yaz
-                row.find(".tutar").val(tutar.toFixed(2));
-                row.find(".kdv-tutari").val(kdvTutari.toFixed(2));
-                row.find(".net-tutar").val(netTutar.toFixed(2));
+                // Değerleri yaz - formatlanmış şekilde
+                row.find(".tutar").val(formatDecimal(tutar));
+                row.find(".kdv-tutari").val(formatDecimal(kdvTutari));
+                row.find(".net-tutar").val(formatDecimal(netTutar));
                 
                 // Tüm toplamları güncelle
                 updateAllTotals();
@@ -579,6 +579,10 @@
                 var kdvToplam = 0;
                 var indirimToplam = 0;
                 var genelToplam = 0;
+                
+                // Döviz değerlerini hesapla
+                var dovizKuru = parseFloat($("#DovizKuru").val()) || 1;
+                var seciliParaBirimi = $("#dovizTuruSelect").val();
                 
                 // Tüm satırları dolaş
                 $(".kalem-row").each(function() {
@@ -598,11 +602,54 @@
                     genelToplam += satırNetTutar;
                 });
                 
+                // Döviz karşılığı hesaplama
+                var araToplamDoviz = 0;
+                var kdvToplamDoviz = 0;
+                var indirimToplamDoviz = 0;
+                var genelToplamDoviz = 0;
+                
+                if (seciliParaBirimi === 'USD') {
+                    // Ana para birimi USD, döviz UZS
+                    araToplamDoviz = araToplam * dovizKuru;
+                    kdvToplamDoviz = kdvToplam * dovizKuru;
+                    indirimToplamDoviz = indirimToplam * dovizKuru;
+                    genelToplamDoviz = genelToplam * dovizKuru;
+                } else {
+                    // Ana para birimi UZS, döviz USD
+                    araToplamDoviz = araToplam / dovizKuru;
+                    kdvToplamDoviz = kdvToplam / dovizKuru;
+                    indirimToplamDoviz = indirimToplam / dovizKuru;
+                    genelToplamDoviz = genelToplam / dovizKuru;
+                }
+                
                 // Toplamları yaz
-                $("#AraToplam").val(araToplam.toFixed(2));
-                $("#KdvTutari").val(kdvToplam.toFixed(2));
-                $("#toplamIndirimTutari").val(indirimToplam.toFixed(2));
-                $("#GenelToplam").val(genelToplam.toFixed(2));
+                $("#AraToplam").val(formatDecimal(araToplam));
+                $("#KdvTutari").val(formatDecimal(kdvToplam));
+                $("#toplamIndirimTutari").val(formatDecimal(indirimToplam));
+                $("#GenelToplam").val(formatDecimal(genelToplam));
+                
+                // Döviz toplamlarını göster
+                $("#AraToplamDoviz").val(formatDecimal(araToplamDoviz));
+                $("#KdvTutariDoviz").val(formatDecimal(kdvToplamDoviz));
+                $("#toplamIndirimTutariDoviz").val(formatDecimal(indirimToplamDoviz));
+                $("#GenelToplamDoviz").val(formatDecimal(genelToplamDoviz));
+                
+                // Hidden fieldlara ham değerleri yaz
+                $("#hiddenAraToplam").val(araToplam.toFixed(2));
+                $("#hiddenKdvToplam").val(kdvToplam.toFixed(2));
+                $("#hiddenGenelToplam").val(genelToplam.toFixed(2));
+                $("#hiddenAraToplamDoviz").val(araToplamDoviz.toFixed(2));
+                $("#hiddenKdvToplamDoviz").val(kdvToplamDoviz.toFixed(2));
+                $("#hiddenGenelToplamDoviz").val(genelToplamDoviz.toFixed(2));
+            }
+            
+            // Para birimi noktalamasını doğru şekilde yapan formatlayıcı
+            function formatDecimal(value) {
+                // Düzgün formatta görünmesi için değeri tam olarak kullan
+                return value.toLocaleString('tr-TR', {
+                    minimumFractionDigits: 2,
+                    maximumFractionDigits: 2
+                });
             }
             
             // Form submit kontrolü

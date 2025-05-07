@@ -41,7 +41,7 @@ namespace MuhasebeStokWebApp.ViewModels.Stok
         public DateTime Tarih { get; set; } = DateTime.Now;
 
         [Display(Name = "Hareket Türü")]
-        public StokHareketiTipi HareketTuru { get; set; } = StokHareketiTipi.Giris;
+        public StokHareketTipi HareketTuru { get; set; } = StokHareketTipi.Giris;
 
         [Display(Name = "Referans No")]
         public string ReferansNo { get; set; }

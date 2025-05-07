@@ -10,9 +10,9 @@ namespace MuhasebeStokWebApp.Services.Interfaces
     public interface ILogService
     {
         Task<bool> AddLogAsync(string logLevel, string message, string source);
-        void LogBilgi(string baslik, string detay, string kullanici);
-        void LogUyari(string baslik, string detay, string kullanici);
-        void LogHata(string baslik, string detay, string kullanici);
+        Task<bool> LogBilgi(string baslik, string detay, string kullanici);
+        Task<bool> LogUyari(string baslik, string detay, string kullanici);
+        Task<bool> LogHata(string baslik, string detay, string kullanici);
         
         Task<bool> LogEkleAsync(string mesaj, MuhasebeStokWebApp.Enums.LogTuru logTuru, string detay = null);
         Task<bool> Log(string mesaj, MuhasebeStokWebApp.Enums.LogTuru logTuru, string detay = null);

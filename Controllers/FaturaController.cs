@@ -94,7 +94,7 @@ namespace MuhasebeStokWebApp.Controllers
                 KDVToplam = f.KDVToplam ?? 0,
                 GenelToplam = f.GenelToplam ?? 0,
                 OdemeDurumu = f.OdemeDurumu ?? "Ödenmedi",
-                DovizTuru = f.DovizTuru ?? "TRY",
+                DovizTuru = f.DovizTuru ?? "USD",
                 DovizKuru = f.DovizKuru ?? 1,
                 ResmiMi = f.ResmiMi,
                 Aciklama = f.FaturaNotu ?? "Açıklama yok"
@@ -116,8 +116,8 @@ namespace MuhasebeStokWebApp.Controllers
                 {
                     FaturaTarihi = DateTime.Now,
                     VadeTarihi = DateTime.Now.AddDays(30),
-                    DovizTuru = "USD",
-                    DovizKuru = 1,
+                    DovizTuru = "USD", // Varsayılan para birimi USD
+                    DovizKuru = 13000, // Varsayılan 1 USD = 13000 UZS
                     FaturaKalemleri = new List<FaturaKalemViewModel>(),
                     OtomatikIrsaliyeOlustur = true
                 };
@@ -179,6 +179,17 @@ namespace MuhasebeStokWebApp.Controllers
             
             _logger.LogInformation("Depo listesi yüklendi, toplam {count} adet depo bulundu.", depolar.Count);
 
+            // Aktif birimler
+            var birimler = await _context.Birimler
+                .Where(b => !b.Silindi && b.Aktif)
+                .OrderBy(b => b.BirimAdi)
+                .ToListAsync();
+            
+            _logger.LogInformation("Birim sayısı: Aktif={activeCount}, Pasif={passiveCount}, Silinmiş={deletedCount}", 
+                birimler.Count, 
+                await _context.Birimler.CountAsync(b => !b.Silindi && !b.Aktif),
+                await _context.Birimler.CountAsync(b => b.Silindi));
+
             // Ürün listesi boş mu
             viewModel.UrunListesiBosMu = urunler.Count == 0;
             
@@ -201,9 +212,9 @@ namespace MuhasebeStokWebApp.Controllers
                 );
             }
 
-            // Para birimleri
+            // Para birimleri - Sadece USD ve UZS
             var paraBirimleriEntities = await _context.ParaBirimleri
-                .Where(p => !p.Silindi && p.Aktif)
+                .Where(p => !p.Silindi && p.Aktif && (p.Kod == "USD" || p.Kod == "UZS"))
                 .OrderBy(p => p.Sira)
                 .ToListAsync();
                 
@@ -211,8 +222,7 @@ namespace MuhasebeStokWebApp.Controllers
             {
                 Kod = p.Kod,
                 Ad = p.Ad,
-                Sembol = p.Sembol,
-                AnaParaBirimiMi = p.AnaParaBirimiMi
+                Sembol = p.Sembol
             }).ToList();
 
             _logger.LogInformation("Para birimi listesi yüklendi, toplam {count} adet para birimi bulundu.", viewModel.ParaBirimleri.Count);
@@ -224,7 +234,16 @@ namespace MuhasebeStokWebApp.Controllers
                 .Where(c => c.VarsayilanParaBirimiId.HasValue)
                 .ToDictionary(
                     c => c.CariID.ToString(),
-                    c => paraBirimiIdToKodMapping.TryGetValue(c.VarsayilanParaBirimiId.Value, out string kod) ? kod : "TRY"
+                    c => {
+                        // Eğer carinin varsayılan para birimi yoksa veya USD/UZS dışında bir değerse USD kullan
+                        if (!c.VarsayilanParaBirimiId.HasValue || 
+                            !paraBirimiIdToKodMapping.TryGetValue(c.VarsayilanParaBirimiId.Value, out string kod) ||
+                            (kod != "USD" && kod != "UZS"))
+                        {
+                            return "USD";
+                        }
+                        return kod;
+                    }
                 );
 
             // Select listelerini oluştur
@@ -232,6 +251,21 @@ namespace MuhasebeStokWebApp.Controllers
             viewModel.Sozlesmeler = sozlesmeler.Select(s => new SelectListItem { Value = s.SozlesmeID.ToString(), Text = s.SozlesmeNo }).ToList();
             viewModel.FaturaTurleri = _context.FaturaTurleri.Select(f => new SelectListItem { Value = f.FaturaTuruID.ToString(), Text = f.FaturaTuruAdi }).ToList();
             viewModel.Depolar = depolar.Select(d => new SelectListItem { Value = d.DepoID.ToString(), Text = d.DepoAdi }).ToList();
+            
+            // ViewBag üzerinden birimler için select list oluştur
+            ViewBag.Birimler = birimler.Select(b => new SelectListItem { Value = b.BirimID.ToString(), Text = b.BirimAdi }).ToList();
+            
+            // ViewBag üzerinden ürünler için select list oluştur (satırlar için)
+            ViewBag.Urunler = urunler.Select(u => new SelectListItem { 
+                Value = u.UrunID.ToString(), 
+                Text = u.UrunAdi
+            }).ToList();
+            
+            // Ürün birim bilgilerini dictionary olarak ViewBag'e ekle
+            ViewBag.UrunBirimBilgileri = urunler.ToDictionary(
+                u => u.UrunID.ToString(), 
+                u => u.Birim?.BirimAdi ?? "Adet"
+            );
         }
 
         // POST: Fatura/Create
@@ -239,41 +273,98 @@ namespace MuhasebeStokWebApp.Controllers
         [ValidateAntiForgeryToken]
         public async Task<IActionResult> Create(FaturaCreateViewModel viewModel)
         {
-            if (ModelState.IsValid)
+            try
             {
-                try
+                // Loglama - model hatalarını detaylı göster
+                foreach (var key in ModelState.Keys)
                 {
-                    // Model validasyonu
-                    var validationResult = _faturaValidationService.ValidateFaturaCreateViewModel(viewModel);
-                    if (!validationResult.IsValid)
+                    var state = ModelState[key];
+                    if (state.Errors.Any())
                     {
-                        ModelState.AddModelError(string.Empty, validationResult.ErrorMessage);
-                        await PopulateFaturaCreateViewModelAsync(viewModel);
-                        return View(viewModel);
+                        foreach (var error in state.Errors)
+                        {
+                            _logger.LogWarning($"Model hata için: {key} = {error.ErrorMessage}");
+                        }
+                    }
+                }
+                
+                if (ModelState.IsValid)
+                {
+                    // Fatura No ve Sipariş No boş değilse
+                    if (string.IsNullOrEmpty(viewModel.FaturaNumarasi))
+                    {
+                        viewModel.FaturaNumarasi = await _faturaNumaralandirmaService.GenerateFaturaNumarasiAsync();
                     }
 
-                    // Mevcut kullanıcıyı al
-                    var currentUser = await _userManager.GetUserAsync(User);
-                    var currentUserId = currentUser?.Id != null ? Guid.Parse(currentUser.Id) : (Guid?)null;
+                    if (string.IsNullOrEmpty(viewModel.SiparisNumarasi))
+                    {
+                        viewModel.SiparisNumarasi = await _faturaNumaralandirmaService.GenerateSiparisNumarasiAsync();
+                    }
 
-                    // Fatura oluştur (StokHareket, CariHareket, Irsaliye dahil)
-                    var faturaId = await _faturaOrchestrationService.CreateFaturaWithRelations(viewModel, currentUserId);
+                    try
+                    {
+                        // Mevcut kullanıcıyı al
+                        var currentUser = await _userManager.GetUserAsync(User);
+                        var currentUserId = currentUser?.Id != null ? Guid.Parse(currentUser.Id) : (Guid?)null;
 
-                    // İşlem başarılı
-                    _logger.LogInformation($"Fatura başarıyla oluşturuldu. FaturaID: {faturaId}");
-                    TempData["SuccessMessage"] = "Fatura başarıyla oluşturuldu.";
-                    return RedirectToAction(nameof(Details), new { id = faturaId });
+                        // Model validasyonu 
+                        var validationResult = _faturaValidationService.ValidateFaturaCreateViewModel(viewModel);
+                        if (!validationResult.IsValid)
+                        {
+                            ModelState.AddModelError(string.Empty, validationResult.ErrorMessage);
+                            _logger.LogWarning($"Fatura validasyon hatası: {validationResult.ErrorMessage}");
+                            await PopulateFaturaCreateViewModelAsync(viewModel);
+                            return View(viewModel);
+                        }
+
+                        // Fatura kaydet ve ilişkili kayıtları oluştur
+                        var faturaId = await _faturaOrchestrationService.CreateFaturaWithRelations(viewModel, currentUserId);
+
+                        // Otomatik irsaliye oluşturma
+                        if (viewModel.OtomatikIrsaliyeOlustur && faturaId != Guid.Empty)
+                        {
+                            var irsaliyeId = await OtomatikIrsaliyeOlusturFromID(faturaId, viewModel.DepoID);
+                            _logger.LogInformation($"Otomatik irsaliye oluşturuldu. IrsaliyeID: {irsaliyeId}");
+                        }
+
+                        // İşlem başarılı
+                        _logger.LogInformation($"Fatura başarıyla oluşturuldu. FaturaID: {faturaId}");
+                        TempData["SuccessMessage"] = "Fatura başarıyla oluşturuldu.";
+                        return RedirectToAction(nameof(Details), new { id = faturaId });
+                    }
+                    catch (Exception ex)
+                    {
+                        _logger.LogError(ex, "Fatura oluşturma hatası");
+                        ModelState.AddModelError(string.Empty, $"Fatura oluşturulurken bir hata oluştu: {ex.Message}");
+                        TempData["ErrorMessage"] = $"Fatura oluşturulurken bir hata oluştu: {ex.Message}";
+                    }
                 }
-                catch (Exception ex)
+                else
                 {
-                    _logger.LogError(ex, "Fatura oluşturma hatası");
-                    ModelState.AddModelError(string.Empty, $"Fatura oluşturulurken bir hata oluştu: {ex.Message}");
+                    _logger.LogWarning("Fatura formu doğrulama hatası");
+                    foreach (var key in ModelState.Keys)
+                    {
+                        var state = ModelState[key];
+                        if (state.Errors.Any())
+                        {
+                            foreach (var error in state.Errors)
+                            {
+                                _logger.LogWarning($"Model hata: {error.ErrorMessage}");
+                            }
+                        }
+                    }
                 }
-            }
 
-            // Form geçerli değilse veya hata oluştuysa, dropdown listelerini yeniden doldur
-            await PopulateFaturaCreateViewModelAsync(viewModel);
-            return View(viewModel);
+                // Form doğrulama hatası veya başka bir hata durumunda view'ı yeniden doldur
+                await PopulateFaturaCreateViewModelAsync(viewModel);
+                return View(viewModel);
+            }
+            catch (Exception ex)
+            {
+                _logger.LogError(ex, "Beklenmeyen hata");
+                TempData["ErrorMessage"] = $"Beklenmeyen bir hata oluştu: {ex.Message}";
+                return RedirectToAction(nameof(Index));
+            }
         }
 
         // GET: Fatura/Details/5
@@ -353,7 +444,7 @@ namespace MuhasebeStokWebApp.Controllers
                               odenenTutar == fatura.GenelToplam.GetValueOrDefault() ? "Ödendi" : 
                               odenenTutar > 0 && odenenTutar < fatura.GenelToplam.GetValueOrDefault() ? "Kısmi Ödendi" : "Bekliyor",
                 Aciklama = fatura.FaturaNotu,
-                DovizTuru = fatura.DovizTuru ?? "TRY",
+                DovizTuru = fatura.DovizTuru ?? "USD",
                 DovizKuru = fatura.DovizKuru ?? 1m,
                 Aktif = fatura.Aktif,
                 OlusturmaTarihi = fatura.OlusturmaTarihi,
@@ -425,8 +516,12 @@ namespace MuhasebeStokWebApp.Controllers
                 ResmiMi = fatura.ResmiMi,
                 Aciklama = fatura.FaturaNotu,
                 OdemeDurumu = fatura.OdemeDurumu,
-                DovizTuru = fatura.DovizTuru,
+                DovizTuru = fatura.DovizTuru ?? "USD",
                 DovizKuru = fatura.DovizKuru ?? 1m,
+                AraToplam = fatura.AraToplam ?? 0,
+                KdvToplam = fatura.KDVToplam ?? 0,
+                GenelToplam = fatura.GenelToplam ?? 0,
+                IndirimTutari = fatura.IndirimTutari ?? 0,
                 IrsaliyeID = fatura.Irsaliyeler?.FirstOrDefault()?.IrsaliyeID,
                 FaturaKalemleri = fatura.FaturaDetaylari.Select(fd => new FaturaKalemViewModel
                 {
@@ -442,7 +537,7 @@ namespace MuhasebeStokWebApp.Controllers
                     KdvTutari = fd.KdvTutari ?? 0,
                     IndirimTutari = fd.IndirimTutari ?? 0,
                     NetTutar = fd.NetTutar ?? 0,
-                    Birim = fd.Birim ?? "Adet"
+                    Birim = fd.Urun?.Birim?.BirimAdi ?? fd.Birim ?? "Adet"
                 }).ToList(),
                 CariListesi = await _context.Cariler
                     .Where(c => !c.Silindi)
@@ -484,9 +579,11 @@ namespace MuhasebeStokWebApp.Controllers
                 u => u.Birim?.BirimAdi ?? "Adet"
             );
 
-            ViewBag.Cariler = new SelectList(await _context.Cariler.Where(c => !c.Silindi && c.AktifMi).ToListAsync(), "CariID", "Ad");
-            ViewBag.FaturaTurleri = new SelectList(await _context.FaturaTurleri.ToListAsync(), "FaturaTuruID", "FaturaTuruAdi");
-            ViewBag.Sozlesmeler = new SelectList(await _context.Sozlesmeler.Where(s => !s.Silindi && s.AktifMi).ToListAsync(), "SozlesmeID", "SozlesmeNo");
+            // ViewBag verilerini doldur
+            ViewBag.Cariler = new SelectList(await _context.Cariler.Where(c => !c.Silindi && c.AktifMi).ToListAsync(), "CariID", "Ad", viewModel.CariID);
+            ViewBag.FaturaTurleri = new SelectList(await _context.FaturaTurleri.ToListAsync(), "FaturaTuruID", "FaturaTuruAdi", viewModel.FaturaTuruID);
+            ViewBag.OdemeTurleri = new SelectList(await _context.OdemeTurleri.ToListAsync(), "OdemeTuruID", "OdemeTuruAdi");
+            ViewBag.Sozlesmeler = new SelectList(await _context.Sozlesmeler.Where(s => !s.Silindi && s.AktifMi && (s.CariID == null || s.CariID == viewModel.CariID)).ToListAsync(), "SozlesmeID", "SozlesmeNo", fatura.SozlesmeID);
 
             return View(viewModel);
         }
@@ -550,13 +647,11 @@ namespace MuhasebeStokWebApp.Controllers
             ViewBag.Urunler = new SelectList(await _context.Urunler.Where(u => !u.Silindi && u.Aktif).ToListAsync(), "UrunID", "UrunAdi");
             ViewBag.Sozlesmeler = new SelectList(await _context.Sozlesmeler.Where(s => !s.Silindi && s.AktifMi).ToListAsync(), "SozlesmeID", "SozlesmeNo");
             
-            // Döviz listesi
+            // Döviz listesi - Sadece USD ve UZS
             viewModel.DovizListesi = new List<SelectListItem>
             {
                 new SelectListItem { Value = "USD", Text = "Amerikan Doları (USD)", Selected = viewModel.DovizTuru == "USD" },
-                new SelectListItem { Value = "EUR", Text = "Euro (EUR)", Selected = viewModel.DovizTuru == "EUR" },
-                new SelectListItem { Value = "TRY", Text = "Türk Lirası (TRY)", Selected = viewModel.DovizTuru == "TRY" },
-                new SelectListItem { Value = "GBP", Text = "İngiliz Sterlini (GBP)", Selected = viewModel.DovizTuru == "GBP" }
+                new SelectListItem { Value = "UZS", Text = "Özbekistan Somu (UZS)", Selected = viewModel.DovizTuru == "UZS" }
             };
         }
 
@@ -578,7 +673,7 @@ namespace MuhasebeStokWebApp.Controllers
                 return NotFound();
             }
 
-            return View(fatura);
+            return PartialView("_DeleteModal", fatura);
         }
 
         // POST: Fatura/Delete/5
@@ -599,20 +694,19 @@ namespace MuhasebeStokWebApp.Controllers
                 {
                     _logger.LogInformation($"Fatura başarıyla silindi. FaturaID: {id}");
                     TempData["SuccessMessage"] = "Fatura başarıyla silindi.";
-                    return RedirectToAction(nameof(Index));
+                    return Json(new { success = true, message = "Fatura başarıyla silindi." });
                 }
                 else
                 {
                     _logger.LogWarning($"Fatura silinirken sorun oluştu. FaturaID: {id}");
                     TempData["ErrorMessage"] = "Fatura silinirken sorun oluştu.";
-                    return RedirectToAction(nameof(Details), new { id });
+                    return Json(new { success = false, message = "Fatura silinirken sorun oluştu." });
                 }
             }
             catch (Exception ex)
             {
                 _logger.LogError(ex, $"Fatura silme hatası. FaturaID: {id}");
-                TempData["ErrorMessage"] = $"Fatura silinirken bir hata oluştu: {ex.Message}";
-                return RedirectToAction(nameof(Details), new { id });
+                return Json(new { success = false, message = $"Fatura silinirken bir hata oluştu: {ex.Message}" });
             }
         }
 
@@ -654,7 +748,7 @@ namespace MuhasebeStokWebApp.Controllers
                 GenelToplam = fatura.GenelToplam ?? 0,
                 OdemeDurumu = fatura.OdemeDurumu ?? "Belirtilmemiş",
                 Aciklama = fatura.FaturaNotu ?? "",
-                DovizTuru = fatura.DovizTuru ?? "TRY",
+                DovizTuru = fatura.DovizTuru ?? "USD",
                 FaturaKalemleri = fatura.FaturaDetaylari.Select(fd => new FaturaKalemDetailViewModel
                 {
                     KalemID = fd.FaturaDetayID,
@@ -718,7 +812,7 @@ namespace MuhasebeStokWebApp.Controllers
                     AraToplam = fatura.AraToplam,
                     KDVToplam = fatura.KDVToplam,
                     GenelToplam = fatura.GenelToplam,
-                    DovizTuru = fatura.DovizTuru ?? "TRY",
+                    DovizTuru = fatura.DovizTuru ?? "USD",
                     DovizKuru = fatura.DovizKuru,
                     ResmiMi = fatura.ResmiMi,
                     OdemeDurumu = fatura.OdemeDurumu,
@@ -783,75 +877,41 @@ namespace MuhasebeStokWebApp.Controllers
             }
         }
 
-        // AJAX isteği ile kur bilgisi getir
+        // GET: Fatura/GetKurBilgisi
         [HttpGet]
-        public async Task<IActionResult> GetKurBilgisi(string dovizKodu, DateTime? tarih = null)
+        public async Task<IActionResult> GetKurBilgisi(string dovizKodu)
         {
             try
             {
-                if (dovizKodu == "TRY")
+                if (string.IsNullOrWhiteSpace(dovizKodu))
                 {
-                    return Json(new { success = true, kurDegeri = 1 });
+                    return Json(new { success = false, message = "Döviz kodu gereklidir" });
                 }
 
-                // Eğer tarih belirtilmemişse bugünün tarihi
-                var arananTarih = tarih ?? DateTime.Today;
-                
-                // Önce para birimini bul
-                var paraBirimi = await _context.ParaBirimleri
-                    .FirstOrDefaultAsync(p => p.Kod == dovizKodu && !p.Silindi && p.Aktif);
-                
-                if (paraBirimi == null)
+                // Sadece USD ve UZS destekleniyor
+                if (dovizKodu != "USD" && dovizKodu != "UZS")
                 {
-                    return Json(new { 
-                        success = false, 
-                        kurDegeri = 0, 
-                        message = $"{dovizKodu} para birimi bulunamadı. Lütfen para birimini kontrol ediniz."
-                    });
+                    return Json(new { success = false, message = "Desteklenmeyen döviz kodu. Sadece USD ve UZS destekleniyor." });
                 }
-                
-                // İstenen tarih için kur bilgisini ara
-                var kurDegeri = await _context.KurDegerleri
-                    .Where(k => k.ParaBirimiID == paraBirimi.ParaBirimiID && k.Tarih.Date == arananTarih.Date && !k.Silindi && k.Aktif)
-                    .OrderByDescending(k => k.Tarih)
-                    .FirstOrDefaultAsync();
 
-                if (kurDegeri != null)
+                // UZS-USD veya USD-UZS çift yönlü çalışabilir
+                var hedefKod = dovizKodu == "USD" ? "UZS" : "USD";
+                
+                // Döviz kurunu sorgula
+                var kurDegeri = await _dovizKuruService.GetGuncelKurAsync(dovizKodu, hedefKod);
+                
+                if (dovizKodu == "UZS")
                 {
-                    return Json(new { 
-                        success = true, 
-                        kurDegeri = kurDegeri.Satis,
-                        message = $"{arananTarih:dd.MM.yyyy} tarihli kur bilgisi kullanılıyor."
-                    });
+                    // UZS sorgulandıysa, UZS/USD paritesinin tersi olan USD/UZS kurunu dön
+                    kurDegeri = 1 / kurDegeri;
                 }
                 
-                // Tarih için kur bilgisi bulunamadı, döviz servisi üzerinden güncel kuru çek
-                var guncelKur = await _dovizKuruService.GetGuncelKurAsync(dovizKodu, "TRY", arananTarih);
-                
-                if (guncelKur > 0)
-                {
-                    return Json(new { 
-                        success = true, 
-                        kurDegeri = guncelKur,
-                        message = $"Güncel döviz kuru kullanılıyor. ({arananTarih:dd.MM.yyyy})"
-                    });
-                }
-                
-                // Hiçbir şekilde kur bulunamadı
-                return Json(new { 
-                    success = false, 
-                    kurDegeri = 0,
-                    message = $"{dovizKodu} para birimi için {arananTarih:dd.MM.yyyy} tarihli kur bilgisi bulunamadı."
-                });
+                return Json(new { success = true, kur = kurDegeri });
             }
             catch (Exception ex)
             {
-                _logger.LogError(ex, $"Kur bilgisi getirilirken hata oluştu: {ex.Message}");
-                return Json(new { 
-                    success = false, 
-                    kurDegeri = 0,
-                    message = $"Kur bilgisi getirilirken bir hata oluştu: {ex.Message}" 
-                });
+                _logger.LogError(ex, "Döviz kuru alınırken hata oluştu");
+                return Json(new { success = false, message = "Döviz kuru alınırken bir hata oluştu" });
             }
         }
 
@@ -913,6 +973,38 @@ namespace MuhasebeStokWebApp.Controllers
             {
                 _logger.LogError(ex, "Sipariş numarası oluşturulurken hata oluştu");
                 return Json(string.Empty);
+            }
+        }
+
+        // GET: Fatura/GetUrunBilgileri
+        [HttpGet]
+        public async Task<IActionResult> GetUrunBilgileri(Guid id)
+        {
+            try
+            {
+                var urun = await _context.Urunler
+                    .Include(u => u.Birim)
+                    .FirstOrDefaultAsync(u => u.UrunID == id && !u.Silindi && u.Aktif);
+
+                if (urun == null)
+                {
+                    return Json(new { success = false, message = "Ürün bulunamadı." });
+                }
+
+                return Json(new
+                {
+                    success = true,
+                    urunAdi = urun.UrunAdi,
+                    birim = urun.Birim?.BirimAdi ?? "Adet",
+                    birimFiyat = urun.DovizliSatisFiyati,
+                    kdvOrani = urun.KDVOrani,
+                    birimId = urun.BirimID
+                });
+            }
+            catch (Exception ex)
+            {
+                _logger.LogError(ex, "Ürün bilgileri getirilirken hata oluştu: {Message}", ex.Message);
+                return Json(new { success = false, message = "Ürün bilgileri getirilirken bir hata oluştu." });
             }
         }
     }

@@ -132,8 +132,7 @@ namespace MuhasebeStokWebApp.Data.Repositories.EntityRepositories
                     f.FaturaNumarasi.Contains(searchTerm) ||
                     f.FaturaNotu.Contains(searchTerm) ||
                     f.FaturaTuru.FaturaTuruAdi.Contains(searchTerm) ||
-                    f.Cari.Ad.Contains(searchTerm) ||
-                    f.Cari.CariUnvani.Contains(searchTerm)
+                    f.Cari.Ad.Contains(searchTerm)
                 ))
                 .OrderByDescending(f => f.FaturaTarihi)
                 .ToListAsync();

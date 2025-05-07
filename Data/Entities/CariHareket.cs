@@ -18,10 +18,13 @@ namespace MuhasebeStokWebApp.Data.Entities
             Tarih = DateTime.Now;
             Borc = 0;
             Alacak = 0;
+            BorcDoviz = 0;
+            AlacakDoviz = 0;
             // Required string alanlar için boş değerler
             ReferansNo = string.Empty;
             ReferansTuru = string.Empty;
             Aciklama = string.Empty;
+            ParaBirimi = "USD"; // Varsayılan para birimi USD
         }
 
         [Key]
@@ -79,9 +82,29 @@ namespace MuhasebeStokWebApp.Data.Entities
         [Column(TypeName = "decimal(18,2)")]
         public decimal Alacak { get; set; }
         
+        // Döviz cinsinden borç miktarı
+        [Column(TypeName = "decimal(18,2)")]
+        public decimal BorcDoviz { get; set; }
+        
+        // Döviz cinsinden alacak miktarı
+        [Column(TypeName = "decimal(18,2)")]
+        public decimal AlacakDoviz { get; set; }
+        
+        // Para birimi
+        [StringLength(10)]
+        public string ParaBirimi { get; set; }
+        
+        // Döviz cinsinden tutar
+        [Column(TypeName = "decimal(18,2)")]
+        public decimal TutarDoviz { get; set; }
+        
         // Hesaplama amaçlı kullanılacak Bakiye özelliği, veritabanında saklanmayacak
         [NotMapped]
         public decimal Bakiye { get; set; }
+        
+        // Hesaplama amaçlı kullanılacak Döviz Bakiye özelliği, veritabanında saklanmayacak
+        [NotMapped]
+        public decimal BakiyeDoviz { get; set; }
         
         [Column(TypeName = "datetime2")]
         public new DateTime OlusturmaTarihi { get; set; } = DateTime.Now;

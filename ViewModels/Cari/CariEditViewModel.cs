@@ -12,10 +12,6 @@ namespace MuhasebeStokWebApp.ViewModels.Cari
         [Display(Name = "Cari Adı")]
         public required string Ad { get; set; }
 
-        [StringLength(100, ErrorMessage = "Cari ünvanı en fazla 100 karakter olabilir.")]
-        [Display(Name = "Cari Ünvanı")]
-        public string? CariUnvani { get; set; }
-
         [StringLength(15, MinimumLength = 0, ErrorMessage = "Vergi numarası 0 ve 15 karakter arasında olmalıdır.")]
         [Display(Name = "Vergi No")]
         public string? VergiNo { get; set; }
@@ -32,12 +28,6 @@ namespace MuhasebeStokWebApp.ViewModels.Cari
         [StringLength(50, ErrorMessage = "Yetkili adı en fazla 50 karakter olabilir.")]
         [Display(Name = "Yetkili")]
         public string? Yetkili { get; set; }
-
-        [Display(Name = "Başlangıç Bakiyesi")]
-        public decimal BaslangicBakiye { get; set; }
-
-        // Önceki bakiyeyi saklamak için kullanılacak
-        public decimal MevcutBakiye { get; set; }
 
         [StringLength(250, ErrorMessage = "Adres en fazla 250 karakter olabilir.")]
         [Display(Name = "Adres")]
@@ -82,10 +72,6 @@ namespace MuhasebeStokWebApp.ViewModels.Cari
         [Display(Name = "Web Sitesi")]
         public string? WebSitesi { get; set; }
 
-        [StringLength(1000, ErrorMessage = "Notlar en fazla 1000 karakter olabilir.")]
-        [Display(Name = "Notlar")]
-        public string? Notlar { get; set; }
-
         [Display(Name = "Oluşturma Tarihi")]
         public DateTime OlusturmaTarihi { get; set; }
 
@@ -96,8 +82,13 @@ namespace MuhasebeStokWebApp.ViewModels.Cari
         public bool VarsayilanKurKullan { get; set; } = true;
 
         // Ekstra bilgiler - view'de görüntü için kullanılabilir, entity'ye kaydedilmez
+        [Display(Name = "Varsayılan Para Birimi Kodu")]
         public string? VarsayilanParaBirimiKodu { get; set; }
+
+        [Display(Name = "Varsayılan Para Birimi Adı")]
         public string? VarsayilanParaBirimiAdi { get; set; }
+
+        [Display(Name = "Varsayılan Para Birimi Sembolü")]
         public string? VarsayilanParaBirimiSembol { get; set; }
     }
 } 

@@ -26,7 +26,7 @@ namespace MuhasebeStokWebApp.Controllers
     {
         private readonly IUnitOfWork _unitOfWork;
         private readonly ApplicationDbContext _context;
-        private readonly StokFifoService _stokFifoService;
+        private readonly IStokFifoService _stokFifoService;
         private readonly IDovizKuruService _dovizKuruService;
         private readonly ILogger<StokController> _logger;
         private readonly IStokService _stokService;
@@ -34,7 +34,7 @@ namespace MuhasebeStokWebApp.Controllers
         public StokController(
             IUnitOfWork unitOfWork, 
             ApplicationDbContext context, 
-            StokFifoService stokFifoService,
+            IStokFifoService stokFifoService,
             IDovizKuruService dovizKuruService,
             ILogger<StokController> logger,
             IMenuService menuService,
@@ -134,7 +134,7 @@ namespace MuhasebeStokWebApp.Controllers
                 if (fifoKayitlari != null && fifoKayitlari.Any() && fifoKayitlari.Sum(f => f.KalanMiktar) > 0)
                 {
                     decimal toplamTutar = fifoKayitlari.Sum(f => f.KalanMiktar * f.BirimFiyat);
-                    decimal toplamUSDTutar = fifoKayitlari.Sum(f => f.KalanMiktar * f.USDBirimFiyat);
+                    decimal toplamUSDTutar = fifoKayitlari.Sum(f => f.KalanMiktar * f.BirimFiyatUSD);
                     decimal toplamKalanMiktar = fifoKayitlari.Sum(f => f.KalanMiktar);
                     
                     if (toplamKalanMiktar > 0)
@@ -193,6 +193,16 @@ namespace MuhasebeStokWebApp.Controllers
                     }
                 }
 
+                // Önce ürün ID'lerini toplayıp birim adlarını bir sözlükte saklayalım
+                var urunIds = stokHareketleri.Select(sh => sh.UrunID).Distinct().ToList();
+                var birimAdlari = new Dictionary<Guid, string>();
+                
+                foreach (var urunId in urunIds)
+                {
+                    var birimAdi = await GetBirimAdiAsync(urunId);
+                    birimAdlari[urunId] = birimAdi ?? "";
+                }
+                
                 // ViewModel oluştur
                 var viewModel = new StokHareketViewModel
                 {
@@ -214,7 +224,7 @@ namespace MuhasebeStokWebApp.Controllers
                         DepoAdi = sh.Depo?.DepoAdi ?? "Merkez Depo",
                         Miktar = sh.Miktar,
                         BirimFiyat = sh.BirimFiyat ?? 0,
-                        Birim = sh.Birim,
+                        Birim = birimAdlari.ContainsKey(sh.UrunID) ? birimAdlari[sh.UrunID] : sh.Birim, // BirimId yerine BirimAdi göster
                         ParaBirimi = sh.ParaBirimi ?? "UZS",
                         ParaBirimiSembol = GetParaBirimiSembol(sh.ParaBirimi),
                         ReferansNo = sh.ReferansNo,
@@ -229,7 +239,8 @@ namespace MuhasebeStokWebApp.Controllers
                         Miktar = sf.Miktar,
                         KalanMiktar = sf.KalanMiktar,
                         BirimFiyat = sf.BirimFiyat,
-                        BirimFiyatUSD = sf.USDBirimFiyat,
+                        BirimFiyatUSD = sf.BirimFiyatUSD,
+                        BirimFiyatUZS = sf.BirimFiyatUZS,
                         DovizKuru = sf.DovizKuru,
                         ParaBirimi = sf.ParaBirimi ?? "UZS",
                         ParaBirimiSembol = GetParaBirimiSembol(sf.ParaBirimi),
@@ -254,7 +265,7 @@ namespace MuhasebeStokWebApp.Controllers
             var viewModel = new StokGirisViewModel
             {
                 Tarih = DateTime.Now,
-                HareketTuru = StokHareketiTipi.Giris,
+                HareketTuru = StokHareketTipi.Giris,
                 ParaBirimi = "USD",
                 DovizKuru = 1
             };
@@ -425,7 +436,7 @@ namespace MuhasebeStokWebApp.Controllers
             var viewModel = new StokCikisViewModel
             {
                 Tarih = DateTime.Now,
-                HareketTuru = StokHareketiTipi.Cikis
+                HareketTuru = StokHareketTipi.Cikis
             };
             
             return View(viewModel);
@@ -459,7 +470,7 @@ namespace MuhasebeStokWebApp.Controllers
                         DepoID = viewModel.DepoID,
                         Miktar = -viewModel.Miktar, // Çıkış işlemi için negatif değer
                         Birim = viewModel.Birim,
-                        HareketTuru = StokHareketiTipi.Cikis,
+                        HareketTuru = StokHareketTipi.Cikis,
                         Tarih = viewModel.Tarih,
                         ReferansNo = viewModel.ReferansNo ?? "Manuel Çıkış",
                         ReferansTuru = viewModel.ReferansTuru ?? "Manuel",
@@ -565,7 +576,7 @@ namespace MuhasebeStokWebApp.Controllers
                         DepoID = viewModel.KaynakDepoID,
                         Miktar = -viewModel.Miktar, // Çıkış işlemi için negatif değer
                         Birim = viewModel.Birim,
-                        HareketTuru = StokHareketiTipi.Cikis,
+                        HareketTuru = StokHareketTipi.Cikis,
                         Tarih = viewModel.Tarih,
                         ReferansNo = viewModel.ReferansNo ?? $"Transfer-{transferID}",
                         ReferansTuru = "Transfer-Çıkış",
@@ -582,7 +593,7 @@ namespace MuhasebeStokWebApp.Controllers
                         DepoID = viewModel.HedefDepoID,
                         Miktar = viewModel.Miktar, // Giriş işlemi için pozitif değer
                         Birim = viewModel.Birim,
-                        HareketTuru = StokHareketiTipi.Giris,
+                        HareketTuru = StokHareketTipi.Giris,
                         Tarih = viewModel.Tarih,
                         ReferansNo = viewModel.ReferansNo ?? $"Transfer-{transferID}",
                         ReferansTuru = "Transfer-Giriş",
@@ -671,7 +682,7 @@ namespace MuhasebeStokWebApp.Controllers
                             Miktar = fark,
                             BirimFiyat = GetUrunBirimFiyat(urun.UrunID),
                             Birim = urun.Birim?.BirimAdi ?? "Adet",
-                            HareketTuru = StokHareketiTipi.Giris,
+                            HareketTuru = StokHareketTipi.Giris,
                             Tarih = viewModel.Tarih,
                             ReferansNo = viewModel.ReferansNo,
                             ReferansTuru = "Stok Sayım",
@@ -707,7 +718,7 @@ namespace MuhasebeStokWebApp.Controllers
                             Miktar = fark, // Fark zaten negatif
                             BirimFiyat = GetUrunBirimFiyat(urun.UrunID),
                             Birim = urun.Birim?.BirimAdi ?? "Adet",
-                            HareketTuru = StokHareketiTipi.Cikis,
+                            HareketTuru = StokHareketTipi.Cikis,
                             Tarih = viewModel.Tarih,
                             ReferansNo = viewModel.ReferansNo,
                             ReferansTuru = "Stok Sayım",
@@ -781,16 +792,13 @@ namespace MuhasebeStokWebApp.Controllers
                 Birim = fifoKayit.Birim,
                 ParaBirimi = fifoKayit.ParaBirimi,
                 DovizKuru = fifoKayit.DovizKuru,
-                USDBirimFiyat = fifoKayit.USDBirimFiyat,
-                TLBirimFiyat = fifoKayit.TLBirimFiyat,
-                UZSBirimFiyat = fifoKayit.UZSBirimFiyat,
+                BirimFiyatUSD = fifoKayit.BirimFiyatUSD,
+                BirimFiyatUZS = fifoKayit.BirimFiyatUZS,
                 ReferansNo = fifoKayit.ReferansNo,
                 ReferansTuru = fifoKayit.ReferansTuru,
                 Aciklama = fifoKayit.Aciklama,
                 Aktif = fifoKayit.Aktif,
-                Iptal = fifoKayit.Iptal,
-                IptalTarihi = fifoKayit.IptalTarihi,
-                IptalAciklama = fifoKayit.IptalAciklama
+                Iptal = fifoKayit.Iptal
             };
 
             return View(viewModel);
@@ -808,12 +816,13 @@ namespace MuhasebeStokWebApp.Controllers
             // Stok durumu detay listesi
             var stokDurumuDetayListesi = new List<StokDurumuDetayViewModel>();
 
-            decimal toplamStokDegeri = 0;
+            decimal toplamStokDegeriUZS = 0;
+            decimal toplamStokDegeriUSD = 0;
 
             foreach (var urun in urunler)
             {
-                decimal maliyet = await _stokFifoService.GetOrtalamaMaliyet(urun.UrunID);
-                decimal maliyetTL = await _stokFifoService.GetOrtalamaMaliyet(urun.UrunID, "USD");
+                decimal maliyetUZS = await _stokFifoService.GetOrtalamaMaliyet(urun.UrunID, "UZS");
+                decimal maliyetUSD = await _stokFifoService.GetOrtalamaMaliyet(urun.UrunID, "USD");
                 
                 // Dinamik stok miktarını hesapla
                 decimal dinamikStokMiktari = await _stokService.GetDinamikStokMiktari(urun.UrunID);
@@ -832,23 +841,40 @@ namespace MuhasebeStokWebApp.Controllers
                     Birim = urun.Birim?.BirimAdi ?? "-",
                     Kategori = urun.Kategori?.KategoriAdi ?? "Kategorisiz",
                     StokMiktari = dinamikStokMiktari,
-                    OrtalamaMaliyet = maliyetTL,
+                    OrtalamaMaliyet = maliyetUZS, // UZS cinsinden maliyet
+                    OrtalamaMaliyetUSD = maliyetUSD, // USD cinsinden maliyet
                     SatisFiyati = urunFiyat?.Fiyat ?? 0,
                     DepoID = Guid.Empty, // Varsayılan olarak boş, gerekirse depo bazlı filtreleme eklenebilir
                     DepoAdi = "Genel", // Varsayılan olarak genel, gerekirse depo bazlı filtreleme eklenebilir
-                    KritikStokSeviyesi = 10 // Varsayılan değer, gerekirse ürün bazlı kritik stok seviyesi eklenebilir
+                    KritikStokSeviyesi = urun.KritikStokSeviyesi > 0 ? urun.KritikStokSeviyesi : 10 // Ürün bazlı kritik stok seviyesi
                 };
 
                 stokDurumuDetayListesi.Add(stokDurumuDetay);
-                toplamStokDegeri += maliyetTL * dinamikStokMiktari;
+                toplamStokDegeriUZS += maliyetUZS * dinamikStokMiktari;
+                toplamStokDegeriUSD += maliyetUSD * dinamikStokMiktari;
             }
 
             // Ana ViewModel
             var stokDurumuViewModel = new StokDurumuViewModel
             {
                 StokDurumuListesi = stokDurumuDetayListesi,
-                ToplamStokDegeri = toplamStokDegeri
+                ToplamStokDegeri = toplamStokDegeriUZS,
+                ToplamStokDegeriUSD = toplamStokDegeriUSD
             };
+
+            // Depolar için ViewBag hazırla
+            var depolar = await _unitOfWork.Repository<Depo>().GetAsync(
+                filter: d => d.Silindi == false && d.Aktif,
+                orderBy: q => q.OrderBy(d => d.DepoAdi)
+            );
+            ViewBag.Depolar = new SelectList(depolar, "DepoID", "DepoAdi");
+            
+            // Kategoriler için ViewBag hazırla
+            var kategoriler = await _unitOfWork.Repository<UrunKategori>().GetAsync(
+                filter: k => k.Silindi == false && k.Aktif,
+                orderBy: q => q.OrderBy(k => k.KategoriAdi)
+            );
+            ViewBag.Kategoriler = new SelectList(kategoriler, "KategoriID", "KategoriAdi");
 
             return View(stokDurumuViewModel);
         }
@@ -1266,13 +1292,13 @@ namespace MuhasebeStokWebApp.Controllers
 
         private bool IsStokGirisi(StokHareket hareket)
         {
-            return hareket.HareketTuru == StokHareketiTipi.Giris;
+            return hareket.HareketTuru == StokHareketTipi.Giris;
         }
 
         private async Task<decimal> GetToplamStokGirisAsync()
         {
             var toplamGiris = await _context.StokHareketleri
-                .Where(s => !s.Silindi && s.HareketTuru == StokHareketiTipi.Giris)
+                .Where(s => !s.Silindi && s.HareketTuru == StokHareketTipi.Giris)
                 .SumAsync(s => s.Miktar);
             
             return toplamGiris;
@@ -1281,7 +1307,7 @@ namespace MuhasebeStokWebApp.Controllers
         private async Task<decimal> GetToplamStokCikisAsync()
         {
             return await _context.StokHareketleri
-                .Where(sh => sh.HareketTuru == StokHareketiTipi.Cikis && !sh.Silindi)
+                .Where(sh => sh.HareketTuru == StokHareketTipi.Cikis && !sh.Silindi)
                 .SumAsync(sh => Math.Abs(sh.Miktar));
         }
 
@@ -1303,6 +1329,38 @@ namespace MuhasebeStokWebApp.Controllers
                     return "so'm";
                 default:
                     return paraBirimiKodu;
+            }
+        }
+
+        private async Task<string> GetBirimAdiAsync(Guid urunID)
+        {
+            try 
+            {
+                // Önce ürünü al
+                var urun = await _context.Urunler
+                    .Include(u => u.Birim)
+                    .FirstOrDefaultAsync(u => u.UrunID == urunID);
+                
+                if (urun != null && urun.Birim != null)
+                {
+                    return urun.Birim.BirimAdi;
+                }
+                
+                // Ürün yoksa veya ürünün bir birimi yoksa
+                if (urun != null && urun.BirimID.HasValue)
+                {
+                    var birim = await _context.Birimler
+                        .FirstOrDefaultAsync(b => b.BirimID == urun.BirimID.Value);
+                    
+                    return birim?.BirimAdi;
+                }
+                
+                return null;
+            }
+            catch (Exception ex)
+            {
+                _logger.LogError(ex, "Birim adı alınırken hata oluştu. UrunID: {UrunID}", urunID);
+                return null;
             }
         }
 

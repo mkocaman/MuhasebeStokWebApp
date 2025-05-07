@@ -14,20 +14,15 @@
             <div class="col-md-6">
                 <div class="mb-3">
                     <label asp-for="CariKodu" class="form-label">Cari Kodu</label>
-                    <input asp-for="CariKodu" class="form-control" />
+                    <input asp-for="CariKodu" class="form-control" readonly />
                     <span asp-validation-for="CariKodu" class="text-danger"></span>
+                    <small class="form-text text-muted">Cari kodu otomatik oluşturulacaktır.</small>
                 </div>
 
                 <div class="mb-3">
                     <label asp-for="Ad" class="form-label">Cari Adı</label>
                     <input asp-for="Ad" class="form-control" />
                     <span asp-validation-for="Ad" class="text-danger"></span>
-                </div>
-
-                <div class="mb-3">
-                    <label asp-for="CariUnvani" class="form-label">Ünvan</label>
-                    <input asp-for="CariUnvani" class="form-control" />
-                    <span asp-validation-for="CariUnvani" class="text-danger"></span>
                 </div>
 
                 <div class="mb-3">
@@ -67,85 +62,64 @@
                 </div>
 
                 <div class="mb-3">
-                    <label asp-for="WebSitesi" class="form-label">Web Sitesi</label>
-                    <input asp-for="WebSitesi" class="form-control" />
-                    <span asp-validation-for="WebSitesi" class="text-danger"></span>
-                </div>
-
-                <div class="mb-3">
                     <label asp-for="Yetkili" class="form-label">Yetkili</label>
                     <input asp-for="Yetkili" class="form-control" />
                     <span asp-validation-for="Yetkili" class="text-danger"></span>
                 </div>
 
                 <div class="mb-3">
-                    <label asp-for="BaslangicBakiye" class="form-label">Başlangıç Bakiyesi</label>
-                    <input asp-for="BaslangicBakiye" class="form-control" value="0.00" />
-                    <span asp-validation-for="BaslangicBakiye" class="text-danger"></span>
+                    <label asp-for="WebSitesi" class="form-label">Web Sitesi</label>
+                    <input asp-for="WebSitesi" class="form-control" />
+                    <span asp-validation-for="WebSitesi" class="text-danger"></span>
                 </div>
 
                 <div class="mb-3">
                     <label asp-for="VarsayilanParaBirimiId" class="form-label">Para Birimi</label>
-                    <select asp-for="VarsayilanParaBirimiId" class="form-select">
-                        <option value="">Para Birimi Seçiniz</option>
-                        @foreach (var paraBirimi in ViewBag.ParaBirimleri)
+                    <select asp-for="VarsayilanParaBirimiId" class="form-select" id="paraBirimiSelect">
+                        <option value="">Seçiniz</option>
+                        @if (ViewBag.ParaBirimleri != null)
                         {
-                            <option value="@paraBirimi.ParaBirimiID">@paraBirimi.Ad (@paraBirimi.Sembol)</option>
+                            @foreach (var pb in ViewBag.ParaBirimleri)
+                            {
+                                if (pb.Kod != "TRY")
+                                {
+                                    <option value="@pb.ParaBirimiID" data-kod="@pb.Kod" data-sembol="@pb.Sembol" data-ad="@pb.Ad">@pb.Ad (@pb.Kod)</option>
+                                }
+                            }
                         }
                     </select>
                     <span asp-validation-for="VarsayilanParaBirimiId" class="text-danger"></span>
+                    <small class="text-muted">TRY harici para birimleri listelenmektedir.</small>
                 </div>
             </div>
         </div>
 
         <div class="row mb-3">
-            <div class="col-md-6">
-                <div class="mb-3">
-                    <label asp-for="Ulke" class="form-label">Ülke</label>
-                    <input asp-for="Ulke" class="form-control" value="Türkiye" />
-                    <span asp-validation-for="Ulke" class="text-danger"></span>
-                </div>
-
-                <div class="mb-3">
-                    <label asp-for="Il" class="form-label">İl</label>
-                    <input asp-for="Il" class="form-control" />
-                    <span asp-validation-for="Il" class="text-danger"></span>
-                </div>
-
-                <div class="mb-3">
-                    <label asp-for="Ilce" class="form-label">İlçe</label>
-                    <input asp-for="Ilce" class="form-control" />
-                    <span asp-validation-for="Ilce" class="text-danger"></span>
-                </div>
-
-                <div class="mb-3">
-                    <label asp-for="PostaKodu" class="form-label">Posta Kodu</label>
-                    <input asp-for="PostaKodu" class="form-control" />
-                    <span asp-validation-for="PostaKodu" class="text-danger"></span>
-                </div>
-            </div>
-
-            <div class="col-md-6">
+            <div class="col-12">
                 <div class="mb-3">
                     <label asp-for="Adres" class="form-label">Adres</label>
-                    <textarea asp-for="Adres" class="form-control" rows="4"></textarea>
+                    <textarea asp-for="Adres" class="form-control" rows="3"></textarea>
                     <span asp-validation-for="Adres" class="text-danger"></span>
                 </div>
+            </div>
+        </div>
 
+        <div class="row mb-3">
+            <div class="col-12">
                 <div class="mb-3">
                     <label asp-for="Aciklama" class="form-label">Açıklama</label>
                     <textarea asp-for="Aciklama" class="form-control" rows="2"></textarea>
                     <span asp-validation-for="Aciklama" class="text-danger"></span>
                 </div>
-
-                <div class="mb-3">
-                    <label asp-for="Notlar" class="form-label">Notlar</label>
-                    <textarea asp-for="Notlar" class="form-control" rows="2"></textarea>
-                    <span asp-validation-for="Notlar" class="text-danger"></span>
-                </div>
             </div>
         </div>
+
+        <div class="form-check mb-3">
+            <input class="form-check-input" type="checkbox" asp-for="Aktif" checked>
+            <label class="form-check-label" asp-for="Aktif">Aktif</label>
+        </div>
     </div>
+
     <div class="modal-footer">
         <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">İptal</button>
         <button type="submit" class="btn btn-primary">Kaydet</button>
@@ -153,36 +127,38 @@
 </form>
 
 <script>
-    $(document).ready(function() {
-        $('#createCariForm').on('submit', function(e) {
+    $(document).ready(function () {
+        // Para birimi seçildiğinde hidden alanlara değerleri atayalım
+        $('#paraBirimiSelect').change(function () {
+            var selected = $(this).find('option:selected');
+            $('#VarsayilanParaBirimiKodu').val(selected.data('kod'));
+            $('#VarsayilanParaBirimiAdi').val(selected.data('ad'));
+            $('#VarsayilanParaBirimiSembol').val(selected.data('sembol'));
+        });
+
+        // Form submit olayında AJAX kullanımı
+        $('#createCariForm').submit(function (e) {
             e.preventDefault();
-            
-            $('#createFormAlert').addClass('d-none');
-            
             var formData = $(this).serialize();
             
             $.ajax({
-                url: '@Url.Action("Create", "Cari")',
                 type: 'POST',
+                url: $(this).attr('action'),
                 data: formData,
-                success: function(response) {
-                    if (response.success) {
-                        toastr.success(response.message);
+                success: function (result) {
+                    if (result.success) {
+                        $('#cariModal').modal('hide');
+                        showNotification('success', result.message);
+                        // İsteğe bağlı olarak sayfayı yenileyebilir veya tabloyu güncelleyebilirsiniz
                         setTimeout(function() {
-                            window.location.reload();
+                            location.reload();
                         }, 1500);
                     } else {
-                        $('#createFormAlert').removeClass('d-none').text(response.message);
+                        $('#createFormAlert').removeClass('d-none').text(result.message);
                     }
                 },
-                error: function(xhr, status, error) {
-                    var errorMessage = 'Bir hata oluştu. Lütfen tüm alanları kontrol ediniz.';
-                    
-                    if (xhr.responseJSON && xhr.responseJSON.errors) {
-                        errorMessage = Object.values(xhr.responseJSON.errors).flat().join('<br>');
-                    }
-                    
-                    $('#createFormAlert').removeClass('d-none').html(errorMessage);
+                error: function (xhr, status, error) {
+                    $('#createFormAlert').removeClass('d-none').text('İşlem sırasında bir hata oluştu. Lütfen tekrar deneyin.');
                 }
             });
         });

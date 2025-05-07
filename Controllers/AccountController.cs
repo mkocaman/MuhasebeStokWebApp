@@ -19,6 +19,9 @@ using MuhasebeStokWebApp.Data.Entities;
 using MuhasebeStokWebApp.ViewModels.Account;
 using MuhasebeStokWebApp.Data;
 using MuhasebeStokWebApp.Services.Interfaces;
+using Microsoft.AspNetCore.Hosting;
+using Microsoft.AspNetCore.Http.Features;
+using System.IO;
 
 namespace MuhasebeStokWebApp.Controllers
 {
@@ -31,6 +34,7 @@ namespace MuhasebeStokWebApp.Controllers
         protected new readonly RoleManager<IdentityRole> _roleManager;
         private readonly ApplicationDbContext _context;
         private new readonly ILogService _logService;
+        private readonly IWebHostEnvironment _webHostEnvironment;
 
         // Constructor: Dependency Injection ile gerekli servisleri alır
         public AccountController(
@@ -40,7 +44,8 @@ namespace MuhasebeStokWebApp.Controllers
             RoleManager<IdentityRole> roleManager,
             SignInManager<ApplicationUser> signInManager,
             ILogService logService,
-            ApplicationDbContext context) : base(menuService, userManager, roleManager, logService)
+            ApplicationDbContext context,
+            IWebHostEnvironment webHostEnvironment) : base(menuService, userManager, roleManager, logService)
         {
             _logger = logger;
             _signInManager = signInManager;
@@ -48,6 +53,7 @@ namespace MuhasebeStokWebApp.Controllers
             _roleManager = roleManager;
             _context = context;
             _logService = logService;
+            _webHostEnvironment = webHostEnvironment;
         }
 
         // Giriş sayfasını gösterir, zaten giriş yapmış kullanıcılar ana sayfaya yönlendirilir
@@ -392,6 +398,245 @@ namespace MuhasebeStokWebApp.Controllers
             }
             
             return RedirectToAction("UserManagement");
+        }
+
+        // Kullanıcı profil sayfası
+        [HttpGet]
+        [Authorize]
+        public async Task<IActionResult> Profile()
+        {
+            try
+            {
+                // Mevcut kullanıcıyı al
+                var user = await _userManager.GetUserAsync(User);
+                if (user == null)
+                {
+                    return RedirectToAction("Login");
+                }
+
+                // Kullanıcının rollerini al
+                var roles = await _userManager.GetRolesAsync(user);
+
+                // Profil modelini oluştur
+                var model = new ProfileViewModel
+                {
+                    Id = user.Id,
+                    UserName = user.UserName,
+                    Email = user.Email,
+                    PhoneNumber = user.PhoneNumber,
+                    Roles = roles.ToList(),
+                    FullName = user.FullName ?? "",
+                    Bio = user.Bio ?? "",
+                    ProfileImage = user.ProfileImage ?? "/assets/images/dashboard/1.png"
+                };
+
+                // Başlık ayarla
+                ViewData["Title"] = "Profil Sayfası";
+                
+                return View(model);
+            }
+            catch (Exception ex)
+            {
+                _logger.LogError(ex, "Profil görüntüleme sırasında hata oluştu");
+                TempData["ErrorMessage"] = "Profil bilgileri yüklenirken bir hata oluştu.";
+                return RedirectToAction("Index", "Home");
+            }
+        }
+        
+        // Kullanıcı profil güncelleme
+        [HttpPost]
+        [Authorize]
+        [ValidateAntiForgeryToken]
+        public async Task<IActionResult> UpdateProfile(ProfileViewModel model)
+        {
+            if (!ModelState.IsValid)
+            {
+                return View("Profile", model);
+            }
+
+            try
+            {
+                // Mevcut kullanıcıyı al
+                var user = await _userManager.GetUserAsync(User);
+                if (user == null)
+                {
+                    return RedirectToAction("Login");
+                }
+
+                // Kullanıcı bilgilerini güncelle
+                user.PhoneNumber = model.PhoneNumber;
+                user.FullName = model.FullName;
+                user.Bio = model.Bio;
+                
+                // Profil resmi yükleme işlemi
+                if (model.ProfilePhoto != null)
+                {
+                    // Dosya uzantısını kontrol et
+                    var allowedExtensions = new[] { ".jpg", ".jpeg", ".png", ".gif" };
+                    var extension = Path.GetExtension(model.ProfilePhoto.FileName).ToLowerInvariant();
+                    
+                    if (!allowedExtensions.Contains(extension))
+                    {
+                        ModelState.AddModelError("ProfilePhoto", "Sadece .jpg, .jpeg, .png ve .gif uzantılı dosyalar yüklenebilir.");
+                        return View("Profile", model);
+                    }
+                    
+                    // Dosya boyutunu kontrol et (en fazla 5MB)
+                    if (model.ProfilePhoto.Length > 5 * 1024 * 1024)
+                    {
+                        ModelState.AddModelError("ProfilePhoto", "Dosya boyutu 5MB'den büyük olamaz.");
+                        return View("Profile", model);
+                    }
+                    
+                    // Dosya adını oluştur
+                    var fileName = $"{user.Id}_{DateTime.Now.Ticks}{extension}";
+                    var filePath = Path.Combine(Directory.GetCurrentDirectory(), "wwwroot", "profilePhotos", fileName);
+                    
+                    // Dosyayı kaydet
+                    using (var stream = new FileStream(filePath, FileMode.Create))
+                    {
+                        await model.ProfilePhoto.CopyToAsync(stream);
+                    }
+                    
+                    // Veritabanında profil resmini güncelle
+                    user.ProfileImage = $"/profilePhotos/{fileName}";
+                }
+                
+                // Email değişikliği varsa
+                if (user.Email != model.Email)
+                {
+                    // Email güncelleme işlemi
+                    var setEmailResult = await _userManager.SetEmailAsync(user, model.Email);
+                    if (!setEmailResult.Succeeded)
+                    {
+                        foreach (var error in setEmailResult.Errors)
+                        {
+                            ModelState.AddModelError("", error.Description);
+                        }
+                        return View("Profile", model);
+                    }
+                    
+                    // Kullanıcı adı email ile aynı ise onu da güncelle
+                    if (user.UserName == user.Email)
+                    {
+                        var setUserNameResult = await _userManager.SetUserNameAsync(user, model.Email);
+                        if (!setUserNameResult.Succeeded)
+                        {
+                            foreach (var error in setUserNameResult.Errors)
+                            {
+                                ModelState.AddModelError("", error.Description);
+                            }
+                            return View("Profile", model);
+                        }
+                    }
+                }
+
+                // Kullanıcı güncellemesini kaydet
+                var result = await _userManager.UpdateAsync(user);
+                if (result.Succeeded)
+                {
+                    // İşlem başarılı logu
+                    await _logService.LogBilgi("Profil Güncellendi", $"Kullanıcı {user.UserName} profil bilgilerini güncelledi", user.UserName);
+                    
+                    TempData["SuccessMessage"] = "Profil bilgileriniz başarıyla güncellendi.";
+                    return RedirectToAction("Profile");
+                }
+                else
+                {
+                    foreach (var error in result.Errors)
+                    {
+                        ModelState.AddModelError("", error.Description);
+                    }
+                }
+            }
+            catch (Exception ex)
+            {
+                _logger.LogError(ex, "Profil güncelleme sırasında hata oluştu");
+                ModelState.AddModelError("", "Profil güncellenirken bir hata oluştu: " + ex.Message);
+            }
+
+            return View("Profile", model);
+        }
+        
+        // Şifre değiştirme
+        [HttpPost]
+        [Authorize]
+        [ValidateAntiForgeryToken]
+        public async Task<IActionResult> ChangePassword(ChangePasswordViewModel model)
+        {
+            if (!ModelState.IsValid)
+            {
+                // Profil modelini yeniden oluştur
+                var user = await _userManager.GetUserAsync(User);
+                var roles = await _userManager.GetRolesAsync(user);
+                
+                var profileModel = new ProfileViewModel
+                {
+                    Id = user.Id,
+                    UserName = user.UserName,
+                    Email = user.Email,
+                    PhoneNumber = user.PhoneNumber,
+                    Roles = roles.ToList(),
+                    FullName = user.FullName ?? "",
+                    Bio = user.Bio ?? "",
+                    ProfileImage = user.ProfileImage ?? "/assets/images/dashboard/1.png"
+                };
+                
+                return View("Profile", profileModel);
+            }
+
+            try
+            {
+                var user = await _userManager.GetUserAsync(User);
+                if (user == null)
+                {
+                    return RedirectToAction("Login");
+                }
+
+                // Şifre değiştirme
+                var result = await _userManager.ChangePasswordAsync(user, model.OldPassword, model.NewPassword);
+                if (result.Succeeded)
+                {
+                    // İşlem başarılı logu
+                    await _logService.LogBilgi("Şifre Değiştirildi", $"Kullanıcı {user.UserName} şifresini değiştirdi", user.UserName);
+                    
+                    TempData["SuccessMessage"] = "Şifreniz başarıyla değiştirildi.";
+                    
+                    // Kullanıcıyı yeniden giriş yapmaya zorla
+                    await _signInManager.RefreshSignInAsync(user);
+                    
+                    return RedirectToAction("Profile");
+                }
+                else
+                {
+                    foreach (var error in result.Errors)
+                    {
+                        ModelState.AddModelError("", error.Description);
+                    }
+                    
+                    // Profil modelini yeniden oluştur
+                    var roles = await _userManager.GetRolesAsync(user);
+                    var profileModel = new ProfileViewModel
+                    {
+                        Id = user.Id,
+                        UserName = user.UserName,
+                        Email = user.Email,
+                        PhoneNumber = user.PhoneNumber,
+                        Roles = roles.ToList(),
+                        FullName = user.FullName ?? "",
+                        Bio = user.Bio ?? "",
+                        ProfileImage = user.ProfileImage ?? "/assets/images/dashboard/1.png"
+                    };
+                    
+                    return View("Profile", profileModel);
+                }
+            }
+            catch (Exception ex)
+            {
+                _logger.LogError(ex, "Şifre değiştirme sırasında hata oluştu");
+                TempData["ErrorMessage"] = "Şifre değiştirilirken bir hata oluştu: " + ex.Message;
+                return RedirectToAction("Profile");
+            }
         }
     }
 } 

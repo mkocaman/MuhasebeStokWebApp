@@ -10,10 +10,6 @@ namespace MuhasebeStokWebApp.ViewModels.Cari
         [Display(Name = "Cari Adı")]
         public required string Ad { get; set; }
 
-        [StringLength(100, ErrorMessage = "Cari ünvanı en fazla 100 karakter olabilir.")]
-        [Display(Name = "Cari Ünvanı")]
-        public string? CariUnvani { get; set; }
-
         [StringLength(11, MinimumLength = 0, ErrorMessage = "Vergi numarası en fazla 11 karakter olabilir.")]
         [Display(Name = "Vergi No")]
         public string? VergiNo { get; set; }
@@ -31,9 +27,6 @@ namespace MuhasebeStokWebApp.ViewModels.Cari
         [Display(Name = "Yetkili")]
         public string? Yetkili { get; set; }
 
-        [Display(Name = "Başlangıç Bakiyesi")]
-        public decimal BaslangicBakiye { get; set; }
-
         [StringLength(250, ErrorMessage = "Adres en fazla 250 karakter olabilir.")]
         [Display(Name = "Adres")]
         public string? Adres { get; set; }
@@ -45,7 +38,6 @@ namespace MuhasebeStokWebApp.ViewModels.Cari
         [Display(Name = "Aktif")]
         public bool Aktif { get; set; } = true;
 
-        [StringLength(20, ErrorMessage = "Cari kodu en fazla 20 karakter olabilir.")]
         [Display(Name = "Cari Kodu")]
         public string? CariKodu { get; set; }
 
@@ -56,7 +48,7 @@ namespace MuhasebeStokWebApp.ViewModels.Cari
         [StringLength(50, ErrorMessage = "Vergi dairesi en fazla 50 karakter olabilir.")]
         [Display(Name = "Vergi Dairesi")]
         public string? VergiDairesi { get; set; }
-
+        
         [StringLength(50, ErrorMessage = "İl en fazla 50 karakter olabilir.")]
         [Display(Name = "İl")]
         public string? Il { get; set; }
@@ -77,19 +69,20 @@ namespace MuhasebeStokWebApp.ViewModels.Cari
         [Display(Name = "Web Sitesi")]
         public string? WebSitesi { get; set; }
 
-        [StringLength(1000, ErrorMessage = "Notlar en fazla 1000 karakter olabilir.")]
-        [Display(Name = "Notlar")]
-        public string? Notlar { get; set; }
-        
         [Display(Name = "Varsayılan Para Birimi")]
         public Guid? VarsayilanParaBirimiId { get; set; }
-        
+
         [Display(Name = "Hesaplamalarda Varsayılan Kur Kullanılsın")]
         public bool VarsayilanKurKullan { get; set; } = true;
-        
+
         // Ekstra bilgiler - view'de görüntü için kullanılabilir, entity'ye kaydedilmez
+        [Display(Name = "Varsayılan Para Birimi Kodu")]
         public string? VarsayilanParaBirimiKodu { get; set; }
+
+        [Display(Name = "Varsayılan Para Birimi Adı")]
         public string? VarsayilanParaBirimiAdi { get; set; }
+
+        [Display(Name = "Varsayılan Para Birimi Sembolü")]
         public string? VarsayilanParaBirimiSembol { get; set; }
     }
 } 

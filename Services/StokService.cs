@@ -143,8 +143,8 @@ namespace MuhasebeStokWebApp.Services
                         UrunAdi = g.Key.UrunAdi,
                         UrunKodu = g.Key.UrunKodu,
                         BirimAdi = g.Key.BirimAdi,
-                        GirisMiktari = g.Where(sh => sh.HareketTuru == StokHareketiTipi.Giris).Sum(sh => sh.Miktar),
-                        CikisMiktari = g.Where(sh => sh.HareketTuru == StokHareketiTipi.Cikis).Sum(sh => Math.Abs(sh.Miktar))
+                        GirisMiktari = g.Where(sh => sh.HareketTuru == StokHareketTipi.Giris).Sum(sh => sh.Miktar),
+                        CikisMiktari = g.Where(sh => sh.HareketTuru == StokHareketTipi.Cikis).Sum(sh => Math.Abs(sh.Miktar))
                     })
                     .ToList();
 
@@ -192,12 +192,12 @@ namespace MuhasebeStokWebApp.Services
 
                 // Giriş hareketlerinin toplamı
                 var girisler = stokHareketleri
-                    .Where(sh => sh.HareketTuru == StokHareketiTipi.Giris)
+                    .Where(sh => sh.HareketTuru == StokHareketTipi.Giris)
                     .Sum(sh => sh.Miktar);
 
                 // Çıkış hareketlerinin toplamı (mutlak değer)
                 var cikislar = stokHareketleri
-                    .Where(sh => sh.HareketTuru == StokHareketiTipi.Cikis)
+                    .Where(sh => sh.HareketTuru == StokHareketTipi.Cikis)
                     .Sum(sh => Math.Abs(sh.Miktar));
 
                 return girisler - cikislar; // Çıkışları çıkararak hesaplıyoruz
@@ -233,7 +233,7 @@ namespace MuhasebeStokWebApp.Services
                     UrunID = viewModel.UrunID,
                     DepoID = viewModel.DepoID,
                     Miktar = viewModel.Miktar, // Giriş olduğu için miktar pozitif
-                    HareketTuru = StokHareketiTipi.Giris,
+                    HareketTuru = StokHareketTipi.Giris,
                     Aciklama = viewModel.Aciklama ?? "Manuel stok girişi",
                     Tarih = DateTime.Now, // Default olarak şu anki zamanı kullan
                     OlusturmaTarihi = DateTime.Now,
@@ -288,7 +288,7 @@ namespace MuhasebeStokWebApp.Services
                     UrunID = viewModel.UrunID,
                     DepoID = viewModel.DepoID,
                     Miktar = -viewModel.Miktar, // Çıkış olduğu için miktar negatif
-                    HareketTuru = StokHareketiTipi.Cikis,
+                    HareketTuru = StokHareketTipi.Cikis,
                     Aciklama = viewModel.Aciklama ?? "Manuel stok çıkışı",
                     Tarih = DateTime.Now, // Default olarak şu anki zamanı kullan
                     OlusturmaTarihi = DateTime.Now,
@@ -343,7 +343,7 @@ namespace MuhasebeStokWebApp.Services
                     UrunID = viewModel.UrunID,
                     DepoID = viewModel.KaynakDepoID,
                     Miktar = -viewModel.Miktar, // Çıkış olduğu için miktar negatif
-                    HareketTuru = StokHareketiTipi.Cikis,
+                    HareketTuru = StokHareketTipi.Cikis,
                     Aciklama = viewModel.Aciklama ?? $"Transfer çıkış: {viewModel.HedefDepoID} nolu depoya",
                     Tarih = DateTime.Now, // Default olarak şu anki zamanı kullan
                     OlusturmaTarihi = DateTime.Now,
@@ -359,7 +359,7 @@ namespace MuhasebeStokWebApp.Services
                     UrunID = viewModel.UrunID,
                     DepoID = viewModel.HedefDepoID,
                     Miktar = viewModel.Miktar, // Giriş olduğu için miktar pozitif
-                    HareketTuru = StokHareketiTipi.Giris,
+                    HareketTuru = StokHareketTipi.Giris,
                     Aciklama = viewModel.Aciklama ?? $"Transfer giriş: {viewModel.KaynakDepoID} nolu depodan",
                     Tarih = DateTime.Now, // Default olarak şu anki zamanı kullan
                     OlusturmaTarihi = DateTime.Now,
@@ -413,7 +413,7 @@ namespace MuhasebeStokWebApp.Services
                         UrunID = urun.UrunID,
                         DepoID = viewModel.DepoID,
                         Miktar = fark, // Fark pozitifse giriş, negatifse çıkış
-                        HareketTuru = fark > 0 ? StokHareketiTipi.Giris : StokHareketiTipi.Cikis,
+                        HareketTuru = fark > 0 ? StokHareketTipi.Giris : StokHareketTipi.Cikis,
                         Aciklama = viewModel.Aciklama ?? $"Stok sayımı düzeltmesi. Sistem: {urun.SistemStokMiktari}, Sayım: {urun.SayimMiktari}, Fark: {fark}",
                         Tarih = DateTime.Now, // Default olarak şu anki zamanı kullan
                         OlusturmaTarihi = DateTime.Now,

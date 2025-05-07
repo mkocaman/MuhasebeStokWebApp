@@ -32,5 +32,15 @@ namespace MuhasebeStokWebApp.Models
         /// Oluşturulan stok çıkış detaylarının ID'leri
         /// </summary>
         public List<Guid> CikisDetaylari { get; set; } = new List<Guid>();
+        
+        /// <summary>
+        /// Stokun yetersiz olup olmadığını belirtir
+        /// </summary>
+        public bool StokYetersiz { get; set; } = false;
+        
+        /// <summary>
+        /// Stok yetersizse, eksik olan miktarı belirtir
+        /// </summary>
+        public decimal EksikMiktar { get; set; } = 0;
     }
 } 

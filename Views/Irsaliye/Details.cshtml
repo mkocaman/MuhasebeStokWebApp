@@ -149,7 +149,7 @@
                                                 @detay.UrunAdi
                                             </a>
                                         </td>
-                                        <td>@detay.Miktar</td>
+                                        <td>@detay.Miktar.ToString("N2")</td>
                                         <td>@detay.Birim</td>
                                         <td>@(string.IsNullOrEmpty(detay.Aciklama) ? "-" : detay.Aciklama)</td>
                                     </tr>

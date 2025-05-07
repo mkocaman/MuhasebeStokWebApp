@@ -249,5 +249,36 @@ namespace MuhasebeStokWebApp.Services
                 
             return faturaOdemeleri;
         }
+
+        private async Task<Fatura> AutoMapFatura(FaturaCreateViewModel dto, Guid? currentUserId)
+        {
+            var fatura = new Fatura
+            {
+                FaturaID = Guid.NewGuid(),
+                FaturaNumarasi = dto.FaturaNumarasi,
+                SiparisNumarasi = dto.SiparisNumarasi,
+                FaturaTarihi = dto.FaturaTarihi,
+                VadeTarihi = dto.VadeTarihi,
+                FaturaTuruID = dto.FaturaTuruID,
+                CariID = dto.CariID,
+                IndirimTutari = dto.IndirimTutari ?? 0,
+                GenelToplam = dto.GenelToplam,
+                KDVToplam = dto.KDVToplam,
+                AraToplam = dto.AraToplam,
+                DovizTuru = dto.DovizTuru,
+                ParaBirimi = dto.DovizTuru, // DovizTuru alanını ParaBirimi olarak kullan
+                DovizKuru = dto.DovizKuru,
+                GenelToplamDoviz = dto.GenelToplamDoviz,
+                KDVToplamDoviz = dto.KDVToplamDoviz,
+                AraToplamDoviz = dto.AraToplamDoviz,
+                IndirimTutariDoviz = dto.IndirimTutariDoviz ?? 0,
+                OlusturmaTarihi = DateTime.Now,
+                OlusturanKullaniciID = currentUserId,
+                FaturaNotu = dto.Aciklama,
+                Silindi = false
+            };
+
+            return fatura;
+        }
     }
 } 

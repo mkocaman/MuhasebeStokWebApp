@@ -51,6 +51,12 @@
     <!-- Toastr -->
     <link rel="stylesheet" href="~/lib/toastr/toastr.min.css" />
     
+    <!-- Feather Icons -->
+    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/feather-icons/dist/feather.min.css">
+    
+    <!-- ApexCharts -->
+    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/apexcharts@3.35.0/dist/apexcharts.min.css">
+    
     @await RenderSectionAsync("Styles", required: false)
     <style>
         /* Menü CSS'i */
@@ -181,10 +187,79 @@
             100% { transform: rotate(360deg); }
         }
         
+        /* Dark Mode CSS */
+        .dark-only {
+            background-color: #1d1e26;
+            color: #eaedef;
+        }
+        
+        .dark-only .page-main-header,
+        .dark-only .page-body-wrapper,
+        .dark-only .footer,
+        .dark-only .card,
+        .dark-only .card-header,
+        .dark-only .card-body {
+            background-color: #1d1e26;
+            color: #eaedef;
+            border-color: #2c2c43;
+        }
+        
+        .dark-only .main-nav {
+            background-color: #262932;
+        }
+        
+        .dark-only .card {
+            box-shadow: 0 0.125rem 0.25rem rgba(0, 0, 0, 0.2);
+        }
+        
+        .dark-only .table th,
+        .dark-only .table td {
+            background-color: #262932;
+            color: #eaedef;
+            border-color: #2c2c43;
+        }
+        
+        .dark-only .text-dark {
+            color: #eaedef !important;
+        }
+        
+        .dark-only a {
+            color: #5baf61;
+        }
+        
+        .dark-only .btn-primary-light {
+            background-color: #5baf6133;
+            color: #5baf61;
+        }
+        
+        .dark-only .widget-settings-dropdown {
+            background-color: #262932;
+            border-color: #2c2c43;
+        }
+        
+        .dark-only .widget-settings-dropdown a {
+            color: #eaedef;
+        }
+        
+        .dark-only .widget-settings-dropdown a:hover {
+            background-color: #1d1e26;
+        }
+        
+        .dark-only .apexcharts-tooltip,
+        .dark-only .apexcharts-menu {
+            background-color: #262932 !important;
+            border-color: #2c2c43 !important;
+            color: #eaedef !important;
+        }
+        
+        .dark-only .apexcharts-menu-item:hover {
+            background-color: #1d1e26 !important;
+        }
+        
         /* Footer CSS */
         .footer {
-            position: fixed;
-            bottom: 0;
+            position: relative;
+            bottom: auto;
             width: 100%;
             white-space: nowrap;
             line-height: 60px;
@@ -192,11 +267,132 @@
             border-top: 1px solid #e9ecef;
             text-align: center;
             z-index: 1030;
+            margin-top: 30px;
         }
 
-        /* Page-body için footer yüksekliği kadar padding ekliyoruz */
+        /* Footer genişleme ayarı - Sidebar küçültülünce footer da genişler */
+        .sidebar-close .footer {
+            margin-left: 0 !important;
+            width: 100% !important;
+            max-width: 100% !important;
+            transition: all 0.3s ease;
+        }
+
+        /* Page-body padding düzeltmesi */
         .page-body {
-            padding-bottom: 70px; /* footer yüksekliğinden biraz fazla */
+            padding-bottom: 20px;
+        }
+        
+        /* Sidebar toggle ve widget ayarları için stiller */
+        .sidebar-close .main-nav {
+            margin-left: -280px;
+            transition: all 0.3s ease;
+        }
+        
+        .sidebar-close .page-body,
+        .sidebar-close .container-fluid {
+            margin-left: 0 !important;
+            width: 100% !important;
+            max-width: 100% !important;
+            flex: 0 0 100% !important;
+            transition: all 0.3s ease;
+        }
+        
+        .sidebar-close .page-header {
+            padding-left: 0;
+        }
+        
+        .main-nav, .page-body, .container-fluid {
+            transition: all 0.3s ease;
+        }
+        
+        /* Widget ayarları için */
+        .card {
+            position: relative;
+            border-radius: 8px;
+            border: 1px solid #eaeaea;
+        }
+        
+        .card-header {
+            position: relative;
+            padding: 15px 20px;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            border-bottom: 1px solid #eaeaea;
+            background-color: #fff;
+            border-radius: 8px 8px 0 0;
+        }
+        
+        .card-header h5 {
+            margin-bottom: 0;
+            font-size: 16px;
+            font-weight: 600;
+        }
+
+        .card-header-right {
+            position: relative;
+        }
+        
+        .card-option {
+            display: flex;
+            margin-bottom: 0;
+        }
+        
+        .card-option li {
+            display: inline-block;
+            margin-left: 10px;
+            cursor: pointer;
+        }
+        
+        .card-option li i {
+            font-size: 16px;
+            color: #6c757d;
+            transition: all 0.3s ease;
+        }
+        
+        .card-option li i:hover {
+            color: #000;
+        }
+        
+        /* Tam ekran kart stili */
+        .card.full-card {
+            position: fixed !important;
+            top: 0;
+            left: 0;
+            width: 100vw !important;
+            height: 100vh !important;
+            z-index: 9999;
+            max-width: none !important;
+            margin: 0 !important;
+            background: #fff;
+            border-radius: 0 !important;
+            overflow-y: auto;
+        }
+        
+        /* Küçültülmüş kart stili */
+        .card.minimize-card .card-body {
+            display: none;
+        }
+        
+        /* Widget loader stili */
+        .card-loader {
+            position: absolute;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background: rgba(255,255,255,0.8);
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            z-index: 999;
+            border-radius: 5px;
+        }
+        
+        .card-loader i {
+            font-size: 30px;
+            color: #007bff;
         }
     </style>
 </head>
@@ -222,15 +418,23 @@
                             <img class="img-fluid" src="~/assets/images/logo/logo.png" alt="Logo">
                         </a>
                     </div>
-                    <div class="toggle-sidebar">
-                        <i class="material-icons" id="sidebar-toggle">menu</i>
-                    </div>
+                    
+                        <div class="toggle-sidebar">
+                            <i data-feather="align-center" id="sidebar-toggle" class="status_toggle middle"></i>
+                        </div>
+                    
                 </div>
                 <div class="nav-right col pull-right right-menu p-0">
                     <ul class="nav-menus">
                         <li>
                             <a class="text-dark" href="#!" onclick="javascript:toggleFullScreen()">
                                 <i class="material-icons">fullscreen</i>
+                            </a>
+                        </li>
+                        <!-- Dark Mode / Light Mode Toggle -->
+                        <li>
+                            <a class="mode text-dark" href="javascript:void(0)" title="Temayı Değiştir" style="padding: 6px 10px; border-radius: 4px; display: flex; align-items: center; justify-content: center;">
+                                <i class="fa fa-moon-o" style="font-size: 22px;"></i>
                             </a>
                         </li>
                         <li class="onhover-dropdown">
@@ -423,6 +627,18 @@
                                         </a>
                                     </li>
                                 }
+
+                                <li class="sidebar-list">
+                                    <a class="sidebar-link sidebar-title @(ViewContext.RouteData.Values["controller"].ToString() == "Home" ? "active" : "")" href="@Url.Action("Index", "Home")">
+                                        <i data-feather="home"></i><span>Ana Sayfa</span>
+                                    </a>
+                                </li>
+                                
+                                <li class="sidebar-list">
+                                    <a class="sidebar-link sidebar-title @(ViewContext.RouteData.Values["controller"].ToString() == "Todo" ? "active" : "")" href="@Url.Action("Index", "Todo")">
+                                        <i data-feather="check-square"></i><span>Yapılacaklar</span>
+                                    </a>
+                                </li>
                             </ul>
                         </div>
                         <div class="right-arrow" id="right-arrow">
@@ -517,6 +733,9 @@
     <!-- Chart.js -->
     <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
     
+    <!-- ApexCharts -->
+    <script src="https://cdn.jsdelivr.net/npm/apexcharts@3.35.0/dist/apexcharts.min.js"></script>
+    
     <!-- DataTables -->
     <script src="https://cdn.datatables.net/1.13.7/js/jquery.dataTables.min.js"></script>
     <script src="https://cdn.datatables.net/1.13.7/js/dataTables.bootstrap5.min.js"></script>
@@ -535,9 +754,13 @@
     <!-- Toastr -->
     <script src="~/lib/toastr/toastr.min.js"></script>
     
+    <!-- Feather icons -->
+    <script src="https://cdn.jsdelivr.net/npm/feather-icons/dist/feather.min.js"></script>
+    
     <!-- Custom Scripts -->
     <script src="~/assets/js/config.js"></script>
     <script src="~/assets/js/script.js"></script>
+    <script src="~/assets/js/custom-card/custom-card.js"></script>
     <script src="~/js/site.js" asp-append-version="true"></script>
     
     @await RenderSectionAsync("Scripts", required: false)
@@ -554,6 +777,9 @@
                 allowOutsideClick: false,
                 allowEscapeKey: false
             });
+            
+            // Feather iconlarını başlat
+            feather.replace();
         });
     </script>
     

@@ -468,7 +468,7 @@ namespace MuhasebeStokWebApp.Controllers
                     Aciklama = h.Aciklama ?? string.Empty,
                     ParaBirimi = kasa.ParaBirimi ?? "TRY",
                     CariID = h.CariID,
-                    CariAdi = h.Cari?.CariUnvani ?? string.Empty,
+                    CariAdi = h.Cari?.Ad ?? string.Empty,
                     IslemTuru = h.IslemTuru ?? string.Empty,
                     TransferID = h.TransferID,
                     HedefKasaID = h.HedefKasaID
@@ -967,7 +967,7 @@ namespace MuhasebeStokWebApp.Controllers
                         (h.HareketTuru != null && h.HareketTuru.Contains(search)) ||
                         (h.ReferansTuru != null && h.ReferansTuru.Contains(search)) ||
                         (h.Aciklama != null && h.Aciklama.Contains(search)) ||
-                        (h.Cari != null && h.Cari.CariUnvani != null && h.Cari.CariUnvani.Contains(search))
+                        (h.Cari != null && h.Cari.Ad != null && h.Cari.Ad.Contains(search))
                     );
                 }
                 
@@ -1032,7 +1032,7 @@ namespace MuhasebeStokWebApp.Controllers
                     referansTuru = h.ReferansTuru ?? string.Empty,
                     aciklama = h.Aciklama ?? string.Empty,
                     tutar = h.Tutar,
-                    cariUnvani = h.Cari?.CariUnvani ?? string.Empty
+                    cariUnvani = h.Cari?.Ad ?? string.Empty
                 }).ToList();
                 
                 return Json(new

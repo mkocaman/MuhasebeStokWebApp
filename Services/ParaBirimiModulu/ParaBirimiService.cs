@@ -169,6 +169,23 @@ namespace MuhasebeStokWebApp.Services.ParaBirimiModulu
         }
         
         /// <summary>
+        /// Yerel para birimini (TRY) döndürür
+        /// Yerel para birimi bulunamazsa ana para birimini döndürür
+        /// </summary>
+        public async Task<MuhasebeStokWebApp.Data.Entities.ParaBirimiModulu.ParaBirimi> GetYerelParaBirimiAsync()
+        {
+            // Önce TRY kodlu para birimini ara
+            var yerelParaBirimi = await _context.ParaBirimleri
+                .FirstOrDefaultAsync(p => p.Kod == "TRY" && !p.Silindi);
+                
+            // TRY bulunamazsa ana para birimini döndür
+            if (yerelParaBirimi == null)
+                return await GetAnaParaBirimiAsync();
+                
+            return yerelParaBirimi;
+        }
+        
+        /// <summary>
         /// Ana para birimini değiştirir
         /// </summary>
         public async Task<bool> SetAnaParaBirimiAsync(Guid paraBirimiId)

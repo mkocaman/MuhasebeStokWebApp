@@ -4,110 +4,77 @@ using Microsoft.EntityFrameworkCore;
 using Microsoft.Extensions.Logging;
 using MuhasebeStokWebApp.Data;
 using MuhasebeStokWebApp.Data.Entities;
-using MuhasebeStokWebApp.Data.Repositories;
+using MuhasebeStokWebApp.Services.Interfaces;
+using System.Linq;
+using System.Reflection;
+using System.Linq.Expressions;
 
 namespace MuhasebeStokWebApp.Services
 {
     /// <summary>
-    /// ISoftDeleteService arayüzünün genel uygulaması
+    /// Soft Delete işlemlerini yönetecek servis
     /// </summary>
     /// <typeparam name="TEntity">ISoftDelete arayüzünü uygulayan entity tipi</typeparam>
     public class SoftDeleteService<TEntity> : ISoftDeleteService<TEntity> where TEntity : class, ISoftDelete
     {
-        protected readonly IUnitOfWork _unitOfWork;
-        protected readonly IRepository<TEntity> _repository;
-        protected readonly ILogger<SoftDeleteService<TEntity>> _logger;
         protected readonly ApplicationDbContext _context;
-        
-        public SoftDeleteService(
-            IUnitOfWork unitOfWork,
-            ILogger<SoftDeleteService<TEntity>> logger,
-            ApplicationDbContext context)
+        protected readonly ILogger<SoftDeleteService<TEntity>> _logger;
+
+        public SoftDeleteService(ApplicationDbContext context, ILogger<SoftDeleteService<TEntity>> logger)
         {
-            _unitOfWork = unitOfWork ?? throw new ArgumentNullException(nameof(unitOfWork));
-            _repository = _unitOfWork.Repository<TEntity>();
-            _logger = logger ?? throw new ArgumentNullException(nameof(logger));
-            _context = context ?? throw new ArgumentNullException(nameof(context));
+            _context = context;
+            _logger = logger;
         }
-        
+
         /// <summary>
-        /// Entity'yi soft delete yapar
+        /// Verilen entity'i soft delete yapar
         /// </summary>
         public virtual async Task<bool> SoftDeleteAsync(TEntity entity)
         {
-            if (entity == null)
-            {
-                _logger.LogWarning("SoftDeleteAsync: Entity null olamaz");
-                return false;
-            }
-            
             try
             {
-                // Transaction başlat
-                await _unitOfWork.BeginTransactionAsync();
-                
-                // Entity'yi güncelle
+                if (entity == null)
+                {
+                    _logger.LogWarning("SoftDeleteAsync: Entity null olamaz");
+                    return false;
+                }
+
                 entity.Silindi = true;
-                
-                // Aktif özelliğine sahipse, onu da false yap
-                var aktivasyonProperty = entity.GetType().GetProperty("Aktif") ?? 
-                                        entity.GetType().GetProperty("AktifMi");
-                
-                if (aktivasyonProperty != null)
-                {
-                    aktivasyonProperty.SetValue(entity, false);
-                }
-                
-                // GuncellemeTarihi özelliğine sahipse, şimdiki zamanı ata
-                var guncellemeTarihiProperty = entity.GetType().GetProperty("GuncellemeTarihi");
-                if (guncellemeTarihiProperty != null)
-                {
-                    guncellemeTarihiProperty.SetValue(entity, DateTime.Now);
-                }
-                
-                // Entity'yi güncelle
-                await _repository.UpdateAsync(entity);
-                await _unitOfWork.SaveChangesAsync();
-                
-                // İşlemi tamamla
-                await _unitOfWork.CommitTransactionAsync();
-                
-                _logger.LogInformation($"{typeof(TEntity).Name} ID: {GetEntityId(entity)} soft delete yapıldı");
+
+                _context.Update(entity);
+                await _context.SaveChangesAsync();
+
+                _logger.LogInformation($"SoftDeleteAsync: {typeof(TEntity).Name} başarıyla silindi");
                 return true;
             }
             catch (Exception ex)
             {
-                await _unitOfWork.RollbackTransactionAsync();
                 _logger.LogError(ex, $"SoftDeleteAsync hatası: {ex.Message}");
                 return false;
             }
         }
-        
+
         /// <summary>
-        /// Entity'yi ID'sine göre soft delete yapar
+        /// Verilen ID'ye sahip entity'i soft delete yapar
         /// </summary>
         public virtual async Task<bool> SoftDeleteByIdAsync(object id)
         {
-            if (id == null)
-            {
-                _logger.LogWarning("SoftDeleteByIdAsync: ID null olamaz");
-                return false;
-            }
-            
             try
             {
-                // Entity'yi getir
-                var entity = await _repository.GetByIdAsync(id);
+                if (id == null)
+                {
+                    _logger.LogWarning("SoftDeleteByIdAsync: ID null olamaz");
+                    return false;
+                }
+
+                var entity = await _context.Set<TEntity>().FindAsync(id);
+
                 if (entity == null)
                 {
                     _logger.LogWarning($"SoftDeleteByIdAsync: {id} ID'li entity bulunamadı");
                     return false;
                 }
-                
-                // İlişkili kayıtlar varsa, sadece soft delete yap
-                bool hasRelated = await HasRelatedRecordsAsync(id);
-                
-                // Soft delete yap
+
                 return await SoftDeleteAsync(entity);
             }
             catch (Exception ex)
@@ -116,119 +83,202 @@ namespace MuhasebeStokWebApp.Services
                 return false;
             }
         }
-        
+
         /// <summary>
-        /// Soft delete yapılmış bir entity'yi geri yükler
+        /// Verilen filtreye göre entity'leri soft delete yapar
+        /// </summary>
+        public virtual async Task<int> DeleteRangeAsync(Expression<Func<TEntity, bool>> filter)
+        {
+            try
+            {
+                if (filter == null)
+                {
+                    _logger.LogWarning("DeleteRangeAsync: Filtre null olamaz");
+                    return 0;
+                }
+
+                var entities = await _context.Set<TEntity>().Where(filter).ToListAsync();
+
+                if (entities == null || !entities.Any())
+                {
+                    _logger.LogWarning("DeleteRangeAsync: Filtreye uygun entity bulunamadı");
+                    return 0;
+                }
+
+                foreach (var entity in entities)
+                {
+                    entity.Silindi = true;
+                }
+
+                _context.UpdateRange(entities);
+                await _context.SaveChangesAsync();
+
+                _logger.LogInformation($"DeleteRangeAsync: {entities.Count} adet {typeof(TEntity).Name} başarıyla silindi");
+                return entities.Count;
+            }
+            catch (Exception ex)
+            {
+                _logger.LogError(ex, $"DeleteRangeAsync hatası: {ex.Message}");
+                return 0;
+            }
+        }
+
+        /// <summary>
+        /// Entity içindeki key property adını döndürür
+        /// </summary>
+        protected string GetKeyPropertyName()
+        {
+            var properties = typeof(TEntity).GetProperties();
+            var keyProperty = properties.FirstOrDefault(p => 
+                p.GetCustomAttributes(typeof(System.ComponentModel.DataAnnotations.KeyAttribute), true).Any());
+
+            if (keyProperty != null)
+                return keyProperty.Name;
+
+            // ID ya da TypeNameID formatında property adı ara
+            var entityName = typeof(TEntity).Name;
+            var idProperty = properties.FirstOrDefault(p => p.Name.Equals("ID", StringComparison.OrdinalIgnoreCase) ||
+                                                          p.Name.Equals($"{entityName}ID", StringComparison.OrdinalIgnoreCase) ||
+                                                          p.Name.Equals($"{entityName}Id", StringComparison.OrdinalIgnoreCase));
+            
+            return idProperty?.Name;
+        }
+
+        /// <summary>
+        /// Verilen entity'i geri yükler (silindi false yapar)
         /// </summary>
         public virtual async Task<bool> RestoreAsync(TEntity entity)
         {
-            if (entity == null)
-            {
-                _logger.LogWarning("RestoreAsync: Entity null olamaz");
-                return false;
-            }
-            
             try
             {
-                // Transaction başlat
-                await _unitOfWork.BeginTransactionAsync();
-                
-                // Entity'yi güncelle
+                if (entity == null)
+                {
+                    _logger.LogWarning("RestoreAsync: Entity null olamaz");
+                    return false;
+                }
+
                 entity.Silindi = false;
-                
-                // Aktif özelliğine sahipse, onu da true yap
-                var aktivasyonProperty = entity.GetType().GetProperty("Aktif") ?? 
-                                        entity.GetType().GetProperty("AktifMi");
-                
-                if (aktivasyonProperty != null)
-                {
-                    aktivasyonProperty.SetValue(entity, true);
-                }
-                
-                // GuncellemeTarihi özelliğine sahipse, şimdiki zamanı ata
-                var guncellemeTarihiProperty = entity.GetType().GetProperty("GuncellemeTarihi");
-                if (guncellemeTarihiProperty != null)
-                {
-                    guncellemeTarihiProperty.SetValue(entity, DateTime.Now);
-                }
-                
-                // Entity'yi güncelle
-                await _repository.UpdateAsync(entity);
-                await _unitOfWork.SaveChangesAsync();
-                
-                // İşlemi tamamla
-                await _unitOfWork.CommitTransactionAsync();
-                
-                _logger.LogInformation($"{typeof(TEntity).Name} ID: {GetEntityId(entity)} geri yüklendi");
+
+                _context.Update(entity);
+                await _context.SaveChangesAsync();
+
+                _logger.LogInformation($"RestoreAsync: {typeof(TEntity).Name} başarıyla geri yüklendi");
                 return true;
             }
             catch (Exception ex)
             {
-                await _unitOfWork.RollbackTransactionAsync();
                 _logger.LogError(ex, $"RestoreAsync hatası: {ex.Message}");
                 return false;
             }
         }
-        
+
         /// <summary>
         /// Soft delete yapılmış bir entity'yi ID'sine göre geri yükler
         /// </summary>
         public virtual async Task<bool> RestoreByIdAsync(object id)
         {
-            if (id == null)
-            {
-                _logger.LogWarning("RestoreByIdAsync: ID null olamaz");
-                return false;
-            }
-            
             try
             {
-                // Entity'yi getir (silinmiş kayıtları da getirebilmek için DbContext'i kullan)
-                var entity = await _context.Set<TEntity>().FindAsync(id);
+                _logger.LogInformation($"Restoring {typeof(TEntity).Name} with ID {id}");
+                var propertyName = GetKeyPropertyName();
                 
-                if (entity == null)
+                if (string.IsNullOrEmpty(propertyName))
                 {
-                    _logger.LogWarning($"RestoreByIdAsync: {id} ID'li entity bulunamadı");
+                    _logger.LogError($"Key property not found for {typeof(TEntity).Name}");
                     return false;
                 }
+
+                var parameter = Expression.Parameter(typeof(TEntity), "x");
+                var property = Expression.Property(parameter, propertyName);
+                var value = Expression.Constant(Guid.Parse(id.ToString()));
+                var equals = Expression.Equal(property, value);
+                var lambda = Expression.Lambda<Func<TEntity, bool>>(equals, parameter);
+
+                // IgnoreQueryFilters kullanımı burada gerekli çünkü silinmiş veriyi alıyoruz
+                var entity = await _context.Set<TEntity>()
+                    .IgnoreQueryFilters()
+                    .FirstOrDefaultAsync(lambda);
+
+                if (entity == null)
+                {
+                    _logger.LogWarning($"{typeof(TEntity).Name} with ID {id} not found or already restored");
+                    return false;
+                }
+
+                entity.Silindi = false;
                 
-                // Geri yükle
-                return await RestoreAsync(entity);
+                // Eğer Cari sınıfı ise açıklama ekle
+                if (typeof(TEntity) == typeof(Cari))
+                {
+                    var cari = entity as Cari;
+                    if (cari != null)
+                    {
+                        cari.Aciklama = (cari.Aciklama ?? "") + " (Restore Edildi: " + DateTime.Now.ToString("dd.MM.yyyy HH:mm") + ")";
+                    }
+                }
+
+                await _context.SaveChangesAsync();
+                
+                _logger.LogInformation($"{typeof(TEntity).Name} with ID {id} restored successfully");
+                return true;
             }
             catch (Exception ex)
             {
-                _logger.LogError(ex, $"RestoreByIdAsync hatası: {ex.Message}");
+                _logger.LogError(ex, $"Error restoring {typeof(TEntity).Name} with ID {id}: {ex.Message}");
                 return false;
+            }
+        }
+
+        /// <summary>
+        /// Verilen filtreye göre silinmiş entity'leri geri yükler
+        /// </summary>
+        public virtual async Task<int> RestoreRangeAsync(Expression<Func<TEntity, bool>> filter)
+        {
+            try
+            {
+                if (filter == null)
+                {
+                    _logger.LogWarning("RestoreRangeAsync: Filtre null olamaz");
+                    return 0;
+                }
+
+                var entities = await _context.Set<TEntity>()
+                    .IgnoreQueryFilters()
+                    .Where(e => e.Silindi)
+                    .Where(filter)
+                    .ToListAsync();
+
+                if (entities == null || !entities.Any())
+                {
+                    _logger.LogWarning("RestoreRangeAsync: Filtreye uygun silinmiş entity bulunamadı");
+                    return 0;
+                }
+
+                foreach (var entity in entities)
+                {
+                    entity.Silindi = false;
+                }
+
+                _context.UpdateRange(entities);
+                await _context.SaveChangesAsync();
+
+                _logger.LogInformation($"RestoreRangeAsync: {entities.Count} adet {typeof(TEntity).Name} başarıyla geri yüklendi");
+                return entities.Count;
+            }
+            catch (Exception ex)
+            {
+                _logger.LogError(ex, $"RestoreRangeAsync hatası: {ex.Message}");
+                return 0;
             }
         }
         
         /// <summary>
         /// Entity'nin ilişkili kayıtları olup olmadığını kontrol eder
-        /// Bu metot, her entity tipi için özel olarak uygulanmalıdır
         /// </summary>
         public virtual async Task<bool> HasRelatedRecordsAsync(object id)
         {
-            // Varsayılan olarak false döndür
-            // Bu metot, türetilmiş sınıflarda uygulanmalıdır
+            _logger.LogWarning($"HasRelatedRecordsAsync metodu {typeof(TEntity).Name} için uygulanmamış");
             return false;
-        }
-        
-        /// <summary>
-        /// Entity'nin ID'sini alır
-        /// </summary>
-        protected virtual object GetEntityId(TEntity entity)
-        {
-            // Entity'nin ID özelliğini bul
-            var idProperty = entity.GetType().GetProperty("Id") ?? 
-                             entity.GetType().GetProperty($"{entity.GetType().Name}ID") ??
-                             entity.GetType().GetProperty($"{entity.GetType().Name}Id");
-                             
-            if (idProperty != null)
-            {
-                return idProperty.GetValue(entity);
-            }
-            
-            return "Bilinmeyen ID";
         }
     }
 } 

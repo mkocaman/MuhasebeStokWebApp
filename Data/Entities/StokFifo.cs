@@ -28,13 +28,13 @@ namespace MuhasebeStokWebApp.Data.Entities
         public decimal BirimFiyat { get; set; }
         
         [Required]
-        [StringLength(20)]
+        [StringLength(50)]
         public string Birim { get; set; } = "";
         
         // Para birimi bilgisi
         [Required]
         [StringLength(10)]
-        public string ParaBirimi { get; set; } = "TRY";
+        public string ParaBirimi { get; set; } = "USD";
         
         // USD'ye çevirmek için kullanılan kur
         [Required]
@@ -42,17 +42,11 @@ namespace MuhasebeStokWebApp.Data.Entities
         
         // Standardize edilmiş USD para birimi değeri - raporlama ve hesaplamalar için
         [Required]
-        public decimal USDBirimFiyat { get; set; }
-
-        // TL para birimi değeri - kaldırılacak (tüm hesaplamalar USD üzerinden yapılacak)
-        // Migration ile bu alan kaldırılacak
-        [Required]
-        public decimal TLBirimFiyat { get; set; }
+        public decimal BirimFiyatUSD { get; set; }
         
-        // UZS para birimi değeri - kaldırılacak (tüm hesaplamalar USD üzerinden yapılacak)
-        // Migration ile bu alan kaldırılacak
+        // UZS para birimi değeri
         [Required]
-        public decimal UZSBirimFiyat { get; set; }
+        public decimal BirimFiyatUZS { get; set; }
         
         [Required]
         public DateTime GirisTarihi { get; set; }
@@ -67,24 +61,10 @@ namespace MuhasebeStokWebApp.Data.Entities
         [StringLength(20)]
         public string ReferansTuru { get; set; } = "";
         
-        [Required]
-        public Guid ReferansID { get; set; }
+        public Guid? ReferansID { get; set; }
         
         [StringLength(500)]
-        public string? Aciklama { get; set; }
-        
-        [Required]
-        public bool Aktif { get; set; } = true;
-        
-        [Required]
-        public bool Iptal { get; set; } = false;
-        
-        public DateTime? IptalTarihi { get; set; }
-        
-        [StringLength(500)]
-        public string? IptalAciklama { get; set; }
-        
-        public Guid? IptalEdenKullaniciID { get; set; }
+        public string Aciklama { get; set; } = "";
         
         [Required]
         public DateTime OlusturmaTarihi { get; set; } = DateTime.Now;
@@ -92,13 +72,16 @@ namespace MuhasebeStokWebApp.Data.Entities
         public DateTime? GuncellemeTarihi { get; set; }
         
         [Required]
+        public bool Aktif { get; set; } = true;
+        
+        [Required]
+        public bool Iptal { get; set; } = false;
+        
+        [Required]
         public bool Silindi { get; set; } = false;
         
-        // Concurrency kontrolü için RowVersion alanı
-        [Timestamp]
-        public byte[]? RowVersion { get; set; }
-        
         // Navigation properties
-        public virtual Urun Urun { get; set; } = null!;
+        public virtual Urun Urun { get; set; }
+        public virtual ICollection<StokCikisDetay> StokCikisDetaylari { get; set; } = new List<StokCikisDetay>();
     }
 } 

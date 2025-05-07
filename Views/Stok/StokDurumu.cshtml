@@ -106,8 +106,10 @@
                             <th>Birim</th>
                             <th>Depo</th>
                             <th>Stok Miktarı</th>
-                            <th>Ortalama Maliyet</th>
-                            <th>Toplam Değer</th>
+                            <th>Ortalama Maliyet (UZS)</th>
+                            <th>Ortalama Maliyet (USD)</th>
+                            <th>Toplam Değer (UZS)</th>
+                            <th>Toplam Değer (USD)</th>
                             <th>Satış Fiyatı</th>
                             <th>Durum</th>
                             <th>İşlemler</th>
@@ -124,7 +126,9 @@
                                 <td>@stokDurumu.DepoAdi</td>
                                 <td>@stokDurumu.StokMiktari.ToString("N2") @stokDurumu.Birim</td>
                                 <td>@stokDurumu.OrtalamaMaliyet.ToString("N2") so'm</td>
+                                <td>@stokDurumu.OrtalamaMaliyetUSD.ToString("N2") $</td>
                                 <td>@((stokDurumu.OrtalamaMaliyet * stokDurumu.StokMiktari).ToString("N2")) so'm</td>
+                                <td>@((stokDurumu.OrtalamaMaliyetUSD * stokDurumu.StokMiktari).ToString("N2")) $</td>
                                 <td>@stokDurumu.SatisFiyati.ToString("N2") so'm</td>
                                 <td>
                                     @if (stokDurumu.StokMiktari <= stokDurumu.KritikStokSeviyesi)
@@ -156,9 +160,14 @@
                     </tbody>
                     <tfoot>
                         <tr class="fw-bold">
-                            <td colspan="7" class="text-end">Toplam Stok Değeri:</td>
-                            <td>@Model.ToplamStokDegeri.ToString("N2") ₺</td>
-                            <td colspan="3"></td>
+                            <td colspan="8" class="text-end">Toplam Stok Değeri (UZS):</td>
+                            <td>@Model.ToplamStokDegeri.ToString("N2") so'm</td>
+                            <td colspan="4"></td>
+                        </tr>
+                        <tr class="fw-bold">
+                            <td colspan="8" class="text-end">Toplam Stok Değeri (USD):</td>
+                            <td>@Model.ToplamStokDegeriUSD.ToString("N2") $</td>
+                            <td colspan="4"></td>
                         </tr>
                     </tfoot>
                 </table>

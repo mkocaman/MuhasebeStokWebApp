@@ -57,7 +57,13 @@ namespace MuhasebeStokWebApp
             services.AddScoped<IFaturaValidationService, FaturaValidationService>();
             services.AddScoped<IIrsaliyeService, IrsaliyeService>();
 
-            // ... more service registrations ...
+            // Numara üretme servisleri
+            services.AddScoped<IFaturaNumaralandirmaService, FaturaNumaralandirmaService>();
+            services.AddScoped<IIrsaliyeNumaralandirmaService, IrsaliyeNumaralandirmaService>();
+            services.AddScoped<ICariNumaralandirmaService, CariNumaralandirmaService>();
+            
+            // Yapılacaklar listesi servisi
+            services.AddScoped<ITodoService, TodoService>();
 
             // EF Core ile veritabanı bağlantısı yapılandırması
             services.AddDbContext<ApplicationDbContext>(options =>

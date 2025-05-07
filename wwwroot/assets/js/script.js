@@ -308,3 +308,80 @@ $(".mode").on("click", function () {
         var color = $(this).attr("data-attr");
         localStorage.setItem('body', 'dark-only');
     });
+
+// Sidebar toggle fonksiyonu
+$(document).ready(function() {
+    $("#sidebar-toggle").on('click', function() {
+        $(".page-body-wrapper").toggleClass("sidebar-close");
+        $(".page-wrapper").toggleClass("sidebar-close");
+    });
+    
+    // Widget ayarları
+    $(".card-option li").on("click", function() {
+        var $this = $(this);
+        var $card = $this.closest('.card');
+        
+        if ($this.find('i').hasClass('fa-cog')) {
+            $this.animate({
+                rotate: '+=360deg'
+            });
+        } else if ($this.find('i').hasClass('fa-window-maximize')) {
+            if (!$card.hasClass('full-card')) {
+                $this.find('i').toggleClass('fa-window-maximize').toggleClass('fa-window-minimize');
+            }
+            $card.toggleClass('full-card');
+            $('body').toggleClass('card-fullscreen');
+        } else if ($this.find('i').hasClass('fa-minus')) {
+            $card.find('.card-body').slideToggle();
+            $this.find('i').toggleClass('fa-minus').toggleClass('fa-plus');
+        } else if($this.find('i').hasClass('fa-refresh')) {
+            var cardLoad = $card.append('<div class="card-loader"><i class="fa fa-spinner fa-spin"></i></div>');
+            setTimeout(function() {
+                cardLoad.find('.card-loader').remove();
+            }, 2000);
+        } else if($this.find('i').hasClass('fa-trash')) {
+            $card.fadeOut(300, function() {
+                $card.remove();
+            });
+        }
+    });
+    
+    // Dark mode / Light mode toggle
+    $(".mode").on("click", function () {
+        var themeBody = $('body');
+        var modeIcon = $('.mode i');
+        
+        themeBody.toggleClass("dark-only");
+        modeIcon.toggleClass("fa-moon-o").toggleClass("fa-lightbulb-o");
+        
+        if (themeBody.hasClass("dark-only")) {
+            localStorage.setItem('dark-mode', 'true');
+        } else {
+            localStorage.setItem('dark-mode', 'false');
+        }
+    });
+    
+    // Dark mode kontrolü
+    if (localStorage.getItem('dark-mode') === 'true') {
+        $('body').addClass("dark-only");
+        $('.mode i').removeClass("fa-moon-o").addClass("fa-lightbulb-o");
+    } else {
+        $('body').removeClass("dark-only");
+        $('.mode i').addClass("fa-moon-o").removeClass("fa-lightbulb-o");
+    }
+});
+
+// Document ready içerisinde feather icons'ları başlatma kodu ekleyelim
+$(document).ready(function() {
+    // Feather icons'ları başlat (eğer feather.js yüklüyse)
+    if (typeof feather !== 'undefined') {
+        feather.replace();
+    }
+    
+    // Widget ayarları simgesini tıklandığında etkinleştir
+    $('.widget-settings-icon').on('click', function(e) {
+        e.preventDefault();
+        e.stopPropagation();
+        $(this).next('.widget-settings-dropdown').toggleClass('show');
+    });
+});

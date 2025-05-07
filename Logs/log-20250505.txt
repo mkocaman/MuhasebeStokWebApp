@@ -1,0 +1,1277 @@
+2025-05-05 10:52:00.836 +03:00 [INF] Veritabanına bağlantı başarılı. Migrationlar uygulanıyor...
+2025-05-05 10:52:01.208 +03:00 [INF] Veritabanı işlemleri başarıyla tamamlandı.
+2025-05-05 10:52:14.725 +03:00 [INF] Giriş denemesi: admin
+2025-05-05 10:52:14.841 +03:00 [INF] Admin kullanıcısı başarıyla giriş yaptı: admin
+2025-05-05 10:52:14.841 +03:00 [INF] Admin session oluşturuldu: UserID=f0c78a73-342f-4491-acca-6c3d4a0be04a, UserName=admin
+2025-05-05 10:52:14.841 +03:00 [INF] Yönlendirme adresi: /
+2025-05-05 10:52:14.841 +03:00 [INF] Admin kullanıcısı / adresine yönlendiriliyor
+2025-05-05 10:52:14.968 +03:00 [INF] Aktif session bulundu: UserID=f0c78a73-342f-4491-acca-6c3d4a0be04a, UserName=admin
+2025-05-05 10:52:14.969 +03:00 [INF] Admin kullanıcısı tespit edildi
+2025-05-05 10:52:14.970 +03:00 [INF] Kimlik doğrulanmış kullanıcı: admin
+2025-05-05 11:03:37.171 +03:00 [INF] Veritabanına bağlantı başarılı. Migrationlar uygulanıyor...
+2025-05-05 11:03:37.487 +03:00 [INF] Veritabanı işlemleri başarıyla tamamlandı.
+2025-05-05 11:03:51.778 +03:00 [INF] Giriş denemesi: admin
+2025-05-05 11:03:51.878 +03:00 [INF] Admin kullanıcısı başarıyla giriş yaptı: admin
+2025-05-05 11:03:51.878 +03:00 [INF] Admin session oluşturuldu: UserID=f0c78a73-342f-4491-acca-6c3d4a0be04a, UserName=admin
+2025-05-05 11:03:51.878 +03:00 [INF] Yönlendirme adresi: /
+2025-05-05 11:03:51.878 +03:00 [INF] Admin kullanıcısı / adresine yönlendiriliyor
+2025-05-05 11:03:51.975 +03:00 [INF] Aktif session bulundu: UserID=f0c78a73-342f-4491-acca-6c3d4a0be04a, UserName=admin
+2025-05-05 11:03:51.976 +03:00 [INF] Admin kullanıcısı tespit edildi
+2025-05-05 11:03:51.976 +03:00 [INF] Kimlik doğrulanmış kullanıcı: admin
+2025-05-05 11:10:51.578 +03:00 [INF] Veritabanına bağlantı başarılı. Migrationlar uygulanıyor...
+2025-05-05 11:10:51.882 +03:00 [INF] Veritabanı işlemleri başarıyla tamamlandı.
+2025-05-05 11:11:06.854 +03:00 [INF] Giriş denemesi: admin
+2025-05-05 11:11:06.951 +03:00 [INF] Admin kullanıcısı başarıyla giriş yaptı: admin
+2025-05-05 11:11:06.951 +03:00 [INF] Admin session oluşturuldu: UserID=f0c78a73-342f-4491-acca-6c3d4a0be04a, UserName=admin
+2025-05-05 11:11:06.951 +03:00 [INF] Yönlendirme adresi: /Urun
+2025-05-05 11:11:06.951 +03:00 [INF] Admin kullanıcısı /Urun adresine yönlendiriliyor
+2025-05-05 11:11:37.136 +03:00 [INF] Kur değeri önbellekten alındı: USD -> TRY
+2025-05-05 11:11:51.347 +03:00 [INF] Kur değeri önbellekten alındı: USD -> TRY
+2025-05-05 11:16:15.957 +03:00 [INF] Veritabanına bağlantı başarılı. Migrationlar uygulanıyor...
+2025-05-05 11:16:16.263 +03:00 [INF] Veritabanı işlemleri başarıyla tamamlandı.
+2025-05-05 11:16:16.421 +03:00 [ERR] Hosting failed to start
+System.IO.IOException: Failed to bind to address https://127.0.0.1:7118: address already in use.
+ ---> Microsoft.AspNetCore.Connections.AddressInUseException: Address already in use
+ ---> System.Net.Sockets.SocketException (48): Address already in use
+   at System.Net.Sockets.Socket.DoBind(EndPoint endPointSnapshot, SocketAddress socketAddress)
+   at System.Net.Sockets.Socket.Bind(EndPoint localEP)
+   at Microsoft.AspNetCore.Server.Kestrel.Transport.Sockets.SocketTransportOptions.CreateDefaultBoundListenSocket(EndPoint endpoint)
+   at Microsoft.AspNetCore.Server.Kestrel.Transport.Sockets.SocketConnectionListener.Bind()
+   --- End of inner exception stack trace ---
+   at Microsoft.AspNetCore.Server.Kestrel.Transport.Sockets.SocketConnectionListener.Bind()
+   at Microsoft.AspNetCore.Server.Kestrel.Transport.Sockets.SocketTransportFactory.BindAsync(EndPoint endpoint, CancellationToken cancellationToken)
+   at Microsoft.AspNetCore.Server.Kestrel.Core.Internal.Infrastructure.TransportManager.BindAsync(EndPoint endPoint, ConnectionDelegate connectionDelegate, EndpointConfig endpointConfig, CancellationToken cancellationToken)
+   at Microsoft.AspNetCore.Server.Kestrel.Core.KestrelServerImpl.<>c__DisplayClass28_0`1.<<StartAsync>g__OnBind|0>d.MoveNext()
+--- End of stack trace from previous location ---
+   at Microsoft.AspNetCore.Server.Kestrel.Core.Internal.AddressBinder.BindEndpointAsync(ListenOptions endpoint, AddressBindContext context, CancellationToken cancellationToken)
+   --- End of inner exception stack trace ---
+   at Microsoft.AspNetCore.Server.Kestrel.Core.Internal.AddressBinder.BindEndpointAsync(ListenOptions endpoint, AddressBindContext context, CancellationToken cancellationToken)
+   at Microsoft.AspNetCore.Server.Kestrel.Core.LocalhostListenOptions.BindAsync(AddressBindContext context, CancellationToken cancellationToken)
+   at Microsoft.AspNetCore.Server.Kestrel.Core.Internal.AddressBinder.AddressesStrategy.BindAsync(AddressBindContext context, CancellationToken cancellationToken)
+   at Microsoft.AspNetCore.Server.Kestrel.Core.KestrelServerImpl.BindAsync(CancellationToken cancellationToken)
+   at Microsoft.AspNetCore.Server.Kestrel.Core.KestrelServerImpl.StartAsync[TContext](IHttpApplication`1 application, CancellationToken cancellationToken)
+   at Microsoft.AspNetCore.Hosting.GenericWebHostService.StartAsync(CancellationToken cancellationToken)
+   at Microsoft.Extensions.Hosting.Internal.Host.<StartAsync>b__14_1(IHostedService service, CancellationToken token)
+   at Microsoft.Extensions.Hosting.Internal.Host.ForeachService[T](IEnumerable`1 services, CancellationToken token, Boolean concurrent, Boolean abortOnFirstException, List`1 exceptions, Func`3 operation)
+2025-05-05 11:16:56.127 +03:00 [INF] Veritabanına bağlantı başarılı. Migrationlar uygulanıyor...
+2025-05-05 11:16:56.436 +03:00 [INF] Veritabanı işlemleri başarıyla tamamlandı.
+2025-05-05 11:28:45.937 +03:00 [INF] Veritabanına bağlantı başarılı. Migrationlar uygulanıyor...
+2025-05-05 11:28:46.246 +03:00 [INF] Veritabanı işlemleri başarıyla tamamlandı.
+2025-05-05 11:29:04.348 +03:00 [INF] Giriş denemesi: admin
+2025-05-05 11:29:04.446 +03:00 [INF] Admin kullanıcısı başarıyla giriş yaptı: admin
+2025-05-05 11:29:04.446 +03:00 [INF] Admin session oluşturuldu: UserID=f0c78a73-342f-4491-acca-6c3d4a0be04a, UserName=admin
+2025-05-05 11:29:04.447 +03:00 [INF] Yönlendirme adresi: /Urun
+2025-05-05 11:29:04.447 +03:00 [INF] Admin kullanıcısı /Urun adresine yönlendiriliyor
+2025-05-05 11:29:51.804 +03:00 [INF] Yeni cari kodu oluşturuldu: CRI-250505-001
+2025-05-05 12:13:26.041 +03:00 [INF] Veritabanına bağlantı başarılı. Migrationlar uygulanıyor...
+2025-05-05 12:13:26.333 +03:00 [INF] Veritabanı işlemleri başarıyla tamamlandı.
+2025-05-05 12:16:22.846 +03:00 [INF] Giriş denemesi: admin
+2025-05-05 12:16:22.943 +03:00 [INF] Admin kullanıcısı başarıyla giriş yaptı: admin
+2025-05-05 12:16:22.943 +03:00 [INF] Admin session oluşturuldu: UserID=f0c78a73-342f-4491-acca-6c3d4a0be04a, UserName=admin
+2025-05-05 12:16:22.943 +03:00 [INF] Yönlendirme adresi: /Urun
+2025-05-05 12:16:22.943 +03:00 [INF] Admin kullanıcısı /Urun adresine yönlendiriliyor
+2025-05-05 12:16:30.295 +03:00 [INF] Yeni cari kodu oluşturuldu: CRI-250505-002
+2025-05-05 12:16:36.441 +03:00 [INF] Yeni cari kodu oluşturuldu: CRI-250505-002
+2025-05-05 12:16:40.879 +03:00 [INF] Yeni cari kodu oluşturuldu: CRI-250505-002
+2025-05-05 12:16:53.216 +03:00 [INF] Yeni cari kodu oluşturuldu: CRI-250505-002
+2025-05-05 12:27:10.724 +03:00 [INF] Fatura oluşturma sayfası yükleniyor: Kullanıcı=admin
+2025-05-05 12:27:10.758 +03:00 [INF] Yeni numara oluşturuldu: FTR-250505-001
+2025-05-05 12:27:10.762 +03:00 [INF] Yeni numara oluşturuldu: SIP-250505-001
+2025-05-05 12:27:10.783 +03:00 [INF] Cari listesi yüklendi, toplam 2 adet cari bulundu.
+2025-05-05 12:27:10.799 +03:00 [INF] Sözleşme listesi yüklendi, toplam 0 adet sözleşme bulundu.
+2025-05-05 12:27:10.821 +03:00 [INF] Ürün listesi yüklendi, toplam 3 adet ürün bulundu.
+2025-05-05 12:27:10.837 +03:00 [INF] Depo listesi yüklendi, toplam 2 adet depo bulundu.
+2025-05-05 12:27:10.837 +03:00 [INF] Ürün select list oluşturuldu, toplam 3 adet öğe içeriyor.
+2025-05-05 12:27:10.848 +03:00 [INF] Para birimi listesi yüklendi, toplam 3 adet para birimi bulundu.
+2025-05-05 12:53:01.861 +03:00 [INF] Fatura oluşturma sayfası yükleniyor: Kullanıcı=admin
+2025-05-05 12:53:01.866 +03:00 [INF] Yeni numara oluşturuldu: FTR-250505-001
+2025-05-05 12:53:01.872 +03:00 [INF] Yeni numara oluşturuldu: SIP-250505-001
+2025-05-05 12:53:01.876 +03:00 [INF] Cari listesi yüklendi, toplam 2 adet cari bulundu.
+2025-05-05 12:53:01.880 +03:00 [INF] Sözleşme listesi yüklendi, toplam 0 adet sözleşme bulundu.
+2025-05-05 12:53:01.884 +03:00 [INF] Ürün listesi yüklendi, toplam 3 adet ürün bulundu.
+2025-05-05 12:53:01.888 +03:00 [INF] Depo listesi yüklendi, toplam 2 adet depo bulundu.
+2025-05-05 12:53:01.889 +03:00 [INF] Ürün select list oluşturuldu, toplam 3 adet öğe içeriyor.
+2025-05-05 12:53:01.893 +03:00 [INF] Para birimi listesi yüklendi, toplam 3 adet para birimi bulundu.
+2025-05-05 13:32:00.025 +03:00 [INF] Veritabanına bağlantı başarılı. Migrationlar uygulanıyor...
+2025-05-05 13:32:00.361 +03:00 [INF] Veritabanı işlemleri başarıyla tamamlandı.
+2025-05-05 13:32:10.032 +03:00 [INF] Giriş denemesi: admin
+2025-05-05 13:32:10.135 +03:00 [INF] Admin kullanıcısı başarıyla giriş yaptı: admin
+2025-05-05 13:32:10.135 +03:00 [INF] Admin session oluşturuldu: UserID=f0c78a73-342f-4491-acca-6c3d4a0be04a, UserName=admin
+2025-05-05 13:32:10.135 +03:00 [INF] Yönlendirme adresi: /Urun
+2025-05-05 13:32:10.135 +03:00 [INF] Admin kullanıcısı /Urun adresine yönlendiriliyor
+2025-05-05 13:32:23.875 +03:00 [INF] Fatura oluşturma sayfası yükleniyor: Kullanıcı=admin
+2025-05-05 13:32:23.904 +03:00 [INF] Yeni numara oluşturuldu: FTR-250505-001
+2025-05-05 13:32:23.909 +03:00 [INF] Yeni numara oluşturuldu: SIP-250505-001
+2025-05-05 13:32:23.942 +03:00 [INF] Cari listesi yüklendi, toplam 2 adet cari bulundu.
+2025-05-05 13:32:23.953 +03:00 [INF] Sözleşme listesi yüklendi, toplam 0 adet sözleşme bulundu.
+2025-05-05 13:32:23.966 +03:00 [INF] Ürün listesi yüklendi, toplam 3 adet ürün bulundu.
+2025-05-05 13:32:23.982 +03:00 [INF] Depo listesi yüklendi, toplam 2 adet depo bulundu.
+2025-05-05 13:32:23.982 +03:00 [INF] Ürün select list oluşturuldu, toplam 3 adet öğe içeriyor.
+2025-05-05 13:32:23.991 +03:00 [INF] Para birimi listesi yüklendi, toplam 3 adet para birimi bulundu.
+2025-05-05 13:32:36.369 +03:00 [INF] Kur değeri önbellekten alındı: UZS -> TRY
+2025-05-05 14:32:25.040 +03:00 [INF] Giriş denemesi: admin
+2025-05-05 14:32:25.145 +03:00 [INF] Admin kullanıcısı başarıyla giriş yaptı: admin
+2025-05-05 14:32:25.145 +03:00 [INF] Admin session oluşturuldu: UserID=f0c78a73-342f-4491-acca-6c3d4a0be04a, UserName=admin
+2025-05-05 14:32:25.145 +03:00 [INF] Yönlendirme adresi: /Urun
+2025-05-05 14:32:25.145 +03:00 [INF] Admin kullanıcısı /Urun adresine yönlendiriliyor
+2025-05-05 14:32:33.795 +03:00 [INF] Fatura oluşturma sayfası yükleniyor: Kullanıcı=admin
+2025-05-05 14:32:33.799 +03:00 [INF] Yeni numara oluşturuldu: FTR-250505-001
+2025-05-05 14:32:33.803 +03:00 [INF] Yeni numara oluşturuldu: SIP-250505-001
+2025-05-05 14:32:33.810 +03:00 [INF] Cari listesi yüklendi, toplam 2 adet cari bulundu.
+2025-05-05 14:32:33.814 +03:00 [INF] Sözleşme listesi yüklendi, toplam 0 adet sözleşme bulundu.
+2025-05-05 14:32:33.818 +03:00 [INF] Ürün listesi yüklendi, toplam 3 adet ürün bulundu.
+2025-05-05 14:32:33.822 +03:00 [INF] Depo listesi yüklendi, toplam 2 adet depo bulundu.
+2025-05-05 14:32:33.822 +03:00 [INF] Ürün select list oluşturuldu, toplam 3 adet öğe içeriyor.
+2025-05-05 14:32:33.827 +03:00 [INF] Para birimi listesi yüklendi, toplam 3 adet para birimi bulundu.
+2025-05-05 14:32:33.905 +03:00 [INF] Kur değeri önbellekten alındı: UZS -> TRY
+2025-05-05 14:32:42.745 +03:00 [INF] Kur değeri önbellekten alındı: UZS -> TRY
+2025-05-05 16:28:36.734 +03:00 [INF] Veritabanına bağlantı başarılı. Migrationlar uygulanıyor...
+2025-05-05 16:28:37.130 +03:00 [INF] Veritabanı işlemleri başarıyla tamamlandı.
+2025-05-05 16:29:53.334 +03:00 [INF] Giriş denemesi: admin
+2025-05-05 16:29:53.433 +03:00 [INF] Admin kullanıcısı başarıyla giriş yaptı: admin
+2025-05-05 16:29:53.433 +03:00 [INF] Admin session oluşturuldu: UserID=f0c78a73-342f-4491-acca-6c3d4a0be04a, UserName=admin
+2025-05-05 16:29:53.433 +03:00 [INF] Yönlendirme adresi: /Urun
+2025-05-05 16:29:53.433 +03:00 [INF] Admin kullanıcısı /Urun adresine yönlendiriliyor
+2025-05-05 16:30:01.758 +03:00 [INF] Fatura oluşturma sayfası yükleniyor: Kullanıcı=admin
+2025-05-05 16:30:01.789 +03:00 [INF] Yeni numara oluşturuldu: FTR-250505-001
+2025-05-05 16:30:01.792 +03:00 [INF] Yeni numara oluşturuldu: SIP-250505-001
+2025-05-05 16:30:01.823 +03:00 [INF] Cari listesi yüklendi, toplam 2 adet cari bulundu.
+2025-05-05 16:30:01.833 +03:00 [INF] Sözleşme listesi yüklendi, toplam 0 adet sözleşme bulundu.
+2025-05-05 16:30:01.845 +03:00 [INF] Ürün listesi yüklendi, toplam 3 adet ürün bulundu.
+2025-05-05 16:30:01.860 +03:00 [INF] Depo listesi yüklendi, toplam 2 adet depo bulundu.
+2025-05-05 16:30:01.861 +03:00 [INF] Ürün select list oluşturuldu, toplam 3 adet öğe içeriyor.
+2025-05-05 16:30:01.879 +03:00 [INF] Para birimi listesi yüklendi, toplam 2 adet para birimi bulundu.
+2025-05-05 16:30:36.074 +03:00 [INF] Kur değeri önbellekten alındı: UZS -> USD
+2025-05-05 16:30:56.660 +03:00 [INF] Birim sayısı: Aktif=2, Pasif=0, Silinmiş=1
+2025-05-05 16:30:59.379 +03:00 [INF] Toplam depo sayısı: 2
+2025-05-05 16:30:59.380 +03:00 [INF] Aktif depo sayısı: 2
+2025-05-05 16:30:59.380 +03:00 [INF] Pasif depo sayısı: 0
+2025-05-05 16:30:59.380 +03:00 [INF] Silinmiş depo sayısı: 0
+2025-05-05 16:31:32.486 +03:00 [INF] Kur değeri önbellekten alındı: UZS -> USD
+2025-05-05 16:31:42.449 +03:00 [INF] Kur değeri önbellekten alındı: UZS -> USD
+2025-05-05 16:50:24.223 +03:00 [INF] Veritabanına bağlantı başarılı. Migrationlar uygulanıyor...
+2025-05-05 16:50:24.572 +03:00 [INF] Veritabanı işlemleri başarıyla tamamlandı.
+2025-05-05 16:50:29.072 +03:00 [INF] Birim sayısı: Aktif=2, Pasif=0, Silinmiş=1
+2025-05-05 16:50:39.215 +03:00 [INF] Fatura oluşturma sayfası yükleniyor: Kullanıcı=admin
+2025-05-05 16:50:39.244 +03:00 [INF] Yeni numara oluşturuldu: FTR-250505-001
+2025-05-05 16:50:39.248 +03:00 [INF] Yeni numara oluşturuldu: SIP-250505-001
+2025-05-05 16:50:39.281 +03:00 [INF] Cari listesi yüklendi, toplam 2 adet cari bulundu.
+2025-05-05 16:50:39.291 +03:00 [INF] Sözleşme listesi yüklendi, toplam 0 adet sözleşme bulundu.
+2025-05-05 16:50:39.383 +03:00 [INF] Ürün listesi yüklendi, toplam 3 adet ürün bulundu.
+2025-05-05 16:50:39.395 +03:00 [INF] Depo listesi yüklendi, toplam 2 adet depo bulundu.
+2025-05-05 16:50:39.435 +03:00 [INF] Birim sayısı: Aktif=2, Pasif=0, Silinmiş=0
+2025-05-05 16:50:39.435 +03:00 [INF] Ürün select list oluşturuldu, toplam 3 adet öğe içeriyor.
+2025-05-05 16:50:39.444 +03:00 [INF] Para birimi listesi yüklendi, toplam 2 adet para birimi bulundu.
+2025-05-05 16:50:59.022 +03:00 [INF] Kur değeri önbellekten alındı: UZS -> USD
+2025-05-05 16:51:32.947 +03:00 [INF] Kur değeri önbellekten alındı: UZS -> USD
+2025-05-05 16:51:38.241 +03:00 [INF] Kur değeri önbellekten alındı: UZS -> USD
+2025-05-05 16:51:59.186 +03:00 [INF] Cari listesi yüklendi, toplam 2 adet cari bulundu.
+2025-05-05 16:51:59.188 +03:00 [INF] Sözleşme listesi yüklendi, toplam 0 adet sözleşme bulundu.
+2025-05-05 16:51:59.190 +03:00 [INF] Ürün listesi yüklendi, toplam 3 adet ürün bulundu.
+2025-05-05 16:51:59.192 +03:00 [INF] Depo listesi yüklendi, toplam 2 adet depo bulundu.
+2025-05-05 16:51:59.196 +03:00 [INF] Birim sayısı: Aktif=2, Pasif=0, Silinmiş=0
+2025-05-05 16:51:59.196 +03:00 [INF] Ürün select list oluşturuldu, toplam 3 adet öğe içeriyor.
+2025-05-05 16:51:59.198 +03:00 [INF] Para birimi listesi yüklendi, toplam 2 adet para birimi bulundu.
+2025-05-05 16:52:38.036 +03:00 [INF] Fatura oluşturma sayfası yükleniyor: Kullanıcı=admin
+2025-05-05 16:52:38.040 +03:00 [INF] Yeni numara oluşturuldu: FTR-250505-001
+2025-05-05 16:52:38.044 +03:00 [INF] Yeni numara oluşturuldu: SIP-250505-001
+2025-05-05 16:52:38.049 +03:00 [INF] Cari listesi yüklendi, toplam 2 adet cari bulundu.
+2025-05-05 16:52:38.054 +03:00 [INF] Sözleşme listesi yüklendi, toplam 0 adet sözleşme bulundu.
+2025-05-05 16:52:38.060 +03:00 [INF] Ürün listesi yüklendi, toplam 3 adet ürün bulundu.
+2025-05-05 16:52:38.066 +03:00 [INF] Depo listesi yüklendi, toplam 2 adet depo bulundu.
+2025-05-05 16:52:38.072 +03:00 [INF] Birim sayısı: Aktif=2, Pasif=0, Silinmiş=0
+2025-05-05 16:52:38.072 +03:00 [INF] Ürün select list oluşturuldu, toplam 3 adet öğe içeriyor.
+2025-05-05 16:52:38.075 +03:00 [INF] Para birimi listesi yüklendi, toplam 2 adet para birimi bulundu.
+2025-05-05 16:52:52.361 +03:00 [INF] Kur değeri önbellekten alındı: UZS -> USD
+2025-05-05 16:52:54.118 +03:00 [INF] Kur değeri önbellekten alındı: UZS -> USD
+2025-05-05 16:53:24.347 +03:00 [INF] Cari listesi yüklendi, toplam 2 adet cari bulundu.
+2025-05-05 16:53:24.351 +03:00 [INF] Sözleşme listesi yüklendi, toplam 0 adet sözleşme bulundu.
+2025-05-05 16:53:24.355 +03:00 [INF] Ürün listesi yüklendi, toplam 3 adet ürün bulundu.
+2025-05-05 16:53:24.359 +03:00 [INF] Depo listesi yüklendi, toplam 2 adet depo bulundu.
+2025-05-05 16:53:24.369 +03:00 [INF] Birim sayısı: Aktif=2, Pasif=0, Silinmiş=0
+2025-05-05 16:53:24.369 +03:00 [INF] Ürün select list oluşturuldu, toplam 3 adet öğe içeriyor.
+2025-05-05 16:53:24.372 +03:00 [INF] Para birimi listesi yüklendi, toplam 2 adet para birimi bulundu.
+2025-05-05 17:02:42.437 +03:00 [INF] Veritabanına bağlantı başarılı. Migrationlar uygulanıyor...
+2025-05-05 17:02:42.755 +03:00 [INF] Veritabanı işlemleri başarıyla tamamlandı.
+2025-05-05 17:02:54.148 +03:00 [INF] Giriş denemesi: admin
+2025-05-05 17:02:54.246 +03:00 [INF] Admin kullanıcısı başarıyla giriş yaptı: admin
+2025-05-05 17:02:54.246 +03:00 [INF] Admin session oluşturuldu: UserID=f0c78a73-342f-4491-acca-6c3d4a0be04a, UserName=admin
+2025-05-05 17:02:54.246 +03:00 [INF] Yönlendirme adresi: /Depo
+2025-05-05 17:02:54.246 +03:00 [INF] Admin kullanıcısı /Depo adresine yönlendiriliyor
+2025-05-05 17:02:54.388 +03:00 [INF] Toplam depo sayısı: 2
+2025-05-05 17:02:54.389 +03:00 [INF] Aktif depo sayısı: 2
+2025-05-05 17:02:54.389 +03:00 [INF] Pasif depo sayısı: 0
+2025-05-05 17:02:54.389 +03:00 [INF] Silinmiş depo sayısı: 0
+2025-05-05 17:03:01.669 +03:00 [INF] Fatura oluşturma sayfası yükleniyor: Kullanıcı=admin
+2025-05-05 17:03:01.697 +03:00 [INF] Yeni numara oluşturuldu: FTR-250505-001
+2025-05-05 17:03:01.701 +03:00 [INF] Yeni numara oluşturuldu: SIP-250505-001
+2025-05-05 17:03:01.735 +03:00 [INF] Cari listesi yüklendi, toplam 2 adet cari bulundu.
+2025-05-05 17:03:01.745 +03:00 [INF] Sözleşme listesi yüklendi, toplam 0 adet sözleşme bulundu.
+2025-05-05 17:03:01.778 +03:00 [INF] Ürün listesi yüklendi, toplam 3 adet ürün bulundu.
+2025-05-05 17:03:01.785 +03:00 [INF] Depo listesi yüklendi, toplam 2 adet depo bulundu.
+2025-05-05 17:03:01.805 +03:00 [INF] Birim sayısı: Aktif=2, Pasif=0, Silinmiş=0
+2025-05-05 17:03:01.805 +03:00 [INF] Ürün select list oluşturuldu, toplam 3 adet öğe içeriyor.
+2025-05-05 17:03:01.822 +03:00 [INF] Para birimi listesi yüklendi, toplam 2 adet para birimi bulundu.
+2025-05-05 17:03:47.656 +03:00 [INF] Kur değeri önbellekten alındı: UZS -> USD
+2025-05-05 17:04:13.233 +03:00 [INF] Cari listesi yüklendi, toplam 2 adet cari bulundu.
+2025-05-05 17:04:13.235 +03:00 [INF] Sözleşme listesi yüklendi, toplam 0 adet sözleşme bulundu.
+2025-05-05 17:04:13.237 +03:00 [INF] Ürün listesi yüklendi, toplam 3 adet ürün bulundu.
+2025-05-05 17:04:13.239 +03:00 [INF] Depo listesi yüklendi, toplam 2 adet depo bulundu.
+2025-05-05 17:04:13.244 +03:00 [INF] Birim sayısı: Aktif=2, Pasif=0, Silinmiş=0
+2025-05-05 17:04:13.244 +03:00 [INF] Ürün select list oluşturuldu, toplam 3 adet öğe içeriyor.
+2025-05-05 17:04:13.246 +03:00 [INF] Para birimi listesi yüklendi, toplam 2 adet para birimi bulundu.
+2025-05-05 17:13:08.191 +03:00 [INF] Veritabanına bağlantı başarılı. Migrationlar uygulanıyor...
+2025-05-05 17:13:08.589 +03:00 [INF] Veritabanı işlemleri başarıyla tamamlandı.
+2025-05-05 17:13:08.752 +03:00 [ERR] Hosting failed to start
+System.IO.IOException: Failed to bind to address https://127.0.0.1:7118: address already in use.
+ ---> Microsoft.AspNetCore.Connections.AddressInUseException: Address already in use
+ ---> System.Net.Sockets.SocketException (48): Address already in use
+   at System.Net.Sockets.Socket.DoBind(EndPoint endPointSnapshot, SocketAddress socketAddress)
+   at System.Net.Sockets.Socket.Bind(EndPoint localEP)
+   at Microsoft.AspNetCore.Server.Kestrel.Transport.Sockets.SocketTransportOptions.CreateDefaultBoundListenSocket(EndPoint endpoint)
+   at Microsoft.AspNetCore.Server.Kestrel.Transport.Sockets.SocketConnectionListener.Bind()
+   --- End of inner exception stack trace ---
+   at Microsoft.AspNetCore.Server.Kestrel.Transport.Sockets.SocketConnectionListener.Bind()
+   at Microsoft.AspNetCore.Server.Kestrel.Transport.Sockets.SocketTransportFactory.BindAsync(EndPoint endpoint, CancellationToken cancellationToken)
+   at Microsoft.AspNetCore.Server.Kestrel.Core.Internal.Infrastructure.TransportManager.BindAsync(EndPoint endPoint, ConnectionDelegate connectionDelegate, EndpointConfig endpointConfig, CancellationToken cancellationToken)
+   at Microsoft.AspNetCore.Server.Kestrel.Core.KestrelServerImpl.<>c__DisplayClass28_0`1.<<StartAsync>g__OnBind|0>d.MoveNext()
+--- End of stack trace from previous location ---
+   at Microsoft.AspNetCore.Server.Kestrel.Core.Internal.AddressBinder.BindEndpointAsync(ListenOptions endpoint, AddressBindContext context, CancellationToken cancellationToken)
+   --- End of inner exception stack trace ---
+   at Microsoft.AspNetCore.Server.Kestrel.Core.Internal.AddressBinder.BindEndpointAsync(ListenOptions endpoint, AddressBindContext context, CancellationToken cancellationToken)
+   at Microsoft.AspNetCore.Server.Kestrel.Core.LocalhostListenOptions.BindAsync(AddressBindContext context, CancellationToken cancellationToken)
+   at Microsoft.AspNetCore.Server.Kestrel.Core.Internal.AddressBinder.AddressesStrategy.BindAsync(AddressBindContext context, CancellationToken cancellationToken)
+   at Microsoft.AspNetCore.Server.Kestrel.Core.KestrelServerImpl.BindAsync(CancellationToken cancellationToken)
+   at Microsoft.AspNetCore.Server.Kestrel.Core.KestrelServerImpl.StartAsync[TContext](IHttpApplication`1 application, CancellationToken cancellationToken)
+   at Microsoft.AspNetCore.Hosting.GenericWebHostService.StartAsync(CancellationToken cancellationToken)
+   at Microsoft.Extensions.Hosting.Internal.Host.<StartAsync>b__14_1(IHostedService service, CancellationToken token)
+   at Microsoft.Extensions.Hosting.Internal.Host.ForeachService[T](IEnumerable`1 services, CancellationToken token, Boolean concurrent, Boolean abortOnFirstException, List`1 exceptions, Func`3 operation)
+2025-05-05 17:13:27.007 +03:00 [INF] Veritabanına bağlantı başarılı. Migrationlar uygulanıyor...
+2025-05-05 17:13:27.313 +03:00 [INF] Veritabanı işlemleri başarıyla tamamlandı.
+2025-05-05 17:13:34.093 +03:00 [INF] Fatura oluşturma sayfası yükleniyor: Kullanıcı=admin
+2025-05-05 17:13:34.109 +03:00 [INF] Yeni numara oluşturuldu: FTR-250505-001
+2025-05-05 17:13:34.113 +03:00 [INF] Yeni numara oluşturuldu: SIP-250505-001
+2025-05-05 17:13:34.139 +03:00 [INF] Cari listesi yüklendi, toplam 2 adet cari bulundu.
+2025-05-05 17:13:34.149 +03:00 [INF] Sözleşme listesi yüklendi, toplam 0 adet sözleşme bulundu.
+2025-05-05 17:13:34.184 +03:00 [INF] Ürün listesi yüklendi, toplam 3 adet ürün bulundu.
+2025-05-05 17:13:34.196 +03:00 [INF] Depo listesi yüklendi, toplam 2 adet depo bulundu.
+2025-05-05 17:13:34.219 +03:00 [INF] Birim sayısı: Aktif=2, Pasif=0, Silinmiş=0
+2025-05-05 17:13:34.219 +03:00 [INF] Ürün select list oluşturuldu, toplam 3 adet öğe içeriyor.
+2025-05-05 17:13:34.240 +03:00 [INF] Para birimi listesi yüklendi, toplam 2 adet para birimi bulundu.
+2025-05-05 17:13:44.281 +03:00 [INF] Kur değeri önbellekten alındı: UZS -> USD
+2025-05-05 17:13:55.823 +03:00 [INF] Kur değeri önbellekten alındı: UZS -> USD
+2025-05-05 17:14:02.989 +03:00 [INF] Kur değeri önbellekten alındı: UZS -> USD
+2025-05-05 17:14:39.596 +03:00 [WRN] Fatura formu doğrulama hatası
+2025-05-05 17:14:39.598 +03:00 [INF] Cari listesi yüklendi, toplam 2 adet cari bulundu.
+2025-05-05 17:14:39.601 +03:00 [INF] Sözleşme listesi yüklendi, toplam 0 adet sözleşme bulundu.
+2025-05-05 17:14:39.604 +03:00 [INF] Ürün listesi yüklendi, toplam 3 adet ürün bulundu.
+2025-05-05 17:14:39.607 +03:00 [INF] Depo listesi yüklendi, toplam 2 adet depo bulundu.
+2025-05-05 17:14:39.613 +03:00 [INF] Birim sayısı: Aktif=2, Pasif=0, Silinmiş=0
+2025-05-05 17:14:39.614 +03:00 [INF] Ürün select list oluşturuldu, toplam 3 adet öğe içeriyor.
+2025-05-05 17:14:39.617 +03:00 [INF] Para birimi listesi yüklendi, toplam 2 adet para birimi bulundu.
+2025-05-05 17:19:27.688 +03:00 [INF] Veritabanına bağlantı başarılı. Migrationlar uygulanıyor...
+2025-05-05 17:19:28.013 +03:00 [INF] Veritabanı işlemleri başarıyla tamamlandı.
+2025-05-05 17:19:35.972 +03:00 [INF] Fatura oluşturma sayfası yükleniyor: Kullanıcı=admin
+2025-05-05 17:19:35.988 +03:00 [INF] Yeni numara oluşturuldu: FTR-250505-001
+2025-05-05 17:19:35.991 +03:00 [INF] Yeni numara oluşturuldu: SIP-250505-001
+2025-05-05 17:19:36.017 +03:00 [INF] Cari listesi yüklendi, toplam 2 adet cari bulundu.
+2025-05-05 17:19:36.026 +03:00 [INF] Sözleşme listesi yüklendi, toplam 0 adet sözleşme bulundu.
+2025-05-05 17:19:36.059 +03:00 [INF] Ürün listesi yüklendi, toplam 3 adet ürün bulundu.
+2025-05-05 17:19:36.071 +03:00 [INF] Depo listesi yüklendi, toplam 2 adet depo bulundu.
+2025-05-05 17:19:36.091 +03:00 [INF] Birim sayısı: Aktif=2, Pasif=0, Silinmiş=0
+2025-05-05 17:19:36.092 +03:00 [INF] Ürün select list oluşturuldu, toplam 3 adet öğe içeriyor.
+2025-05-05 17:19:36.110 +03:00 [INF] Para birimi listesi yüklendi, toplam 2 adet para birimi bulundu.
+2025-05-05 17:19:46.909 +03:00 [INF] Kur değeri önbellekten alındı: UZS -> USD
+2025-05-05 17:20:14.358 +03:00 [WRN] Fatura formu doğrulama hatası
+2025-05-05 17:20:14.362 +03:00 [INF] Cari listesi yüklendi, toplam 2 adet cari bulundu.
+2025-05-05 17:20:14.364 +03:00 [INF] Sözleşme listesi yüklendi, toplam 0 adet sözleşme bulundu.
+2025-05-05 17:20:14.367 +03:00 [INF] Ürün listesi yüklendi, toplam 3 adet ürün bulundu.
+2025-05-05 17:20:14.369 +03:00 [INF] Depo listesi yüklendi, toplam 2 adet depo bulundu.
+2025-05-05 17:20:14.375 +03:00 [INF] Birim sayısı: Aktif=2, Pasif=0, Silinmiş=0
+2025-05-05 17:20:14.375 +03:00 [INF] Ürün select list oluşturuldu, toplam 3 adet öğe içeriyor.
+2025-05-05 17:20:14.378 +03:00 [INF] Para birimi listesi yüklendi, toplam 2 adet para birimi bulundu.
+2025-05-05 17:32:22.866 +03:00 [INF] Veritabanına bağlantı başarılı. Migrationlar uygulanıyor...
+2025-05-05 17:32:23.179 +03:00 [INF] Veritabanı işlemleri başarıyla tamamlandı.
+2025-05-05 17:32:23.807 +03:00 [INF] Fatura oluşturma sayfası yükleniyor: Kullanıcı=admin
+2025-05-05 17:32:23.823 +03:00 [INF] Yeni numara oluşturuldu: FTR-250505-001
+2025-05-05 17:32:23.827 +03:00 [INF] Yeni numara oluşturuldu: SIP-250505-001
+2025-05-05 17:32:23.852 +03:00 [INF] Cari listesi yüklendi, toplam 2 adet cari bulundu.
+2025-05-05 17:32:23.861 +03:00 [INF] Sözleşme listesi yüklendi, toplam 0 adet sözleşme bulundu.
+2025-05-05 17:32:23.896 +03:00 [INF] Ürün listesi yüklendi, toplam 3 adet ürün bulundu.
+2025-05-05 17:32:23.909 +03:00 [INF] Depo listesi yüklendi, toplam 2 adet depo bulundu.
+2025-05-05 17:32:23.929 +03:00 [INF] Birim sayısı: Aktif=2, Pasif=0, Silinmiş=0
+2025-05-05 17:32:23.930 +03:00 [INF] Ürün select list oluşturuldu, toplam 3 adet öğe içeriyor.
+2025-05-05 17:32:23.951 +03:00 [INF] Para birimi listesi yüklendi, toplam 2 adet para birimi bulundu.
+2025-05-05 17:32:35.104 +03:00 [INF] Kur değeri önbellekten alındı: UZS -> USD
+2025-05-05 17:33:25.859 +03:00 [INF] Giriş denemesi: admin
+2025-05-05 17:33:25.954 +03:00 [INF] Admin kullanıcısı başarıyla giriş yaptı: admin
+2025-05-05 17:33:25.954 +03:00 [INF] Admin session oluşturuldu: UserID=f0c78a73-342f-4491-acca-6c3d4a0be04a, UserName=admin
+2025-05-05 17:33:25.954 +03:00 [INF] Yönlendirme adresi: /Fatura/Create
+2025-05-05 17:33:25.954 +03:00 [INF] Admin kullanıcısı /Fatura/Create adresine yönlendiriliyor
+2025-05-05 17:33:25.970 +03:00 [INF] Fatura oluşturma sayfası yükleniyor: Kullanıcı=admin
+2025-05-05 17:33:25.973 +03:00 [INF] Yeni numara oluşturuldu: FTR-250505-001
+2025-05-05 17:33:25.975 +03:00 [INF] Yeni numara oluşturuldu: SIP-250505-001
+2025-05-05 17:33:25.977 +03:00 [INF] Cari listesi yüklendi, toplam 2 adet cari bulundu.
+2025-05-05 17:33:25.979 +03:00 [INF] Sözleşme listesi yüklendi, toplam 0 adet sözleşme bulundu.
+2025-05-05 17:33:25.980 +03:00 [INF] Ürün listesi yüklendi, toplam 3 adet ürün bulundu.
+2025-05-05 17:33:25.982 +03:00 [INF] Depo listesi yüklendi, toplam 2 adet depo bulundu.
+2025-05-05 17:33:25.985 +03:00 [INF] Birim sayısı: Aktif=2, Pasif=0, Silinmiş=0
+2025-05-05 17:33:25.985 +03:00 [INF] Ürün select list oluşturuldu, toplam 3 adet öğe içeriyor.
+2025-05-05 17:33:25.987 +03:00 [INF] Para birimi listesi yüklendi, toplam 2 adet para birimi bulundu.
+2025-05-05 17:33:38.522 +03:00 [INF] Kur değeri önbellekten alındı: UZS -> USD
+2025-05-05 17:33:40.294 +03:00 [INF] Kur değeri önbellekten alındı: UZS -> USD
+2025-05-05 17:34:21.883 +03:00 [WRN] Fatura formu doğrulama hatası
+2025-05-05 17:34:21.883 +03:00 [WRN] Model hata: The Açıklama field is required.
+2025-05-05 17:34:21.884 +03:00 [WRN] Model hata: The Fatura Notu field is required.
+2025-05-05 17:34:21.886 +03:00 [INF] Cari listesi yüklendi, toplam 2 adet cari bulundu.
+2025-05-05 17:34:21.889 +03:00 [INF] Sözleşme listesi yüklendi, toplam 0 adet sözleşme bulundu.
+2025-05-05 17:34:21.890 +03:00 [INF] Ürün listesi yüklendi, toplam 3 adet ürün bulundu.
+2025-05-05 17:34:21.892 +03:00 [INF] Depo listesi yüklendi, toplam 2 adet depo bulundu.
+2025-05-05 17:34:21.899 +03:00 [INF] Birim sayısı: Aktif=2, Pasif=0, Silinmiş=0
+2025-05-05 17:34:21.899 +03:00 [INF] Ürün select list oluşturuldu, toplam 3 adet öğe içeriyor.
+2025-05-05 17:34:21.902 +03:00 [INF] Para birimi listesi yüklendi, toplam 2 adet para birimi bulundu.
+2025-05-05 17:37:46.054 +03:00 [INF] Fatura oluşturma sayfası yükleniyor: Kullanıcı=admin
+2025-05-05 17:37:46.055 +03:00 [INF] Yeni numara oluşturuldu: FTR-250505-001
+2025-05-05 17:37:46.056 +03:00 [INF] Yeni numara oluşturuldu: SIP-250505-001
+2025-05-05 17:37:46.057 +03:00 [INF] Cari listesi yüklendi, toplam 2 adet cari bulundu.
+2025-05-05 17:37:46.059 +03:00 [INF] Sözleşme listesi yüklendi, toplam 0 adet sözleşme bulundu.
+2025-05-05 17:37:46.061 +03:00 [INF] Ürün listesi yüklendi, toplam 3 adet ürün bulundu.
+2025-05-05 17:37:46.063 +03:00 [INF] Depo listesi yüklendi, toplam 2 adet depo bulundu.
+2025-05-05 17:37:46.067 +03:00 [INF] Birim sayısı: Aktif=2, Pasif=0, Silinmiş=0
+2025-05-05 17:37:46.067 +03:00 [INF] Ürün select list oluşturuldu, toplam 3 adet öğe içeriyor.
+2025-05-05 17:37:46.069 +03:00 [INF] Para birimi listesi yüklendi, toplam 2 adet para birimi bulundu.
+2025-05-05 17:37:47.707 +03:00 [INF] Fatura oluşturma sayfası yükleniyor: Kullanıcı=admin
+2025-05-05 17:37:47.709 +03:00 [INF] Yeni numara oluşturuldu: FTR-250505-001
+2025-05-05 17:37:47.710 +03:00 [INF] Yeni numara oluşturuldu: SIP-250505-001
+2025-05-05 17:37:47.712 +03:00 [INF] Cari listesi yüklendi, toplam 2 adet cari bulundu.
+2025-05-05 17:37:47.714 +03:00 [INF] Sözleşme listesi yüklendi, toplam 0 adet sözleşme bulundu.
+2025-05-05 17:37:47.715 +03:00 [INF] Ürün listesi yüklendi, toplam 3 adet ürün bulundu.
+2025-05-05 17:37:47.717 +03:00 [INF] Depo listesi yüklendi, toplam 2 adet depo bulundu.
+2025-05-05 17:37:47.721 +03:00 [INF] Birim sayısı: Aktif=2, Pasif=0, Silinmiş=0
+2025-05-05 17:37:47.721 +03:00 [INF] Ürün select list oluşturuldu, toplam 3 adet öğe içeriyor.
+2025-05-05 17:37:47.722 +03:00 [INF] Para birimi listesi yüklendi, toplam 2 adet para birimi bulundu.
+2025-05-05 17:37:57.041 +03:00 [INF] Kur değeri önbellekten alındı: UZS -> USD
+2025-05-05 17:37:58.703 +03:00 [INF] Kur değeri önbellekten alındı: UZS -> USD
+2025-05-05 17:38:41.782 +03:00 [WRN] Fatura formu doğrulama hatası
+2025-05-05 17:38:41.782 +03:00 [WRN] Model hata: The Açıklama field is required.
+2025-05-05 17:38:41.782 +03:00 [WRN] Model hata: The Fatura Notu field is required.
+2025-05-05 17:38:41.787 +03:00 [INF] Cari listesi yüklendi, toplam 2 adet cari bulundu.
+2025-05-05 17:38:41.792 +03:00 [INF] Sözleşme listesi yüklendi, toplam 0 adet sözleşme bulundu.
+2025-05-05 17:38:41.795 +03:00 [INF] Ürün listesi yüklendi, toplam 3 adet ürün bulundu.
+2025-05-05 17:38:41.798 +03:00 [INF] Depo listesi yüklendi, toplam 2 adet depo bulundu.
+2025-05-05 17:38:41.805 +03:00 [INF] Birim sayısı: Aktif=2, Pasif=0, Silinmiş=0
+2025-05-05 17:38:41.805 +03:00 [INF] Ürün select list oluşturuldu, toplam 3 adet öğe içeriyor.
+2025-05-05 17:38:41.808 +03:00 [INF] Para birimi listesi yüklendi, toplam 2 adet para birimi bulundu.
+sport.Sockets.SocketTransportFactory.BindAsync(EndPoint endpoint, CancellationToken cancellationToken)
+   at Microsoft.AspNetCore.Server.Kestrel.Core.Internal.Infrastructure.TransportManager.BindAsync(EndPoint endPoint, ConnectionDelegate connectionDelegate, EndpointConfig endpointConfig, CancellationToken cancellationToken)
+   at Microsoft.AspNetCore.Server.Kestrel.Core.KestrelServerImpl.<>c__DisplayClass28_0`1.<<StartAsync>g__OnBind|0>d.MoveNext()
+--- End of stack trace from previous location ---
+   at Microsoft.AspNetCore.Server.Kestrel.Core.Internal.AddressBinder.BindEndpointAsync(ListenOptions endpoint, AddressBindContext context, CancellationToken cancellationToken)
+   --- End of inner exception stack trace ---
+   at Microsoft.AspNetCore.Server.Kestrel.Core.Internal.AddressBinder.BindEndpointAsync(ListenOptions endpoint, AddressBindContext context, CancellationToken cancellationToken)
+   at Microsoft.AspNetCore.Server.Kestrel.Core.LocalhostListenOptions.BindAsync(AddressBindContext context, CancellationToken cancellationToken)
+   at Microsoft.AspNetCore.Server.Kestrel.Core.Internal.AddressBinder.AddressesStrategy.BindAsync(AddressBindContext context, CancellationToken cancellationToken)
+   at Microsoft.AspNetCore.Server.Kestrel.Core.KestrelServerImpl.BindAsync(CancellationToken cancellationToken)
+   at Microsoft.AspNetCore.Server.Kestrel.Core.KestrelServerImpl.StartAsync[TContext](IHttpApplication`1 application, CancellationToken cancellationToken)
+   at Microsoft.AspNetCore.Hosting.GenericWebHostService.StartAsync(CancellationToken cancellationToken)
+   at Microsoft.Extensions.Hosting.Internal.Host.<StartAsync>b__14_1(IHostedService service, CancellationToken token)
+   at Microsoft.Extensions.Hosting.Internal.Host.ForeachService[T](IEnumerable`1 services, CancellationToken token, Boolean concurrent, Boolean abortOnFirstException, List`1 exceptions, Func`3 operation)
+2025-05-05 17:43:48.466 +03:00 [INF] Veritabanına bağlantı başarılı. Migrationlar uygulanıyor...
+2025-05-05 17:43:48.782 +03:00 [INF] Veritabanı işlemleri başarıyla tamamlandı.
+2025-05-05 17:43:48.952 +03:00 [ERR] Hosting failed to start
+System.IO.IOException: Failed to bind to address https://127.0.0.1:7118: address already in use.
+ ---> Microsoft.AspNetCore.Connections.AddressInUseException: Address already in use
+ ---> System.Net.Sockets.SocketException (48): Address already in use
+   at System.Net.Sockets.Socket.DoBind(EndPoint endPointSnapshot, SocketAddress socketAddress)
+   at System.Net.Sockets.Socket.Bind(EndPoint localEP)
+   at Microsoft.AspNetCore.Server.Kestrel.Transport.Sockets.SocketTransportOptions.CreateDefaultBoundListenSocket(EndPoint endpoint)
+   at Microsoft.AspNetCore.Server.Kestrel.Transport.Sockets.SocketConnectionListener.Bind()
+   --- End of inner exception stack trace ---
+   at Microsoft.AspNetCore.Server.Kestrel.Transport.Sockets.SocketConnectionListener.Bind()
+   at Microsoft.AspNetCore.Server.Kestrel.Transport.Sockets.SocketTransportFactory.BindAsync(EndPoint endpoint, CancellationToken cancellationToken)
+   at Microsoft.AspNetCore.Server.Kestrel.Core.Internal.Infrastructure.TransportManager.BindAsync(EndPoint endPoint, ConnectionDelegate connectionDelegate, EndpointConfig endpointConfig, CancellationToken cancellationToken)
+   at Microsoft.AspNetCore.Server.Kestrel.Core.KestrelServerImpl.<>c__DisplayClass28_0`1.<<StartAsync>g__OnBind|0>d.MoveNext()
+--- End of stack trace from previous location ---
+   at Microsoft.AspNetCore.Server.Kestrel.Core.Internal.AddressBinder.BindEndpointAsync(ListenOptions endpoint, AddressBindContext context, CancellationToken cancellationToken)
+   --- End of inner exception stack trace ---
+   at Microsoft.AspNetCore.Server.Kestrel.Core.Internal.AddressBinder.BindEndpointAsync(ListenOptions endpoint, AddressBindContext context, CancellationToken cancellationToken)
+   at Microsoft.AspNetCore.Server.Kestrel.Core.LocalhostListenOptions.BindAsync(AddressBindContext context, CancellationToken cancellationToken)
+   at Microsoft.AspNetCore.Server.Kestrel.Core.Internal.AddressBinder.AddressesStrategy.BindAsync(AddressBindContext context, CancellationToken cancellationToken)
+   at Microsoft.AspNetCore.Server.Kestrel.Core.KestrelServerImpl.BindAsync(CancellationToken cancellationToken)
+   at Microsoft.AspNetCore.Server.Kestrel.Core.KestrelServerImpl.StartAsync[TContext](IHttpApplication`1 application, CancellationToken cancellationToken)
+   at Microsoft.AspNetCore.Hosting.GenericWebHostService.StartAsync(CancellationToken cancellationToken)
+   at Microsoft.Extensions.Hosting.Internal.Host.<StartAsync>b__14_1(IHostedService service, CancellationToken token)
+   at Microsoft.Extensions.Hosting.Internal.Host.ForeachService[T](IEnumerable`1 services, CancellationToken token, Boolean concurrent, Boolean abortOnFirstException, List`1 exceptions, Func`3 operation)
+2025-05-05 17:44:29.206 +03:00 [INF] Veritabanına bağlantı başarılı. Migrationlar uygulanıyor...
+2025-05-05 17:44:29.518 +03:00 [INF] Veritabanı işlemleri başarıyla tamamlandı.
+2025-05-05 17:44:35.945 +03:00 [INF] Fatura oluşturma sayfası yükleniyor: Kullanıcı=admin
+2025-05-05 17:44:35.961 +03:00 [INF] Yeni numara oluşturuldu: FTR-250505-001
+2025-05-05 17:44:35.972 +03:00 [INF] Yeni numara oluşturuldu: SIP-250505-001
+2025-05-05 17:44:35.998 +03:00 [INF] Cari listesi yüklendi, toplam 2 adet cari bulundu.
+2025-05-05 17:44:36.007 +03:00 [INF] Sözleşme listesi yüklendi, toplam 0 adet sözleşme bulundu.
+2025-05-05 17:44:36.040 +03:00 [INF] Ürün listesi yüklendi, toplam 3 adet ürün bulundu.
+2025-05-05 17:44:36.054 +03:00 [INF] Depo listesi yüklendi, toplam 2 adet depo bulundu.
+2025-05-05 17:44:36.073 +03:00 [INF] Birim sayısı: Aktif=2, Pasif=0, Silinmiş=0
+2025-05-05 17:44:36.074 +03:00 [INF] Ürün select list oluşturuldu, toplam 3 adet öğe içeriyor.
+2025-05-05 17:44:36.092 +03:00 [INF] Para birimi listesi yüklendi, toplam 2 adet para birimi bulundu.
+2025-05-05 17:44:47.643 +03:00 [INF] Kur değeri önbellekten alındı: UZS -> USD
+2025-05-05 17:45:14.658 +03:00 [WRN] Fatura formu doğrulama hatası
+2025-05-05 17:45:14.659 +03:00 [WRN] Model hata: The Açıklama field is required.
+2025-05-05 17:45:14.659 +03:00 [WRN] Model hata: The Fatura Notu field is required.
+2025-05-05 17:45:14.661 +03:00 [INF] Cari listesi yüklendi, toplam 2 adet cari bulundu.
+2025-05-05 17:45:14.663 +03:00 [INF] Sözleşme listesi yüklendi, toplam 0 adet sözleşme bulundu.
+2025-05-05 17:45:14.666 +03:00 [INF] Ürün listesi yüklendi, toplam 3 adet ürün bulundu.
+2025-05-05 17:45:14.668 +03:00 [INF] Depo listesi yüklendi, toplam 2 adet depo bulundu.
+2025-05-05 17:45:14.673 +03:00 [INF] Birim sayısı: Aktif=2, Pasif=0, Silinmiş=0
+2025-05-05 17:45:14.673 +03:00 [INF] Ürün select list oluşturuldu, toplam 3 adet öğe içeriyor.
+2025-05-05 17:45:14.675 +03:00 [INF] Para birimi listesi yüklendi, toplam 2 adet para birimi bulundu.
+2025-05-05 17:53:01.034 +03:00 [INF] Veritabanına bağlantı başarılı. Migrationlar uygulanıyor...
+2025-05-05 17:53:01.353 +03:00 [INF] Veritabanı işlemleri başarıyla tamamlandı.
+2025-05-05 17:53:01.516 +03:00 [ERR] Hosting failed to start
+System.IO.IOException: Failed to bind to address https://127.0.0.1:7118: address already in use.
+ ---> Microsoft.AspNetCore.Connections.AddressInUseException: Address already in use
+ ---> System.Net.Sockets.SocketException (48): Address already in use
+   at System.Net.Sockets.Socket.DoBind(EndPoint endPointSnapshot, SocketAddress socketAddress)
+   at System.Net.Sockets.Socket.Bind(EndPoint localEP)
+   at Microsoft.AspNetCore.Server.Kestrel.Transport.Sockets.SocketTransportOptions.CreateDefaultBoundListenSocket(EndPoint endpoint)
+   at Microsoft.AspNetCore.Server.Kestrel.Transport.Sockets.SocketConnectionListener.Bind()
+   --- End of inner exception stack trace ---
+   at Microsoft.AspNetCore.Server.Kestrel.Transport.Sockets.SocketConnectionListener.Bind()
+   at Microsoft.AspNetCore.Server.Kestrel.Transport.Sockets.SocketTransportFactory.BindAsync(EndPoint endpoint, CancellationToken cancellationToken)
+   at Microsoft.AspNetCore.Server.Kestrel.Core.Internal.Infrastructure.TransportManager.BindAsync(EndPoint endPoint, ConnectionDelegate connectionDelegate, EndpointConfig endpointConfig, CancellationToken cancellationToken)
+   at Microsoft.AspNetCore.Server.Kestrel.Core.KestrelServerImpl.<>c__DisplayClass28_0`1.<<StartAsync>g__OnBind|0>d.MoveNext()
+--- End of stack trace from previous location ---
+   at Microsoft.AspNetCore.Server.Kestrel.Core.Internal.AddressBinder.BindEndpointAsync(ListenOptions endpoint, AddressBindContext context, CancellationToken cancellationToken)
+   --- End of inner exception stack trace ---
+   at Microsoft.AspNetCore.Server.Kestrel.Core.Internal.AddressBinder.BindEndpointAsync(ListenOptions endpoint, AddressBindContext context, CancellationToken cancellationToken)
+   at Microsoft.AspNetCore.Server.Kestrel.Core.LocalhostListenOptions.BindAsync(AddressBindContext context, CancellationToken cancellationToken)
+   at Microsoft.AspNetCore.Server.Kestrel.Core.Internal.AddressBinder.AddressesStrategy.BindAsync(AddressBindContext context, CancellationToken cancellationToken)
+   at Microsoft.AspNetCore.Server.Kestrel.Core.KestrelServerImpl.BindAsync(CancellationToken cancellationToken)
+   at Microsoft.AspNetCore.Server.Kestrel.Core.KestrelServerImpl.StartAsync[TContext](IHttpApplication`1 application, CancellationToken cancellationToken)
+   at Microsoft.AspNetCore.Hosting.GenericWebHostService.StartAsync(CancellationToken cancellationToken)
+   at Microsoft.Extensions.Hosting.Internal.Host.<StartAsync>b__14_1(IHostedService service, CancellationToken token)
+   at Microsoft.Extensions.Hosting.Internal.Host.ForeachService[T](IEnumerable`1 services, CancellationToken token, Boolean concurrent, Boolean abortOnFirstException, List`1 exceptions, Func`3 operation)
+2025-05-05 17:53:33.175 +03:00 [INF] Veritabanına bağlantı başarılı. Migrationlar uygulanıyor...
+2025-05-05 17:53:33.485 +03:00 [INF] Veritabanı işlemleri başarıyla tamamlandı.
+2025-05-05 17:53:43.035 +03:00 [INF] Fatura oluşturma sayfası yükleniyor: Kullanıcı=admin
+2025-05-05 17:53:43.050 +03:00 [INF] Yeni numara oluşturuldu: FTR-250505-001
+2025-05-05 17:53:43.054 +03:00 [INF] Yeni numara oluşturuldu: SIP-250505-001
+2025-05-05 17:53:43.080 +03:00 [INF] Cari listesi yüklendi, toplam 2 adet cari bulundu.
+2025-05-05 17:53:43.090 +03:00 [INF] Sözleşme listesi yüklendi, toplam 0 adet sözleşme bulundu.
+2025-05-05 17:53:43.123 +03:00 [INF] Ürün listesi yüklendi, toplam 3 adet ürün bulundu.
+2025-05-05 17:53:43.137 +03:00 [INF] Depo listesi yüklendi, toplam 2 adet depo bulundu.
+2025-05-05 17:53:43.157 +03:00 [INF] Birim sayısı: Aktif=2, Pasif=0, Silinmiş=0
+2025-05-05 17:53:43.157 +03:00 [INF] Ürün select list oluşturuldu, toplam 3 adet öğe içeriyor.
+2025-05-05 17:53:43.176 +03:00 [INF] Para birimi listesi yüklendi, toplam 2 adet para birimi bulundu.
+2025-05-05 17:53:53.737 +03:00 [INF] Fatura oluşturma sayfası yükleniyor: Kullanıcı=admin
+2025-05-05 17:53:53.743 +03:00 [INF] Yeni numara oluşturuldu: FTR-250505-001
+2025-05-05 17:53:53.747 +03:00 [INF] Yeni numara oluşturuldu: SIP-250505-001
+2025-05-05 17:53:53.754 +03:00 [INF] Cari listesi yüklendi, toplam 2 adet cari bulundu.
+2025-05-05 17:53:53.759 +03:00 [INF] Sözleşme listesi yüklendi, toplam 0 adet sözleşme bulundu.
+2025-05-05 17:53:53.765 +03:00 [INF] Ürün listesi yüklendi, toplam 3 adet ürün bulundu.
+2025-05-05 17:53:53.770 +03:00 [INF] Depo listesi yüklendi, toplam 2 adet depo bulundu.
+2025-05-05 17:53:53.774 +03:00 [INF] Birim sayısı: Aktif=2, Pasif=0, Silinmiş=0
+2025-05-05 17:53:53.775 +03:00 [INF] Ürün select list oluşturuldu, toplam 3 adet öğe içeriyor.
+2025-05-05 17:53:53.777 +03:00 [INF] Para birimi listesi yüklendi, toplam 2 adet para birimi bulundu.
+2025-05-05 17:54:07.086 +03:00 [INF] Giriş denemesi: admin
+2025-05-05 17:54:07.184 +03:00 [INF] Admin kullanıcısı başarıyla giriş yaptı: admin
+2025-05-05 17:54:07.184 +03:00 [INF] Admin session oluşturuldu: UserID=f0c78a73-342f-4491-acca-6c3d4a0be04a, UserName=admin
+2025-05-05 17:54:07.184 +03:00 [INF] Yönlendirme adresi: /Urun
+2025-05-05 17:54:07.184 +03:00 [INF] Admin kullanıcısı /Urun adresine yönlendiriliyor
+2025-05-05 17:54:13.362 +03:00 [INF] Fatura oluşturma sayfası yükleniyor: Kullanıcı=admin
+2025-05-05 17:54:13.365 +03:00 [INF] Yeni numara oluşturuldu: FTR-250505-001
+2025-05-05 17:54:13.367 +03:00 [INF] Yeni numara oluşturuldu: SIP-250505-001
+2025-05-05 17:54:13.371 +03:00 [INF] Cari listesi yüklendi, toplam 2 adet cari bulundu.
+2025-05-05 17:54:13.374 +03:00 [INF] Sözleşme listesi yüklendi, toplam 0 adet sözleşme bulundu.
+2025-05-05 17:54:13.378 +03:00 [INF] Ürün listesi yüklendi, toplam 3 adet ürün bulundu.
+2025-05-05 17:54:13.381 +03:00 [INF] Depo listesi yüklendi, toplam 2 adet depo bulundu.
+2025-05-05 17:54:13.390 +03:00 [INF] Birim sayısı: Aktif=2, Pasif=0, Silinmiş=0
+2025-05-05 17:54:13.390 +03:00 [INF] Ürün select list oluşturuldu, toplam 3 adet öğe içeriyor.
+2025-05-05 17:54:13.393 +03:00 [INF] Para birimi listesi yüklendi, toplam 2 adet para birimi bulundu.
+2025-05-05 17:54:27.704 +03:00 [INF] Kur değeri önbellekten alındı: UZS -> USD
+2025-05-05 17:55:01.348 +03:00 [WRN] Model hata için: FaturaNotu = The Fatura Notu field is required.
+2025-05-05 17:55:01.348 +03:00 [WRN] Fatura formu doğrulama hatası
+2025-05-05 17:55:01.348 +03:00 [WRN] Model hata: The Fatura Notu field is required.
+2025-05-05 17:55:01.351 +03:00 [INF] Cari listesi yüklendi, toplam 2 adet cari bulundu.
+2025-05-05 17:55:01.354 +03:00 [INF] Sözleşme listesi yüklendi, toplam 0 adet sözleşme bulundu.
+2025-05-05 17:55:01.356 +03:00 [INF] Ürün listesi yüklendi, toplam 3 adet ürün bulundu.
+2025-05-05 17:55:01.358 +03:00 [INF] Depo listesi yüklendi, toplam 2 adet depo bulundu.
+2025-05-05 17:55:01.364 +03:00 [INF] Birim sayısı: Aktif=2, Pasif=0, Silinmiş=0
+2025-05-05 17:55:01.364 +03:00 [INF] Ürün select list oluşturuldu, toplam 3 adet öğe içeriyor.
+2025-05-05 17:55:01.366 +03:00 [INF] Para birimi listesi yüklendi, toplam 2 adet para birimi bulundu.
+2025-05-05 18:00:14.319 +03:00 [INF] Veritabanına bağlantı başarılı. Migrationlar uygulanıyor...
+2025-05-05 18:00:14.642 +03:00 [INF] Veritabanı işlemleri başarıyla tamamlandı.
+2025-05-05 18:00:14.819 +03:00 [ERR] Hosting failed to start
+System.IO.IOException: Failed to bind to address https://127.0.0.1:7118: address already in use.
+ ---> Microsoft.AspNetCore.Connections.AddressInUseException: Address already in use
+ ---> System.Net.Sockets.SocketException (48): Address already in use
+   at System.Net.Sockets.Socket.DoBind(EndPoint endPointSnapshot, SocketAddress socketAddress)
+   at System.Net.Sockets.Socket.Bind(EndPoint localEP)
+   at Microsoft.AspNetCore.Server.Kestrel.Transport.Sockets.SocketTransportOptions.CreateDefaultBoundListenSocket(EndPoint endpoint)
+   at Microsoft.AspNetCore.Server.Kestrel.Transport.Sockets.SocketConnectionListener.Bind()
+   --- End of inner exception stack trace ---
+   at Microsoft.AspNetCore.Server.Kestrel.Transport.Sockets.SocketConnectionListener.Bind()
+   at Microsoft.AspNetCore.Server.Kestrel.Transport.Sockets.SocketTransportFactory.BindAsync(EndPoint endpoint, CancellationToken cancellationToken)
+   at Microsoft.AspNetCore.Server.Kestrel.Core.Internal.Infrastructure.TransportManager.BindAsync(EndPoint endPoint, ConnectionDelegate connectionDelegate, EndpointConfig endpointConfig, CancellationToken cancellationToken)
+   at Microsoft.AspNetCore.Server.Kestrel.Core.KestrelServerImpl.<>c__DisplayClass28_0`1.<<StartAsync>g__OnBind|0>d.MoveNext()
+--- End of stack trace from previous location ---
+   at Microsoft.AspNetCore.Server.Kestrel.Core.Internal.AddressBinder.BindEndpointAsync(ListenOptions endpoint, AddressBindContext context, CancellationToken cancellationToken)
+   --- End of inner exception stack trace ---
+   at Microsoft.AspNetCore.Server.Kestrel.Core.Internal.AddressBinder.BindEndpointAsync(ListenOptions endpoint, AddressBindContext context, CancellationToken cancellationToken)
+   at Microsoft.AspNetCore.Server.Kestrel.Core.LocalhostListenOptions.BindAsync(AddressBindContext context, CancellationToken cancellationToken)
+   at Microsoft.AspNetCore.Server.Kestrel.Core.Internal.AddressBinder.AddressesStrategy.BindAsync(AddressBindContext context, CancellationToken cancellationToken)
+   at Microsoft.AspNetCore.Server.Kestrel.Core.KestrelServerImpl.BindAsync(CancellationToken cancellationToken)
+   at Microsoft.AspNetCore.Server.Kestrel.Core.KestrelServerImpl.StartAsync[TContext](IHttpApplication`1 application, CancellationToken cancellationToken)
+   at Microsoft.AspNetCore.Hosting.GenericWebHostService.StartAsync(CancellationToken cancellationToken)
+   at Microsoft.Extensions.Hosting.Internal.Host.<StartAsync>b__14_1(IHostedService service, CancellationToken token)
+   at Microsoft.Extensions.Hosting.Internal.Host.ForeachService[T](IEnumerable`1 services, CancellationToken token, Boolean concurrent, Boolean abortOnFirstException, List`1 exceptions, Func`3 operation)
+2025-05-05 18:00:58.174 +03:00 [INF] Veritabanına bağlantı başarılı. Migrationlar uygulanıyor...
+2025-05-05 18:00:58.490 +03:00 [INF] Veritabanı işlemleri başarıyla tamamlandı.
+2025-05-05 18:01:28.438 +03:00 [INF] Fatura oluşturma sayfası yükleniyor: Kullanıcı=admin
+2025-05-05 18:01:28.464 +03:00 [INF] Yeni numara oluşturuldu: FTR-250505-001
+2025-05-05 18:01:28.468 +03:00 [INF] Yeni numara oluşturuldu: SIP-250505-001
+2025-05-05 18:01:28.493 +03:00 [INF] Cari listesi yüklendi, toplam 2 adet cari bulundu.
+2025-05-05 18:01:28.502 +03:00 [INF] Sözleşme listesi yüklendi, toplam 0 adet sözleşme bulundu.
+2025-05-05 18:01:28.534 +03:00 [INF] Ürün listesi yüklendi, toplam 3 adet ürün bulundu.
+2025-05-05 18:01:28.548 +03:00 [INF] Depo listesi yüklendi, toplam 2 adet depo bulundu.
+2025-05-05 18:01:28.568 +03:00 [INF] Birim sayısı: Aktif=2, Pasif=0, Silinmiş=0
+2025-05-05 18:01:28.568 +03:00 [INF] Ürün select list oluşturuldu, toplam 3 adet öğe içeriyor.
+2025-05-05 18:01:28.585 +03:00 [INF] Para birimi listesi yüklendi, toplam 2 adet para birimi bulundu.
+2025-05-05 18:01:35.878 +03:00 [INF] Fatura oluşturma sayfası yükleniyor: Kullanıcı=admin
+2025-05-05 18:01:35.883 +03:00 [INF] Yeni numara oluşturuldu: FTR-250505-001
+2025-05-05 18:01:35.888 +03:00 [INF] Yeni numara oluşturuldu: SIP-250505-001
+2025-05-05 18:01:35.893 +03:00 [INF] Cari listesi yüklendi, toplam 2 adet cari bulundu.
+2025-05-05 18:01:35.899 +03:00 [INF] Sözleşme listesi yüklendi, toplam 0 adet sözleşme bulundu.
+2025-05-05 18:01:35.904 +03:00 [INF] Ürün listesi yüklendi, toplam 3 adet ürün bulundu.
+2025-05-05 18:01:35.909 +03:00 [INF] Depo listesi yüklendi, toplam 2 adet depo bulundu.
+2025-05-05 18:01:35.918 +03:00 [INF] Birim sayısı: Aktif=2, Pasif=0, Silinmiş=0
+2025-05-05 18:01:35.918 +03:00 [INF] Ürün select list oluşturuldu, toplam 3 adet öğe içeriyor.
+2025-05-05 18:01:35.921 +03:00 [INF] Para birimi listesi yüklendi, toplam 2 adet para birimi bulundu.
+2025-05-05 18:02:06.930 +03:00 [ERR] Fatura ve ilişkili kayıtlar oluşturulurken hata: Index and length must refer to a location within the string. (Parameter 'length')
+System.ArgumentOutOfRangeException: Index and length must refer to a location within the string. (Parameter 'length')
+   at System.String.ThrowSubstringArgumentOutOfRange(Int32 startIndex, Int32 length)
+   at System.String.Substring(Int32 startIndex, Int32 length)
+   at MuhasebeStokWebApp.Services.FaturaOrchestrationService.CreateFaturaWithRelations(FaturaCreateViewModel viewModel, Nullable`1 currentUserId) in /Users/muhammetkocaman/MuhasebeStokWebApp/Services/FaturaOrchestrationService.cs:line 39
+2025-05-05 18:02:06.936 +03:00 [ERR] Fatura oluşturma hatası
+System.ArgumentOutOfRangeException: Index and length must refer to a location within the string. (Parameter 'length')
+   at System.String.ThrowSubstringArgumentOutOfRange(Int32 startIndex, Int32 length)
+   at System.String.Substring(Int32 startIndex, Int32 length)
+   at MuhasebeStokWebApp.Services.FaturaOrchestrationService.CreateFaturaWithRelations(FaturaCreateViewModel viewModel, Nullable`1 currentUserId) in /Users/muhammetkocaman/MuhasebeStokWebApp/Services/FaturaOrchestrationService.cs:line 39
+   at MuhasebeStokWebApp.Controllers.FaturaController.Create(FaturaCreateViewModel viewModel) in /Users/muhammetkocaman/MuhasebeStokWebApp/Controllers/FaturaController.cs:line 321
+2025-05-05 18:02:06.942 +03:00 [INF] Cari listesi yüklendi, toplam 2 adet cari bulundu.
+2025-05-05 18:02:06.946 +03:00 [INF] Sözleşme listesi yüklendi, toplam 0 adet sözleşme bulundu.
+2025-05-05 18:02:06.949 +03:00 [INF] Ürün listesi yüklendi, toplam 3 adet ürün bulundu.
+2025-05-05 18:02:06.953 +03:00 [INF] Depo listesi yüklendi, toplam 2 adet depo bulundu.
+2025-05-05 18:02:06.957 +03:00 [INF] Birim sayısı: Aktif=2, Pasif=0, Silinmiş=0
+2025-05-05 18:02:06.957 +03:00 [INF] Ürün select list oluşturuldu, toplam 3 adet öğe içeriyor.
+2025-05-05 18:02:06.958 +03:00 [INF] Para birimi listesi yüklendi, toplam 2 adet para birimi bulundu.
+2025-05-05 18:05:02.465 +03:00 [INF] Veritabanına bağlantı başarılı. Migrationlar uygulanıyor...
+2025-05-05 18:05:02.780 +03:00 [INF] Veritabanı işlemleri başarıyla tamamlandı.
+2025-05-05 18:05:02.937 +03:00 [ERR] Hosting failed to start
+System.IO.IOException: Failed to bind to address https://127.0.0.1:7118: address already in use.
+ ---> Microsoft.AspNetCore.Connections.AddressInUseException: Address already in use
+ ---> System.Net.Sockets.SocketException (48): Address already in use
+   at System.Net.Sockets.Socket.DoBind(EndPoint endPointSnapshot, SocketAddress socketAddress)
+   at System.Net.Sockets.Socket.Bind(EndPoint localEP)
+   at Microsoft.AspNetCore.Server.Kestrel.Transport.Sockets.SocketTransportOptions.CreateDefaultBoundListenSocket(EndPoint endpoint)
+   at Microsoft.AspNetCore.Server.Kestrel.Transport.Sockets.SocketConnectionListener.Bind()
+   --- End of inner exception stack trace ---
+   at Microsoft.AspNetCore.Server.Kestrel.Transport.Sockets.SocketConnectionListener.Bind()
+   at Microsoft.AspNetCore.Server.Kestrel.Transport.Sockets.SocketTransportFactory.BindAsync(EndPoint endpoint, CancellationToken cancellationToken)
+   at Microsoft.AspNetCore.Server.Kestrel.Core.Internal.Infrastructure.TransportManager.BindAsync(EndPoint endPoint, ConnectionDelegate connectionDelegate, EndpointConfig endpointConfig, CancellationToken cancellationToken)
+   at Microsoft.AspNetCore.Server.Kestrel.Core.KestrelServerImpl.<>c__DisplayClass28_0`1.<<StartAsync>g__OnBind|0>d.MoveNext()
+--- End of stack trace from previous location ---
+   at Microsoft.AspNetCore.Server.Kestrel.Core.Internal.AddressBinder.BindEndpointAsync(ListenOptions endpoint, AddressBindContext context, CancellationToken cancellationToken)
+   --- End of inner exception stack trace ---
+   at Microsoft.AspNetCore.Server.Kestrel.Core.Internal.AddressBinder.BindEndpointAsync(ListenOptions endpoint, AddressBindContext context, CancellationToken cancellationToken)
+   at Microsoft.AspNetCore.Server.Kestrel.Core.LocalhostListenOptions.BindAsync(AddressBindContext context, CancellationToken cancellationToken)
+   at Microsoft.AspNetCore.Server.Kestrel.Core.Internal.AddressBinder.AddressesStrategy.BindAsync(AddressBindContext context, CancellationToken cancellationToken)
+   at Microsoft.AspNetCore.Server.Kestrel.Core.KestrelServerImpl.BindAsync(CancellationToken cancellationToken)
+   at Microsoft.AspNetCore.Server.Kestrel.Core.KestrelServerImpl.StartAsync[TContext](IHttpApplication`1 application, CancellationToken cancellationToken)
+   at Microsoft.AspNetCore.Hosting.GenericWebHostService.StartAsync(CancellationToken cancellationToken)
+   at Microsoft.Extensions.Hosting.Internal.Host.<StartAsync>b__14_1(IHostedService service, CancellationToken token)
+   at Microsoft.Extensions.Hosting.Internal.Host.ForeachService[T](IEnumerable`1 services, CancellationToken token, Boolean concurrent, Boolean abortOnFirstException, List`1 exceptions, Func`3 operation)
+2025-05-05 18:05:21.552 +03:00 [INF] Veritabanına bağlantı başarılı. Migrationlar uygulanıyor...
+2025-05-05 18:05:21.865 +03:00 [INF] Veritabanı işlemleri başarıyla tamamlandı.
+2025-05-05 18:05:32.088 +03:00 [INF] Fatura oluşturma sayfası yükleniyor: Kullanıcı=admin
+2025-05-05 18:05:32.104 +03:00 [INF] Yeni numara oluşturuldu: FTR-250505-001
+2025-05-05 18:05:32.108 +03:00 [INF] Yeni numara oluşturuldu: SIP-250505-001
+2025-05-05 18:05:32.133 +03:00 [INF] Cari listesi yüklendi, toplam 2 adet cari bulundu.
+2025-05-05 18:05:32.143 +03:00 [INF] Sözleşme listesi yüklendi, toplam 0 adet sözleşme bulundu.
+2025-05-05 18:05:32.176 +03:00 [INF] Ürün listesi yüklendi, toplam 3 adet ürün bulundu.
+2025-05-05 18:05:32.189 +03:00 [INF] Depo listesi yüklendi, toplam 2 adet depo bulundu.
+2025-05-05 18:05:32.210 +03:00 [INF] Birim sayısı: Aktif=2, Pasif=0, Silinmiş=0
+2025-05-05 18:05:32.210 +03:00 [INF] Ürün select list oluşturuldu, toplam 3 adet öğe içeriyor.
+2025-05-05 18:05:32.228 +03:00 [INF] Para birimi listesi yüklendi, toplam 2 adet para birimi bulundu.
+2025-05-05 18:05:37.231 +03:00 [INF] Fatura oluşturma sayfası yükleniyor: Kullanıcı=admin
+2025-05-05 18:05:37.237 +03:00 [INF] Yeni numara oluşturuldu: FTR-250505-001
+2025-05-05 18:05:37.243 +03:00 [INF] Yeni numara oluşturuldu: SIP-250505-001
+2025-05-05 18:05:37.248 +03:00 [INF] Cari listesi yüklendi, toplam 2 adet cari bulundu.
+2025-05-05 18:05:37.252 +03:00 [INF] Sözleşme listesi yüklendi, toplam 0 adet sözleşme bulundu.
+2025-05-05 18:05:37.258 +03:00 [INF] Ürün listesi yüklendi, toplam 3 adet ürün bulundu.
+2025-05-05 18:05:37.263 +03:00 [INF] Depo listesi yüklendi, toplam 2 adet depo bulundu.
+2025-05-05 18:05:37.274 +03:00 [INF] Birim sayısı: Aktif=2, Pasif=0, Silinmiş=0
+2025-05-05 18:05:37.274 +03:00 [INF] Ürün select list oluşturuldu, toplam 3 adet öğe içeriyor.
+2025-05-05 18:05:37.278 +03:00 [INF] Para birimi listesi yüklendi, toplam 2 adet para birimi bulundu.
+2025-05-05 18:06:09.396 +03:00 [INF] AddAsync işlemi başlatılıyor
+2025-05-05 18:06:09.405 +03:00 [INF] Yeni fatura ekleniyor...
+2025-05-05 18:06:09.487 +03:00 [INF] Fatura başarıyla eklendi, FaturaID: "04b44174-0b1c-413b-b592-dab5a3ce086f"
+2025-05-05 18:06:09.494 +03:00 [INF] AddAsync işlemi başarıyla tamamlandı
+2025-05-05 18:06:09.496 +03:00 [INF] Otomatik irsaliye oluşturuldu: bcf6fa8a-7400-4e61-9cf4-c6478fb9334e (Fatura: 04b44174-0b1c-413b-b592-dab5a3ce086f)
+2025-05-05 18:06:09.496 +03:00 [INF] Otomatik irsaliye oluşturuldu. IrsaliyeID: bcf6fa8a-7400-4e61-9cf4-c6478fb9334e
+2025-05-05 18:06:09.496 +03:00 [INF] Fatura başarıyla oluşturuldu. FaturaID: 04b44174-0b1c-413b-b592-dab5a3ce086f
+2025-05-05 18:08:27.487 +03:00 [INF] Birim sayısı: Aktif=2, Pasif=0, Silinmiş=1
+2025-05-05 18:24:04.432 +03:00 [INF] Veritabanına bağlantı başarılı. Migrationlar uygulanıyor...
+2025-05-05 18:24:04.729 +03:00 [INF] Veritabanı işlemleri başarıyla tamamlandı.
+2025-05-05 18:24:30.507 +03:00 [INF] Giriş denemesi: admin
+2025-05-05 18:24:30.603 +03:00 [INF] Admin kullanıcısı başarıyla giriş yaptı: admin
+2025-05-05 18:24:30.603 +03:00 [INF] Admin session oluşturuldu: UserID=f0c78a73-342f-4491-acca-6c3d4a0be04a, UserName=admin
+2025-05-05 18:24:30.603 +03:00 [INF] Yönlendirme adresi: /Urun
+2025-05-05 18:24:30.603 +03:00 [INF] Admin kullanıcısı /Urun adresine yönlendiriliyor
+2025-05-05 18:24:36.933 +03:00 [INF] Fatura oluşturma sayfası yükleniyor: Kullanıcı=admin
+2025-05-05 18:24:36.966 +03:00 [INF] Yeni numara oluşturuldu: FTR-250505-002
+2025-05-05 18:24:36.971 +03:00 [INF] Yeni numara oluşturuldu: SIP-250505-001
+2025-05-05 18:24:36.983 +03:00 [INF] Cari listesi yüklendi, toplam 2 adet cari bulundu.
+2025-05-05 18:24:36.990 +03:00 [INF] Sözleşme listesi yüklendi, toplam 0 adet sözleşme bulundu.
+2025-05-05 18:24:37.000 +03:00 [INF] Ürün listesi yüklendi, toplam 3 adet ürün bulundu.
+2025-05-05 18:24:37.013 +03:00 [INF] Depo listesi yüklendi, toplam 2 adet depo bulundu.
+2025-05-05 18:24:37.030 +03:00 [INF] Birim sayısı: Aktif=2, Pasif=0, Silinmiş=0
+2025-05-05 18:24:37.031 +03:00 [INF] Ürün select list oluşturuldu, toplam 3 adet öğe içeriyor.
+2025-05-05 18:24:37.048 +03:00 [INF] Para birimi listesi yüklendi, toplam 2 adet para birimi bulundu.
+2025-05-05 18:25:46.865 +03:00 [INF] CreateFaturaWithRelations başlatılıyor: FaturaTuruID=2, CariID="9395be15-6278-41d0-8625-671a7931db02"
+2025-05-05 18:25:46.868 +03:00 [INF] AddAsync işlemi başlatılıyor
+2025-05-05 18:25:46.875 +03:00 [INF] Yeni fatura ekleniyor...
+2025-05-05 18:25:46.920 +03:00 [INF] Fatura başarıyla eklendi, FaturaID: "06dd1b36-52f9-4305-a61e-22fe4a3b8906"
+2025-05-05 18:25:46.927 +03:00 [INF] AddAsync işlemi başarıyla tamamlandı
+2025-05-05 18:25:46.927 +03:00 [INF] Fatura oluşturuldu, FaturaID: "06dd1b36-52f9-4305-a61e-22fe4a3b8906"
+2025-05-05 18:25:46.949 +03:00 [INF] Fatura Detay eklendi: FaturaDetayID="d452d4f0-3dbe-4b0a-99f9-1ce73eb75603", UrunID="3fe2cca7-136f-403e-be18-2b86e8448019", Miktar=150
+2025-05-05 18:25:46.952 +03:00 [INF] StokCikisiYap başladı: Ürün 3fe2cca7-136f-403e-be18-2b86e8448019, Miktar 150, Hareket Tipi Cikis
+2025-05-05 18:25:46.954 +03:00 [INF] StokCikisiYap - Yeni transaction başlatıldı (Isolation Level: Snapshot): Ürün 3fe2cca7-136f-403e-be18-2b86e8448019, Miktar 150
+2025-05-05 18:25:46.984 +03:00 [ERR] An exception occurred while iterating over the results of a query for context type 'MuhasebeStokWebApp.Data.ApplicationDbContext'.
+Microsoft.Data.SqlClient.SqlException (0x80131904): Snapshot isolation transaction failed accessing database 'MuhasebeStokDB' because snapshot isolation is not allowed in this database. Use ALTER DATABASE to allow snapshot isolation.
+   at Microsoft.Data.SqlClient.SqlConnection.OnError(SqlException exception, Boolean breakConnection, Action`1 wrapCloseInAction)
+   at Microsoft.Data.SqlClient.SqlInternalConnection.OnError(SqlException exception, Boolean breakConnection, Action`1 wrapCloseInAction)
+   at Microsoft.Data.SqlClient.TdsParser.ThrowExceptionAndWarning(TdsParserStateObject stateObj, Boolean callerHasConnectionLock, Boolean asyncClose)
+   at Microsoft.Data.SqlClient.TdsParser.TryRun(RunBehavior runBehavior, SqlCommand cmdHandler, SqlDataReader dataStream, BulkCopySimpleResultSet bulkCopyHandler, TdsParserStateObject stateObj, Boolean& dataReady)
+   at Microsoft.Data.SqlClient.SqlDataReader.TryHasMoreRows(Boolean& moreRows)
+   at Microsoft.Data.SqlClient.SqlDataReader.TryReadInternal(Boolean setTimeout, Boolean& more)
+   at Microsoft.Data.SqlClient.SqlDataReader.ReadAsyncExecute(Task task, Object state)
+   at Microsoft.Data.SqlClient.SqlDataReader.InvokeAsyncCall[T](SqlDataReaderBaseAsyncCallContext`1 context)
+--- End of stack trace from previous location ---
+   at Microsoft.EntityFrameworkCore.Query.Internal.BufferedDataReader.BufferedDataRecord.InitializeAsync(DbDataReader reader, IReadOnlyList`1 columns, CancellationToken cancellationToken)
+   at Microsoft.EntityFrameworkCore.Query.Internal.BufferedDataReader.InitializeAsync(IReadOnlyList`1 columns, CancellationToken cancellationToken)
+   at Microsoft.EntityFrameworkCore.Query.Internal.BufferedDataReader.InitializeAsync(IReadOnlyList`1 columns, CancellationToken cancellationToken)
+   at Microsoft.EntityFrameworkCore.Storage.RelationalCommand.ExecuteReaderAsync(RelationalCommandParameterObject parameterObject, CancellationToken cancellationToken)
+   at Microsoft.EntityFrameworkCore.Storage.RelationalCommand.ExecuteReaderAsync(RelationalCommandParameterObject parameterObject, CancellationToken cancellationToken)
+   at Microsoft.EntityFrameworkCore.Query.Internal.SplitQueryingEnumerable`1.AsyncEnumerator.InitializeReaderAsync(AsyncEnumerator enumerator, CancellationToken cancellationToken)
+   at Microsoft.EntityFrameworkCore.SqlServer.Storage.Internal.SqlServerExecutionStrategy.ExecuteAsync[TState,TResult](TState state, Func`4 operation, Func`4 verifySucceeded, CancellationToken cancellationToken)
+   at Microsoft.EntityFrameworkCore.Query.Internal.SplitQueryingEnumerable`1.AsyncEnumerator.MoveNextAsync()
+ClientConnectionId:44747a5a-3d6a-4c08-aaf4-aeaab6a78f93
+Error Number:3952,State:1,Class:16
+Microsoft.Data.SqlClient.SqlException (0x80131904): Snapshot isolation transaction failed accessing database 'MuhasebeStokDB' because snapshot isolation is not allowed in this database. Use ALTER DATABASE to allow snapshot isolation.
+   at Microsoft.Data.SqlClient.SqlConnection.OnError(SqlException exception, Boolean breakConnection, Action`1 wrapCloseInAction)
+   at Microsoft.Data.SqlClient.SqlInternalConnection.OnError(SqlException exception, Boolean breakConnection, Action`1 wrapCloseInAction)
+   at Microsoft.Data.SqlClient.TdsParser.ThrowExceptionAndWarning(TdsParserStateObject stateObj, Boolean callerHasConnectionLock, Boolean asyncClose)
+   at Microsoft.Data.SqlClient.TdsParser.TryRun(RunBehavior runBehavior, SqlCommand cmdHandler, SqlDataReader dataStream, BulkCopySimpleResultSet bulkCopyHandler, TdsParserStateObject stateObj, Boolean& dataReady)
+   at Microsoft.Data.SqlClient.SqlDataReader.TryHasMoreRows(Boolean& moreRows)
+   at Microsoft.Data.SqlClient.SqlDataReader.TryReadInternal(Boolean setTimeout, Boolean& more)
+   at Microsoft.Data.SqlClient.SqlDataReader.ReadAsyncExecute(Task task, Object state)
+   at Microsoft.Data.SqlClient.SqlDataReader.InvokeAsyncCall[T](SqlDataReaderBaseAsyncCallContext`1 context)
+--- End of stack trace from previous location ---
+   at Microsoft.EntityFrameworkCore.Query.Internal.BufferedDataReader.BufferedDataRecord.InitializeAsync(DbDataReader reader, IReadOnlyList`1 columns, CancellationToken cancellationToken)
+   at Microsoft.EntityFrameworkCore.Query.Internal.BufferedDataReader.InitializeAsync(IReadOnlyList`1 columns, CancellationToken cancellationToken)
+   at Microsoft.EntityFrameworkCore.Query.Internal.BufferedDataReader.InitializeAsync(IReadOnlyList`1 columns, CancellationToken cancellationToken)
+   at Microsoft.EntityFrameworkCore.Storage.RelationalCommand.ExecuteReaderAsync(RelationalCommandParameterObject parameterObject, CancellationToken cancellationToken)
+   at Microsoft.EntityFrameworkCore.Storage.RelationalCommand.ExecuteReaderAsync(RelationalCommandParameterObject parameterObject, CancellationToken cancellationToken)
+   at Microsoft.EntityFrameworkCore.Query.Internal.SplitQueryingEnumerable`1.AsyncEnumerator.InitializeReaderAsync(AsyncEnumerator enumerator, CancellationToken cancellationToken)
+   at Microsoft.EntityFrameworkCore.SqlServer.Storage.Internal.SqlServerExecutionStrategy.ExecuteAsync[TState,TResult](TState state, Func`4 operation, Func`4 verifySucceeded, CancellationToken cancellationToken)
+   at Microsoft.EntityFrameworkCore.Query.Internal.SplitQueryingEnumerable`1.AsyncEnumerator.MoveNextAsync()
+ClientConnectionId:44747a5a-3d6a-4c08-aaf4-aeaab6a78f93
+Error Number:3952,State:1,Class:16
+2025-05-05 18:25:46.986 +03:00 [WRN] StokCikisiYap - Transaction geri alındı: Ürün 3fe2cca7-136f-403e-be18-2b86e8448019, Miktar 150
+2025-05-05 18:25:46.986 +03:00 [ERR] Stok çıkışı sırasında hata oluştu: Ürün 3fe2cca7-136f-403e-be18-2b86e8448019, Miktar 150
+Microsoft.Data.SqlClient.SqlException (0x80131904): Snapshot isolation transaction failed accessing database 'MuhasebeStokDB' because snapshot isolation is not allowed in this database. Use ALTER DATABASE to allow snapshot isolation.
+   at Microsoft.Data.SqlClient.SqlConnection.OnError(SqlException exception, Boolean breakConnection, Action`1 wrapCloseInAction)
+   at Microsoft.Data.SqlClient.SqlInternalConnection.OnError(SqlException exception, Boolean breakConnection, Action`1 wrapCloseInAction)
+   at Microsoft.Data.SqlClient.TdsParser.ThrowExceptionAndWarning(TdsParserStateObject stateObj, Boolean callerHasConnectionLock, Boolean asyncClose)
+   at Microsoft.Data.SqlClient.TdsParser.TryRun(RunBehavior runBehavior, SqlCommand cmdHandler, SqlDataReader dataStream, BulkCopySimpleResultSet bulkCopyHandler, TdsParserStateObject stateObj, Boolean& dataReady)
+   at Microsoft.Data.SqlClient.SqlDataReader.TryHasMoreRows(Boolean& moreRows)
+   at Microsoft.Data.SqlClient.SqlDataReader.TryReadInternal(Boolean setTimeout, Boolean& more)
+   at Microsoft.Data.SqlClient.SqlDataReader.ReadAsyncExecute(Task task, Object state)
+   at Microsoft.Data.SqlClient.SqlDataReader.InvokeAsyncCall[T](SqlDataReaderBaseAsyncCallContext`1 context)
+--- End of stack trace from previous location ---
+   at Microsoft.EntityFrameworkCore.Query.Internal.BufferedDataReader.BufferedDataRecord.InitializeAsync(DbDataReader reader, IReadOnlyList`1 columns, CancellationToken cancellationToken)
+   at Microsoft.EntityFrameworkCore.Query.Internal.BufferedDataReader.InitializeAsync(IReadOnlyList`1 columns, CancellationToken cancellationToken)
+   at Microsoft.EntityFrameworkCore.Query.Internal.BufferedDataReader.InitializeAsync(IReadOnlyList`1 columns, CancellationToken cancellationToken)
+   at Microsoft.EntityFrameworkCore.Storage.RelationalCommand.ExecuteReaderAsync(RelationalCommandParameterObject parameterObject, CancellationToken cancellationToken)
+   at Microsoft.EntityFrameworkCore.Storage.RelationalCommand.ExecuteReaderAsync(RelationalCommandParameterObject parameterObject, CancellationToken cancellationToken)
+   at Microsoft.EntityFrameworkCore.Query.Internal.SplitQueryingEnumerable`1.AsyncEnumerator.InitializeReaderAsync(AsyncEnumerator enumerator, CancellationToken cancellationToken)
+   at Microsoft.EntityFrameworkCore.SqlServer.Storage.Internal.SqlServerExecutionStrategy.ExecuteAsync[TState,TResult](TState state, Func`4 operation, Func`4 verifySucceeded, CancellationToken cancellationToken)
+   at Microsoft.EntityFrameworkCore.Query.Internal.SplitQueryingEnumerable`1.AsyncEnumerator.MoveNextAsync()
+   at Microsoft.EntityFrameworkCore.Query.ShapedQueryCompilingExpressionVisitor.SingleOrDefaultAsync[TSource](IAsyncEnumerable`1 asyncEnumerable, CancellationToken cancellationToken)
+   at Microsoft.EntityFrameworkCore.Query.ShapedQueryCompilingExpressionVisitor.SingleOrDefaultAsync[TSource](IAsyncEnumerable`1 asyncEnumerable, CancellationToken cancellationToken)
+   at MuhasebeStokWebApp.Services.StokFifoService.StokCikisiYap(Guid urunID, Decimal miktar, StokHareketTipi hareketTipi, Nullable`1 referansID, String aciklama, String paraBirimi, Boolean useBatch) in /Users/muhammetkocaman/MuhasebeStokWebApp/Services/StokFifoService.cs:line 504
+ClientConnectionId:44747a5a-3d6a-4c08-aaf4-aeaab6a78f93
+Error Number:3952,State:1,Class:16
+2025-05-05 18:25:46.988 +03:00 [ERR] Fatura ve ilişkili kayıtlar oluşturulurken hata: Stok çıkışı işlemi başarısız oldu: Snapshot isolation transaction failed accessing database 'MuhasebeStokDB' because snapshot isolation is not allowed in this database. Use ALTER DATABASE to allow snapshot isolation.
+System.Exception: Stok çıkışı işlemi başarısız oldu: Snapshot isolation transaction failed accessing database 'MuhasebeStokDB' because snapshot isolation is not allowed in this database. Use ALTER DATABASE to allow snapshot isolation.
+ ---> Microsoft.Data.SqlClient.SqlException (0x80131904): Snapshot isolation transaction failed accessing database 'MuhasebeStokDB' because snapshot isolation is not allowed in this database. Use ALTER DATABASE to allow snapshot isolation.
+   at Microsoft.Data.SqlClient.SqlConnection.OnError(SqlException exception, Boolean breakConnection, Action`1 wrapCloseInAction)
+   at Microsoft.Data.SqlClient.SqlInternalConnection.OnError(SqlException exception, Boolean breakConnection, Action`1 wrapCloseInAction)
+   at Microsoft.Data.SqlClient.TdsParser.ThrowExceptionAndWarning(TdsParserStateObject stateObj, Boolean callerHasConnectionLock, Boolean asyncClose)
+   at Microsoft.Data.SqlClient.TdsParser.TryRun(RunBehavior runBehavior, SqlCommand cmdHandler, SqlDataReader dataStream, BulkCopySimpleResultSet bulkCopyHandler, TdsParserStateObject stateObj, Boolean& dataReady)
+   at Microsoft.Data.SqlClient.SqlDataReader.TryHasMoreRows(Boolean& moreRows)
+   at Microsoft.Data.SqlClient.SqlDataReader.TryReadInternal(Boolean setTimeout, Boolean& more)
+   at Microsoft.Data.SqlClient.SqlDataReader.ReadAsyncExecute(Task task, Object state)
+   at Microsoft.Data.SqlClient.SqlDataReader.InvokeAsyncCall[T](SqlDataReaderBaseAsyncCallContext`1 context)
+--- End of stack trace from previous location ---
+   at Microsoft.EntityFrameworkCore.Query.Internal.BufferedDataReader.BufferedDataRecord.InitializeAsync(DbDataReader reader, IReadOnlyList`1 columns, CancellationToken cancellationToken)
+   at Microsoft.EntityFrameworkCore.Query.Internal.BufferedDataReader.InitializeAsync(IReadOnlyList`1 columns, CancellationToken cancellationToken)
+   at Microsoft.EntityFrameworkCore.Query.Internal.BufferedDataReader.InitializeAsync(IReadOnlyList`1 columns, CancellationToken cancellationToken)
+   at Microsoft.EntityFrameworkCore.Storage.RelationalCommand.ExecuteReaderAsync(RelationalCommandParameterObject parameterObject, CancellationToken cancellationToken)
+   at Microsoft.EntityFrameworkCore.Storage.RelationalCommand.ExecuteReaderAsync(RelationalCommandParameterObject parameterObject, CancellationToken cancellationToken)
+   at Microsoft.EntityFrameworkCore.Query.Internal.SplitQueryingEnumerable`1.AsyncEnumerator.InitializeReaderAsync(AsyncEnumerator enumerator, CancellationToken cancellationToken)
+   at Microsoft.EntityFrameworkCore.SqlServer.Storage.Internal.SqlServerExecutionStrategy.ExecuteAsync[TState,TResult](TState state, Func`4 operation, Func`4 verifySucceeded, CancellationToken cancellationToken)
+   at Microsoft.EntityFrameworkCore.Query.Internal.SplitQueryingEnumerable`1.AsyncEnumerator.MoveNextAsync()
+   at Microsoft.EntityFrameworkCore.Query.ShapedQueryCompilingExpressionVisitor.SingleOrDefaultAsync[TSource](IAsyncEnumerable`1 asyncEnumerable, CancellationToken cancellationToken)
+   at Microsoft.EntityFrameworkCore.Query.ShapedQueryCompilingExpressionVisitor.SingleOrDefaultAsync[TSource](IAsyncEnumerable`1 asyncEnumerable, CancellationToken cancellationToken)
+   at MuhasebeStokWebApp.Services.StokFifoService.StokCikisiYap(Guid urunID, Decimal miktar, StokHareketTipi hareketTipi, Nullable`1 referansID, String aciklama, String paraBirimi, Boolean useBatch) in /Users/muhammetkocaman/MuhasebeStokWebApp/Services/StokFifoService.cs:line 504
+ClientConnectionId:44747a5a-3d6a-4c08-aaf4-aeaab6a78f93
+Error Number:3952,State:1,Class:16
+   --- End of inner exception stack trace ---
+   at MuhasebeStokWebApp.Services.StokFifoService.StokCikisiYap(Guid urunID, Decimal miktar, StokHareketTipi hareketTipi, Nullable`1 referansID, String aciklama, String paraBirimi, Boolean useBatch) in /Users/muhammetkocaman/MuhasebeStokWebApp/Services/StokFifoService.cs:line 647
+   at MuhasebeStokWebApp.Services.StokFifoService.StokCikisiYap(Guid urunID, Decimal miktar, StokHareketTipi hareketTipi, Nullable`1 referansID, String aciklama, String paraBirimi, Boolean useBatch) in /Users/muhammetkocaman/MuhasebeStokWebApp/Services/StokFifoService.cs:line 656
+   at MuhasebeStokWebApp.Services.FaturaOrchestrationService.CreateFaturaWithRelations(FaturaCreateViewModel viewModel, Nullable`1 currentUserId) in /Users/muhammetkocaman/MuhasebeStokWebApp/Services/FaturaOrchestrationService.cs:line 113
+2025-05-05 18:25:46.988 +03:00 [ERR] Fatura oluşturma hatası
+System.Exception: Stok çıkışı işlemi başarısız oldu: Snapshot isolation transaction failed accessing database 'MuhasebeStokDB' because snapshot isolation is not allowed in this database. Use ALTER DATABASE to allow snapshot isolation.
+ ---> Microsoft.Data.SqlClient.SqlException (0x80131904): Snapshot isolation transaction failed accessing database 'MuhasebeStokDB' because snapshot isolation is not allowed in this database. Use ALTER DATABASE to allow snapshot isolation.
+   at Microsoft.Data.SqlClient.SqlConnection.OnError(SqlException exception, Boolean breakConnection, Action`1 wrapCloseInAction)
+   at Microsoft.Data.SqlClient.SqlInternalConnection.OnError(SqlException exception, Boolean breakConnection, Action`1 wrapCloseInAction)
+   at Microsoft.Data.SqlClient.TdsParser.ThrowExceptionAndWarning(TdsParserStateObject stateObj, Boolean callerHasConnectionLock, Boolean asyncClose)
+   at Microsoft.Data.SqlClient.TdsParser.TryRun(RunBehavior runBehavior, SqlCommand cmdHandler, SqlDataReader dataStream, BulkCopySimpleResultSet bulkCopyHandler, TdsParserStateObject stateObj, Boolean& dataReady)
+   at Microsoft.Data.SqlClient.SqlDataReader.TryHasMoreRows(Boolean& moreRows)
+   at Microsoft.Data.SqlClient.SqlDataReader.TryReadInternal(Boolean setTimeout, Boolean& more)
+   at Microsoft.Data.SqlClient.SqlDataReader.ReadAsyncExecute(Task task, Object state)
+   at Microsoft.Data.SqlClient.SqlDataReader.InvokeAsyncCall[T](SqlDataReaderBaseAsyncCallContext`1 context)
+--- End of stack trace from previous location ---
+   at Microsoft.EntityFrameworkCore.Query.Internal.BufferedDataReader.BufferedDataRecord.InitializeAsync(DbDataReader reader, IReadOnlyList`1 columns, CancellationToken cancellationToken)
+   at Microsoft.EntityFrameworkCore.Query.Internal.BufferedDataReader.InitializeAsync(IReadOnlyList`1 columns, CancellationToken cancellationToken)
+   at Microsoft.EntityFrameworkCore.Query.Internal.BufferedDataReader.InitializeAsync(IReadOnlyList`1 columns, CancellationToken cancellationToken)
+   at Microsoft.EntityFrameworkCore.Storage.RelationalCommand.ExecuteReaderAsync(RelationalCommandParameterObject parameterObject, CancellationToken cancellationToken)
+   at Microsoft.EntityFrameworkCore.Storage.RelationalCommand.ExecuteReaderAsync(RelationalCommandParameterObject parameterObject, CancellationToken cancellationToken)
+   at Microsoft.EntityFrameworkCore.Query.Internal.SplitQueryingEnumerable`1.AsyncEnumerator.InitializeReaderAsync(AsyncEnumerator enumerator, CancellationToken cancellationToken)
+   at Microsoft.EntityFrameworkCore.SqlServer.Storage.Internal.SqlServerExecutionStrategy.ExecuteAsync[TState,TResult](TState state, Func`4 operation, Func`4 verifySucceeded, CancellationToken cancellationToken)
+   at Microsoft.EntityFrameworkCore.Query.Internal.SplitQueryingEnumerable`1.AsyncEnumerator.MoveNextAsync()
+   at Microsoft.EntityFrameworkCore.Query.ShapedQueryCompilingExpressionVisitor.SingleOrDefaultAsync[TSource](IAsyncEnumerable`1 asyncEnumerable, CancellationToken cancellationToken)
+   at Microsoft.EntityFrameworkCore.Query.ShapedQueryCompilingExpressionVisitor.SingleOrDefaultAsync[TSource](IAsyncEnumerable`1 asyncEnumerable, CancellationToken cancellationToken)
+   at MuhasebeStokWebApp.Services.StokFifoService.StokCikisiYap(Guid urunID, Decimal miktar, StokHareketTipi hareketTipi, Nullable`1 referansID, String aciklama, String paraBirimi, Boolean useBatch) in /Users/muhammetkocaman/MuhasebeStokWebApp/Services/StokFifoService.cs:line 504
+ClientConnectionId:44747a5a-3d6a-4c08-aaf4-aeaab6a78f93
+Error Number:3952,State:1,Class:16
+   --- End of inner exception stack trace ---
+   at MuhasebeStokWebApp.Services.StokFifoService.StokCikisiYap(Guid urunID, Decimal miktar, StokHareketTipi hareketTipi, Nullable`1 referansID, String aciklama, String paraBirimi, Boolean useBatch) in /Users/muhammetkocaman/MuhasebeStokWebApp/Services/StokFifoService.cs:line 647
+   at MuhasebeStokWebApp.Services.StokFifoService.StokCikisiYap(Guid urunID, Decimal miktar, StokHareketTipi hareketTipi, Nullable`1 referansID, String aciklama, String paraBirimi, Boolean useBatch) in /Users/muhammetkocaman/MuhasebeStokWebApp/Services/StokFifoService.cs:line 656
+   at MuhasebeStokWebApp.Services.FaturaOrchestrationService.CreateFaturaWithRelations(FaturaCreateViewModel viewModel, Nullable`1 currentUserId) in /Users/muhammetkocaman/MuhasebeStokWebApp/Services/FaturaOrchestrationService.cs:line 113
+   at MuhasebeStokWebApp.Controllers.FaturaController.Create(FaturaCreateViewModel viewModel) in /Users/muhammetkocaman/MuhasebeStokWebApp/Controllers/FaturaController.cs:line 321
+2025-05-05 18:25:46.994 +03:00 [ERR] An exception occurred while iterating over the results of a query for context type 'MuhasebeStokWebApp.Data.ApplicationDbContext'.
+Microsoft.Data.SqlClient.SqlException (0x80131904): Snapshot isolation transaction failed accessing database 'MuhasebeStokDB' because snapshot isolation is not allowed in this database. Use ALTER DATABASE to allow snapshot isolation.
+   at Microsoft.Data.SqlClient.SqlConnection.OnError(SqlException exception, Boolean breakConnection, Action`1 wrapCloseInAction)
+   at Microsoft.Data.SqlClient.SqlInternalConnection.OnError(SqlException exception, Boolean breakConnection, Action`1 wrapCloseInAction)
+   at Microsoft.Data.SqlClient.TdsParser.ThrowExceptionAndWarning(TdsParserStateObject stateObj, Boolean callerHasConnectionLock, Boolean asyncClose)
+   at Microsoft.Data.SqlClient.TdsParser.TryRun(RunBehavior runBehavior, SqlCommand cmdHandler, SqlDataReader dataStream, BulkCopySimpleResultSet bulkCopyHandler, TdsParserStateObject stateObj, Boolean& dataReady)
+   at Microsoft.Data.SqlClient.SqlDataReader.TryHasMoreRows(Boolean& moreRows)
+   at Microsoft.Data.SqlClient.SqlDataReader.TryReadInternal(Boolean setTimeout, Boolean& more)
+   at Microsoft.Data.SqlClient.SqlDataReader.ReadAsyncExecute(Task task, Object state)
+   at Microsoft.Data.SqlClient.SqlDataReader.InvokeAsyncCall[T](SqlDataReaderBaseAsyncCallContext`1 context)
+--- End of stack trace from previous location ---
+   at Microsoft.EntityFrameworkCore.Query.Internal.BufferedDataReader.BufferedDataRecord.InitializeAsync(DbDataReader reader, IReadOnlyList`1 columns, CancellationToken cancellationToken)
+   at Microsoft.EntityFrameworkCore.Query.Internal.BufferedDataReader.InitializeAsync(IReadOnlyList`1 columns, CancellationToken cancellationToken)
+   at Microsoft.EntityFrameworkCore.Query.Internal.BufferedDataReader.InitializeAsync(IReadOnlyList`1 columns, CancellationToken cancellationToken)
+   at Microsoft.EntityFrameworkCore.Storage.RelationalCommand.ExecuteReaderAsync(RelationalCommandParameterObject parameterObject, CancellationToken cancellationToken)
+   at Microsoft.EntityFrameworkCore.Storage.RelationalCommand.ExecuteReaderAsync(RelationalCommandParameterObject parameterObject, CancellationToken cancellationToken)
+   at Microsoft.EntityFrameworkCore.Query.Internal.SplitQueryingEnumerable`1.AsyncEnumerator.InitializeReaderAsync(AsyncEnumerator enumerator, CancellationToken cancellationToken)
+   at Microsoft.EntityFrameworkCore.SqlServer.Storage.Internal.SqlServerExecutionStrategy.ExecuteAsync[TState,TResult](TState state, Func`4 operation, Func`4 verifySucceeded, CancellationToken cancellationToken)
+   at Microsoft.EntityFrameworkCore.Query.Internal.SplitQueryingEnumerable`1.AsyncEnumerator.MoveNextAsync()
+ClientConnectionId:44747a5a-3d6a-4c08-aaf4-aeaab6a78f93
+Error Number:3952,State:1,Class:16
+Microsoft.Data.SqlClient.SqlException (0x80131904): Snapshot isolation transaction failed accessing database 'MuhasebeStokDB' because snapshot isolation is not allowed in this database. Use ALTER DATABASE to allow snapshot isolation.
+   at Microsoft.Data.SqlClient.SqlConnection.OnError(SqlException exception, Boolean breakConnection, Action`1 wrapCloseInAction)
+   at Microsoft.Data.SqlClient.SqlInternalConnection.OnError(SqlException exception, Boolean breakConnection, Action`1 wrapCloseInAction)
+   at Microsoft.Data.SqlClient.TdsParser.ThrowExceptionAndWarning(TdsParserStateObject stateObj, Boolean callerHasConnectionLock, Boolean asyncClose)
+   at Microsoft.Data.SqlClient.TdsParser.TryRun(RunBehavior runBehavior, SqlCommand cmdHandler, SqlDataReader dataStream, BulkCopySimpleResultSet bulkCopyHandler, TdsParserStateObject stateObj, Boolean& dataReady)
+   at Microsoft.Data.SqlClient.SqlDataReader.TryHasMoreRows(Boolean& moreRows)
+   at Microsoft.Data.SqlClient.SqlDataReader.TryReadInternal(Boolean setTimeout, Boolean& more)
+   at Microsoft.Data.SqlClient.SqlDataReader.ReadAsyncExecute(Task task, Object state)
+   at Microsoft.Data.SqlClient.SqlDataReader.InvokeAsyncCall[T](SqlDataReaderBaseAsyncCallContext`1 context)
+--- End of stack trace from previous location ---
+   at Microsoft.EntityFrameworkCore.Query.Internal.BufferedDataReader.BufferedDataRecord.InitializeAsync(DbDataReader reader, IReadOnlyList`1 columns, CancellationToken cancellationToken)
+   at Microsoft.EntityFrameworkCore.Query.Internal.BufferedDataReader.InitializeAsync(IReadOnlyList`1 columns, CancellationToken cancellationToken)
+   at Microsoft.EntityFrameworkCore.Query.Internal.BufferedDataReader.InitializeAsync(IReadOnlyList`1 columns, CancellationToken cancellationToken)
+   at Microsoft.EntityFrameworkCore.Storage.RelationalCommand.ExecuteReaderAsync(RelationalCommandParameterObject parameterObject, CancellationToken cancellationToken)
+   at Microsoft.EntityFrameworkCore.Storage.RelationalCommand.ExecuteReaderAsync(RelationalCommandParameterObject parameterObject, CancellationToken cancellationToken)
+   at Microsoft.EntityFrameworkCore.Query.Internal.SplitQueryingEnumerable`1.AsyncEnumerator.InitializeReaderAsync(AsyncEnumerator enumerator, CancellationToken cancellationToken)
+   at Microsoft.EntityFrameworkCore.SqlServer.Storage.Internal.SqlServerExecutionStrategy.ExecuteAsync[TState,TResult](TState state, Func`4 operation, Func`4 verifySucceeded, CancellationToken cancellationToken)
+   at Microsoft.EntityFrameworkCore.Query.Internal.SplitQueryingEnumerable`1.AsyncEnumerator.MoveNextAsync()
+ClientConnectionId:44747a5a-3d6a-4c08-aaf4-aeaab6a78f93
+Error Number:3952,State:1,Class:16
+2025-05-05 18:25:46.995 +03:00 [ERR] Beklenmeyen hata
+Microsoft.Data.SqlClient.SqlException (0x80131904): Snapshot isolation transaction failed accessing database 'MuhasebeStokDB' because snapshot isolation is not allowed in this database. Use ALTER DATABASE to allow snapshot isolation.
+   at Microsoft.Data.SqlClient.SqlConnection.OnError(SqlException exception, Boolean breakConnection, Action`1 wrapCloseInAction)
+   at Microsoft.Data.SqlClient.SqlInternalConnection.OnError(SqlException exception, Boolean breakConnection, Action`1 wrapCloseInAction)
+   at Microsoft.Data.SqlClient.TdsParser.ThrowExceptionAndWarning(TdsParserStateObject stateObj, Boolean callerHasConnectionLock, Boolean asyncClose)
+   at Microsoft.Data.SqlClient.TdsParser.TryRun(RunBehavior runBehavior, SqlCommand cmdHandler, SqlDataReader dataStream, BulkCopySimpleResultSet bulkCopyHandler, TdsParserStateObject stateObj, Boolean& dataReady)
+   at Microsoft.Data.SqlClient.SqlDataReader.TryHasMoreRows(Boolean& moreRows)
+   at Microsoft.Data.SqlClient.SqlDataReader.TryReadInternal(Boolean setTimeout, Boolean& more)
+   at Microsoft.Data.SqlClient.SqlDataReader.ReadAsyncExecute(Task task, Object state)
+   at Microsoft.Data.SqlClient.SqlDataReader.InvokeAsyncCall[T](SqlDataReaderBaseAsyncCallContext`1 context)
+--- End of stack trace from previous location ---
+   at Microsoft.EntityFrameworkCore.Query.Internal.BufferedDataReader.BufferedDataRecord.InitializeAsync(DbDataReader reader, IReadOnlyList`1 columns, CancellationToken cancellationToken)
+   at Microsoft.EntityFrameworkCore.Query.Internal.BufferedDataReader.InitializeAsync(IReadOnlyList`1 columns, CancellationToken cancellationToken)
+   at Microsoft.EntityFrameworkCore.Query.Internal.BufferedDataReader.InitializeAsync(IReadOnlyList`1 columns, CancellationToken cancellationToken)
+   at Microsoft.EntityFrameworkCore.Storage.RelationalCommand.ExecuteReaderAsync(RelationalCommandParameterObject parameterObject, CancellationToken cancellationToken)
+   at Microsoft.EntityFrameworkCore.Storage.RelationalCommand.ExecuteReaderAsync(RelationalCommandParameterObject parameterObject, CancellationToken cancellationToken)
+   at Microsoft.EntityFrameworkCore.Query.Internal.SplitQueryingEnumerable`1.AsyncEnumerator.InitializeReaderAsync(AsyncEnumerator enumerator, CancellationToken cancellationToken)
+   at Microsoft.EntityFrameworkCore.SqlServer.Storage.Internal.SqlServerExecutionStrategy.ExecuteAsync[TState,TResult](TState state, Func`4 operation, Func`4 verifySucceeded, CancellationToken cancellationToken)
+   at Microsoft.EntityFrameworkCore.Query.Internal.SplitQueryingEnumerable`1.AsyncEnumerator.MoveNextAsync()
+   at Microsoft.EntityFrameworkCore.EntityFrameworkQueryableExtensions.ToListAsync[TSource](IQueryable`1 source, CancellationToken cancellationToken)
+   at Microsoft.EntityFrameworkCore.EntityFrameworkQueryableExtensions.ToListAsync[TSource](IQueryable`1 source, CancellationToken cancellationToken)
+   at MuhasebeStokWebApp.Controllers.FaturaController.PopulateFaturaCreateViewModelAsync(FaturaCreateViewModel viewModel) in /Users/muhammetkocaman/MuhasebeStokWebApp/Controllers/FaturaController.cs:line 150
+   at MuhasebeStokWebApp.Controllers.FaturaController.Create(FaturaCreateViewModel viewModel) in /Users/muhammetkocaman/MuhasebeStokWebApp/Controllers/FaturaController.cs:line 359
+ClientConnectionId:44747a5a-3d6a-4c08-aaf4-aeaab6a78f93
+Error Number:3952,State:1,Class:16
+2025-05-05 18:25:47.003 +03:00 [ERR] An exception occurred while iterating over the results of a query for context type 'MuhasebeStokWebApp.Data.ApplicationDbContext'.
+Microsoft.Data.SqlClient.SqlException (0x80131904): Snapshot isolation transaction failed accessing database 'MuhasebeStokDB' because snapshot isolation is not allowed in this database. Use ALTER DATABASE to allow snapshot isolation.
+   at Microsoft.Data.SqlClient.SqlConnection.OnError(SqlException exception, Boolean breakConnection, Action`1 wrapCloseInAction)
+   at Microsoft.Data.SqlClient.SqlInternalConnection.OnError(SqlException exception, Boolean breakConnection, Action`1 wrapCloseInAction)
+   at Microsoft.Data.SqlClient.TdsParser.ThrowExceptionAndWarning(TdsParserStateObject stateObj, Boolean callerHasConnectionLock, Boolean asyncClose)
+   at Microsoft.Data.SqlClient.TdsParser.TryRun(RunBehavior runBehavior, SqlCommand cmdHandler, SqlDataReader dataStream, BulkCopySimpleResultSet bulkCopyHandler, TdsParserStateObject stateObj, Boolean& dataReady)
+   at Microsoft.Data.SqlClient.SqlDataReader.TryHasMoreRows(Boolean& moreRows)
+   at Microsoft.Data.SqlClient.SqlDataReader.TryReadInternal(Boolean setTimeout, Boolean& more)
+   at Microsoft.Data.SqlClient.SqlDataReader.ReadAsyncExecute(Task task, Object state)
+   at Microsoft.Data.SqlClient.SqlDataReader.InvokeAsyncCall[T](SqlDataReaderBaseAsyncCallContext`1 context)
+--- End of stack trace from previous location ---
+   at Microsoft.EntityFrameworkCore.Query.Internal.BufferedDataReader.BufferedDataRecord.InitializeAsync(DbDataReader reader, IReadOnlyList`1 columns, CancellationToken cancellationToken)
+   at Microsoft.EntityFrameworkCore.Query.Internal.BufferedDataReader.InitializeAsync(IReadOnlyList`1 columns, CancellationToken cancellationToken)
+   at Microsoft.EntityFrameworkCore.Query.Internal.BufferedDataReader.InitializeAsync(IReadOnlyList`1 columns, CancellationToken cancellationToken)
+   at Microsoft.EntityFrameworkCore.Storage.RelationalCommand.ExecuteReaderAsync(RelationalCommandParameterObject parameterObject, CancellationToken cancellationToken)
+   at Microsoft.EntityFrameworkCore.Storage.RelationalCommand.ExecuteReaderAsync(RelationalCommandParameterObject parameterObject, CancellationToken cancellationToken)
+   at Microsoft.EntityFrameworkCore.Query.Internal.SplitQueryingEnumerable`1.AsyncEnumerator.InitializeReaderAsync(AsyncEnumerator enumerator, CancellationToken cancellationToken)
+   at Microsoft.EntityFrameworkCore.SqlServer.Storage.Internal.SqlServerExecutionStrategy.ExecuteAsync[TState,TResult](TState state, Func`4 operation, Func`4 verifySucceeded, CancellationToken cancellationToken)
+   at Microsoft.EntityFrameworkCore.Query.Internal.SplitQueryingEnumerable`1.AsyncEnumerator.MoveNextAsync()
+ClientConnectionId:44747a5a-3d6a-4c08-aaf4-aeaab6a78f93
+Error Number:3952,State:1,Class:16
+Microsoft.Data.SqlClient.SqlException (0x80131904): Snapshot isolation transaction failed accessing database 'MuhasebeStokDB' because snapshot isolation is not allowed in this database. Use ALTER DATABASE to allow snapshot isolation.
+   at Microsoft.Data.SqlClient.SqlConnection.OnError(SqlException exception, Boolean breakConnection, Action`1 wrapCloseInAction)
+   at Microsoft.Data.SqlClient.SqlInternalConnection.OnError(SqlException exception, Boolean breakConnection, Action`1 wrapCloseInAction)
+   at Microsoft.Data.SqlClient.TdsParser.ThrowExceptionAndWarning(TdsParserStateObject stateObj, Boolean callerHasConnectionLock, Boolean asyncClose)
+   at Microsoft.Data.SqlClient.TdsParser.TryRun(RunBehavior runBehavior, SqlCommand cmdHandler, SqlDataReader dataStream, BulkCopySimpleResultSet bulkCopyHandler, TdsParserStateObject stateObj, Boolean& dataReady)
+   at Microsoft.Data.SqlClient.SqlDataReader.TryHasMoreRows(Boolean& moreRows)
+   at Microsoft.Data.SqlClient.SqlDataReader.TryReadInternal(Boolean setTimeout, Boolean& more)
+   at Microsoft.Data.SqlClient.SqlDataReader.ReadAsyncExecute(Task task, Object state)
+   at Microsoft.Data.SqlClient.SqlDataReader.InvokeAsyncCall[T](SqlDataReaderBaseAsyncCallContext`1 context)
+--- End of stack trace from previous location ---
+   at Microsoft.EntityFrameworkCore.Query.Internal.BufferedDataReader.BufferedDataRecord.InitializeAsync(DbDataReader reader, IReadOnlyList`1 columns, CancellationToken cancellationToken)
+   at Microsoft.EntityFrameworkCore.Query.Internal.BufferedDataReader.InitializeAsync(IReadOnlyList`1 columns, CancellationToken cancellationToken)
+   at Microsoft.EntityFrameworkCore.Query.Internal.BufferedDataReader.InitializeAsync(IReadOnlyList`1 columns, CancellationToken cancellationToken)
+   at Microsoft.EntityFrameworkCore.Storage.RelationalCommand.ExecuteReaderAsync(RelationalCommandParameterObject parameterObject, CancellationToken cancellationToken)
+   at Microsoft.EntityFrameworkCore.Storage.RelationalCommand.ExecuteReaderAsync(RelationalCommandParameterObject parameterObject, CancellationToken cancellationToken)
+   at Microsoft.EntityFrameworkCore.Query.Internal.SplitQueryingEnumerable`1.AsyncEnumerator.InitializeReaderAsync(AsyncEnumerator enumerator, CancellationToken cancellationToken)
+   at Microsoft.EntityFrameworkCore.SqlServer.Storage.Internal.SqlServerExecutionStrategy.ExecuteAsync[TState,TResult](TState state, Func`4 operation, Func`4 verifySucceeded, CancellationToken cancellationToken)
+   at Microsoft.EntityFrameworkCore.Query.Internal.SplitQueryingEnumerable`1.AsyncEnumerator.MoveNextAsync()
+ClientConnectionId:44747a5a-3d6a-4c08-aaf4-aeaab6a78f93
+Error Number:3952,State:1,Class:16
+2025-05-05 18:25:47.003 +03:00 [ERR] GetActiveSidebarMenusAsync metodunda beklenmeyen hata: Snapshot isolation transaction failed accessing database 'MuhasebeStokDB' because snapshot isolation is not allowed in this database. Use ALTER DATABASE to allow snapshot isolation.
+Microsoft.Data.SqlClient.SqlException (0x80131904): Snapshot isolation transaction failed accessing database 'MuhasebeStokDB' because snapshot isolation is not allowed in this database. Use ALTER DATABASE to allow snapshot isolation.
+   at Microsoft.Data.SqlClient.SqlConnection.OnError(SqlException exception, Boolean breakConnection, Action`1 wrapCloseInAction)
+   at Microsoft.Data.SqlClient.SqlInternalConnection.OnError(SqlException exception, Boolean breakConnection, Action`1 wrapCloseInAction)
+   at Microsoft.Data.SqlClient.TdsParser.ThrowExceptionAndWarning(TdsParserStateObject stateObj, Boolean callerHasConnectionLock, Boolean asyncClose)
+   at Microsoft.Data.SqlClient.TdsParser.TryRun(RunBehavior runBehavior, SqlCommand cmdHandler, SqlDataReader dataStream, BulkCopySimpleResultSet bulkCopyHandler, TdsParserStateObject stateObj, Boolean& dataReady)
+   at Microsoft.Data.SqlClient.SqlDataReader.TryHasMoreRows(Boolean& moreRows)
+   at Microsoft.Data.SqlClient.SqlDataReader.TryReadInternal(Boolean setTimeout, Boolean& more)
+   at Microsoft.Data.SqlClient.SqlDataReader.ReadAsyncExecute(Task task, Object state)
+   at Microsoft.Data.SqlClient.SqlDataReader.InvokeAsyncCall[T](SqlDataReaderBaseAsyncCallContext`1 context)
+--- End of stack trace from previous location ---
+   at Microsoft.EntityFrameworkCore.Query.Internal.BufferedDataReader.BufferedDataRecord.InitializeAsync(DbDataReader reader, IReadOnlyList`1 columns, CancellationToken cancellationToken)
+   at Microsoft.EntityFrameworkCore.Query.Internal.BufferedDataReader.InitializeAsync(IReadOnlyList`1 columns, CancellationToken cancellationToken)
+   at Microsoft.EntityFrameworkCore.Query.Internal.BufferedDataReader.InitializeAsync(IReadOnlyList`1 columns, CancellationToken cancellationToken)
+   at Microsoft.EntityFrameworkCore.Storage.RelationalCommand.ExecuteReaderAsync(RelationalCommandParameterObject parameterObject, CancellationToken cancellationToken)
+   at Microsoft.EntityFrameworkCore.Storage.RelationalCommand.ExecuteReaderAsync(RelationalCommandParameterObject parameterObject, CancellationToken cancellationToken)
+   at Microsoft.EntityFrameworkCore.Query.Internal.SplitQueryingEnumerable`1.AsyncEnumerator.InitializeReaderAsync(AsyncEnumerator enumerator, CancellationToken cancellationToken)
+   at Microsoft.EntityFrameworkCore.SqlServer.Storage.Internal.SqlServerExecutionStrategy.ExecuteAsync[TState,TResult](TState state, Func`4 operation, Func`4 verifySucceeded, CancellationToken cancellationToken)
+   at Microsoft.EntityFrameworkCore.Query.Internal.SplitQueryingEnumerable`1.AsyncEnumerator.MoveNextAsync()
+   at Microsoft.EntityFrameworkCore.Query.ShapedQueryCompilingExpressionVisitor.SingleOrDefaultAsync[TSource](IAsyncEnumerable`1 asyncEnumerable, CancellationToken cancellationToken)
+   at Microsoft.EntityFrameworkCore.Query.ShapedQueryCompilingExpressionVisitor.SingleOrDefaultAsync[TSource](IAsyncEnumerable`1 asyncEnumerable, CancellationToken cancellationToken)
+   at MuhasebeStokWebApp.Services.Menu.MenuService.GetActiveSidebarMenusAsync(String userId) in /Users/muhammetkocaman/MuhasebeStokWebApp/Services/Menu/MenuService.cs:line 1067
+ClientConnectionId:44747a5a-3d6a-4c08-aaf4-aeaab6a78f93
+Error Number:3952,State:1,Class:16
+2025-05-05 18:25:47.009 +03:00 [ERR] An exception occurred while iterating over the results of a query for context type 'MuhasebeStokWebApp.Data.ApplicationDbContext'.
+Microsoft.Data.SqlClient.SqlException (0x80131904): Snapshot isolation transaction failed accessing database 'MuhasebeStokDB' because snapshot isolation is not allowed in this database. Use ALTER DATABASE to allow snapshot isolation.
+   at Microsoft.Data.SqlClient.SqlConnection.OnError(SqlException exception, Boolean breakConnection, Action`1 wrapCloseInAction)
+   at Microsoft.Data.SqlClient.SqlInternalConnection.OnError(SqlException exception, Boolean breakConnection, Action`1 wrapCloseInAction)
+   at Microsoft.Data.SqlClient.TdsParser.ThrowExceptionAndWarning(TdsParserStateObject stateObj, Boolean callerHasConnectionLock, Boolean asyncClose)
+   at Microsoft.Data.SqlClient.TdsParser.TryRun(RunBehavior runBehavior, SqlCommand cmdHandler, SqlDataReader dataStream, BulkCopySimpleResultSet bulkCopyHandler, TdsParserStateObject stateObj, Boolean& dataReady)
+   at Microsoft.Data.SqlClient.SqlDataReader.TryHasMoreRows(Boolean& moreRows)
+   at Microsoft.Data.SqlClient.SqlDataReader.TryReadInternal(Boolean setTimeout, Boolean& more)
+   at Microsoft.Data.SqlClient.SqlDataReader.ReadAsyncExecute(Task task, Object state)
+   at Microsoft.Data.SqlClient.SqlDataReader.InvokeAsyncCall[T](SqlDataReaderBaseAsyncCallContext`1 context)
+--- End of stack trace from previous location ---
+   at Microsoft.EntityFrameworkCore.Query.Internal.BufferedDataReader.BufferedDataRecord.InitializeAsync(DbDataReader reader, IReadOnlyList`1 columns, CancellationToken cancellationToken)
+   at Microsoft.EntityFrameworkCore.Query.Internal.BufferedDataReader.InitializeAsync(IReadOnlyList`1 columns, CancellationToken cancellationToken)
+   at Microsoft.EntityFrameworkCore.Query.Internal.BufferedDataReader.InitializeAsync(IReadOnlyList`1 columns, CancellationToken cancellationToken)
+   at Microsoft.EntityFrameworkCore.Storage.RelationalCommand.ExecuteReaderAsync(RelationalCommandParameterObject parameterObject, CancellationToken cancellationToken)
+   at Microsoft.EntityFrameworkCore.Storage.RelationalCommand.ExecuteReaderAsync(RelationalCommandParameterObject parameterObject, CancellationToken cancellationToken)
+   at Microsoft.EntityFrameworkCore.Query.Internal.SplitQueryingEnumerable`1.AsyncEnumerator.InitializeReaderAsync(AsyncEnumerator enumerator, CancellationToken cancellationToken)
+   at Microsoft.EntityFrameworkCore.SqlServer.Storage.Internal.SqlServerExecutionStrategy.ExecuteAsync[TState,TResult](TState state, Func`4 operation, Func`4 verifySucceeded, CancellationToken cancellationToken)
+   at Microsoft.EntityFrameworkCore.Query.Internal.SplitQueryingEnumerable`1.AsyncEnumerator.MoveNextAsync()
+ClientConnectionId:44747a5a-3d6a-4c08-aaf4-aeaab6a78f93
+Error Number:3952,State:1,Class:16
+Microsoft.Data.SqlClient.SqlException (0x80131904): Snapshot isolation transaction failed accessing database 'MuhasebeStokDB' because snapshot isolation is not allowed in this database. Use ALTER DATABASE to allow snapshot isolation.
+   at Microsoft.Data.SqlClient.SqlConnection.OnError(SqlException exception, Boolean breakConnection, Action`1 wrapCloseInAction)
+   at Microsoft.Data.SqlClient.SqlInternalConnection.OnError(SqlException exception, Boolean breakConnection, Action`1 wrapCloseInAction)
+   at Microsoft.Data.SqlClient.TdsParser.ThrowExceptionAndWarning(TdsParserStateObject stateObj, Boolean callerHasConnectionLock, Boolean asyncClose)
+   at Microsoft.Data.SqlClient.TdsParser.TryRun(RunBehavior runBehavior, SqlCommand cmdHandler, SqlDataReader dataStream, BulkCopySimpleResultSet bulkCopyHandler, TdsParserStateObject stateObj, Boolean& dataReady)
+   at Microsoft.Data.SqlClient.SqlDataReader.TryHasMoreRows(Boolean& moreRows)
+   at Microsoft.Data.SqlClient.SqlDataReader.TryReadInternal(Boolean setTimeout, Boolean& more)
+   at Microsoft.Data.SqlClient.SqlDataReader.ReadAsyncExecute(Task task, Object state)
+   at Microsoft.Data.SqlClient.SqlDataReader.InvokeAsyncCall[T](SqlDataReaderBaseAsyncCallContext`1 context)
+--- End of stack trace from previous location ---
+   at Microsoft.EntityFrameworkCore.Query.Internal.BufferedDataReader.BufferedDataRecord.InitializeAsync(DbDataReader reader, IReadOnlyList`1 columns, CancellationToken cancellationToken)
+   at Microsoft.EntityFrameworkCore.Query.Internal.BufferedDataReader.InitializeAsync(IReadOnlyList`1 columns, CancellationToken cancellationToken)
+   at Microsoft.EntityFrameworkCore.Query.Internal.BufferedDataReader.InitializeAsync(IReadOnlyList`1 columns, CancellationToken cancellationToken)
+   at Microsoft.EntityFrameworkCore.Storage.RelationalCommand.ExecuteReaderAsync(RelationalCommandParameterObject parameterObject, CancellationToken cancellationToken)
+   at Microsoft.EntityFrameworkCore.Storage.RelationalCommand.ExecuteReaderAsync(RelationalCommandParameterObject parameterObject, CancellationToken cancellationToken)
+   at Microsoft.EntityFrameworkCore.Query.Internal.SplitQueryingEnumerable`1.AsyncEnumerator.InitializeReaderAsync(AsyncEnumerator enumerator, CancellationToken cancellationToken)
+   at Microsoft.EntityFrameworkCore.SqlServer.Storage.Internal.SqlServerExecutionStrategy.ExecuteAsync[TState,TResult](TState state, Func`4 operation, Func`4 verifySucceeded, CancellationToken cancellationToken)
+   at Microsoft.EntityFrameworkCore.Query.Internal.SplitQueryingEnumerable`1.AsyncEnumerator.MoveNextAsync()
+ClientConnectionId:44747a5a-3d6a-4c08-aaf4-aeaab6a78f93
+Error Number:3952,State:1,Class:16
+2025-05-05 18:25:47.013 +03:00 [ERR] Hata: 00-ff0af561d0acd7a6b4b71761588b6b3b-d6f5199efb567390-00, Kullanıcı: admin, Path: /Fatura, Method: GET, QueryString: , IP: ::1, UserAgent: Mozilla/5.0 (Macintosh; Intel Mac OS X 10_15_7) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/136.0.0.0 Safari/537.36
+Microsoft.Data.SqlClient.SqlException (0x80131904): Snapshot isolation transaction failed accessing database 'MuhasebeStokDB' because snapshot isolation is not allowed in this database. Use ALTER DATABASE to allow snapshot isolation.
+   at Microsoft.Data.SqlClient.SqlConnection.OnError(SqlException exception, Boolean breakConnection, Action`1 wrapCloseInAction)
+   at Microsoft.Data.SqlClient.SqlInternalConnection.OnError(SqlException exception, Boolean breakConnection, Action`1 wrapCloseInAction)
+   at Microsoft.Data.SqlClient.TdsParser.ThrowExceptionAndWarning(TdsParserStateObject stateObj, Boolean callerHasConnectionLock, Boolean asyncClose)
+   at Microsoft.Data.SqlClient.TdsParser.TryRun(RunBehavior runBehavior, SqlCommand cmdHandler, SqlDataReader dataStream, BulkCopySimpleResultSet bulkCopyHandler, TdsParserStateObject stateObj, Boolean& dataReady)
+   at Microsoft.Data.SqlClient.SqlDataReader.TryHasMoreRows(Boolean& moreRows)
+   at Microsoft.Data.SqlClient.SqlDataReader.TryReadInternal(Boolean setTimeout, Boolean& more)
+   at Microsoft.Data.SqlClient.SqlDataReader.ReadAsyncExecute(Task task, Object state)
+   at Microsoft.Data.SqlClient.SqlDataReader.InvokeAsyncCall[T](SqlDataReaderBaseAsyncCallContext`1 context)
+--- End of stack trace from previous location ---
+   at Microsoft.EntityFrameworkCore.Query.Internal.BufferedDataReader.BufferedDataRecord.InitializeAsync(DbDataReader reader, IReadOnlyList`1 columns, CancellationToken cancellationToken)
+   at Microsoft.EntityFrameworkCore.Query.Internal.BufferedDataReader.InitializeAsync(IReadOnlyList`1 columns, CancellationToken cancellationToken)
+   at Microsoft.EntityFrameworkCore.Query.Internal.BufferedDataReader.InitializeAsync(IReadOnlyList`1 columns, CancellationToken cancellationToken)
+   at Microsoft.EntityFrameworkCore.Storage.RelationalCommand.ExecuteReaderAsync(RelationalCommandParameterObject parameterObject, CancellationToken cancellationToken)
+   at Microsoft.EntityFrameworkCore.Storage.RelationalCommand.ExecuteReaderAsync(RelationalCommandParameterObject parameterObject, CancellationToken cancellationToken)
+   at Microsoft.EntityFrameworkCore.Query.Internal.SplitQueryingEnumerable`1.AsyncEnumerator.InitializeReaderAsync(AsyncEnumerator enumerator, CancellationToken cancellationToken)
+   at Microsoft.EntityFrameworkCore.SqlServer.Storage.Internal.SqlServerExecutionStrategy.ExecuteAsync[TState,TResult](TState state, Func`4 operation, Func`4 verifySucceeded, CancellationToken cancellationToken)
+   at Microsoft.EntityFrameworkCore.Query.Internal.SplitQueryingEnumerable`1.AsyncEnumerator.MoveNextAsync()
+   at Microsoft.EntityFrameworkCore.EntityFrameworkQueryableExtensions.ToListAsync[TSource](IQueryable`1 source, CancellationToken cancellationToken)
+   at Microsoft.EntityFrameworkCore.EntityFrameworkQueryableExtensions.ToListAsync[TSource](IQueryable`1 source, CancellationToken cancellationToken)
+   at MuhasebeStokWebApp.Controllers.FaturaController.Index() in /Users/muhammetkocaman/MuhasebeStokWebApp/Controllers/FaturaController.cs:line 75
+   at Microsoft.AspNetCore.Mvc.Infrastructure.ActionMethodExecutor.TaskOfIActionResultExecutor.Execute(ActionContext actionContext, IActionResultTypeMapper mapper, ObjectMethodExecutor executor, Object controller, Object[] arguments)
+   at Microsoft.AspNetCore.Mvc.Infrastructure.ControllerActionInvoker.<InvokeActionMethodAsync>g__Awaited|12_0(ControllerActionInvoker invoker, ValueTask`1 actionResultValueTask)
+   at Microsoft.AspNetCore.Mvc.Infrastructure.ControllerActionInvoker.<InvokeNextActionFilterAsync>g__Awaited|10_0(ControllerActionInvoker invoker, Task lastTask, State next, Scope scope, Object state, Boolean isCompleted)
+   at Microsoft.AspNetCore.Mvc.Infrastructure.ControllerActionInvoker.Rethrow(ActionExecutedContextSealed context)
+   at Microsoft.AspNetCore.Mvc.Infrastructure.ControllerActionInvoker.Next(State& next, Scope& scope, Object& state, Boolean& isCompleted)
+   at Microsoft.AspNetCore.Mvc.Infrastructure.ControllerActionInvoker.<InvokeInnerFilterAsync>g__Awaited|13_0(ControllerActionInvoker invoker, Task lastTask, State next, Scope scope, Object state, Boolean isCompleted)
+   at Microsoft.AspNetCore.Mvc.Infrastructure.ResourceInvoker.<InvokeNextResourceFilter>g__Awaited|25_0(ResourceInvoker invoker, Task lastTask, State next, Scope scope, Object state, Boolean isCompleted)
+   at Microsoft.AspNetCore.Mvc.Infrastructure.ResourceInvoker.Rethrow(ResourceExecutedContextSealed context)
+   at Microsoft.AspNetCore.Mvc.Infrastructure.ResourceInvoker.Next(State& next, Scope& scope, Object& state, Boolean& isCompleted)
+   at Microsoft.AspNetCore.Mvc.Infrastructure.ResourceInvoker.<InvokeFilterPipelineAsync>g__Awaited|20_0(ResourceInvoker invoker, Task lastTask, State next, Scope scope, Object state, Boolean isCompleted)
+   at Microsoft.AspNetCore.Mvc.Infrastructure.ResourceInvoker.<InvokeAsync>g__Awaited|17_0(ResourceInvoker invoker, Task task, IDisposable scope)
+   at Microsoft.AspNetCore.Mvc.Infrastructure.ResourceInvoker.<InvokeAsync>g__Awaited|17_0(ResourceInvoker invoker, Task task, IDisposable scope)
+   at Microsoft.AspNetCore.Localization.RequestLocalizationMiddleware.Invoke(HttpContext context)
+   at MuhasebeStokWebApp.Middleware.GlobalExceptionHandlingMiddleware.InvokeAsync(HttpContext context) in /Users/muhammetkocaman/MuhasebeStokWebApp/Middleware/GlobalExceptionHandlingMiddleware.cs:line 38
+ClientConnectionId:44747a5a-3d6a-4c08-aaf4-aeaab6a78f93
+Error Number:3952,State:1,Class:16
+2025-05-05 18:28:57.735 +03:00 [INF] Veritabanına bağlantı başarılı. Migrationlar uygulanıyor...
+2025-05-05 18:28:58.062 +03:00 [INF] Veritabanı işlemleri başarıyla tamamlandı.
+2025-05-05 18:28:58.228 +03:00 [ERR] Hosting failed to start
+System.IO.IOException: Failed to bind to address https://127.0.0.1:7118: address already in use.
+ ---> Microsoft.AspNetCore.Connections.AddressInUseException: Address already in use
+ ---> System.Net.Sockets.SocketException (48): Address already in use
+   at System.Net.Sockets.Socket.DoBind(EndPoint endPointSnapshot, SocketAddress socketAddress)
+   at System.Net.Sockets.Socket.Bind(EndPoint localEP)
+   at Microsoft.AspNetCore.Server.Kestrel.Transport.Sockets.SocketTransportOptions.CreateDefaultBoundListenSocket(EndPoint endpoint)
+   at Microsoft.AspNetCore.Server.Kestrel.Transport.Sockets.SocketConnectionListener.Bind()
+   --- End of inner exception stack trace ---
+   at Microsoft.AspNetCore.Server.Kestrel.Transport.Sockets.SocketConnectionListener.Bind()
+   at Microsoft.AspNetCore.Server.Kestrel.Transport.Sockets.SocketTransportFactory.BindAsync(EndPoint endpoint, CancellationToken cancellationToken)
+   at Microsoft.AspNetCore.Server.Kestrel.Core.Internal.Infrastructure.TransportManager.BindAsync(EndPoint endPoint, ConnectionDelegate connectionDelegate, EndpointConfig endpointConfig, CancellationToken cancellationToken)
+   at Microsoft.AspNetCore.Server.Kestrel.Core.KestrelServerImpl.<>c__DisplayClass28_0`1.<<StartAsync>g__OnBind|0>d.MoveNext()
+--- End of stack trace from previous location ---
+   at Microsoft.AspNetCore.Server.Kestrel.Core.Internal.AddressBinder.BindEndpointAsync(ListenOptions endpoint, AddressBindContext context, CancellationToken cancellationToken)
+   --- End of inner exception stack trace ---
+   at Microsoft.AspNetCore.Server.Kestrel.Core.Internal.AddressBinder.BindEndpointAsync(ListenOptions endpoint, AddressBindContext context, CancellationToken cancellationToken)
+   at Microsoft.AspNetCore.Server.Kestrel.Core.LocalhostListenOptions.BindAsync(AddressBindContext context, CancellationToken cancellationToken)
+   at Microsoft.AspNetCore.Server.Kestrel.Core.Internal.AddressBinder.AddressesStrategy.BindAsync(AddressBindContext context, CancellationToken cancellationToken)
+   at Microsoft.AspNetCore.Server.Kestrel.Core.KestrelServerImpl.BindAsync(CancellationToken cancellationToken)
+   at Microsoft.AspNetCore.Server.Kestrel.Core.KestrelServerImpl.StartAsync[TContext](IHttpApplication`1 application, CancellationToken cancellationToken)
+   at Microsoft.AspNetCore.Hosting.GenericWebHostService.StartAsync(CancellationToken cancellationToken)
+   at Microsoft.Extensions.Hosting.Internal.Host.<StartAsync>b__14_1(IHostedService service, CancellationToken token)
+   at Microsoft.Extensions.Hosting.Internal.Host.ForeachService[T](IEnumerable`1 services, CancellationToken token, Boolean concurrent, Boolean abortOnFirstException, List`1 exceptions, Func`3 operation)
+2025-05-05 18:29:14.442 +03:00 [INF] Veritabanına bağlantı başarılı. Migrationlar uygulanıyor...
+2025-05-05 18:29:14.752 +03:00 [INF] Veritabanı işlemleri başarıyla tamamlandı.
+2025-05-05 18:29:55.170 +03:00 [INF] Fatura oluşturma sayfası yükleniyor: Kullanıcı=admin
+2025-05-05 18:29:55.203 +03:00 [INF] Yeni numara oluşturuldu: FTR-250505-003
+2025-05-05 18:29:55.206 +03:00 [INF] Yeni numara oluşturuldu: SIP-250505-001
+2025-05-05 18:29:55.221 +03:00 [INF] Cari listesi yüklendi, toplam 2 adet cari bulundu.
+2025-05-05 18:29:55.230 +03:00 [INF] Sözleşme listesi yüklendi, toplam 0 adet sözleşme bulundu.
+2025-05-05 18:29:55.263 +03:00 [INF] Ürün listesi yüklendi, toplam 3 adet ürün bulundu.
+2025-05-05 18:29:55.276 +03:00 [INF] Depo listesi yüklendi, toplam 2 adet depo bulundu.
+2025-05-05 18:29:55.291 +03:00 [INF] Birim sayısı: Aktif=2, Pasif=0, Silinmiş=0
+2025-05-05 18:29:55.292 +03:00 [INF] Ürün select list oluşturuldu, toplam 3 adet öğe içeriyor.
+2025-05-05 18:29:55.312 +03:00 [INF] Para birimi listesi yüklendi, toplam 2 adet para birimi bulundu.
+2025-05-05 18:30:25.308 +03:00 [INF] CreateFaturaWithRelations başlatılıyor: FaturaTuruID=2, CariID="9395be15-6278-41d0-8625-671a7931db02"
+2025-05-05 18:30:25.311 +03:00 [INF] AddAsync işlemi başlatılıyor
+2025-05-05 18:30:25.319 +03:00 [INF] Yeni fatura ekleniyor...
+2025-05-05 18:30:25.361 +03:00 [INF] Fatura başarıyla eklendi, FaturaID: "cf0ceeaf-692e-4afc-b51f-bc53e84f6968"
+2025-05-05 18:30:25.368 +03:00 [INF] AddAsync işlemi başarıyla tamamlandı
+2025-05-05 18:30:25.369 +03:00 [INF] Fatura oluşturuldu, FaturaID: "cf0ceeaf-692e-4afc-b51f-bc53e84f6968"
+2025-05-05 18:30:25.390 +03:00 [INF] Fatura Detay eklendi: FaturaDetayID="fe66d930-76ae-40c7-9242-d1087fa048d0", UrunID="3fe2cca7-136f-403e-be18-2b86e8448019", Miktar=100
+2025-05-05 18:30:25.393 +03:00 [INF] StokCikisiYap başladı: Ürün 3fe2cca7-136f-403e-be18-2b86e8448019, Miktar 100, Hareket Tipi Cikis
+2025-05-05 18:30:25.396 +03:00 [INF] StokCikisiYap - Yeni transaction başlatıldı (Isolation Level: ReadCommitted): Ürün 3fe2cca7-136f-403e-be18-2b86e8448019, Miktar 100
+2025-05-05 18:30:25.420 +03:00 [WRN] Stok çıkışı yapılamadı: Ürün için aktif FIFO kaydı bulunamadı (ID: 3fe2cca7-136f-403e-be18-2b86e8448019)
+2025-05-05 18:30:25.423 +03:00 [WRN] StokCikisiYap - Transaction geri alındı: Ürün 3fe2cca7-136f-403e-be18-2b86e8448019, Miktar 100
+2025-05-05 18:30:25.423 +03:00 [ERR] Fatura ve ilişkili kayıtlar oluşturulurken hata: Stok yetersiz. Ürün: Alt ayar mili (TEL001), Talep edilen: 100, Mevcut: 0
+MuhasebeStokWebApp.Services.StokYetersizException: Stok yetersiz. Ürün: Alt ayar mili (TEL001), Talep edilen: 100, Mevcut: 0
+   at MuhasebeStokWebApp.Services.StokFifoService.StokCikisiYap(Guid urunID, Decimal miktar, StokHareketTipi hareketTipi, Nullable`1 referansID, String aciklama, String paraBirimi, Boolean useBatch) in /Users/muhammetkocaman/MuhasebeStokWebApp/Services/StokFifoService.cs:line 521
+   at MuhasebeStokWebApp.Services.StokFifoService.StokCikisiYap(Guid urunID, Decimal miktar, StokHareketTipi hareketTipi, Nullable`1 referansID, String aciklama, String paraBirimi, Boolean useBatch) in /Users/muhammetkocaman/MuhasebeStokWebApp/Services/StokFifoService.cs:line 643
+   at MuhasebeStokWebApp.Services.StokFifoService.StokCikisiYap(Guid urunID, Decimal miktar, StokHareketTipi hareketTipi, Nullable`1 referansID, String aciklama, String paraBirimi, Boolean useBatch) in /Users/muhammetkocaman/MuhasebeStokWebApp/Services/StokFifoService.cs:line 656
+   at MuhasebeStokWebApp.Services.FaturaOrchestrationService.CreateFaturaWithRelations(FaturaCreateViewModel viewModel, Nullable`1 currentUserId) in /Users/muhammetkocaman/MuhasebeStokWebApp/Services/FaturaOrchestrationService.cs:line 113
+2025-05-05 18:30:25.428 +03:00 [ERR] Fatura oluşturma hatası
+MuhasebeStokWebApp.Services.StokYetersizException: Stok yetersiz. Ürün: Alt ayar mili (TEL001), Talep edilen: 100, Mevcut: 0
+   at MuhasebeStokWebApp.Services.StokFifoService.StokCikisiYap(Guid urunID, Decimal miktar, StokHareketTipi hareketTipi, Nullable`1 referansID, String aciklama, String paraBirimi, Boolean useBatch) in /Users/muhammetkocaman/MuhasebeStokWebApp/Services/StokFifoService.cs:line 521
+   at MuhasebeStokWebApp.Services.StokFifoService.StokCikisiYap(Guid urunID, Decimal miktar, StokHareketTipi hareketTipi, Nullable`1 referansID, String aciklama, String paraBirimi, Boolean useBatch) in /Users/muhammetkocaman/MuhasebeStokWebApp/Services/StokFifoService.cs:line 643
+   at MuhasebeStokWebApp.Services.StokFifoService.StokCikisiYap(Guid urunID, Decimal miktar, StokHareketTipi hareketTipi, Nullable`1 referansID, String aciklama, String paraBirimi, Boolean useBatch) in /Users/muhammetkocaman/MuhasebeStokWebApp/Services/StokFifoService.cs:line 656
+   at MuhasebeStokWebApp.Services.FaturaOrchestrationService.CreateFaturaWithRelations(FaturaCreateViewModel viewModel, Nullable`1 currentUserId) in /Users/muhammetkocaman/MuhasebeStokWebApp/Services/FaturaOrchestrationService.cs:line 113
+   at MuhasebeStokWebApp.Controllers.FaturaController.Create(FaturaCreateViewModel viewModel) in /Users/muhammetkocaman/MuhasebeStokWebApp/Controllers/FaturaController.cs:line 321
+2025-05-05 18:30:25.432 +03:00 [INF] Cari listesi yüklendi, toplam 2 adet cari bulundu.
+2025-05-05 18:30:25.434 +03:00 [INF] Sözleşme listesi yüklendi, toplam 0 adet sözleşme bulundu.
+2025-05-05 18:30:25.436 +03:00 [INF] Ürün listesi yüklendi, toplam 3 adet ürün bulundu.
+2025-05-05 18:30:25.437 +03:00 [INF] Depo listesi yüklendi, toplam 2 adet depo bulundu.
+2025-05-05 18:30:25.444 +03:00 [INF] Birim sayısı: Aktif=2, Pasif=0, Silinmiş=0
+2025-05-05 18:30:25.444 +03:00 [INF] Ürün select list oluşturuldu, toplam 3 adet öğe içeriyor.
+2025-05-05 18:30:25.446 +03:00 [INF] Para birimi listesi yüklendi, toplam 2 adet para birimi bulundu.
+2025-05-05 18:36:05.143 +03:00 [INF] Veritabanına bağlantı başarılı. Migrationlar uygulanıyor...
+2025-05-05 18:36:05.464 +03:00 [INF] Veritabanı işlemleri başarıyla tamamlandı.
+2025-05-05 18:36:10.378 +03:00 [INF] Fatura oluşturma sayfası yükleniyor: Kullanıcı=admin
+2025-05-05 18:36:10.397 +03:00 [INF] Yeni numara oluşturuldu: FTR-250505-004
+2025-05-05 18:36:10.400 +03:00 [INF] Yeni numara oluşturuldu: SIP-250505-001
+2025-05-05 18:36:10.427 +03:00 [INF] Cari listesi yüklendi, toplam 2 adet cari bulundu.
+2025-05-05 18:36:10.436 +03:00 [INF] Sözleşme listesi yüklendi, toplam 0 adet sözleşme bulundu.
+2025-05-05 18:36:10.470 +03:00 [INF] Ürün listesi yüklendi, toplam 3 adet ürün bulundu.
+2025-05-05 18:36:10.483 +03:00 [INF] Depo listesi yüklendi, toplam 2 adet depo bulundu.
+2025-05-05 18:36:10.504 +03:00 [INF] Birim sayısı: Aktif=2, Pasif=0, Silinmiş=0
+2025-05-05 18:36:10.505 +03:00 [INF] Ürün select list oluşturuldu, toplam 3 adet öğe içeriyor.
+2025-05-05 18:36:10.523 +03:00 [INF] Para birimi listesi yüklendi, toplam 2 adet para birimi bulundu.
+2025-05-05 18:36:45.561 +03:00 [INF] CreateFaturaWithRelations başlatılıyor: FaturaTuruID=2, CariID="9395be15-6278-41d0-8625-671a7931db02"
+2025-05-05 18:36:45.564 +03:00 [INF] AddAsync işlemi başlatılıyor
+2025-05-05 18:36:45.571 +03:00 [INF] Yeni fatura ekleniyor...
+2025-05-05 18:36:45.651 +03:00 [INF] Fatura başarıyla eklendi, FaturaID: "041ed265-ae90-432a-a435-55f898c8f9b3"
+2025-05-05 18:36:45.657 +03:00 [INF] AddAsync işlemi başarıyla tamamlandı
+2025-05-05 18:36:45.657 +03:00 [INF] Fatura oluşturuldu, FaturaID: "041ed265-ae90-432a-a435-55f898c8f9b3"
+2025-05-05 18:36:45.677 +03:00 [INF] Fatura Detay eklendi: FaturaDetayID="9cc2652e-fba0-410a-88ea-c14a4e2ee7b7", UrunID="3fe2cca7-136f-403e-be18-2b86e8448019", Miktar=100
+2025-05-05 18:36:45.680 +03:00 [INF] StokCikisiYap başladı: Ürün 3fe2cca7-136f-403e-be18-2b86e8448019, Miktar 100, Hareket Tipi Cikis
+2025-05-05 18:36:45.683 +03:00 [INF] StokCikisiYap - Yeni transaction başlatıldı (Isolation Level: ReadCommitted): Ürün 3fe2cca7-136f-403e-be18-2b86e8448019, Miktar 100
+2025-05-05 18:36:45.698 +03:00 [WRN] Stok yetersiz ancak işleme devam ediliyor: Ürün 3fe2cca7-136f-403e-be18-2b86e8448019, Talep: 100, Mevcut: 0, Eksik: 100
+2025-05-05 18:36:45.711 +03:00 [INF] Eksik stok kaydı oluşturuldu: UrunID=3fe2cca7-136f-403e-be18-2b86e8448019, Miktar=100, BirimFiyat=0
+2025-05-05 18:36:45.760 +03:00 [ERR] Failed executing DbCommand (20ms) [Parameters=[@p0='?' (DbType = Guid), @p1='?' (Size = 500), @p2='?' (Precision = 18) (Scale = 2) (DbType = Decimal), @p3='?' (DbType = Boolean), @p4='?' (DbType = Boolean), @p5='?' (Size = 50), @p6='?' (Precision = 18) (Scale = 2) (DbType = Decimal), @p7='?' (Precision = 18) (Scale = 2) (DbType = Decimal), @p8='?' (DbType = Guid), @p9='?' (DbType = Guid), @p10='?' (DbType = DateTime2), @p11='?' (Precision = 18) (Scale = 2) (DbType = Decimal), @p12='?' (Precision = 18) (Scale = 2) (DbType = Decimal), @p13='?' (Precision = 18) (Scale = 2) (DbType = Decimal), @p14='?' (Precision = 18) (Scale = 2) (DbType = Decimal), @p15='?' (Precision = 18) (Scale = 2) (DbType = Decimal), @p16='?' (Precision = 18) (Scale = 2) (DbType = Decimal), @p17='?' (Precision = 18) (Scale = 3) (DbType = Decimal), @p18='?' (Precision = 18) (Scale = 2) (DbType = Decimal), @p19='?' (Precision = 18) (Scale = 2) (DbType = Decimal), @p20='?' (DbType = Guid), @p21='?' (DbType = DateTime2), @p22='?' (Precision = 18) (Scale = 2) (DbType = Decimal), @p23='?' (Precision = 18) (Scale = 2) (DbType = Decimal), @p24='?' (DbType = Boolean), @p25='?' (DbType = Guid), @p26='?' (Precision = 18) (Scale = 2) (DbType = Decimal), @p27='?' (Precision = 18) (Scale = 2) (DbType = Decimal), @p28='?' (DbType = Guid), @p29='?' (DbType = Guid), @p30='?' (Size = 500), @p31='?' (Precision = 18) (Scale = 6) (DbType = Decimal), @p32='?' (Precision = 18) (Scale = 6) (DbType = Decimal), @p33='?' (Precision = 18) (Scale = 6) (DbType = Decimal), @p34='?' (Precision = 18) (Scale = 6) (DbType = Decimal), @p35='?' (Precision = 18) (Scale = 6) (DbType = Decimal), @p36='?' (Precision = 18) (Scale = 6) (DbType = Decimal), @p37='?' (DbType = DateTime2), @p38='?' (Size = 50), @p39='?' (DbType = Boolean), @p40='?' (Size = 500), @p41='?' (DbType = DateTime2), @p42='?' (DbType = DateTime2), @p43='?' (Size = 10), @p44='?' (DbType = Guid), @p45='?' (Size = 50), @p46='?' (Size = 50), @p47='?' (DbType = Guid), @p48='?' (Precision = 18) (Scale = 6) (DbType = Decimal), @p49='?' (Precision = 18) (Scale = 6) (DbType = Decimal)], CommandType='"Text"', CommandTimeout='120']
+SET NOCOUNT ON;
+INSERT INTO [FaturaDetaylari] ([FaturaDetayID], [Aciklama], [AklananMiktar], [AklanmaTamamlandi], [Aktif], [Birim], [BirimFiyat], [BirimFiyatDoviz], [BirimID], [FaturaID], [GuncellemeTarihi], [IndirimOrani], [IndirimTutari], [IndirimTutariDoviz], [KdvOrani], [KdvTutari], [KdvTutariDoviz], [Miktar], [NetTutar], [NetTutarDoviz], [OlusturanKullaniciID], [OlusturmaTarihi], [SatirKdvToplam], [SatirToplam], [Silindi], [SonGuncelleyenKullaniciID], [Tutar], [TutarDoviz], [UrunID])
+VALUES (@p0, @p1, @p2, @p3, @p4, @p5, @p6, @p7, @p8, @p9, @p10, @p11, @p12, @p13, @p14, @p15, @p16, @p17, @p18, @p19, @p20, @p21, @p22, @p23, @p24, @p25, @p26, @p27, @p28);
+INSERT INTO [StokCikisDetaylari] ([StokCikisDetayID], [Aciklama], [BirimFiyat], [BirimFiyatTL], [BirimFiyatUSD], [BirimFiyatUZS], [BirimMaliyet], [CikisMiktari], [CikisTarihi], [HareketTipi], [Iptal], [IptalAciklama], [IptalTarihi], [OlusturmaTarihi], [ParaBirimi], [ReferansID], [ReferansNo], [ReferansTuru], [StokFifoID], [ToplamMaliyet], [ToplamMaliyetUSD])
+VALUES (@p29, @p30, @p31, @p32, @p33, @p34, @p35, @p36, @p37, @p38, @p39, @p40, @p41, @p42, @p43, @p44, @p45, @p46, @p47, @p48, @p49);
+2025-05-05 18:36:45.775 +03:00 [ERR] An exception occurred in the database while saving changes for context type 'MuhasebeStokWebApp.Data.ApplicationDbContext'.
+Microsoft.EntityFrameworkCore.DbUpdateException: An error occurred while saving the entity changes. See the inner exception for details.
+ ---> Microsoft.Data.SqlClient.SqlException (0x80131904): Cannot insert the value NULL into column 'SatirKdvToplam', table 'MuhasebeStokDB.dbo.FaturaDetaylari'; column does not allow nulls. INSERT fails.
+Cannot insert the value NULL into column 'IptalAciklama', table 'MuhasebeStokDB.dbo.StokCikisDetaylari'; column does not allow nulls. INSERT fails.
+The statement has been terminated.
+The statement has been terminated.
+   at Microsoft.Data.SqlClient.SqlCommand.<>c.<ExecuteDbDataReaderAsync>b__211_0(Task`1 result)
+   at System.Threading.Tasks.ContinuationResultTaskFromResultTask`2.InnerInvoke()
+   at System.Threading.ExecutionContext.RunInternal(ExecutionContext executionContext, ContextCallback callback, Object state)
+--- End of stack trace from previous location ---
+   at System.Threading.ExecutionContext.RunInternal(ExecutionContext executionContext, ContextCallback callback, Object state)
+   at System.Threading.Tasks.Task.ExecuteWithThreadLocal(Task& currentTaskSlot, Thread threadPoolThread)
+--- End of stack trace from previous location ---
+   at Microsoft.EntityFrameworkCore.Storage.RelationalCommand.ExecuteReaderAsync(RelationalCommandParameterObject parameterObject, CancellationToken cancellationToken)
+   at Microsoft.EntityFrameworkCore.Storage.RelationalCommand.ExecuteReaderAsync(RelationalCommandParameterObject parameterObject, CancellationToken cancellationToken)
+   at Microsoft.EntityFrameworkCore.Update.ReaderModificationCommandBatch.ExecuteAsync(IRelationalConnection connection, CancellationToken cancellationToken)
+ClientConnectionId:5cddb36c-068c-48c3-850c-1907491c724f
+Error Number:515,State:2,Class:16
+   --- End of inner exception stack trace ---
+   at Microsoft.EntityFrameworkCore.Update.ReaderModificationCommandBatch.ExecuteAsync(IRelationalConnection connection, CancellationToken cancellationToken)
+   at Microsoft.EntityFrameworkCore.SqlServer.Update.Internal.SqlServerModificationCommandBatch.ExecuteAsync(IRelationalConnection connection, CancellationToken cancellationToken)
+   at Microsoft.EntityFrameworkCore.Update.Internal.BatchExecutor.ExecuteAsync(IEnumerable`1 commandBatches, IRelationalConnection connection, CancellationToken cancellationToken)
+   at Microsoft.EntityFrameworkCore.Update.Internal.BatchExecutor.ExecuteAsync(IEnumerable`1 commandBatches, IRelationalConnection connection, CancellationToken cancellationToken)
+   at Microsoft.EntityFrameworkCore.Update.Internal.BatchExecutor.ExecuteAsync(IEnumerable`1 commandBatches, IRelationalConnection connection, CancellationToken cancellationToken)
+   at Microsoft.EntityFrameworkCore.Storage.RelationalDatabase.SaveChangesAsync(IList`1 entries, CancellationToken cancellationToken)
+   at Microsoft.EntityFrameworkCore.ChangeTracking.Internal.StateManager.SaveChangesAsync(IList`1 entriesToSave, CancellationToken cancellationToken)
+   at Microsoft.EntityFrameworkCore.ChangeTracking.Internal.StateManager.SaveChangesAsync(StateManager stateManager, Boolean acceptAllChangesOnSuccess, CancellationToken cancellationToken)
+   at Microsoft.EntityFrameworkCore.SqlServer.Storage.Internal.SqlServerExecutionStrategy.ExecuteAsync[TState,TResult](TState state, Func`4 operation, Func`4 verifySucceeded, CancellationToken cancellationToken)
+   at Microsoft.EntityFrameworkCore.DbContext.SaveChangesAsync(Boolean acceptAllChangesOnSuccess, CancellationToken cancellationToken)
+Microsoft.EntityFrameworkCore.DbUpdateException: An error occurred while saving the entity changes. See the inner exception for details.
+ ---> Microsoft.Data.SqlClient.SqlException (0x80131904): Cannot insert the value NULL into column 'SatirKdvToplam', table 'MuhasebeStokDB.dbo.FaturaDetaylari'; column does not allow nulls. INSERT fails.
+Cannot insert the value NULL into column 'IptalAciklama', table 'MuhasebeStokDB.dbo.StokCikisDetaylari'; column does not allow nulls. INSERT fails.
+The statement has been terminated.
+The statement has been terminated.
+   at Microsoft.Data.SqlClient.SqlCommand.<>c.<ExecuteDbDataReaderAsync>b__211_0(Task`1 result)
+   at System.Threading.Tasks.ContinuationResultTaskFromResultTask`2.InnerInvoke()
+   at System.Threading.ExecutionContext.RunInternal(ExecutionContext executionContext, ContextCallback callback, Object state)
+--- End of stack trace from previous location ---
+   at System.Threading.ExecutionContext.RunInternal(ExecutionContext executionContext, ContextCallback callback, Object state)
+   at System.Threading.Tasks.Task.ExecuteWithThreadLocal(Task& currentTaskSlot, Thread threadPoolThread)
+--- End of stack trace from previous location ---
+   at Microsoft.EntityFrameworkCore.Storage.RelationalCommand.ExecuteReaderAsync(RelationalCommandParameterObject parameterObject, CancellationToken cancellationToken)
+   at Microsoft.EntityFrameworkCore.Storage.RelationalCommand.ExecuteReaderAsync(RelationalCommandParameterObject parameterObject, CancellationToken cancellationToken)
+   at Microsoft.EntityFrameworkCore.Update.ReaderModificationCommandBatch.ExecuteAsync(IRelationalConnection connection, CancellationToken cancellationToken)
+ClientConnectionId:5cddb36c-068c-48c3-850c-1907491c724f
+Error Number:515,State:2,Class:16
+   --- End of inner exception stack trace ---
+   at Microsoft.EntityFrameworkCore.Update.ReaderModificationCommandBatch.ExecuteAsync(IRelationalConnection connection, CancellationToken cancellationToken)
+   at Microsoft.EntityFrameworkCore.SqlServer.Update.Internal.SqlServerModificationCommandBatch.ExecuteAsync(IRelationalConnection connection, CancellationToken cancellationToken)
+   at Microsoft.EntityFrameworkCore.Update.Internal.BatchExecutor.ExecuteAsync(IEnumerable`1 commandBatches, IRelationalConnection connection, CancellationToken cancellationToken)
+   at Microsoft.EntityFrameworkCore.Update.Internal.BatchExecutor.ExecuteAsync(IEnumerable`1 commandBatches, IRelationalConnection connection, CancellationToken cancellationToken)
+   at Microsoft.EntityFrameworkCore.Update.Internal.BatchExecutor.ExecuteAsync(IEnumerable`1 commandBatches, IRelationalConnection connection, CancellationToken cancellationToken)
+   at Microsoft.EntityFrameworkCore.Storage.RelationalDatabase.SaveChangesAsync(IList`1 entries, CancellationToken cancellationToken)
+   at Microsoft.EntityFrameworkCore.ChangeTracking.Internal.StateManager.SaveChangesAsync(IList`1 entriesToSave, CancellationToken cancellationToken)
+   at Microsoft.EntityFrameworkCore.ChangeTracking.Internal.StateManager.SaveChangesAsync(StateManager stateManager, Boolean acceptAllChangesOnSuccess, CancellationToken cancellationToken)
+   at Microsoft.EntityFrameworkCore.SqlServer.Storage.Internal.SqlServerExecutionStrategy.ExecuteAsync[TState,TResult](TState state, Func`4 operation, Func`4 verifySucceeded, CancellationToken cancellationToken)
+   at Microsoft.EntityFrameworkCore.DbContext.SaveChangesAsync(Boolean acceptAllChangesOnSuccess, CancellationToken cancellationToken)
+2025-05-05 18:36:45.778 +03:00 [WRN] StokCikisiYap - Transaction geri alındı: Ürün 3fe2cca7-136f-403e-be18-2b86e8448019, Miktar 100
+2025-05-05 18:36:45.778 +03:00 [ERR] Stok çıkışı sırasında hata oluştu: Ürün 3fe2cca7-136f-403e-be18-2b86e8448019, Miktar 100
+Microsoft.EntityFrameworkCore.DbUpdateException: An error occurred while saving the entity changes. See the inner exception for details.
+ ---> Microsoft.Data.SqlClient.SqlException (0x80131904): Cannot insert the value NULL into column 'SatirKdvToplam', table 'MuhasebeStokDB.dbo.FaturaDetaylari'; column does not allow nulls. INSERT fails.
+Cannot insert the value NULL into column 'IptalAciklama', table 'MuhasebeStokDB.dbo.StokCikisDetaylari'; column does not allow nulls. INSERT fails.
+The statement has been terminated.
+The statement has been terminated.
+   at Microsoft.Data.SqlClient.SqlCommand.<>c.<ExecuteDbDataReaderAsync>b__211_0(Task`1 result)
+   at System.Threading.Tasks.ContinuationResultTaskFromResultTask`2.InnerInvoke()
+   at System.Threading.ExecutionContext.RunInternal(ExecutionContext executionContext, ContextCallback callback, Object state)
+--- End of stack trace from previous location ---
+   at System.Threading.ExecutionContext.RunInternal(ExecutionContext executionContext, ContextCallback callback, Object state)
+   at System.Threading.Tasks.Task.ExecuteWithThreadLocal(Task& currentTaskSlot, Thread threadPoolThread)
+--- End of stack trace from previous location ---
+   at Microsoft.EntityFrameworkCore.Storage.RelationalCommand.ExecuteReaderAsync(RelationalCommandParameterObject parameterObject, CancellationToken cancellationToken)
+   at Microsoft.EntityFrameworkCore.Storage.RelationalCommand.ExecuteReaderAsync(RelationalCommandParameterObject parameterObject, CancellationToken cancellationToken)
+   at Microsoft.EntityFrameworkCore.Update.ReaderModificationCommandBatch.ExecuteAsync(IRelationalConnection connection, CancellationToken cancellationToken)
+ClientConnectionId:5cddb36c-068c-48c3-850c-1907491c724f
+Error Number:515,State:2,Class:16
+   --- End of inner exception stack trace ---
+   at Microsoft.EntityFrameworkCore.Update.ReaderModificationCommandBatch.ExecuteAsync(IRelationalConnection connection, CancellationToken cancellationToken)
+   at Microsoft.EntityFrameworkCore.SqlServer.Update.Internal.SqlServerModificationCommandBatch.ExecuteAsync(IRelationalConnection connection, CancellationToken cancellationToken)
+   at Microsoft.EntityFrameworkCore.Update.Internal.BatchExecutor.ExecuteAsync(IEnumerable`1 commandBatches, IRelationalConnection connection, CancellationToken cancellationToken)
+   at Microsoft.EntityFrameworkCore.Update.Internal.BatchExecutor.ExecuteAsync(IEnumerable`1 commandBatches, IRelationalConnection connection, CancellationToken cancellationToken)
+   at Microsoft.EntityFrameworkCore.Update.Internal.BatchExecutor.ExecuteAsync(IEnumerable`1 commandBatches, IRelationalConnection connection, CancellationToken cancellationToken)
+   at Microsoft.EntityFrameworkCore.Storage.RelationalDatabase.SaveChangesAsync(IList`1 entries, CancellationToken cancellationToken)
+   at Microsoft.EntityFrameworkCore.ChangeTracking.Internal.StateManager.SaveChangesAsync(IList`1 entriesToSave, CancellationToken cancellationToken)
+   at Microsoft.EntityFrameworkCore.ChangeTracking.Internal.StateManager.SaveChangesAsync(StateManager stateManager, Boolean acceptAllChangesOnSuccess, CancellationToken cancellationToken)
+   at Microsoft.EntityFrameworkCore.SqlServer.Storage.Internal.SqlServerExecutionStrategy.ExecuteAsync[TState,TResult](TState state, Func`4 operation, Func`4 verifySucceeded, CancellationToken cancellationToken)
+   at Microsoft.EntityFrameworkCore.DbContext.SaveChangesAsync(Boolean acceptAllChangesOnSuccess, CancellationToken cancellationToken)
+   at Microsoft.EntityFrameworkCore.DbContext.SaveChangesAsync(Boolean acceptAllChangesOnSuccess, CancellationToken cancellationToken)
+   at MuhasebeStokWebApp.Services.StokFifoService.StokCikisiYap(Guid urunID, Decimal miktar, StokHareketTipi hareketTipi, Nullable`1 referansID, String aciklama, String paraBirimi, Boolean useBatch) in /Users/muhammetkocaman/MuhasebeStokWebApp/Services/StokFifoService.cs:line 638
+2025-05-05 18:36:45.781 +03:00 [ERR] Fatura ve ilişkili kayıtlar oluşturulurken hata: Stok çıkışı işlemi başarısız oldu: An error occurred while saving the entity changes. See the inner exception for details.
+System.Exception: Stok çıkışı işlemi başarısız oldu: An error occurred while saving the entity changes. See the inner exception for details.
+ ---> Microsoft.EntityFrameworkCore.DbUpdateException: An error occurred while saving the entity changes. See the inner exception for details.
+ ---> Microsoft.Data.SqlClient.SqlException (0x80131904): Cannot insert the value NULL into column 'SatirKdvToplam', table 'MuhasebeStokDB.dbo.FaturaDetaylari'; column does not allow nulls. INSERT fails.
+Cannot insert the value NULL into column 'IptalAciklama', table 'MuhasebeStokDB.dbo.StokCikisDetaylari'; column does not allow nulls. INSERT fails.
+The statement has been terminated.
+The statement has been terminated.
+   at Microsoft.Data.SqlClient.SqlCommand.<>c.<ExecuteDbDataReaderAsync>b__211_0(Task`1 result)
+   at System.Threading.Tasks.ContinuationResultTaskFromResultTask`2.InnerInvoke()
+   at System.Threading.ExecutionContext.RunInternal(ExecutionContext executionContext, ContextCallback callback, Object state)
+--- End of stack trace from previous location ---
+   at System.Threading.ExecutionContext.RunInternal(ExecutionContext executionContext, ContextCallback callback, Object state)
+   at System.Threading.Tasks.Task.ExecuteWithThreadLocal(Task& currentTaskSlot, Thread threadPoolThread)
+--- End of stack trace from previous location ---
+   at Microsoft.EntityFrameworkCore.Storage.RelationalCommand.ExecuteReaderAsync(RelationalCommandParameterObject parameterObject, CancellationToken cancellationToken)
+   at Microsoft.EntityFrameworkCore.Storage.RelationalCommand.ExecuteReaderAsync(RelationalCommandParameterObject parameterObject, CancellationToken cancellationToken)
+   at Microsoft.EntityFrameworkCore.Update.ReaderModificationCommandBatch.ExecuteAsync(IRelationalConnection connection, CancellationToken cancellationToken)
+ClientConnectionId:5cddb36c-068c-48c3-850c-1907491c724f
+Error Number:515,State:2,Class:16
+   --- End of inner exception stack trace ---
+   at Microsoft.EntityFrameworkCore.Update.ReaderModificationCommandBatch.ExecuteAsync(IRelationalConnection connection, CancellationToken cancellationToken)
+   at Microsoft.EntityFrameworkCore.SqlServer.Update.Internal.SqlServerModificationCommandBatch.ExecuteAsync(IRelationalConnection connection, CancellationToken cancellationToken)
+   at Microsoft.EntityFrameworkCore.Update.Internal.BatchExecutor.ExecuteAsync(IEnumerable`1 commandBatches, IRelationalConnection connection, CancellationToken cancellationToken)
+   at Microsoft.EntityFrameworkCore.Update.Internal.BatchExecutor.ExecuteAsync(IEnumerable`1 commandBatches, IRelationalConnection connection, CancellationToken cancellationToken)
+   at Microsoft.EntityFrameworkCore.Update.Internal.BatchExecutor.ExecuteAsync(IEnumerable`1 commandBatches, IRelationalConnection connection, CancellationToken cancellationToken)
+   at Microsoft.EntityFrameworkCore.Storage.RelationalDatabase.SaveChangesAsync(IList`1 entries, CancellationToken cancellationToken)
+   at Microsoft.EntityFrameworkCore.ChangeTracking.Internal.StateManager.SaveChangesAsync(IList`1 entriesToSave, CancellationToken cancellationToken)
+   at Microsoft.EntityFrameworkCore.ChangeTracking.Internal.StateManager.SaveChangesAsync(StateManager stateManager, Boolean acceptAllChangesOnSuccess, CancellationToken cancellationToken)
+   at Microsoft.EntityFrameworkCore.SqlServer.Storage.Internal.SqlServerExecutionStrategy.ExecuteAsync[TState,TResult](TState state, Func`4 operation, Func`4 verifySucceeded, CancellationToken cancellationToken)
+   at Microsoft.EntityFrameworkCore.DbContext.SaveChangesAsync(Boolean acceptAllChangesOnSuccess, CancellationToken cancellationToken)
+   at Microsoft.EntityFrameworkCore.DbContext.SaveChangesAsync(Boolean acceptAllChangesOnSuccess, CancellationToken cancellationToken)
+   at MuhasebeStokWebApp.Services.StokFifoService.StokCikisiYap(Guid urunID, Decimal miktar, StokHareketTipi hareketTipi, Nullable`1 referansID, String aciklama, String paraBirimi, Boolean useBatch) in /Users/muhammetkocaman/MuhasebeStokWebApp/Services/StokFifoService.cs:line 638
+   --- End of inner exception stack trace ---
+   at MuhasebeStokWebApp.Services.StokFifoService.StokCikisiYap(Guid urunID, Decimal miktar, StokHareketTipi hareketTipi, Nullable`1 referansID, String aciklama, String paraBirimi, Boolean useBatch) in /Users/muhammetkocaman/MuhasebeStokWebApp/Services/StokFifoService.cs:line 693
+   at MuhasebeStokWebApp.Services.StokFifoService.StokCikisiYap(Guid urunID, Decimal miktar, StokHareketTipi hareketTipi, Nullable`1 referansID, String aciklama, String paraBirimi, Boolean useBatch) in /Users/muhammetkocaman/MuhasebeStokWebApp/Services/StokFifoService.cs:line 702
+   at MuhasebeStokWebApp.Services.FaturaOrchestrationService.CreateFaturaWithRelations(FaturaCreateViewModel viewModel, Nullable`1 currentUserId) in /Users/muhammetkocaman/MuhasebeStokWebApp/Services/FaturaOrchestrationService.cs:line 113
+2025-05-05 18:36:45.782 +03:00 [ERR] Fatura oluşturma hatası
+System.Exception: Stok çıkışı işlemi başarısız oldu: An error occurred while saving the entity changes. See the inner exception for details.
+ ---> Microsoft.EntityFrameworkCore.DbUpdateException: An error occurred while saving the entity changes. See the inner exception for details.
+ ---> Microsoft.Data.SqlClient.SqlException (0x80131904): Cannot insert the value NULL into column 'SatirKdvToplam', table 'MuhasebeStokDB.dbo.FaturaDetaylari'; column does not allow nulls. INSERT fails.
+Cannot insert the value NULL into column 'IptalAciklama', table 'MuhasebeStokDB.dbo.StokCikisDetaylari'; column does not allow nulls. INSERT fails.
+The statement has been terminated.
+The statement has been terminated.
+   at Microsoft.Data.SqlClient.SqlCommand.<>c.<ExecuteDbDataReaderAsync>b__211_0(Task`1 result)
+   at System.Threading.Tasks.ContinuationResultTaskFromResultTask`2.InnerInvoke()
+   at System.Threading.ExecutionContext.RunInternal(ExecutionContext executionContext, ContextCallback callback, Object state)
+--- End of stack trace from previous location ---
+   at System.Threading.ExecutionContext.RunInternal(ExecutionContext executionContext, ContextCallback callback, Object state)
+   at System.Threading.Tasks.Task.ExecuteWithThreadLocal(Task& currentTaskSlot, Thread threadPoolThread)
+--- End of stack trace from previous location ---
+   at Microsoft.EntityFrameworkCore.Storage.RelationalCommand.ExecuteReaderAsync(RelationalCommandParameterObject parameterObject, CancellationToken cancellationToken)
+   at Microsoft.EntityFrameworkCore.Storage.RelationalCommand.ExecuteReaderAsync(RelationalCommandParameterObject parameterObject, CancellationToken cancellationToken)
+   at Microsoft.EntityFrameworkCore.Update.ReaderModificationCommandBatch.ExecuteAsync(IRelationalConnection connection, CancellationToken cancellationToken)
+ClientConnectionId:5cddb36c-068c-48c3-850c-1907491c724f
+Error Number:515,State:2,Class:16
+   --- End of inner exception stack trace ---
+   at Microsoft.EntityFrameworkCore.Update.ReaderModificationCommandBatch.ExecuteAsync(IRelationalConnection connection, CancellationToken cancellationToken)
+   at Microsoft.EntityFrameworkCore.SqlServer.Update.Internal.SqlServerModificationCommandBatch.ExecuteAsync(IRelationalConnection connection, CancellationToken cancellationToken)
+   at Microsoft.EntityFrameworkCore.Update.Internal.BatchExecutor.ExecuteAsync(IEnumerable`1 commandBatches, IRelationalConnection connection, CancellationToken cancellationToken)
+   at Microsoft.EntityFrameworkCore.Update.Internal.BatchExecutor.ExecuteAsync(IEnumerable`1 commandBatches, IRelationalConnection connection, CancellationToken cancellationToken)
+   at Microsoft.EntityFrameworkCore.Update.Internal.BatchExecutor.ExecuteAsync(IEnumerable`1 commandBatches, IRelationalConnection connection, CancellationToken cancellationToken)
+   at Microsoft.EntityFrameworkCore.Storage.RelationalDatabase.SaveChangesAsync(IList`1 entries, CancellationToken cancellationToken)
+   at Microsoft.EntityFrameworkCore.ChangeTracking.Internal.StateManager.SaveChangesAsync(IList`1 entriesToSave, CancellationToken cancellationToken)
+   at Microsoft.EntityFrameworkCore.ChangeTracking.Internal.StateManager.SaveChangesAsync(StateManager stateManager, Boolean acceptAllChangesOnSuccess, CancellationToken cancellationToken)
+   at Microsoft.EntityFrameworkCore.SqlServer.Storage.Internal.SqlServerExecutionStrategy.ExecuteAsync[TState,TResult](TState state, Func`4 operation, Func`4 verifySucceeded, CancellationToken cancellationToken)
+   at Microsoft.EntityFrameworkCore.DbContext.SaveChangesAsync(Boolean acceptAllChangesOnSuccess, CancellationToken cancellationToken)
+   at Microsoft.EntityFrameworkCore.DbContext.SaveChangesAsync(Boolean acceptAllChangesOnSuccess, CancellationToken cancellationToken)
+   at MuhasebeStokWebApp.Services.StokFifoService.StokCikisiYap(Guid urunID, Decimal miktar, StokHareketTipi hareketTipi, Nullable`1 referansID, String aciklama, String paraBirimi, Boolean useBatch) in /Users/muhammetkocaman/MuhasebeStokWebApp/Services/StokFifoService.cs:line 638
+   --- End of inner exception stack trace ---
+   at MuhasebeStokWebApp.Services.StokFifoService.StokCikisiYap(Guid urunID, Decimal miktar, StokHareketTipi hareketTipi, Nullable`1 referansID, String aciklama, String paraBirimi, Boolean useBatch) in /Users/muhammetkocaman/MuhasebeStokWebApp/Services/StokFifoService.cs:line 693
+   at MuhasebeStokWebApp.Services.StokFifoService.StokCikisiYap(Guid urunID, Decimal miktar, StokHareketTipi hareketTipi, Nullable`1 referansID, String aciklama, String paraBirimi, Boolean useBatch) in /Users/muhammetkocaman/MuhasebeStokWebApp/Services/StokFifoService.cs:line 702
+   at MuhasebeStokWebApp.Services.FaturaOrchestrationService.CreateFaturaWithRelations(FaturaCreateViewModel viewModel, Nullable`1 currentUserId) in /Users/muhammetkocaman/MuhasebeStokWebApp/Services/FaturaOrchestrationService.cs:line 113
+   at MuhasebeStokWebApp.Controllers.FaturaController.Create(FaturaCreateViewModel viewModel) in /Users/muhammetkocaman/MuhasebeStokWebApp/Controllers/FaturaController.cs:line 321
+2025-05-05 18:36:45.787 +03:00 [INF] Cari listesi yüklendi, toplam 2 adet cari bulundu.
+2025-05-05 18:36:45.788 +03:00 [INF] Sözleşme listesi yüklendi, toplam 0 adet sözleşme bulundu.
+2025-05-05 18:36:45.790 +03:00 [INF] Ürün listesi yüklendi, toplam 3 adet ürün bulundu.
+2025-05-05 18:36:45.791 +03:00 [INF] Depo listesi yüklendi, toplam 2 adet depo bulundu.
+2025-05-05 18:36:45.793 +03:00 [INF] Birim sayısı: Aktif=2, Pasif=0, Silinmiş=0
+2025-05-05 18:36:45.793 +03:00 [INF] Ürün select list oluşturuldu, toplam 3 adet öğe içeriyor.
+2025-05-05 18:36:45.794 +03:00 [INF] Para birimi listesi yüklendi, toplam 2 adet para birimi bulundu.
+2025-05-05 18:40:36.126 +03:00 [INF] Veritabanına bağlantı başarılı. Migrationlar uygulanıyor...
+2025-05-05 18:40:36.437 +03:00 [INF] Veritabanı işlemleri başarıyla tamamlandı.
+2025-05-05 18:40:36.621 +03:00 [ERR] Hosting failed to start
+System.IO.IOException: Failed to bind to address https://127.0.0.1:7118: address already in use.
+ ---> Microsoft.AspNetCore.Connections.AddressInUseException: Address already in use
+ ---> System.Net.Sockets.SocketException (48): Address already in use
+   at System.Net.Sockets.Socket.DoBind(EndPoint endPointSnapshot, SocketAddress socketAddress)
+   at System.Net.Sockets.Socket.Bind(EndPoint localEP)
+   at Microsoft.AspNetCore.Server.Kestrel.Transport.Sockets.SocketTransportOptions.CreateDefaultBoundListenSocket(EndPoint endpoint)
+   at Microsoft.AspNetCore.Server.Kestrel.Transport.Sockets.SocketConnectionListener.Bind()
+   --- End of inner exception stack trace ---
+   at Microsoft.AspNetCore.Server.Kestrel.Transport.Sockets.SocketConnectionListener.Bind()
+   at Microsoft.AspNetCore.Server.Kestrel.Transport.Sockets.SocketTransportFactory.BindAsync(EndPoint endpoint, CancellationToken cancellationToken)
+   at Microsoft.AspNetCore.Server.Kestrel.Core.Internal.Infrastructure.TransportManager.BindAsync(EndPoint endPoint, ConnectionDelegate connectionDelegate, EndpointConfig endpointConfig, CancellationToken cancellationToken)
+   at Microsoft.AspNetCore.Server.Kestrel.Core.KestrelServerImpl.<>c__DisplayClass28_0`1.<<StartAsync>g__OnBind|0>d.MoveNext()
+--- End of stack trace from previous location ---
+   at Microsoft.AspNetCore.Server.Kestrel.Core.Internal.AddressBinder.BindEndpointAsync(ListenOptions endpoint, AddressBindContext context, CancellationToken cancellationToken)
+   --- End of inner exception stack trace ---
+   at Microsoft.AspNetCore.Server.Kestrel.Core.Internal.AddressBinder.BindEndpointAsync(ListenOptions endpoint, AddressBindContext context, CancellationToken cancellationToken)
+   at Microsoft.AspNetCore.Server.Kestrel.Core.LocalhostListenOptions.BindAsync(AddressBindContext context, CancellationToken cancellationToken)
+   at Microsoft.AspNetCore.Server.Kestrel.Core.Internal.AddressBinder.AddressesStrategy.BindAsync(AddressBindContext context, CancellationToken cancellationToken)
+   at Microsoft.AspNetCore.Server.Kestrel.Core.KestrelServerImpl.BindAsync(CancellationToken cancellationToken)
+   at Microsoft.AspNetCore.Server.Kestrel.Core.KestrelServerImpl.StartAsync[TContext](IHttpApplication`1 application, CancellationToken cancellationToken)
+   at Microsoft.AspNetCore.Hosting.GenericWebHostService.StartAsync(CancellationToken cancellationToken)
+   at Microsoft.Extensions.Hosting.Internal.Host.<StartAsync>b__14_1(IHostedService service, CancellationToken token)
+   at Microsoft.Extensions.Hosting.Internal.Host.ForeachService[T](IEnumerable`1 services, CancellationToken token, Boolean concurrent, Boolean abortOnFirstException, List`1 exceptions, Func`3 operation)

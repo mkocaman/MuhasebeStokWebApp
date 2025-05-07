@@ -97,14 +97,15 @@ namespace MuhasebeStokWebApp.Controllers
                 KasaAdi = h.Kasa?.KasaAdi ?? "Bilinmeyen Kasa",
                 Tarih = h.Tarih,
                 HareketTuru = h.HareketTuru,
+                HareketTuruAdi = h.HareketTuru == "Giris" ? "Giriş" : "Çıkış",
                 Tutar = h.Tutar,
                 ReferansNo = h.ReferansNo,
                 ReferansTuru = h.ReferansTuru,
                 Aciklama = h.Aciklama
             }).ToList();
 
-            model.ToplamGiris = hareketler.Where(h => h.HareketTuru == "Giriş" || h.HareketTuru == "Açılış Bakiyesi" || h.HareketTuru == "Bakiye Artışı").Sum(h => h.Tutar);
-            model.ToplamCikis = hareketler.Where(h => h.HareketTuru == "Çıkış" || h.HareketTuru == "Bakiye Azalışı").Sum(h => h.Tutar);
+            model.ToplamGiris = hareketler.Where(h => h.HareketTuru == "Giris").Sum(h => h.Tutar);
+            model.ToplamCikis = hareketler.Where(h => h.HareketTuru == "Cikis").Sum(h => h.Tutar);
 
             return View(model);
         }
@@ -159,6 +160,7 @@ namespace MuhasebeStokWebApp.Controllers
                 BankaAdi = h.BankaHesap?.Banka?.BankaAdi ?? "Bilinmeyen Banka",
                 Tarih = h.Tarih,
                 HareketTuru = h.HareketTuru,
+                HareketTuruAdi = h.HareketTuru == "Giris" ? "Giriş" : "Çıkış",
                 Tutar = h.Tutar,
                 ParaBirimi = h.BankaHesap?.ParaBirimi ?? "TL",
                 ReferansNo = h.ReferansNo,
@@ -167,8 +169,8 @@ namespace MuhasebeStokWebApp.Controllers
                 Aciklama = h.Aciklama
             }).ToList();
 
-            model.ToplamGiris = hareketler.Where(h => h.HareketTuru == "Giriş" || h.HareketTuru == "Açılış Bakiyesi" || h.HareketTuru == "Bakiye Artışı").Sum(h => h.Tutar);
-            model.ToplamCikis = hareketler.Where(h => h.HareketTuru == "Çıkış" || h.HareketTuru == "Bakiye Azalışı").Sum(h => h.Tutar);
+            model.ToplamGiris = hareketler.Where(h => h.HareketTuru == "Giris").Sum(h => h.Tutar);
+            model.ToplamCikis = hareketler.Where(h => h.HareketTuru == "Cikis").Sum(h => h.Tutar);
 
             // Para birimine göre toplamları hesapla
             var paraBirimiGruplari = hareketler
@@ -176,8 +178,8 @@ namespace MuhasebeStokWebApp.Controllers
                 .Select(g => new
                 {
                     ParaBirimi = g.Key,
-                    ToplamGiris = g.Where(h => h.HareketTuru == "Giriş" || h.HareketTuru == "Açılış Bakiyesi" || h.HareketTuru == "Bakiye Artışı").Sum(h => h.Tutar),
-                    ToplamCikis = g.Where(h => h.HareketTuru == "Çıkış" || h.HareketTuru == "Bakiye Azalışı").Sum(h => h.Tutar)
+                    ToplamGiris = g.Where(h => h.HareketTuru == "Giris").Sum(h => h.Tutar),
+                    ToplamCikis = g.Where(h => h.HareketTuru == "Cikis").Sum(h => h.Tutar)
                 });
 
             foreach (var grup in paraBirimiGruplari)
@@ -236,6 +238,7 @@ namespace MuhasebeStokWebApp.Controllers
                 CariAdi = h.Cari?.Ad ?? "Bilinmeyen Cari",
                 Tarih = h.Tarih,
                 HareketTuru = h.HareketTuru,
+                HareketTuruAdi = h.HareketTuru == "Giris" ? "Giriş" : "Çıkış",
                 Tutar = h.Tutar,
                 ReferansNo = h.ReferansNo,
                 ReferansTuru = h.ReferansTuru,
@@ -277,12 +280,12 @@ namespace MuhasebeStokWebApp.Controllers
         [HttpPost]
         public async Task<IActionResult> StokRaporu(RaporFiltreViewModel filtre)
         {
-            var model = new RaporStokViewModel
+            var model = new MuhasebeStokWebApp.ViewModels.Rapor.StokRaporViewModel
             {
                 RaporAdi = "Stok Hareket Raporu",
                 RaporTarihi = DateTime.Now,
                 KullaniciAdi = User.Identity?.Name ?? "Kullanıcı",
-                Aciklama = $"{filtre.BaslangicTarihi:dd.MM.yyyy} - {filtre.BitisTarihi:dd.MM.yyyy} tarihleri arası stok hareketleri"
+                Aciklama = $"{filtre.BaslangicTarihi:dd.MM.yyyy} - {filtre.BitisTarihi:dd.MM.yyyy} tarihleri arası stok raporu"
             };
 
             var query = _context.StokHareketleri
@@ -292,13 +295,30 @@ namespace MuhasebeStokWebApp.Controllers
 
             if (filtre.UrunID.HasValue)
             {
-                query = query.Where(s => s.UrunID == filtre.UrunID.Value);
+                query = query.Where(s => s.UrunID == filtre.UrunID);
+            }
+
+            // KategoriID'nin kategori_id olan ürünleri filtrele
+            if (filtre.UrunID.HasValue)
+            {
+                var urun = await _context.Urunler.FirstOrDefaultAsync(u => u.UrunID == filtre.UrunID);
+                if (urun != null && urun.KategoriID.HasValue)
+                {
+                    // Kategoriye ait ürünleri bul
+                    var urunIDlerKategoriye = await _context.Urunler
+                        .Where(u => u.KategoriID == urun.KategoriID.Value)
+                        .Select(u => u.UrunID)
+                        .ToListAsync();
+                    
+                    // Stok hareketlerini kategoriye göre filtrele
+                    query = query.Where(s => urunIDlerKategoriye.Contains(s.UrunID));
+                }
             }
 
             if (!string.IsNullOrEmpty(filtre.HareketTuru))
             {
                 // String'i enum'a dönüştür
-                if (Enum.TryParse<StokHareketiTipi>(filtre.HareketTuru, out var hareketTipi))
+                if (Enum.TryParse<StokHareketTipi>(filtre.HareketTuru, out var hareketTipi))
                 {
                     query = query.Where(s => s.HareketTuru == hareketTipi);
                 }
@@ -306,11 +326,12 @@ namespace MuhasebeStokWebApp.Controllers
 
             var hareketler = await query.OrderBy(s => s.Tarih).ToListAsync();
 
-            model.StokHareketleri = hareketler.Select(h => new RaporStokHareketViewModel
+            model.StokHareketleri = hareketler.Select(h => new StokHareketRaporViewModel
             {
                 UrunAdi = h.Urun?.UrunAdi ?? "Bilinmeyen Ürün",
                 Tarih = h.Tarih,
                 HareketTuru = h.HareketTuru.ToString(),
+                HareketTuruAdi = h.HareketTuru == StokHareketTipi.Giris ? "Giriş" : "Çıkış",
                 Miktar = Math.Abs(h.Miktar),
                 Birim = h.Birim ?? "Adet",
                 BirimFiyat = h.BirimFiyat ?? 0,
@@ -326,11 +347,11 @@ namespace MuhasebeStokWebApp.Controllers
 
             foreach (var hareket in hareketler)
             {
-                if (hareket.HareketTuru == StokHareketiTipi.Giris)
+                if (hareket.HareketTuru.ToString() == "Giris")
                 {
                     toplamGiris += hareket.Miktar;
                 }
-                else if (hareket.HareketTuru == StokHareketiTipi.Cikis)
+                else if (hareket.HareketTuru.ToString() == "Cikis")
                 {
                     toplamCikis += Math.Abs(hareket.Miktar);
                 }
@@ -591,7 +612,7 @@ namespace MuhasebeStokWebApp.Controllers
                 UrunAdi = sh.Urun?.UrunAdi ?? "",
                 Tarih = sh.Tarih,
                 HareketTuru = sh.HareketTuru,
-                HareketTuruAdi = sh.HareketTuru == StokHareketiTipi.Giris ? "Giriş" : "Çıkış",
+                HareketTuruAdi = sh.HareketTuru == StokHareketTipi.Giris ? "Giriş" : "Çıkış",
                 Miktar = Math.Abs(sh.Miktar),
                 BirimFiyat = sh.BirimFiyat ?? 0,
                 ToplamTutar = Math.Abs(sh.Miktar) * (sh.BirimFiyat ?? 0),
@@ -630,11 +651,11 @@ namespace MuhasebeStokWebApp.Controllers
             {
                 if (hareketTuruFilter == "Giris")
                 {
-                    hareketler = hareketler.Where(h => h.HareketTuru == StokHareketiTipi.Giris).ToList();
+                    hareketler = hareketler.Where(h => h.HareketTuru == StokHareketTipi.Giris).ToList();
                 }
                 else if (hareketTuruFilter == "Cikis")
                 {
-                    hareketler = hareketler.Where(h => h.HareketTuru == StokHareketiTipi.Cikis).ToList();
+                    hareketler = hareketler.Where(h => h.HareketTuru == StokHareketTipi.Cikis).ToList();
                 }
             }
             
@@ -646,10 +667,10 @@ namespace MuhasebeStokWebApp.Controllers
                 KategoriID = kategoriID,
                 HareketTuru = hareketTuruFilter,
                 Hareketler = hareketler,
-                ToplamGirisMiktari = hareketler.Where(h => h.HareketTuru == StokHareketiTipi.Giris).Sum(h => h.Miktar),
-                ToplamCikisMiktari = hareketler.Where(h => h.HareketTuru == StokHareketiTipi.Cikis).Sum(h => h.Miktar),
-                ToplamGirisTutari = hareketler.Where(h => h.HareketTuru == StokHareketiTipi.Giris).Sum(h => h.ToplamTutar),
-                ToplamCikisTutari = hareketler.Where(h => h.HareketTuru == StokHareketiTipi.Cikis).Sum(h => h.ToplamTutar)
+                ToplamGirisMiktari = hareketler.Where(h => h.HareketTuru == StokHareketTipi.Giris).Sum(h => h.Miktar),
+                ToplamCikisMiktari = hareketler.Where(h => h.HareketTuru == StokHareketTipi.Cikis).Sum(h => h.Miktar),
+                ToplamGirisTutari = hareketler.Where(h => h.HareketTuru == StokHareketTipi.Giris).Sum(h => h.ToplamTutar),
+                ToplamCikisTutari = hareketler.Where(h => h.HareketTuru == StokHareketTipi.Cikis).Sum(h => h.ToplamTutar)
             };
             
             return model;

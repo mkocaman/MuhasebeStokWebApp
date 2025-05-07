@@ -1,5 +1,6 @@
 using System;
 using System.Threading.Tasks;
+using System.Data;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Storage;
 using Microsoft.Extensions.Logging;
@@ -103,6 +104,18 @@ namespace MuhasebeStokWebApp.Data.Repositories
             }
             
             _transaction = await _context.Database.BeginTransactionAsync();
+        }
+        
+        public async Task<IDbContextTransaction> BeginTransactionAsync(IsolationLevel isolationLevel = IsolationLevel.ReadCommitted)
+        {
+            if (_transaction != null)
+            {
+                return _transaction;
+            }
+            
+            _transaction = await _context.Database.BeginTransactionAsync(isolationLevel);
+            _logger.LogInformation($"Yeni bir transaction başlatıldı (Isolation level: {isolationLevel})");
+            return _transaction;
         }
         
         public async Task CommitTransactionAsync()

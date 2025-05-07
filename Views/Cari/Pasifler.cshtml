@@ -61,7 +61,7 @@
                                             <th>Cari Adı</th>
                                             <th>Yetkili</th>
                                             <th>Telefon</th>
-                                            <th>Bakiye</th>
+                                            <th>Para Birimi</th>
                                             <th>Durum</th>
                                             <th>İşlemler</th>
                                         </tr>
@@ -90,8 +90,8 @@
                                                 </td>
                                                 <td>@(string.IsNullOrEmpty(cari.Yetkili) ? "-" : cari.Yetkili)</td>
                                                 <td>@(string.IsNullOrEmpty(cari.Telefon) ? "-" : cari.Telefon)</td>
-                                                <td class="text-end @(cari.BaslangicBakiye >= 0 ? "text-success" : "text-danger")">
-                                                    @cari.BaslangicBakiye.ToString("N2") @paraBirimiSembol
+                                                <td class="text-center">
+                                                    @paraBirimiSembol
                                                 </td>
                                                 <td class="text-center">
                                                     <span class="badge bg-danger">Pasif</span>
@@ -129,7 +129,7 @@
                                             <th>Cari Adı</th>
                                             <th>Yetkili</th>
                                             <th>Telefon</th>
-                                            <th>Bakiye</th>
+                                            <th>Para Birimi</th>
                                             <th>Durum</th>
                                             <th>İşlemler</th>
                                         </tr>
@@ -154,8 +154,8 @@
                                                 <td>@cari.Ad</td>
                                                 <td>@(string.IsNullOrEmpty(cari.Yetkili) ? "-" : cari.Yetkili)</td>
                                                 <td>@(string.IsNullOrEmpty(cari.Telefon) ? "-" : cari.Telefon)</td>
-                                                <td class="text-end @(cari.BaslangicBakiye >= 0 ? "text-success" : "text-danger")">
-                                                    @cari.BaslangicBakiye.ToString("N2") @paraBirimiSembol
+                                                <td class="text-center">
+                                                    @paraBirimiSembol
                                                 </td>
                                                 <td class="text-center">
                                                     <span class="badge bg-danger">Silinmiş</span>
@@ -277,7 +277,7 @@
                 
                 $('#confirmModal').modal('show');
             });
-
+            
             // Geri Yükle butonu tıklandığında
             $(document).on('click', '.restore-cari-btn', function() {
                 var cariID = $(this).data('id');
@@ -289,7 +289,7 @@
                 
                 $('#confirmModalConfirmBtn').off('click').on('click', function() {
                     $.ajax({
-                        url: '@Url.Action("RestoreCari", "Cari")',
+                        url: '@Url.Action("Restore", "Cari")',
                         type: 'POST',
                         data: { id: cariID },
                         success: function(response) {
@@ -325,7 +325,7 @@
                 
                 $('#confirmModalConfirmBtn').off('click').on('click', function() {
                     $.ajax({
-                        url: '@Url.Action("SetDelete", "Cari")',
+                        url: '@Url.Action("Delete", "Cari")',
                         type: 'POST',
                         data: { id: cariID },
                         success: function(response) {

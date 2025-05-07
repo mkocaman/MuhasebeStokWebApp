@@ -143,7 +143,7 @@ namespace MuhasebeStokWebApp.ViewModels.Stok
     {
         public Guid StokHareketID { get; set; }
         public DateTime Tarih { get; set; }
-        public StokHareketiTipi HareketTuru { get; set; }
+        public StokHareketTipi HareketTuru { get; set; }
         public string DepoAdi { get; set; }
         public decimal Miktar { get; set; }
         public decimal BirimFiyat { get; set; }
@@ -165,6 +165,7 @@ namespace MuhasebeStokWebApp.ViewModels.Stok
         public decimal KalanMiktar { get; set; }
         public decimal BirimFiyat { get; set; }
         public decimal BirimFiyatUSD { get; set; }
+        public decimal BirimFiyatUZS { get; set; }
         public decimal DovizKuru { get; set; }
         public string ParaBirimi { get; set; }
         public string ParaBirimiSembol { get; set; }
@@ -189,7 +190,7 @@ namespace MuhasebeStokWebApp.ViewModels.Stok
         public string DepoAdi { get; set; }
         
         [Display(Name = "Hareket Türü")]
-        public StokHareketiTipi HareketTuru { get; set; }
+        public StokHareketTipi HareketTuru { get; set; }
         
         [Display(Name = "Tarih")]
         [DisplayFormat(DataFormatString = "{0:dd.MM.yyyy HH:mm}", ApplyFormatInEditMode = false)]
@@ -321,13 +322,10 @@ namespace MuhasebeStokWebApp.ViewModels.Stok
         public decimal DovizKuru { get; set; }
         
         [Display(Name = "USD Birim Fiyat")]
-        public decimal USDBirimFiyat { get; set; }
-        
-        [Display(Name = "TL Birim Fiyat")]
-        public decimal TLBirimFiyat { get; set; }
+        public decimal BirimFiyatUSD { get; set; }
         
         [Display(Name = "UZS Birim Fiyat")]
-        public decimal UZSBirimFiyat { get; set; }
+        public decimal BirimFiyatUZS { get; set; }
         
         [Display(Name = "Referans No")]
         public string ReferansNo { get; set; }
@@ -387,7 +385,7 @@ namespace MuhasebeStokWebApp.ViewModels.Stok
         public string Aciklama { get; set; }
         
         [Display(Name = "Hareket Türü")]
-        public StokHareketiTipi HareketTuru { get; set; } = StokHareketiTipi.Cikis;
+        public StokHareketTipi HareketTuru { get; set; } = StokHareketTipi.Cikis;
     }
 
     // Stok Transfer ViewModel
@@ -475,14 +473,15 @@ namespace MuhasebeStokWebApp.ViewModels.Stok
         public string Kategori { get; set; }
         public string Birim { get; set; }
         public decimal StokMiktar { get; set; }
-        public decimal OrtalamaMaliyet { get; set; }
-        public decimal OrtalamaMaliyetTL { get; set; }
-        public decimal ToplamMaliyet { get; set; }
-        public decimal ToplamMaliyetTL { get; set; }
+        public decimal OrtalamaMaliyet { get; set; } // UZS cinsinden
+        public decimal OrtalamaMaliyetUSD { get; set; } // USD cinsinden
+        public decimal ToplamMaliyet { get; set; } // UZS cinsinden
+        public decimal ToplamMaliyetUSD { get; set; } // USD cinsinden
         public decimal SatisFiyati { get; set; }
         
         public List<StokDurumuDetayViewModel> StokDurumuListesi { get; set; } = new List<StokDurumuDetayViewModel>();
-        public decimal ToplamStokDegeri { get; set; }
+        public decimal ToplamStokDegeri { get; set; } // UZS cinsinden
+        public decimal ToplamStokDegeriUSD { get; set; } // USD cinsinden
     }
 
     public class StokDurumuDetayViewModel
@@ -496,6 +495,7 @@ namespace MuhasebeStokWebApp.ViewModels.Stok
         public string DepoAdi { get; set; }
         public decimal StokMiktari { get; set; }
         public decimal OrtalamaMaliyet { get; set; }
+        public decimal OrtalamaMaliyetUSD { get; set; } // USD cinsinden ortalama maliyet
         public decimal SatisFiyati { get; set; }
         public decimal KritikStokSeviyesi { get; set; }
     }

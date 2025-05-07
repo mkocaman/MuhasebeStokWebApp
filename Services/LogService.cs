@@ -213,7 +213,7 @@ namespace MuhasebeStokWebApp.Services
                     KayitID = kayitID,
                     KullaniciAdi = kullaniciAdi ?? _httpContextAccessor.HttpContext?.User?.Identity?.Name ?? "Sistem",
                     Basarili = basarili,
-                    Aciklama = aciklama
+                    Aciklama = aciklama ?? mesaj // Aciklama null ise mesaj değerini kullan
                 };
 
                 await _context.SistemLoglar.AddAsync(sistemLog);
@@ -962,40 +962,63 @@ namespace MuhasebeStokWebApp.Services
             }
         }
 
-        public void LogBilgi(string baslik, string detay, string kullanici)
+        public async Task<bool> LogBilgi(string baslik, string detay, string kullanici)
         {
             try
             {
-                var log = new ESistemLog
+                // HTTP bağlam bilgilerini al
+                var httpContext = _httpContextAccessor.HttpContext;
+                string ipAdresi = httpContext?.Connection?.RemoteIpAddress?.ToString() ?? "0.0.0.0";
+                string browser = GetBrowserInfo(httpContext?.Request?.Headers["User-Agent"].ToString() ?? "");
+                string os = GetOSInfo(httpContext?.Request?.Headers["User-Agent"].ToString() ?? "");
+                string sayfaAdresi = httpContext?.Request?.Path.ToString() ?? "/";
+                
+                // Kullanıcı ID'sini al
+                string kullaniciId = null;
+                if (httpContext?.User?.Identity?.IsAuthenticated == true)
+                {
+                    kullaniciId = httpContext.User.FindFirst(ClaimTypes.NameIdentifier)?.Value;
+                }
+                
+                // Log kaydını oluştur
+                var logKaydi = new ESistemLog
                 {
                     LogID = Guid.NewGuid().ToString(),
                     LogTuru = "Bilgi",
+                    LogTuruInt = (int)LogTuru.Bilgi,
                     IslemTuru = "Bilgi",
-                    LogTuruInt = (int)MuhasebeStokWebApp.Enums.LogTuru.Bilgi,
+                    Mesaj = baslik,
                     Aciklama = baslik,
                     HataMesaji = detay,
+                    TabloAdi = "Sistem",
+                    KayitAdi = "Bilgi",
                     KullaniciAdi = kullanici,
-                    IPAdresi = _httpContextAccessor.HttpContext?.Connection?.RemoteIpAddress?.ToString() ?? "0.0.0.0",
+                    KullaniciId = kullaniciId,
+                    IPAdresi = ipAdresi,
                     IslemTarihi = DateTime.Now,
-                    TabloAdi = "",
-                    KayitAdi = "",
-                    Mesaj = baslik,
-                    Sayfa = _httpContextAccessor.HttpContext?.Request?.Path.ToString() ?? "",
+                    Sayfa = sayfaAdresi,
                     Basarili = true,
-                    KullaniciId = null,
-                    KullaniciGuid = null
+                    KullaniciGuid = kullaniciId != null ? Guid.TryParse(kullaniciId, out Guid guidResult) ? guidResult : (Guid?)null : null
                 };
-
-                _context.SistemLoglar.Add(log);
-                _context.SaveChanges();
+                
+                // Veritabanına ekle
+                await _context.SistemLoglar.AddAsync(logKaydi);
+                await _context.SaveChangesAsync();
+                
+                // Debug log ekle
+                _logger.LogDebug($"Bilgi logu kaydedildi: {baslik} - {kullanici}");
+                
+                return true;
             }
             catch (Exception ex)
             {
-                _logger.LogError(ex, $"Log ekleme hatası: {baslik} - {ex.Message}");
+                // Hata oluşursa debug seviyesinde logla ama işlemi engelleme
+                _logger.LogError(ex, $"Bilgi logu kaydedilirken hata oluştu: {baslik}");
+                return false;
             }
         }
 
-        public void LogUyari(string baslik, string detay, string kullanici)
+        public async Task<bool> LogUyari(string baslik, string detay, string kullanici)
         {
             try
             {
@@ -1019,16 +1042,18 @@ namespace MuhasebeStokWebApp.Services
                     KullaniciGuid = null
                 };
 
-                _context.SistemLoglar.Add(log);
-                _context.SaveChanges();
+                await _context.SistemLoglar.AddAsync(log);
+                await _context.SaveChangesAsync();
+                return true;
             }
             catch (Exception ex)
             {
                 _logger.LogError(ex, $"Log ekleme hatası: {baslik} - {ex.Message}");
+                return false;
             }
         }
 
-        public void LogHata(string baslik, string detay, string kullanici)
+        public async Task<bool> LogHata(string baslik, string detay, string kullanici)
         {
             try
             {
@@ -1051,13 +1076,15 @@ namespace MuhasebeStokWebApp.Services
                     KullaniciId = null,
                     KullaniciGuid = null
                 };
-
-                _context.SistemLoglar.Add(log);
-                _context.SaveChanges();
+                
+                await _context.SistemLoglar.AddAsync(log);
+                await _context.SaveChangesAsync();
+                return true;
             }
             catch (Exception ex)
             {
                 _logger.LogError(ex, $"Log ekleme hatası: {baslik} - {ex.Message}");
+                return false;
             }
         }
 

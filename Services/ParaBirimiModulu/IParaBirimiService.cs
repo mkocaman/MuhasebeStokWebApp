@@ -50,6 +50,12 @@ namespace MuhasebeStokWebApp.Services.ParaBirimiModulu
         /// Ana para birimini döndürür
         /// </summary>
         Task<ParaBirimi> GetAnaParaBirimiAsync();
+
+        /// <summary>
+        /// Yerel para birimini (TRY) döndürür
+        /// Yerel para birimi bulunamazsa ana para birimini döndürür
+        /// </summary>
+        Task<ParaBirimi> GetYerelParaBirimiAsync();
         
         /// <summary>
         /// Ana para birimini değiştirir

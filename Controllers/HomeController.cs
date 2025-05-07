@@ -24,6 +24,7 @@ using MuhasebeStokWebApp.Services.Report;
 using MuhasebeStokWebApp.Services.Notification;
 using System.Globalization;
 using Microsoft.AspNetCore.Http;
+using MuhasebeStokWebApp.ViewModels.Todo;
 
 namespace MuhasebeStokWebApp.Controllers
 {
@@ -37,6 +38,7 @@ namespace MuhasebeStokWebApp.Controllers
         private readonly IDovizKuruService _dovizKuruService;
         private readonly ApplicationDbContext _context;
         private readonly INotificationService _notificationService;
+        private readonly ITodoService _todoService;
 
         // Constructor: Dependency Injection ile gerekli servisleri alır
         public HomeController(
@@ -48,7 +50,8 @@ namespace MuhasebeStokWebApp.Controllers
             IDovizKuruService dovizKuruService,
             ApplicationDbContext context,
             INotificationService notificationService,
-            ILogService logService)
+            ILogService logService,
+            ITodoService todoService)
             : base(menuService, userManager, roleManager, logService)
         {
             _logger = logger;
@@ -58,6 +61,7 @@ namespace MuhasebeStokWebApp.Controllers
             _dovizKuruService = dovizKuruService;
             _context = context;
             _notificationService = notificationService;
+            _todoService = todoService;
         }
 
         // Ana Dashboard sayfasını hazırlar
@@ -778,6 +782,25 @@ namespace MuhasebeStokWebApp.Controllers
             ViewBag.Days = JsonConvert.SerializeObject(buAyGunler);
             ViewBag.Revenues = JsonConvert.SerializeObject(buAySatislar);
             ViewBag.Expenses = JsonConvert.SerializeObject(buAyGiderler);
+            
+            // Todo List verilerini yükle
+            try
+            {
+                var currentUser = await _userManager.GetUserAsync(User);
+                if (currentUser != null)
+                {
+                    // Kullanıcının görevlerini getir
+                    var userTodos = await _todoService.GetFilteredTodoItemsAsync(currentUser.Id, "all");
+                    
+                    // Son 5 görevi view'a gönder (tarihe göre sıralı)
+                    ViewBag.RecentTodos = userTodos.OrderByDescending(t => t.CreatedAt).Take(5).ToList();
+                }
+            }
+            catch (Exception ex)
+            {
+                _logger.LogError(ex, "Todo list verileri yüklenirken hata oluştu.");
+                ViewBag.RecentTodos = new List<ViewModels.Todo.TodoItemViewModel>();
+            }
             
             // Kategori bazında satış dağılımı
             var kategoriSatislar = new Dictionary<Guid, decimal>();

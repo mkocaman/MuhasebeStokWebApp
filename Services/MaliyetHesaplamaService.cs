@@ -52,16 +52,16 @@ namespace MuhasebeStokWebApp.Services
                 switch (paraBirimi.ToUpper())
                 {
                     case "USD":
-                        toplamMaliyet = aktifKayitlar.Sum(f => f.KalanMiktar * f.USDBirimFiyat);
+                        toplamMaliyet = aktifKayitlar.Sum(f => f.KalanMiktar * f.BirimFiyatUSD);
                         break;
                     case "TRY":
-                        toplamMaliyet = aktifKayitlar.Sum(f => f.KalanMiktar * f.TLBirimFiyat);
+                        toplamMaliyet = aktifKayitlar.Sum(f => f.KalanMiktar * f.BirimFiyatUSD);
                         break;
                     case "UZS":
-                        toplamMaliyet = aktifKayitlar.Sum(f => f.KalanMiktar * f.UZSBirimFiyat);
+                        toplamMaliyet = aktifKayitlar.Sum(f => f.KalanMiktar * f.BirimFiyatUZS);
                         break;
                     default:
-                        toplamMaliyet = aktifKayitlar.Sum(f => f.KalanMiktar * f.USDBirimFiyat);
+                        toplamMaliyet = aktifKayitlar.Sum(f => f.KalanMiktar * f.BirimFiyatUSD);
                         break;
                 }
 
@@ -112,52 +112,155 @@ namespace MuhasebeStokWebApp.Services
         }
 
         /// <summary>
-        /// TL para birimi cinsinden birim fiyat hesaplar
+        /// TL yerine UZS para birimi cinsinden birim fiyat hesaplar
         /// </summary>
-        public async Task<decimal> HesaplaTlBirimFiyatAsync(decimal usdBirimFiyat)
+        /// <param name="usdBirimFiyat">USD cinsinden birim fiyat</param>
+        /// <returns>UZS cinsinden birim fiyat</returns>
+        public async Task<decimal> HesaplaUZSBirimFiyatAsync(decimal usdBirimFiyat)
         {
-            return await _exceptionHandler.HandleExceptionAsync(async () =>
+            return await _exceptionHandler.HandleExceptionAsync(async () => 
             {
-                var kur = await _dovizKuruService.GetGuncelKurAsync("USD", "TRY");
-                return Math.Round(usdBirimFiyat * kur, 4);
-            }, "HesaplaTlBirimFiyatAsync", usdBirimFiyat);
-        }
-
-        /// <summary>
-        /// UZS para birimi cinsinden birim fiyat hesaplar
-        /// </summary>
-        public async Task<decimal> HesaplaUzsBirimFiyatAsync(decimal usdBirimFiyat)
-        {
-            return await _exceptionHandler.HandleExceptionAsync(async () =>
-            {
-                var kur = await _dovizKuruService.GetGuncelKurAsync("USD", "UZS");
-                return Math.Round(usdBirimFiyat * kur, 4);
-            }, "HesaplaUzsBirimFiyatAsync", usdBirimFiyat);
+                var kurDegeri = await _dovizKuruService.GetGuncelKurAsync("USD", "UZS");
+                if (kurDegeri <= 0)
+                {
+                    // Kur değeri alınamazsa varsayılan değer kullan
+                    kurDegeri = 13000m; // Varsayılan USD -> UZS kuru
+                    _logger.LogWarning($"Güncel USD -> UZS kuru alınamadı, varsayılan değer (13000) kullanılıyor.");
+                }
+                
+                return usdBirimFiyat * kurDegeri;
+            }, "HesaplaUZSBirimFiyatAsync", usdBirimFiyat);
         }
 
         /// <summary>
         /// FIFO kayıtları üzerinden toplam maliyet hesaplar
         /// </summary>
+        /// <param name="fifoKayitlari">FIFO kayıtları</param>
+        /// <param name="paraBirimi">İstenen para birimi</param>
+        /// <returns>Toplam maliyet</returns>
         public decimal HesaplaToplamMaliyet(IEnumerable<StokFifo> fifoKayitlari, string paraBirimi = "USD")
         {
-            return _exceptionHandler.HandleException(() =>
+            if (fifoKayitlari == null || !fifoKayitlari.Any())
+                return 0;
+                
+            decimal toplamMaliyet = 0;
+            
+            // Para birimine göre toplam maliyeti hesapla
+            switch (paraBirimi.ToUpper())
             {
-                if (fifoKayitlari == null || !fifoKayitlari.Any())
-                    return 0;
+                case "USD":
+                    toplamMaliyet = fifoKayitlari.Sum(f => f.KalanMiktar * f.BirimFiyatUSD);
+                    break;
+                case "UZS":
+                    toplamMaliyet = fifoKayitlari.Sum(f => f.KalanMiktar * f.BirimFiyatUZS);
+                    break;
+                default:
+                    // Varsayılan olarak USD kullan
+                    toplamMaliyet = fifoKayitlari.Sum(f => f.KalanMiktar * f.BirimFiyatUSD);
+                    break;
+            }
+            
+            return toplamMaliyet;
+        }
 
-                // Para birimine göre toplam maliyet hesapla
+        /// <summary>
+        /// Bir ürünün ortalama maliyetini hesaplar
+        /// </summary>
+        /// <param name="urunID">Ürün ID</param>
+        /// <param name="paraBirimi">Para birimi (USD, UZS)</param>
+        /// <returns>Ortalama maliyet</returns>
+        public async Task<decimal> HesaplaOrtalamaMaliyetAsync(Guid urunID, string paraBirimi = "USD")
+        {
+            return await _exceptionHandler.HandleExceptionAsync(async () =>
+            {
+                // Aktif FIFO kayıtlarını getir
+                var aktifKayitlar = await _unitOfWork.StokFifoRepository.GetAllAsync(
+                    f => f.UrunID == urunID && f.KalanMiktar > 0 && f.Aktif && !f.Iptal && !f.Silindi,
+                    asNoTracking: true);
+                
+                if (!aktifKayitlar.Any() || aktifKayitlar.Sum(f => f.KalanMiktar) == 0)
+                    return 0;
+                
+                decimal toplamMiktar = aktifKayitlar.Sum(f => f.KalanMiktar);
+                decimal toplamMaliyet = 0;
+                
+                // Para birimine göre toplam maliyeti hesapla
                 switch (paraBirimi.ToUpper())
                 {
                     case "USD":
-                        return fifoKayitlari.Sum(f => f.KalanMiktar * f.USDBirimFiyat);
-                    case "TRY":
-                        return fifoKayitlari.Sum(f => f.KalanMiktar * f.TLBirimFiyat);
+                        toplamMaliyet = aktifKayitlar.Sum(f => f.KalanMiktar * f.BirimFiyatUSD);
+                        break;
                     case "UZS":
-                        return fifoKayitlari.Sum(f => f.KalanMiktar * f.UZSBirimFiyat);
+                        toplamMaliyet = aktifKayitlar.Sum(f => f.KalanMiktar * f.BirimFiyatUZS);
+                        break;
                     default:
-                        return fifoKayitlari.Sum(f => f.KalanMiktar * f.USDBirimFiyat);
+                        // Varsayılan olarak USD kullan
+                        toplamMaliyet = aktifKayitlar.Sum(f => f.KalanMiktar * f.BirimFiyatUSD);
+                        break;
                 }
-            }, "HesaplaToplamMaliyet", paraBirimi);
+                
+                return toplamMaliyet / toplamMiktar;
+            }, "HesaplaOrtalamaMaliyetAsync", urunID, paraBirimi);
+        }
+        
+        /// <summary>
+        /// Belirli bir tarihteki ürün maliyetini hesaplar
+        /// </summary>
+        /// <param name="urunID">Ürün ID</param>
+        /// <param name="tarih">Tarih</param>
+        /// <param name="paraBirimi">Para birimi (USD, UZS)</param>
+        /// <returns>Maliyet</returns>
+        public async Task<decimal> HesaplaTarihselMaliyetAsync(Guid urunID, DateTime tarih, string paraBirimi = "USD")
+        {
+            return await _exceptionHandler.HandleExceptionAsync(async () =>
+            {
+                // Belirli bir tarihe kadar olan FIFO kayıtlarını getir
+                var fifoKayitlari = await _unitOfWork.Repository<StokFifo>().GetAsync(
+                    f => f.UrunID == urunID && f.GirisTarihi <= tarih && f.Aktif && !f.Iptal && !f.Silindi);
+                
+                if (!fifoKayitlari.Any())
+                    return 0;
+                
+                // StokCikisDetay tablosunu kontrol et
+                var cikisDetaylar = await _unitOfWork.Repository<StokCikisDetay>().GetAsync(
+                    c => c.StokFifoID != null && 
+                         fifoKayitlari.Select(f => f.StokFifoID).Contains(c.StokFifoID.Value) && 
+                         c.CikisTarihi <= tarih && !c.Iptal);
+                
+                decimal toplamMiktar = 0;
+                decimal toplamMaliyet = 0;
+                
+                foreach (var fifo in fifoKayitlari)
+                {
+                    // O tarihe kadar olan çıkışları hesapla
+                    decimal cikisMiktari = cikisDetaylar
+                        .Where(c => c.StokFifoID == fifo.StokFifoID)
+                        .Sum(c => c.CikisMiktari);
+                    
+                    decimal kalan = Math.Max(0, fifo.Miktar - cikisMiktari);
+                    
+                    if (kalan <= 0)
+                        continue;
+                    
+                    toplamMiktar += kalan;
+                    
+                    switch (paraBirimi.ToUpper())
+                    {
+                        case "USD":
+                            toplamMaliyet += kalan * fifo.BirimFiyatUSD;
+                            break;
+                        case "UZS":
+                            toplamMaliyet += kalan * fifo.BirimFiyatUZS;
+                            break;
+                        default:
+                            // Varsayılan olarak USD kullan
+                            toplamMaliyet += kalan * fifo.BirimFiyatUSD;
+                            break;
+                    }
+                }
+                
+                return toplamMiktar > 0 ? toplamMaliyet / toplamMiktar : 0;
+            }, "HesaplaTarihselMaliyetAsync", urunID, tarih, paraBirimi);
         }
     }
 } 

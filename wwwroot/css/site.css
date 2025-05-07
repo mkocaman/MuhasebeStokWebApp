@@ -154,24 +154,44 @@ footer {
     color: var(--text-color);
 }
 
-/* Tema değiştirme butonu */
-.theme-toggle {
-    position: fixed;
-    bottom: 20px;
-    right: 20px;
-    z-index: 1000;
-    padding: 10px;
-    border-radius: 50%;
-    background-color: var(--primary-color);
-    color: var(--text-color);
-    border: none;
-    cursor: pointer;
-    box-shadow: 0 2px 5px rgba(0,0,0,0.2);
-    transition: all 0.3s ease;
+/* Tema değiştirme butonu stilleri */
+.mode {
+    display: flex !important;
+    align-items: center !important;
+    justify-content: center !important;
+    padding: 6px 10px !important;
+    border-radius: 4px !important;
+    transition: all 0.3s ease !important;
+    cursor: pointer !important;
+    position: relative !important;
+    z-index: 1050 !important;
+    background-color: rgba(0, 0, 0, 0.03) !important;
 }
 
-.theme-toggle:hover {
-    transform: scale(1.1);
+.mode:hover {
+    background-color: rgba(0, 0, 0, 0.1) !important;
+    transform: scale(1.1) !important;
+}
+
+.mode:active {
+    transform: scale(0.95) !important;
+}
+
+.dark-only .mode {
+    background-color: rgba(255, 255, 255, 0.1) !important;
+}
+
+.dark-only .mode:hover {
+    background-color: rgba(255, 255, 255, 0.2) !important;
+}
+
+.mode i {
+    font-size: 22px !important;
+    transition: all 0.3s ease !important;
+}
+
+.dark-only .mode i {
+    color: #ffffff !important;
 }
 
 /* Animasyonlar */
@@ -857,4 +877,637 @@ body:not(.login-page) {
         text-align: center !important;
         margin-top: 5px;
     }
+}
+
+/* Widget ayarları ve konfeti için CSS */
+
+/* Konfeti efekti */
+.confetti {
+    position: absolute;
+    top: 0;
+    left: 0;
+    width: 100%;
+    height: 100%;
+    z-index: 0;
+    pointer-events: none;
+    overflow: hidden;
+}
+
+.confetti-piece {
+    position: absolute;
+    width: 8px;
+    height: 16px;
+    background: #7366ff;
+    top: 0;
+    opacity: 0;
+}
+
+.confetti-piece:nth-child(1) {
+    left: 7%;
+    transform: rotate(-40deg);
+    animation: makeItRain 1000ms infinite ease-out;
+    animation-delay: 182ms;
+    animation-duration: 1116ms;
+    background: #7366ff;
+}
+
+.confetti-piece:nth-child(2) {
+    left: 14%;
+    transform: rotate(4deg);
+    animation: makeItRain 1000ms infinite ease-out;
+    animation-delay: 161ms;
+    animation-duration: 1076ms;
+    background: #f73164;
+}
+
+.confetti-piece:nth-child(3) {
+    left: 21%;
+    transform: rotate(-51deg);
+    animation: makeItRain 1000ms infinite ease-out;
+    animation-delay: 481ms;
+    animation-duration: 1103ms;
+    background: #51bb25;
+}
+
+.confetti-piece:nth-child(4) {
+    left: 28%;
+    transform: rotate(61deg);
+    animation: makeItRain 1000ms infinite ease-out;
+    animation-delay: 334ms;
+    animation-duration: 708ms;
+    background: #5baf61;
+}
+
+.confetti-piece:nth-child(5) {
+    left: 35%;
+    transform: rotate(-52deg);
+    animation: makeItRain 1000ms infinite ease-out;
+    animation-delay: 302ms;
+    animation-duration: 776ms;
+    background: #e2614f;
+}
+
+.confetti-piece:nth-child(6) {
+    left: 42%;
+    transform: rotate(38deg);
+    animation: makeItRain 1000ms infinite ease-out;
+    animation-delay: 180ms;
+    animation-duration: 1168ms;
+    background: #4f6479;
+}
+
+.confetti-piece:nth-child(7) {
+    left: 49%;
+    transform: rotate(11deg);
+    animation: makeItRain 1000ms infinite ease-out;
+    animation-delay: 395ms;
+    animation-duration: 1200ms;
+    background: #4f6479;
+}
+
+.confetti-piece:nth-child(8) {
+    left: 56%;
+    transform: rotate(49deg);
+    animation: makeItRain 1000ms infinite ease-out;
+    animation-delay: 14ms;
+    animation-duration: 887ms;
+    background: #e2614f;
+}
+
+.confetti-piece:nth-child(9) {
+    left: 63%;
+    transform: rotate(-72deg);
+    animation: makeItRain 1000ms infinite ease-out;
+    animation-delay: 149ms;
+    animation-duration: 805ms;
+    background: #5baf61;
+}
+
+.confetti-piece:nth-child(10) {
+    left: 70%;
+    transform: rotate(10deg);
+    animation: makeItRain 1000ms infinite ease-out;
+    animation-delay: 351ms;
+    animation-duration: 1059ms;
+    background: #4f6479;
+}
+
+.confetti-piece:nth-child(11) {
+    left: 77%;
+    transform: rotate(4deg);
+    animation: makeItRain 1000ms infinite ease-out;
+    animation-delay: 307ms;
+    animation-duration: 1132ms;
+    background: #e2614f;
+}
+
+.confetti-piece:nth-child(12) {
+    left: 84%;
+    transform: rotate(42deg);
+    animation: makeItRain 1000ms infinite ease-out;
+    animation-delay: 464ms;
+    animation-duration: 776ms;
+    background: #5baf61;
+}
+
+.confetti-piece:nth-child(13) {
+    left: 91%;
+    transform: rotate(-72deg);
+    animation: makeItRain 1000ms infinite ease-out;
+    animation-delay: 429ms;
+    animation-duration: 818ms;
+    background: #4f6479;
+}
+
+@keyframes makeItRain {
+    from {
+        opacity: 0;
+    }
+    50% {
+        opacity: 1;
+    }
+    to {
+        transform: translateY(1000px);
+    }
+}
+
+/* Widget Ayarları */
+.setting-list {
+    position: absolute;
+    right: 20px;
+    top: 22px;
+    display: inline-block;
+    float: right;
+    z-index: 1;
+}
+
+.dark-only .setting-list {
+    background-color: transparent;
+}
+
+.setting-list .setting-option {
+    position: absolute;
+    right: 35px;
+    top: 0;
+    background-color: #fff;
+    width: 0;
+    height: auto;
+    padding: 10px 0;
+    box-shadow: 0 0 15px rgba(0, 0, 0, 0.1);
+    border-radius: 5px;
+    z-index: 9;
+    visibility: hidden;
+    opacity: 0;
+    transition: all 0.3s ease;
+}
+
+.dark-only .setting-list .setting-option {
+    background-color: #262932;
+}
+
+.setting-list .setting-option.open-setting {
+    visibility: visible;
+    width: 230px;
+    opacity: 1;
+}
+
+.setting-list i {
+    display: inline-block;
+    padding: 6px 8px;
+    color: #333;
+    cursor: pointer;
+    transition: all 0.2s ease;
+    border-radius: 4px;
+}
+
+.setting-list i:hover {
+    background-color: rgba(0, 0, 0, 0.05);
+}
+
+.dark-only .setting-list i {
+    color: #fff;
+}
+
+.dark-only .setting-list i:hover {
+    background-color: rgba(255, 255, 255, 0.1);
+}
+
+.setting-list .setting-option li {
+    display: inline-flex;
+    margin: 0 5px;
+}
+
+/* Full Card Stili */
+.card.full-card {
+    position: fixed !important;
+    top: 0;
+    left: 0;
+    width: 100vw;
+    height: 100vh;
+    z-index: 9999;
+    border-radius: 0;
+    max-width: 100vw;
+    margin: 0;
+    overflow: auto;
+}
+
+/* Widget Profile Card */
+.profile-greeting {
+    position: relative;
+    overflow: hidden;
+    margin-bottom: 30px;
+    background: linear-gradient(45deg, #4f6479, #5baf61);
+    color: #fff;
+}
+
+.profile-greeting .card-header {
+    background: transparent;
+    padding: 30px;
+    border-bottom: none;
+}
+
+.profile-greeting .card-body {
+    padding: 0 30px 30px;
+}
+
+.profile-greeting h3 {
+    font-weight: 600;
+    font-size: 24px;
+    margin-bottom: 15px;
+    color: #fff;
+}
+
+.profile-greeting p {
+    font-size: 14px;
+    color: rgba(255, 255, 255, 0.9);
+    max-width: 500px;
+    margin: 0 auto 20px;
+    line-height: 1.6;
+}
+
+.profile-greeting .btn-light {
+    background-color: rgba(255, 255, 255, 0.9);
+    border: none;
+    color: #4f6479;
+    padding: 10px 30px;
+    font-weight: 600;
+    border-radius: 5px;
+    transition: all 0.3s ease;
+}
+
+.profile-greeting .btn-light:hover {
+    background-color: #fff;
+    box-shadow: 0 5px 15px rgba(0, 0, 0, 0.1);
+}
+
+.header-top {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    width: 100%;
+}
+
+/* Transaction Card Styles */
+.transaction-totalbal {
+    padding: 20px;
+    text-align: center;
+    background-color: #f8f9fa;
+    border-radius: 5px;
+    margin: 0 20px;
+}
+
+.dark-only .transaction-totalbal {
+    background-color: #262932;
+}
+
+.transaction-totalbal h2 {
+    font-size: 24px;
+    font-weight: 600;
+    margin-bottom: 5px;
+    color: #4f6479;
+}
+
+.transaction-totalbal p {
+    font-size: 14px;
+    color: #6c757d;
+    margin-bottom: 0;
+}
+
+.dark-only .transaction-totalbal p {
+    color: #eaedef;
+}
+
+.dark-only .transaction-totalbal h2 {
+    color: #5baf61;
+}
+
+.btn-arrow {
+    color: #5baf61;
+    font-weight: 600;
+    font-size: 13px;
+    text-decoration: none;
+    display: inline-flex;
+    align-items: center;
+}
+
+.btn-arrow i {
+    margin-right: 5px;
+}
+
+.card-load {
+    position: relative;
+}
+
+.card-loader {
+    position: absolute;
+    top: 0;
+    left: 0;
+    width: 100%;
+    height: 100%;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    background: rgba(255, 255, 255, 0.7);
+    z-index: 999;
+    border-radius: 5px;
+}
+
+.dark-only .card-loader {
+    background: rgba(38, 41, 50, 0.7);
+}
+
+.loader-p {
+    width: 40px;
+    height: 40px;
+    border: 4px solid #f3f3f3;
+    border-top: 4px solid #4f6479;
+    border-radius: 50%;
+    animation: spin 1s linear infinite;
+}
+
+/* Income Card Styles */
+.income-card {
+    overflow: hidden;
+    border-radius: 5px;
+}
+
+.income-card .card-header {
+    padding: 20px;
+}
+
+.income-card .card-body {
+    padding: 0;
+}
+
+.dark-only .income-card {
+    background-color: #262932;
+    border-color: #2c2c43;
+}
+
+.card-header h5 {
+    margin-bottom: 0;
+    font-size: 18px;
+    font-weight: 600;
+}
+
+.center-content p {
+    margin-bottom: 0;
+    color: #6c757d;
+    font-size: 14px;
+}
+
+.dark-only .center-content p {
+    color: #eaedef;
+}
+
+.font-primary {
+    color: #4f6479;
+    font-weight: 600;
+}
+
+.dark-only .font-primary {
+    color: #5baf61;
+}
+
+.toprightarrow-primary {
+    color: #5baf61;
+}
+
+/* Card renkleri ve stil tanımlamaları */
+.card-green {
+    background-color: #5baf61 !important;
+    color: #fff;
+}
+
+.card-red {
+    background-color: #e2614f !important;
+    color: #fff;
+}
+
+.card-blue {
+    background-color: #4f6479 !important;
+    color: #fff;
+}
+
+/* Başarı ve hata okları için */
+.arrow-success {
+    color: #5baf61 !important;
+}
+
+.arrow-danger {
+    color: #e2614f !important;
+}
+
+.arrow-primary {
+    color: #4f6479 !important;
+}
+
+.toprightarrow-success {
+    color: #5baf61 !important;
+}
+
+.toprightarrow-danger {
+    color: #e2614f !important;
+}
+
+.toprightarrow-primary {
+    color: #4f6479 !important;
+}
+
+/* Tema geçişi için */
+.mode i {
+    cursor: pointer;
+    font-size: 18px;
+    transition: all 0.2s ease;
+}
+
+.dark-only .mode i {
+    color: #fff;
+}
+
+.mode i:hover {
+    transform: scale(1.1);
+}
+
+/* Dashboard ve kart özellikleri */
+.recent-order-sec h5,
+.trasaction-sec h5 {
+    margin-bottom: 20px;
+    color: #333;
+}
+
+.dark-only .recent-order-sec h5,
+.dark-only .trasaction-sec h5 {
+    color: #eaedef;
+}
+
+.dark-only .apexcharts-menu {
+    background-color: #262932;
+    border-color: #2c2c43;
+}
+
+.dark-only .apexcharts-menu-item:hover {
+    background-color: #1d1e26;
+}
+
+.dark-only .apexcharts-tooltip {
+    background-color: #262932;
+    border-color: #2c2c43;
+    color: #eaedef;
+}
+
+.dark-only .apexcharts-tooltip-title {
+    background-color: #1d1e26;
+    border-color: #2c2c43;
+}
+
+.dark-only .apexcharts-xaxistooltip {
+    background-color: #262932;
+    border-color: #2c2c43;
+    color: #eaedef;
+}
+
+.dark-only .apexcharts-yaxistooltip {
+    background-color: #262932;
+    border-color: #2c2c43;
+    color: #eaedef;
+}
+
+.dark-only .apexcharts-xaxistooltip-bottom:after {
+    border-bottom-color: #262932;
+}
+
+.dark-only .apexcharts-xaxistooltip-bottom:before {
+    border-bottom-color: #2c2c43;
+}
+
+/* Dashboard kart stili düzenlemeleri */
+.rate-sec .card {
+    padding: 20px;
+    display: flex;
+    flex-direction: column;
+    justify-content: center;
+    align-items: center;
+    height: 100%;
+    position: relative;
+    overflow: hidden;
+    border-radius: 8px;
+    background: linear-gradient(45deg, #4f6479, #5baf61);
+}
+
+.rate-sec .income-card {
+    border-radius: 8px;
+    box-shadow: 0 0 15px rgba(0, 0, 0, 0.05);
+}
+
+.dark-only .rate-sec .income-card {
+    box-shadow: 0 0 15px rgba(0, 0, 0, 0.2);
+}
+
+.rate-sec .card .round-box {
+    margin-bottom: 15px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    background-color: rgba(255, 255, 255, 0.2);
+    border-radius: 50%;
+    width: 60px;
+    height: 60px;
+}
+
+.rate-sec .card .round-box svg {
+    width: 30px;
+    height: 30px;
+    stroke: #fff;
+}
+
+.rate-sec .card:nth-child(even) {
+    background: linear-gradient(45deg, #e2614f, #ffa07a);
+}
+
+.rate-sec .card h5 {
+    font-size: 22px;
+    font-weight: 600;
+    color: #fff;
+    margin-bottom: 5px;
+}
+
+.rate-sec .card p {
+    font-size: 14px;
+    color: rgba(255, 255, 255, 0.8);
+    margin-bottom: 15px;
+}
+
+.rate-sec .card .btn-arrow {
+    color: #fff;
+    font-weight: 500;
+}
+
+.rate-sec .card .parrten {
+    position: absolute;
+    bottom: 0;
+    left: 0;
+    width: 100%;
+    opacity: 0.1;
+}
+
+.dark-only .rate-sec .card {
+    box-shadow: 0 0 15px rgba(0, 0, 0, 0.1);
+}
+
+/* Week date stili */
+.week-date {
+    display: flex;
+    list-style: none;
+    padding: 0;
+    margin: 0;
+    background-color: #f8f9fa;
+    border-radius: 5px;
+    overflow: hidden;
+}
+
+.dark-only .week-date {
+    background-color: #262932;
+}
+
+.week-date li {
+    padding: 8px 15px;
+    font-size: 14px;
+    cursor: pointer;
+    font-weight: 500;
+    color: #6c757d;
+    transition: all 0.3s ease;
+}
+
+.dark-only .week-date li {
+    color: #eaedef;
+}
+
+.week-date li.font-primary {
+    background-color: #4f6479;
+    color: #fff;
+}
+
+.dark-only .week-date li.font-primary {
+    background-color: #5baf61;
 }
