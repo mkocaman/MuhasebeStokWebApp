@@ -2,6 +2,7 @@ using Microsoft.AspNetCore.Identity;
 using Microsoft.EntityFrameworkCore;
 using MuhasebeStokWebApp.Data.Entities;
 using Microsoft.Extensions.DependencyInjection;
+using MuhasebeStokWebApp.Services.Interfaces;
 
 namespace MuhasebeStokWebApp.Data
 {
@@ -27,6 +28,9 @@ namespace MuhasebeStokWebApp.Data
                 await SeedRoles(roleManager);
                 await SeedUsers(userManager);
             }
+            
+            // Varsayılan menüleri oluştur
+            await SeedMenus(serviceProvider);
         }
         
         private static async Task SeedFiyatTipleri(ApplicationDbContext context)
@@ -134,6 +138,19 @@ namespace MuhasebeStokWebApp.Data
                 {
                     await userManager.AddToRoleAsync(adminUser, "Admin");
                 }
+            }
+        }
+        
+        private static async Task SeedMenus(IServiceProvider serviceProvider)
+        {
+            var menuService = serviceProvider.GetRequiredService<IMenuService>();
+            
+            // Menüler var mı diye kontrol et
+            var context = serviceProvider.GetRequiredService<ApplicationDbContext>();
+            if (!await context.Menuler.AnyAsync())
+            {
+                // Varsayılan menüleri oluştur
+                await menuService.InitDefaultMenusAsync();
             }
         }
     }

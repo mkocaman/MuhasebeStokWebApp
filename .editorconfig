@@ -1,0 +1,26 @@
+# EditorConfig: https://EditorConfig.org
+root = true
+
+[*]
+end_of_line = lf
+insert_final_newline = true
+charset = utf-8
+trim_trailing_whitespace = true
+indent_style = space
+indent_size = 4
+
+[*.{cs,vb}]
+dotnet_diagnostic.CS8600.severity = none  # Converting null literal or possible null value to non-nullable type
+dotnet_diagnostic.CS8601.severity = none  # Possible null reference assignment
+dotnet_diagnostic.CS8602.severity = none  # Dereference of a possibly null reference
+dotnet_diagnostic.CS8603.severity = none  # Possible null reference return
+dotnet_diagnostic.CS8604.severity = none  # Possible null reference argument
+dotnet_diagnostic.CS8618.severity = none  # Non-nullable field is uninitialized
+dotnet_diagnostic.CS8620.severity = none  # Argument cannot be used for parameter due to nullability
+dotnet_diagnostic.CS8625.severity = none  # Cannot convert null literal to non-nullable reference type
+dotnet_diagnostic.CS8629.severity = none  # Nullable value type may be null
+dotnet_diagnostic.CS8765.severity = none  # Nullability of type doesn't match overridden member
+dotnet_diagnostic.CA1416.severity = none  # Platform specific call
+dotnet_diagnostic.CA2017.severity = none  # Number of parameters supplied in the logging message template do not match
+dotnet_diagnostic.CA2200.severity = none  # Re-throwing caught exception changes stack information
+dotnet_diagnostic.EF1001.severity = none  # Internal API 

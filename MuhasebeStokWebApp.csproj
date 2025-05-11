@@ -2,7 +2,7 @@
 
   <PropertyGroup>
     <TargetFramework>net9.0</TargetFramework>
-    <Nullable>enable</Nullable>
+    <Nullable>disable</Nullable>
     <ImplicitUsings>enable</ImplicitUsings>
     <UserSecretsId>aspnet-MuhasebeStokWebApp-D7F2FD0F-7E26-4C19-A917-E067536FCCC6</UserSecretsId>
     <GenerateAssemblyInfo>false</GenerateAssemblyInfo>
