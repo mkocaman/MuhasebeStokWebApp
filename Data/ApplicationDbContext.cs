@@ -787,6 +787,29 @@ namespace MuhasebeStokWebApp.Data
             // StokFifoCikis için query filter ekle
             modelBuilder.Entity<Entities.StokFifoCikis>()
                 .HasQueryFilter(s => !s.StokFifoID.HasValue || (s.StokFifo != null && !s.StokFifo.Silindi && s.StokFifo.Aktif && !s.StokFifo.Iptal));
+
+            // FaturaTuru
+            modelBuilder.Entity<Entities.FaturaTuru>()
+                .Property(f => f.Silindi)
+                .HasDefaultValue(false);
+                
+            // FaturaTuru için seed data
+            modelBuilder.Entity<Entities.FaturaTuru>().HasData(
+                new Entities.FaturaTuru 
+                { 
+                    FaturaTuruID = 1, 
+                    FaturaTuruAdi = "Satış Faturası", 
+                    HareketTuru = "Çıkış", 
+                    Silindi = false 
+                },
+                new Entities.FaturaTuru 
+                { 
+                    FaturaTuruID = 2, 
+                    FaturaTuruAdi = "Alış Faturası", 
+                    HareketTuru = "Giriş", 
+                    Silindi = false 
+                }
+            );
         }
 
         // GetDbContextOptions metodunu ekle

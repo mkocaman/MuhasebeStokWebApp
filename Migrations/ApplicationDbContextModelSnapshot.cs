@@ -1275,11 +1275,29 @@ namespace MuhasebeStokWebApp.Migrations
                         .HasColumnType("nvarchar(50)");
 
                     b.Property<bool>("Silindi")
-                        .HasColumnType("bit");
+                        .ValueGeneratedOnAdd()
+                        .HasColumnType("bit")
+                        .HasDefaultValue(false);
 
                     b.HasKey("FaturaTuruID");
 
                     b.ToTable("FaturaTurleri");
+
+                    b.HasData(
+                        new
+                        {
+                            FaturaTuruID = 1,
+                            FaturaTuruAdi = "Satış Faturası",
+                            HareketTuru = "Çıkış",
+                            Silindi = false
+                        },
+                        new
+                        {
+                            FaturaTuruID = 2,
+                            FaturaTuruAdi = "Alış Faturası",
+                            HareketTuru = "Giriş",
+                            Silindi = false
+                        });
                 });
 
             modelBuilder.Entity("MuhasebeStokWebApp.Data.Entities.FiyatTipi", b =>

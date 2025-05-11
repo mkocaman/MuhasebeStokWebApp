@@ -950,3 +950,55 @@ System.InvalidOperationException: The query contains a projection 'u => DbSet<St
 2025-05-11 15:00:28.853 +03:00 [INF] Dashboard sayfası başarıyla yüklendi.
 2025-05-11 15:02:07.724 +03:00 [INF] Yaklaşan hatırlatıcılar kontrol ediliyor...
 2025-05-11 15:02:07.731 +03:00 [INF] Bekleyen hatırlatma bulunamadı.
+2025-05-11 15:04:47.387 +03:00 [INF] Giriş denemesi: admin
+2025-05-11 15:04:47.462 +03:00 [INF] Admin kullanıcısı başarıyla giriş yaptı: admin
+2025-05-11 15:04:47.462 +03:00 [INF] Admin session oluşturuldu: UserID=8b547a04-134c-4578-99bb-f831a55b400d, UserName=admin
+2025-05-11 15:04:47.462 +03:00 [INF] Yönlendirme adresi: /Urun
+2025-05-11 15:04:47.462 +03:00 [INF] Admin kullanıcısı /Urun adresine yönlendiriliyor
+2025-05-11 15:05:39.596 +03:00 [INF] Aktif session bulundu: UserID=8b547a04-134c-4578-99bb-f831a55b400d, UserName=admin
+2025-05-11 15:05:39.596 +03:00 [INF] Admin kullanıcısı tespit edildi
+2025-05-11 15:05:39.596 +03:00 [INF] Kimlik doğrulanmış kullanıcı: admin
+2025-05-11 15:05:39.612 +03:00 [INF] Kur değeri önbellekten alındı: TRY -> USD, Değer: 0,03
+2025-05-11 15:05:39.613 +03:00 [INF] Kur değeri önbellekten alındı: UZS -> USD, Değer: 0,0000775313262804067879513497
+2025-05-11 15:05:39.634 +03:00 [INF] Çevrilen tutar önbellekten alındı: UZS -> USD, Tutar: 0,00, Sonuç: 0
+2025-05-11 15:07:07.733 +03:00 [INF] Yaklaşan hatırlatıcılar kontrol ediliyor...
+2025-05-11 15:07:07.738 +03:00 [INF] Bekleyen hatırlatma bulunamadı.
+2025-05-11 15:12:07.740 +03:00 [INF] Yaklaşan hatırlatıcılar kontrol ediliyor...
+2025-05-11 15:12:07.747 +03:00 [INF] Bekleyen hatırlatma bulunamadı.
+2025-05-11 15:17:49.271 +03:00 [INF] Veritabanına bağlantı başarılı. Migrationlar uygulanıyor...
+2025-05-11 15:17:49.628 +03:00 [INF] Veritabanı işlemleri başarıyla tamamlandı.
+2025-05-11 15:17:49.694 +03:00 [INF] Todo Hatırlatıcı Servisi başlatıldı.
+2025-05-11 15:17:49.695 +03:00 [INF] Yaklaşan hatırlatıcılar kontrol ediliyor...
+2025-05-11 15:17:49.745 +03:00 [INF] Bekleyen hatırlatma bulunamadı.
+2025-05-11 15:17:59.981 +03:00 [INF] Giriş denemesi: admin
+2025-05-11 15:18:00.084 +03:00 [INF] Admin kullanıcısı başarıyla giriş yaptı: admin
+2025-05-11 15:18:00.084 +03:00 [INF] Admin session oluşturuldu: UserID=8b547a04-134c-4578-99bb-f831a55b400d, UserName=admin
+2025-05-11 15:18:00.084 +03:00 [INF] Yönlendirme adresi: /Urun
+2025-05-11 15:18:00.084 +03:00 [INF] Admin kullanıcısı /Urun adresine yönlendiriliyor
+2025-05-11 15:18:03.652 +03:00 [INF] Birim sayısı: Aktif=2, Pasif=0, Silinmiş=0
+2025-05-11 15:18:04.521 +03:00 [INF] Toplam depo sayısı: 1
+2025-05-11 15:18:04.521 +03:00 [INF] Aktif depo sayısı: 1
+2025-05-11 15:18:04.521 +03:00 [INF] Pasif depo sayısı: 0
+2025-05-11 15:18:04.521 +03:00 [INF] Silinmiş depo sayısı: 0
+2025-05-11 15:18:06.763 +03:00 [INF] Aktif session bulundu: UserID=8b547a04-134c-4578-99bb-f831a55b400d, UserName=admin
+2025-05-11 15:18:06.765 +03:00 [INF] Admin kullanıcısı tespit edildi
+2025-05-11 15:18:06.765 +03:00 [INF] Kimlik doğrulanmış kullanıcı: admin
+2025-05-11 15:18:06.913 +03:00 [INF] TRY dönüşümü için kur değeri hesaplandı: TRY -> USD, Değer: 0,03
+2025-05-11 15:18:06.962 +03:00 [INF] Kur değeri hesaplandı: UZS -> USD, Değer: 0,0000775313262804067879513497
+2025-05-11 15:18:07.047 +03:00 [INF] Kur değeri önbellekten alındı: UZS -> USD, Değer: 0,0000775313262804067879513497
+2025-05-11 15:18:07.047 +03:00 [INF] Çevrilen tutar hesaplandı: UZS -> USD, Tutar: 0,00, Sonuç: 0, Kur: 0,0000775313262804067879513497
+2025-05-11 15:18:08.673 +03:00 [INF] Dashboard sayfası yükleniyor...
+2025-05-11 15:18:08.675 +03:00 [INF] Dashboard verileri yükleniyor...
+2025-05-11 15:18:08.944 +03:00 [INF] TRY dönüşümü için kur değeri hesaplandı: USD -> TRY, Değer: 33,33
+2025-05-11 15:18:08.955 +03:00 [INF] Kur değeri hesaplandı: USD -> UZS, Değer: 12898,012300
+2025-05-11 15:18:09.363 +03:00 [INF] Kur değeri önbellekten alındı: USD -> TRY, Değer: 33,33
+2025-05-11 15:18:09.363 +03:00 [INF] Kur değeri önbellekten alındı: USD -> UZS, Değer: 12898,012300
+2025-05-11 15:18:09.898 +03:00 [INF] Kur değeri önbellekten alındı: USD -> TRY, Değer: 33,33
+2025-05-11 15:18:09.899 +03:00 [INF] Kur değeri önbellekten alındı: USD -> UZS, Değer: 12898,012300
+2025-05-11 15:18:09.899 +03:00 [INF] Dashboard sayfası başarıyla yüklendi.
+2025-05-11 15:18:52.288 +03:00 [INF] Aktif session bulundu: UserID=8b547a04-134c-4578-99bb-f831a55b400d, UserName=admin
+2025-05-11 15:18:52.288 +03:00 [INF] Admin kullanıcısı tespit edildi
+2025-05-11 15:18:52.289 +03:00 [INF] Kimlik doğrulanmış kullanıcı: admin
+2025-05-11 15:18:52.300 +03:00 [INF] Kur değeri önbellekten alındı: TRY -> USD, Değer: 0,03
+2025-05-11 15:18:52.301 +03:00 [INF] Kur değeri önbellekten alındı: UZS -> USD, Değer: 0,0000775313262804067879513497
+2025-05-11 15:18:52.320 +03:00 [INF] Çevrilen tutar önbellekten alındı: UZS -> USD, Tutar: 0,00, Sonuç: 0
