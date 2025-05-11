@@ -1091,17 +1091,53 @@ namespace MuhasebeStokWebApp.Controllers
         {
             try
             {
-                await _notificationService.SendCriticalNotificationAsync(
-                    "Test Bildirimi",
-                    "Bu bir test bildirimidir. Bildirim sistemi başarıyla çalışıyor."
-                );
-
-                return Json(new { success = true, message = "Test bildirimi başarıyla gönderildi." });
+                // Test bildirimi gönder
+                var currentUser = await _userManager.GetUserAsync(User);
+                if (currentUser != null)
+                {
+                    // INotificationService arayüzünde mevcut olan metodu kullan
+                    await _notificationService.SendCriticalNotificationAsync(
+                        "Test Bildirimi", 
+                        "Bu bir test bildirimidir."
+                    );
+                    
+                    return Json(new { success = true, message = "Test bildirimi başarıyla gönderildi." });
+                }
+                return Json(new { success = false, message = "Kullanıcı bulunamadı." });
             }
             catch (Exception ex)
             {
-                _logger.LogError(ex, $"Bildirim gönderilirken hata oluştu: {ex.Message}");
-                return Json(new { success = false, message = "Bildirim gönderilirken hata oluştu: " + ex.Message });
+                _logger.LogError(ex, "Test bildirimi gönderilirken hata oluştu.");
+                return Json(new { success = false, message = ex.Message });
+            }
+        }
+
+        // FaturaTurleri tablosundaki verileri test etme
+        [HttpGet]
+        [AllowAnonymous] // Test amaçlı kimlik doğrulama olmadan da erişilebilir
+        public async Task<IActionResult> TestFaturaTurleri()
+        {
+            try
+            {
+                // Tüm fatura türlerini getir
+                var faturaTurleri = await _context.FaturaTurleri.ToListAsync();
+                
+                // Sonucu görüntüle
+                return Json(new { 
+                    success = true, 
+                    count = faturaTurleri.Count,
+                    data = faturaTurleri.Select(ft => new {
+                        id = ft.FaturaTuruID,
+                        adi = ft.FaturaTuruAdi,
+                        hareket = ft.HareketTuru,
+                        silindi = ft.Silindi
+                    })
+                });
+            }
+            catch (Exception ex)
+            {
+                _logger.LogError(ex, "FaturaTurleri test edilirken hata oluştu");
+                return Json(new { success = false, message = ex.Message });
             }
         }
 

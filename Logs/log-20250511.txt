@@ -1002,3 +1002,166 @@ System.InvalidOperationException: The query contains a projection 'u => DbSet<St
 2025-05-11 15:18:52.300 +03:00 [INF] Kur değeri önbellekten alındı: TRY -> USD, Değer: 0,03
 2025-05-11 15:18:52.301 +03:00 [INF] Kur değeri önbellekten alındı: UZS -> USD, Değer: 0,0000775313262804067879513497
 2025-05-11 15:18:52.320 +03:00 [INF] Çevrilen tutar önbellekten alındı: UZS -> USD, Tutar: 0,00, Sonuç: 0
+2025-05-11 15:22:44.920 +03:00 [INF] Veritabanına bağlantı başarılı. Migrationlar uygulanıyor...
+2025-05-11 15:22:45.423 +03:00 [INF] Veritabanı işlemleri başarıyla tamamlandı.
+2025-05-11 15:22:45.489 +03:00 [INF] Todo Hatırlatıcı Servisi başlatıldı.
+2025-05-11 15:22:45.490 +03:00 [INF] Yaklaşan hatırlatıcılar kontrol ediliyor...
+2025-05-11 15:22:45.535 +03:00 [INF] Bekleyen hatırlatma bulunamadı.
+2025-05-11 15:22:45.657 +03:00 [ERR] Hosting failed to start
+System.IO.IOException: Failed to bind to address https://127.0.0.1:7118: address already in use.
+ ---> Microsoft.AspNetCore.Connections.AddressInUseException: Address already in use
+ ---> System.Net.Sockets.SocketException (48): Address already in use
+   at System.Net.Sockets.Socket.DoBind(EndPoint endPointSnapshot, SocketAddress socketAddress)
+   at System.Net.Sockets.Socket.Bind(EndPoint localEP)
+   at Microsoft.AspNetCore.Server.Kestrel.Transport.Sockets.SocketTransportOptions.CreateDefaultBoundListenSocket(EndPoint endpoint)
+   at Microsoft.AspNetCore.Server.Kestrel.Transport.Sockets.SocketConnectionListener.Bind()
+   --- End of inner exception stack trace ---
+   at Microsoft.AspNetCore.Server.Kestrel.Transport.Sockets.SocketConnectionListener.Bind()
+   at Microsoft.AspNetCore.Server.Kestrel.Transport.Sockets.SocketTransportFactory.BindAsync(EndPoint endpoint, CancellationToken cancellationToken)
+   at Microsoft.AspNetCore.Server.Kestrel.Core.Internal.Infrastructure.TransportManager.BindAsync(EndPoint endPoint, ConnectionDelegate connectionDelegate, EndpointConfig endpointConfig, CancellationToken cancellationToken)
+   at Microsoft.AspNetCore.Server.Kestrel.Core.KestrelServerImpl.<>c__DisplayClass28_0`1.<<StartAsync>g__OnBind|0>d.MoveNext()
+--- End of stack trace from previous location ---
+   at Microsoft.AspNetCore.Server.Kestrel.Core.Internal.AddressBinder.BindEndpointAsync(ListenOptions endpoint, AddressBindContext context, CancellationToken cancellationToken)
+   --- End of inner exception stack trace ---
+   at Microsoft.AspNetCore.Server.Kestrel.Core.Internal.AddressBinder.BindEndpointAsync(ListenOptions endpoint, AddressBindContext context, CancellationToken cancellationToken)
+   at Microsoft.AspNetCore.Server.Kestrel.Core.LocalhostListenOptions.BindAsync(AddressBindContext context, CancellationToken cancellationToken)
+   at Microsoft.AspNetCore.Server.Kestrel.Core.Internal.AddressBinder.AddressesStrategy.BindAsync(AddressBindContext context, CancellationToken cancellationToken)
+   at Microsoft.AspNetCore.Server.Kestrel.Core.KestrelServerImpl.BindAsync(CancellationToken cancellationToken)
+   at Microsoft.AspNetCore.Server.Kestrel.Core.KestrelServerImpl.StartAsync[TContext](IHttpApplication`1 application, CancellationToken cancellationToken)
+   at Microsoft.AspNetCore.Hosting.GenericWebHostService.StartAsync(CancellationToken cancellationToken)
+   at Microsoft.Extensions.Hosting.Internal.Host.<StartAsync>b__14_1(IHostedService service, CancellationToken token)
+   at Microsoft.Extensions.Hosting.Internal.Host.ForeachService[T](IEnumerable`1 services, CancellationToken token, Boolean concurrent, Boolean abortOnFirstException, List`1 exceptions, Func`3 operation)
+2025-05-11 15:22:45.663 +03:00 [ERR] BackgroundService failed
+System.Threading.Tasks.TaskCanceledException: A task was canceled.
+   at MuhasebeStokWebApp.Services.TodoReminderService.ExecuteAsync(CancellationToken stoppingToken) in /Users/muhammetkocaman/MuhasebeStokWebApp/Services/TodoReminderService.cs:line 46
+   at Microsoft.Extensions.Hosting.Internal.Host.TryExecuteBackgroundServiceAsync(BackgroundService backgroundService)
+2025-05-11 15:23:05.109 +03:00 [INF] Veritabanına bağlantı başarılı. Migrationlar uygulanıyor...
+2025-05-11 15:23:05.480 +03:00 [INF] Veritabanı işlemleri başarıyla tamamlandı.
+2025-05-11 15:23:05.539 +03:00 [INF] Todo Hatırlatıcı Servisi başlatıldı.
+2025-05-11 15:23:05.540 +03:00 [INF] Yaklaşan hatırlatıcılar kontrol ediliyor...
+2025-05-11 15:23:05.586 +03:00 [INF] Bekleyen hatırlatma bulunamadı.
+2025-05-11 15:23:14.221 +03:00 [INF] Giriş denemesi: admin
+2025-05-11 15:23:14.354 +03:00 [INF] Admin kullanıcısı başarıyla giriş yaptı: admin
+2025-05-11 15:23:14.354 +03:00 [INF] Admin session oluşturuldu: UserID=aa602442-6681-4feb-afa8-832da9bff684, UserName=admin
+2025-05-11 15:23:14.354 +03:00 [INF] Yönlendirme adresi: /Urun
+2025-05-11 15:23:14.354 +03:00 [INF] Admin kullanıcısı /Urun adresine yönlendiriliyor
+2025-05-11 15:23:14.411 +03:00 [WRN] Veritabanında aktif menü bulunamadı, varsayılan menüler kullanılıyor
+2025-05-11 15:23:17.949 +03:00 [WRN] Veritabanında aktif menü bulunamadı, varsayılan menüler kullanılıyor
+2025-05-11 15:23:19.995 +03:00 [WRN] Veritabanında aktif menü bulunamadı, varsayılan menüler kullanılıyor
+2025-05-11 15:23:25.094 +03:00 [WRN] Veritabanında aktif menü bulunamadı, varsayılan menüler kullanılıyor
+2025-05-11 15:23:26.278 +03:00 [WRN] Veritabanında aktif menü bulunamadı, varsayılan menüler kullanılıyor
+2025-05-11 15:23:28.365 +03:00 [WRN] Veritabanında aktif menü bulunamadı, varsayılan menüler kullanılıyor
+2025-05-11 15:23:28.376 +03:00 [INF] Varsayılan menüleri oluşturma işlemi başlatıldı
+2025-05-11 15:23:28.403 +03:00 [INF] Temizlenecek mevcut menü bulunamadı
+2025-05-11 15:23:33.530 +03:00 [INF] Fatura oluşturma sayfası yükleniyor: Kullanıcı=admin
+2025-05-11 15:23:33.564 +03:00 [INF] Yeni numara oluşturuldu: FTR-250511-001
+2025-05-11 15:23:33.568 +03:00 [INF] Yeni numara oluşturuldu: SIP-250511-001
+2025-05-11 15:23:33.590 +03:00 [INF] Cari listesi yüklendi, toplam 0 adet cari bulundu.
+2025-05-11 15:23:33.607 +03:00 [INF] Sözleşme listesi yüklendi, toplam 0 adet sözleşme bulundu.
+2025-05-11 15:23:33.631 +03:00 [INF] Ürün listesi yüklendi, toplam 0 adet ürün bulundu.
+2025-05-11 15:23:33.641 +03:00 [INF] Depo listesi yüklendi, toplam 0 adet depo bulundu.
+2025-05-11 15:23:33.665 +03:00 [INF] Birim sayısı: Aktif=0, Pasif=0, Silinmiş=0
+2025-05-11 15:23:33.678 +03:00 [INF] Para birimi listesi yüklendi, toplam 0 adet para birimi bulundu.
+2025-05-11 15:25:54.097 +03:00 [INF] Veritabanına bağlantı başarılı. Migrationlar uygulanıyor...
+2025-05-11 15:25:54.424 +03:00 [INF] Veritabanı işlemleri başarıyla tamamlandı.
+2025-05-11 15:25:54.477 +03:00 [INF] Todo Hatırlatıcı Servisi başlatıldı.
+2025-05-11 15:25:54.478 +03:00 [INF] Yaklaşan hatırlatıcılar kontrol ediliyor...
+2025-05-11 15:25:54.520 +03:00 [INF] Bekleyen hatırlatma bulunamadı.
+2025-05-11 15:27:12.670 +03:00 [INF] Veritabanına bağlantı başarılı. Migrationlar uygulanıyor...
+2025-05-11 15:27:13.003 +03:00 [INF] Veritabanı işlemleri başarıyla tamamlandı.
+2025-05-11 15:27:13.058 +03:00 [INF] Todo Hatırlatıcı Servisi başlatıldı.
+2025-05-11 15:27:13.059 +03:00 [INF] Yaklaşan hatırlatıcılar kontrol ediliyor...
+2025-05-11 15:27:13.102 +03:00 [INF] Bekleyen hatırlatma bulunamadı.
+2025-05-11 15:27:20.828 +03:00 [INF] Giriş denemesi: admin
+2025-05-11 15:27:20.927 +03:00 [INF] Admin kullanıcısı başarıyla giriş yaptı: admin
+2025-05-11 15:27:20.927 +03:00 [INF] Admin session oluşturuldu: UserID=aa602442-6681-4feb-afa8-832da9bff684, UserName=admin
+2025-05-11 15:27:20.927 +03:00 [INF] Yönlendirme adresi: /Urun
+2025-05-11 15:27:20.927 +03:00 [INF] Admin kullanıcısı /Urun adresine yönlendiriliyor
+2025-05-11 15:28:05.670 +03:00 [ERR] Unexpected exception in TimingPipeFlusher.FlushAsync.
+System.IO.IOException: The encryption operation failed, see inner exception.
+ ---> System.ComponentModel.Win32Exception (14): Bad address
+   --- End of inner exception stack trace ---
+   at System.Net.Security.SslStream.WriteSingleChunk[TIOAdapter](ReadOnlyMemory`1 buffer, CancellationToken cancellationToken)
+   at System.Net.Security.SslStream.WriteAsyncInternal[TIOAdapter](ReadOnlyMemory`1 buffer, CancellationToken cancellationToken)
+   at System.Runtime.CompilerServices.AsyncMethodBuilderCore.Start[TStateMachine](TStateMachine& stateMachine)
+   at System.Net.Security.SslStream.WriteAsync(ReadOnlyMemory`1 buffer, CancellationToken cancellationToken)
+   at System.IO.Pipelines.StreamPipeWriter.FlushAsyncInternal(Boolean writeToStream, ReadOnlyMemory`1 data, CancellationToken cancellationToken)
+   at System.Runtime.CompilerServices.AsyncMethodBuilderCore.Start[TStateMachine](TStateMachine& stateMachine)
+   at System.IO.Pipelines.StreamPipeWriter.FlushAsyncInternal(Boolean writeToStream, ReadOnlyMemory`1 data, CancellationToken cancellationToken)
+   at System.IO.Pipelines.StreamPipeWriter.FlushAsync(CancellationToken cancellationToken)
+   at Microsoft.AspNetCore.Server.Kestrel.Core.Internal.Infrastructure.PipeWriterHelpers.ConcurrentPipeWriter.FlushAsync(CancellationToken cancellationToken)
+   at Microsoft.AspNetCore.Server.Kestrel.Core.Internal.Infrastructure.PipeWriterHelpers.TimingPipeFlusher.FlushAsync(MinDataRate minRate, Int64 count, IHttpOutputAborter outputAborter, CancellationToken cancellationToken)
+   at Microsoft.AspNetCore.Server.Kestrel.Core.Internal.Http2.Http2FrameWriter.WriteGoAwayAsync(Int32 lastStreamId, Http2ErrorCode errorCode)
+   at Microsoft.AspNetCore.Server.Kestrel.Core.Internal.Http2.Http2Connection.ProcessRequestsAsync[TContext](IHttpApplication`1 application)
+   at System.Threading.ExecutionContext.RunFromThreadPoolDispatchLoop(Thread threadPoolThread, ExecutionContext executionContext, ContextCallback callback, Object state)
+   at System.Runtime.CompilerServices.AsyncTaskMethodBuilder`1.AsyncStateMachineBox`1.MoveNext(Thread threadPoolThread)
+   at System.Threading.ThreadPoolWorkQueue.Dispatch()
+   at System.Threading.PortableThreadPool.WorkerThread.WorkerThreadStart()
+   at System.Threading.Thread.StartCallback()
+--- End of stack trace from previous location ---
+   at System.Net.Security.SslStream.WriteAsyncInternal[TIOAdapter](ReadOnlyMemory`1 buffer, CancellationToken cancellationToken)
+   at System.IO.Pipelines.StreamPipeWriter.FlushAsyncInternal(Boolean writeToStream, ReadOnlyMemory`1 data, CancellationToken cancellationToken)
+   at System.Runtime.CompilerServices.PoolingAsyncValueTaskMethodBuilder`1.StateMachineBox`1.System.Threading.Tasks.Sources.IValueTaskSource<TResult>.GetResult(Int16 token)
+   at Microsoft.AspNetCore.Server.Kestrel.Core.Internal.Infrastructure.PipeWriterHelpers.ConcurrentPipeWriter.FlushAsyncAwaited(ValueTask`1 flushTask, CancellationToken cancellationToken)
+   at Microsoft.AspNetCore.Server.Kestrel.Core.Internal.Infrastructure.PipeWriterHelpers.TimingPipeFlusher.TimeFlushAsyncAwaited(ValueTask`1 pipeFlushTask, MinDataRate minRate, IHttpOutputAborter outputAborter, CancellationToken cancellationToken)
+2025-05-11 15:28:05.674 +03:00 [ERR] Unhandled exception while processing 0HNCGGSL2F7UC.
+System.IO.IOException: The encryption operation failed, see inner exception.
+ ---> System.ComponentModel.Win32Exception (14): Bad address
+   --- End of inner exception stack trace ---
+   at System.Net.Security.SslStream.WriteSingleChunk[TIOAdapter](ReadOnlyMemory`1 buffer, CancellationToken cancellationToken)
+   at System.Net.Security.SslStream.WriteAsyncInternal[TIOAdapter](ReadOnlyMemory`1 buffer, CancellationToken cancellationToken)
+   at System.Runtime.CompilerServices.AsyncMethodBuilderCore.Start[TStateMachine](TStateMachine& stateMachine)
+   at System.Net.Security.SslStream.WriteAsync(ReadOnlyMemory`1 buffer, CancellationToken cancellationToken)
+   at System.IO.Pipelines.StreamPipeWriter.FlushAsyncInternal(Boolean writeToStream, ReadOnlyMemory`1 data, CancellationToken cancellationToken)
+   at System.Runtime.CompilerServices.AsyncMethodBuilderCore.Start[TStateMachine](TStateMachine& stateMachine)
+   at System.IO.Pipelines.StreamPipeWriter.FlushAsyncInternal(Boolean writeToStream, ReadOnlyMemory`1 data, CancellationToken cancellationToken)
+   at System.IO.Pipelines.StreamPipeWriter.CompleteAsync(Exception exception)
+   at System.Runtime.CompilerServices.AsyncMethodBuilderCore.Start[TStateMachine](TStateMachine& stateMachine)
+   at System.IO.Pipelines.StreamPipeWriter.CompleteAsync(Exception exception)
+   at Microsoft.AspNetCore.Server.Kestrel.Core.Internal.DuplexPipeStreamAdapter`1.DisposeAsync()
+   at System.Runtime.CompilerServices.AsyncMethodBuilderCore.Start[TStateMachine](TStateMachine& stateMachine)
+   at Microsoft.AspNetCore.Server.Kestrel.Core.Internal.DuplexPipeStreamAdapter`1.DisposeAsync()
+   at Microsoft.AspNetCore.Server.Kestrel.Https.Internal.HttpsConnectionMiddleware.OnConnectionAsync(ConnectionContext context)
+   at System.Runtime.CompilerServices.AsyncTaskMethodBuilder`1.AsyncStateMachineBox`1.ExecutionContextCallback(Object s)
+   at System.Threading.ExecutionContext.RunInternal(ExecutionContext executionContext, ContextCallback callback, Object state)
+   at System.Runtime.CompilerServices.AsyncTaskMethodBuilder`1.AsyncStateMachineBox`1.MoveNext(Thread threadPoolThread)
+   at System.Runtime.CompilerServices.AsyncTaskMethodBuilder`1.AsyncStateMachineBox`1.MoveNext()
+   at System.Threading.Tasks.AwaitTaskContinuation.RunOrScheduleAction(IAsyncStateMachineBox box, Boolean allowInlining)
+   at System.Threading.Tasks.Task.RunContinuations(Object continuationObject)
+   at System.Runtime.CompilerServices.AsyncTaskMethodBuilder.SetResult()
+   at Microsoft.AspNetCore.Server.Kestrel.Core.Internal.HttpConnection.ProcessRequestsAsync[TContext](IHttpApplication`1 httpApplication)
+   at System.Runtime.CompilerServices.AsyncTaskMethodBuilder`1.AsyncStateMachineBox`1.ExecutionContextCallback(Object s)
+   at System.Threading.ExecutionContext.RunInternal(ExecutionContext executionContext, ContextCallback callback, Object state)
+   at System.Runtime.CompilerServices.AsyncTaskMethodBuilder`1.AsyncStateMachineBox`1.MoveNext(Thread threadPoolThread)
+   at System.Runtime.CompilerServices.AsyncTaskMethodBuilder`1.AsyncStateMachineBox`1.MoveNext()
+   at System.Threading.Tasks.AwaitTaskContinuation.RunOrScheduleAction(IAsyncStateMachineBox box, Boolean allowInlining)
+   at System.Threading.Tasks.Task.RunContinuations(Object continuationObject)
+   at System.Runtime.CompilerServices.AsyncTaskMethodBuilder.SetResult()
+   at Microsoft.AspNetCore.Server.Kestrel.Core.Internal.Http2.Http2Connection.ProcessRequestsAsync[TContext](IHttpApplication`1 application)
+   at System.Threading.ExecutionContext.RunInternal(ExecutionContext executionContext, ContextCallback callback, Object state)
+   at System.Runtime.CompilerServices.AsyncTaskMethodBuilder`1.AsyncStateMachineBox`1.MoveNext(Thread threadPoolThread)
+   at System.Runtime.CompilerServices.AsyncTaskMethodBuilder`1.AsyncStateMachineBox`1.MoveNext()
+   at System.Threading.Tasks.AwaitTaskContinuation.RunOrScheduleAction(IAsyncStateMachineBox box, Boolean allowInlining)
+   at System.Threading.Tasks.Task.RunContinuations(Object continuationObject)
+   at System.Threading.Tasks.Task`1.TrySetResult(TResult result)
+   at System.Threading.Tasks.UnwrapPromise`1.TrySetFromTask(Task task, Boolean lookForOce)
+   at System.Threading.Tasks.UnwrapPromise`1.Invoke(Task completingTask)
+   at System.Threading.Tasks.Task.RunContinuations(Object continuationObject)
+   at System.Runtime.CompilerServices.AsyncTaskMethodBuilder.SetResult()
+   at Microsoft.AspNetCore.Server.Kestrel.Core.Internal.Http2.Http2FrameWriter.WriteToOutputPipe()
+   at System.Runtime.CompilerServices.AsyncTaskMethodBuilder`1.AsyncStateMachineBox`1.ExecutionContextCallback(Object s)
+   at System.Threading.ExecutionContext.RunInternal(ExecutionContext executionContext, ContextCallback callback, Object state)
+   at System.Threading.ThreadPool.<>c.<.cctor>b__52_0(Object state)
+   at System.Threading.ThreadPoolWorkQueue.Dispatch()
+   at System.Threading.PortableThreadPool.WorkerThread.WorkerThreadStart()
+   at System.Threading.Thread.StartCallback()
+--- End of stack trace from previous location ---
+   at System.Net.Security.SslStream.WriteAsyncInternal[TIOAdapter](ReadOnlyMemory`1 buffer, CancellationToken cancellationToken)
+   at System.IO.Pipelines.StreamPipeWriter.FlushAsyncInternal(Boolean writeToStream, ReadOnlyMemory`1 data, CancellationToken cancellationToken)
+   at System.Runtime.CompilerServices.PoolingAsyncValueTaskMethodBuilder`1.StateMachineBox`1.System.Threading.Tasks.Sources.IValueTaskSource<TResult>.GetResult(Int16 token)
+   at System.IO.Pipelines.StreamPipeWriter.CompleteAsync(Exception exception)
+   at System.IO.Pipelines.StreamPipeWriter.CompleteAsync(Exception exception)
+   at Microsoft.AspNetCore.Server.Kestrel.Core.Internal.DuplexPipeStreamAdapter`1.DisposeAsync()
+   at Microsoft.AspNetCore.Server.Kestrel.Https.Internal.HttpsConnectionMiddleware.OnConnectionAsync(ConnectionContext context)
+   at Microsoft.AspNetCore.Server.Kestrel.Https.Internal.HttpsConnectionMiddleware.OnConnectionAsync(ConnectionContext context)
+   at Microsoft.AspNetCore.Server.Kestrel.Core.Internal.Infrastructure.KestrelConnection`1.ExecuteAsync()

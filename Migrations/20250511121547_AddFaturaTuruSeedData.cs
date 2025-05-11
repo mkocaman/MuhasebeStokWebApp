@@ -23,6 +23,8 @@ namespace MuhasebeStokWebApp.Migrations
 
             // Kayıtların önceden var olup olmadığını kontrol et
             migrationBuilder.Sql(@"
+                SET IDENTITY_INSERT FaturaTurleri ON;
+
                 IF NOT EXISTS(SELECT 1 FROM FaturaTurleri WHERE FaturaTuruID = 1)
                 BEGIN
                     INSERT INTO FaturaTurleri (FaturaTuruID, FaturaTuruAdi, HareketTuru, Silindi)
@@ -46,6 +48,8 @@ namespace MuhasebeStokWebApp.Migrations
                     SET FaturaTuruAdi = N'Alış Faturası', HareketTuru = N'Giriş', Silindi = 0
                     WHERE FaturaTuruID = 2
                 END
+
+                SET IDENTITY_INSERT FaturaTurleri OFF;
             ");
         }
 
