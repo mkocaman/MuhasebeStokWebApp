@@ -64,12 +64,26 @@ var connectionString = builder.Configuration.GetConnectionString("DefaultConnect
 
 // SQL Server kullanımı
 builder.Services.AddDbContext<ApplicationDbContext>(options =>
+{
+    var env = builder.Environment;
+    var config = builder.Configuration;
+    
+    // Ortama göre doğru connection string'i seç
+    Console.WriteLine($"Current environment: {env.EnvironmentName}");
+    
+    var connectionString = env.IsDevelopment() 
+        ? config.GetConnectionString("DefaultConnection") 
+        : config.GetConnectionString("DefaultConnection");
+    
+    Console.WriteLine($"Using connection string: {connectionString}");
+    
     options.UseSqlServer(connectionString, sqlServerOptions => 
     {
         sqlServerOptions.MigrationsAssembly("MuhasebeStokWebApp");
         sqlServerOptions.CommandTimeout(120);
         sqlServerOptions.UseQuerySplittingBehavior(QuerySplittingBehavior.SplitQuery);
-    }));
+    });
+});
 
 // Identity servislerini ekliyoruz
 builder.Services.AddIdentity<ApplicationUser, IdentityRole>(options => 

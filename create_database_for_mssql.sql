@@ -1,4 +1,39 @@
-﻿IF OBJECT_ID(N'[__EFMigrationsHistory]') IS NULL
+﻿-- Önce veritabanı var mı kontrol et, varsa sil
+USE [master]
+GO
+
+IF EXISTS(SELECT 1 FROM sys.databases WHERE name = 'MuhasebeStokDB')
+BEGIN
+    ALTER DATABASE [MuhasebeStokDB] SET SINGLE_USER WITH ROLLBACK IMMEDIATE;
+    DROP DATABASE [MuhasebeStokDB];
+END
+GO
+
+-- Veritabanını oluştur (farklı lokasyonda)
+CREATE DATABASE [MuhasebeStokDB]
+ON PRIMARY 
+(
+    NAME = N'MuhasebeStokDB', 
+    FILENAME = N'C:\Program Files\Microsoft SQL Server\MSSQL16.MSSQLSERVER\MSSQL\DATA\MuhasebeStokDB_Primary.mdf',
+    SIZE = 8MB,
+    MAXSIZE = UNLIMITED,
+    FILEGROWTH = 65536KB
+)
+LOG ON 
+(
+    NAME = N'MuhasebeStokDB_log', 
+    FILENAME = N'C:\Program Files\Microsoft SQL Server\MSSQL16.MSSQLSERVER\MSSQL\DATA\MuhasebeStokDB_Primary_log.ldf',
+    SIZE = 8MB,
+    MAXSIZE = 2048GB,
+    FILEGROWTH = 65536KB
+)
+GO
+
+-- Veritabanını kullan
+USE [MuhasebeStokDB]
+GO
+
+IF OBJECT_ID(N'[__EFMigrationsHistory]') IS NULL
 BEGIN
     CREATE TABLE [__EFMigrationsHistory] (
         [MigrationId] nvarchar(150) NOT NULL,

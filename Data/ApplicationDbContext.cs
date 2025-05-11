@@ -99,17 +99,35 @@ namespace MuhasebeStokWebApp.Data
             // henüz yapılandırılmadıysa basit bir yapılandırma ekleyelim
             if (!optionsBuilder.IsConfigured)
             {
-                IConfigurationRoot configuration = new ConfigurationBuilder()
+                // Environment değişkenini kontrol et
+                var environment = Environment.GetEnvironmentVariable("ASPNETCORE_ENVIRONMENT");
+                
+                // Ortama göre doğru yapılandırma dosyasını yükle
+                var builder = new ConfigurationBuilder()
                     .SetBasePath(Directory.GetCurrentDirectory())
-                    .AddJsonFile("appsettings.json")
-                    .Build();
+                    .AddJsonFile("appsettings.json", optional: false, reloadOnChange: true);
+
+                // Development ortamı için appsettings.Development.json dosyasını da yükle
+                if (environment == "Development")
+                {
+                    builder.AddJsonFile($"appsettings.{environment}.json", optional: true, reloadOnChange: true);
+                }
+
+                IConfigurationRoot configuration = builder.Build();
                 var connectionString = configuration.GetConnectionString("DefaultConnection");
+                
+                Console.WriteLine($"OnConfiguring using connection string: {connectionString}");
                 optionsBuilder.UseSqlServer(connectionString, options => options.CommandTimeout(120));
             }
             else
             {
                 // Zaten yapılandırılmış olsa bile command timeout'u ayarla
-                optionsBuilder.UseSqlServer(optionsBuilder.Options.FindExtension<Microsoft.EntityFrameworkCore.SqlServer.Infrastructure.Internal.SqlServerOptionsExtension>().ConnectionString, options => options.CommandTimeout(120));
+                var sqlServerOptions = optionsBuilder.Options.FindExtension<Microsoft.EntityFrameworkCore.SqlServer.Infrastructure.Internal.SqlServerOptionsExtension>();
+                if (sqlServerOptions != null)
+                {
+                    Console.WriteLine($"Already configured with connection string: {sqlServerOptions.ConnectionString}");
+                    optionsBuilder.UseSqlServer(sqlServerOptions.ConnectionString, options => options.CommandTimeout(120));
+                }
             }
         }
 

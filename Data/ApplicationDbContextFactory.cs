@@ -10,18 +10,30 @@ namespace MuhasebeStokWebApp.Data
     {
         public ApplicationDbContext CreateDbContext(string[] args)
         {
-            // appsettings.json dosyasından bağlantı dizesini alma
-            IConfigurationRoot configuration = new ConfigurationBuilder()
+            // Environment değişkenini kontrol et
+            var environment = Environment.GetEnvironmentVariable("ASPNETCORE_ENVIRONMENT");
+            
+            // Ortama göre doğru yapılandırma dosyasını yükle
+            var builder = new ConfigurationBuilder()
                 .SetBasePath(Directory.GetCurrentDirectory())
-                .AddJsonFile("appsettings.json")
-                .Build();
+                .AddJsonFile("appsettings.json", optional: false, reloadOnChange: true);
 
-            var builder = new DbContextOptionsBuilder<ApplicationDbContext>();
+            // Development ortamı için appsettings.Development.json dosyasını da yükle
+            if (environment == "Development")
+            {
+                builder.AddJsonFile($"appsettings.{environment}.json", optional: true, reloadOnChange: true);
+            }
+
+            IConfigurationRoot configuration = builder.Build();
+
+            var dbContextBuilder = new DbContextOptionsBuilder<ApplicationDbContext>();
             var connectionString = configuration.GetConnectionString("DefaultConnection");
 
-            builder.UseSqlServer(connectionString, options => options.CommandTimeout(120));
+            Console.WriteLine($"Using connection string: {connectionString}");
 
-            return new ApplicationDbContext(builder.Options);
+            dbContextBuilder.UseSqlServer(connectionString, options => options.CommandTimeout(120));
+
+            return new ApplicationDbContext(dbContextBuilder.Options);
         }
     }
 } 
