@@ -846,7 +846,7 @@ namespace MuhasebeStokWebApp.Controllers
             try
             {
                 var musteriler = await _unitOfWork.CariRepository.GetAll()
-                    .Where(c => c.CariTipi == "Müşteri" && c.AktifMi && !c.Silindi)
+                    .Where(c => (c.CariTipi == "Müşteri" || c.CariTipi == "MüşteriVeTedarikçi") && c.AktifMi && !c.Silindi)
                     .Include(c => c.CariHareketler.Where(h => !h.Silindi)) // Cari hareketlerini yükle
                     .ToListAsync();
                 
@@ -867,7 +867,7 @@ namespace MuhasebeStokWebApp.Controllers
             try
             {
                 var tedarikciler = await _unitOfWork.CariRepository.GetAll()
-                    .Where(c => c.CariTipi == "Tedarikçi" && c.AktifMi && !c.Silindi)
+                    .Where(c => (c.CariTipi == "Tedarikçi" || c.CariTipi == "MüşteriVeTedarikçi") && c.AktifMi && !c.Silindi)
                     .Include(c => c.CariHareketler.Where(h => !h.Silindi)) // Cari hareketlerini yükle
                     .ToListAsync();
                 

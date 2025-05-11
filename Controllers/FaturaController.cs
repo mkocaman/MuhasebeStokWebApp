@@ -131,38 +131,7 @@ namespace MuhasebeStokWebApp.Controllers
                 
                 // Gerekli formları yükle
                 await PopulateFaturaCreateViewModelAsync(viewModel);
-
-                // İlk varsayılan kalemi oluştur
-                viewModel.FaturaKalemleri = new List<FaturaKalemViewModel>(); // FaturaKalemleri listesini yeniden oluştur
-                
-                if (!viewModel.UrunListesiBosMu && viewModel.Urunler.Any())
-                {
-                    // İlk ürünü seç
-                    var ilkUrun = viewModel.Urunler.FirstOrDefault();
-                    if (ilkUrun != null)
-                    {
-                        // Ürün bilgilerini al
-                        var urun = await _context.Urunler
-                            .Include(u => u.Birim)
-                            .FirstOrDefaultAsync(u => u.UrunID == Guid.Parse(ilkUrun.Value));
-                            
-                        var ilkKalem = new FaturaKalemViewModel
-                        {
-                            UrunID = Guid.Parse(ilkUrun.Value),
-                            UrunAdi = ilkUrun.Text,
-                            Miktar = 1,
-                            BirimFiyat = urun?.DovizliSatisFiyati ?? 0,
-                            Birim = urun?.Birim?.BirimAdi ?? "Adet",
-                            KdvOrani = urun?.KDVOrani ?? 0,
-                            IndirimOrani = 0,
-                            Tutar = urun?.DovizliSatisFiyati ?? 0,
-                            KdvTutari = (urun?.DovizliSatisFiyati ?? 0) * (urun?.KDVOrani ?? 0) / 100,
-                            IndirimTutari = 0,
-                            NetTutar = (urun?.DovizliSatisFiyati ?? 0) * (1 + (urun?.KDVOrani ?? 0) / 100)
-                        };
-                        viewModel.FaturaKalemleri.Add(ilkKalem);
-                    }
-                }
+                viewModel.FaturaKalemleri = new List<FaturaKalemViewModel>();
                 
                 return View(viewModel);
             }
@@ -400,7 +369,7 @@ namespace MuhasebeStokWebApp.Controllers
                 .Include(f => f.Cari) // Silindi filtresiz Cari ilişkisini yükle 
                 .Include(f => f.FaturaTuru)
                 .Include(f => f.FaturaDetaylari)
-                .ThenInclude(fd => fd.Urun)
+                    .ThenInclude(fd => fd.Urun)
                         .ThenInclude(u => u.Birim)
                 .Include(f => f.FaturaOdemeleri)
                 .Where(f => f.FaturaID == id && !f.Silindi)
@@ -526,6 +495,7 @@ namespace MuhasebeStokWebApp.Controllers
                 .Include(f => f.FaturaTuru)
                 .Include(f => f.FaturaDetaylari)
                     .ThenInclude(fd => fd.Urun)
+                        .ThenInclude(u => u.Birim)
                 .FirstOrDefaultAsync(f => f.FaturaID == id);
 
             if (fatura == null)
@@ -568,7 +538,7 @@ namespace MuhasebeStokWebApp.Controllers
                     KdvTutari = fd.KdvTutari ?? 0,
                     IndirimTutari = fd.IndirimTutari ?? 0,
                     NetTutar = fd.NetTutar ?? 0,
-                    Birim = fd.Urun?.Birim?.BirimAdi ?? fd.Birim ?? "Adet"
+                    Birim = fd.Urun?.Birim?.BirimAdi ?? "Adet"
                 }).ToList(),
                 CariListesi = await _context.Cariler
                     .Where(c => !c.Silindi)

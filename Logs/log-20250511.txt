@@ -6809,3 +6809,423 @@ Error Number:547,State:0,Class:16
 2025-05-11 20:10:27.423 +03:00 [INF] Todo Hatırlatıcı Servisi başlatıldı.
 2025-05-11 20:10:27.424 +03:00 [INF] Yaklaşan hatırlatıcılar kontrol ediliyor...
 2025-05-11 20:10:27.478 +03:00 [INF] Bekleyen hatırlatma bulunamadı.
+2025-05-11 21:09:37.002 +03:00 [INF] Veritabanına bağlantı başarılı. Migrationlar uygulanıyor...
+2025-05-11 21:09:38.571 +03:00 [INF] Veritabanı işlemleri başarıyla tamamlandı.
+2025-05-11 21:09:38.742 +03:00 [INF] Todo Hatırlatıcı Servisi başlatıldı.
+2025-05-11 21:09:38.744 +03:00 [INF] Yaklaşan hatırlatıcılar kontrol ediliyor...
+2025-05-11 21:09:38.882 +03:00 [INF] Bekleyen hatırlatma bulunamadı.
+2025-05-11 21:09:55.530 +03:00 [INF] Giriş denemesi: admin
+2025-05-11 21:09:56.116 +03:00 [INF] Admin kullanıcısı başarıyla giriş yaptı: admin
+2025-05-11 21:09:56.117 +03:00 [INF] Admin session oluşturuldu: UserID=9e6fc203-37eb-49a7-a470-1551f7bec8b8, UserName=admin
+2025-05-11 21:09:56.120 +03:00 [INF] Yönlendirme adresi: /
+2025-05-11 21:09:56.122 +03:00 [INF] Admin kullanıcısı / adresine yönlendiriliyor
+2025-05-11 21:09:56.590 +03:00 [INF] Aktif session bulundu: UserID=9e6fc203-37eb-49a7-a470-1551f7bec8b8, UserName=admin
+2025-05-11 21:09:56.592 +03:00 [INF] Admin kullanıcısı tespit edildi
+2025-05-11 21:09:56.593 +03:00 [INF] Kimlik doğrulanmış kullanıcı: admin
+2025-05-11 21:09:57.260 +03:00 [INF] TRY dönüşümü için kur değeri hesaplandı: TRY -> USD, Değer: 0.03
+2025-05-11 21:09:57.666 +03:00 [INF] Kur değeri hesaplandı: UZS -> USD, Değer: 0.0000775226832727903141733102
+2025-05-11 21:10:20.390 +03:00 [INF] Dashboard sayfası yükleniyor...
+2025-05-11 21:10:20.393 +03:00 [INF] Dashboard verileri yükleniyor...
+2025-05-11 21:10:20.766 +03:00 [INF] TRY dönüşümü için kur değeri hesaplandı: USD -> TRY, Değer: 33.33
+2025-05-11 21:10:20.986 +03:00 [INF] Kur değeri hesaplandı: USD -> UZS, Değer: 12899.450300
+2025-05-11 21:10:22.158 +03:00 [INF] Kur değeri önbellekten alındı: USD -> TRY, Değer: 33.33
+2025-05-11 21:10:22.159 +03:00 [INF] Kur değeri önbellekten alındı: USD -> UZS, Değer: 12899.450300
+2025-05-11 21:10:23.217 +03:00 [INF] Kur değeri önbellekten alındı: USD -> TRY, Değer: 33.33
+2025-05-11 21:10:23.219 +03:00 [INF] Kur değeri önbellekten alındı: USD -> UZS, Değer: 12899.450300
+2025-05-11 21:10:23.220 +03:00 [INF] Dashboard sayfası başarıyla yüklendi.
+2025-05-11 21:10:28.715 +03:00 [INF] Aktif session bulundu: UserID=9e6fc203-37eb-49a7-a470-1551f7bec8b8, UserName=admin
+2025-05-11 21:10:28.716 +03:00 [INF] Admin kullanıcısı tespit edildi
+2025-05-11 21:10:28.717 +03:00 [INF] Kimlik doğrulanmış kullanıcı: admin
+2025-05-11 21:10:29.012 +03:00 [INF] Kur değeri önbellekten alındı: TRY -> USD, Değer: 0.03
+2025-05-11 21:10:29.013 +03:00 [INF] Kur değeri önbellekten alındı: UZS -> USD, Değer: 0.0000775226832727903141733102
+2025-05-11 21:10:32.945 +03:00 [INF] Dashboard sayfası yükleniyor...
+2025-05-11 21:10:32.946 +03:00 [INF] Dashboard verileri yükleniyor...
+2025-05-11 21:10:33.266 +03:00 [INF] Kur değeri önbellekten alındı: USD -> TRY, Değer: 33.33
+2025-05-11 21:10:33.267 +03:00 [INF] Kur değeri önbellekten alındı: USD -> UZS, Değer: 12899.450300
+2025-05-11 21:10:34.923 +03:00 [INF] Dashboard sayfası yükleniyor...
+2025-05-11 21:10:34.933 +03:00 [INF] Dashboard verileri yükleniyor...
+2025-05-11 21:10:35.246 +03:00 [INF] Kur değeri önbellekten alındı: USD -> TRY, Değer: 33.33
+2025-05-11 21:10:35.247 +03:00 [INF] Kur değeri önbellekten alındı: USD -> UZS, Değer: 12899.450300
+2025-05-11 21:10:35.378 +03:00 [INF] Kur değeri önbellekten alındı: USD -> TRY, Değer: 33.33
+2025-05-11 21:10:35.379 +03:00 [INF] Kur değeri önbellekten alındı: USD -> UZS, Değer: 12899.450300
+2025-05-11 21:10:35.379 +03:00 [INF] Dashboard sayfası başarıyla yüklendi.
+2025-05-11 21:10:37.142 +03:00 [INF] Kur değeri önbellekten alındı: USD -> TRY, Değer: 33.33
+2025-05-11 21:10:37.143 +03:00 [INF] Kur değeri önbellekten alındı: USD -> UZS, Değer: 12899.450300
+2025-05-11 21:10:37.144 +03:00 [INF] Dashboard sayfası başarıyla yüklendi.
+2025-05-11 21:14:38.893 +03:00 [INF] Yaklaşan hatırlatıcılar kontrol ediliyor...
+2025-05-11 21:14:38.926 +03:00 [INF] Bekleyen hatırlatma bulunamadı.
+2025-05-11 21:19:38.933 +03:00 [INF] Yaklaşan hatırlatıcılar kontrol ediliyor...
+2025-05-11 21:19:39.077 +03:00 [INF] Bekleyen hatırlatma bulunamadı.
+2025-05-11 21:24:39.080 +03:00 [INF] Yaklaşan hatırlatıcılar kontrol ediliyor...
+2025-05-11 21:24:39.113 +03:00 [INF] Bekleyen hatırlatma bulunamadı.
+2025-05-11 21:29:39.122 +03:00 [INF] Yaklaşan hatırlatıcılar kontrol ediliyor...
+2025-05-11 21:29:39.153 +03:00 [INF] Bekleyen hatırlatma bulunamadı.
+2025-05-11 21:34:39.153 +03:00 [INF] Yaklaşan hatırlatıcılar kontrol ediliyor...
+2025-05-11 21:34:39.286 +03:00 [INF] Bekleyen hatırlatma bulunamadı.
+2025-05-11 21:35:05.666 +03:00 [INF] Aktif session bulundu: UserID=9e6fc203-37eb-49a7-a470-1551f7bec8b8, UserName=admin
+2025-05-11 21:35:05.667 +03:00 [INF] Admin kullanıcısı tespit edildi
+2025-05-11 21:35:05.667 +03:00 [INF] Kimlik doğrulanmış kullanıcı: admin
+2025-05-11 21:35:05.801 +03:00 [INF] Kur değeri önbellekten alındı: TRY -> USD, Değer: 0.03
+2025-05-11 21:35:05.802 +03:00 [INF] Kur değeri önbellekten alındı: UZS -> USD, Değer: 0.0000775226832727903141733102
+2025-05-11 21:35:07.959 +03:00 [INF] Aktif session bulundu: UserID=9e6fc203-37eb-49a7-a470-1551f7bec8b8, UserName=admin
+2025-05-11 21:35:07.959 +03:00 [INF] Admin kullanıcısı tespit edildi
+2025-05-11 21:35:07.960 +03:00 [INF] Kimlik doğrulanmış kullanıcı: admin
+2025-05-11 21:35:08.088 +03:00 [INF] Kur değeri önbellekten alındı: TRY -> USD, Değer: 0.03
+2025-05-11 21:35:08.089 +03:00 [INF] Kur değeri önbellekten alındı: UZS -> USD, Değer: 0.0000775226832727903141733102
+2025-05-11 21:35:45.550 +03:00 [INF] Aktif session bulundu: UserID=9e6fc203-37eb-49a7-a470-1551f7bec8b8, UserName=admin
+2025-05-11 21:35:45.551 +03:00 [INF] Admin kullanıcısı tespit edildi
+2025-05-11 21:35:45.552 +03:00 [INF] Kimlik doğrulanmış kullanıcı: admin
+2025-05-11 21:35:45.677 +03:00 [INF] Kur değeri önbellekten alındı: TRY -> USD, Değer: 0.03
+2025-05-11 21:35:45.678 +03:00 [INF] Kur değeri önbellekten alındı: UZS -> USD, Değer: 0.0000775226832727903141733102
+2025-05-11 21:39:38.685 +03:00 [INF] Aktif session bulundu: UserID=9e6fc203-37eb-49a7-a470-1551f7bec8b8, UserName=admin
+2025-05-11 21:39:38.686 +03:00 [INF] Admin kullanıcısı tespit edildi
+2025-05-11 21:39:38.687 +03:00 [INF] Kimlik doğrulanmış kullanıcı: admin
+2025-05-11 21:39:38.820 +03:00 [INF] Kur değeri önbellekten alındı: TRY -> USD, Değer: 0.03
+2025-05-11 21:39:38.821 +03:00 [INF] Kur değeri önbellekten alındı: UZS -> USD, Değer: 0.0000775226832727903141733102
+2025-05-11 21:39:39.290 +03:00 [INF] Yaklaşan hatırlatıcılar kontrol ediliyor...
+2025-05-11 21:39:39.320 +03:00 [INF] Bekleyen hatırlatma bulunamadı.
+2025-05-11 21:40:25.623 +03:00 [INF] Giriş denemesi: admin
+2025-05-11 21:40:25.831 +03:00 [INF] Admin kullanıcısı başarıyla giriş yaptı: admin
+2025-05-11 21:40:25.832 +03:00 [INF] Admin session oluşturuldu: UserID=9e6fc203-37eb-49a7-a470-1551f7bec8b8, UserName=admin
+2025-05-11 21:40:25.833 +03:00 [INF] Yönlendirme adresi: /Fatura
+2025-05-11 21:40:25.834 +03:00 [INF] Admin kullanıcısı /Fatura adresine yönlendiriliyor
+2025-05-11 21:40:38.414 +03:00 [INF] Fatura oluşturma sayfası yükleniyor: Kullanıcı=admin
+2025-05-11 21:40:38.466 +03:00 [INF] Yeni numara oluşturuldu: FTR-250511-002
+2025-05-11 21:40:38.498 +03:00 [INF] Yeni numara oluşturuldu: SIP-250511-001
+2025-05-11 21:40:38.541 +03:00 [INF] Cari listesi yüklendi, toplam 2 adet cari bulundu.
+2025-05-11 21:40:38.582 +03:00 [INF] Sözleşme listesi yüklendi, toplam 0 adet sözleşme bulundu.
+2025-05-11 21:40:38.631 +03:00 [INF] Ürün listesi yüklendi, toplam 2 adet ürün bulundu.
+2025-05-11 21:40:38.683 +03:00 [INF] Depo listesi yüklendi, toplam 1 adet depo bulundu.
+2025-05-11 21:40:38.777 +03:00 [INF] Birim sayısı: Aktif=1, Pasif=0, Silinmiş=0
+2025-05-11 21:40:38.778 +03:00 [INF] Ürün select list oluşturuldu, toplam 2 adet öğe içeriyor.
+2025-05-11 21:40:38.815 +03:00 [INF] Para birimi listesi yüklendi, toplam 2 adet para birimi bulundu.
+2025-05-11 21:44:13.365 +03:00 [INF] Fatura oluşturma sayfası yükleniyor: Kullanıcı=admin
+2025-05-11 21:44:13.413 +03:00 [INF] Yeni numara oluşturuldu: FTR-250511-002
+2025-05-11 21:44:13.457 +03:00 [INF] Yeni numara oluşturuldu: SIP-250511-001
+2025-05-11 21:44:13.503 +03:00 [INF] Cari listesi yüklendi, toplam 2 adet cari bulundu.
+2025-05-11 21:44:13.548 +03:00 [INF] Sözleşme listesi yüklendi, toplam 0 adet sözleşme bulundu.
+2025-05-11 21:44:13.593 +03:00 [INF] Ürün listesi yüklendi, toplam 2 adet ürün bulundu.
+2025-05-11 21:44:13.637 +03:00 [INF] Depo listesi yüklendi, toplam 1 adet depo bulundu.
+2025-05-11 21:44:13.762 +03:00 [INF] Birim sayısı: Aktif=1, Pasif=0, Silinmiş=0
+2025-05-11 21:44:13.763 +03:00 [INF] Ürün select list oluşturuldu, toplam 2 adet öğe içeriyor.
+2025-05-11 21:44:13.807 +03:00 [INF] Para birimi listesi yüklendi, toplam 2 adet para birimi bulundu.
+2025-05-11 21:44:39.323 +03:00 [INF] Yaklaşan hatırlatıcılar kontrol ediliyor...
+2025-05-11 21:44:39.353 +03:00 [INF] Bekleyen hatırlatma bulunamadı.
+2025-05-11 21:45:35.100 +03:00 [INF] Fatura oluşturma sayfası yükleniyor: Kullanıcı=admin
+2025-05-11 21:45:35.128 +03:00 [INF] Yeni numara oluşturuldu: FTR-250511-003
+2025-05-11 21:45:35.156 +03:00 [INF] Yeni numara oluşturuldu: SIP-250511-001
+2025-05-11 21:45:35.183 +03:00 [INF] Cari listesi yüklendi, toplam 2 adet cari bulundu.
+2025-05-11 21:45:35.212 +03:00 [INF] Sözleşme listesi yüklendi, toplam 0 adet sözleşme bulundu.
+2025-05-11 21:45:35.240 +03:00 [INF] Ürün listesi yüklendi, toplam 2 adet ürün bulundu.
+2025-05-11 21:45:35.267 +03:00 [INF] Depo listesi yüklendi, toplam 1 adet depo bulundu.
+2025-05-11 21:45:35.343 +03:00 [INF] Birim sayısı: Aktif=1, Pasif=0, Silinmiş=0
+2025-05-11 21:45:35.344 +03:00 [INF] Ürün select list oluşturuldu, toplam 2 adet öğe içeriyor.
+2025-05-11 21:45:35.371 +03:00 [INF] Para birimi listesi yüklendi, toplam 2 adet para birimi bulundu.
+2025-05-11 21:46:01.436 +03:00 [INF] Kur değeri önbellekten alındı: UZS -> USD, Değer: 0.0000775226832727903141733102
+2025-05-11 21:46:06.467 +03:00 [INF] Kur değeri önbellekten alındı: USD -> UZS, Değer: 12899.450300
+2025-05-11 21:46:07.834 +03:00 [INF] Kur değeri önbellekten alındı: UZS -> USD, Değer: 0.0000775226832727903141733102
+2025-05-11 21:46:14.978 +03:00 [INF] Kur değeri önbellekten alındı: USD -> UZS, Değer: 12899.450300
+2025-05-11 21:46:16.397 +03:00 [INF] Kur değeri önbellekten alındı: UZS -> USD, Değer: 0.0000775226832727903141733102
+2025-05-11 21:47:05.886 +03:00 [INF] Kur değeri önbellekten alındı: USD -> UZS, Değer: 12899.450300
+2025-05-11 21:47:36.447 +03:00 [INF] Kur değeri önbellekten alındı: USD -> UZS, Değer: 12899.450300
+2025-05-11 21:48:41.963 +03:00 [INF] Kur değeri önbellekten alındı: UZS -> USD, Değer: 0.0000775226832727903141733102
+2025-05-11 21:48:51.907 +03:00 [INF] Kur değeri önbellekten alındı: USD -> UZS, Değer: 12899.450300
+2025-05-11 21:48:54.829 +03:00 [INF] Kur değeri önbellekten alındı: UZS -> USD, Değer: 0.0000775226832727903141733102
+2025-05-11 21:49:39.359 +03:00 [INF] Yaklaşan hatırlatıcılar kontrol ediliyor...
+2025-05-11 21:49:39.392 +03:00 [INF] Bekleyen hatırlatma bulunamadı.
+2025-05-11 21:54:39.398 +03:00 [INF] Yaklaşan hatırlatıcılar kontrol ediliyor...
+2025-05-11 21:54:39.427 +03:00 [INF] Bekleyen hatırlatma bulunamadı.
+2025-05-11 21:57:29.962 +03:00 [INF] Fatura oluşturma sayfası yükleniyor: Kullanıcı=admin
+2025-05-11 21:57:29.989 +03:00 [INF] Yeni numara oluşturuldu: FTR-250511-003
+2025-05-11 21:57:30.014 +03:00 [INF] Yeni numara oluşturuldu: SIP-250511-001
+2025-05-11 21:57:30.041 +03:00 [INF] Cari listesi yüklendi, toplam 2 adet cari bulundu.
+2025-05-11 21:57:30.068 +03:00 [INF] Sözleşme listesi yüklendi, toplam 0 adet sözleşme bulundu.
+2025-05-11 21:57:30.094 +03:00 [INF] Ürün listesi yüklendi, toplam 2 adet ürün bulundu.
+2025-05-11 21:57:30.119 +03:00 [INF] Depo listesi yüklendi, toplam 1 adet depo bulundu.
+2025-05-11 21:57:30.195 +03:00 [INF] Birim sayısı: Aktif=1, Pasif=0, Silinmiş=0
+2025-05-11 21:57:30.196 +03:00 [INF] Ürün select list oluşturuldu, toplam 2 adet öğe içeriyor.
+2025-05-11 21:57:30.223 +03:00 [INF] Para birimi listesi yüklendi, toplam 2 adet para birimi bulundu.
+2025-05-11 21:59:39.427 +03:00 [INF] Yaklaşan hatırlatıcılar kontrol ediliyor...
+2025-05-11 21:59:40.346 +03:00 [INF] Bekleyen hatırlatma bulunamadı.
+2025-05-11 22:04:40.354 +03:00 [INF] Yaklaşan hatırlatıcılar kontrol ediliyor...
+2025-05-11 22:04:40.400 +03:00 [INF] Bekleyen hatırlatma bulunamadı.
+2025-05-11 22:09:40.411 +03:00 [INF] Yaklaşan hatırlatıcılar kontrol ediliyor...
+2025-05-11 22:09:40.561 +03:00 [INF] Bekleyen hatırlatma bulunamadı.
+2025-05-11 22:14:24.562 +03:00 [INF] Veritabanına bağlantı başarılı. Migrationlar uygulanıyor...
+2025-05-11 22:14:26.438 +03:00 [INF] Veritabanı işlemleri başarıyla tamamlandı.
+2025-05-11 22:14:26.580 +03:00 [INF] Todo Hatırlatıcı Servisi başlatıldı.
+2025-05-11 22:14:26.582 +03:00 [INF] Yaklaşan hatırlatıcılar kontrol ediliyor...
+2025-05-11 22:14:26.742 +03:00 [INF] Bekleyen hatırlatma bulunamadı.
+2025-05-11 22:15:20.996 +03:00 [INF] Giriş denemesi: admin
+2025-05-11 22:15:21.314 +03:00 [INF] Admin kullanıcısı başarıyla giriş yaptı: admin
+2025-05-11 22:15:21.315 +03:00 [INF] Admin session oluşturuldu: UserID=9e6fc203-37eb-49a7-a470-1551f7bec8b8, UserName=admin
+2025-05-11 22:15:21.316 +03:00 [INF] Yönlendirme adresi: /
+2025-05-11 22:15:21.317 +03:00 [INF] Admin kullanıcısı / adresine yönlendiriliyor
+2025-05-11 22:15:21.626 +03:00 [INF] Aktif session bulundu: UserID=9e6fc203-37eb-49a7-a470-1551f7bec8b8, UserName=admin
+2025-05-11 22:15:21.629 +03:00 [INF] Admin kullanıcısı tespit edildi
+2025-05-11 22:15:21.630 +03:00 [INF] Kimlik doğrulanmış kullanıcı: admin
+2025-05-11 22:15:22.085 +03:00 [INF] TRY dönüşümü için kur değeri hesaplandı: TRY -> USD, Değer: 0.03
+2025-05-11 22:15:22.504 +03:00 [INF] Kur değeri hesaplandı: UZS -> USD, Değer: 0.0000775226832727903141733102
+2025-05-11 22:18:23.688 +03:00 [INF] Veritabanına bağlantı başarılı. Migrationlar uygulanıyor...
+2025-05-11 22:18:24.849 +03:00 [INF] Veritabanı işlemleri başarıyla tamamlandı.
+2025-05-11 22:18:24.975 +03:00 [INF] Todo Hatırlatıcı Servisi başlatıldı.
+2025-05-11 22:18:24.977 +03:00 [INF] Yaklaşan hatırlatıcılar kontrol ediliyor...
+2025-05-11 22:18:25.090 +03:00 [INF] Bekleyen hatırlatma bulunamadı.
+2025-05-11 22:18:27.807 +03:00 [WRN] Session bulunamadı, kullanıcı giriş yapmamış olabilir
+2025-05-11 22:18:27.810 +03:00 [INF] Kimlik doğrulanmış kullanıcı: admin
+2025-05-11 22:18:28.257 +03:00 [INF] TRY dönüşümü için kur değeri hesaplandı: TRY -> USD, Değer: 0.03
+2025-05-11 22:18:28.498 +03:00 [INF] Kur değeri hesaplandı: UZS -> USD, Değer: 0.0000775226832727903141733102
+2025-05-11 22:18:34.396 +03:00 [WRN] Session bulunamadı, kullanıcı giriş yapmamış olabilir
+2025-05-11 22:18:34.398 +03:00 [INF] Kimlik doğrulanmış kullanıcı: admin
+2025-05-11 22:18:34.549 +03:00 [INF] Kur değeri önbellekten alındı: TRY -> USD, Değer: 0.03
+2025-05-11 22:18:34.550 +03:00 [INF] Kur değeri önbellekten alındı: UZS -> USD, Değer: 0.0000775226832727903141733102
+2025-05-11 22:20:46.772 +03:00 [INF] Veritabanına bağlantı başarılı. Migrationlar uygulanıyor...
+2025-05-11 22:20:47.892 +03:00 [INF] Veritabanı işlemleri başarıyla tamamlandı.
+2025-05-11 22:20:48.013 +03:00 [INF] Todo Hatırlatıcı Servisi başlatıldı.
+2025-05-11 22:20:48.016 +03:00 [INF] Yaklaşan hatırlatıcılar kontrol ediliyor...
+2025-05-11 22:20:48.120 +03:00 [INF] Bekleyen hatırlatma bulunamadı.
+2025-05-11 22:25:48.123 +03:00 [INF] Yaklaşan hatırlatıcılar kontrol ediliyor...
+2025-05-11 22:25:48.163 +03:00 [INF] Bekleyen hatırlatma bulunamadı.
+2025-05-11 22:30:48.174 +03:00 [INF] Yaklaşan hatırlatıcılar kontrol ediliyor...
+2025-05-11 22:30:48.329 +03:00 [INF] Bekleyen hatırlatma bulunamadı.
+2025-05-11 22:32:22.788 +03:00 [INF] Veritabanına bağlantı başarılı. Migrationlar uygulanıyor...
+2025-05-11 22:32:23.980 +03:00 [INF] Veritabanı işlemleri başarıyla tamamlandı.
+2025-05-11 22:32:24.111 +03:00 [INF] Todo Hatırlatıcı Servisi başlatıldı.
+2025-05-11 22:32:24.114 +03:00 [INF] Yaklaşan hatırlatıcılar kontrol ediliyor...
+2025-05-11 22:32:24.236 +03:00 [INF] Bekleyen hatırlatma bulunamadı.
+2025-05-11 22:32:30.503 +03:00 [INF] Fatura oluşturma sayfası yükleniyor: Kullanıcı=admin
+2025-05-11 22:32:30.560 +03:00 [INF] Yeni numara oluşturuldu: FTR-250511-005
+2025-05-11 22:32:30.591 +03:00 [INF] Yeni numara oluşturuldu: FTR-250511-005
+2025-05-11 22:32:30.618 +03:00 [INF] Fatura oluşturma sayfası yükleniyor: Kullanıcı=admin
+2025-05-11 22:32:30.637 +03:00 [INF] Cari listesi yüklendi, toplam 2 adet cari bulundu.
+2025-05-11 22:32:30.646 +03:00 [INF] Yeni numara oluşturuldu: FTR-250511-005
+2025-05-11 22:32:30.674 +03:00 [INF] Yeni numara oluşturuldu: FTR-250511-005
+2025-05-11 22:32:30.682 +03:00 [INF] Sözleşme listesi yüklendi, toplam 0 adet sözleşme bulundu.
+2025-05-11 22:32:30.701 +03:00 [INF] Cari listesi yüklendi, toplam 2 adet cari bulundu.
+2025-05-11 22:32:30.729 +03:00 [INF] Sözleşme listesi yüklendi, toplam 0 adet sözleşme bulundu.
+2025-05-11 22:32:30.784 +03:00 [INF] Ürün listesi yüklendi, toplam 2 adet ürün bulundu.
+2025-05-11 22:32:30.784 +03:00 [INF] Ürün listesi yüklendi, toplam 2 adet ürün bulundu.
+2025-05-11 22:32:30.837 +03:00 [INF] Depo listesi yüklendi, toplam 1 adet depo bulundu.
+2025-05-11 22:32:30.837 +03:00 [INF] Depo listesi yüklendi, toplam 1 adet depo bulundu.
+2025-05-11 22:32:30.949 +03:00 [INF] Birim sayısı: Aktif=1, Pasif=0, Silinmiş=0
+2025-05-11 22:32:30.950 +03:00 [INF] Ürün select list oluşturuldu, toplam 2 adet öğe içeriyor.
+2025-05-11 22:32:30.951 +03:00 [INF] Birim sayısı: Aktif=1, Pasif=0, Silinmiş=0
+2025-05-11 22:32:30.952 +03:00 [INF] Ürün select list oluşturuldu, toplam 2 adet öğe içeriyor.
+2025-05-11 22:32:30.996 +03:00 [INF] Para birimi listesi yüklendi, toplam 2 adet para birimi bulundu.
+2025-05-11 22:32:30.997 +03:00 [INF] Para birimi listesi yüklendi, toplam 2 adet para birimi bulundu.
+2025-05-11 22:34:12.182 +03:00 [INF] Veritabanına bağlantı başarılı. Migrationlar uygulanıyor...
+2025-05-11 22:34:13.270 +03:00 [INF] Veritabanı işlemleri başarıyla tamamlandı.
+2025-05-11 22:34:13.421 +03:00 [INF] Todo Hatırlatıcı Servisi başlatıldı.
+2025-05-11 22:34:13.423 +03:00 [INF] Yaklaşan hatırlatıcılar kontrol ediliyor...
+2025-05-11 22:34:13.537 +03:00 [INF] Bekleyen hatırlatma bulunamadı.
+2025-05-11 22:34:16.620 +03:00 [INF] Fatura oluşturma sayfası yükleniyor: Kullanıcı=admin
+2025-05-11 22:34:16.691 +03:00 [INF] Yeni numara oluşturuldu: FTR-250511-005
+2025-05-11 22:34:16.729 +03:00 [INF] Yeni numara oluşturuldu: SIP-250511-005
+2025-05-11 22:34:16.820 +03:00 [INF] Cari listesi yüklendi, toplam 2 adet cari bulundu.
+2025-05-11 22:34:16.862 +03:00 [INF] Sözleşme listesi yüklendi, toplam 0 adet sözleşme bulundu.
+2025-05-11 22:34:16.970 +03:00 [INF] Ürün listesi yüklendi, toplam 2 adet ürün bulundu.
+2025-05-11 22:34:17.022 +03:00 [INF] Depo listesi yüklendi, toplam 1 adet depo bulundu.
+2025-05-11 22:34:17.127 +03:00 [INF] Birim sayısı: Aktif=1, Pasif=0, Silinmiş=0
+2025-05-11 22:34:17.129 +03:00 [INF] Ürün select list oluşturuldu, toplam 2 adet öğe içeriyor.
+2025-05-11 22:34:17.200 +03:00 [INF] Para birimi listesi yüklendi, toplam 2 adet para birimi bulundu.
+2025-05-11 22:34:21.516 +03:00 [INF] Fatura oluşturma sayfası yükleniyor: Kullanıcı=admin
+2025-05-11 22:34:21.546 +03:00 [INF] Yeni numara oluşturuldu: FTR-250511-005
+2025-05-11 22:34:21.574 +03:00 [INF] Yeni numara oluşturuldu: SIP-250511-005
+2025-05-11 22:34:21.604 +03:00 [INF] Cari listesi yüklendi, toplam 2 adet cari bulundu.
+2025-05-11 22:34:21.632 +03:00 [INF] Sözleşme listesi yüklendi, toplam 0 adet sözleşme bulundu.
+2025-05-11 22:34:21.659 +03:00 [INF] Ürün listesi yüklendi, toplam 2 adet ürün bulundu.
+2025-05-11 22:34:21.686 +03:00 [INF] Depo listesi yüklendi, toplam 1 adet depo bulundu.
+2025-05-11 22:34:21.766 +03:00 [INF] Birim sayısı: Aktif=1, Pasif=0, Silinmiş=0
+2025-05-11 22:34:21.767 +03:00 [INF] Ürün select list oluşturuldu, toplam 2 adet öğe içeriyor.
+2025-05-11 22:34:21.795 +03:00 [INF] Para birimi listesi yüklendi, toplam 2 adet para birimi bulundu.
+2025-05-11 22:35:21.919 +03:00 [INF] Fatura oluşturma sayfası yükleniyor: Kullanıcı=admin
+2025-05-11 22:35:21.946 +03:00 [INF] Yeni numara oluşturuldu: FTR-250511-005
+2025-05-11 22:35:21.974 +03:00 [INF] Yeni numara oluşturuldu: SIP-250511-005
+2025-05-11 22:35:22.001 +03:00 [INF] Cari listesi yüklendi, toplam 2 adet cari bulundu.
+2025-05-11 22:35:22.029 +03:00 [INF] Sözleşme listesi yüklendi, toplam 0 adet sözleşme bulundu.
+2025-05-11 22:35:22.057 +03:00 [INF] Ürün listesi yüklendi, toplam 2 adet ürün bulundu.
+2025-05-11 22:35:22.083 +03:00 [INF] Depo listesi yüklendi, toplam 1 adet depo bulundu.
+2025-05-11 22:35:22.162 +03:00 [INF] Birim sayısı: Aktif=1, Pasif=0, Silinmiş=0
+2025-05-11 22:35:22.164 +03:00 [INF] Ürün select list oluşturuldu, toplam 2 adet öğe içeriyor.
+2025-05-11 22:35:22.192 +03:00 [INF] Para birimi listesi yüklendi, toplam 2 adet para birimi bulundu.
+2025-05-11 22:39:13.549 +03:00 [INF] Yaklaşan hatırlatıcılar kontrol ediliyor...
+2025-05-11 22:39:13.581 +03:00 [INF] Bekleyen hatırlatma bulunamadı.
+2025-05-11 22:44:13.588 +03:00 [INF] Yaklaşan hatırlatıcılar kontrol ediliyor...
+2025-05-11 22:44:13.729 +03:00 [INF] Bekleyen hatırlatma bulunamadı.
+2025-05-11 22:49:13.733 +03:00 [INF] Yaklaşan hatırlatıcılar kontrol ediliyor...
+2025-05-11 22:49:13.762 +03:00 [INF] Bekleyen hatırlatma bulunamadı.
+2025-05-11 22:54:13.767 +03:00 [INF] Yaklaşan hatırlatıcılar kontrol ediliyor...
+2025-05-11 22:54:13.800 +03:00 [INF] Bekleyen hatırlatma bulunamadı.
+2025-05-11 22:59:13.808 +03:00 [INF] Yaklaşan hatırlatıcılar kontrol ediliyor...
+2025-05-11 22:59:13.957 +03:00 [INF] Bekleyen hatırlatma bulunamadı.
+2025-05-11 23:04:13.959 +03:00 [INF] Yaklaşan hatırlatıcılar kontrol ediliyor...
+2025-05-11 23:04:13.991 +03:00 [INF] Bekleyen hatırlatma bulunamadı.
+2025-05-11 23:09:13.996 +03:00 [INF] Yaklaşan hatırlatıcılar kontrol ediliyor...
+2025-05-11 23:09:14.138 +03:00 [INF] Bekleyen hatırlatma bulunamadı.
+2025-05-11 23:11:09.352 +03:00 [INF] Veritabanına bağlantı başarılı. Migrationlar uygulanıyor...
+2025-05-11 23:11:10.555 +03:00 [INF] Veritabanı işlemleri başarıyla tamamlandı.
+2025-05-11 23:11:10.724 +03:00 [INF] Todo Hatırlatıcı Servisi başlatıldı.
+2025-05-11 23:11:10.727 +03:00 [INF] Yaklaşan hatırlatıcılar kontrol ediliyor...
+2025-05-11 23:11:10.859 +03:00 [INF] Bekleyen hatırlatma bulunamadı.
+2025-05-11 23:11:12.657 +03:00 [INF] Giriş denemesi: admin
+2025-05-11 23:11:12.954 +03:00 [INF] Admin kullanıcısı başarıyla giriş yaptı: admin
+2025-05-11 23:11:12.955 +03:00 [INF] Admin session oluşturuldu: UserID=9e6fc203-37eb-49a7-a470-1551f7bec8b8, UserName=admin
+2025-05-11 23:11:12.956 +03:00 [INF] Yönlendirme adresi: /Fatura/Create
+2025-05-11 23:11:12.956 +03:00 [INF] Admin kullanıcısı /Fatura/Create adresine yönlendiriliyor
+2025-05-11 23:11:13.247 +03:00 [INF] Fatura oluşturma sayfası yükleniyor: Kullanıcı=admin
+2025-05-11 23:11:13.308 +03:00 [INF] Yeni numara oluşturuldu: FTR-250511-005
+2025-05-11 23:11:13.344 +03:00 [INF] Yeni numara oluşturuldu: SIP-250511-005
+2025-05-11 23:11:13.436 +03:00 [INF] Cari listesi yüklendi, toplam 2 adet cari bulundu.
+2025-05-11 23:11:13.484 +03:00 [INF] Sözleşme listesi yüklendi, toplam 0 adet sözleşme bulundu.
+2025-05-11 23:11:13.592 +03:00 [INF] Ürün listesi yüklendi, toplam 2 adet ürün bulundu.
+2025-05-11 23:11:13.650 +03:00 [INF] Depo listesi yüklendi, toplam 1 adet depo bulundu.
+2025-05-11 23:11:13.770 +03:00 [INF] Birim sayısı: Aktif=1, Pasif=0, Silinmiş=0
+2025-05-11 23:11:13.773 +03:00 [INF] Ürün select list oluşturuldu, toplam 2 adet öğe içeriyor.
+2025-05-11 23:11:13.852 +03:00 [INF] Para birimi listesi yüklendi, toplam 2 adet para birimi bulundu.
+2025-05-11 23:13:34.639 +03:00 [INF] Veritabanına bağlantı başarılı. Migrationlar uygulanıyor...
+2025-05-11 23:13:35.823 +03:00 [INF] Veritabanı işlemleri başarıyla tamamlandı.
+2025-05-11 23:13:35.961 +03:00 [INF] Todo Hatırlatıcı Servisi başlatıldı.
+2025-05-11 23:13:35.964 +03:00 [INF] Yaklaşan hatırlatıcılar kontrol ediliyor...
+2025-05-11 23:13:36.081 +03:00 [INF] Bekleyen hatırlatma bulunamadı.
+2025-05-11 23:13:51.357 +03:00 [INF] Fatura oluşturma sayfası yükleniyor: Kullanıcı=admin
+2025-05-11 23:13:51.419 +03:00 [INF] Yeni numara oluşturuldu: FTR-250511-005
+2025-05-11 23:13:51.451 +03:00 [INF] Yeni numara oluşturuldu: SIP-250511-005
+2025-05-11 23:13:51.538 +03:00 [INF] Cari listesi yüklendi, toplam 2 adet cari bulundu.
+2025-05-11 23:13:51.583 +03:00 [INF] Sözleşme listesi yüklendi, toplam 0 adet sözleşme bulundu.
+2025-05-11 23:13:51.690 +03:00 [INF] Ürün listesi yüklendi, toplam 2 adet ürün bulundu.
+2025-05-11 23:13:51.746 +03:00 [INF] Depo listesi yüklendi, toplam 1 adet depo bulundu.
+2025-05-11 23:13:51.860 +03:00 [INF] Birim sayısı: Aktif=1, Pasif=0, Silinmiş=0
+2025-05-11 23:13:51.862 +03:00 [INF] Ürün select list oluşturuldu, toplam 2 adet öğe içeriyor.
+2025-05-11 23:13:51.949 +03:00 [INF] Para birimi listesi yüklendi, toplam 2 adet para birimi bulundu.
+2025-05-11 23:16:31.673 +03:00 [INF] Veritabanına bağlantı başarılı. Migrationlar uygulanıyor...
+2025-05-11 23:16:32.744 +03:00 [INF] Veritabanı işlemleri başarıyla tamamlandı.
+2025-05-11 23:16:32.889 +03:00 [INF] Todo Hatırlatıcı Servisi başlatıldı.
+2025-05-11 23:16:32.891 +03:00 [INF] Yaklaşan hatırlatıcılar kontrol ediliyor...
+2025-05-11 23:16:33.005 +03:00 [INF] Bekleyen hatırlatma bulunamadı.
+2025-05-11 23:16:33.550 +03:00 [INF] Fatura oluşturma sayfası yükleniyor: Kullanıcı=admin
+2025-05-11 23:16:33.607 +03:00 [INF] Yeni numara oluşturuldu: FTR-250511-005
+2025-05-11 23:16:33.636 +03:00 [INF] Yeni numara oluşturuldu: SIP-250511-005
+2025-05-11 23:16:33.717 +03:00 [INF] Cari listesi yüklendi, toplam 2 adet cari bulundu.
+2025-05-11 23:16:33.757 +03:00 [INF] Sözleşme listesi yüklendi, toplam 0 adet sözleşme bulundu.
+2025-05-11 23:16:33.853 +03:00 [INF] Ürün listesi yüklendi, toplam 2 adet ürün bulundu.
+2025-05-11 23:16:33.904 +03:00 [INF] Depo listesi yüklendi, toplam 1 adet depo bulundu.
+2025-05-11 23:16:34.006 +03:00 [INF] Birim sayısı: Aktif=1, Pasif=0, Silinmiş=0
+2025-05-11 23:16:34.008 +03:00 [INF] Ürün select list oluşturuldu, toplam 2 adet öğe içeriyor.
+2025-05-11 23:16:34.073 +03:00 [INF] Para birimi listesi yüklendi, toplam 2 adet para birimi bulundu.
+2025-05-11 23:19:10.466 +03:00 [INF] Veritabanına bağlantı başarılı. Migrationlar uygulanıyor...
+2025-05-11 23:19:11.703 +03:00 [INF] Veritabanı işlemleri başarıyla tamamlandı.
+2025-05-11 23:19:11.872 +03:00 [INF] Todo Hatırlatıcı Servisi başlatıldı.
+2025-05-11 23:19:11.875 +03:00 [INF] Yaklaşan hatırlatıcılar kontrol ediliyor...
+2025-05-11 23:19:12.017 +03:00 [INF] Bekleyen hatırlatma bulunamadı.
+2025-05-11 23:19:14.084 +03:00 [INF] Fatura oluşturma sayfası yükleniyor: Kullanıcı=admin
+2025-05-11 23:19:14.150 +03:00 [INF] Yeni numara oluşturuldu: FTR-250511-005
+2025-05-11 23:19:14.189 +03:00 [INF] Yeni numara oluşturuldu: SIP-250511-005
+2025-05-11 23:19:14.280 +03:00 [INF] Cari listesi yüklendi, toplam 2 adet cari bulundu.
+2025-05-11 23:19:14.327 +03:00 [INF] Sözleşme listesi yüklendi, toplam 0 adet sözleşme bulundu.
+2025-05-11 23:19:14.465 +03:00 [INF] Ürün listesi yüklendi, toplam 2 adet ürün bulundu.
+2025-05-11 23:19:14.524 +03:00 [INF] Depo listesi yüklendi, toplam 1 adet depo bulundu.
+2025-05-11 23:19:14.641 +03:00 [INF] Birim sayısı: Aktif=1, Pasif=0, Silinmiş=0
+2025-05-11 23:19:14.643 +03:00 [INF] Ürün select list oluşturuldu, toplam 2 adet öğe içeriyor.
+2025-05-11 23:19:14.718 +03:00 [INF] Para birimi listesi yüklendi, toplam 2 adet para birimi bulundu.
+2025-05-11 23:21:46.239 +03:00 [INF] Veritabanına bağlantı başarılı. Migrationlar uygulanıyor...
+2025-05-11 23:21:47.370 +03:00 [INF] Veritabanı işlemleri başarıyla tamamlandı.
+2025-05-11 23:21:47.519 +03:00 [INF] Todo Hatırlatıcı Servisi başlatıldı.
+2025-05-11 23:21:47.521 +03:00 [INF] Yaklaşan hatırlatıcılar kontrol ediliyor...
+2025-05-11 23:21:47.654 +03:00 [INF] Bekleyen hatırlatma bulunamadı.
+2025-05-11 23:21:49.144 +03:00 [INF] Fatura oluşturma sayfası yükleniyor: Kullanıcı=admin
+2025-05-11 23:21:49.210 +03:00 [INF] Yeni numara oluşturuldu: FTR-250511-005
+2025-05-11 23:21:49.241 +03:00 [INF] Yeni numara oluşturuldu: SIP-250511-005
+2025-05-11 23:21:49.334 +03:00 [INF] Cari listesi yüklendi, toplam 2 adet cari bulundu.
+2025-05-11 23:21:49.380 +03:00 [INF] Sözleşme listesi yüklendi, toplam 0 adet sözleşme bulundu.
+2025-05-11 23:21:49.492 +03:00 [INF] Ürün listesi yüklendi, toplam 2 adet ürün bulundu.
+2025-05-11 23:21:49.548 +03:00 [INF] Depo listesi yüklendi, toplam 1 adet depo bulundu.
+2025-05-11 23:21:49.661 +03:00 [INF] Birim sayısı: Aktif=1, Pasif=0, Silinmiş=0
+2025-05-11 23:21:49.663 +03:00 [INF] Ürün select list oluşturuldu, toplam 2 adet öğe içeriyor.
+2025-05-11 23:21:49.742 +03:00 [INF] Para birimi listesi yüklendi, toplam 2 adet para birimi bulundu.
+2025-05-11 23:26:47.660 +03:00 [INF] Yaklaşan hatırlatıcılar kontrol ediliyor...
+2025-05-11 23:26:47.693 +03:00 [INF] Bekleyen hatırlatma bulunamadı.
+2025-05-11 23:29:55.702 +03:00 [INF] Veritabanına bağlantı başarılı. Migrationlar uygulanıyor...
+2025-05-11 23:29:56.824 +03:00 [INF] Veritabanı işlemleri başarıyla tamamlandı.
+2025-05-11 23:29:56.961 +03:00 [INF] Todo Hatırlatıcı Servisi başlatıldı.
+2025-05-11 23:29:56.963 +03:00 [INF] Yaklaşan hatırlatıcılar kontrol ediliyor...
+2025-05-11 23:29:57.103 +03:00 [INF] Bekleyen hatırlatma bulunamadı.
+2025-05-11 23:29:57.790 +03:00 [INF] Fatura oluşturma sayfası yükleniyor: Kullanıcı=admin
+2025-05-11 23:29:57.849 +03:00 [INF] Yeni numara oluşturuldu: FTR-250511-005
+2025-05-11 23:29:57.879 +03:00 [INF] Yeni numara oluşturuldu: SIP-250511-005
+2025-05-11 23:29:57.962 +03:00 [INF] Cari listesi yüklendi, toplam 2 adet cari bulundu.
+2025-05-11 23:29:58.004 +03:00 [INF] Sözleşme listesi yüklendi, toplam 0 adet sözleşme bulundu.
+2025-05-11 23:29:58.109 +03:00 [INF] Ürün listesi yüklendi, toplam 2 adet ürün bulundu.
+2025-05-11 23:29:58.162 +03:00 [INF] Depo listesi yüklendi, toplam 1 adet depo bulundu.
+2025-05-11 23:29:58.275 +03:00 [INF] Birim sayısı: Aktif=1, Pasif=0, Silinmiş=0
+2025-05-11 23:29:58.278 +03:00 [INF] Ürün select list oluşturuldu, toplam 2 adet öğe içeriyor.
+2025-05-11 23:29:58.348 +03:00 [INF] Para birimi listesi yüklendi, toplam 2 adet para birimi bulundu.
+2025-05-11 23:30:03.420 +03:00 [INF] Fatura oluşturma sayfası yükleniyor: Kullanıcı=admin
+2025-05-11 23:30:03.451 +03:00 [INF] Yeni numara oluşturuldu: FTR-250511-005
+2025-05-11 23:30:03.479 +03:00 [INF] Yeni numara oluşturuldu: SIP-250511-005
+2025-05-11 23:30:03.507 +03:00 [INF] Cari listesi yüklendi, toplam 2 adet cari bulundu.
+2025-05-11 23:30:03.535 +03:00 [INF] Sözleşme listesi yüklendi, toplam 0 adet sözleşme bulundu.
+2025-05-11 23:30:03.568 +03:00 [INF] Ürün listesi yüklendi, toplam 2 adet ürün bulundu.
+2025-05-11 23:30:03.594 +03:00 [INF] Depo listesi yüklendi, toplam 1 adet depo bulundu.
+2025-05-11 23:30:03.679 +03:00 [INF] Birim sayısı: Aktif=1, Pasif=0, Silinmiş=0
+2025-05-11 23:30:03.680 +03:00 [INF] Ürün select list oluşturuldu, toplam 2 adet öğe içeriyor.
+2025-05-11 23:30:03.709 +03:00 [INF] Para birimi listesi yüklendi, toplam 2 adet para birimi bulundu.
+2025-05-11 23:31:25.729 +03:00 [INF] Fatura oluşturma sayfası yükleniyor: Kullanıcı=admin
+2025-05-11 23:31:25.759 +03:00 [INF] Yeni numara oluşturuldu: FTR-250511-005
+2025-05-11 23:31:25.790 +03:00 [INF] Yeni numara oluşturuldu: SIP-250511-005
+2025-05-11 23:31:25.850 +03:00 [INF] Cari listesi yüklendi, toplam 2 adet cari bulundu.
+2025-05-11 23:31:25.880 +03:00 [INF] Sözleşme listesi yüklendi, toplam 0 adet sözleşme bulundu.
+2025-05-11 23:31:25.912 +03:00 [INF] Ürün listesi yüklendi, toplam 2 adet ürün bulundu.
+2025-05-11 23:31:25.942 +03:00 [INF] Depo listesi yüklendi, toplam 1 adet depo bulundu.
+2025-05-11 23:31:26.029 +03:00 [INF] Birim sayısı: Aktif=1, Pasif=0, Silinmiş=0
+2025-05-11 23:31:26.030 +03:00 [INF] Ürün select list oluşturuldu, toplam 2 adet öğe içeriyor.
+2025-05-11 23:31:26.061 +03:00 [INF] Para birimi listesi yüklendi, toplam 2 adet para birimi bulundu.
+2025-05-11 23:34:57.110 +03:00 [INF] Yaklaşan hatırlatıcılar kontrol ediliyor...
+2025-05-11 23:34:57.144 +03:00 [INF] Bekleyen hatırlatma bulunamadı.
+2025-05-11 23:39:57.151 +03:00 [INF] Yaklaşan hatırlatıcılar kontrol ediliyor...
+2025-05-11 23:39:57.183 +03:00 [INF] Bekleyen hatırlatma bulunamadı.
+2025-05-11 23:41:25.480 +03:00 [INF] Giriş denemesi: admin
+2025-05-11 23:41:25.738 +03:00 [INF] Admin kullanıcısı başarıyla giriş yaptı: admin
+2025-05-11 23:41:25.739 +03:00 [INF] Admin session oluşturuldu: UserID=9e6fc203-37eb-49a7-a470-1551f7bec8b8, UserName=admin
+2025-05-11 23:41:25.739 +03:00 [INF] Yönlendirme adresi: /Fatura
+2025-05-11 23:41:25.740 +03:00 [INF] Admin kullanıcısı /Fatura adresine yönlendiriliyor
+2025-05-11 23:44:57.189 +03:00 [INF] Yaklaşan hatırlatıcılar kontrol ediliyor...
+2025-05-11 23:44:57.223 +03:00 [INF] Bekleyen hatırlatma bulunamadı.
+2025-05-11 23:49:57.234 +03:00 [INF] Yaklaşan hatırlatıcılar kontrol ediliyor...
+2025-05-11 23:49:57.387 +03:00 [INF] Bekleyen hatırlatma bulunamadı.
+2025-05-11 23:53:38.892 +03:00 [INF] Veritabanına bağlantı başarılı. Migrationlar uygulanıyor...
+2025-05-11 23:53:39.994 +03:00 [INF] Veritabanı işlemleri başarıyla tamamlandı.
+2025-05-11 23:53:40.126 +03:00 [INF] Todo Hatırlatıcı Servisi başlatıldı.
+2025-05-11 23:53:40.128 +03:00 [INF] Yaklaşan hatırlatıcılar kontrol ediliyor...
+2025-05-11 23:53:40.243 +03:00 [INF] Bekleyen hatırlatma bulunamadı.
+2025-05-11 23:53:58.182 +03:00 [INF] Fatura oluşturma sayfası yükleniyor: Kullanıcı=admin
+2025-05-11 23:53:58.244 +03:00 [INF] Yeni numara oluşturuldu: FTR-250511-005
+2025-05-11 23:53:58.273 +03:00 [INF] Yeni numara oluşturuldu: SIP-250511-005
+2025-05-11 23:53:58.318 +03:00 [INF] Cari listesi yüklendi, toplam 2 adet cari bulundu.
+2025-05-11 23:53:58.357 +03:00 [INF] Sözleşme listesi yüklendi, toplam 0 adet sözleşme bulundu.
+2025-05-11 23:53:58.388 +03:00 [INF] Ürün listesi yüklendi, toplam 2 adet ürün bulundu.
+2025-05-11 23:53:58.439 +03:00 [INF] Depo listesi yüklendi, toplam 1 adet depo bulundu.
+2025-05-11 23:53:58.548 +03:00 [INF] Birim sayısı: Aktif=1, Pasif=0, Silinmiş=0
+2025-05-11 23:53:58.550 +03:00 [INF] Ürün select list oluşturuldu, toplam 2 adet öğe içeriyor.
+2025-05-11 23:53:58.618 +03:00 [INF] Para birimi listesi yüklendi, toplam 2 adet para birimi bulundu.
+2025-05-11 23:58:40.256 +03:00 [INF] Yaklaşan hatırlatıcılar kontrol ediliyor...
+2025-05-11 23:58:40.310 +03:00 [INF] Bekleyen hatırlatma bulunamadı.
+2025-05-11 23:58:54.329 +03:00 [INF] Fatura oluşturma sayfası yükleniyor: Kullanıcı=admin
+2025-05-11 23:58:54.356 +03:00 [INF] Yeni numara oluşturuldu: FTR-250511-005
+2025-05-11 23:58:54.385 +03:00 [INF] Yeni numara oluşturuldu: SIP-250511-005
+2025-05-11 23:58:54.413 +03:00 [INF] Cari listesi yüklendi, toplam 2 adet cari bulundu.
+2025-05-11 23:58:54.441 +03:00 [INF] Sözleşme listesi yüklendi, toplam 0 adet sözleşme bulundu.
+2025-05-11 23:58:54.470 +03:00 [INF] Ürün listesi yüklendi, toplam 2 adet ürün bulundu.
+2025-05-11 23:58:54.497 +03:00 [INF] Depo listesi yüklendi, toplam 1 adet depo bulundu.
+2025-05-11 23:58:54.577 +03:00 [INF] Birim sayısı: Aktif=1, Pasif=0, Silinmiş=0
+2025-05-11 23:58:54.578 +03:00 [INF] Ürün select list oluşturuldu, toplam 2 adet öğe içeriyor.
+2025-05-11 23:58:54.606 +03:00 [INF] Para birimi listesi yüklendi, toplam 2 adet para birimi bulundu.
+2025-05-11 23:59:21.757 +03:00 [INF] Fatura oluşturma sayfası yükleniyor: Kullanıcı=admin
+2025-05-11 23:59:21.786 +03:00 [INF] Yeni numara oluşturuldu: FTR-250511-005
+2025-05-11 23:59:21.813 +03:00 [INF] Yeni numara oluşturuldu: SIP-250511-005
+2025-05-11 23:59:21.839 +03:00 [INF] Cari listesi yüklendi, toplam 2 adet cari bulundu.
+2025-05-11 23:59:21.867 +03:00 [INF] Sözleşme listesi yüklendi, toplam 0 adet sözleşme bulundu.
+2025-05-11 23:59:21.895 +03:00 [INF] Ürün listesi yüklendi, toplam 2 adet ürün bulundu.
+2025-05-11 23:59:21.922 +03:00 [INF] Depo listesi yüklendi, toplam 1 adet depo bulundu.
+2025-05-11 23:59:22.005 +03:00 [INF] Birim sayısı: Aktif=1, Pasif=0, Silinmiş=0
+2025-05-11 23:59:22.007 +03:00 [INF] Ürün select list oluşturuldu, toplam 2 adet öğe içeriyor.
+2025-05-11 23:59:22.035 +03:00 [INF] Para birimi listesi yüklendi, toplam 2 adet para birimi bulundu.

@@ -179,12 +179,12 @@
                             <td>@kalem.UrunAdi</td>
                             <td>@kalem.Miktar</td>
                             <td>@kalem.Birim</td>
-                            <td class="text-right">@kalem.BirimFiyat.ToString("N2") ₺</td>
+                            <td class="text-right">@kalem.BirimFiyat.ToString("N2") @Model.DovizTuru</td>
                             <td class="text-center">%@kalem.KdvOrani</td>
                             <td class="text-center">%@kalem.IndirimOrani</td>
-                            <td class="text-right">@kalem.Tutar.ToString("N2") ₺</td>
-                            <td class="text-right">@kalem.KdvTutari.ToString("N2") ₺</td>
-                            <td class="text-right">@kalem.NetTutar.ToString("N2") ₺</td>
+                            <td class="text-right">@kalem.Tutar.ToString("N2") @Model.DovizTuru</td>
+                            <td class="text-right">@kalem.KdvTutari.ToString("N2") @Model.DovizTuru</td>
+                            <td class="text-right">@kalem.NetTutar.ToString("N2") @Model.DovizTuru</td>
                         </tr>
                     }
                 </tbody>
@@ -195,23 +195,23 @@
             <table>
                 <tr>
                     <th>Ara Toplam:</th>
-                    <td class="text-right">@Model.AraToplam.ToString("N2") ₺</td>
+                    <td class="text-right">@Model.AraToplam.ToString("N2") @Model.DovizTuru</td>
                 </tr>
                 <tr>
                     <th>KDV Tutarı:</th>
-                    <td class="text-right">@Model.KdvTutari.ToString("N2") ₺</td>
+                    <td class="text-right">@Model.KdvTutari.ToString("N2") @Model.DovizTuru</td>
                 </tr>
                 <tr>
                     <th>Genel Toplam:</th>
-                    <td class="text-right">@Model.GenelToplam.ToString("N2") ₺</td>
+                    <td class="text-right">@Model.GenelToplam.ToString("N2") @Model.DovizTuru</td>
                 </tr>
                 <tr>
                     <th>Ödenen Tutar:</th>
-                    <td class="text-right">@((Model.GenelToplam - Model.OdenecekTutar).ToString("N2")) ₺</td>
+                    <td class="text-right">@((Model.GenelToplam - Model.OdenecekTutar).ToString("N2")) @Model.DovizTuru</td>
                 </tr>
                 <tr>
                     <th>Kalan Tutar:</th>
-                    <td class="text-right">@Model.OdenecekTutar.ToString("N2") ₺</td>
+                    <td class="text-right">@Model.OdenecekTutar.ToString("N2") @Model.DovizTuru</td>
                 </tr>
             </table>
         </div>

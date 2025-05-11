@@ -63,7 +63,7 @@ namespace MuhasebeStokWebApp.Services
             
             // Son numara sırasını bul
             var sonNumara = await _unitOfWork.EntityFaturaRepository.GetAll()
-                .Where(f => f.FaturaNumarasi != null && f.FaturaNumarasi.StartsWith(prefix))
+                .Where(f => f.FaturaNumarasi != null && f.FaturaNumarasi.StartsWith(prefix.Replace("SIP-", "FTR-")))
                 .OrderByDescending(f => f.FaturaNumarasi)
                 .FirstOrDefaultAsync();
             
