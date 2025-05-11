@@ -108,6 +108,14 @@
                                         }
                                     </td>
                                 </tr>
+                                <tr>
+                                    <th>Toplam Tahmini Satış Değeri (UZS):</th>
+                                    <td class="text-end">@(Model.ToplamTahminiSatisDegeriUZS > 0 ? Model.ToplamTahminiSatisDegeriUZS.ToString("N2") + " so'm" : "-")</td>
+                                </tr>
+                                <tr>
+                                    <th>Toplam Tahmini Satış Değeri (USD):</th>
+                                    <td class="text-end">@(Model.ToplamTahminiSatisDegeriUSD > 0 ? Model.ToplamTahminiSatisDegeriUSD.ToString("N2") + " $" : "-")</td>
+                                </tr>
                             </table>
                         </div>
                     </div>

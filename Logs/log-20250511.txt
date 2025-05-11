@@ -1,0 +1,952 @@
+2025-05-11 02:11:38.302 +03:00 [INF] Yaklaşan hatırlatıcılar kontrol ediliyor...
+2025-05-11 02:11:38.372 +03:00 [INF] Bekleyen hatırlatma bulunamadı.
+2025-05-11 10:36:49.250 +03:00 [INF] Yaklaşan hatırlatıcılar kontrol ediliyor...
+2025-05-11 10:36:49.266 +03:00 [INF] Bekleyen hatırlatma bulunamadı.
+2025-05-11 11:13:37.321 +03:00 [INF] Giriş denemesi: admin
+2025-05-11 11:13:37.403 +03:00 [INF] Admin kullanıcısı başarıyla giriş yaptı: admin
+2025-05-11 11:13:37.404 +03:00 [INF] Admin session oluşturuldu: UserID=8b547a04-134c-4578-99bb-f831a55b400d, UserName=admin
+2025-05-11 11:13:37.404 +03:00 [INF] Yönlendirme adresi: /Urun/Details/2d28401d-efbf-430e-8cbe-40e2298a499e
+2025-05-11 11:13:37.404 +03:00 [INF] Admin kullanıcısı /Urun/Details/2d28401d-efbf-430e-8cbe-40e2298a499e adresine yönlendiriliyor
+2025-05-11 11:17:20.599 +03:00 [INF] Yaklaşan hatırlatıcılar kontrol ediliyor...
+2025-05-11 11:17:20.606 +03:00 [INF] Bekleyen hatırlatma bulunamadı.
+2025-05-11 11:22:20.608 +03:00 [INF] Yaklaşan hatırlatıcılar kontrol ediliyor...
+2025-05-11 11:22:20.639 +03:00 [INF] Bekleyen hatırlatma bulunamadı.
+2025-05-11 11:27:20.641 +03:00 [INF] Yaklaşan hatırlatıcılar kontrol ediliyor...
+2025-05-11 11:27:20.647 +03:00 [INF] Bekleyen hatırlatma bulunamadı.
+2025-05-11 11:32:20.668 +03:00 [INF] Yaklaşan hatırlatıcılar kontrol ediliyor...
+2025-05-11 11:32:20.704 +03:00 [INF] Bekleyen hatırlatma bulunamadı.
+2025-05-11 11:34:05.945 +03:00 [INF] Veritabanına bağlantı başarılı. Migrationlar uygulanıyor...
+2025-05-11 11:34:06.258 +03:00 [INF] Veritabanı işlemleri başarıyla tamamlandı.
+2025-05-11 11:34:06.308 +03:00 [INF] Todo Hatırlatıcı Servisi başlatıldı.
+2025-05-11 11:34:06.309 +03:00 [INF] Yaklaşan hatırlatıcılar kontrol ediliyor...
+2025-05-11 11:34:06.349 +03:00 [INF] Bekleyen hatırlatma bulunamadı.
+2025-05-11 11:34:12.808 +03:00 [INF] Giriş denemesi: admin
+2025-05-11 11:34:12.908 +03:00 [INF] Admin kullanıcısı başarıyla giriş yaptı: admin
+2025-05-11 11:34:12.908 +03:00 [INF] Admin session oluşturuldu: UserID=8b547a04-134c-4578-99bb-f831a55b400d, UserName=admin
+2025-05-11 11:34:12.908 +03:00 [INF] Yönlendirme adresi: /Urun
+2025-05-11 11:34:12.908 +03:00 [INF] Admin kullanıcısı /Urun adresine yönlendiriliyor
+2025-05-11 11:39:06.352 +03:00 [INF] Yaklaşan hatırlatıcılar kontrol ediliyor...
+2025-05-11 11:39:06.361 +03:00 [INF] Bekleyen hatırlatma bulunamadı.
+2025-05-11 11:42:48.581 +03:00 [INF] Veritabanına bağlantı başarılı. Migrationlar uygulanıyor...
+2025-05-11 11:42:48.891 +03:00 [INF] Veritabanı işlemleri başarıyla tamamlandı.
+2025-05-11 11:42:48.942 +03:00 [INF] Todo Hatırlatıcı Servisi başlatıldı.
+2025-05-11 11:42:48.943 +03:00 [INF] Yaklaşan hatırlatıcılar kontrol ediliyor...
+2025-05-11 11:42:48.986 +03:00 [INF] Bekleyen hatırlatma bulunamadı.
+2025-05-11 11:42:58.193 +03:00 [INF] Giriş denemesi: admin
+2025-05-11 11:42:58.291 +03:00 [INF] Admin kullanıcısı başarıyla giriş yaptı: admin
+2025-05-11 11:42:58.291 +03:00 [INF] Admin session oluşturuldu: UserID=8b547a04-134c-4578-99bb-f831a55b400d, UserName=admin
+2025-05-11 11:42:58.291 +03:00 [INF] Yönlendirme adresi: /Urun
+2025-05-11 11:42:58.291 +03:00 [INF] Admin kullanıcısı /Urun adresine yönlendiriliyor
+2025-05-11 11:47:48.982 +03:00 [INF] Yaklaşan hatırlatıcılar kontrol ediliyor...
+2025-05-11 11:47:48.986 +03:00 [INF] Bekleyen hatırlatma bulunamadı.
+2025-05-11 11:49:53.490 +03:00 [INF] Veritabanına bağlantı başarılı. Migrationlar uygulanıyor...
+2025-05-11 11:49:53.810 +03:00 [INF] Veritabanı işlemleri başarıyla tamamlandı.
+2025-05-11 11:49:53.861 +03:00 [INF] Todo Hatırlatıcı Servisi başlatıldı.
+2025-05-11 11:49:53.862 +03:00 [INF] Yaklaşan hatırlatıcılar kontrol ediliyor...
+2025-05-11 11:49:53.903 +03:00 [INF] Bekleyen hatırlatma bulunamadı.
+2025-05-11 11:54:53.904 +03:00 [INF] Yaklaşan hatırlatıcılar kontrol ediliyor...
+2025-05-11 11:54:53.914 +03:00 [INF] Bekleyen hatırlatma bulunamadı.
+2025-05-11 12:05:34.966 +03:00 [INF] Veritabanına bağlantı başarılı. Migrationlar uygulanıyor...
+2025-05-11 12:05:35.293 +03:00 [INF] Veritabanı işlemleri başarıyla tamamlandı.
+2025-05-11 12:05:35.346 +03:00 [INF] Todo Hatırlatıcı Servisi başlatıldı.
+2025-05-11 12:05:35.347 +03:00 [INF] Yaklaşan hatırlatıcılar kontrol ediliyor...
+2025-05-11 12:05:35.389 +03:00 [INF] Bekleyen hatırlatma bulunamadı.
+2025-05-11 12:09:58.804 +03:00 [INF] Veritabanına bağlantı başarılı. Migrationlar uygulanıyor...
+2025-05-11 12:09:59.124 +03:00 [INF] Veritabanı işlemleri başarıyla tamamlandı.
+2025-05-11 12:09:59.173 +03:00 [INF] Todo Hatırlatıcı Servisi başlatıldı.
+2025-05-11 12:09:59.173 +03:00 [INF] Yaklaşan hatırlatıcılar kontrol ediliyor...
+2025-05-11 12:09:59.213 +03:00 [INF] Bekleyen hatırlatma bulunamadı.
+2025-05-11 12:14:59.215 +03:00 [INF] Yaklaşan hatırlatıcılar kontrol ediliyor...
+2025-05-11 12:14:59.226 +03:00 [INF] Bekleyen hatırlatma bulunamadı.
+2025-05-11 12:19:13.081 +03:00 [INF] Veritabanına bağlantı başarılı. Migrationlar uygulanıyor...
+2025-05-11 12:19:13.403 +03:00 [INF] Veritabanı işlemleri başarıyla tamamlandı.
+2025-05-11 12:19:13.453 +03:00 [INF] Todo Hatırlatıcı Servisi başlatıldı.
+2025-05-11 12:19:13.454 +03:00 [INF] Yaklaşan hatırlatıcılar kontrol ediliyor...
+2025-05-11 12:19:13.494 +03:00 [INF] Bekleyen hatırlatma bulunamadı.
+2025-05-11 12:19:30.860 +03:00 [INF] Giriş denemesi: admin
+2025-05-11 12:19:30.954 +03:00 [INF] Admin kullanıcısı başarıyla giriş yaptı: admin
+2025-05-11 12:19:30.954 +03:00 [INF] Admin session oluşturuldu: UserID=8b547a04-134c-4578-99bb-f831a55b400d, UserName=admin
+2025-05-11 12:19:30.954 +03:00 [INF] Yönlendirme adresi: /Fatura/Details/ea699368-f871-4bdc-8840-59bcdcfc87b6
+2025-05-11 12:19:30.954 +03:00 [INF] Admin kullanıcısı /Fatura/Details/ea699368-f871-4bdc-8840-59bcdcfc87b6 adresine yönlendiriliyor
+2025-05-11 12:21:01.163 +03:00 [INF] Fatura oluşturma sayfası yükleniyor: Kullanıcı=admin
+2025-05-11 12:21:01.186 +03:00 [INF] Yeni numara oluşturuldu: FTR-250511-001
+2025-05-11 12:21:01.189 +03:00 [INF] Yeni numara oluşturuldu: SIP-250511-001
+2025-05-11 12:21:01.203 +03:00 [INF] Cari listesi yüklendi, toplam 8 adet cari bulundu.
+2025-05-11 12:21:01.214 +03:00 [INF] Sözleşme listesi yüklendi, toplam 0 adet sözleşme bulundu.
+2025-05-11 12:21:01.227 +03:00 [INF] Ürün listesi yüklendi, toplam 7 adet ürün bulundu.
+2025-05-11 12:21:01.240 +03:00 [INF] Depo listesi yüklendi, toplam 1 adet depo bulundu.
+2025-05-11 12:21:01.261 +03:00 [INF] Birim sayısı: Aktif=2, Pasif=0, Silinmiş=0
+2025-05-11 12:21:01.261 +03:00 [INF] Ürün select list oluşturuldu, toplam 7 adet öğe içeriyor.
+2025-05-11 12:21:01.279 +03:00 [INF] Para birimi listesi yüklendi, toplam 2 adet para birimi bulundu.
+2025-05-11 12:21:08.847 +03:00 [INF] Kur değeri hesaplandı: UZS -> USD, Değer: 0,0000775313262804067879513497
+2025-05-11 12:21:32.264 +03:00 [INF] Fatura oluşturma işlemi başlatıldı: FaturaNumarasi=FTR-250511-001, FaturaTuru=2, CariID="d3390bbc-7e81-4fd9-b7bb-bd26113292b0"
+2025-05-11 12:21:32.268 +03:00 [INF] Cari listesi yüklendi, toplam 8 adet cari bulundu.
+2025-05-11 12:21:32.270 +03:00 [INF] Sözleşme listesi yüklendi, toplam 0 adet sözleşme bulundu.
+2025-05-11 12:21:32.273 +03:00 [INF] Ürün listesi yüklendi, toplam 7 adet ürün bulundu.
+2025-05-11 12:21:32.276 +03:00 [INF] Depo listesi yüklendi, toplam 1 adet depo bulundu.
+2025-05-11 12:21:32.283 +03:00 [INF] Birim sayısı: Aktif=2, Pasif=0, Silinmiş=0
+2025-05-11 12:21:32.283 +03:00 [INF] Ürün select list oluşturuldu, toplam 7 adet öğe içeriyor.
+2025-05-11 12:21:32.285 +03:00 [INF] Para birimi listesi yüklendi, toplam 2 adet para birimi bulundu.
+2025-05-11 12:21:32.292 +03:00 [INF] CreateFaturaWithRelations başlatılıyor. Fatura No: FTR-250511-001
+2025-05-11 12:21:32.300 +03:00 [INF] Yeni bir transaction başlatıldı (Isolation level: ReadCommitted)
+2025-05-11 12:21:32.301 +03:00 [INF] Fatura işlemi için transaction başlatıldı. Fatura No: FTR-250511-001
+2025-05-11 12:21:32.302 +03:00 [INF] AddAsync işlemi başlatılıyor
+2025-05-11 12:21:32.303 +03:00 [INF] Yeni fatura ekleniyor...
+2025-05-11 12:21:32.350 +03:00 [INF] Fatura başarıyla eklendi, FaturaID: "1403fda9-167b-4d36-94c7-a86f98ffd8d1"
+2025-05-11 12:21:32.358 +03:00 [INF] AddAsync işlemi başarıyla tamamlandı
+2025-05-11 12:21:32.362 +03:00 [INF] Fatura kalemi işleniyor. UrunID: "2d28401d-efbf-430e-8cbe-40e2298a499e", Miktar: 100
+2025-05-11 12:21:32.364 +03:00 [INF] Fatura Detay eklendi. UrunID: "2d28401d-efbf-430e-8cbe-40e2298a499e"
+2025-05-11 12:21:32.369 +03:00 [INF] StokGirisiYap - Yeni transaction başlatıldı (Isolation Level: ReadCommitted): Ürün 2d28401d-efbf-430e-8cbe-40e2298a499e, Miktar 100
+2025-05-11 12:21:32.403 +03:00 [INF] StokGirisiYap - Transaction commit edildi: 2d28401d-efbf-430e-8cbe-40e2298a499e, 100, 25
+2025-05-11 12:21:32.403 +03:00 [INF] Stok girişi başarıyla tamamlandı: UrunID=2d28401d-efbf-430e-8cbe-40e2298a499e, Miktar=100, BirimFiyat=25, ParaBirimi=USD, Mahsuplaşan=0
+2025-05-11 12:21:32.403 +03:00 [INF] Alış faturası için stok girişi yapıldı. Ürün: "2d28401d-efbf-430e-8cbe-40e2298a499e", Miktar: 100
+2025-05-11 12:21:32.411 +03:00 [INF] USD -> UZS dönüşümü: 25 USD * 13000 = 325000 UZS
+2025-05-11 12:21:32.411 +03:00 [INF] Stok hareketi oluşturuldu: UrunID=2d28401d-efbf-430e-8cbe-40e2298a499e, Miktar=100, BirimFiyat=25 USD, USD=25, UZS=325000
+2025-05-11 12:21:32.434 +03:00 [INF] Stok hareketleri veritabanına kaydedildi: 1 adet
+2025-05-11 12:21:32.434 +03:00 [INF] Stok hareketleri oluşturuldu. Fatura No: FTR-250511-001
+2025-05-11 12:21:32.443 +03:00 [INF] Cari hareket eklendi. CariID: "d3390bbc-7e81-4fd9-b7bb-bd26113292b0"
+2025-05-11 12:21:32.466 +03:00 [INF] Yeni irsaliye numarası oluşturuldu: IRS-250511-0001
+2025-05-11 12:21:32.476 +03:00 [INF] Otomatik irsaliye oluşturuldu. IrsaliyeNo: IRS-250511-0001, Türü: Giriş
+2025-05-11 12:21:32.485 +03:00 [INF] İrsaliye detayı eklendi. UrunID: "2d28401d-efbf-430e-8cbe-40e2298a499e"
+2025-05-11 12:21:32.508 +03:00 [INF] Fatura ve ilişkili tüm kayıtlar başarıyla kaydedildi. Fatura No: FTR-250511-001
+2025-05-11 12:21:32.508 +03:00 [INF] Transaction temizlendi. Fatura No: FTR-250511-001
+2025-05-11 12:21:32.509 +03:00 [INF] Otomatik irsaliye oluşturuldu: f7b1ff2a-525c-4605-8695-c3d101cc5ed0 (Fatura: 1403fda9-167b-4d36-94c7-a86f98ffd8d1)
+2025-05-11 12:21:32.509 +03:00 [INF] Otomatik irsaliye oluşturuldu. IrsaliyeID: f7b1ff2a-525c-4605-8695-c3d101cc5ed0
+2025-05-11 12:21:32.509 +03:00 [INF] Fatura başarıyla oluşturuldu. FaturaID: 1403fda9-167b-4d36-94c7-a86f98ffd8d1
+2025-05-11 12:22:58.901 +03:00 [INF] Veritabanına bağlantı başarılı. Migrationlar uygulanıyor...
+2025-05-11 12:22:59.215 +03:00 [INF] Veritabanı işlemleri başarıyla tamamlandı.
+2025-05-11 12:22:59.267 +03:00 [INF] Todo Hatırlatıcı Servisi başlatıldı.
+2025-05-11 12:22:59.268 +03:00 [INF] Yaklaşan hatırlatıcılar kontrol ediliyor...
+2025-05-11 12:22:59.308 +03:00 [INF] Bekleyen hatırlatma bulunamadı.
+2025-05-11 12:23:24.078 +03:00 [INF] Giriş denemesi: admin
+2025-05-11 12:23:24.176 +03:00 [INF] Admin kullanıcısı başarıyla giriş yaptı: admin
+2025-05-11 12:23:24.176 +03:00 [INF] Admin session oluşturuldu: UserID=8b547a04-134c-4578-99bb-f831a55b400d, UserName=admin
+2025-05-11 12:23:24.176 +03:00 [INF] Yönlendirme adresi: /Fatura/Details/ea699368-f871-4bdc-8840-59bcdcfc87b6
+2025-05-11 12:23:24.176 +03:00 [INF] Admin kullanıcısı /Fatura/Details/ea699368-f871-4bdc-8840-59bcdcfc87b6 adresine yönlendiriliyor
+2025-05-11 12:27:59.327 +03:00 [INF] Yaklaşan hatırlatıcılar kontrol ediliyor...
+2025-05-11 12:27:59.336 +03:00 [INF] Bekleyen hatırlatma bulunamadı.
+2025-05-11 12:32:25.045 +03:00 [INF] Aktif session bulundu: UserID=8b547a04-134c-4578-99bb-f831a55b400d, UserName=admin
+2025-05-11 12:32:25.049 +03:00 [INF] Admin kullanıcısı tespit edildi
+2025-05-11 12:32:25.049 +03:00 [INF] Kimlik doğrulanmış kullanıcı: admin
+2025-05-11 12:32:25.161 +03:00 [INF] TRY dönüşümü için kur değeri hesaplandı: TRY -> USD, Değer: 0,03
+2025-05-11 12:32:25.208 +03:00 [INF] Kur değeri hesaplandı: UZS -> USD, Değer: 0,0000775313262804067879513497
+2025-05-11 12:32:25.293 +03:00 [INF] Kur değeri önbellekten alındı: UZS -> USD, Değer: 0,0000775313262804067879513497
+2025-05-11 12:32:25.294 +03:00 [INF] Çevrilen tutar hesaplandı: UZS -> USD, Tutar: 0,00, Sonuç: 0, Kur: 0,0000775313262804067879513497
+2025-05-11 12:32:55.746 +03:00 [INF] Birim sayısı: Aktif=2, Pasif=0, Silinmiş=0
+2025-05-11 12:32:58.377 +03:00 [INF] Toplam depo sayısı: 1
+2025-05-11 12:32:58.378 +03:00 [INF] Aktif depo sayısı: 1
+2025-05-11 12:32:58.378 +03:00 [INF] Pasif depo sayısı: 0
+2025-05-11 12:32:58.378 +03:00 [INF] Silinmiş depo sayısı: 0
+2025-05-11 12:32:59.339 +03:00 [INF] Yaklaşan hatırlatıcılar kontrol ediliyor...
+2025-05-11 12:32:59.345 +03:00 [INF] Bekleyen hatırlatma bulunamadı.
+2025-05-11 12:37:48.313 +03:00 [INF] Toplam depo sayısı: 1
+2025-05-11 12:37:48.313 +03:00 [INF] Aktif depo sayısı: 1
+2025-05-11 12:37:48.313 +03:00 [INF] Pasif depo sayısı: 0
+2025-05-11 12:37:48.313 +03:00 [INF] Silinmiş depo sayısı: 0
+2025-05-11 12:38:00.549 +03:00 [INF] Yaklaşan hatırlatıcılar kontrol ediliyor...
+2025-05-11 12:38:00.553 +03:00 [INF] Bekleyen hatırlatma bulunamadı.
+atırlatma bulunamadı.
+2025-05-11 12:37:48.443 +03:00 [ERR] Hosting failed to start
+System.IO.IOException: Failed to bind to address https://127.0.0.1:7118: address already in use.
+ ---> Microsoft.AspNetCore.Connections.AddressInUseException: Address already in use
+ ---> System.Net.Sockets.SocketException (48): Address already in use
+   at System.Net.Sockets.Socket.DoBind(EndPoint endPointSnapshot, SocketAddress socketAddress)
+   at System.Net.Sockets.Socket.Bind(EndPoint localEP)
+   at Microsoft.AspNetCore.Server.Kestrel.Transport.Sockets.SocketTransportOptions.CreateDefaultBoundListenSocket(EndPoint endpoint)
+   at Microsoft.AspNetCore.Server.Kestrel.Transport.Sockets.SocketConnectionListener.Bind()
+   --- End of inner exception stack trace ---
+   at Microsoft.AspNetCore.Server.Kestrel.Transport.Sockets.SocketConnectionListener.Bind()
+   at Microsoft.AspNetCore.Server.Kestrel.Transport.Sockets.SocketTransportFactory.BindAsync(EndPoint endpoint, CancellationToken cancellationToken)
+   at Microsoft.AspNetCore.Server.Kestrel.Core.Internal.Infrastructure.TransportManager.BindAsync(EndPoint endPoint, ConnectionDelegate connectionDelegate, EndpointConfig endpointConfig, CancellationToken cancellationToken)
+   at Microsoft.AspNetCore.Server.Kestrel.Core.KestrelServerImpl.<>c__DisplayClass28_0`1.<<StartAsync>g__OnBind|0>d.MoveNext()
+--- End of stack trace from previous location ---
+   at Microsoft.AspNetCore.Server.Kestrel.Core.Internal.AddressBinder.BindEndpointAsync(ListenOptions endpoint, AddressBindContext context, CancellationToken cancellationToken)
+   --- End of inner exception stack trace ---
+   at Microsoft.AspNetCore.Server.Kestrel.Core.Internal.AddressBinder.BindEndpointAsync(ListenOptions endpoint, AddressBindContext context, CancellationToken cancellationToken)
+   at Microsoft.AspNetCore.Server.Kestrel.Core.LocalhostListenOptions.BindAsync(AddressBindContext context, CancellationToken cancellationToken)
+   at Microsoft.AspNetCore.Server.Kestrel.Core.Internal.AddressBinder.AddressesStrategy.BindAsync(AddressBindContext context, CancellationToken cancellationToken)
+   at Microsoft.AspNetCore.Server.Kestrel.Core.KestrelServerImpl.BindAsync(CancellationToken cancellationToken)
+   at Microsoft.AspNetCore.Server.Kestrel.Core.KestrelServerImpl.StartAsync[TContext](IHttpApplication`1 application, CancellationToken cancellationToken)
+   at Microsoft.AspNetCore.Hosting.GenericWebHostService.StartAsync(CancellationToken cancellationToken)
+   at Microsoft.Extensions.Hosting.Internal.Host.<StartAsync>b__14_1(IHostedService service, CancellationToken token)
+   at Microsoft.Extensions.Hosting.Internal.Host.ForeachService[T](IEnumerable`1 services, CancellationToken token, Boolean concurrent, Boolean abortOnFirstException, List`1 exceptions, Func`3 operation)
+2025-05-11 12:37:48.449 +03:00 [ERR] BackgroundService failed
+System.Threading.Tasks.TaskCanceledException: A task was canceled.
+   at MuhasebeStokWebApp.Services.TodoReminderService.ExecuteAsync(CancellationToken stoppingToken) in /Users/muhammetkocaman/MuhasebeStokWebApp/Services/TodoReminderService.cs:line 46
+   at Microsoft.Extensions.Hosting.Internal.Host.TryExecuteBackgroundServiceAsync(BackgroundService backgroundService)
+2025-05-11 12:37:48.450 +03:00 [FTL] The HostOptions.BackgroundServiceExceptionBehavior is configured to StopHost. A BackgroundService has thrown an unhandled exception, and the IHost instance is stopping. To avoid this behavior, configure this to Ignore; however the BackgroundService will not be restarted.
+System.Threading.Tasks.TaskCanceledException: A task was canceled.
+   at MuhasebeStokWebApp.Services.TodoReminderService.ExecuteAsync(CancellationToken stoppingToken) in /Users/muhammetkocaman/MuhasebeStokWebApp/Services/TodoReminderService.cs:line 46
+   at Microsoft.Extensions.Hosting.Internal.Host.TryExecuteBackgroundServiceAsync(BackgroundService backgroundService)
+2025-05-11 12:38:50.060 +03:00 [INF] Veritabanına bağlantı başarılı. Migrationlar uygulanıyor...
+2025-05-11 12:38:50.391 +03:00 [INF] Veritabanı işlemleri başarıyla tamamlandı.
+2025-05-11 12:38:50.442 +03:00 [INF] Todo Hatırlatıcı Servisi başlatıldı.
+2025-05-11 12:38:50.442 +03:00 [INF] Yaklaşan hatırlatıcılar kontrol ediliyor...
+2025-05-11 12:38:50.484 +03:00 [INF] Bekleyen hatırlatma bulunamadı.
+2025-05-11 12:38:56.078 +03:00 [WRN] Failed to determine the https port for redirect.
+2025-05-11 12:38:56.218 +03:00 [WRN] Session bulunamadı, kullanıcı giriş yapmamış olabilir
+2025-05-11 12:38:56.220 +03:00 [INF] Kimlik doğrulanmış kullanıcı: admin
+2025-05-11 12:38:56.378 +03:00 [INF] TRY dönüşümü için kur değeri hesaplandı: TRY -> USD, Değer: 0,03
+2025-05-11 12:38:56.428 +03:00 [INF] Kur değeri hesaplandı: UZS -> USD, Değer: 0,0000775313262804067879513497
+2025-05-11 12:38:56.538 +03:00 [INF] Kur değeri önbellekten alındı: UZS -> USD, Değer: 0,0000775313262804067879513497
+2025-05-11 12:38:56.538 +03:00 [INF] Çevrilen tutar hesaplandı: UZS -> USD, Tutar: 0,00, Sonuç: 0, Kur: 0,0000775313262804067879513497
+2025-05-11 12:39:02.182 +03:00 [INF] Birim sayısı: Aktif=2, Pasif=0, Silinmiş=0
+2025-05-11 12:39:45.501 +03:00 [WRN] Session bulunamadı, kullanıcı giriş yapmamış olabilir
+2025-05-11 12:39:45.501 +03:00 [INF] Kimlik doğrulanmış kullanıcı: admin
+2025-05-11 12:39:45.515 +03:00 [INF] Kur değeri önbellekten alındı: TRY -> USD, Değer: 0,03
+2025-05-11 12:39:45.515 +03:00 [INF] Kur değeri önbellekten alındı: UZS -> USD, Değer: 0,0000775313262804067879513497
+2025-05-11 12:39:45.534 +03:00 [INF] Çevrilen tutar önbellekten alındı: UZS -> USD, Tutar: 0,00, Sonuç: 0
+2025-05-11 12:43:50.487 +03:00 [INF] Yaklaşan hatırlatıcılar kontrol ediliyor...
+2025-05-11 12:43:50.493 +03:00 [INF] Bekleyen hatırlatma bulunamadı.
+2025-05-11 13:08:16.016 +03:00 [INF] Veritabanına bağlantı başarılı. Migrationlar uygulanıyor...
+2025-05-11 13:08:16.359 +03:00 [INF] Veritabanı işlemleri başarıyla tamamlandı.
+2025-05-11 13:08:16.418 +03:00 [INF] Todo Hatırlatıcı Servisi başlatıldı.
+2025-05-11 13:08:16.419 +03:00 [INF] Yaklaşan hatırlatıcılar kontrol ediliyor...
+2025-05-11 13:08:16.460 +03:00 [INF] Bekleyen hatırlatma bulunamadı.
+2025-05-11 13:08:31.444 +03:00 [INF] Giriş denemesi: admin
+2025-05-11 13:08:31.527 +03:00 [INF] Admin kullanıcısı başarıyla giriş yaptı: admin
+2025-05-11 13:08:31.527 +03:00 [INF] Admin session oluşturuldu: UserID=8b547a04-134c-4578-99bb-f831a55b400d, UserName=admin
+2025-05-11 13:08:31.527 +03:00 [INF] Yönlendirme adresi: /Fatura/Details/ea699368-f871-4bdc-8840-59bcdcfc87b6
+2025-05-11 13:08:31.527 +03:00 [INF] Admin kullanıcısı /Fatura/Details/ea699368-f871-4bdc-8840-59bcdcfc87b6 adresine yönlendiriliyor
+2025-05-11 13:08:34.788 +03:00 [INF] Aktif session bulundu: UserID=8b547a04-134c-4578-99bb-f831a55b400d, UserName=admin
+2025-05-11 13:08:34.791 +03:00 [INF] Admin kullanıcısı tespit edildi
+2025-05-11 13:08:34.791 +03:00 [INF] Kimlik doğrulanmış kullanıcı: admin
+2025-05-11 13:08:34.901 +03:00 [INF] TRY dönüşümü için kur değeri hesaplandı: TRY -> USD, Değer: 0,03
+2025-05-11 13:08:34.949 +03:00 [INF] Kur değeri hesaplandı: UZS -> USD, Değer: 0,0000775313262804067879513497
+2025-05-11 13:08:35.042 +03:00 [INF] Kur değeri önbellekten alındı: UZS -> USD, Değer: 0,0000775313262804067879513497
+2025-05-11 13:08:35.042 +03:00 [INF] Çevrilen tutar hesaplandı: UZS -> USD, Tutar: 0,00, Sonuç: 0, Kur: 0,0000775313262804067879513497
+2025-05-11 13:08:38.732 +03:00 [ERR] Hata: 00-cf86232c8b8e4417137fd2befb3bc346-3c95e7af0df84893-00, Kullanıcı: admin, Path: /Dashboard, Method: GET, QueryString: , IP: ::1, UserAgent: Mozilla/5.0 (Macintosh; Intel Mac OS X 10_15_7) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/136.0.0.0 Safari/537.36
+System.InvalidOperationException: Unable to resolve service for type 'MuhasebeStokWebApp.Services.Interfaces.IDashboardService' while attempting to activate 'MuhasebeStokWebApp.Controllers.DashboardController'.
+   at Microsoft.Extensions.DependencyInjection.ActivatorUtilities.ThrowHelperUnableToResolveService(Type type, Type requiredBy)
+   at lambda_method4614(Closure, IServiceProvider, Object[])
+   at Microsoft.AspNetCore.Mvc.Controllers.ControllerFactoryProvider.<>c__DisplayClass6_0.<CreateControllerFactory>g__CreateController|0(ControllerContext controllerContext)
+   at Microsoft.AspNetCore.Mvc.Infrastructure.ControllerActionInvoker.Next(State& next, Scope& scope, Object& state, Boolean& isCompleted)
+   at Microsoft.AspNetCore.Mvc.Infrastructure.ControllerActionInvoker.InvokeInnerFilterAsync()
+--- End of stack trace from previous location ---
+   at Microsoft.AspNetCore.Mvc.Infrastructure.ResourceInvoker.<InvokeNextResourceFilter>g__Awaited|25_0(ResourceInvoker invoker, Task lastTask, State next, Scope scope, Object state, Boolean isCompleted)
+   at Microsoft.AspNetCore.Mvc.Infrastructure.ResourceInvoker.Rethrow(ResourceExecutedContextSealed context)
+   at Microsoft.AspNetCore.Mvc.Infrastructure.ResourceInvoker.Next(State& next, Scope& scope, Object& state, Boolean& isCompleted)
+   at Microsoft.AspNetCore.Mvc.Infrastructure.ResourceInvoker.InvokeFilterPipelineAsync()
+--- End of stack trace from previous location ---
+   at Microsoft.AspNetCore.Mvc.Infrastructure.ResourceInvoker.<InvokeAsync>g__Awaited|17_0(ResourceInvoker invoker, Task task, IDisposable scope)
+   at Microsoft.AspNetCore.Mvc.Infrastructure.ResourceInvoker.<InvokeAsync>g__Awaited|17_0(ResourceInvoker invoker, Task task, IDisposable scope)
+   at Microsoft.AspNetCore.Localization.RequestLocalizationMiddleware.Invoke(HttpContext context)
+   at MuhasebeStokWebApp.Middleware.GlobalExceptionHandlingMiddleware.InvokeAsync(HttpContext context) in /Users/muhammetkocaman/MuhasebeStokWebApp/Middleware/GlobalExceptionHandlingMiddleware.cs:line 38
+2025-05-11 13:08:42.045 +03:00 [INF] Aktif session bulundu: UserID=8b547a04-134c-4578-99bb-f831a55b400d, UserName=admin
+2025-05-11 13:08:42.045 +03:00 [INF] Admin kullanıcısı tespit edildi
+2025-05-11 13:08:42.045 +03:00 [INF] Kimlik doğrulanmış kullanıcı: admin
+2025-05-11 13:08:42.059 +03:00 [INF] Kur değeri önbellekten alındı: TRY -> USD, Değer: 0,03
+2025-05-11 13:08:42.059 +03:00 [INF] Kur değeri önbellekten alındı: UZS -> USD, Değer: 0,0000775313262804067879513497
+2025-05-11 13:08:42.078 +03:00 [INF] Çevrilen tutar önbellekten alındı: UZS -> USD, Tutar: 0,00, Sonuç: 0
+2025-05-11 13:08:47.063 +03:00 [INF] Aktif session bulundu: UserID=8b547a04-134c-4578-99bb-f831a55b400d, UserName=admin
+2025-05-11 13:08:47.063 +03:00 [INF] Admin kullanıcısı tespit edildi
+2025-05-11 13:08:47.063 +03:00 [INF] Kimlik doğrulanmış kullanıcı: admin
+2025-05-11 13:08:47.074 +03:00 [INF] Kur değeri önbellekten alındı: TRY -> USD, Değer: 0,03
+2025-05-11 13:08:47.074 +03:00 [INF] Kur değeri önbellekten alındı: UZS -> USD, Değer: 0,0000775313262804067879513497
+2025-05-11 13:08:47.089 +03:00 [INF] Çevrilen tutar önbellekten alındı: UZS -> USD, Tutar: 0,00, Sonuç: 0
+2025-05-11 13:08:51.828 +03:00 [ERR] Hata: 00-ae231eb3752790ac0573c7f60612fad3-68b3ed9cf176e275-00, Kullanıcı: admin, Path: /Dashboard, Method: GET, QueryString: , IP: ::1, UserAgent: Mozilla/5.0 (Macintosh; Intel Mac OS X 10_15_7) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/136.0.0.0 Safari/537.36
+System.InvalidOperationException: Unable to resolve service for type 'MuhasebeStokWebApp.Services.Interfaces.IDashboardService' while attempting to activate 'MuhasebeStokWebApp.Controllers.DashboardController'.
+   at Microsoft.Extensions.DependencyInjection.ActivatorUtilities.ThrowHelperUnableToResolveService(Type type, Type requiredBy)
+   at lambda_method4614(Closure, IServiceProvider, Object[])
+   at Microsoft.AspNetCore.Mvc.Controllers.ControllerFactoryProvider.<>c__DisplayClass6_0.<CreateControllerFactory>g__CreateController|0(ControllerContext controllerContext)
+   at Microsoft.AspNetCore.Mvc.Infrastructure.ControllerActionInvoker.Next(State& next, Scope& scope, Object& state, Boolean& isCompleted)
+   at Microsoft.AspNetCore.Mvc.Infrastructure.ControllerActionInvoker.InvokeInnerFilterAsync()
+--- End of stack trace from previous location ---
+   at Microsoft.AspNetCore.Mvc.Infrastructure.ResourceInvoker.<InvokeNextResourceFilter>g__Awaited|25_0(ResourceInvoker invoker, Task lastTask, State next, Scope scope, Object state, Boolean isCompleted)
+   at Microsoft.AspNetCore.Mvc.Infrastructure.ResourceInvoker.Rethrow(ResourceExecutedContextSealed context)
+   at Microsoft.AspNetCore.Mvc.Infrastructure.ResourceInvoker.Next(State& next, Scope& scope, Object& state, Boolean& isCompleted)
+   at Microsoft.AspNetCore.Mvc.Infrastructure.ResourceInvoker.InvokeFilterPipelineAsync()
+--- End of stack trace from previous location ---
+   at Microsoft.AspNetCore.Mvc.Infrastructure.ResourceInvoker.<InvokeAsync>g__Awaited|17_0(ResourceInvoker invoker, Task task, IDisposable scope)
+   at Microsoft.AspNetCore.Mvc.Infrastructure.ResourceInvoker.<InvokeAsync>g__Awaited|17_0(ResourceInvoker invoker, Task task, IDisposable scope)
+   at Microsoft.AspNetCore.Localization.RequestLocalizationMiddleware.Invoke(HttpContext context)
+   at MuhasebeStokWebApp.Middleware.GlobalExceptionHandlingMiddleware.InvokeAsync(HttpContext context) in /Users/muhammetkocaman/MuhasebeStokWebApp/Middleware/GlobalExceptionHandlingMiddleware.cs:line 38
+2025-05-11 13:08:55.035 +03:00 [INF] Aktif session bulundu: UserID=8b547a04-134c-4578-99bb-f831a55b400d, UserName=admin
+2025-05-11 13:08:55.035 +03:00 [INF] Admin kullanıcısı tespit edildi
+2025-05-11 13:08:55.036 +03:00 [INF] Kimlik doğrulanmış kullanıcı: admin
+2025-05-11 13:08:55.046 +03:00 [INF] Kur değeri önbellekten alındı: TRY -> USD, Değer: 0,03
+2025-05-11 13:08:55.046 +03:00 [INF] Kur değeri önbellekten alındı: UZS -> USD, Değer: 0,0000775313262804067879513497
+2025-05-11 13:08:55.057 +03:00 [INF] Çevrilen tutar önbellekten alındı: UZS -> USD, Tutar: 0,00, Sonuç: 0
+2025-05-11 13:08:58.291 +03:00 [ERR] Hata: 00-6664a5eacf3e49ade2aca9416fe3ec26-57f0cf2a4b2cab72-00, Kullanıcı: admin, Path: /Dashboard, Method: GET, QueryString: , IP: ::1, UserAgent: Mozilla/5.0 (Macintosh; Intel Mac OS X 10_15_7) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/136.0.0.0 Safari/537.36
+System.InvalidOperationException: Unable to resolve service for type 'MuhasebeStokWebApp.Services.Interfaces.IDashboardService' while attempting to activate 'MuhasebeStokWebApp.Controllers.DashboardController'.
+   at Microsoft.Extensions.DependencyInjection.ActivatorUtilities.ThrowHelperUnableToResolveService(Type type, Type requiredBy)
+   at lambda_method4614(Closure, IServiceProvider, Object[])
+   at Microsoft.AspNetCore.Mvc.Controllers.ControllerFactoryProvider.<>c__DisplayClass6_0.<CreateControllerFactory>g__CreateController|0(ControllerContext controllerContext)
+   at Microsoft.AspNetCore.Mvc.Infrastructure.ControllerActionInvoker.Next(State& next, Scope& scope, Object& state, Boolean& isCompleted)
+   at Microsoft.AspNetCore.Mvc.Infrastructure.ControllerActionInvoker.InvokeInnerFilterAsync()
+--- End of stack trace from previous location ---
+   at Microsoft.AspNetCore.Mvc.Infrastructure.ResourceInvoker.<InvokeNextResourceFilter>g__Awaited|25_0(ResourceInvoker invoker, Task lastTask, State next, Scope scope, Object state, Boolean isCompleted)
+   at Microsoft.AspNetCore.Mvc.Infrastructure.ResourceInvoker.Rethrow(ResourceExecutedContextSealed context)
+   at Microsoft.AspNetCore.Mvc.Infrastructure.ResourceInvoker.Next(State& next, Scope& scope, Object& state, Boolean& isCompleted)
+   at Microsoft.AspNetCore.Mvc.Infrastructure.ResourceInvoker.InvokeFilterPipelineAsync()
+--- End of stack trace from previous location ---
+   at Microsoft.AspNetCore.Mvc.Infrastructure.ResourceInvoker.<InvokeAsync>g__Awaited|17_0(ResourceInvoker invoker, Task task, IDisposable scope)
+   at Microsoft.AspNetCore.Mvc.Infrastructure.ResourceInvoker.<InvokeAsync>g__Awaited|17_0(ResourceInvoker invoker, Task task, IDisposable scope)
+   at Microsoft.AspNetCore.Localization.RequestLocalizationMiddleware.Invoke(HttpContext context)
+   at MuhasebeStokWebApp.Middleware.GlobalExceptionHandlingMiddleware.InvokeAsync(HttpContext context) in /Users/muhammetkocaman/MuhasebeStokWebApp/Middleware/GlobalExceptionHandlingMiddleware.cs:line 38
+2025-05-11 13:11:36.715 +03:00 [INF] Veritabanına bağlantı başarılı. Migrationlar uygulanıyor...
+2025-05-11 13:11:37.120 +03:00 [INF] Veritabanı işlemleri başarıyla tamamlandı.
+2025-05-11 13:11:37.170 +03:00 [INF] Todo Hatırlatıcı Servisi başlatıldı.
+2025-05-11 13:11:37.171 +03:00 [INF] Yaklaşan hatırlatıcılar kontrol ediliyor...
+2025-05-11 13:11:37.212 +03:00 [INF] Bekleyen hatırlatma bulunamadı.
+2025-05-11 13:12:00.985 +03:00 [INF] Dashboard sayfası yükleniyor...
+2025-05-11 13:12:00.988 +03:00 [INF] Dashboard verileri yükleniyor...
+2025-05-11 13:12:01.057 +03:00 [INF] TRY dönüşümü için kur değeri hesaplandı: USD -> TRY, Değer: 33,33
+2025-05-11 13:12:01.102 +03:00 [INF] Kur değeri hesaplandı: USD -> UZS, Değer: 12898,012300
+2025-05-11 13:12:01.148 +03:00 [ERR] Kritik stoktaki ürünler alınırken hata oluştu
+System.InvalidOperationException: The LINQ expression 'DbSet<Urun>()
+    .Where(u => u.Silindi == False && u.Aktif == True)
+    .Where(u => !(u.Silindi) && u.Aktif && u.StokMiktar <= u.KritikStokSeviyesi)' could not be translated. Additional information: Translation of member 'StokMiktar' on entity type 'Urun' failed. This commonly occurs when the specified member is unmapped. Either rewrite the query in a form that can be translated, or switch to client evaluation explicitly by inserting a call to 'AsEnumerable', 'AsAsyncEnumerable', 'ToList', or 'ToListAsync'. See https://go.microsoft.com/fwlink/?linkid=2101038 for more information.
+   at Microsoft.EntityFrameworkCore.Query.QueryableMethodTranslatingExpressionVisitor.Translate(Expression expression)
+   at Microsoft.EntityFrameworkCore.Query.QueryCompilationContext.CreateQueryExecutorExpression[TResult](Expression query)
+   at Microsoft.EntityFrameworkCore.Query.QueryCompilationContext.CreateQueryExecutor[TResult](Expression query)
+   at Microsoft.EntityFrameworkCore.Storage.Database.CompileQuery[TResult](Expression query, Boolean async)
+   at Microsoft.EntityFrameworkCore.Query.Internal.QueryCompiler.CompileQueryCore[TResult](IDatabase database, Expression query, IModel model, Boolean async)
+   at Microsoft.EntityFrameworkCore.Query.Internal.QueryCompiler.<>c__DisplayClass11_0`1.<ExecuteCore>b__0()
+   at Microsoft.EntityFrameworkCore.Query.Internal.CompiledQueryCache.GetOrAddQuery[TResult](Object cacheKey, Func`1 compiler)
+   at Microsoft.EntityFrameworkCore.Query.Internal.QueryCompiler.ExecuteCore[TResult](Expression query, Boolean async, CancellationToken cancellationToken)
+   at Microsoft.EntityFrameworkCore.Query.Internal.QueryCompiler.ExecuteAsync[TResult](Expression query, CancellationToken cancellationToken)
+   at Microsoft.EntityFrameworkCore.Query.Internal.EntityQueryProvider.ExecuteAsync[TResult](Expression expression, CancellationToken cancellationToken)
+   at Microsoft.EntityFrameworkCore.Query.Internal.EntityQueryable`1.GetAsyncEnumerator(CancellationToken cancellationToken)
+   at System.Runtime.CompilerServices.ConfiguredCancelableAsyncEnumerable`1.GetAsyncEnumerator()
+   at Microsoft.EntityFrameworkCore.EntityFrameworkQueryableExtensions.ToListAsync[TSource](IQueryable`1 source, CancellationToken cancellationToken)
+   at MuhasebeStokWebApp.Services.DashboardService.GetCriticalStockProductsAsync() in /Users/muhammetkocaman/MuhasebeStokWebApp/Services/DashboardService.cs:line 270
+2025-05-11 13:12:01.166 +03:00 [INF] Kur değeri önbellekten alındı: USD -> TRY, Değer: 33,33
+2025-05-11 13:12:01.166 +03:00 [INF] Kur değeri önbellekten alındı: USD -> UZS, Değer: 12898,012300
+2025-05-11 13:12:01.285 +03:00 [INF] Kur değeri önbellekten alındı: USD -> TRY, Değer: 33,33
+2025-05-11 13:12:01.285 +03:00 [INF] Kur değeri önbellekten alındı: USD -> UZS, Değer: 12898,012300
+2025-05-11 13:12:01.359 +03:00 [INF] Kur değeri önbellekten alındı: USD -> TRY, Değer: 33,33
+2025-05-11 13:12:01.359 +03:00 [INF] Kur değeri önbellekten alındı: USD -> UZS, Değer: 12898,012300
+2025-05-11 13:12:01.372 +03:00 [INF] Dashboard verileri başarıyla yüklendi.
+2025-05-11 13:12:01.373 +03:00 [INF] Kur değeri önbellekten alındı: USD -> TRY, Değer: 33,33
+2025-05-11 13:12:01.377 +03:00 [INF] Kur değeri önbellekten alındı: USD -> UZS, Değer: 12898,012300
+2025-05-11 13:12:01.378 +03:00 [INF] Dashboard sayfası başarıyla yüklendi.
+2025-05-11 13:12:38.408 +03:00 [INF] Dashboard sayfası yükleniyor...
+2025-05-11 13:12:38.408 +03:00 [INF] Dashboard verileri yükleniyor...
+2025-05-11 13:12:38.409 +03:00 [ERR] Kritik stoktaki ürünler alınırken hata oluştu
+System.InvalidOperationException: The LINQ expression 'DbSet<Urun>()
+    .Where(u => u.Silindi == False && u.Aktif == True)
+    .Where(u => !(u.Silindi) && u.Aktif && u.StokMiktar <= u.KritikStokSeviyesi)' could not be translated. Additional information: Translation of member 'StokMiktar' on entity type 'Urun' failed. This commonly occurs when the specified member is unmapped. Either rewrite the query in a form that can be translated, or switch to client evaluation explicitly by inserting a call to 'AsEnumerable', 'AsAsyncEnumerable', 'ToList', or 'ToListAsync'. See https://go.microsoft.com/fwlink/?linkid=2101038 for more information.
+   at Microsoft.EntityFrameworkCore.Query.QueryableMethodTranslatingExpressionVisitor.Translate(Expression expression)
+   at Microsoft.EntityFrameworkCore.Query.QueryCompilationContext.CreateQueryExecutorExpression[TResult](Expression query)
+   at Microsoft.EntityFrameworkCore.Query.QueryCompilationContext.CreateQueryExecutor[TResult](Expression query)
+   at Microsoft.EntityFrameworkCore.Storage.Database.CompileQuery[TResult](Expression query, Boolean async)
+   at Microsoft.EntityFrameworkCore.Query.Internal.QueryCompiler.CompileQueryCore[TResult](IDatabase database, Expression query, IModel model, Boolean async)
+   at Microsoft.EntityFrameworkCore.Query.Internal.QueryCompiler.<>c__DisplayClass11_0`1.<ExecuteCore>b__0()
+   at Microsoft.EntityFrameworkCore.Query.Internal.CompiledQueryCache.GetOrAddQuery[TResult](Object cacheKey, Func`1 compiler)
+   at Microsoft.EntityFrameworkCore.Query.Internal.QueryCompiler.ExecuteCore[TResult](Expression query, Boolean async, CancellationToken cancellationToken)
+   at Microsoft.EntityFrameworkCore.Query.Internal.QueryCompiler.ExecuteAsync[TResult](Expression query, CancellationToken cancellationToken)
+   at Microsoft.EntityFrameworkCore.Query.Internal.EntityQueryProvider.ExecuteAsync[TResult](Expression expression, CancellationToken cancellationToken)
+   at Microsoft.EntityFrameworkCore.Query.Internal.EntityQueryable`1.GetAsyncEnumerator(CancellationToken cancellationToken)
+   at System.Runtime.CompilerServices.ConfiguredCancelableAsyncEnumerable`1.GetAsyncEnumerator()
+   at Microsoft.EntityFrameworkCore.EntityFrameworkQueryableExtensions.ToListAsync[TSource](IQueryable`1 source, CancellationToken cancellationToken)
+   at MuhasebeStokWebApp.Services.DashboardService.GetCriticalStockProductsAsync() in /Users/muhammetkocaman/MuhasebeStokWebApp/Services/DashboardService.cs:line 270
+2025-05-11 13:12:38.410 +03:00 [INF] Dashboard verileri başarıyla yüklendi.
+2025-05-11 13:12:38.410 +03:00 [INF] Kur değeri önbellekten alındı: USD -> TRY, Değer: 33,33
+2025-05-11 13:12:38.410 +03:00 [INF] Kur değeri önbellekten alındı: USD -> UZS, Değer: 12898,012300
+2025-05-11 13:12:38.410 +03:00 [INF] Dashboard sayfası başarıyla yüklendi.
+2025-05-11 13:13:15.288 +03:00 [INF] Veritabanına bağlantı başarılı. Migrationlar uygulanıyor...
+2025-05-11 13:13:15.605 +03:00 [INF] Veritabanı işlemleri başarıyla tamamlandı.
+2025-05-11 13:13:15.654 +03:00 [INF] Todo Hatırlatıcı Servisi başlatıldı.
+2025-05-11 13:13:15.655 +03:00 [INF] Yaklaşan hatırlatıcılar kontrol ediliyor...
+2025-05-11 13:13:15.697 +03:00 [INF] Bekleyen hatırlatma bulunamadı.
+2025-05-11 13:13:20.263 +03:00 [INF] Dashboard sayfası yükleniyor...
+2025-05-11 13:13:20.265 +03:00 [INF] Dashboard verileri yükleniyor...
+2025-05-11 13:13:20.298 +03:00 [INF] TRY dönüşümü için kur değeri hesaplandı: USD -> TRY, Değer: 33,33
+2025-05-11 13:13:20.350 +03:00 [INF] Kur değeri hesaplandı: USD -> UZS, Değer: 12898,012300
+2025-05-11 13:13:20.401 +03:00 [ERR] Kritik stoktaki ürünler alınırken hata oluştu
+System.InvalidOperationException: The LINQ expression 'DbSet<Urun>()
+    .Where(u => u.Silindi == False && u.Aktif == True)
+    .Where(u => !(u.Silindi) && u.Aktif && u.StokMiktar <= u.KritikStokSeviyesi)' could not be translated. Additional information: Translation of member 'StokMiktar' on entity type 'Urun' failed. This commonly occurs when the specified member is unmapped. Either rewrite the query in a form that can be translated, or switch to client evaluation explicitly by inserting a call to 'AsEnumerable', 'AsAsyncEnumerable', 'ToList', or 'ToListAsync'. See https://go.microsoft.com/fwlink/?linkid=2101038 for more information.
+   at Microsoft.EntityFrameworkCore.Query.QueryableMethodTranslatingExpressionVisitor.Translate(Expression expression)
+   at Microsoft.EntityFrameworkCore.Query.QueryCompilationContext.CreateQueryExecutorExpression[TResult](Expression query)
+   at Microsoft.EntityFrameworkCore.Query.QueryCompilationContext.CreateQueryExecutor[TResult](Expression query)
+   at Microsoft.EntityFrameworkCore.Storage.Database.CompileQuery[TResult](Expression query, Boolean async)
+   at Microsoft.EntityFrameworkCore.Query.Internal.QueryCompiler.CompileQueryCore[TResult](IDatabase database, Expression query, IModel model, Boolean async)
+   at Microsoft.EntityFrameworkCore.Query.Internal.QueryCompiler.<>c__DisplayClass11_0`1.<ExecuteCore>b__0()
+   at Microsoft.EntityFrameworkCore.Query.Internal.CompiledQueryCache.GetOrAddQuery[TResult](Object cacheKey, Func`1 compiler)
+   at Microsoft.EntityFrameworkCore.Query.Internal.QueryCompiler.ExecuteCore[TResult](Expression query, Boolean async, CancellationToken cancellationToken)
+   at Microsoft.EntityFrameworkCore.Query.Internal.QueryCompiler.ExecuteAsync[TResult](Expression query, CancellationToken cancellationToken)
+   at Microsoft.EntityFrameworkCore.Query.Internal.EntityQueryProvider.ExecuteAsync[TResult](Expression expression, CancellationToken cancellationToken)
+   at Microsoft.EntityFrameworkCore.Query.Internal.EntityQueryable`1.GetAsyncEnumerator(CancellationToken cancellationToken)
+   at System.Runtime.CompilerServices.ConfiguredCancelableAsyncEnumerable`1.GetAsyncEnumerator()
+   at Microsoft.EntityFrameworkCore.EntityFrameworkQueryableExtensions.ToListAsync[TSource](IQueryable`1 source, CancellationToken cancellationToken)
+   at MuhasebeStokWebApp.Services.DashboardService.GetCriticalStockProductsAsync() in /Users/muhammetkocaman/MuhasebeStokWebApp/Services/DashboardService.cs:line 270
+2025-05-11 13:13:20.411 +03:00 [INF] Kur değeri önbellekten alındı: USD -> TRY, Değer: 33,33
+2025-05-11 13:13:20.411 +03:00 [INF] Kur değeri önbellekten alındı: USD -> UZS, Değer: 12898,012300
+2025-05-11 13:13:20.501 +03:00 [INF] Kur değeri önbellekten alındı: USD -> TRY, Değer: 33,33
+2025-05-11 13:13:20.501 +03:00 [INF] Kur değeri önbellekten alındı: USD -> UZS, Değer: 12898,012300
+2025-05-11 13:13:20.570 +03:00 [INF] Kur değeri önbellekten alındı: USD -> TRY, Değer: 33,33
+2025-05-11 13:13:20.570 +03:00 [INF] Kur değeri önbellekten alındı: USD -> UZS, Değer: 12898,012300
+2025-05-11 13:13:20.580 +03:00 [INF] Dashboard verileri başarıyla yüklendi.
+2025-05-11 13:13:20.580 +03:00 [INF] Kur değeri önbellekten alındı: USD -> TRY, Değer: 33,33
+2025-05-11 13:13:20.585 +03:00 [INF] Kur değeri önbellekten alındı: USD -> UZS, Değer: 12898,012300
+2025-05-11 13:13:20.585 +03:00 [INF] Dashboard sayfası başarıyla yüklendi.
+2025-05-11 13:18:15.700 +03:00 [INF] Yaklaşan hatırlatıcılar kontrol ediliyor...
+2025-05-11 13:18:15.705 +03:00 [INF] Bekleyen hatırlatma bulunamadı.
+2025-05-11 13:19:03.987 +03:00 [INF] Veritabanına bağlantı başarılı. Migrationlar uygulanıyor...
+2025-05-11 13:19:04.310 +03:00 [INF] Veritabanı işlemleri başarıyla tamamlandı.
+2025-05-11 13:19:04.361 +03:00 [INF] Todo Hatırlatıcı Servisi başlatıldı.
+2025-05-11 13:19:04.362 +03:00 [INF] Yaklaşan hatırlatıcılar kontrol ediliyor...
+2025-05-11 13:19:04.403 +03:00 [INF] Bekleyen hatırlatma bulunamadı.
+2025-05-11 13:19:08.098 +03:00 [INF] Dashboard sayfası yükleniyor...
+2025-05-11 13:19:08.100 +03:00 [INF] Dashboard verileri yükleniyor...
+2025-05-11 13:19:08.149 +03:00 [INF] TRY dönüşümü için kur değeri hesaplandı: USD -> TRY, Değer: 33,33
+2025-05-11 13:19:08.290 +03:00 [INF] Kur değeri hesaplandı: USD -> UZS, Değer: 12898,012300
+2025-05-11 13:19:08.402 +03:00 [INF] Kur değeri önbellekten alındı: USD -> TRY, Değer: 33,33
+2025-05-11 13:19:08.402 +03:00 [INF] Kur değeri önbellekten alındı: USD -> UZS, Değer: 12898,012300
+2025-05-11 13:19:08.497 +03:00 [INF] Kur değeri önbellekten alındı: USD -> TRY, Değer: 33,33
+2025-05-11 13:19:08.497 +03:00 [INF] Kur değeri önbellekten alındı: USD -> UZS, Değer: 12898,012300
+2025-05-11 13:19:08.564 +03:00 [INF] Kur değeri önbellekten alındı: USD -> TRY, Değer: 33,33
+2025-05-11 13:19:08.564 +03:00 [INF] Kur değeri önbellekten alındı: USD -> UZS, Değer: 12898,012300
+2025-05-11 13:19:08.573 +03:00 [INF] Dashboard verileri başarıyla yüklendi.
+2025-05-11 13:19:08.574 +03:00 [INF] Kur değeri önbellekten alındı: USD -> TRY, Değer: 33,33
+2025-05-11 13:19:08.579 +03:00 [INF] Kur değeri önbellekten alındı: USD -> UZS, Değer: 12898,012300
+2025-05-11 13:19:08.579 +03:00 [INF] Dashboard sayfası başarıyla yüklendi.
+2025-05-11 13:23:05.975 +03:00 [INF] Veritabanına bağlantı başarılı. Migrationlar uygulanıyor...
+2025-05-11 13:23:06.340 +03:00 [INF] Veritabanı işlemleri başarıyla tamamlandı.
+2025-05-11 13:23:06.421 +03:00 [INF] Todo Hatırlatıcı Servisi başlatıldı.
+2025-05-11 13:23:06.422 +03:00 [INF] Yaklaşan hatırlatıcılar kontrol ediliyor...
+2025-05-11 13:23:06.615 +03:00 [INF] Bekleyen hatırlatma bulunamadı.
+2025-05-11 13:23:20.982 +03:00 [INF] Dashboard sayfası yükleniyor...
+2025-05-11 13:23:20.985 +03:00 [INF] Dashboard verileri yükleniyor...
+2025-05-11 13:23:21.047 +03:00 [INF] TRY dönüşümü için kur değeri hesaplandı: USD -> TRY, Değer: 33,33
+2025-05-11 13:23:21.096 +03:00 [INF] Kur değeri hesaplandı: USD -> UZS, Değer: 12898,012300
+2025-05-11 13:23:21.239 +03:00 [INF] Kur değeri önbellekten alındı: USD -> TRY, Değer: 33,33
+2025-05-11 13:23:21.239 +03:00 [INF] Kur değeri önbellekten alındı: USD -> UZS, Değer: 12898,012300
+2025-05-11 13:23:21.302 +03:00 [INF] Kur değeri önbellekten alındı: USD -> TRY, Değer: 33,33
+2025-05-11 13:23:21.303 +03:00 [INF] Kur değeri önbellekten alındı: USD -> UZS, Değer: 12898,012300
+2025-05-11 13:23:21.379 +03:00 [INF] Kur değeri önbellekten alındı: USD -> TRY, Değer: 33,33
+2025-05-11 13:23:21.379 +03:00 [INF] Kur değeri önbellekten alındı: USD -> UZS, Değer: 12898,012300
+2025-05-11 13:23:21.389 +03:00 [INF] Dashboard verileri başarıyla yüklendi.
+2025-05-11 13:23:21.389 +03:00 [INF] Kur değeri önbellekten alındı: USD -> TRY, Değer: 33,33
+2025-05-11 13:23:21.394 +03:00 [INF] Kur değeri önbellekten alındı: USD -> UZS, Değer: 12898,012300
+2025-05-11 13:23:21.395 +03:00 [INF] Dashboard sayfası başarıyla yüklendi.
+2025-05-11 13:23:59.244 +03:00 [INF] Dashboard sayfası yükleniyor...
+2025-05-11 13:23:59.244 +03:00 [INF] Dashboard verileri yükleniyor...
+2025-05-11 13:23:59.256 +03:00 [INF] Kur değeri önbellekten alındı: USD -> TRY, Değer: 33,33
+2025-05-11 13:23:59.256 +03:00 [INF] Kur değeri önbellekten alındı: USD -> UZS, Değer: 12898,012300
+2025-05-11 13:23:59.288 +03:00 [INF] Dashboard verileri başarıyla yüklendi.
+2025-05-11 13:23:59.289 +03:00 [INF] Kur değeri önbellekten alındı: USD -> TRY, Değer: 33,33
+2025-05-11 13:23:59.289 +03:00 [INF] Kur değeri önbellekten alındı: USD -> UZS, Değer: 12898,012300
+2025-05-11 13:23:59.289 +03:00 [INF] Dashboard sayfası başarıyla yüklendi.
+2025-05-11 13:25:59.469 +03:00 [INF] Veritabanına bağlantı başarılı. Migrationlar uygulanıyor...
+2025-05-11 13:25:59.796 +03:00 [INF] Veritabanı işlemleri başarıyla tamamlandı.
+2025-05-11 13:25:59.848 +03:00 [INF] Todo Hatırlatıcı Servisi başlatıldı.
+2025-05-11 13:25:59.849 +03:00 [INF] Yaklaşan hatırlatıcılar kontrol ediliyor...
+2025-05-11 13:25:59.890 +03:00 [INF] Bekleyen hatırlatma bulunamadı.
+2025-05-11 13:26:03.071 +03:00 [INF] Dashboard sayfası yükleniyor...
+2025-05-11 13:26:03.074 +03:00 [INF] Dashboard verileri yükleniyor...
+2025-05-11 13:26:03.097 +03:00 [INF] TRY dönüşümü için kur değeri hesaplandı: USD -> TRY, Değer: 33,33
+2025-05-11 13:26:03.112 +03:00 [ERR] An exception occurred while iterating over the results of a query for context type 'MuhasebeStokWebApp.Data.ApplicationDbContext'.
+System.InvalidOperationException: A second operation was started on this context instance before a previous operation completed. This is usually caused by different threads concurrently using the same instance of DbContext. For more information on how to avoid threading issues with DbContext, see https://go.microsoft.com/fwlink/?linkid=2097913.
+   at Microsoft.EntityFrameworkCore.Infrastructure.Internal.ConcurrencyDetector.EnterCriticalSection()
+   at Microsoft.EntityFrameworkCore.Query.Internal.SplitQueryingEnumerable`1.AsyncEnumerator.MoveNextAsync()
+System.InvalidOperationException: A second operation was started on this context instance before a previous operation completed. This is usually caused by different threads concurrently using the same instance of DbContext. For more information on how to avoid threading issues with DbContext, see https://go.microsoft.com/fwlink/?linkid=2097913.
+   at Microsoft.EntityFrameworkCore.Infrastructure.Internal.ConcurrencyDetector.EnterCriticalSection()
+   at Microsoft.EntityFrameworkCore.Query.Internal.SplitQueryingEnumerable`1.AsyncEnumerator.MoveNextAsync()
+2025-05-11 13:26:03.113 +03:00 [ERR] Kritik stoktaki ürünler alınırken hata oluştu
+System.InvalidOperationException: A second operation was started on this context instance before a previous operation completed. This is usually caused by different threads concurrently using the same instance of DbContext. For more information on how to avoid threading issues with DbContext, see https://go.microsoft.com/fwlink/?linkid=2097913.
+   at Microsoft.EntityFrameworkCore.Infrastructure.Internal.ConcurrencyDetector.EnterCriticalSection()
+   at Microsoft.EntityFrameworkCore.Query.Internal.SplitQueryingEnumerable`1.AsyncEnumerator.MoveNextAsync()
+   at Microsoft.EntityFrameworkCore.EntityFrameworkQueryableExtensions.ToListAsync[TSource](IQueryable`1 source, CancellationToken cancellationToken)
+   at Microsoft.EntityFrameworkCore.EntityFrameworkQueryableExtensions.ToListAsync[TSource](IQueryable`1 source, CancellationToken cancellationToken)
+   at MuhasebeStokWebApp.Services.DashboardService.GetCriticalStockProductsAsync() in /Users/muhammetkocaman/MuhasebeStokWebApp/Services/DashboardService.cs:line 305
+2025-05-11 13:26:03.120 +03:00 [INF] Kur değeri önbellekten alındı: USD -> TRY, Değer: 33,33
+2025-05-11 13:26:03.120 +03:00 [ERR] An exception occurred while iterating over the results of a query for context type 'MuhasebeStokWebApp.Data.ApplicationDbContext'.
+System.InvalidOperationException: A second operation was started on this context instance before a previous operation completed. This is usually caused by different threads concurrently using the same instance of DbContext. For more information on how to avoid threading issues with DbContext, see https://go.microsoft.com/fwlink/?linkid=2097913.
+   at Microsoft.EntityFrameworkCore.Infrastructure.Internal.ConcurrencyDetector.EnterCriticalSection()
+   at Microsoft.EntityFrameworkCore.Query.Internal.SplitQueryingEnumerable`1.AsyncEnumerator.MoveNextAsync()
+System.InvalidOperationException: A second operation was started on this context instance before a previous operation completed. This is usually caused by different threads concurrently using the same instance of DbContext. For more information on how to avoid threading issues with DbContext, see https://go.microsoft.com/fwlink/?linkid=2097913.
+   at Microsoft.EntityFrameworkCore.Infrastructure.Internal.ConcurrencyDetector.EnterCriticalSection()
+   at Microsoft.EntityFrameworkCore.Query.Internal.SplitQueryingEnumerable`1.AsyncEnumerator.MoveNextAsync()
+2025-05-11 13:26:03.121 +03:00 [ERR] Kur hesaplanırken hata oluştu: USD -> UZS
+System.InvalidOperationException: A second operation was started on this context instance before a previous operation completed. This is usually caused by different threads concurrently using the same instance of DbContext. For more information on how to avoid threading issues with DbContext, see https://go.microsoft.com/fwlink/?linkid=2097913.
+   at Microsoft.EntityFrameworkCore.Infrastructure.Internal.ConcurrencyDetector.EnterCriticalSection()
+   at Microsoft.EntityFrameworkCore.Query.Internal.SplitQueryingEnumerable`1.AsyncEnumerator.MoveNextAsync()
+   at Microsoft.EntityFrameworkCore.Query.ShapedQueryCompilingExpressionVisitor.SingleOrDefaultAsync[TSource](IAsyncEnumerable`1 asyncEnumerable, CancellationToken cancellationToken)
+   at Microsoft.EntityFrameworkCore.Query.ShapedQueryCompilingExpressionVisitor.SingleOrDefaultAsync[TSource](IAsyncEnumerable`1 asyncEnumerable, CancellationToken cancellationToken)
+   at MuhasebeStokWebApp.Services.ParaBirimiModulu.ParaBirimiService.GetParaBirimiByKodAsync(String kod) in /Users/muhammetkocaman/MuhasebeStokWebApp/Services/ParaBirimiModulu/ParaBirimiService.cs:line 75
+   at MuhasebeStokWebApp.Services.ParaBirimiModulu.DovizKuruServiceAdapter.HesaplaKurDegeriByKodAsync(String kaynakKod, String hedefKod, Nullable`1 tarih) in /Users/muhammetkocaman/MuhasebeStokWebApp/Services/ParaBirimiModulu/DovizKuruServiceAdapter.cs:line 447
+2025-05-11 13:26:03.121 +03:00 [INF] Kur değeri hesaplandı: USD -> UZS, Değer: 1
+2025-05-11 13:26:03.131 +03:00 [ERR] An exception occurred while iterating over the results of a query for context type 'MuhasebeStokWebApp.Data.ApplicationDbContext'.
+System.InvalidOperationException: A second operation was started on this context instance before a previous operation completed. This is usually caused by different threads concurrently using the same instance of DbContext. For more information on how to avoid threading issues with DbContext, see https://go.microsoft.com/fwlink/?linkid=2097913.
+   at Microsoft.EntityFrameworkCore.Infrastructure.Internal.ConcurrencyDetector.EnterCriticalSection()
+   at Microsoft.EntityFrameworkCore.Query.Internal.SplitQueryingEnumerable`1.AsyncEnumerator.MoveNextAsync()
+System.InvalidOperationException: A second operation was started on this context instance before a previous operation completed. This is usually caused by different threads concurrently using the same instance of DbContext. For more information on how to avoid threading issues with DbContext, see https://go.microsoft.com/fwlink/?linkid=2097913.
+   at Microsoft.EntityFrameworkCore.Infrastructure.Internal.ConcurrencyDetector.EnterCriticalSection()
+   at Microsoft.EntityFrameworkCore.Query.Internal.SplitQueryingEnumerable`1.AsyncEnumerator.MoveNextAsync()
+2025-05-11 13:26:03.131 +03:00 [ERR] Toplam alış/satış verileri alınırken hata oluştu
+System.InvalidOperationException: A second operation was started on this context instance before a previous operation completed. This is usually caused by different threads concurrently using the same instance of DbContext. For more information on how to avoid threading issues with DbContext, see https://go.microsoft.com/fwlink/?linkid=2097913.
+   at Microsoft.EntityFrameworkCore.Infrastructure.Internal.ConcurrencyDetector.EnterCriticalSection()
+   at Microsoft.EntityFrameworkCore.Query.Internal.SplitQueryingEnumerable`1.AsyncEnumerator.MoveNextAsync()
+   at Microsoft.EntityFrameworkCore.EntityFrameworkQueryableExtensions.ToListAsync[TSource](IQueryable`1 source, CancellationToken cancellationToken)
+   at Microsoft.EntityFrameworkCore.EntityFrameworkQueryableExtensions.ToListAsync[TSource](IQueryable`1 source, CancellationToken cancellationToken)
+   at MuhasebeStokWebApp.Services.DashboardService.GetTotalPurchaseSalesAsync() in /Users/muhammetkocaman/MuhasebeStokWebApp/Services/DashboardService.cs:line 456
+2025-05-11 13:26:03.137 +03:00 [ERR] An exception occurred while iterating over the results of a query for context type 'MuhasebeStokWebApp.Data.ApplicationDbContext'.
+System.InvalidOperationException: A second operation was started on this context instance before a previous operation completed. This is usually caused by different threads concurrently using the same instance of DbContext. For more information on how to avoid threading issues with DbContext, see https://go.microsoft.com/fwlink/?linkid=2097913.
+   at Microsoft.EntityFrameworkCore.Infrastructure.Internal.ConcurrencyDetector.EnterCriticalSection()
+   at Microsoft.EntityFrameworkCore.Query.Internal.SplitQueryingEnumerable`1.AsyncEnumerator.MoveNextAsync()
+System.InvalidOperationException: A second operation was started on this context instance before a previous operation completed. This is usually caused by different threads concurrently using the same instance of DbContext. For more information on how to avoid threading issues with DbContext, see https://go.microsoft.com/fwlink/?linkid=2097913.
+   at Microsoft.EntityFrameworkCore.Infrastructure.Internal.ConcurrencyDetector.EnterCriticalSection()
+   at Microsoft.EntityFrameworkCore.Query.Internal.SplitQueryingEnumerable`1.AsyncEnumerator.MoveNextAsync()
+2025-05-11 13:26:03.138 +03:00 [ERR] Ödeme/tahsilat özeti alınırken hata oluştu
+System.InvalidOperationException: A second operation was started on this context instance before a previous operation completed. This is usually caused by different threads concurrently using the same instance of DbContext. For more information on how to avoid threading issues with DbContext, see https://go.microsoft.com/fwlink/?linkid=2097913.
+   at Microsoft.EntityFrameworkCore.Infrastructure.Internal.ConcurrencyDetector.EnterCriticalSection()
+   at Microsoft.EntityFrameworkCore.Query.Internal.SplitQueryingEnumerable`1.AsyncEnumerator.MoveNextAsync()
+   at Microsoft.EntityFrameworkCore.Query.ShapedQueryCompilingExpressionVisitor.SingleAsync[TSource](IAsyncEnumerable`1 asyncEnumerable, CancellationToken cancellationToken)
+   at Microsoft.EntityFrameworkCore.Query.ShapedQueryCompilingExpressionVisitor.SingleAsync[TSource](IAsyncEnumerable`1 asyncEnumerable, CancellationToken cancellationToken)
+   at MuhasebeStokWebApp.Services.DashboardService.GetPaymentReceiptSummaryAsync() in /Users/muhammetkocaman/MuhasebeStokWebApp/Services/DashboardService.cs:line 535
+2025-05-11 13:26:03.139 +03:00 [INF] Kur değeri önbellekten alındı: USD -> TRY, Değer: 33,33
+2025-05-11 13:26:03.139 +03:00 [INF] Kur değeri önbellekten alındı: USD -> UZS, Değer: 1
+2025-05-11 13:26:03.151 +03:00 [INF] Kur değeri hesaplandı: USD -> UZS, Değer: 12898,012300
+2025-05-11 13:26:03.164 +03:00 [ERR] An exception occurred while iterating over the results of a query for context type 'MuhasebeStokWebApp.Data.ApplicationDbContext'.
+System.InvalidOperationException: A second operation was started on this context instance before a previous operation completed. This is usually caused by different threads concurrently using the same instance of DbContext. For more information on how to avoid threading issues with DbContext, see https://go.microsoft.com/fwlink/?linkid=2097913.
+   at Microsoft.EntityFrameworkCore.Infrastructure.Internal.ConcurrencyDetector.EnterCriticalSection()
+   at Microsoft.EntityFrameworkCore.Query.Internal.SplitQueryingEnumerable`1.AsyncEnumerator.MoveNextAsync()
+System.InvalidOperationException: A second operation was started on this context instance before a previous operation completed. This is usually caused by different threads concurrently using the same instance of DbContext. For more information on how to avoid threading issues with DbContext, see https://go.microsoft.com/fwlink/?linkid=2097913.
+   at Microsoft.EntityFrameworkCore.Infrastructure.Internal.ConcurrencyDetector.EnterCriticalSection()
+   at Microsoft.EntityFrameworkCore.Query.Internal.SplitQueryingEnumerable`1.AsyncEnumerator.MoveNextAsync()
+2025-05-11 13:26:03.164 +03:00 [ERR] Aylık satış trendi alınırken hata oluştu
+System.InvalidOperationException: A second operation was started on this context instance before a previous operation completed. This is usually caused by different threads concurrently using the same instance of DbContext. For more information on how to avoid threading issues with DbContext, see https://go.microsoft.com/fwlink/?linkid=2097913.
+   at Microsoft.EntityFrameworkCore.Infrastructure.Internal.ConcurrencyDetector.EnterCriticalSection()
+   at Microsoft.EntityFrameworkCore.Query.Internal.SplitQueryingEnumerable`1.AsyncEnumerator.MoveNextAsync()
+   at Microsoft.EntityFrameworkCore.EntityFrameworkQueryableExtensions.ToListAsync[TSource](IQueryable`1 source, CancellationToken cancellationToken)
+   at Microsoft.EntityFrameworkCore.EntityFrameworkQueryableExtensions.ToListAsync[TSource](IQueryable`1 source, CancellationToken cancellationToken)
+   at MuhasebeStokWebApp.Services.DashboardService.GetMonthlySalesTrendAsync(Int32 months) in /Users/muhammetkocaman/MuhasebeStokWebApp/Services/DashboardService.cs:line 180
+2025-05-11 13:26:03.168 +03:00 [ERR] An exception occurred while iterating over the results of a query for context type 'MuhasebeStokWebApp.Data.ApplicationDbContext'.
+System.InvalidOperationException: A second operation was started on this context instance before a previous operation completed. This is usually caused by different threads concurrently using the same instance of DbContext. For more information on how to avoid threading issues with DbContext, see https://go.microsoft.com/fwlink/?linkid=2097913.
+   at Microsoft.EntityFrameworkCore.Infrastructure.Internal.ConcurrencyDetector.EnterCriticalSection()
+   at Microsoft.EntityFrameworkCore.Query.Internal.SplitQueryingEnumerable`1.AsyncEnumerator.MoveNextAsync()
+System.InvalidOperationException: A second operation was started on this context instance before a previous operation completed. This is usually caused by different threads concurrently using the same instance of DbContext. For more information on how to avoid threading issues with DbContext, see https://go.microsoft.com/fwlink/?linkid=2097913.
+   at Microsoft.EntityFrameworkCore.Infrastructure.Internal.ConcurrencyDetector.EnterCriticalSection()
+   at Microsoft.EntityFrameworkCore.Query.Internal.SplitQueryingEnumerable`1.AsyncEnumerator.MoveNextAsync()
+2025-05-11 13:26:03.169 +03:00 [ERR] Günlük işlem aktivitesi alınırken hata oluştu: A second operation was started on this context instance before a previous operation completed. This is usually caused by different threads concurrently using the same instance of DbContext. For more information on how to avoid threading issues with DbContext, see https://go.microsoft.com/fwlink/?linkid=2097913.
+System.InvalidOperationException: A second operation was started on this context instance before a previous operation completed. This is usually caused by different threads concurrently using the same instance of DbContext. For more information on how to avoid threading issues with DbContext, see https://go.microsoft.com/fwlink/?linkid=2097913.
+   at Microsoft.EntityFrameworkCore.Infrastructure.Internal.ConcurrencyDetector.EnterCriticalSection()
+   at Microsoft.EntityFrameworkCore.Query.Internal.SplitQueryingEnumerable`1.AsyncEnumerator.MoveNextAsync()
+   at Microsoft.EntityFrameworkCore.EntityFrameworkQueryableExtensions.ToListAsync[TSource](IQueryable`1 source, CancellationToken cancellationToken)
+   at Microsoft.EntityFrameworkCore.EntityFrameworkQueryableExtensions.ToListAsync[TSource](IQueryable`1 source, CancellationToken cancellationToken)
+   at MuhasebeStokWebApp.Services.DashboardService.GetDailyActivityAsync(Int32 days) in /Users/muhammetkocaman/MuhasebeStokWebApp/Services/DashboardService.cs:line 673
+2025-05-11 13:26:03.170 +03:00 [INF] Kur değeri önbellekten alındı: USD -> TRY, Değer: 33,33
+2025-05-11 13:26:03.170 +03:00 [INF] Kur değeri önbellekten alındı: USD -> UZS, Değer: 12898,012300
+2025-05-11 13:26:03.178 +03:00 [ERR] An exception occurred while iterating over the results of a query for context type 'MuhasebeStokWebApp.Data.ApplicationDbContext'.
+System.InvalidOperationException: A second operation was started on this context instance before a previous operation completed. This is usually caused by different threads concurrently using the same instance of DbContext. For more information on how to avoid threading issues with DbContext, see https://go.microsoft.com/fwlink/?linkid=2097913.
+   at Microsoft.EntityFrameworkCore.Infrastructure.Internal.ConcurrencyDetector.EnterCriticalSection()
+   at Microsoft.EntityFrameworkCore.Query.Internal.SplitQueryingEnumerable`1.AsyncEnumerator.MoveNextAsync()
+System.InvalidOperationException: A second operation was started on this context instance before a previous operation completed. This is usually caused by different threads concurrently using the same instance of DbContext. For more information on how to avoid threading issues with DbContext, see https://go.microsoft.com/fwlink/?linkid=2097913.
+   at Microsoft.EntityFrameworkCore.Infrastructure.Internal.ConcurrencyDetector.EnterCriticalSection()
+   at Microsoft.EntityFrameworkCore.Query.Internal.SplitQueryingEnumerable`1.AsyncEnumerator.MoveNextAsync()
+2025-05-11 13:26:03.178 +03:00 [ERR] Ortalama kar marjı alınırken hata oluştu
+System.InvalidOperationException: A second operation was started on this context instance before a previous operation completed. This is usually caused by different threads concurrently using the same instance of DbContext. For more information on how to avoid threading issues with DbContext, see https://go.microsoft.com/fwlink/?linkid=2097913.
+   at Microsoft.EntityFrameworkCore.Infrastructure.Internal.ConcurrencyDetector.EnterCriticalSection()
+   at Microsoft.EntityFrameworkCore.Query.Internal.SplitQueryingEnumerable`1.AsyncEnumerator.MoveNextAsync()
+   at Microsoft.EntityFrameworkCore.EntityFrameworkQueryableExtensions.ToListAsync[TSource](IQueryable`1 source, CancellationToken cancellationToken)
+   at Microsoft.EntityFrameworkCore.EntityFrameworkQueryableExtensions.ToListAsync[TSource](IQueryable`1 source, CancellationToken cancellationToken)
+   at MuhasebeStokWebApp.Services.DashboardService.GetProfitMarginAsync() in /Users/muhammetkocaman/MuhasebeStokWebApp/Services/DashboardService.cs:line 751
+2025-05-11 13:26:03.205 +03:00 [INF] Dashboard verileri başarıyla yüklendi.
+2025-05-11 13:26:03.205 +03:00 [INF] Kur değeri önbellekten alındı: USD -> TRY, Değer: 33,33
+2025-05-11 13:26:03.210 +03:00 [INF] Kur değeri önbellekten alındı: USD -> UZS, Değer: 12898,012300
+2025-05-11 13:26:03.211 +03:00 [INF] Dashboard sayfası başarıyla yüklendi.
+2025-05-11 13:26:06.026 +03:00 [WRN] Session bulunamadı, kullanıcı giriş yapmamış olabilir
+2025-05-11 13:26:06.028 +03:00 [INF] Kimlik doğrulanmış kullanıcı: admin
+2025-05-11 13:26:06.146 +03:00 [INF] TRY dönüşümü için kur değeri hesaplandı: TRY -> USD, Değer: 0,03
+2025-05-11 13:26:06.156 +03:00 [INF] Kur değeri hesaplandı: UZS -> USD, Değer: 0,0000775313262804067879513497
+2025-05-11 13:26:06.257 +03:00 [INF] Kur değeri önbellekten alındı: UZS -> USD, Değer: 0,0000775313262804067879513497
+2025-05-11 13:26:06.257 +03:00 [INF] Çevrilen tutar hesaplandı: UZS -> USD, Tutar: 0,00, Sonuç: 0, Kur: 0,0000775313262804067879513497
+2025-05-11 13:26:08.506 +03:00 [INF] Dashboard sayfası yükleniyor...
+2025-05-11 13:26:08.506 +03:00 [INF] Dashboard verileri yükleniyor...
+2025-05-11 13:26:08.509 +03:00 [ERR] An exception occurred while iterating over the results of a query for context type 'MuhasebeStokWebApp.Data.ApplicationDbContext'.
+System.InvalidOperationException: A second operation was started on this context instance before a previous operation completed. This is usually caused by different threads concurrently using the same instance of DbContext. For more information on how to avoid threading issues with DbContext, see https://go.microsoft.com/fwlink/?linkid=2097913.
+   at Microsoft.EntityFrameworkCore.Query.Internal.SplitQueryingEnumerable`1.AsyncEnumerator.MoveNextAsync()
+System.InvalidOperationException: A second operation was started on this context instance before a previous operation completed. This is usually caused by different threads concurrently using the same instance of DbContext. For more information on how to avoid threading issues with DbContext, see https://go.microsoft.com/fwlink/?linkid=2097913.
+   at Microsoft.EntityFrameworkCore.Query.Internal.SplitQueryingEnumerable`1.AsyncEnumerator.MoveNextAsync()
+2025-05-11 13:26:08.509 +03:00 [ERR] En çok satış yapılan cariler alınırken hata oluştu
+System.InvalidOperationException: A second operation was started on this context instance before a previous operation completed. This is usually caused by different threads concurrently using the same instance of DbContext. For more information on how to avoid threading issues with DbContext, see https://go.microsoft.com/fwlink/?linkid=2097913.
+   at Microsoft.EntityFrameworkCore.Query.Internal.SplitQueryingEnumerable`1.AsyncEnumerator.MoveNextAsync()
+   at Microsoft.EntityFrameworkCore.EntityFrameworkQueryableExtensions.ToListAsync[TSource](IQueryable`1 source, CancellationToken cancellationToken)
+   at Microsoft.EntityFrameworkCore.EntityFrameworkQueryableExtensions.ToListAsync[TSource](IQueryable`1 source, CancellationToken cancellationToken)
+   at MuhasebeStokWebApp.Services.DashboardService.GetTopCustomersAsync(Int32 count) in /Users/muhammetkocaman/MuhasebeStokWebApp/Services/DashboardService.cs:line 130
+2025-05-11 13:26:08.510 +03:00 [INF] Kur değeri önbellekten alındı: USD -> TRY, Değer: 33,33
+2025-05-11 13:26:08.510 +03:00 [INF] Kur değeri önbellekten alındı: USD -> UZS, Değer: 12898,012300
+2025-05-11 13:26:08.510 +03:00 [ERR] An exception occurred while iterating over the results of a query for context type 'MuhasebeStokWebApp.Data.ApplicationDbContext'.
+System.InvalidOperationException: A second operation was started on this context instance before a previous operation completed. This is usually caused by different threads concurrently using the same instance of DbContext. For more information on how to avoid threading issues with DbContext, see https://go.microsoft.com/fwlink/?linkid=2097913.
+   at Microsoft.EntityFrameworkCore.Query.Internal.SplitQueryingEnumerable`1.AsyncEnumerator.MoveNextAsync()
+System.InvalidOperationException: A second operation was started on this context instance before a previous operation completed. This is usually caused by different threads concurrently using the same instance of DbContext. For more information on how to avoid threading issues with DbContext, see https://go.microsoft.com/fwlink/?linkid=2097913.
+   at Microsoft.EntityFrameworkCore.Query.Internal.SplitQueryingEnumerable`1.AsyncEnumerator.MoveNextAsync()
+2025-05-11 13:26:08.511 +03:00 [ERR] Aylık satış trendi alınırken hata oluştu
+System.InvalidOperationException: A second operation was started on this context instance before a previous operation completed. This is usually caused by different threads concurrently using the same instance of DbContext. For more information on how to avoid threading issues with DbContext, see https://go.microsoft.com/fwlink/?linkid=2097913.
+   at Microsoft.EntityFrameworkCore.Query.Internal.SplitQueryingEnumerable`1.AsyncEnumerator.MoveNextAsync()
+   at Microsoft.EntityFrameworkCore.EntityFrameworkQueryableExtensions.ToListAsync[TSource](IQueryable`1 source, CancellationToken cancellationToken)
+   at Microsoft.EntityFrameworkCore.EntityFrameworkQueryableExtensions.ToListAsync[TSource](IQueryable`1 source, CancellationToken cancellationToken)
+   at MuhasebeStokWebApp.Services.DashboardService.GetMonthlySalesTrendAsync(Int32 months) in /Users/muhammetkocaman/MuhasebeStokWebApp/Services/DashboardService.cs:line 180
+2025-05-11 13:26:08.512 +03:00 [ERR] An exception occurred while iterating over the results of a query for context type 'MuhasebeStokWebApp.Data.ApplicationDbContext'.
+System.InvalidOperationException: A second operation was started on this context instance before a previous operation completed. This is usually caused by different threads concurrently using the same instance of DbContext. For more information on how to avoid threading issues with DbContext, see https://go.microsoft.com/fwlink/?linkid=2097913.
+   at Microsoft.EntityFrameworkCore.Query.Internal.SplitQueryingEnumerable`1.AsyncEnumerator.MoveNextAsync()
+System.InvalidOperationException: A second operation was started on this context instance before a previous operation completed. This is usually caused by different threads concurrently using the same instance of DbContext. For more information on how to avoid threading issues with DbContext, see https://go.microsoft.com/fwlink/?linkid=2097913.
+   at Microsoft.EntityFrameworkCore.Query.Internal.SplitQueryingEnumerable`1.AsyncEnumerator.MoveNextAsync()
+2025-05-11 13:26:08.512 +03:00 [ERR] Döviz bazlı satış dağılımı alınırken hata oluştu
+System.InvalidOperationException: A second operation was started on this context instance before a previous operation completed. This is usually caused by different threads concurrently using the same instance of DbContext. For more information on how to avoid threading issues with DbContext, see https://go.microsoft.com/fwlink/?linkid=2097913.
+   at Microsoft.EntityFrameworkCore.Query.Internal.SplitQueryingEnumerable`1.AsyncEnumerator.MoveNextAsync()
+   at Microsoft.EntityFrameworkCore.EntityFrameworkQueryableExtensions.ToListAsync[TSource](IQueryable`1 source, CancellationToken cancellationToken)
+   at Microsoft.EntityFrameworkCore.EntityFrameworkQueryableExtensions.ToListAsync[TSource](IQueryable`1 source, CancellationToken cancellationToken)
+   at MuhasebeStokWebApp.Services.DashboardService.GetCurrencySalesDistributionAsync() in /Users/muhammetkocaman/MuhasebeStokWebApp/Services/DashboardService.cs:line 370
+2025-05-11 13:26:08.513 +03:00 [INF] Kur değeri önbellekten alındı: USD -> TRY, Değer: 33,33
+2025-05-11 13:26:08.513 +03:00 [INF] Kur değeri önbellekten alındı: USD -> UZS, Değer: 12898,012300
+2025-05-11 13:26:08.513 +03:00 [ERR] An exception occurred while iterating over the results of a query for context type 'MuhasebeStokWebApp.Data.ApplicationDbContext'.
+System.InvalidOperationException: A second operation was started on this context instance before a previous operation completed. This is usually caused by different threads concurrently using the same instance of DbContext. For more information on how to avoid threading issues with DbContext, see https://go.microsoft.com/fwlink/?linkid=2097913.
+   at Microsoft.EntityFrameworkCore.Query.Internal.SplitQueryingEnumerable`1.AsyncEnumerator.MoveNextAsync()
+System.InvalidOperationException: A second operation was started on this context instance before a previous operation completed. This is usually caused by different threads concurrently using the same instance of DbContext. For more information on how to avoid threading issues with DbContext, see https://go.microsoft.com/fwlink/?linkid=2097913.
+   at Microsoft.EntityFrameworkCore.Query.Internal.SplitQueryingEnumerable`1.AsyncEnumerator.MoveNextAsync()
+2025-05-11 13:26:08.513 +03:00 [ERR] Toplam alış/satış verileri alınırken hata oluştu
+System.InvalidOperationException: A second operation was started on this context instance before a previous operation completed. This is usually caused by different threads concurrently using the same instance of DbContext. For more information on how to avoid threading issues with DbContext, see https://go.microsoft.com/fwlink/?linkid=2097913.
+   at Microsoft.EntityFrameworkCore.Query.Internal.SplitQueryingEnumerable`1.AsyncEnumerator.MoveNextAsync()
+   at Microsoft.EntityFrameworkCore.EntityFrameworkQueryableExtensions.ToListAsync[TSource](IQueryable`1 source, CancellationToken cancellationToken)
+   at Microsoft.EntityFrameworkCore.EntityFrameworkQueryableExtensions.ToListAsync[TSource](IQueryable`1 source, CancellationToken cancellationToken)
+   at MuhasebeStokWebApp.Services.DashboardService.GetTotalPurchaseSalesAsync() in /Users/muhammetkocaman/MuhasebeStokWebApp/Services/DashboardService.cs:line 456
+2025-05-11 13:26:08.516 +03:00 [ERR] An exception occurred while iterating over the results of a query for context type 'MuhasebeStokWebApp.Data.ApplicationDbContext'.
+System.InvalidOperationException: A second operation was started on this context instance before a previous operation completed. This is usually caused by different threads concurrently using the same instance of DbContext. For more information on how to avoid threading issues with DbContext, see https://go.microsoft.com/fwlink/?linkid=2097913.
+   at Microsoft.EntityFrameworkCore.Query.Internal.SplitQueryingEnumerable`1.AsyncEnumerator.MoveNextAsync()
+System.InvalidOperationException: A second operation was started on this context instance before a previous operation completed. This is usually caused by different threads concurrently using the same instance of DbContext. For more information on how to avoid threading issues with DbContext, see https://go.microsoft.com/fwlink/?linkid=2097913.
+   at Microsoft.EntityFrameworkCore.Query.Internal.SplitQueryingEnumerable`1.AsyncEnumerator.MoveNextAsync()
+2025-05-11 13:26:08.517 +03:00 [ERR] Günlük işlem aktivitesi alınırken hata oluştu: A second operation was started on this context instance before a previous operation completed. This is usually caused by different threads concurrently using the same instance of DbContext. For more information on how to avoid threading issues with DbContext, see https://go.microsoft.com/fwlink/?linkid=2097913.
+System.InvalidOperationException: A second operation was started on this context instance before a previous operation completed. This is usually caused by different threads concurrently using the same instance of DbContext. For more information on how to avoid threading issues with DbContext, see https://go.microsoft.com/fwlink/?linkid=2097913.
+   at Microsoft.EntityFrameworkCore.Query.Internal.SplitQueryingEnumerable`1.AsyncEnumerator.MoveNextAsync()
+   at Microsoft.EntityFrameworkCore.EntityFrameworkQueryableExtensions.ToListAsync[TSource](IQueryable`1 source, CancellationToken cancellationToken)
+   at Microsoft.EntityFrameworkCore.EntityFrameworkQueryableExtensions.ToListAsync[TSource](IQueryable`1 source, CancellationToken cancellationToken)
+   at MuhasebeStokWebApp.Services.DashboardService.GetDailyActivityAsync(Int32 days) in /Users/muhammetkocaman/MuhasebeStokWebApp/Services/DashboardService.cs:line 673
+2025-05-11 13:26:08.517 +03:00 [INF] Kur değeri önbellekten alındı: USD -> TRY, Değer: 33,33
+2025-05-11 13:26:08.518 +03:00 [INF] Kur değeri önbellekten alındı: USD -> UZS, Değer: 12898,012300
+2025-05-11 13:26:08.518 +03:00 [ERR] An exception occurred while iterating over the results of a query for context type 'MuhasebeStokWebApp.Data.ApplicationDbContext'.
+System.InvalidOperationException: A second operation was started on this context instance before a previous operation completed. This is usually caused by different threads concurrently using the same instance of DbContext. For more information on how to avoid threading issues with DbContext, see https://go.microsoft.com/fwlink/?linkid=2097913.
+   at Microsoft.EntityFrameworkCore.Query.Internal.SplitQueryingEnumerable`1.AsyncEnumerator.MoveNextAsync()
+System.InvalidOperationException: A second operation was started on this context instance before a previous operation completed. This is usually caused by different threads concurrently using the same instance of DbContext. For more information on how to avoid threading issues with DbContext, see https://go.microsoft.com/fwlink/?linkid=2097913.
+   at Microsoft.EntityFrameworkCore.Query.Internal.SplitQueryingEnumerable`1.AsyncEnumerator.MoveNextAsync()
+2025-05-11 13:26:08.518 +03:00 [ERR] Ortalama kar marjı alınırken hata oluştu
+System.InvalidOperationException: A second operation was started on this context instance before a previous operation completed. This is usually caused by different threads concurrently using the same instance of DbContext. For more information on how to avoid threading issues with DbContext, see https://go.microsoft.com/fwlink/?linkid=2097913.
+   at Microsoft.EntityFrameworkCore.Query.Internal.SplitQueryingEnumerable`1.AsyncEnumerator.MoveNextAsync()
+   at Microsoft.EntityFrameworkCore.EntityFrameworkQueryableExtensions.ToListAsync[TSource](IQueryable`1 source, CancellationToken cancellationToken)
+   at Microsoft.EntityFrameworkCore.EntityFrameworkQueryableExtensions.ToListAsync[TSource](IQueryable`1 source, CancellationToken cancellationToken)
+   at MuhasebeStokWebApp.Services.DashboardService.GetProfitMarginAsync() in /Users/muhammetkocaman/MuhasebeStokWebApp/Services/DashboardService.cs:line 751
+2025-05-11 13:26:08.542 +03:00 [ERR] An exception occurred while iterating over the results of a query for context type 'MuhasebeStokWebApp.Data.ApplicationDbContext'.
+System.InvalidOperationException: A second operation was started on this context instance before a previous operation completed. This is usually caused by different threads concurrently using the same instance of DbContext. For more information on how to avoid threading issues with DbContext, see https://go.microsoft.com/fwlink/?linkid=2097913.
+   at Microsoft.EntityFrameworkCore.Query.Internal.SplitQueryingEnumerable`1.AsyncEnumerator.MoveNextAsync()
+System.InvalidOperationException: A second operation was started on this context instance before a previous operation completed. This is usually caused by different threads concurrently using the same instance of DbContext. For more information on how to avoid threading issues with DbContext, see https://go.microsoft.com/fwlink/?linkid=2097913.
+   at Microsoft.EntityFrameworkCore.Query.Internal.SplitQueryingEnumerable`1.AsyncEnumerator.MoveNextAsync()
+2025-05-11 13:26:08.542 +03:00 [ERR] Ödeme/tahsilat özeti alınırken hata oluştu
+System.InvalidOperationException: A second operation was started on this context instance before a previous operation completed. This is usually caused by different threads concurrently using the same instance of DbContext. For more information on how to avoid threading issues with DbContext, see https://go.microsoft.com/fwlink/?linkid=2097913.
+   at Microsoft.EntityFrameworkCore.Query.Internal.SplitQueryingEnumerable`1.AsyncEnumerator.MoveNextAsync()
+   at Microsoft.EntityFrameworkCore.EntityFrameworkQueryableExtensions.ToListAsync[TSource](IQueryable`1 source, CancellationToken cancellationToken)
+   at Microsoft.EntityFrameworkCore.EntityFrameworkQueryableExtensions.ToListAsync[TSource](IQueryable`1 source, CancellationToken cancellationToken)
+   at MuhasebeStokWebApp.Services.DashboardService.GetPaymentReceiptSummaryAsync() in /Users/muhammetkocaman/MuhasebeStokWebApp/Services/DashboardService.cs:line 549
+2025-05-11 13:26:08.556 +03:00 [INF] Dashboard verileri başarıyla yüklendi.
+2025-05-11 13:26:08.556 +03:00 [INF] Kur değeri önbellekten alındı: USD -> TRY, Değer: 33,33
+2025-05-11 13:26:08.556 +03:00 [INF] Kur değeri önbellekten alındı: USD -> UZS, Değer: 12898,012300
+2025-05-11 13:26:08.556 +03:00 [INF] Dashboard sayfası başarıyla yüklendi.
+2025-05-11 13:27:23.472 +03:00 [INF] Veritabanına bağlantı başarılı. Migrationlar uygulanıyor...
+2025-05-11 13:27:23.800 +03:00 [INF] Veritabanı işlemleri başarıyla tamamlandı.
+2025-05-11 13:27:23.852 +03:00 [INF] Todo Hatırlatıcı Servisi başlatıldı.
+2025-05-11 13:27:23.853 +03:00 [INF] Yaklaşan hatırlatıcılar kontrol ediliyor...
+2025-05-11 13:27:23.895 +03:00 [INF] Bekleyen hatırlatma bulunamadı.
+2025-05-11 13:27:24.001 +03:00 [ERR] Hosting failed to start
+System.IO.IOException: Failed to bind to address https://127.0.0.1:7118: address already in use.
+ ---> Microsoft.AspNetCore.Connections.AddressInUseException: Address already in use
+ ---> System.Net.Sockets.SocketException (48): Address already in use
+   at System.Net.Sockets.Socket.DoBind(EndPoint endPointSnapshot, SocketAddress socketAddress)
+   at System.Net.Sockets.Socket.Bind(EndPoint localEP)
+   at Microsoft.AspNetCore.Server.Kestrel.Transport.Sockets.SocketTransportOptions.CreateDefaultBoundListenSocket(EndPoint endpoint)
+   at Microsoft.AspNetCore.Server.Kestrel.Transport.Sockets.SocketConnectionListener.Bind()
+   --- End of inner exception stack trace ---
+   at Microsoft.AspNetCore.Server.Kestrel.Transport.Sockets.SocketConnectionListener.Bind()
+   at Microsoft.AspNetCore.Server.Kestrel.Transport.Sockets.SocketTransportFactory.BindAsync(EndPoint endpoint, CancellationToken cancellationToken)
+   at Microsoft.AspNetCore.Server.Kestrel.Core.Internal.Infrastructure.TransportManager.BindAsync(EndPoint endPoint, ConnectionDelegate connectionDelegate, EndpointConfig endpointConfig, CancellationToken cancellationToken)
+   at Microsoft.AspNetCore.Server.Kestrel.Core.KestrelServerImpl.<>c__DisplayClass28_0`1.<<StartAsync>g__OnBind|0>d.MoveNext()
+--- End of stack trace from previous location ---
+   at Microsoft.AspNetCore.Server.Kestrel.Core.Internal.AddressBinder.BindEndpointAsync(ListenOptions endpoint, AddressBindContext context, CancellationToken cancellationToken)
+   --- End of inner exception stack trace ---
+   at Microsoft.AspNetCore.Server.Kestrel.Core.Internal.AddressBinder.BindEndpointAsync(ListenOptions endpoint, AddressBindContext context, CancellationToken cancellationToken)
+   at Microsoft.AspNetCore.Server.Kestrel.Core.LocalhostListenOptions.BindAsync(AddressBindContext context, CancellationToken cancellationToken)
+   at Microsoft.AspNetCore.Server.Kestrel.Core.Internal.AddressBinder.AddressesStrategy.BindAsync(AddressBindContext context, CancellationToken cancellationToken)
+   at Microsoft.AspNetCore.Server.Kestrel.Core.KestrelServerImpl.BindAsync(CancellationToken cancellationToken)
+   at Microsoft.AspNetCore.Server.Kestrel.Core.KestrelServerImpl.StartAsync[TContext](IHttpApplication`1 application, CancellationToken cancellationToken)
+   at Microsoft.AspNetCore.Hosting.GenericWebHostService.StartAsync(CancellationToken cancellationToken)
+   at Microsoft.Extensions.Hosting.Internal.Host.<StartAsync>b__14_1(IHostedService service, CancellationToken token)
+   at Microsoft.Extensions.Hosting.Internal.Host.ForeachService[T](IEnumerable`1 services, CancellationToken token, Boolean concurrent, Boolean abortOnFirstException, List`1 exceptions, Func`3 operation)
+2025-05-11 13:27:24.007 +03:00 [ERR] BackgroundService failed
+System.Threading.Tasks.TaskCanceledException: A task was canceled.
+   at MuhasebeStokWebApp.Services.TodoReminderService.ExecuteAsync(CancellationToken stoppingToken) in /Users/muhammetkocaman/MuhasebeStokWebApp/Services/TodoReminderService.cs:line 46
+   at Microsoft.Extensions.Hosting.Internal.Host.TryExecuteBackgroundServiceAsync(BackgroundService backgroundService)
+2025-05-11 13:27:24.009 +03:00 [FTL] The HostOptions.BackgroundServiceExceptionBehavior is configured to StopHost. A BackgroundService has thrown an unhandled exception, and the IHost instance is stopping. To avoid this behavior, configure this to Ignore; however the BackgroundService will not be restarted.
+System.Threading.Tasks.TaskCanceledException: A task was canceled.
+   at MuhasebeStokWebApp.Services.TodoReminderService.ExecuteAsync(CancellationToken stoppingToken) in /Users/muhammetkocaman/MuhasebeStokWebApp/Services/TodoReminderService.cs:line 46
+   at Microsoft.Extensions.Hosting.Internal.Host.TryExecuteBackgroundServiceAsync(BackgroundService backgroundService)
+2025-05-11 13:27:43.147 +03:00 [INF] Veritabanına bağlantı başarılı. Migrationlar uygulanıyor...
+2025-05-11 13:27:43.467 +03:00 [INF] Veritabanı işlemleri başarıyla tamamlandı.
+2025-05-11 13:27:43.517 +03:00 [INF] Todo Hatırlatıcı Servisi başlatıldı.
+2025-05-11 13:27:43.518 +03:00 [INF] Yaklaşan hatırlatıcılar kontrol ediliyor...
+2025-05-11 13:27:43.559 +03:00 [INF] Bekleyen hatırlatma bulunamadı.
+2025-05-11 13:27:47.240 +03:00 [INF] Dashboard sayfası yükleniyor...
+2025-05-11 13:27:47.242 +03:00 [INF] Dashboard verileri yükleniyor...
+2025-05-11 13:27:47.267 +03:00 [INF] TRY dönüşümü için kur değeri hesaplandı: USD -> TRY, Değer: 33,33
+2025-05-11 13:27:47.283 +03:00 [ERR] An exception occurred while iterating over the results of a query for context type 'MuhasebeStokWebApp.Data.ApplicationDbContext'.
+System.InvalidOperationException: A second operation was started on this context instance before a previous operation completed. This is usually caused by different threads concurrently using the same instance of DbContext. For more information on how to avoid threading issues with DbContext, see https://go.microsoft.com/fwlink/?linkid=2097913.
+   at Microsoft.EntityFrameworkCore.Infrastructure.Internal.ConcurrencyDetector.EnterCriticalSection()
+   at Microsoft.EntityFrameworkCore.Query.Internal.SplitQueryingEnumerable`1.AsyncEnumerator.MoveNextAsync()
+System.InvalidOperationException: A second operation was started on this context instance before a previous operation completed. This is usually caused by different threads concurrently using the same instance of DbContext. For more information on how to avoid threading issues with DbContext, see https://go.microsoft.com/fwlink/?linkid=2097913.
+   at Microsoft.EntityFrameworkCore.Infrastructure.Internal.ConcurrencyDetector.EnterCriticalSection()
+   at Microsoft.EntityFrameworkCore.Query.Internal.SplitQueryingEnumerable`1.AsyncEnumerator.MoveNextAsync()
+2025-05-11 13:27:47.283 +03:00 [ERR] Kritik stoktaki ürünler alınırken hata oluştu
+System.InvalidOperationException: A second operation was started on this context instance before a previous operation completed. This is usually caused by different threads concurrently using the same instance of DbContext. For more information on how to avoid threading issues with DbContext, see https://go.microsoft.com/fwlink/?linkid=2097913.
+   at Microsoft.EntityFrameworkCore.Infrastructure.Internal.ConcurrencyDetector.EnterCriticalSection()
+   at Microsoft.EntityFrameworkCore.Query.Internal.SplitQueryingEnumerable`1.AsyncEnumerator.MoveNextAsync()
+   at Microsoft.EntityFrameworkCore.EntityFrameworkQueryableExtensions.ToListAsync[TSource](IQueryable`1 source, CancellationToken cancellationToken)
+   at Microsoft.EntityFrameworkCore.EntityFrameworkQueryableExtensions.ToListAsync[TSource](IQueryable`1 source, CancellationToken cancellationToken)
+   at MuhasebeStokWebApp.Services.DashboardService.GetCriticalStockProductsAsync() in /Users/muhammetkocaman/MuhasebeStokWebApp/Services/DashboardService.cs:line 305
+2025-05-11 13:27:47.289 +03:00 [INF] Kur değeri önbellekten alındı: USD -> TRY, Değer: 33,33
+2025-05-11 13:27:47.290 +03:00 [ERR] An exception occurred while iterating over the results of a query for context type 'MuhasebeStokWebApp.Data.ApplicationDbContext'.
+System.InvalidOperationException: A second operation was started on this context instance before a previous operation completed. This is usually caused by different threads concurrently using the same instance of DbContext. For more information on how to avoid threading issues with DbContext, see https://go.microsoft.com/fwlink/?linkid=2097913.
+   at Microsoft.EntityFrameworkCore.Infrastructure.Internal.ConcurrencyDetector.EnterCriticalSection()
+   at Microsoft.EntityFrameworkCore.Query.Internal.SplitQueryingEnumerable`1.AsyncEnumerator.MoveNextAsync()
+System.InvalidOperationException: A second operation was started on this context instance before a previous operation completed. This is usually caused by different threads concurrently using the same instance of DbContext. For more information on how to avoid threading issues with DbContext, see https://go.microsoft.com/fwlink/?linkid=2097913.
+   at Microsoft.EntityFrameworkCore.Infrastructure.Internal.ConcurrencyDetector.EnterCriticalSection()
+   at Microsoft.EntityFrameworkCore.Query.Internal.SplitQueryingEnumerable`1.AsyncEnumerator.MoveNextAsync()
+2025-05-11 13:27:47.290 +03:00 [ERR] Kur hesaplanırken hata oluştu: USD -> UZS
+System.InvalidOperationException: A second operation was started on this context instance before a previous operation completed. This is usually caused by different threads concurrently using the same instance of DbContext. For more information on how to avoid threading issues with DbContext, see https://go.microsoft.com/fwlink/?linkid=2097913.
+   at Microsoft.EntityFrameworkCore.Infrastructure.Internal.ConcurrencyDetector.EnterCriticalSection()
+   at Microsoft.EntityFrameworkCore.Query.Internal.SplitQueryingEnumerable`1.AsyncEnumerator.MoveNextAsync()
+   at Microsoft.EntityFrameworkCore.Query.ShapedQueryCompilingExpressionVisitor.SingleOrDefaultAsync[TSource](IAsyncEnumerable`1 asyncEnumerable, CancellationToken cancellationToken)
+   at Microsoft.EntityFrameworkCore.Query.ShapedQueryCompilingExpressionVisitor.SingleOrDefaultAsync[TSource](IAsyncEnumerable`1 asyncEnumerable, CancellationToken cancellationToken)
+   at MuhasebeStokWebApp.Services.ParaBirimiModulu.ParaBirimiService.GetParaBirimiByKodAsync(String kod) in /Users/muhammetkocaman/MuhasebeStokWebApp/Services/ParaBirimiModulu/ParaBirimiService.cs:line 75
+   at MuhasebeStokWebApp.Services.ParaBirimiModulu.DovizKuruServiceAdapter.HesaplaKurDegeriByKodAsync(String kaynakKod, String hedefKod, Nullable`1 tarih) in /Users/muhammetkocaman/MuhasebeStokWebApp/Services/ParaBirimiModulu/DovizKuruServiceAdapter.cs:line 447
+2025-05-11 13:27:47.290 +03:00 [INF] Kur değeri hesaplandı: USD -> UZS, Değer: 1
+2025-05-11 13:27:47.300 +03:00 [ERR] An exception occurred while iterating over the results of a query for context type 'MuhasebeStokWebApp.Data.ApplicationDbContext'.
+System.InvalidOperationException: A second operation was started on this context instance before a previous operation completed. This is usually caused by different threads concurrently using the same instance of DbContext. For more information on how to avoid threading issues with DbContext, see https://go.microsoft.com/fwlink/?linkid=2097913.
+   at Microsoft.EntityFrameworkCore.Infrastructure.Internal.ConcurrencyDetector.EnterCriticalSection()
+   at Microsoft.EntityFrameworkCore.Query.Internal.SplitQueryingEnumerable`1.AsyncEnumerator.MoveNextAsync()
+System.InvalidOperationException: A second operation was started on this context instance before a previous operation completed. This is usually caused by different threads concurrently using the same instance of DbContext. For more information on how to avoid threading issues with DbContext, see https://go.microsoft.com/fwlink/?linkid=2097913.
+   at Microsoft.EntityFrameworkCore.Infrastructure.Internal.ConcurrencyDetector.EnterCriticalSection()
+   at Microsoft.EntityFrameworkCore.Query.Internal.SplitQueryingEnumerable`1.AsyncEnumerator.MoveNextAsync()
+2025-05-11 13:27:47.301 +03:00 [ERR] Para birimi dönüşümü sırasında hata oluştu.
+System.InvalidOperationException: A second operation was started on this context instance before a previous operation completed. This is usually caused by different threads concurrently using the same instance of DbContext. For more information on how to avoid threading issues with DbContext, see https://go.microsoft.com/fwlink/?linkid=2097913.
+   at Microsoft.EntityFrameworkCore.Infrastructure.Internal.ConcurrencyDetector.EnterCriticalSection()
+   at Microsoft.EntityFrameworkCore.Query.Internal.SplitQueryingEnumerable`1.AsyncEnumerator.MoveNextAsync()
+   at Microsoft.EntityFrameworkCore.Query.ShapedQueryCompilingExpressionVisitor.SingleOrDefaultAsync[TSource](IAsyncEnumerable`1 asyncEnumerable, CancellationToken cancellationToken)
+   at Microsoft.EntityFrameworkCore.Query.ShapedQueryCompilingExpressionVisitor.SingleOrDefaultAsync[TSource](IAsyncEnumerable`1 asyncEnumerable, CancellationToken cancellationToken)
+   at MuhasebeStokWebApp.Services.ParaBirimiModulu.ParaBirimiService.HesaplaKurDegeriAsync(Guid kaynakParaBirimiId, Guid hedefParaBirimiId, Nullable`1 tarih) in /Users/muhammetkocaman/MuhasebeStokWebApp/Services/ParaBirimiModulu/ParaBirimiService.cs:line 668
+2025-05-11 13:27:47.301 +03:00 [INF] Kur değeri hesaplandı: USD -> UZS, Değer: 1,0
+2025-05-11 13:27:47.306 +03:00 [INF] Kur değeri önbellekten alındı: USD -> TRY, Değer: 33,33
+2025-05-11 13:27:47.307 +03:00 [INF] Kur değeri önbellekten alındı: USD -> UZS, Değer: 1,0
+2025-05-11 13:27:47.310 +03:00 [ERR] An exception occurred while iterating over the results of a query for context type 'MuhasebeStokWebApp.Data.ApplicationDbContext'.
+System.InvalidOperationException: A second operation was started on this context instance before a previous operation completed. This is usually caused by different threads concurrently using the same instance of DbContext. For more information on how to avoid threading issues with DbContext, see https://go.microsoft.com/fwlink/?linkid=2097913.
+   at Microsoft.EntityFrameworkCore.Infrastructure.Internal.ConcurrencyDetector.EnterCriticalSection()
+   at Microsoft.EntityFrameworkCore.Query.Internal.SplitQueryingEnumerable`1.AsyncEnumerator.MoveNextAsync()
+System.InvalidOperationException: A second operation was started on this context instance before a previous operation completed. This is usually caused by different threads concurrently using the same instance of DbContext. For more information on how to avoid threading issues with DbContext, see https://go.microsoft.com/fwlink/?linkid=2097913.
+   at Microsoft.EntityFrameworkCore.Infrastructure.Internal.ConcurrencyDetector.EnterCriticalSection()
+   at Microsoft.EntityFrameworkCore.Query.Internal.SplitQueryingEnumerable`1.AsyncEnumerator.MoveNextAsync()
+2025-05-11 13:27:47.311 +03:00 [ERR] Ödeme/tahsilat özeti alınırken hata oluştu
+System.InvalidOperationException: A second operation was started on this context instance before a previous operation completed. This is usually caused by different threads concurrently using the same instance of DbContext. For more information on how to avoid threading issues with DbContext, see https://go.microsoft.com/fwlink/?linkid=2097913.
+   at Microsoft.EntityFrameworkCore.Infrastructure.Internal.ConcurrencyDetector.EnterCriticalSection()
+   at Microsoft.EntityFrameworkCore.Query.Internal.SplitQueryingEnumerable`1.AsyncEnumerator.MoveNextAsync()
+   at Microsoft.EntityFrameworkCore.Query.ShapedQueryCompilingExpressionVisitor.SingleAsync[TSource](IAsyncEnumerable`1 asyncEnumerable, CancellationToken cancellationToken)
+   at Microsoft.EntityFrameworkCore.Query.ShapedQueryCompilingExpressionVisitor.SingleAsync[TSource](IAsyncEnumerable`1 asyncEnumerable, CancellationToken cancellationToken)
+   at MuhasebeStokWebApp.Services.DashboardService.GetPaymentReceiptSummaryAsync() in /Users/muhammetkocaman/MuhasebeStokWebApp/Services/DashboardService.cs:line 542
+2025-05-11 13:27:47.324 +03:00 [ERR] An exception occurred while iterating over the results of a query for context type 'MuhasebeStokWebApp.Data.ApplicationDbContext'.
+System.InvalidOperationException: A second operation was started on this context instance before a previous operation completed. This is usually caused by different threads concurrently using the same instance of DbContext. For more information on how to avoid threading issues with DbContext, see https://go.microsoft.com/fwlink/?linkid=2097913.
+   at Microsoft.EntityFrameworkCore.Infrastructure.Internal.ConcurrencyDetector.EnterCriticalSection()
+   at Microsoft.EntityFrameworkCore.Query.Internal.SplitQueryingEnumerable`1.AsyncEnumerator.MoveNextAsync()
+System.InvalidOperationException: A second operation was started on this context instance before a previous operation completed. This is usually caused by different threads concurrently using the same instance of DbContext. For more information on how to avoid threading issues with DbContext, see https://go.microsoft.com/fwlink/?linkid=2097913.
+   at Microsoft.EntityFrameworkCore.Infrastructure.Internal.ConcurrencyDetector.EnterCriticalSection()
+   at Microsoft.EntityFrameworkCore.Query.Internal.SplitQueryingEnumerable`1.AsyncEnumerator.MoveNextAsync()
+2025-05-11 13:27:47.324 +03:00 [ERR] Son faturalar alınırken hata oluştu
+System.InvalidOperationException: A second operation was started on this context instance before a previous operation completed. This is usually caused by different threads concurrently using the same instance of DbContext. For more information on how to avoid threading issues with DbContext, see https://go.microsoft.com/fwlink/?linkid=2097913.
+   at Microsoft.EntityFrameworkCore.Infrastructure.Internal.ConcurrencyDetector.EnterCriticalSection()
+   at Microsoft.EntityFrameworkCore.Query.Internal.SplitQueryingEnumerable`1.AsyncEnumerator.MoveNextAsync()
+   at Microsoft.EntityFrameworkCore.EntityFrameworkQueryableExtensions.ToListAsync[TSource](IQueryable`1 source, CancellationToken cancellationToken)
+   at Microsoft.EntityFrameworkCore.EntityFrameworkQueryableExtensions.ToListAsync[TSource](IQueryable`1 source, CancellationToken cancellationToken)
+   at MuhasebeStokWebApp.Services.DashboardService.GetRecentInvoicesAsync(Int32 count) in /Users/muhammetkocaman/MuhasebeStokWebApp/Services/DashboardService.cs:line 605
+2025-05-11 13:27:47.333 +03:00 [ERR] An exception occurred while iterating over the results of a query for context type 'MuhasebeStokWebApp.Data.ApplicationDbContext'.
+System.InvalidOperationException: A second operation was started on this context instance before a previous operation completed. This is usually caused by different threads concurrently using the same instance of DbContext. For more information on how to avoid threading issues with DbContext, see https://go.microsoft.com/fwlink/?linkid=2097913.
+   at Microsoft.EntityFrameworkCore.Infrastructure.Internal.ConcurrencyDetector.EnterCriticalSection()
+   at Microsoft.EntityFrameworkCore.Query.Internal.SplitQueryingEnumerable`1.AsyncEnumerator.MoveNextAsync()
+System.InvalidOperationException: A second operation was started on this context instance before a previous operation completed. This is usually caused by different threads concurrently using the same instance of DbContext. For more information on how to avoid threading issues with DbContext, see https://go.microsoft.com/fwlink/?linkid=2097913.
+   at Microsoft.EntityFrameworkCore.Infrastructure.Internal.ConcurrencyDetector.EnterCriticalSection()
+   at Microsoft.EntityFrameworkCore.Query.Internal.SplitQueryingEnumerable`1.AsyncEnumerator.MoveNextAsync()
+2025-05-11 13:27:47.333 +03:00 [ERR] Günlük işlem aktivitesi alınırken hata oluştu: A second operation was started on this context instance before a previous operation completed. This is usually caused by different threads concurrently using the same instance of DbContext. For more information on how to avoid threading issues with DbContext, see https://go.microsoft.com/fwlink/?linkid=2097913.
+System.InvalidOperationException: A second operation was started on this context instance before a previous operation completed. This is usually caused by different threads concurrently using the same instance of DbContext. For more information on how to avoid threading issues with DbContext, see https://go.microsoft.com/fwlink/?linkid=2097913.
+   at Microsoft.EntityFrameworkCore.Infrastructure.Internal.ConcurrencyDetector.EnterCriticalSection()
+   at Microsoft.EntityFrameworkCore.Query.Internal.SplitQueryingEnumerable`1.AsyncEnumerator.MoveNextAsync()
+   at Microsoft.EntityFrameworkCore.EntityFrameworkQueryableExtensions.ToListAsync[TSource](IQueryable`1 source, CancellationToken cancellationToken)
+   at Microsoft.EntityFrameworkCore.EntityFrameworkQueryableExtensions.ToListAsync[TSource](IQueryable`1 source, CancellationToken cancellationToken)
+   at MuhasebeStokWebApp.Services.DashboardService.GetDailyActivityAsync(Int32 days) in /Users/muhammetkocaman/MuhasebeStokWebApp/Services/DashboardService.cs:line 673
+2025-05-11 13:27:47.335 +03:00 [INF] Kur değeri önbellekten alındı: USD -> TRY, Değer: 33,33
+2025-05-11 13:27:47.335 +03:00 [INF] Kur değeri önbellekten alındı: USD -> UZS, Değer: 1,0
+2025-05-11 13:27:47.344 +03:00 [ERR] An exception occurred while iterating over the results of a query for context type 'MuhasebeStokWebApp.Data.ApplicationDbContext'.
+System.InvalidOperationException: A second operation was started on this context instance before a previous operation completed. This is usually caused by different threads concurrently using the same instance of DbContext. For more information on how to avoid threading issues with DbContext, see https://go.microsoft.com/fwlink/?linkid=2097913.
+   at Microsoft.EntityFrameworkCore.Infrastructure.Internal.ConcurrencyDetector.EnterCriticalSection()
+   at Microsoft.EntityFrameworkCore.Query.Internal.SplitQueryingEnumerable`1.AsyncEnumerator.MoveNextAsync()
+System.InvalidOperationException: A second operation was started on this context instance before a previous operation completed. This is usually caused by different threads concurrently using the same instance of DbContext. For more information on how to avoid threading issues with DbContext, see https://go.microsoft.com/fwlink/?linkid=2097913.
+   at Microsoft.EntityFrameworkCore.Infrastructure.Internal.ConcurrencyDetector.EnterCriticalSection()
+   at Microsoft.EntityFrameworkCore.Query.Internal.SplitQueryingEnumerable`1.AsyncEnumerator.MoveNextAsync()
+2025-05-11 13:27:47.344 +03:00 [ERR] Ortalama kar marjı alınırken hata oluştu
+System.InvalidOperationException: A second operation was started on this context instance before a previous operation completed. This is usually caused by different threads concurrently using the same instance of DbContext. For more information on how to avoid threading issues with DbContext, see https://go.microsoft.com/fwlink/?linkid=2097913.
+   at Microsoft.EntityFrameworkCore.Infrastructure.Internal.ConcurrencyDetector.EnterCriticalSection()
+   at Microsoft.EntityFrameworkCore.Query.Internal.SplitQueryingEnumerable`1.AsyncEnumerator.MoveNextAsync()
+   at Microsoft.EntityFrameworkCore.EntityFrameworkQueryableExtensions.ToListAsync[TSource](IQueryable`1 source, CancellationToken cancellationToken)
+   at Microsoft.EntityFrameworkCore.EntityFrameworkQueryableExtensions.ToListAsync[TSource](IQueryable`1 source, CancellationToken cancellationToken)
+   at MuhasebeStokWebApp.Services.DashboardService.GetProfitMarginAsync() in /Users/muhammetkocaman/MuhasebeStokWebApp/Services/DashboardService.cs:line 751
+2025-05-11 13:27:47.366 +03:00 [INF] Dashboard verileri başarıyla yüklendi.
+2025-05-11 13:27:47.366 +03:00 [INF] Kur değeri önbellekten alındı: USD -> TRY, Değer: 33,33
+2025-05-11 13:27:47.371 +03:00 [INF] Kur değeri önbellekten alındı: USD -> UZS, Değer: 1,0
+2025-05-11 13:27:47.371 +03:00 [INF] Dashboard sayfası başarıyla yüklendi.
+2025-05-11 13:34:28.161 +03:00 [INF] Yaklaşan hatırlatıcılar kontrol ediliyor...
+2025-05-11 13:34:28.169 +03:00 [INF] Bekleyen hatırlatma bulunamadı.
+2025-05-11 13:43:29.184 +03:00 [INF] Veritabanına bağlantı başarılı. Migrationlar uygulanıyor...
+2025-05-11 13:43:29.514 +03:00 [INF] Veritabanı işlemleri başarıyla tamamlandı.
+2025-05-11 13:43:29.570 +03:00 [INF] Todo Hatırlatıcı Servisi başlatıldı.
+2025-05-11 13:43:29.570 +03:00 [INF] Yaklaşan hatırlatıcılar kontrol ediliyor...
+2025-05-11 13:43:29.621 +03:00 [INF] Bekleyen hatırlatma bulunamadı.
+2025-05-11 13:43:40.536 +03:00 [INF] Giriş denemesi: admin
+2025-05-11 13:43:40.633 +03:00 [INF] Admin kullanıcısı başarıyla giriş yaptı: admin
+2025-05-11 13:43:40.633 +03:00 [INF] Admin session oluşturuldu: UserID=8b547a04-134c-4578-99bb-f831a55b400d, UserName=admin
+2025-05-11 13:43:40.633 +03:00 [INF] Yönlendirme adresi: /Fatura/Details/ea699368-f871-4bdc-8840-59bcdcfc87b6
+2025-05-11 13:43:40.633 +03:00 [INF] Admin kullanıcısı /Fatura/Details/ea699368-f871-4bdc-8840-59bcdcfc87b6 adresine yönlendiriliyor
+2025-05-11 13:43:43.681 +03:00 [INF] Dashboard sayfası yükleniyor...
+2025-05-11 13:43:43.684 +03:00 [INF] Dashboard verileri yükleniyor...
+2025-05-11 13:43:43.958 +03:00 [INF] TRY dönüşümü için kur değeri hesaplandı: USD -> TRY, Değer: 33,33
+2025-05-11 13:43:44.013 +03:00 [INF] Kur değeri hesaplandı: USD -> UZS, Değer: 12898,012300
+2025-05-11 13:43:44.148 +03:00 [ERR] Kritik stoktaki ürünler alınırken hata oluştu
+System.InvalidOperationException: The query contains a projection 'u => DbSet<StokHareket>()
+    .Where(sh => sh.UrunID == u.UrunID)' of type 'IQueryable<StokHareket>'. Collections in the final projection must be an 'IEnumerable<T>' type such as 'List<T>'. Consider using 'ToList' or some other mechanism to convert the 'IQueryable<T>' or 'IOrderedEnumerable<T>' into an 'IEnumerable<T>'.
+   at Microsoft.EntityFrameworkCore.Query.Internal.QueryableMethodNormalizingExpressionVisitor.VerifyReturnType(Expression expression, ParameterExpression lambdaParameter)
+   at Microsoft.EntityFrameworkCore.Query.Internal.QueryableMethodNormalizingExpressionVisitor.VerifyReturnType(Expression expression, ParameterExpression lambdaParameter)
+   at Microsoft.EntityFrameworkCore.Query.Internal.QueryableMethodNormalizingExpressionVisitor.VisitMethodCall(MethodCallExpression methodCallExpression)
+   at Microsoft.EntityFrameworkCore.Query.Internal.QueryableMethodNormalizingExpressionVisitor.Normalize(Expression expression)
+   at Microsoft.EntityFrameworkCore.Query.QueryTranslationPreprocessor.NormalizeQueryableMethod(Expression expression)
+   at Microsoft.EntityFrameworkCore.Query.RelationalQueryTranslationPreprocessor.NormalizeQueryableMethod(Expression expression)
+   at Microsoft.EntityFrameworkCore.Query.QueryTranslationPreprocessor.Process(Expression query)
+   at Microsoft.EntityFrameworkCore.Query.QueryCompilationContext.CreateQueryExecutorExpression[TResult](Expression query)
+   at Microsoft.EntityFrameworkCore.Query.QueryCompilationContext.CreateQueryExecutor[TResult](Expression query)
+   at Microsoft.EntityFrameworkCore.Storage.Database.CompileQuery[TResult](Expression query, Boolean async)
+   at Microsoft.EntityFrameworkCore.Query.Internal.QueryCompiler.CompileQueryCore[TResult](IDatabase database, Expression query, IModel model, Boolean async)
+   at Microsoft.EntityFrameworkCore.Query.Internal.QueryCompiler.<>c__DisplayClass11_0`1.<ExecuteCore>b__0()
+   at Microsoft.EntityFrameworkCore.Query.Internal.CompiledQueryCache.GetOrAddQuery[TResult](Object cacheKey, Func`1 compiler)
+   at Microsoft.EntityFrameworkCore.Query.Internal.QueryCompiler.ExecuteCore[TResult](Expression query, Boolean async, CancellationToken cancellationToken)
+   at Microsoft.EntityFrameworkCore.Query.Internal.QueryCompiler.ExecuteAsync[TResult](Expression query, CancellationToken cancellationToken)
+   at Microsoft.EntityFrameworkCore.Query.Internal.EntityQueryProvider.ExecuteAsync[TResult](Expression expression, CancellationToken cancellationToken)
+   at Microsoft.EntityFrameworkCore.Query.Internal.EntityQueryable`1.GetAsyncEnumerator(CancellationToken cancellationToken)
+   at System.Runtime.CompilerServices.ConfiguredCancelableAsyncEnumerable`1.GetAsyncEnumerator()
+   at Microsoft.EntityFrameworkCore.EntityFrameworkQueryableExtensions.ToListAsync[TSource](IQueryable`1 source, CancellationToken cancellationToken)
+   at MuhasebeStokWebApp.Services.DashboardService.GetCriticalStockProductsAsync() in /Users/muhammetkocaman/MuhasebeStokWebApp/Services/DashboardService.cs:line 312
+2025-05-11 13:43:44.385 +03:00 [INF] Kur değeri önbellekten alındı: USD -> TRY, Değer: 33,33
+2025-05-11 13:43:44.385 +03:00 [INF] Kur değeri önbellekten alındı: USD -> UZS, Değer: 12898,012300
+2025-05-11 13:43:44.975 +03:00 [INF] Dashboard verileri başarıyla yüklendi.
+2025-05-11 13:43:44.975 +03:00 [INF] Kur değeri önbellekten alındı: USD -> TRY, Değer: 33,33
+2025-05-11 13:43:44.976 +03:00 [INF] Kur değeri önbellekten alındı: USD -> UZS, Değer: 12898,012300
+2025-05-11 13:43:44.976 +03:00 [INF] Dashboard sayfası başarıyla yüklendi.
+2025-05-11 13:45:35.879 +03:00 [INF] Aktif session bulundu: UserID=8b547a04-134c-4578-99bb-f831a55b400d, UserName=admin
+2025-05-11 13:45:35.881 +03:00 [INF] Admin kullanıcısı tespit edildi
+2025-05-11 13:45:35.881 +03:00 [INF] Kimlik doğrulanmış kullanıcı: admin
+2025-05-11 13:45:35.980 +03:00 [INF] TRY dönüşümü için kur değeri hesaplandı: TRY -> USD, Değer: 0,03
+2025-05-11 13:45:35.991 +03:00 [INF] Kur değeri hesaplandı: UZS -> USD, Değer: 0,0000775313262804067879513497
+2025-05-11 13:45:36.081 +03:00 [INF] Kur değeri önbellekten alındı: UZS -> USD, Değer: 0,0000775313262804067879513497
+2025-05-11 13:45:36.082 +03:00 [INF] Çevrilen tutar hesaplandı: UZS -> USD, Tutar: 0,00, Sonuç: 0, Kur: 0,0000775313262804067879513497
+2025-05-11 13:45:43.361 +03:00 [INF] Birim sayısı: Aktif=2, Pasif=0, Silinmiş=0
+2025-05-11 13:46:06.567 +03:00 [INF] Kur değeri önbellekten alındı: USD -> TRY, Değer: 33,33
+2025-05-11 13:46:12.955 +03:00 [INF] Kur değeri önbellekten alındı: USD -> TRY, Değer: 33,33
+2025-05-11 13:47:14.235 +03:00 [INF] Veritabanına bağlantı başarılı. Migrationlar uygulanıyor...
+2025-05-11 13:47:14.567 +03:00 [INF] Veritabanı işlemleri başarıyla tamamlandı.
+2025-05-11 13:47:14.621 +03:00 [INF] Todo Hatırlatıcı Servisi başlatıldı.
+2025-05-11 13:47:14.621 +03:00 [INF] Yaklaşan hatırlatıcılar kontrol ediliyor...
+2025-05-11 13:47:14.663 +03:00 [INF] Bekleyen hatırlatma bulunamadı.
+2025-05-11 13:48:53.672 +03:00 [INF] Dashboard sayfası yükleniyor...
+2025-05-11 13:48:53.676 +03:00 [INF] Dashboard verileri yükleniyor...
+2025-05-11 13:48:53.938 +03:00 [INF] TRY dönüşümü için kur değeri hesaplandı: USD -> TRY, Değer: 33,33
+2025-05-11 13:48:53.984 +03:00 [INF] Kur değeri hesaplandı: USD -> UZS, Değer: 12898,012300
+2025-05-11 13:48:54.425 +03:00 [INF] Kur değeri önbellekten alındı: USD -> TRY, Değer: 33,33
+2025-05-11 13:48:54.425 +03:00 [INF] Kur değeri önbellekten alındı: USD -> UZS, Değer: 12898,012300
+2025-05-11 13:48:54.949 +03:00 [INF] Dashboard verileri başarıyla yüklendi.
+2025-05-11 13:48:54.949 +03:00 [INF] Kur değeri önbellekten alındı: USD -> TRY, Değer: 33,33
+2025-05-11 13:48:54.954 +03:00 [INF] Kur değeri önbellekten alındı: USD -> UZS, Değer: 12898,012300
+2025-05-11 13:48:54.954 +03:00 [INF] Dashboard sayfası başarıyla yüklendi.
+2025-05-11 13:49:15.996 +03:00 [WRN] Session bulunamadı, kullanıcı giriş yapmamış olabilir
+2025-05-11 13:49:15.997 +03:00 [INF] Kimlik doğrulanmış kullanıcı: admin
+2025-05-11 13:49:16.098 +03:00 [INF] TRY dönüşümü için kur değeri hesaplandı: TRY -> USD, Değer: 0,03
+2025-05-11 13:49:16.107 +03:00 [INF] Kur değeri hesaplandı: UZS -> USD, Değer: 0,0000775313262804067879513497
+2025-05-11 13:49:16.196 +03:00 [INF] Kur değeri önbellekten alındı: UZS -> USD, Değer: 0,0000775313262804067879513497
+2025-05-11 13:49:16.197 +03:00 [INF] Çevrilen tutar hesaplandı: UZS -> USD, Tutar: 0,00, Sonuç: 0, Kur: 0,0000775313262804067879513497
+2025-05-11 13:51:32.305 +03:00 [INF] Dashboard sayfası yükleniyor...
+2025-05-11 13:51:32.305 +03:00 [INF] Dashboard verileri yükleniyor...
+2025-05-11 13:51:32.515 +03:00 [INF] Kur değeri önbellekten alındı: USD -> TRY, Değer: 33,33
+2025-05-11 13:51:32.516 +03:00 [INF] Kur değeri önbellekten alındı: USD -> UZS, Değer: 12898,012300
+2025-05-11 13:51:33.274 +03:00 [INF] Dashboard verileri başarıyla yüklendi.
+2025-05-11 13:51:33.275 +03:00 [INF] Kur değeri önbellekten alındı: USD -> TRY, Değer: 33,33
+2025-05-11 13:51:33.275 +03:00 [INF] Kur değeri önbellekten alındı: USD -> UZS, Değer: 12898,012300
+2025-05-11 13:51:33.275 +03:00 [INF] Dashboard sayfası başarıyla yüklendi.
+2025-05-11 13:52:14.694 +03:00 [INF] Yaklaşan hatırlatıcılar kontrol ediliyor...
+2025-05-11 13:52:14.698 +03:00 [INF] Bekleyen hatırlatma bulunamadı.
+2025-05-11 14:57:07.261 +03:00 [INF] Veritabanına bağlantı başarılı. Migrationlar uygulanıyor...
+2025-05-11 14:57:07.615 +03:00 [INF] Veritabanı işlemleri başarıyla tamamlandı.
+2025-05-11 14:57:07.677 +03:00 [INF] Todo Hatırlatıcı Servisi başlatıldı.
+2025-05-11 14:57:07.678 +03:00 [INF] Yaklaşan hatırlatıcılar kontrol ediliyor...
+2025-05-11 14:57:07.723 +03:00 [INF] Bekleyen hatırlatma bulunamadı.
+2025-05-11 14:58:04.919 +03:00 [INF] Giriş denemesi: admin
+2025-05-11 14:58:05.013 +03:00 [INF] Admin kullanıcısı başarıyla giriş yaptı: admin
+2025-05-11 14:58:05.014 +03:00 [INF] Admin session oluşturuldu: UserID=8b547a04-134c-4578-99bb-f831a55b400d, UserName=admin
+2025-05-11 14:58:05.014 +03:00 [INF] Yönlendirme adresi: /Urun
+2025-05-11 14:58:05.014 +03:00 [INF] Admin kullanıcısı /Urun adresine yönlendiriliyor
+2025-05-11 14:58:07.648 +03:00 [INF] Dashboard sayfası yükleniyor...
+2025-05-11 14:58:07.650 +03:00 [INF] Dashboard verileri yükleniyor...
+2025-05-11 14:58:07.926 +03:00 [INF] TRY dönüşümü için kur değeri hesaplandı: USD -> TRY, Değer: 33,33
+2025-05-11 14:58:08.006 +03:00 [INF] Kur değeri hesaplandı: USD -> UZS, Değer: 12898,012300
+2025-05-11 14:58:08.444 +03:00 [INF] Kur değeri önbellekten alındı: USD -> TRY, Değer: 33,33
+2025-05-11 14:58:08.444 +03:00 [INF] Kur değeri önbellekten alındı: USD -> UZS, Değer: 12898,012300
+2025-05-11 14:58:08.969 +03:00 [INF] Kur değeri önbellekten alındı: USD -> TRY, Değer: 33,33
+2025-05-11 14:58:08.971 +03:00 [INF] Kur değeri önbellekten alındı: USD -> UZS, Değer: 12898,012300
+2025-05-11 14:58:08.972 +03:00 [INF] Dashboard sayfası başarıyla yüklendi.
+2025-05-11 15:00:00.359 +03:00 [INF] Aktif session bulundu: UserID=8b547a04-134c-4578-99bb-f831a55b400d, UserName=admin
+2025-05-11 15:00:00.361 +03:00 [INF] Admin kullanıcısı tespit edildi
+2025-05-11 15:00:00.361 +03:00 [INF] Kimlik doğrulanmış kullanıcı: admin
+2025-05-11 15:00:00.477 +03:00 [INF] TRY dönüşümü için kur değeri hesaplandı: TRY -> USD, Değer: 0,03
+2025-05-11 15:00:00.488 +03:00 [INF] Kur değeri hesaplandı: UZS -> USD, Değer: 0,0000775313262804067879513497
+2025-05-11 15:00:00.577 +03:00 [INF] Kur değeri önbellekten alındı: UZS -> USD, Değer: 0,0000775313262804067879513497
+2025-05-11 15:00:00.577 +03:00 [INF] Çevrilen tutar hesaplandı: UZS -> USD, Tutar: 0,00, Sonuç: 0, Kur: 0,0000775313262804067879513497
+2025-05-11 15:00:09.042 +03:00 [INF] Aktif session bulundu: UserID=8b547a04-134c-4578-99bb-f831a55b400d, UserName=admin
+2025-05-11 15:00:09.042 +03:00 [INF] Admin kullanıcısı tespit edildi
+2025-05-11 15:00:09.042 +03:00 [INF] Kimlik doğrulanmış kullanıcı: admin
+2025-05-11 15:00:09.054 +03:00 [INF] Kur değeri önbellekten alındı: TRY -> USD, Değer: 0,03
+2025-05-11 15:00:09.054 +03:00 [INF] Kur değeri önbellekten alındı: UZS -> USD, Değer: 0,0000775313262804067879513497
+2025-05-11 15:00:09.070 +03:00 [INF] Çevrilen tutar önbellekten alındı: UZS -> USD, Tutar: 0,00, Sonuç: 0
+2025-05-11 15:00:13.012 +03:00 [INF] Aktif session bulundu: UserID=8b547a04-134c-4578-99bb-f831a55b400d, UserName=admin
+2025-05-11 15:00:13.012 +03:00 [INF] Admin kullanıcısı tespit edildi
+2025-05-11 15:00:13.012 +03:00 [INF] Kimlik doğrulanmış kullanıcı: admin
+2025-05-11 15:00:13.022 +03:00 [INF] Kur değeri önbellekten alındı: TRY -> USD, Değer: 0,03
+2025-05-11 15:00:13.022 +03:00 [INF] Kur değeri önbellekten alındı: UZS -> USD, Değer: 0,0000775313262804067879513497
+2025-05-11 15:00:13.040 +03:00 [INF] Çevrilen tutar önbellekten alındı: UZS -> USD, Tutar: 0,00, Sonuç: 0
+2025-05-11 15:00:21.640 +03:00 [INF] Dashboard sayfası yükleniyor...
+2025-05-11 15:00:21.640 +03:00 [INF] Dashboard verileri yükleniyor...
+2025-05-11 15:00:21.851 +03:00 [INF] Kur değeri önbellekten alındı: USD -> TRY, Değer: 33,33
+2025-05-11 15:00:21.851 +03:00 [INF] Kur değeri önbellekten alındı: USD -> UZS, Değer: 12898,012300
+2025-05-11 15:00:22.608 +03:00 [INF] Kur değeri önbellekten alındı: USD -> TRY, Değer: 33,33
+2025-05-11 15:00:22.608 +03:00 [INF] Kur değeri önbellekten alındı: USD -> UZS, Değer: 12898,012300
+2025-05-11 15:00:22.608 +03:00 [INF] Dashboard sayfası başarıyla yüklendi.
+2025-05-11 15:00:23.788 +03:00 [INF] Aktif session bulundu: UserID=8b547a04-134c-4578-99bb-f831a55b400d, UserName=admin
+2025-05-11 15:00:23.788 +03:00 [INF] Admin kullanıcısı tespit edildi
+2025-05-11 15:00:23.788 +03:00 [INF] Kimlik doğrulanmış kullanıcı: admin
+2025-05-11 15:00:23.797 +03:00 [INF] Kur değeri önbellekten alındı: TRY -> USD, Değer: 0,03
+2025-05-11 15:00:23.797 +03:00 [INF] Kur değeri önbellekten alındı: UZS -> USD, Değer: 0,0000775313262804067879513497
+2025-05-11 15:00:23.812 +03:00 [INF] Çevrilen tutar önbellekten alındı: UZS -> USD, Tutar: 0,00, Sonuç: 0
+2025-05-11 15:00:24.882 +03:00 [INF] Aktif session bulundu: UserID=8b547a04-134c-4578-99bb-f831a55b400d, UserName=admin
+2025-05-11 15:00:24.882 +03:00 [INF] Admin kullanıcısı tespit edildi
+2025-05-11 15:00:24.882 +03:00 [INF] Kimlik doğrulanmış kullanıcı: admin
+2025-05-11 15:00:24.892 +03:00 [INF] Kur değeri önbellekten alındı: TRY -> USD, Değer: 0,03
+2025-05-11 15:00:24.893 +03:00 [INF] Kur değeri önbellekten alındı: UZS -> USD, Değer: 0,0000775313262804067879513497
+2025-05-11 15:00:24.914 +03:00 [INF] Çevrilen tutar önbellekten alındı: UZS -> USD, Tutar: 0,00, Sonuç: 0
+2025-05-11 15:00:27.880 +03:00 [INF] Dashboard sayfası yükleniyor...
+2025-05-11 15:00:27.880 +03:00 [INF] Dashboard verileri yükleniyor...
+2025-05-11 15:00:28.090 +03:00 [INF] Kur değeri önbellekten alındı: USD -> TRY, Değer: 33,33
+2025-05-11 15:00:28.090 +03:00 [INF] Kur değeri önbellekten alındı: USD -> UZS, Değer: 12898,012300
+2025-05-11 15:00:28.853 +03:00 [INF] Kur değeri önbellekten alındı: USD -> TRY, Değer: 33,33
+2025-05-11 15:00:28.853 +03:00 [INF] Kur değeri önbellekten alındı: USD -> UZS, Değer: 12898,012300
+2025-05-11 15:00:28.853 +03:00 [INF] Dashboard sayfası başarıyla yüklendi.
+2025-05-11 15:02:07.724 +03:00 [INF] Yaklaşan hatırlatıcılar kontrol ediliyor...
+2025-05-11 15:02:07.731 +03:00 [INF] Bekleyen hatırlatma bulunamadı.

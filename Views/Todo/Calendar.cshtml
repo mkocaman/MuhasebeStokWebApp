@@ -1,0 +1,545 @@
+@model MuhasebeStokWebApp.ViewModels.Todo.TodoViewModel
+@using MuhasebeStokWebApp.Enums
+@{
+    ViewData["Title"] = "Görev Takvimi";
+    ViewData["ActiveMenu"] = "Yapılacaklar";
+    Layout = ViewData["Layout"] as string ?? "~/Views/Shared/_Layout.cshtml";
+    string formatDate = Model.SelectedDate.ToString("dd.MM.yyyy");
+}
+
+<div class="container-fluid">
+    <div class="page-title">
+        <div class="row">
+            <div class="col-6">
+                <h3>Görev Takvimi</h3>
+            </div>
+            <div class="col-6">
+                <ol class="breadcrumb">
+                    <li class="breadcrumb-item"><a href="@Url.Action("Index", "Home")"><i data-feather="home"></i></a></li>
+                    <li class="breadcrumb-item"><a href="@Url.Action("Index", "Todo")">Görevler</a></li>
+                    <li class="breadcrumb-item active">Takvim</li>
+                </ol>
+            </div>
+        </div>
+    </div>
+</div>
+
+<div class="container-fluid calendar-basic">
+    <div class="card">
+        <div class="card-header">
+            <div class="row">
+                <div class="col-md-8">
+                    <h5 class="mb-0">@formatDate Tarihli Görevler</h5>
+                </div>
+                <div class="col-md-4 text-end">
+                    <div class="btn-group">
+                        <a href="@Url.Action("Calendar", "Todo", new { date = DateTime.Today.AddDays(-1).ToString("yyyy-MM-dd") })" class="btn btn-outline-secondary">
+                            <i class="fa fa-arrow-left"></i> Dün
+                        </a>
+                        <a href="@Url.Action("Calendar", "Todo", new { date = DateTime.Today.ToString("yyyy-MM-dd") })" class="btn btn-outline-primary">
+                            Bugün
+                        </a>
+                        <a href="@Url.Action("Calendar", "Todo", new { date = DateTime.Today.AddDays(1).ToString("yyyy-MM-dd") })" class="btn btn-outline-secondary">
+                            Yarın <i class="fa fa-arrow-right"></i>
+                        </a>
+                    </div>
+                </div>
+            </div>
+        </div>
+        <div class="card-body">
+            <div class="row">
+                <div class="col-md-12">
+                    @if (Model.CalendarEvents.Count > 0)
+                    {
+                        <div class="table-responsive">
+                            <table class="table table-bordered">
+                                <thead>
+                                    <tr>
+                                        <th style="width: 50px;"></th>
+                                        <th>Başlık</th>
+                                        <th>Açıklama</th>
+                                        <th>Durum</th>
+                                        <th>Atanan</th>
+                                        <th>İşlemler</th>
+                                    </tr>
+                                </thead>
+                                <tbody>
+                                    @foreach (var task in Model.CalendarEvents)
+                                    {
+                                        <tr>
+                                            <td>
+                                                <div class="priority-dot" style="background-color: @task.Color;"></div>
+                                            </td>
+                                            <td>@task.Title</td>
+                                            <td>@(string.IsNullOrEmpty(task.Description) ? "-" : task.Description)</td>
+                                            <td>
+                                                @if (task.IsCompleted)
+                                                {
+                                                    <span class="badge bg-success">Tamamlandı</span>
+                                                }
+                                                else
+                                                {
+                                                    <span class="badge @(task.Status == MuhasebeStokWebApp.Enums.TaskStatus.DevamEdiyor ? "bg-primary" : 
+                                                                        task.Status == MuhasebeStokWebApp.Enums.TaskStatus.Beklemede ? "bg-warning" : 
+                                                                        task.Status == MuhasebeStokWebApp.Enums.TaskStatus.IptalEdildi ? "bg-danger" : "bg-secondary")">
+                                                        @task.Status.ToString()
+                                                    </span>
+                                                }
+                                            </td>
+                                            <td>@(string.IsNullOrEmpty(task.AssignedToUserName) ? "-" : task.AssignedToUserName)</td>
+                                            <td>
+                                                <div class="btn-group" role="group">
+                                                    <a href="@Url.Action("Index", "Todo")" class="btn btn-sm btn-outline-primary">
+                                                        <i class="fa fa-eye"></i>
+                                                    </a>
+                                                    <button class="btn btn-sm btn-outline-success toggle-task-status" data-id="@task.Id">
+                                                        <i class="fa @(task.IsCompleted ? "fa-times" : "fa-check")"></i>
+                                                    </button>
+                                                    <button class="btn btn-sm btn-outline-secondary edit-task" data-id="@task.Id">
+                                                        <i class="fa fa-edit"></i>
+                                                    </button>
+                                                </div>
+                                            </td>
+                                        </tr>
+                                    }
+                                </tbody>
+                            </table>
+                        </div>
+                    }
+                    else
+                    {
+                        <div class="alert alert-info">
+                            <p class="mb-0">Bu tarih için görev bulunamadı.</p>
+                        </div>
+                        <div class="text-center mb-3">
+                            <a href="@Url.Action("Index", "Todo")" class="btn btn-primary">
+                                <i class="fa fa-list me-2"></i> Tüm Görevleri Görüntüle
+                            </a>
+                            <button type="button" class="btn btn-success" data-bs-toggle="modal" data-bs-target="#newTaskModal">
+                                <i class="fa fa-plus me-2"></i> Yeni Görev Ekle
+                            </button>
+                        </div>
+                    }
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+
+<!-- New Task Modal -->
+<div class="modal fade" id="newTaskModal" tabindex="-1" aria-labelledby="newTaskModalLabel" aria-hidden="true">
+    <div class="modal-dialog modal-dialog-centered modal-lg">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h5 class="modal-title" id="newTaskModalLabel">Yeni Görev Ekle</h5>
+                <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+            </div>
+            <div class="modal-body">
+                <form id="newTaskForm" asp-action="Create" asp-controller="Todo" method="post">
+                    <div class="row">
+                        <div class="col-md-12 mb-3">
+                            <label for="Title" class="form-label">Başlık <span class="text-danger">*</span></label>
+                            <input type="text" class="form-control" id="Title" name="Title" required>
+                            <div class="invalid-feedback">Başlık alanı zorunludur.</div>
+                        </div>
+                    </div>
+                    <div class="row">
+                        <div class="col-md-6 mb-3">
+                            <label for="PriorityLevel" class="form-label">Öncelik</label>
+                            <select class="form-select" id="PriorityLevel" name="PriorityLevel">
+                                <option value="0">Düşük</option>
+                                <option value="1" selected>Orta</option>
+                                <option value="2">Yüksek</option>
+                            </select>
+                        </div>
+                        <div class="col-md-6 mb-3">
+                            <label for="Deadline" class="form-label">Son Tarih</label>
+                            <input type="date" class="form-control" id="Deadline" name="Deadline" value="@DateTime.Today.ToString("yyyy-MM-dd")">
+                        </div>
+                    </div>
+                    <div class="row">
+                        <div class="col-md-12 mb-3">
+                            <label for="Description" class="form-label">Açıklama</label>
+                            <textarea class="form-control" id="Description" name="Description" rows="3"></textarea>
+                        </div>
+                    </div>
+                    <div class="row">
+                        <div class="col-md-12">
+                            <div class="form-check">
+                                <input class="form-check-input" type="checkbox" id="UseReminder" name="UseReminder">
+                                <label class="form-check-label" for="UseReminder">
+                                    Hatırlatma zamanı eklemek istiyorum
+                                </label>
+                            </div>
+                        </div>
+                    </div>
+                    <div class="row mt-2 d-none" id="reminderRow">
+                        <div class="col-md-6 mb-3">
+                            <label for="ReminderAt" class="form-label">Hatırlatma Zamanı</label>
+                            <input type="datetime-local" class="form-control" id="ReminderAt" name="ReminderAt">
+                        </div>
+                    </div>
+                </form>
+            </div>
+            <div class="modal-footer">
+                <button type="button" class="btn btn-outline-secondary" data-bs-dismiss="modal">İptal</button>
+                <button type="button" class="btn btn-primary" id="saveNewTask">Kaydet</button>
+            </div>
+        </div>
+    </div>
+</div>
+
+<!-- Edit Task Modal -->
+<div class="modal fade" id="editTaskModal" tabindex="-1" aria-labelledby="editTaskModalLabel" aria-hidden="true">
+    <div class="modal-dialog modal-dialog-centered modal-lg">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h5 class="modal-title" id="editTaskModalLabel">Görevi Düzenle</h5>
+                <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+            </div>
+            <div class="modal-body">
+                <form id="editTaskForm" asp-action="Edit" asp-controller="Todo" method="post">
+                    <input type="hidden" id="editId" name="Id">
+                    <div class="row">
+                        <div class="col-md-12 mb-3">
+                            <label for="editTitle" class="form-label">Başlık <span class="text-danger">*</span></label>
+                            <input type="text" class="form-control" id="editTitle" name="Title" required>
+                            <div class="invalid-feedback">Başlık alanı zorunludur.</div>
+                        </div>
+                    </div>
+                    <div class="row">
+                        <div class="col-md-6 mb-3">
+                            <label for="editPriorityLevel" class="form-label">Öncelik</label>
+                            <select class="form-select" id="editPriorityLevel" name="PriorityLevel">
+                                <option value="0">Düşük</option>
+                                <option value="1">Orta</option>
+                                <option value="2">Yüksek</option>
+                            </select>
+                        </div>
+                        <div class="col-md-6 mb-3">
+                            <label for="editDeadline" class="form-label">Son Tarih</label>
+                            <input type="date" class="form-control" id="editDeadline" name="Deadline">
+                        </div>
+                    </div>
+                    <div class="row">
+                        <div class="col-md-6 mb-3">
+                            <label for="editStatus" class="form-label">Durum</label>
+                            <select class="form-select" id="editStatus" name="Status">
+                                <option value="0">Beklemede</option>
+                                <option value="1">Devam Ediyor</option>
+                                <option value="2">Tamamlandı</option>
+                                <option value="3">İptal Edildi</option>
+                            </select>
+                        </div>
+                        <div class="col-md-6 mb-3">
+                            <div class="form-check mt-4">
+                                <input class="form-check-input" type="checkbox" id="editIsCompleted" name="IsCompleted">
+                                <label class="form-check-label" for="editIsCompleted">
+                                    Tamamlandı olarak işaretle
+                                </label>
+                            </div>
+                        </div>
+                    </div>
+                    <div class="row">
+                        <div class="col-md-12 mb-3">
+                            <label for="editDescription" class="form-label">Açıklama</label>
+                            <textarea class="form-control" id="editDescription" name="Description" rows="3"></textarea>
+                        </div>
+                    </div>
+                    <div class="row">
+                        <div class="col-md-12">
+                            <div class="form-check">
+                                <input class="form-check-input" type="checkbox" id="editUseReminder" name="UseReminder">
+                                <label class="form-check-label" for="editUseReminder">
+                                    Hatırlatma zamanı eklemek istiyorum
+                                </label>
+                            </div>
+                        </div>
+                    </div>
+                    <div class="row mt-2 d-none" id="editReminderRow">
+                        <div class="col-md-6 mb-3">
+                            <label for="editReminderAt" class="form-label">Hatırlatma Zamanı</label>
+                            <input type="datetime-local" class="form-control" id="editReminderAt" name="ReminderAt">
+                        </div>
+                    </div>
+                </form>
+            </div>
+            <div class="modal-footer">
+                <button type="button" class="btn btn-outline-secondary" data-bs-dismiss="modal">İptal</button>
+                <button type="button" class="btn btn-primary" id="saveEditTask">Kaydet</button>
+            </div>
+        </div>
+    </div>
+</div>
+
+@section Styles {
+    <style>
+        .priority-dot {
+            width: 16px;
+            height: 16px;
+            border-radius: 50%;
+            display: inline-block;
+        }
+        
+        /* Modal ayarları - sığma sorunu için */
+        .modal-dialog {
+            max-width: 650px; /* Genişlik ayarı */
+        }
+        
+        .modal-body {
+            max-height: calc(100vh - 200px); /* Maksimum yükseklik ayarı */
+            overflow-y: auto; /* İçerik fazla ise kaydırma çubuğu ekle */
+        }
+        
+        /* Bootstrap modal - responsive ayarlar */
+        @@media (max-width: 576px) {
+            .modal-dialog {
+                margin: 0.5rem;
+            }
+        }
+    </style>
+}
+
+@section Scripts {
+    <script>
+        $(document).ready(function() {
+            // Başlık alanı için validasyon
+            $("#Title").on("input", function() {
+                if ($(this).val().trim() === "") {
+                    $(this).addClass("is-invalid");
+                    $(this).removeClass("is-valid");
+                } else {
+                    $(this).removeClass("is-invalid");
+                    $(this).addClass("is-valid");
+                }
+            });
+        
+            // Hatırlatma seçeneği değiştiğinde hatırlatma tarih alanını göster/gizle
+            $('#UseReminder').change(function() {
+                if ($(this).is(':checked')) {
+                    $('#reminderRow').removeClass('d-none');
+                    
+                    // Bugünün tarihini ve şu anki saati varsayılan olarak ayarla
+                    var now = new Date();
+                    var dateTimeStr = now.getFullYear() + '-' + 
+                        String(now.getMonth() + 1).padStart(2, '0') + '-' + 
+                        String(now.getDate()).padStart(2, '0') + 'T' + 
+                        String(now.getHours()).padStart(2, '0') + ':' + 
+                        String(now.getMinutes()).padStart(2, '0');
+                    
+                    $('#ReminderAt').val(dateTimeStr);
+                } else {
+                    $('#reminderRow').addClass('d-none');
+                }
+            });
+            
+            // Görev ekleme düğmesine tıklandığında
+            $('#saveNewTask').click(function() {
+                // Form doğrulama
+                if (!validateTaskForm('#newTaskForm')) {
+                    return false;
+                }
+                
+                // Formu AJAX ile gönder
+                $.ajax({
+                    url: '@Url.Action("Create", "Todo")',
+                    type: 'POST',
+                    data: $('#newTaskForm').serialize(),
+                    success: function(response) {
+                        if (response.success) {
+                            // Formu sıfırla
+                            $('#newTaskForm')[0].reset();
+                            $('#Title').removeClass('is-valid');
+                            
+                            // Modalı kapat
+                            $('#newTaskModal').modal('hide');
+                            
+                            // Başarı mesajı göster
+                            toastr.success(response.message || 'Görev başarıyla eklendi.');
+                            
+                            // Sayfayı yenile
+                            setTimeout(function() {
+                                window.location.reload();
+                            }, 1000);
+                        } else {
+                            toastr.error(response.message || 'Görev eklenirken bir hata oluştu.');
+                        }
+                    },
+                    error: function(xhr) {
+                        toastr.error('Görev eklenirken bir hata oluştu: ' + 
+                            (xhr.responseJSON ? xhr.responseJSON.message : 'Bilinmeyen hata'));
+                    }
+                });
+            });
+            
+            // Edit Task butonuna tıklandığında
+            $(".edit-task").click(function() {
+                var todoId = $(this).data("todo-id");
+                
+                // Modal içeriğini temizle
+                $("#editTaskForm").html('<div class="text-center p-5"><div class="spinner-border text-primary" role="status"><span class="visually-hidden">Yükleniyor...</span></div><p class="mt-2">Görev bilgileri yükleniyor...</p></div>');
+                
+                // Modalı aç
+                $("#editTaskModal").modal("show");
+                
+                // AJAX ile görev düzenleme modalını getir
+                $.ajax({
+                    url: '@Url.Action("Edit", "Todo")/' + todoId,
+                    type: 'GET',
+                    success: function(response) {
+                        $("#editTaskModal .modal-body").html(response);
+                        
+                        // Hatırlatma checkbox'ını dinle (edit modalındaki script çalışmayabilir, bu yüzden tekrar tanımlıyoruz)
+                        $("#editUseReminderCheck").change(function() {
+                            if ($(this).is(":checked")) {
+                                $(".edit-reminder-date-container").slideDown();
+                                
+                                // Eğer hatırlatma zamanı boşsa, varsayılan olarak şu anki zamanı + 1 saat ayarlayalım
+                                var reminderInput = $("#TodoItem_ReminderAt");
+                                if (!reminderInput.val()) {
+                                    var now = new Date();
+                                    now.setHours(now.getHours() + 1); // 1 saat sonra
+                                    
+                                    var localDatetime = new Date(now.getTime() - now.getTimezoneOffset() * 60000)
+                                        .toISOString()
+                                        .slice(0, 16);
+                                    
+                                    reminderInput.val(localDatetime);
+                                }
+                            } else {
+                                $(".edit-reminder-date-container").slideUp();
+                            }
+                        });
+                    },
+                    error: function() {
+                        $("#editTaskModal .modal-body").html('<div class="alert alert-danger">Görev bilgileri yüklenirken bir hata oluştu.</div>');
+                    }
+                });
+            });
+            
+            // Düzenlenen görevi kaydet
+            $('#saveEditTask').click(function() {
+                var formData = $('#editTodoForm').serializeArray();
+                var useReminder = $("#editUseReminderCheck").is(":checked");
+                var useReminderFound = false;
+                
+                // UseReminder alanını doğru şekilde ayarla
+                $.each(formData, function(i, field) {
+                    if (field.name === "UseReminder") {
+                        field.value = useReminder;
+                        useReminderFound = true;
+                    }
+                });
+                
+                // Eğer UseReminder alanı yoksa ekle
+                if (!useReminderFound) {
+                    formData.push({ name: "UseReminder", value: useReminder });
+                }
+                
+                $.ajax({
+                    url: '@Url.Action("Edit", "Todo")',
+                    type: 'POST',
+                    data: formData,
+                    success: function(response) {
+                        if (response.success) {
+                            // Modal'ı kapat
+                            $('#editTaskModal').modal('hide');
+                            
+                            // Başarılı mesajı
+                            toastr.success(response.message || 'Görev başarıyla güncellendi');
+                            
+                            // Sayfayı yenile
+                            setTimeout(function() {
+                                window.location.reload();
+                            }, 1000);
+                        } else {
+                            toastr.error(response.message || 'Görev güncellenirken bir hata oluştu');
+                        }
+                    },
+                    error: function(xhr) {
+                        toastr.error('Görev güncellenirken bir hata oluştu: ' + 
+                            (xhr.responseJSON ? xhr.responseJSON.message : 'Bilinmeyen hata'));
+                    }
+                });
+            });
+            
+            // Görev durumunu değiştir
+            $('.toggle-task-status').click(function() {
+                var taskId = $(this).data('id');
+                
+                $.ajax({
+                    url: '@Url.Action("ToggleComplete", "Todo")',
+                    type: 'POST',
+                    data: { id: taskId },
+                    success: function(response) {
+                        if (response.success) {
+                            // Başarılı mesajı
+                            toastr.success(response.message || 'Görev durumu değiştirildi');
+                            
+                            // Sayfayı yenile
+                            setTimeout(function() {
+                                window.location.reload();
+                            }, 1000);
+                        } else {
+                            toastr.error(response.message || 'Görev durumu değiştirilemedi');
+                        }
+                    },
+                    error: function(xhr) {
+                        toastr.error('Görev durumu değiştirilirken bir hata oluştu: ' + 
+                            (xhr.responseJSON ? xhr.responseJSON.message : 'Bilinmeyen hata'));
+                    }
+                });
+            });
+            
+            // Form doğrulama fonksiyonu
+            function validateTaskForm(formSelector) {
+                var isValid = true;
+                
+                // Başlık kontrolü
+                var titleInput = $(formSelector + ' [name="Title"]');
+                if (!titleInput.val().trim()) {
+                    titleInput.addClass('is-invalid');
+                    toastr.error('Başlık alanı zorunludur.');
+                    isValid = false;
+                } else {
+                    titleInput.removeClass('is-invalid');
+                    titleInput.addClass('is-valid');
+                }
+                
+                // Hatırlatma kontrolü
+                var useReminder = $(formSelector + ' [name="UseReminder"]').is(':checked');
+                if (useReminder) {
+                    var reminderTime = new Date($(formSelector + ' [name="ReminderAt"]').val());
+                    var now = new Date();
+                    
+                    if (reminderTime < now) {
+                        toastr.error('Hatırlatma zamanı geçmiş bir zaman olamaz.');
+                        isValid = false;
+                    }
+                }
+                
+                return isValid;
+            }
+            
+            // Bildirim gösterme fonksiyonu
+            function showNotification(type, message) {
+                toastr.options = {
+                    closeButton: true,
+                    progressBar: true,
+                    positionClass: 'toast-top-right',
+                    timeOut: 5000
+                };
+                
+                if (type === 'success') {
+                    toastr.success(message);
+                } else if (type === 'error') {
+                    toastr.error(message);
+                } else if (type === 'warning') {
+                    toastr.warning(message);
+                } else {
+                    toastr.info(message);
+                }
+            }
+        });
+    </script>
+} 

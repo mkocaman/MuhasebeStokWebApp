@@ -25,6 +25,7 @@ using MuhasebeStokWebApp.Services.Notification;
 using System.Globalization;
 using Microsoft.AspNetCore.Http;
 using MuhasebeStokWebApp.ViewModels.Todo;
+using Microsoft.Extensions.Hosting;
 
 namespace MuhasebeStokWebApp.Controllers
 {
@@ -37,8 +38,9 @@ namespace MuhasebeStokWebApp.Controllers
         protected new readonly RoleManager<IdentityRole> _roleManager;
         private readonly IDovizKuruService _dovizKuruService;
         private readonly ApplicationDbContext _context;
-        private readonly INotificationService _notificationService;
+        private readonly MuhasebeStokWebApp.Services.Interfaces.INotificationService _notificationService;
         private readonly ITodoService _todoService;
+        private readonly IHostEnvironment _environment;
 
         // Constructor: Dependency Injection ile gerekli servisleri alır
         public HomeController(
@@ -49,9 +51,10 @@ namespace MuhasebeStokWebApp.Controllers
             IMenuService menuService,
             IDovizKuruService dovizKuruService,
             ApplicationDbContext context,
-            INotificationService notificationService,
+            MuhasebeStokWebApp.Services.Interfaces.INotificationService notificationService,
             ILogService logService,
-            ITodoService todoService)
+            ITodoService todoService,
+            IHostEnvironment environment)
             : base(menuService, userManager, roleManager, logService)
         {
             _logger = logger;
@@ -62,6 +65,7 @@ namespace MuhasebeStokWebApp.Controllers
             _context = context;
             _notificationService = notificationService;
             _todoService = todoService;
+            _environment = environment;
         }
 
         // Ana Dashboard sayfasını hazırlar
@@ -301,6 +305,18 @@ namespace MuhasebeStokWebApp.Controllers
             // Toplam fatura sayısı hesaplama
             var faturalar = await _unitOfWork.Repository<Data.Entities.Fatura>().GetAllAsync();
             ViewBag.ToplamFaturaSayisi = faturalar?.Count() ?? 0;
+            
+            // Kullanıcıları yükle - Todo Modal'ı için
+            var kullanicilar = await _userManager.Users.ToListAsync();
+            ViewBag.Users = kullanicilar.Select(u => new Microsoft.AspNetCore.Mvc.Rendering.SelectListItem
+            {
+                Value = u.Id,
+                Text = u.UserName
+            }).ToList();
+            
+            // Todo öğelerini yükle - Dashboard'da gösterilecek olanlar
+            var currentUser = await _userManager.GetUserAsync(User);
+            ViewBag.RecentTodos = await _todoService.GetRecentTodosAsync(9, currentUser?.Id);
             
             // USD kur değerini al
             decimal tryToUsdKur = 1;
@@ -783,25 +799,6 @@ namespace MuhasebeStokWebApp.Controllers
             ViewBag.Revenues = JsonConvert.SerializeObject(buAySatislar);
             ViewBag.Expenses = JsonConvert.SerializeObject(buAyGiderler);
             
-            // Todo List verilerini yükle
-            try
-            {
-                var currentUser = await _userManager.GetUserAsync(User);
-                if (currentUser != null)
-                {
-                    // Kullanıcının görevlerini getir
-                    var userTodos = await _todoService.GetFilteredTodoItemsAsync(currentUser.Id, "all");
-                    
-                    // Son 5 görevi view'a gönder (tarihe göre sıralı)
-                    ViewBag.RecentTodos = userTodos.OrderByDescending(t => t.CreatedAt).Take(5).ToList();
-                }
-            }
-            catch (Exception ex)
-            {
-                _logger.LogError(ex, "Todo list verileri yüklenirken hata oluştu.");
-                ViewBag.RecentTodos = new List<ViewModels.Todo.TodoItemViewModel>();
-            }
-            
             // Kategori bazında satış dağılımı
             var kategoriSatislar = new Dictionary<Guid, decimal>();
             
@@ -1103,6 +1100,7 @@ namespace MuhasebeStokWebApp.Controllers
             }
             catch (Exception ex)
             {
+                _logger.LogError(ex, $"Bildirim gönderilirken hata oluştu: {ex.Message}");
                 return Json(new { success = false, message = "Bildirim gönderilirken hata oluştu: " + ex.Message });
             }
         }

@@ -28,7 +28,8 @@ namespace MuhasebeStokWebApp.Interfaces
             Guid? referansID = null, 
             string aciklama = null, 
             string paraBirimi = "USD", 
-            bool useBatch = false);
+            bool useBatch = false,
+            decimal? dovizKuru = null);
 
         Task<StokFifo> StokGirisi(
             Guid urunID, 

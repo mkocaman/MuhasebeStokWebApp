@@ -86,9 +86,12 @@ namespace MuhasebeStokWebApp.Data
         
         // Todo yapılacaklar listesi
         public virtual DbSet<TodoItem> TodoItems { get; set; }
-        
+
         // Todo yorumları
         public virtual DbSet<TodoComment> TodoComments { get; set; }
+        
+        // Bildirimler
+        public virtual DbSet<Notification> Notifications { get; set; }
 
         protected override void OnConfiguring(DbContextOptionsBuilder optionsBuilder)
         {

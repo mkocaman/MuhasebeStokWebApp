@@ -13,7 +13,12 @@ namespace MuhasebeStokWebApp.ViewModels.Todo
         public List<TodoItemViewModel> TodoItems { get; set; } = new List<TodoItemViewModel>();
         public TodoItemViewModel NewTodo { get; set; } = new TodoItemViewModel();
         public List<SelectListItem> Users { get; set; } = new List<SelectListItem>();
-        public string FilterOption { get; set; } = "all"; // all, completed, pending
+        public string FilterOption { get; set; } = "all"; // all, completed, pending, deleted, archived
+        public bool IsAdminView { get; set; } = false;
+        
+        // Takvim görünümü için gerekli özellikler
+        public DateTime SelectedDate { get; set; } = DateTime.Today;
+        public List<CalendarEventViewModel> CalendarEvents { get; set; } = new List<CalendarEventViewModel>();
     }
 
     public class TodoItemViewModel
@@ -39,6 +44,12 @@ namespace MuhasebeStokWebApp.ViewModels.Todo
         [Display(Name = "Tamamlandı")]
         public bool IsCompleted { get; set; } = false;
         
+        [Display(Name = "Silinmiş")]
+        public bool IsDeleted { get; set; } = false;
+        
+        [Display(Name = "Oluşturan Kullanıcı")]
+        public string? UserId { get; set; }
+        
         [Display(Name = "Atanan Kullanıcı")]
         public string? AssignedToUserId { get; set; }
         
@@ -56,6 +67,27 @@ namespace MuhasebeStokWebApp.ViewModels.Todo
         [Required(ErrorMessage = "Öncelik seviyesi zorunludur.")]
         public PriorityLevel PriorityLevel { get; set; } = PriorityLevel.Medium;
         
+        [Display(Name = "Durum")]
+        [Required(ErrorMessage = "Durum alanı zorunludur.")]
+        public MuhasebeStokWebApp.Enums.TaskStatus Status { get; set; } = MuhasebeStokWebApp.Enums.TaskStatus.Beklemede;
+        
+        [Display(Name = "Etiketler")]
+        [MaxLength(200, ErrorMessage = "Etiketler en fazla 200 karakter olabilir.")]
+        public string? Tags { get; set; }
+        
+        [Display(Name = "Arşivlenmiş")]
+        public bool IsArchived { get; set; } = false;
+        
+        [Display(Name = "Hatırlatma Zamanı")]
+        [DataType(DataType.DateTime)]
+        public DateTime? ReminderAt { get; set; }
+        
+        [Display(Name = "Hatırlatma Ekle")]
+        public bool UseReminder { get; set; } = false;
+        
+        [Display(Name = "Hatırlatma Gönderildi")]
+        public bool IsReminderSent { get; set; } = false;
+        
         // Yorumlar için liste
         public List<TodoCommentViewModel>? Comments { get; set; }
         
@@ -68,9 +100,17 @@ namespace MuhasebeStokWebApp.ViewModels.Todo
             if (string.IsNullOrWhiteSpace(Title))
                 return false;
             
-            // Deadline geçmiş bir tarih olamaz
-            if (Deadline.HasValue && Deadline < DateTime.Now.Date)
+            // Deadline geçmiş bir tarih olamaz (bugün olabilir)
+            if (Deadline.HasValue && Deadline.Value.Date < DateTime.Now.Date)
                 return false;
+            
+            // Hatırlatma zamanı geçmiş bir zaman olamaz, eğer kullanılıyorsa
+            if (UseReminder && ReminderAt.HasValue)
+            {
+                // Şimdiki zamandan biraz önce olabileceği için 1 dakika tolerans verilebilir
+                if (ReminderAt.Value < DateTime.Now.AddMinutes(-1))
+                    return false;
+            }
             
             return true;
         }
@@ -82,6 +122,9 @@ namespace MuhasebeStokWebApp.ViewModels.Todo
                 
             if (Deadline.HasValue && Deadline.Value.Date < DateTime.Now.Date)
                 return "Son tarih geçmiş bir tarih olamaz.";
+            
+            if (UseReminder && ReminderAt.HasValue && ReminderAt.Value < DateTime.Now.AddMinutes(-1))
+                return "Hatırlatma zamanı geçmiş bir zaman olamaz.";
                 
             return "";
         }

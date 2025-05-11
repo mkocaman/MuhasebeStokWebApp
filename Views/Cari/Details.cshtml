@@ -41,9 +41,9 @@
                             }
                             else
                             {
-                                <a asp-action="Edit" asp-route-id="@Model.CariID" class="btn btn-light btn-sm">
+                                <button type="button" class="btn btn-light btn-sm edit-cari-button" data-cari-id="@Model.CariID">
                                     <i class="fas fa-edit"></i> Düzenle
-                                </a>
+                                </button>
                                 @if (Model.AktifMi)
                                 {
                                     <button type="button" class="btn btn-warning btn-sm" data-cari-id="@Model.CariID" onclick="setPassive(this)" title="Pasife Al">
@@ -366,106 +366,227 @@
     </div>
 </div>
 
+<!-- Modal -->
+<div class="modal fade" id="cariEditModal" tabindex="-1" aria-labelledby="cariEditModalLabel" aria-hidden="true">
+    <div class="modal-dialog modal-lg">
+        <div class="modal-content" id="cariEditModalContent">
+            <!-- İçerik AJAX ile doldurulacak -->
+        </div>
+    </div>
+</div>
+
 @section Scripts {
     <script>
-        function deleteCari(button) {
-            if (confirm('Bu cariyi silmek istediğinizden emin misiniz?')) {
-                const cariId = $(button).data('cari-id');
+        $(document).ready(function() {
+            // Düzenle butonuna tıklandığında
+            $(document).on('click', '.edit-cari-button', function() {
+                const cariId = $(this).data('cari-id');
                 
+                // Modal içeriğini yükle
                 $.ajax({
-                    url: '@Url.Action("SetDelete")',
-                    type: 'POST',
+                    url: '@Url.Action("Edit")',
+                    type: 'GET',
                     data: { id: cariId },
-                    success: function(result) {
-                        if (result.success) {
-                            toastr.success(result.message);
-                            setTimeout(function() {
-                                window.location.href = '@Url.Action("Index")';
-                            }, 1500);
-                        } else {
-                            toastr.error(result.message);
-                        }
+                    headers: {
+                        'X-Requested-With': 'XMLHttpRequest' // AJAX isteği olduğunu belirt
+                    },
+                    success: function(response) {
+                        $('#cariEditModalContent').html(response);
+                        $('#cariEditModal').modal('show');
                     },
                     error: function() {
-                        toastr.error('İşlem sırasında bir hata oluştu.');
+                        Swal.fire('Hata!', 'Cari bilgileri yüklenirken bir hata oluştu.', 'error');
                     }
                 });
-            }
+            });
+        });
+
+        function deleteCari(button) {
+            Swal.fire({
+                title: 'Emin misiniz?',
+                text: 'Bu cariyi silmek istediğinizden emin misiniz?',
+                icon: 'warning',
+                showCancelButton: true,
+                confirmButtonColor: '#d33',
+                cancelButtonColor: '#3085d6',
+                confirmButtonText: 'Evet, sil!',
+                cancelButtonText: 'İptal'
+            }).then((result) => {
+                if (result.isConfirmed) {
+                    const cariId = $(button).data('cari-id');
+                    
+                    $.ajax({
+                        url: '@Url.Action("SetDelete")',
+                        type: 'POST',
+                        data: { id: cariId },
+                        success: function(result) {
+                            if (result.success) {
+                                Swal.fire(
+                                    'Silindi!',
+                                    result.message,
+                                    'success'
+                                ).then(() => {
+                                    window.location.href = '@Url.Action("Index")';
+                                });
+                            } else {
+                                Swal.fire(
+                                    'Hata!',
+                                    result.message,
+                                    'error'
+                                );
+                            }
+                        },
+                        error: function() {
+                            Swal.fire(
+                                'Hata!',
+                                'İşlem sırasında bir hata oluştu.',
+                                'error'
+                            );
+                        }
+                    });
+                }
+            });
         }
         
         function setPassive(button) {
-            if (confirm('Bu cariyi pasif duruma almak istediğinizden emin misiniz?')) {
-                const cariId = $(button).data('cari-id');
-                
-                $.ajax({
-                    url: '@Url.Action("SetPassive")',
-                    type: 'POST',
-                    data: { id: cariId },
-                    success: function(result) {
-                        if (result.success) {
-                            toastr.success(result.message);
-                            setTimeout(function() {
-                                window.location.reload();
-                            }, 1500);
-                        } else {
-                            toastr.error(result.message);
+            Swal.fire({
+                title: 'Emin misiniz?',
+                text: 'Bu cariyi pasif duruma almak istediğinizden emin misiniz?',
+                icon: 'warning',
+                showCancelButton: true,
+                confirmButtonColor: '#f8bb86',
+                cancelButtonColor: '#3085d6',
+                confirmButtonText: 'Evet, pasife al!',
+                cancelButtonText: 'İptal'
+            }).then((result) => {
+                if (result.isConfirmed) {
+                    const cariId = $(button).data('cari-id');
+                    
+                    $.ajax({
+                        url: '@Url.Action("SetPassive")',
+                        type: 'POST',
+                        data: { id: cariId },
+                        success: function(result) {
+                            if (result.success) {
+                                Swal.fire(
+                                    'Pasife Alındı!',
+                                    result.message,
+                                    'success'
+                                ).then(() => {
+                                    window.location.reload();
+                                });
+                            } else {
+                                Swal.fire(
+                                    'Hata!',
+                                    result.message,
+                                    'error'
+                                );
+                            }
+                        },
+                        error: function() {
+                            Swal.fire(
+                                'Hata!',
+                                'İşlem sırasında bir hata oluştu.',
+                                'error'
+                            );
                         }
-                    },
-                    error: function() {
-                        toastr.error('İşlem sırasında bir hata oluştu.');
-                    }
-                });
-            }
+                    });
+                }
+            });
         }
         
         function setActive(button) {
-            if (confirm('Bu cariyi aktif duruma almak istediğinizden emin misiniz?')) {
-                const cariId = $(button).data('cari-id');
-                
-                $.ajax({
-                    url: '@Url.Action("SetActive")',
-                    type: 'POST',
-                    data: { id: cariId },
-                    success: function(result) {
-                        if (result.success) {
-                            toastr.success(result.message);
-                            setTimeout(function() {
-                                window.location.reload();
-                            }, 1500);
-                        } else {
-                            toastr.error(result.message);
+            Swal.fire({
+                title: 'Emin misiniz?',
+                text: 'Bu cariyi aktif duruma almak istediğinizden emin misiniz?',
+                icon: 'question',
+                showCancelButton: true,
+                confirmButtonColor: '#3085d6',
+                cancelButtonColor: '#d33',
+                confirmButtonText: 'Evet, aktif et!',
+                cancelButtonText: 'İptal'
+            }).then((result) => {
+                if (result.isConfirmed) {
+                    const cariId = $(button).data('cari-id');
+                    
+                    $.ajax({
+                        url: '@Url.Action("SetActive")',
+                        type: 'POST',
+                        data: { id: cariId },
+                        success: function(result) {
+                            if (result.success) {
+                                Swal.fire(
+                                    'Aktifleştirildi!',
+                                    result.message,
+                                    'success'
+                                ).then(() => {
+                                    window.location.reload();
+                                });
+                            } else {
+                                Swal.fire(
+                                    'Hata!',
+                                    result.message,
+                                    'error'
+                                );
+                            }
+                        },
+                        error: function() {
+                            Swal.fire(
+                                'Hata!',
+                                'İşlem sırasında bir hata oluştu.',
+                                'error'
+                            );
                         }
-                    },
-                    error: function() {
-                        toastr.error('İşlem sırasında bir hata oluştu.');
-                    }
-                });
-            }
+                    });
+                }
+            });
         }
         
         function restoreCari(button) {
-            if (confirm('Bu cariyi geri yüklemek istediğinizden emin misiniz?')) {
-                const cariId = $(button).data('cari-id');
-                
-                $.ajax({
-                    url: '@Url.Action("RestoreCari")',
-                    type: 'POST',
-                    data: { id: cariId },
-                    success: function(result) {
-                        if (result.success) {
-                            toastr.success(result.message);
-                            setTimeout(function() {
-                                window.location.reload();
-                            }, 1500);
-                        } else {
-                            toastr.error(result.message);
+            Swal.fire({
+                title: 'Emin misiniz?',
+                text: 'Bu cariyi geri yüklemek istediğinizden emin misiniz?',
+                icon: 'question',
+                showCancelButton: true,
+                confirmButtonColor: '#3085d6',
+                cancelButtonColor: '#d33',
+                confirmButtonText: 'Evet, geri yükle!',
+                cancelButtonText: 'İptal'
+            }).then((result) => {
+                if (result.isConfirmed) {
+                    const cariId = $(button).data('cari-id');
+                    
+                    $.ajax({
+                        url: '@Url.Action("RestoreCari")',
+                        type: 'POST',
+                        data: { id: cariId },
+                        success: function(result) {
+                            if (result.success) {
+                                Swal.fire(
+                                    'Geri Yüklendi!',
+                                    result.message,
+                                    'success'
+                                ).then(() => {
+                                    window.location.reload();
+                                });
+                            } else {
+                                Swal.fire(
+                                    'Hata!',
+                                    result.message,
+                                    'error'
+                                );
+                            }
+                        },
+                        error: function() {
+                            Swal.fire(
+                                'Hata!',
+                                'İşlem sırasında bir hata oluştu.',
+                                'error'
+                            );
                         }
-                    },
-                    error: function() {
-                        toastr.error('İşlem sırasında bir hata oluştu.');
-                    }
-                });
-            }
+                    });
+                }
+            });
         }
     </script>
 } 

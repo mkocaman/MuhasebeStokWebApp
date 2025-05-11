@@ -3,7 +3,8 @@
 @addTagHelper *, Microsoft.AspNetCore.Mvc.TagHelpers
 @{
     ViewData["Title"] = "Yapılacaklar Listesi";
-    Layout = "~/Views/Shared/_Layout.cshtml";
+    Layout = ViewData["Layout"] as string ?? "~/Views/Shared/_Layout.cshtml";
+    bool isAdmin = Model.IsAdminView;
 }
 
 <div class="container-fluid">
@@ -21,10 +22,20 @@
 </div>
 
 <div class="container-fluid">
+    <div class="card">
+        <div class="card-header bg-primary text-white">
+            <div class="d-flex justify-content-between align-items-center">
+                <h4 class="mb-0">Görev Listesi</h4>
+                <button type="button" class="btn btn-success" data-bs-toggle="modal" data-bs-target="#addTodoModal">
+                    <i class="fas fa-plus"></i> Yeni Görev Ekle
+                </button>
+            </div>
+        </div>
+        <div class="card-body">
     @if (TempData["SuccessMessage"] != null)
     {
         <div class="alert alert-success alert-dismissible fade show" role="alert">
-            <strong>Başarılı!</strong> @TempData["SuccessMessage"]
+                    @TempData["SuccessMessage"]
             <button type="button" class="btn-close" data-bs-dismiss="alert" aria-label="Close"></button>
         </div>
     }
@@ -32,57 +43,61 @@
     @if (TempData["ErrorMessage"] != null)
     {
         <div class="alert alert-danger alert-dismissible fade show" role="alert">
-            <strong>Hata!</strong> @TempData["ErrorMessage"]
+                    @TempData["ErrorMessage"]
             <button type="button" class="btn-close" data-bs-dismiss="alert" aria-label="Close"></button>
         </div>
     }
 
-    <div class="row">
-        <div class="col-sm-12">
-            <div class="card">
-                <div class="card-header pb-0">
-                    <div class="row">
-                        <div class="col-6">
-                            <h5>Görevlerim</h5>
-                        </div>
-                        <div class="col-6 text-end">
-                            <button class="btn btn-primary" type="button" data-bs-toggle="modal" data-bs-target="#addTodoModal">
-                                <i class="fa fa-plus-square me-1"></i> Yeni Görev
-                            </button>
-                        </div>
-                    </div>
-                    <div class="row pt-3">
-                        <div class="col-md-12">
-                            <div class="btn-group" role="group">
-                                <a href="@Url.Action("Index", "Todo", new { filterOption = "all" })" 
-                                   class="btn @(Model.FilterOption == "all" ? "btn-primary" : "btn-outline-primary")">
-                                    Tümü
-                                </a>
-                                <a href="@Url.Action("Index", "Todo", new { filterOption = "pending" })" 
-                                   class="btn @(Model.FilterOption == "pending" ? "btn-primary" : "btn-outline-primary")">
-                                    Bekleyenler
-                                </a>
-                                <a href="@Url.Action("Index", "Todo", new { filterOption = "completed" })" 
-                                   class="btn @(Model.FilterOption == "completed" ? "btn-primary" : "btn-outline-primary")">
-                                    Tamamlananlar
-                                </a>
-                            </div>
-                        </div>
-                    </div>
-                </div>
-                <div class="card-body">
+            <!-- Sekme Başlıkları -->
+            <ul class="nav nav-tabs mb-3" id="todoTabs" role="tablist">
+                <li class="nav-item" role="presentation">
+                    <a class="nav-link @(Model.FilterOption == "all" ? "active" : "")" id="all-tab" 
+                       href="@Url.Action("Index", "Todo", new { filterOption = "all" })" role="tab">
+                        <i class="fas fa-list text-primary"></i> Tüm Görevler
+                    </a>
+                </li>
+                <li class="nav-item" role="presentation">
+                    <a class="nav-link @(Model.FilterOption == "pending" ? "active" : "")" id="pending-tab" 
+                       href="@Url.Action("Index", "Todo", new { filterOption = "pending" })" role="tab">
+                        <i class="fas fa-clock text-warning"></i> Bekleyen Görevler
+                    </a>
+                </li>
+                <li class="nav-item" role="presentation">
+                    <a class="nav-link @(Model.FilterOption == "completed" ? "active" : "")" id="completed-tab" 
+                       href="@Url.Action("Index", "Todo", new { filterOption = "completed" })" role="tab">
+                        <i class="fas fa-check-circle text-success"></i> Tamamlanan Görevler
+                    </a>
+                </li>
+                @if (isAdmin)
+                {
+                    <li class="nav-item" role="presentation">
+                        <a class="nav-link @(Model.FilterOption == "deleted" ? "active" : "")" id="deleted-tab" 
+                           href="@Url.Action("Index", "Todo", new { filterOption = "deleted" })" role="tab">
+                            <i class="fas fa-trash text-danger"></i> Silinmiş Görevler
+                        </a>
+                    </li>
+                }
+            </ul>
+
+            <!-- Tablo İçeriği -->
+            <div class="tab-content" id="todoTabsContent">
+                <div class="tab-pane fade show active" id="content" role="tabpanel">
                     <div class="table-responsive">
-                        <table class="table table-striped">
-                            <thead>
+                        <table class="table table-bordered table-hover">
+                            <thead class="table-light">
                                 <tr>
-                                    <th>Durum</th>
-                                    <th>Öncelik</th>
-                                    <th>Kategori</th>
+                                    <th width="50">Durum</th>
+                                    <th width="80">Öncelik</th>
+                                    <th width="50">Kategori</th>
                                     <th>Başlık</th>
                                     <th>Açıklama</th>
-                                    <th>Oluşturulma</th>
-                                    <th>Son Tarih</th>
-                                    <th>İşlemler</th>
+                                    @if (isAdmin)
+                                    {
+                                        <th width="120">Atanan Kişi</th>
+                                    }
+                                    <th width="150">Oluşturulma</th>
+                                    <th width="120">Son Tarih</th>
+                                    <th width="100">İşlemler</th>
                                 </tr>
                             </thead>
                             <tbody>
@@ -109,11 +124,12 @@
                                     }
                                     
                                     <tr class="@(item.IsCompleted ? "table-success" : "") @priorityClass">
-                                        <td>
-                                            <div class="form-check form-switch">
+                                        <td class="text-center">
+                                            <div class="form-check form-switch justify-content-center">
                                                 <input class="form-check-input todo-status-toggle" type="checkbox" 
                                                        id="status-@item.Id" data-todo-id="@item.Id" 
-                                                       @(item.IsCompleted ? "checked" : "")>
+                                                       @(item.IsCompleted ? "checked" : "")
+                                                       @(Model.FilterOption == "deleted" ? "disabled" : "")>
                                             </div>
                                         </td>
                                         <td>
@@ -130,9 +146,19 @@
                                                     break;
                                             }
                                         </td>
-                                        <td>
+                                        <td class="text-center">
                                             <i class="@item.TaskIcon" data-bs-toggle="tooltip" data-bs-placement="top" 
                                                title="Kategori: @item.TaskCategory"></i>
+                                            @if (item.ReminderAt.HasValue && !item.IsReminderSent)
+                                            {
+                                                <i class="fa fa-bell text-warning ml-1 reminder-icon" data-bs-toggle="tooltip" 
+                                                   data-bs-placement="top" title="Hatırlatma: @item.ReminderAt.Value.ToString("dd.MM.yyyy HH:mm")"></i>
+                                            }
+                                            @if (item.ReminderAt.HasValue && item.IsReminderSent)
+                                            {
+                                                <i class="fa fa-bell-slash text-muted ml-1" data-bs-toggle="tooltip" 
+                                                   data-bs-placement="top" title="Hatırlatma gönderildi: @item.ReminderAt.Value.ToString("dd.MM.yyyy HH:mm")"></i>
+                                            }
                                         </td>
                                         <td>@item.Title</td>
                                         <td>
@@ -148,6 +174,10 @@
                                                 }
                                             }
                                         </td>
+                                        @if (isAdmin)
+                                        {
+                                            <td>@item.AssignedToUserName</td>
+                                        }
                                         <td>@item.CreatedAt.ToString("dd.MM.yyyy HH:mm")</td>
                                         <td>
                                             @if (item.Deadline.HasValue)
@@ -163,18 +193,30 @@
                                         </td>
                                         <td>
                                             <div class="btn-group" role="group">
+                                                @if (Model.FilterOption == "deleted" && isAdmin)
+                                                {
+                                                    <!-- Silinmiş görevi geri yükleme butonu -->
+                                                    <button type="button" class="btn btn-sm btn-success restore-todo" 
+                                                            data-todo-id="@item.Id" title="Geri Yükle">
+                                                        <i class="fas fa-undo"></i>
+                                                    </button>
+                                                }
+                                                else
+                                                {
+                                                    <!-- Normal görüntüleme/düzenleme/silme butonları -->
                                                 <button type="button" class="btn btn-sm btn-primary view-todo" 
                                                         data-todo-id="@item.Id" title="Görüntüle">
-                                                    <i class="fa fa-eye"></i>
+                                                        <i class="fas fa-eye"></i>
                                                 </button>
                                                 <button type="button" class="btn btn-sm btn-info edit-todo" 
                                                         data-todo-id="@item.Id" title="Düzenle">
-                                                    <i class="fa fa-edit"></i>
+                                                        <i class="fas fa-edit"></i>
                                                 </button>
                                                 <button type="button" class="btn btn-sm btn-danger delete-todo" 
                                                         data-todo-id="@item.Id" data-todo-title="@item.Title" title="Sil">
-                                                    <i class="fa fa-trash"></i>
+                                                        <i class="fas fa-trash"></i>
                                                 </button>
+                                                }
                                             </div>
                                         </td>
                                     </tr>
@@ -192,46 +234,69 @@
 <div class="modal fade" id="addTodoModal" tabindex="-1" aria-labelledby="addTodoModalLabel" aria-hidden="true">
     <div class="modal-dialog modal-dialog-centered">
         <div class="modal-content">
-            <div class="modal-header">
+            <div class="modal-header bg-primary text-white">
                 <h5 class="modal-title" id="addTodoModalLabel">Yeni Görev Ekle</h5>
-                <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Kapat"></button>
+                <button type="button" class="btn-close btn-close-white" data-bs-dismiss="modal" aria-label="Kapat"></button>
             </div>
-            <form asp-action="Create" asp-controller="Todo" method="post">
+            <form id="createTodoForm" method="post">
                 <div class="modal-body">
                     <div class="mb-3">
-                        <label for="Title" class="form-label">Başlık <span class="text-danger">*</span></label>
-                        <input type="text" class="form-control" id="Title" name="Title" required maxlength="200">
-                        <small class="form-text text-muted">Başlık içeriğine göre otomatik kategori belirlenecektir.</small>
+                        <label for="NewTodo_Title" class="form-label">Başlık <span class="text-danger">*</span></label>
+                        <input id="NewTodo_Title" name="Title" class="form-control" required maxlength="200" />
+                        <div id="titleError" class="invalid-feedback">Başlık alanı zorunludur.</div>
                     </div>
+                    
                     <div class="mb-3">
-                        <label for="Description" class="form-label">Açıklama</label>
-                        <textarea class="form-control" id="Description" name="Description" rows="3" maxlength="1000"></textarea>
+                        <label for="NewTodo_Description" class="form-label">Açıklama</label>
+                        <textarea id="NewTodo_Description" name="Description" class="form-control" rows="3" maxlength="1000"></textarea>
                     </div>
+                    
                     <div class="mb-3">
-                        <label for="PriorityLevel" class="form-label">Öncelik <span class="text-danger">*</span></label>
-                        <select class="form-select" id="PriorityLevel" name="PriorityLevel">
-                            <option value="@((int)PriorityLevel.Low)">Düşük</option>
-                            <option value="@((int)PriorityLevel.Medium)" selected>Orta</option>
-                            <option value="@((int)PriorityLevel.High)">Yüksek</option>
+                        <label for="NewTodo_PriorityLevel" class="form-label">Öncelik <span class="text-danger">*</span></label>
+                        <select id="NewTodo_PriorityLevel" name="PriorityLevel" class="form-select">
+                            <option value="0">Düşük</option>
+                            <option value="1" selected>Orta</option>
+                            <option value="2">Yüksek</option>
                         </select>
                     </div>
+                    
                     <div class="mb-3">
-                        <label for="Deadline" class="form-label">Son Tarih</label>
-                        <input type="date" class="form-control" id="Deadline" name="Deadline" min="@DateTime.Now.ToString("yyyy-MM-dd")">
+                        <label for="NewTodo_Deadline" class="form-label">Son Tarih</label>
+                        <input id="NewTodo_Deadline" name="Deadline" type="date" class="form-control" value="@DateTime.Today.ToString("yyyy-MM-dd")" />
                     </div>
-                    <div class="mb-3">
-                        <label for="AssignedToUserId" class="form-label">Atanan Kullanıcı</label>
-                        <select class="form-select" id="AssignedToUserId" name="AssignedToUserId">
+                    
+                    @if (Model.IsAdminView)
+                    {
+                        <div class="mb-3">
+                            <label for="NewTodo_AssignedToUserId" class="form-label">Atanacak Kullanıcı</label>
+                            <select id="NewTodo_AssignedToUserId" name="AssignedToUserId" class="form-select">
+                                <option value="">Kendinize Atayın</option>
                             @foreach (var user in Model.Users)
                             {
                                 <option value="@user.Value">@user.Text</option>
                             }
                         </select>
+                            <small class="form-text text-muted">Görevin atanacağı kullanıcıyı seçin.</small>
+                        </div>
+                    }
+                    
+                    <div class="mb-3">
+                        <div class="form-check">
+                            <input id="useReminderCheck" name="UseReminder" class="form-check-input" type="checkbox" value="true" />
+                            <input name="UseReminder" type="hidden" value="false" />
+                            <label class="form-check-label" for="useReminderCheck">Hatırlatma zamanı eklemek istiyorum</label>
+                        </div>
+                    </div>
+                    
+                    <div class="mb-3 reminder-date-container" style="display: none;">
+                        <label for="NewTodo_ReminderAt" class="form-label">Hatırlatma Zamanı</label>
+                        <input id="NewTodo_ReminderAt" name="ReminderAt" type="datetime-local" class="form-control" />
+                        <small class="form-text text-muted">Görevin hatırlatılacağı tarih ve saat</small>
                     </div>
                 </div>
                 <div class="modal-footer">
                     <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">İptal</button>
-                    <button type="submit" class="btn btn-primary">Kaydet</button>
+                    <button type="submit" class="btn btn-primary">Ekle</button>
                 </div>
             </form>
         </div>
@@ -242,9 +307,9 @@
 <div class="modal fade" id="editTodoModal" tabindex="-1" aria-labelledby="editTodoModalLabel" aria-hidden="true">
     <div class="modal-dialog modal-dialog-centered">
         <div class="modal-content">
-            <div class="modal-header">
-                <h5 class="modal-title" id="editTodoModalLabel">Görev Düzenle</h5>
-                <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Kapat"></button>
+            <div class="modal-header bg-primary text-white">
+                <h5 class="modal-title" id="editTodoModalLabel">Görevi Düzenle</h5>
+                <button type="button" class="btn-close btn-close-white" data-bs-dismiss="modal" aria-label="Kapat"></button>
             </div>
             <div id="editTodoContent">
                 <!-- Partial View ile doldurulacak -->
@@ -257,46 +322,46 @@
 <div class="modal fade" id="viewTodoModal" tabindex="-1" aria-labelledby="viewTodoModalLabel" aria-hidden="true">
     <div class="modal-dialog modal-dialog-centered modal-lg">
         <div class="modal-content">
-            <div class="modal-header">
+            <div class="modal-header bg-primary text-white">
                 <h5 class="modal-title" id="viewTodoModalLabel">Görev Detayları</h5>
-                <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Kapat"></button>
+                <button type="button" class="btn-close btn-close-white" data-bs-dismiss="modal" aria-label="Kapat"></button>
             </div>
             <div class="modal-body">
                 <div class="row">
                     <div class="col-md-6">
-                        <div class="mb-3">
-                            <label class="form-label fw-bold">Başlık:</label>
-                            <p id="viewTitle"></p>
-                        </div>
-                        <div class="mb-3">
-                            <label class="form-label fw-bold">Kategori:</label>
-                            <p><i id="viewCategoryIcon"></i> <span id="viewCategory"></span></p>
-                        </div>
+                <div class="mb-3">
+                    <label class="form-label fw-bold">Başlık:</label>
+                    <p id="viewTitle"></p>
+                </div>
+                <div class="mb-3">
+                    <label class="form-label fw-bold">Kategori:</label>
+                    <p><i id="viewCategoryIcon"></i> <span id="viewCategory"></span></p>
+                </div>
                         <div class="mb-3">
                             <label class="form-label fw-bold">Öncelik:</label>
                             <p id="viewPriority"></p>
                         </div>
-                        <div class="mb-3">
-                            <label class="form-label fw-bold">Açıklama:</label>
-                            <p id="viewDescription"></p>
-                        </div>
+                <div class="mb-3">
+                    <label class="form-label fw-bold">Açıklama:</label>
+                    <p id="viewDescription"></p>
+                </div>
                     </div>
                     <div class="col-md-6">
-                        <div class="mb-3">
-                            <label class="form-label fw-bold">Oluşturulma Tarihi:</label>
-                            <p id="viewCreatedAt"></p>
-                        </div>
-                        <div class="mb-3">
-                            <label class="form-label fw-bold">Son Tarih:</label>
-                            <p id="viewDeadline"></p>
-                        </div>
-                        <div class="mb-3">
-                            <label class="form-label fw-bold">Durum:</label>
-                            <p id="viewStatus"></p>
-                        </div>
-                        <div class="mb-3">
-                            <label class="form-label fw-bold">Atanan Kullanıcı:</label>
-                            <p id="viewAssignedUser"></p>
+                <div class="mb-3">
+                    <label class="form-label fw-bold">Oluşturulma Tarihi:</label>
+                    <p id="viewCreatedAt"></p>
+                </div>
+                <div class="mb-3">
+                    <label class="form-label fw-bold">Son Tarih:</label>
+                    <p id="viewDeadline"></p>
+                </div>
+                <div class="mb-3">
+                    <label class="form-label fw-bold">Durum:</label>
+                    <p id="viewStatus"></p>
+                </div>
+                <div class="mb-3">
+                    <label class="form-label fw-bold">Atanan Kullanıcı:</label>
+                    <p id="viewAssignedUser"></p>
                         </div>
                     </div>
                 </div>
@@ -330,29 +395,17 @@
     </div>
 </div>
 
-<!-- Görev Silme Onay Modal -->
-<div class="modal fade" id="deleteTodoModal" tabindex="-1" aria-labelledby="deleteTodoModalLabel" aria-hidden="true">
-    <div class="modal-dialog modal-dialog-centered">
-        <div class="modal-content">
-            <div class="modal-header">
-                <h5 class="modal-title" id="deleteTodoModalLabel">Görevi Sil</h5>
-                <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Kapat"></button>
-            </div>
-            <div class="modal-body">
-                <p>Bu görevi silmek istediğinizden emin misiniz?</p>
-                <p><strong id="deleteTodoTitle"></strong></p>
-            </div>
-            <div class="modal-footer">
-                <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">İptal</button>
-                <form asp-action="Delete" asp-controller="Todo" method="post" id="deleteTodoForm">
+<!-- Görev Silme Onay Form -->
+<form id="deleteTodoForm" asp-action="Delete" asp-controller="Todo" method="post">
                     <input type="hidden" id="deleteTodoId" name="id" value="" />
                     @Html.AntiForgeryToken()
-                    <button type="submit" class="btn btn-danger">Sil</button>
+</form>
+
+<!-- Görevi Geri Yükleme Form -->
+<form id="restoreTodoForm" asp-action="Restore" asp-controller="Todo" method="post">
+    <input type="hidden" id="restoreTodoId" name="id" value="" />
+    @Html.AntiForgeryToken()
                 </form>
-            </div>
-        </div>
-    </div>
-</div>
 
 @section Scripts {
     <script>
@@ -363,101 +416,297 @@
                 return new bootstrap.Tooltip(tooltipTriggerEl)
             });
             
-            // Görev detayını getir
-            $(".view-todo").click(function() {
-                var todoId = $(this).data("todo-id");
-                $("#commentTodoId").val(todoId);
+            // Başlık alanı için validasyon
+            $("#NewTodo_Title").on("input", function() {
+                if ($(this).val().trim() === "") {
+                    $(this).addClass("is-invalid");
+                    $(this).removeClass("is-valid");
+                } else {
+                    $(this).removeClass("is-invalid");
+                    $(this).addClass("is-valid");
+                }
+            });
+            
+            // Hatırlatma seçeneği değiştiğinde hatırlatma tarih alanını göster/gizle
+            $('#useReminderCheck').change(function() {
+                if ($(this).is(':checked')) {
+                    $('.reminder-date-container').show();
+                    
+                    // Bugünün tarihini ve şu anki saati varsayılan olarak ayarla
+                    var now = new Date();
+                    var dateTimeStr = now.getFullYear() + '-' + 
+                        String(now.getMonth() + 1).padStart(2, '0') + '-' + 
+                        String(now.getDate()).padStart(2, '0') + 'T' + 
+                        String(now.getHours()).padStart(2, '0') + ':' + 
+                        String(now.getMinutes()).padStart(2, '0');
+                    
+                    $('#NewTodo_ReminderAt').val(dateTimeStr);
+                } else {
+                    $('.reminder-date-container').hide();
+                }
+            });
+            
+            // Todo ekleme formunu AJAX ile gönder
+            $("#createTodoForm").on("submit", function(e) {
+                e.preventDefault();
+                
+                // Başlık doğrulama
+                var title = $("#NewTodo_Title").val().trim();
+                if (!title) {
+                    $("#NewTodo_Title").addClass("is-invalid").removeClass("is-valid");
+                    toastr.error("Başlık alanı zorunludur.");
+                    return false;
+                } else {
+                    $("#NewTodo_Title").removeClass("is-invalid").addClass("is-valid");
+                }
+                
+                // Hatırlatma kontrolü
+                var useReminder = $("#useReminderCheck").is(":checked");
+                if (useReminder) {
+                    var reminderTime = new Date($("#NewTodo_ReminderAt").val());
+                    var now = new Date();
+                    
+                    if (reminderTime < now) {
+                        toastr.error("Hatırlatma zamanı geçmiş bir zaman olamaz.");
+                        return false;
+                    }
+                }
+                
+                // Form verilerini topla
+                var formData = $(this).serializeArray();
+                var useReminderFound = false;
+                
+                // UseReminder alanını doğru şekilde ayarla
+                $.each(formData, function(i, field) {
+                    if (field.name === "UseReminder") {
+                        field.value = useReminder;
+                        useReminderFound = true;
+                    }
+                });
+                
+                // Eğer UseReminder alanı yoksa ekle
+                if (!useReminderFound) {
+                    formData.push({ name: "UseReminder", value: useReminder });
+                }
                 
                 $.ajax({
-                    url: '@Url.Action("GetTodoDetails", "Todo")/' + todoId,
-                    type: "GET",
+                    url: '@Url.Action("Create", "Todo")',
+                    type: 'POST',
+                    data: formData,
                     success: function(response) {
                         if (response.success) {
-                            var todo = response.data;
-                            $("#viewTitle").text(todo.title);
-                            $("#viewCategory").text(todo.taskCategory);
-                            $("#viewCategoryIcon").attr("class", todo.taskIcon);
+                            // Formu sıfırla
+                            $("#createTodoForm")[0].reset();
+                            $("#NewTodo_Title").removeClass("is-valid");
                             
-                            // Öncelik seviyesi
-                            var priorityText = "";
-                            var priorityBadge = "";
-                            switch (todo.priorityLevel) {
-                                case 0:
-                                    priorityText = "Düşük";
-                                    priorityBadge = '<span class="badge bg-secondary">Düşük</span>';
-                                    break;
-                                case 1:
-                                    priorityText = "Orta";
-                                    priorityBadge = '<span class="badge bg-warning text-dark">Orta</span>';
-                                    break;
-                                case 2:
-                                    priorityText = "Yüksek";
-                                    priorityBadge = '<span class="badge bg-danger">Yüksek</span>';
-                                    break;
-                            }
-                            $("#viewPriority").html(priorityBadge);
+                            // Modalı kapat
+                            $("#addTodoModal").modal("hide");
                             
-                            $("#viewDescription").text(todo.description || "");
-                            $("#viewCreatedAt").text(new Date(todo.createdAt).toLocaleString('tr-TR'));
+                            // Başarı mesajı göster
+                            toastr.success(response.message, "Başarılı");
                             
-                            if (todo.deadline) {
-                                $("#viewDeadline").text(new Date(todo.deadline).toLocaleDateString('tr-TR'));
-                            } else {
-                                $("#viewDeadline").text("-");
-                            }
-                            
-                            $("#viewStatus").text(todo.isCompleted ? "Tamamlandı" : "Bekliyor");
-                            $("#viewAssignedUser").text(todo.assignedToUserName);
-                            
-                            // Yorumları listele
-                            loadComments(todoId);
-                            
-                            $("#viewTodoModal").modal("show");
+                            // Sayfayı yenile
+                            setTimeout(function() {
+                                window.location.reload();
+                            }, 1000);
                         } else {
-                            alert("Hata: " + response.message);
+                            toastr.error(response.message, "Hata");
                         }
                     },
-                    error: function() {
-                        alert("Görev detayları alınırken bir hata oluştu.");
+                    error: function(xhr) {
+                        toastr.error("Görev eklenirken bir hata oluştu: " + 
+                            (xhr.responseJSON ? xhr.responseJSON.message : "Bilinmeyen hata"), "Hata");
                     }
                 });
             });
             
-            // Görev düzenleme sayfasını getir
+            // Görev tamamlandı değişikliği
+            $(".todo-status-toggle").change(function() {
+                var todoId = $(this).data("todo-id");
+                var isCompleted = $(this).is(":checked");
+                
+                $.ajax({
+                    url: '@Url.Action("ToggleComplete", "Todo")',
+                    type: 'POST',
+                    data: { id: todoId },
+                    success: function(response) {
+                        if (response.success) {
+                            toastr.success(response.message);
+                            
+                            // Satırın görünümünü güncelle
+                            var row = $("#status-" + todoId).closest("tr");
+                            if (isCompleted) {
+                                row.addClass("table-success");
+                            } else {
+                                row.removeClass("table-success");
+                            }
+                            
+                            // Filtre seçeneği "tamamlananlar" ise ve görev tamamlanmadıysa satırı gizle
+                            if ("@Model.FilterOption" === "completed" && !isCompleted) {
+                                row.fadeOut('slow');
+                            }
+                            
+                            // İstatistikleri güncellemek için sayfayı yenile
+                            setTimeout(function() {
+                                if ("@Model.FilterOption" === "completed" && !isCompleted) {
+                                    window.location.reload();
+                                }
+                            }, 1500);
+                        } else {
+                            toastr.error(response.message);
+                            // Değişiklik başarısız olduğunda checkbox'ı eski haline getir
+                            $(this).prop("checked", !isCompleted);
+                        }
+                    }.bind(this),
+                    error: function() {
+                        toastr.error("İşlem sırasında bir hata oluştu.");
+                        // Değişiklik başarısız olduğunda checkbox'ı eski haline getir
+                        $(this).prop("checked", !isCompleted);
+                    }.bind(this)
+                });
+            });
+            
+            // Düzenleme modalını açma işlemi
             $(".edit-todo").click(function() {
                 var todoId = $(this).data("todo-id");
+                
+                // Modal içeriğini temizle
+                $("#editTodoContent").html("");
+                
+                // Modal yükleniyor içeriği göster
+                $("#editTodoContent").html('<div class="text-center p-5"><div class="spinner-border text-primary" role="status"><span class="visually-hidden">Yükleniyor...</span></div><p class="mt-2">Görev bilgileri yükleniyor...</p></div>');
+                
+                // Modalı aç
+                $("#editTodoModal").modal("show");
+                
+                // AJAX ile görev bilgilerini getir
                 $.ajax({
                     url: '@Url.Action("Edit", "Todo")/' + todoId,
-                    type: "GET",
+                    type: 'GET',
                     success: function(response) {
                         $("#editTodoContent").html(response);
-                        $("#editTodoModal").modal("show");
                     },
                     error: function() {
-                        alert("Görev düzenleme sayfası yüklenirken bir hata oluştu.");
+                        $("#editTodoContent").html('<div class="alert alert-danger">Görev bilgileri yüklenirken bir hata oluştu.</div>');
                     }
                 });
             });
             
-            // Görev silme onayı
+            // Görev silme
             $(".delete-todo").click(function() {
                 var todoId = $(this).data("todo-id");
                 var todoTitle = $(this).data("todo-title");
                 
-                if (confirm('"' + todoTitle + '" görevini silmek istediğinize emin misiniz?')) {
-                    var form = $('<form action="@Url.Action("Delete", "Todo")/' + todoId + '" method="post"></form>');
-                    form.append('@Html.AntiForgeryToken()');
-                    form.appendTo('body').submit().remove();
-                }
+                Swal.fire({
+                    title: 'Emin misiniz?',
+                    text: '"' + todoTitle + '" görevini silmek istediğinizden emin misiniz?',
+                    icon: 'warning',
+                    showCancelButton: true,
+                    confirmButtonColor: '#d33',
+                    cancelButtonColor: '#3085d6',
+                    confirmButtonText: 'Evet, Sil',
+                    cancelButtonText: 'İptal'
+                }).then((result) => {
+                    if (result.isConfirmed) {
+                        $("#deleteTodoId").val(todoId);
+                        $("#deleteTodoForm").submit();
+                    }
+                });
             });
             
-            // Görev durumu değiştir
-            $(".todo-status-toggle").change(function() {
+            // Görev detayını getir
+            $(document).on("click", ".view-todo", function() {
                 var todoId = $(this).data("todo-id");
                 
-                var form = $('<form action="@Url.Action("ToggleStatus", "Todo")/' + todoId + '" method="post"></form>');
-                form.append('@Html.AntiForgeryToken()');
-                form.appendTo('body').submit().remove();
+                $.ajax({
+                    url: '@Url.Action("GetTodoDetails", "Todo")/' + todoId,
+                    type: 'GET',
+                    success: function(response) {
+                        if (response.success) {
+                            var todo = response.data;
+                            
+                            // Detay bilgilerini doldur
+                            $("#viewTitle").text(todo.title);
+                            $("#viewCategory").text(todo.taskCategory || "Genel");
+                            $("#viewCategoryIcon").attr("class", todo.taskIcon);
+                            
+                            // Öncelik
+                            var priorityText = "";
+                            var priorityClass = "";
+                            switch (todo.priorityLevel) {
+                                case 0:
+                                    priorityText = "Düşük";
+                                    priorityClass = "badge bg-secondary";
+                                    break;
+                                case 1:
+                                    priorityText = "Orta";
+                                    priorityClass = "badge bg-warning text-dark";
+                                    break;
+                                case 2:
+                                    priorityText = "Yüksek";
+                                    priorityClass = "badge bg-danger";
+                                    break;
+                            }
+                            $("#viewPriority").html('<span class="' + priorityClass + '">' + priorityText + '</span>');
+                            
+                            // Atanan kullanıcı
+                            $("#viewAssignedUser").text(todo.assignedToUserName || "Atanmamış");
+                            
+                            // Açıklama
+                            $("#viewDescription").text(todo.description || "Açıklama bulunmuyor.");
+                            
+                            // Oluşturulma tarihi
+                            var createdDate = new Date(todo.createdAt);
+                            $("#viewCreatedAt").text(createdDate.toLocaleDateString('tr-TR') + ' ' + createdDate.toLocaleTimeString('tr-TR'));
+                            
+                            // Son tarih
+                            if (todo.deadline) {
+                                var deadline = new Date(todo.deadline);
+                                $("#viewDeadline").text(deadline.toLocaleDateString('tr-TR'));
+                            } else {
+                                $("#viewDeadline").text("Belirtilmemiş");
+                            }
+                            
+                            // Durum
+                            var statusText = "";
+                            var statusClass = "";
+                            switch (todo.status) {
+                                case 0:
+                                    statusText = "Beklemede";
+                                    statusClass = "badge bg-secondary";
+                                    break;
+                                case 1:
+                                    statusText = "Devam Ediyor";
+                                    statusClass = "badge bg-primary";
+                                    break;
+                                case 2:
+                                    statusText = "Tamamlandı";
+                                    statusClass = "badge bg-success";
+                                    break;
+                                case 3:
+                                    statusText = "İptal Edildi";
+                                    statusClass = "badge bg-danger";
+                                    break;
+                            }
+                            $("#viewStatus").html('<span class="' + statusClass + '">' + statusText + '</span>');
+                            
+                            // Görevi ilgili ID'ye atama
+                            $("#commentTodoId").val(todo.id);
+                            
+                            // Modalı göster
+                            var modal = new bootstrap.Modal(document.getElementById('viewTodoModal'));
+                            modal.show();
+                            
+                            // Yorumları getir
+                            loadComments(todo.id);
+                        } else {
+                            toastr.error(response.message);
+                        }
+                    },
+                    error: function() {
+                        toastr.error("Görev detayları yüklenirken bir hata oluştu.");
+                    }
+                });
             });
             
             // Yorum ekleme
@@ -466,7 +715,7 @@
                 var todoId = $("#commentTodoId").val();
                 
                 if (content === "") {
-                    alert("Lütfen bir yorum yazın.");
+                    toastr.warning("Lütfen bir yorum yazın.");
                     return;
                 }
                 
@@ -481,13 +730,15 @@
                         if (response.success) {
                             // Yorumu listeye ekle
                             $("#commentContent").val("");
+                            toastr.success(response.message);
                             loadComments(todoId);
                         } else {
-                            alert("Hata: " + response.message);
+                            toastr.error(response.message);
                         }
                     },
-                    error: function() {
-                        alert("Yorum eklenirken bir hata oluştu.");
+                    error: function(xhr) {
+                        toastr.error("Yorum eklenirken bir hata oluştu: " + 
+                            (xhr.responseJSON ? xhr.responseJSON.message : "Bilinmeyen hata"));
                     }
                 });
             });
@@ -531,37 +782,96 @@
                                 });
                             }
                         } else {
-                            alert("Hata: " + response.message);
+                            toastr.error(response.message);
                         }
                     },
                     error: function() {
-                        alert("Yorumlar alınırken bir hata oluştu.");
+                        toastr.error("Yorumlar alınırken bir hata oluştu.");
                     }
                 });
             }
             
             // Yorum silme
             function deleteComment(commentId, todoId) {
-                if (confirm("Bu yorumu silmek istediğinizden emin misiniz?")) {
-                    $.ajax({
-                        url: '@Url.Action("DeleteComment", "Todo")',
-                        type: "POST",
-                        data: {
-                            commentId: commentId
-                        },
-                        success: function(response) {
-                            if (response.success) {
-                                loadComments(todoId);
-                            } else {
-                                alert("Hata: " + response.message);
+                Swal.fire({
+                    title: 'Emin misiniz?',
+                    text: 'Bu yorumu silmek istediğinizden emin misiniz?',
+                    icon: 'warning',
+                    showCancelButton: true,
+                    confirmButtonText: 'Evet, Sil',
+                    cancelButtonText: 'İptal',
+                    confirmButtonColor: '#d33',
+                    cancelButtonColor: '#3085d6',
+                    reverseButtons: true
+                }).then((result) => {
+                    if (result.isConfirmed) {
+                        $.ajax({
+                            url: '@Url.Action("DeleteComment", "Todo")',
+                            type: "POST",
+                            data: {
+                                commentId: commentId
+                            },
+                            success: function(response) {
+                                if (response.success) {
+                                    toastr.success(response.message);
+                                    loadComments(todoId);
+                                } else {
+                                    toastr.error(response.message);
+                                }
+                            },
+                            error: function() {
+                                toastr.error("Yorum silinirken bir hata oluştu.");
                             }
-                        },
-                        error: function() {
-                            alert("Yorum silinirken bir hata oluştu.");
-                        }
-                    });
-                }
+                        });
+                    }
+                });
             }
+            
+            // Görevi geri yükleme
+            $(".restore-todo").click(function() {
+                var todoId = $(this).data("todo-id");
+                
+                Swal.fire({
+                    title: 'Emin misiniz?',
+                    text: 'Bu görevi geri yüklemek istediğinizden emin misiniz?',
+                    icon: 'question',
+                    showCancelButton: true,
+                    confirmButtonColor: '#28a745',
+                    cancelButtonColor: '#6c757d',
+                    confirmButtonText: 'Evet, Geri Yükle',
+                    cancelButtonText: 'İptal'
+                }).then((result) => {
+                    if (result.isConfirmed) {
+                        // ID'yi form alanına ekle
+                        $("#restoreTodoId").val(todoId);
+                        
+                        // AJAX isteği ile görevi geri yükle
+                        $.ajax({
+                            url: '@Url.Action("Restore", "Todo")',
+                            type: 'POST',
+                            data: { id: todoId },
+                            success: function(response) {
+                                if (response.success) {
+                                    toastr.success(response.message || 'Görev başarıyla geri yüklendi.');
+                                    
+                                    // İlgili satırı gizle
+                                    $(this).closest('tr').fadeOut('slow');
+                                    
+                                    // Sayfayı yenile
+                                    setTimeout(function() {
+                                        window.location.reload();
+                                    }, 1000);
+                                } else {
+                                    toastr.error(response.message || 'Görev geri yüklenirken bir hata oluştu.');
+                                }
+                            }.bind(this),
+                            error: function() {
+                                toastr.error('Görev geri yüklenirken bir hata oluştu.');
+                            }
+                        });
+                    }
+                });
+            });
         });
     </script>
 } 

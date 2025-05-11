@@ -93,12 +93,12 @@ namespace MuhasebeStokWebApp.Services
                 // Sadece dış transaction yoksa yeni bir transaction başlat
                 if (!hasExistingTransaction)
                 {
-                    transaction = await _context.Database.BeginTransactionAsync();
-                    _logger.LogInformation($"StokGirisiYap - Yeni transaction başlatıldı: {urunID}, {miktar}, {birimFiyat}");
+                    transaction = await _context.Database.BeginTransactionAsync(System.Data.IsolationLevel.ReadCommitted);
+                    _logger.LogInformation($"StokGirisiYap - Yeni transaction başlatıldı (Isolation Level: ReadCommitted): Ürün {urunID}, Miktar {miktar}");
                 }
                 else
                 {
-                    _logger.LogInformation($"StokGirisiYap - Mevcut transaction kullanılıyor: {urunID}, {miktar}, {birimFiyat}");
+                    _logger.LogInformation($"StokGirisiYap - Mevcut transaction kullanılıyor: Ürün {urunID}, Miktar {miktar}");
                 }
                 
                 // Null kontrolü ve varsayılan değerler
@@ -112,31 +112,109 @@ namespace MuhasebeStokWebApp.Services
                 {
                     throw new ArgumentException("USD dışında bir para birimi için döviz kuru zorunludur", nameof(dovizKuru));
                 }
-                
-                // Stok FIFO kaydı oluştur
-                var stokFifo = new StokFifo
+
+                // Stok borçlanma/negatif kayıtları kontrol et
+                decimal girisKalanMiktar = miktar;
+                decimal mahsuplasilanMiktar = 0;
+
+                // Ürünün negatif FIFO kayıtlarını getir
+                var negatifKayitlar = await _context.StokFifoKayitlari
+                    .Where(f => f.UrunID == urunID && f.Aktif && !f.Iptal && !f.Silindi && f.KalanMiktar < 0)
+                    .OrderBy(f => f.GirisTarihi)
+                    .ToListAsync();
+
+                // Negatif kayıtları mahsuplaştır
+                foreach (var negatifKayit in negatifKayitlar)
                 {
-                    StokFifoID = Guid.NewGuid(),
-                    UrunID = urunID,
-                    Miktar = miktar,
-                    KalanMiktar = miktar,
-                    BirimFiyat = birimFiyat,
-                    BirimFiyatUSD = birimFiyat,
-                    BirimFiyatUZS = birimFiyat * await GetKurDegeri("USD", "UZS"),
-                    ParaBirimi = paraBirimi,
-                    DovizKuru = dovizKuru.HasValue ? dovizKuru.Value : 1m,
-                    GirisTarihi = DateTime.Now,
-                    OlusturmaTarihi = DateTime.Now,
-                    Aktif = true,
-                    Iptal = false,
-                    Silindi = false,
-                    ReferansNo = referansNo,
-                    ReferansTuru = referansTuru,
-                    ReferansID = referansID,
-                    Aciklama = aciklama
-                };
+                    if (girisKalanMiktar <= 0)
+                        break;
+                    
+                    // Negatif miktarın mutlak değeri
+                    decimal negatifMiktar = Math.Abs(negatifKayit.KalanMiktar);
+                    // Mahsuplaşılacak miktar
+                    decimal mahsupMiktari = Math.Min(negatifMiktar, girisKalanMiktar);
+                    
+                    // Negatif FIFO kaydının kalan miktarını güncelle
+                    negatifKayit.KalanMiktar += mahsupMiktari; // Negatif değere eklenince sıfıra yaklaşır
+                    negatifKayit.GuncellemeTarihi = DateTime.Now;
+                    if (negatifKayit.KalanMiktar == 0)
+                    {
+                        // Tamamen mahsuplaşmış, artık aktif değil
+                        negatifKayit.Aktif = false;
+                    }
+                    
+                    _context.StokFifoKayitlari.Update(negatifKayit);
+                    
+                    // Giriş yapılacak kalanı azalt
+                    girisKalanMiktar -= mahsupMiktari;
+                    mahsuplasilanMiktar += mahsupMiktari;
+                    
+                    _logger.LogInformation($"Negatif stok mahsuplaşması yapıldı: UrunID={urunID}, MahsupMiktari={mahsupMiktari}, NegatifFifoID={negatifKayit.StokFifoID}");
+                }
                 
-                _context.StokFifoKayitlari.Add(stokFifo);
+                // StokFifo girişi oluştur (eğer hala kalan miktar varsa)
+                StokFifo stokFifo = null;
+                if (girisKalanMiktar > 0)
+                {
+                    stokFifo = new StokFifo
+                    {
+                        StokFifoID = Guid.NewGuid(),
+                        UrunID = urunID,
+                        Miktar = girisKalanMiktar,
+                        KalanMiktar = girisKalanMiktar,
+                        BirimFiyat = birimFiyat,
+                        // Para birimine göre doğru dönüşüm hesaplamaları
+                        BirimFiyatUSD = paraBirimi == "USD" ? birimFiyat : birimFiyat / (dovizKuru ?? 13000m),
+                        BirimFiyatUZS = paraBirimi == "UZS" ? birimFiyat : birimFiyat * (dovizKuru ?? 13000m),
+                        ParaBirimi = paraBirimi,
+                        DovizKuru = dovizKuru.HasValue ? dovizKuru.Value : 1m,
+                        GirisTarihi = DateTime.Now,
+                        OlusturmaTarihi = DateTime.Now,
+                        Aktif = true,
+                        Iptal = false,
+                        Silindi = false,
+                        ReferansNo = referansNo,
+                        ReferansTuru = referansTuru,
+                        ReferansID = referansID,
+                        Aciklama = mahsuplasilanMiktar > 0 
+                            ? $"{aciklama} (Negatif stok mahsuplaşması: {mahsuplasilanMiktar})" 
+                            : aciklama
+                    };
+                    
+                    _context.StokFifoKayitlari.Add(stokFifo);
+                }
+                else if (mahsuplasilanMiktar > 0)
+                {
+                    // Tüm miktar mahsuplaştırıldı, hiç giriş kaydı oluşturmadık
+                    _logger.LogInformation($"Tüm stok girişi negatif bakiyelerle mahsuplaştı: UrunID={urunID}, Miktar={miktar}");
+                    
+                    // Sadece log için bir sahte giriş nesnesi oluştur
+                    stokFifo = new StokFifo
+                    {
+                        StokFifoID = Guid.NewGuid(),
+                        UrunID = urunID,
+                        Miktar = miktar,
+                        KalanMiktar = 0, // Tamamen mahsuplaştı
+                        BirimFiyat = birimFiyat,
+                        // Para birimine göre doğru dönüşüm hesaplamaları
+                        BirimFiyatUSD = paraBirimi == "USD" ? birimFiyat : birimFiyat / (dovizKuru ?? 13000m),
+                        BirimFiyatUZS = paraBirimi == "UZS" ? birimFiyat : birimFiyat * (dovizKuru ?? 13000m),
+                        ParaBirimi = paraBirimi,
+                        DovizKuru = dovizKuru.HasValue ? dovizKuru.Value : 1m,
+                        GirisTarihi = DateTime.Now,
+                        OlusturmaTarihi = DateTime.Now,
+                        Aktif = false, // Aktif değil çünkü hepsi mahsuplaştı
+                        Iptal = false,
+                        Silindi = false,
+                        ReferansNo = referansNo,
+                        ReferansTuru = referansTuru,
+                        ReferansID = referansID,
+                        Aciklama = $"Tamamen mahsuplaşan stok girişi: {miktar} {birim}"
+                    };
+                    
+                    // Bu kayıt veritabanına eklenmeyecek, sadece log ve dönüş değeri için
+                }
+                
                 await _context.SaveChangesAsync();
                 
                 // Sadece biz başlattıysak transaction'ı commit et
@@ -146,7 +224,7 @@ namespace MuhasebeStokWebApp.Services
                     _logger.LogInformation($"StokGirisiYap - Transaction commit edildi: {urunID}, {miktar}, {birimFiyat}");
                 }
                 
-                _logger.LogInformation($"Stok girişi başarıyla tamamlandı: UrunID={urunID}, Miktar={miktar}, BirimFiyat={birimFiyat}, ParaBirimi={paraBirimi}");
+                _logger.LogInformation($"Stok girişi başarıyla tamamlandı: UrunID={urunID}, Miktar={miktar}, BirimFiyat={birimFiyat}, ParaBirimi={paraBirimi}, Mahsuplaşan={mahsuplasilanMiktar}");
                 return stokFifo;
             }
             catch (Exception ex)
@@ -317,7 +395,7 @@ namespace MuhasebeStokWebApp.Services
         /// Stok çıkışı yapar
         /// </summary>
         public async Task<StokCikisInfo> StokCikisiYap(Guid urunID, decimal miktar, StokHareketTipi hareketTipi, 
-            Guid? referansID = null, string aciklama = null, string paraBirimi = "USD", bool useBatch = false)
+            Guid? referansID = null, string aciklama = null, string paraBirimi = "USD", bool useBatch = false, decimal? dovizKuru = null)
         {
             // Transaction yönetimi için mevcut transaction kontrolü
             bool hasExistingTransaction = _context.Database.CurrentTransaction != null;
@@ -400,6 +478,7 @@ namespace MuhasebeStokWebApp.Services
                         BirimMaliyet = fifo.BirimFiyatUSD,
                         ToplamMaliyet = kullanilanMiktar * fifo.BirimFiyatUSD,
                         ParaBirimi = paraBirimi,
+                        DovizKuru = dovizKuru, // Faturadan gelen döviz kuru kullanımı
                         Aciklama = aciklama ?? $"{hareketTipi} hareketi ile stok çıkışı (FIFO)",
                         OlusturmaTarihi = DateTime.Now,
                         Iptal = false,
@@ -465,11 +544,12 @@ namespace MuhasebeStokWebApp.Services
                         ReferansNo = aciklama ?? $"{hareketTipi}-EksikStok", // ReferansNo için null kontrolü
                         BirimFiyat = ortalamaBirimFiyat,
                         BirimFiyatUSD = ortalamaBirimFiyat, // USD varsayılan
-                        BirimFiyatUZS = paraBirimi == "UZS" ? ortalamaBirimFiyat : ortalamaBirimFiyat * await GetKurDegeri("USD", "UZS"),
+                        BirimFiyatUZS = paraBirimi == "UZS" ? ortalamaBirimFiyat : ortalamaBirimFiyat * (dovizKuru ?? await GetKurDegeri("USD", "UZS")),
                         ToplamMaliyetUSD = kalanMiktar * ortalamaBirimFiyat,
                         BirimMaliyet = ortalamaBirimFiyat,
                         ToplamMaliyet = kalanMiktar * ortalamaBirimFiyat,
                         ParaBirimi = paraBirimi,
+                        DovizKuru = dovizKuru, // Faturadan gelen döviz kuru kullanımı
                         Aciklama = $"Stok yetersiz - Borçlanma ({hareketTipi}): {kalanMiktar}",
                         OlusturmaTarihi = DateTime.Now,
                         Iptal = false,
@@ -478,6 +558,32 @@ namespace MuhasebeStokWebApp.Services
                     
                     cikisDetaylari.Add(eksikStokCikisDetay);
                     toplamMaliyet += eksikStokCikisDetay.ToplamMaliyet;
+                    
+                    // Negatif FIFO kaydı oluştur
+                    var negatifFifo = new StokFifo
+                    {
+                        StokFifoID = Guid.NewGuid(),
+                        UrunID = urunID,
+                        Miktar = -kalanMiktar, // Negatif miktar
+                        KalanMiktar = -kalanMiktar, // Negatif kalan miktar
+                        BirimFiyat = ortalamaBirimFiyat,
+                        BirimFiyatUSD = ortalamaBirimFiyat,
+                        BirimFiyatUZS = paraBirimi == "UZS" ? ortalamaBirimFiyat : ortalamaBirimFiyat * (dovizKuru ?? await GetKurDegeri("USD", "UZS")),
+                        ParaBirimi = paraBirimi,
+                        DovizKuru = dovizKuru ?? ((paraBirimi == "UZS") ? await GetKurDegeri("UZS", "USD") : await GetKurDegeri("USD", "UZS")),
+                        GirisTarihi = DateTime.Now,
+                        OlusturmaTarihi = DateTime.Now,
+                        Aktif = true,
+                        Iptal = false,
+                        Silindi = false,
+                        ReferansNo = aciklama ?? $"{hareketTipi}-EksikStok",
+                        ReferansTuru = "NegatifStok",
+                        ReferansID = referansID,
+                        Aciklama = $"Negatif stok kaydı - Eksik miktar: {kalanMiktar}"
+                    };
+                    
+                    _context.StokFifoKayitlari.Add(negatifFifo);
+                    _logger.LogInformation($"Negatif stok FIFO kaydı oluşturuldu: UrunID={urunID}, Miktar={-kalanMiktar}, Fiyat={ortalamaBirimFiyat}");
                     
                     _logger.LogInformation($"Eksik stok kaydı oluşturuldu: UrunID={urunID}, Miktar={kalanMiktar}, BirimFiyat={ortalamaBirimFiyat}");
                 }
@@ -797,9 +903,14 @@ namespace MuhasebeStokWebApp.Services
         {
             try
             {
-                // Aktif kayıtların maliyetlerini alıp ortalamasını hesapla
+                // Sadece aktif giriş kayıtlarını al
                 var kayitlar = await _context.StokFifoKayitlari
-                    .Where(f => f.UrunID == urunID && f.KalanMiktar > 0 && f.Aktif && !f.Iptal && !f.Silindi)
+                    .Where(f => f.UrunID == urunID 
+                           && f.KalanMiktar > 0 
+                           && f.Aktif 
+                           && !f.Iptal 
+                           && !f.Silindi
+                           && f.Miktar > 0) // Miktar > 0 olan kayıtlar giriş kayıtlarıdır
                     .ToListAsync();
                 
                 if (!kayitlar.Any())
@@ -818,6 +929,7 @@ namespace MuhasebeStokWebApp.Services
                 
                 foreach (var kayit in kayitlar)
                 {
+                    // Doğrudan BirimFiyatUSD veya BirimFiyatUZS alanlarını kullan
                     switch (paraBirimi.ToUpper())
                     {
                         case "USD":
@@ -849,9 +961,14 @@ namespace MuhasebeStokWebApp.Services
         {
             try
             {
-                // Aktif FIFO kayıtlarını alıp ortalama maliyet hesaplama
+                // Sadece aktif giriş kayıtlarını al
                 var fifoKayitlari = await _context.StokFifoKayitlari
-                    .Where(f => f.UrunID == urunID && f.KalanMiktar > 0 && f.Aktif && !f.Iptal && !f.Silindi)
+                    .Where(f => f.UrunID == urunID 
+                           && f.KalanMiktar > 0 
+                           && f.Aktif 
+                           && !f.Iptal 
+                           && !f.Silindi
+                           && f.Miktar > 0) // Miktar > 0 olan kayıtlar giriş kayıtlarıdır
                     .ToListAsync();
                     
                 if (!fifoKayitlari.Any() || fifoKayitlari.Sum(f => f.KalanMiktar) == 0)
@@ -862,6 +979,7 @@ namespace MuhasebeStokWebApp.Services
 
                 foreach (var fifo in fifoKayitlari)
                 {
+                    // Doğrudan BirimFiyatUSD veya BirimFiyatUZS alanlarını kullan
                     switch (paraBirimi.ToUpper())
                     {
                         case "USD":
@@ -933,9 +1051,14 @@ namespace MuhasebeStokWebApp.Services
         {
             try
             {
-                // Belirli bir tarihe kadar olan stok hareketlerini hesaplayarak maliyeti bul
+                // Belirli bir tarihe kadar olan sadece giriş kayıtlarını alarak maliyeti hesapla
                 var fifoKayitlari = await _context.StokFifoKayitlari
-                    .Where(f => f.UrunID == stokId && f.GirisTarihi <= tarih && f.Aktif && !f.Iptal && !f.Silindi)
+                    .Where(f => f.UrunID == stokId 
+                           && f.GirisTarihi <= tarih 
+                           && f.Aktif 
+                           && !f.Iptal 
+                           && !f.Silindi
+                           && f.Miktar > 0) // Miktar > 0 olan kayıtlar giriş kayıtlarıdır
                     .ToListAsync();
                 
                 // StokCikisDetay tablosu varsa, o tarihteki çıkışları da hesaba kat
@@ -967,7 +1090,7 @@ namespace MuhasebeStokWebApp.Services
                     // Negatif olamaz
                     mevcutMiktar = Math.Max(0, mevcutMiktar);
                     
-                    // Maliyet hesapla
+                    // Maliyet hesapla - doğrudan BirimFiyatUSD veya BirimFiyatUZS kullan
                     decimal birimFiyat = 0;
                     switch (paraBirimi.ToUpper())
                     {

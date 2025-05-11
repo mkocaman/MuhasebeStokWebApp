@@ -77,7 +77,8 @@ namespace MuhasebeStokWebApp.Controllers
                 .Include(f => f.Cari) // Sildi filtresi olmadan Cari'yi dahil et
                 .Include(f => f.FaturaTuru)
                 .Where(f => !f.Silindi)
-                .OrderByDescending(f => f.FaturaTarihi)
+                .OrderByDescending(f => f.OlusturmaTarihi) // En son oluşturulan faturaları üstte göster
+                .ThenByDescending(f => f.FaturaTarihi) // Eğer oluşturma tarihi aynı ise fatura tarihine göre sırala
                 .ToListAsync();
 
             var viewModel = faturalar.Select(f => new FaturaViewModel
@@ -116,7 +117,7 @@ namespace MuhasebeStokWebApp.Controllers
                 {
                     FaturaTarihi = DateTime.Now,
                     VadeTarihi = DateTime.Now.AddDays(30),
-                    DovizTuru = "USD", // Varsayılan para birimi USD
+                    DovizTuru = null, // Para birimi seçim için boş bırakıldı
                     DovizKuru = 13000, // Varsayılan 1 USD = 13000 UZS
                     FaturaKalemleri = new List<FaturaKalemViewModel>(),
                     OtomatikIrsaliyeOlustur = true
@@ -130,6 +131,38 @@ namespace MuhasebeStokWebApp.Controllers
                 
                 // Gerekli formları yükle
                 await PopulateFaturaCreateViewModelAsync(viewModel);
+
+                // İlk varsayılan kalemi oluştur
+                viewModel.FaturaKalemleri = new List<FaturaKalemViewModel>(); // FaturaKalemleri listesini yeniden oluştur
+                
+                if (!viewModel.UrunListesiBosMu && viewModel.Urunler.Any())
+                {
+                    // İlk ürünü seç
+                    var ilkUrun = viewModel.Urunler.FirstOrDefault();
+                    if (ilkUrun != null)
+                    {
+                        // Ürün bilgilerini al
+                        var urun = await _context.Urunler
+                            .Include(u => u.Birim)
+                            .FirstOrDefaultAsync(u => u.UrunID == Guid.Parse(ilkUrun.Value));
+                            
+                        var ilkKalem = new FaturaKalemViewModel
+                        {
+                            UrunID = Guid.Parse(ilkUrun.Value),
+                            UrunAdi = ilkUrun.Text,
+                            Miktar = 1,
+                            BirimFiyat = urun?.DovizliSatisFiyati ?? 0,
+                            Birim = urun?.Birim?.BirimAdi ?? "Adet",
+                            KdvOrani = urun?.KDVOrani ?? 0,
+                            IndirimOrani = 0,
+                            Tutar = urun?.DovizliSatisFiyati ?? 0,
+                            KdvTutari = (urun?.DovizliSatisFiyati ?? 0) * (urun?.KDVOrani ?? 0) / 100,
+                            IndirimTutari = 0,
+                            NetTutar = (urun?.DovizliSatisFiyati ?? 0) * (1 + (urun?.KDVOrani ?? 0) / 100)
+                        };
+                        viewModel.FaturaKalemleri.Add(ilkKalem);
+                    }
+                }
                 
                 return View(viewModel);
             }
@@ -275,89 +308,74 @@ namespace MuhasebeStokWebApp.Controllers
         {
             try
             {
-                // Loglama - model hatalarını detaylı göster
-                foreach (var key in ModelState.Keys)
+                _logger.LogInformation("Fatura oluşturma işlemi başlatıldı: FaturaNumarasi={FaturaNumarasi}, FaturaTuru={FaturaTuru}, CariID={CariID}", 
+                    viewModel.FaturaNumarasi, viewModel.FaturaTuruID, viewModel.CariID);
+                
+                await PopulateFaturaCreateViewModelAsync(viewModel);
+                
+                if (!ModelState.IsValid)
                 {
-                    var state = ModelState[key];
-                    if (state.Errors.Any())
-                    {
-                        foreach (var error in state.Errors)
-                        {
-                            _logger.LogWarning($"Model hata için: {key} = {error.ErrorMessage}");
-                        }
-                    }
+                    var errors = ModelState.Values.SelectMany(v => v.Errors)
+                        .Select(e => e.ErrorMessage)
+                        .ToList();
+                    _logger.LogWarning("Fatura oluşturma işleminde doğrulama hatası. FaturaNumarasi={FaturaNumarasi}, Hatalar={Errors}", 
+                        viewModel.FaturaNumarasi, string.Join(", ", errors));
+                    
+                    return View(viewModel);
                 }
                 
-                if (ModelState.IsValid)
+                // Validate total calculation and relations
+                var validationResult = _faturaValidationService.ValidateFaturaCreateViewModel(viewModel);
+                if (!validationResult.IsValid)
                 {
-                    // Fatura No ve Sipariş No boş değilse
-                    if (string.IsNullOrEmpty(viewModel.FaturaNumarasi))
-                    {
-                        viewModel.FaturaNumarasi = await _faturaNumaralandirmaService.GenerateFaturaNumarasiAsync();
-                    }
-
-                    if (string.IsNullOrEmpty(viewModel.SiparisNumarasi))
-                    {
-                        viewModel.SiparisNumarasi = await _faturaNumaralandirmaService.GenerateSiparisNumarasiAsync();
-                    }
-
-                    try
-                    {
-                        // Mevcut kullanıcıyı al
-                        var currentUser = await _userManager.GetUserAsync(User);
-                        var currentUserId = currentUser?.Id != null ? Guid.Parse(currentUser.Id) : (Guid?)null;
-
-                        // Model validasyonu 
-                        var validationResult = _faturaValidationService.ValidateFaturaCreateViewModel(viewModel);
-                        if (!validationResult.IsValid)
-                        {
-                            ModelState.AddModelError(string.Empty, validationResult.ErrorMessage);
-                            _logger.LogWarning($"Fatura validasyon hatası: {validationResult.ErrorMessage}");
-                            await PopulateFaturaCreateViewModelAsync(viewModel);
-                            return View(viewModel);
-                        }
-
-                        // Fatura kaydet ve ilişkili kayıtları oluştur
-                        var faturaId = await _faturaOrchestrationService.CreateFaturaWithRelations(viewModel, currentUserId);
-
-                        // Otomatik irsaliye oluşturma
-                        if (viewModel.OtomatikIrsaliyeOlustur && faturaId != Guid.Empty)
-                        {
-                            var irsaliyeId = await OtomatikIrsaliyeOlusturFromID(faturaId, viewModel.DepoID);
-                            _logger.LogInformation($"Otomatik irsaliye oluşturuldu. IrsaliyeID: {irsaliyeId}");
-                        }
-
-                        // İşlem başarılı
-                        _logger.LogInformation($"Fatura başarıyla oluşturuldu. FaturaID: {faturaId}");
-                        TempData["SuccessMessage"] = "Fatura başarıyla oluşturuldu.";
-                        return RedirectToAction(nameof(Details), new { id = faturaId });
-                    }
-                    catch (Exception ex)
-                    {
-                        _logger.LogError(ex, "Fatura oluşturma hatası");
-                        ModelState.AddModelError(string.Empty, $"Fatura oluşturulurken bir hata oluştu: {ex.Message}");
-                        TempData["ErrorMessage"] = $"Fatura oluşturulurken bir hata oluştu: {ex.Message}";
-                    }
+                    ModelState.AddModelError(string.Empty, validationResult.ErrorMessage);
+                    _logger.LogWarning("Fatura doğrulama hatası. FaturaNumarasi={FaturaNumarasi}, Hata={Error}", 
+                        viewModel.FaturaNumarasi, validationResult.ErrorMessage);
+                    
+                    return View(viewModel);
                 }
-                else
+                
+                // Kullanıcı boş fatura numarası gönderdiyse yeni numara oluştur
+                if (string.IsNullOrEmpty(viewModel.FaturaNumarasi))
                 {
-                    _logger.LogWarning("Fatura formu doğrulama hatası");
-                    foreach (var key in ModelState.Keys)
-                    {
-                        var state = ModelState[key];
-                        if (state.Errors.Any())
-                        {
-                            foreach (var error in state.Errors)
-                            {
-                                _logger.LogWarning($"Model hata: {error.ErrorMessage}");
-                            }
-                        }
-                    }
+                    viewModel.FaturaNumarasi = await _faturaNumaralandirmaService.GenerateFaturaNumarasiAsync();
+                    _logger.LogInformation("Yeni fatura numarası oluşturuldu: {FaturaNumarasi}", viewModel.FaturaNumarasi);
+                }
+                
+                // Kullanıcı boş sipariş numarası gönderdiyse yeni numara oluştur
+                if (string.IsNullOrEmpty(viewModel.SiparisNumarasi))
+                {
+                    viewModel.SiparisNumarasi = await _faturaNumaralandirmaService.GenerateSiparisNumarasiAsync();
+                    _logger.LogInformation("Yeni sipariş numarası oluşturuldu: {SiparisNumarasi}", viewModel.SiparisNumarasi);
                 }
 
-                // Form doğrulama hatası veya başka bir hata durumunda view'ı yeniden doldur
-                await PopulateFaturaCreateViewModelAsync(viewModel);
-                return View(viewModel);
+                try
+                {
+                    // Mevcut kullanıcıyı al
+                    var currentUser = await _userManager.GetUserAsync(User);
+                    var currentUserId = currentUser?.Id != null ? Guid.Parse(currentUser.Id) : (Guid?)null;
+
+                    // Fatura kaydet ve ilişkili kayıtları oluştur
+                    var faturaId = await _faturaOrchestrationService.CreateFaturaWithRelations(viewModel, currentUserId);
+
+                    // Otomatik irsaliye oluşturma
+                    if (viewModel.OtomatikIrsaliyeOlustur && faturaId != Guid.Empty)
+                    {
+                        var irsaliyeId = await OtomatikIrsaliyeOlusturFromID(faturaId, viewModel.DepoID);
+                        _logger.LogInformation($"Otomatik irsaliye oluşturuldu. IrsaliyeID: {irsaliyeId}");
+                    }
+
+                    // İşlem başarılı
+                    _logger.LogInformation($"Fatura başarıyla oluşturuldu. FaturaID: {faturaId}");
+                    TempData["SuccessMessage"] = "Fatura başarıyla oluşturuldu.";
+                    return RedirectToAction(nameof(Details), new { id = faturaId });
+                }
+                catch (Exception ex)
+                {
+                    _logger.LogError(ex, "Fatura oluşturma hatası");
+                    ModelState.AddModelError(string.Empty, $"Fatura oluşturulurken bir hata oluştu: {ex.Message}");
+                    TempData["ErrorMessage"] = $"Fatura oluşturulurken bir hata oluştu: {ex.Message}";
+                }
             }
             catch (Exception ex)
             {
@@ -365,6 +383,8 @@ namespace MuhasebeStokWebApp.Controllers
                 TempData["ErrorMessage"] = $"Beklenmeyen bir hata oluştu: {ex.Message}";
                 return RedirectToAction(nameof(Index));
             }
+
+            return View(viewModel);
         }
 
         // GET: Fatura/Details/5
@@ -427,7 +447,7 @@ namespace MuhasebeStokWebApp.Controllers
                 CariAdres = fatura.Cari?.Adres ?? "Belirtilmemiş",
                 CariTelefon = fatura.Cari?.Telefon ?? "Belirtilmemiş",
                 FaturaTuru = fatura.FaturaTuru?.FaturaTuruAdi ?? "Belirtilmemiş",
-                FaturaTuruID = fatura.FaturaTuruID, 
+                FaturaTuruID = fatura.FaturaTuruID,
                 SiparisNumarasi = fatura.SiparisNumarasi ?? "",
                 // Eğer irsaliye numarası Fatura entity'sinde varsa kullan, yoksa boş string kullan
                 IrsaliyeNumarasi = "", 
@@ -437,6 +457,11 @@ namespace MuhasebeStokWebApp.Controllers
                 // İskonto tutarını kontrol et - entity'de var
                 IndirimTutari = fatura.IndirimTutari ?? 0m, 
                 GenelToplam = fatura.GenelToplam ?? 0m,
+                // Döviz toplamları
+                AraToplamDoviz = fatura.AraToplamDoviz ?? GetDovizTutari(fatura.AraToplam ?? 0m, fatura.DovizTuru, fatura.DovizKuru ?? 1m),
+                KdvTutariDoviz = fatura.KDVToplamDoviz ?? GetDovizTutari(fatura.KDVToplam ?? 0m, fatura.DovizTuru, fatura.DovizKuru ?? 1m),
+                IndirimTutariDoviz = fatura.IndirimTutariDoviz ?? GetDovizTutari(fatura.IndirimTutari ?? 0m, fatura.DovizTuru, fatura.DovizKuru ?? 1m),
+                GenelToplamDoviz = fatura.GenelToplamDoviz ?? GetDovizTutari(fatura.GenelToplam ?? 0m, fatura.DovizTuru, fatura.DovizKuru ?? 1m),
                 OdenecekTutar = odenecekTutar,
                 OdenenTutar = odenenTutar,
                 // Ödeme durumunu hesapla
@@ -465,6 +490,12 @@ namespace MuhasebeStokWebApp.Controllers
                     KdvTutari = fd.KdvTutari ?? 0m,
                     IndirimTutari = fd.IndirimTutari ?? 0m,
                     NetTutar = fd.NetTutar ?? 0m,
+                    // Dövizli alanları hesapla
+                    BirimFiyatDoviz = GetDovizTutari(fd.BirimFiyat, fatura.DovizTuru, fatura.DovizKuru ?? 1m),
+                    TutarDoviz = GetDovizTutari(fd.Tutar ?? 0m, fatura.DovizTuru, fatura.DovizKuru ?? 1m),
+                    KdvTutariDoviz = GetDovizTutari(fd.KdvTutari ?? 0m, fatura.DovizTuru, fatura.DovizKuru ?? 1m),
+                    IndirimTutariDoviz = GetDovizTutari(fd.IndirimTutari ?? 0m, fatura.DovizTuru, fatura.DovizKuru ?? 1m),
+                    NetTutarDoviz = GetDovizTutari(fd.NetTutar ?? 0m, fatura.DovizTuru, fatura.DovizKuru ?? 1m),
                     Birim = fd.Urun?.Birim?.BirimAdi ?? "Adet"
                 }).OrderBy(fk => fk.UrunAdi).ToList(),
                 
@@ -762,6 +793,12 @@ namespace MuhasebeStokWebApp.Controllers
                     KdvTutari = fd.KdvTutari ?? 0m,
                     IndirimTutari = fd.IndirimTutari ?? 0m,
                     NetTutar = fd.NetTutar ?? 0m,
+                    // Dövizli alanları hesapla
+                    BirimFiyatDoviz = GetDovizTutari(fd.BirimFiyat, fatura.DovizTuru, fatura.DovizKuru ?? 1m),
+                    TutarDoviz = GetDovizTutari(fd.Tutar ?? 0m, fatura.DovizTuru, fatura.DovizKuru ?? 1m),
+                    KdvTutariDoviz = GetDovizTutari(fd.KdvTutari ?? 0m, fatura.DovizTuru, fatura.DovizKuru ?? 1m),
+                    IndirimTutariDoviz = GetDovizTutari(fd.IndirimTutari ?? 0m, fatura.DovizTuru, fatura.DovizKuru ?? 1m),
+                    NetTutarDoviz = GetDovizTutari(fd.NetTutar ?? 0m, fatura.DovizTuru, fatura.DovizKuru ?? 1m),
                     Birim = fd.Birim
                 }).ToList()
             };
@@ -1006,6 +1043,26 @@ namespace MuhasebeStokWebApp.Controllers
                 _logger.LogError(ex, "Ürün bilgileri getirilirken hata oluştu: {Message}", ex.Message);
                 return Json(new { success = false, message = "Ürün bilgileri getirilirken bir hata oluştu." });
             }
+        }
+
+        private decimal GetDovizTutari(decimal tutar, string dövizTuru, decimal dövizKuru)
+        {
+            if (dövizTuru == "USD")
+            {
+                // UZS değerini bulmak için USD değerini çarp
+                return tutar * dövizKuru;
+            }
+            else if (dövizTuru == "UZS")
+            {
+                // USD değerini bulmak için UZS değerini böl
+                if (dövizKuru <= 0)
+                {
+                    // Sıfıra bölmeyi önle
+                    return 0;
+                }
+                return tutar / dövizKuru;
+            }
+            throw new ArgumentException("Desteklenmeyen döviz kodu");
         }
     }
 } 

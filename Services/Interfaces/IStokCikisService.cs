@@ -32,6 +32,7 @@ namespace MuhasebeStokWebApp.Services.Interfaces
         /// <param name="aciklama">Açıklama</param>
         /// <param name="paraBirimi">Para birimi (varsayılan: USD)</param>
         /// <param name="useBatch">Toplu işlem mi? (varsayılan: false)</param>
+        /// <param name="dovizKuru">Döviz kuru</param>
         /// <returns>Stok çıkış bilgisi</returns>
         Task<StokCikisInfo> StokCikisiYap(
             Guid urunID, 
@@ -40,7 +41,8 @@ namespace MuhasebeStokWebApp.Services.Interfaces
             Guid? referansID = null, 
             string aciklama = null, 
             string paraBirimi = "USD", 
-            bool useBatch = false);
+            bool useBatch = false,
+            decimal? dovizKuru = null);
         
         /// <summary>
         /// Alternatif stok çıkış işlemi yapar

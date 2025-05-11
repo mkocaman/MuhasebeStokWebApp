@@ -428,6 +428,38 @@ namespace MuhasebeStokWebApp.Services.Menu
                             "#"
                         );
 
+                        // Todo menüsü (Üst menü)
+                        var todoMenu = CreateMenu(
+                            "Görevler",
+                            "fas fa-tasks",
+                            "",
+                            "",
+                            4,
+                            null,
+                            "#"
+                        );
+
+                        // Todo alt menüleri
+                        var todoListMenu = CreateMenu(
+                            "Görev Listesi",
+                            "fas fa-list",
+                            "Todo",
+                            "Index",
+                            1,
+                            todoMenu.MenuID,
+                            "/Todo/Index"
+                        );
+
+                        var todoCalendarMenu = CreateMenu(
+                            "Takvim Görünümü",
+                            "fas fa-calendar-alt",
+                            "Todo",
+                            "Calendar",
+                            2,
+                            todoMenu.MenuID,
+                            "/Todo/Calendar"
+                        );
+
                         // Stok Yönetimi Alt Menüleri
                         var urunlerMenu = CreateMenu(
                             "Ürünler", 
@@ -528,7 +560,7 @@ namespace MuhasebeStokWebApp.Services.Menu
                             "fas fa-users", 
                             "", 
                             "", 
-                            4, 
+                            5, 
                             null, 
                             "#"
                         );
@@ -570,7 +602,7 @@ namespace MuhasebeStokWebApp.Services.Menu
                             "fas fa-file-alt", 
                             "", 
                             "", 
-                            5, 
+                            6, 
                             null, 
                             "#"
                         );
@@ -623,7 +655,7 @@ namespace MuhasebeStokWebApp.Services.Menu
                             "fas fa-money-bill-wave", 
                             "", 
                             "", 
-                            6, 
+                            7, 
                             null, 
                             "#"
                         );
@@ -666,7 +698,7 @@ namespace MuhasebeStokWebApp.Services.Menu
                             "fas fa-coins", 
                             "", 
                             "", 
-                            7, 
+                            8, 
                             null, 
                             "#"
                         );
@@ -708,7 +740,7 @@ namespace MuhasebeStokWebApp.Services.Menu
                             "fas fa-chart-bar", 
                             "", 
                             "", 
-                            8, 
+                            9, 
                             null, 
                             "#"
                         );
@@ -781,7 +813,7 @@ namespace MuhasebeStokWebApp.Services.Menu
                             "fas fa-cogs", 
                             "", 
                             "", 
-                            9, 
+                            10, 
                             null, 
                             "#"
                         );
@@ -854,6 +886,7 @@ namespace MuhasebeStokWebApp.Services.Menu
                             dashboardMenu,
                             tanimlamalarMenu,
                             stokYonetimiMenu,
+                            todoMenu,
                             cariHesapMenu,
                             belgelerMenu,
                             finansMenu,
@@ -876,6 +909,10 @@ namespace MuhasebeStokWebApp.Services.Menu
                             stokTransferMenu,
                             stokSayimMenu,
                             urunFiyatMenu,
+                            
+                            // Todo alt menüleri
+                            todoListMenu,
+                            todoCalendarMenu,
                             
                             // 4. Cari alt menüleri
                             tumCarilerMenu,
@@ -1289,6 +1326,47 @@ namespace MuhasebeStokWebApp.Services.Menu
                 AltMenuler = new List<MenuViewModel>()
             });
             
+            // Todo menüsü
+            var todoMenu = new MenuViewModel
+            {
+                MenuID = Guid.NewGuid(),
+                Ad = "Görevler",
+                Icon = "fas fa-tasks",
+                AktifMi = true,
+                Sira = 2,
+                Url = "#",
+                AltMenuler = new List<MenuViewModel>()
+            };
+            
+            // Todo alt menüleri
+            todoMenu.AltMenuler.Add(new MenuViewModel
+            {
+                MenuID = Guid.NewGuid(),
+                Ad = "Görev Listesi",
+                Controller = "Todo",
+                Action = "Index",
+                AktifMi = true,
+                Sira = 1,
+                UstMenuID = todoMenu.MenuID,
+                Url = "/Todo/Index",
+                AltMenuler = new List<MenuViewModel>()
+            });
+            
+            todoMenu.AltMenuler.Add(new MenuViewModel
+            {
+                MenuID = Guid.NewGuid(),
+                Ad = "Takvim Görünümü",
+                Controller = "Todo",
+                Action = "Calendar",
+                AktifMi = true,
+                Sira = 2,
+                UstMenuID = todoMenu.MenuID,
+                Url = "/Todo/Calendar",
+                AltMenuler = new List<MenuViewModel>()
+            });
+            
+            result.Add(todoMenu);
+            
             // Cariler menüsü
             result.Add(new MenuViewModel
             {
@@ -1298,7 +1376,7 @@ namespace MuhasebeStokWebApp.Services.Menu
                 Controller = "Cari",
                 Action = "Index",
                 AktifMi = true,
-                Sira = 2,
+                Sira = 3,
                 Url = "/Cari/Index",
                 AltMenuler = new List<MenuViewModel>()
             });
@@ -1310,7 +1388,7 @@ namespace MuhasebeStokWebApp.Services.Menu
                 Ad = "Stok Yönetimi",
                 Icon = "fas fa-boxes",
                 AktifMi = true,
-                Sira = 3,
+                Sira = 4,
                 Url = "#",
                 AltMenuler = new List<MenuViewModel>() // Alt menü listesini başlat
             };
@@ -1393,7 +1471,7 @@ namespace MuhasebeStokWebApp.Services.Menu
                 Controller = "Fatura",
                 Action = "Index",
                 AktifMi = true,
-                Sira = 4,
+                Sira = 5,
                 Url = "/Fatura/Index",
                 AltMenuler = new List<MenuViewModel>()
             });
@@ -1405,7 +1483,7 @@ namespace MuhasebeStokWebApp.Services.Menu
                 Ad = "Raporlar",
                 Icon = "fas fa-chart-bar",
                 AktifMi = true,
-                Sira = 5,
+                Sira = 6,
                 Url = "#",
                 AltMenuler = new List<MenuViewModel>()
             };
@@ -1448,7 +1526,7 @@ namespace MuhasebeStokWebApp.Services.Menu
                 Controller = "User",
                 Action = "Index",
                 AktifMi = true,
-                Sira = 6,
+                Sira = 7,
                 Url = "/User/Index",
                 AltMenuler = new List<MenuViewModel>()
             });
@@ -1460,7 +1538,7 @@ namespace MuhasebeStokWebApp.Services.Menu
                 Ad = "Şirket Yönetimi",
                 Icon = "fas fa-building",
                 AktifMi = true,
-                Sira = 7,
+                Sira = 8,
                 Url = "#",
                 AltMenuler = new List<MenuViewModel>()
             };
@@ -1527,7 +1605,7 @@ namespace MuhasebeStokWebApp.Services.Menu
                 Ad = "Finans",
                 Icon = "fas fa-money-check-alt",
                 AktifMi = true,
-                Sira = 8,
+                Sira = 9,
                 Url = "#",
                 AltMenuler = new List<MenuViewModel>()
             };
@@ -1607,7 +1685,7 @@ namespace MuhasebeStokWebApp.Services.Menu
                 Ad = "Döviz İşlemleri",
                 Icon = "fas fa-dollar-sign",
                 AktifMi = true,
-                Sira = 9,
+                Sira = 10,
                 Url = "#",
                 AltMenuler = new List<MenuViewModel>()
             };
@@ -1661,7 +1739,7 @@ namespace MuhasebeStokWebApp.Services.Menu
                 Ad = "Satın Alma",
                 Icon = "fas fa-shopping-cart",
                 AktifMi = true,
-                Sira = 10,
+                Sira = 11,
                 Url = "#",
                 AltMenuler = new List<MenuViewModel>()
             };
@@ -1715,7 +1793,7 @@ namespace MuhasebeStokWebApp.Services.Menu
                 Ad = "Sistem Ayarları",
                 Icon = "fas fa-cogs",
                 AktifMi = true,
-                Sira = 11,
+                Sira = 12,
                 Url = "#",
                 AltMenuler = new List<MenuViewModel>()
             };

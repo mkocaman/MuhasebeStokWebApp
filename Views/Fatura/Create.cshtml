@@ -828,6 +828,8 @@
                     // Değerleri forma yaz (formatlı şekilde göster)
                     row.find(".tutar").val(formatDecimal(tutar));
                     row.find(".kdv-tutari").val(kdvTutari.toFixed(2)); // Hidden için ham değer
+                    
+                    // USD için 100 ile çarpma yapmayı kaldır - NetTutar doğru değerle kaydedilsin
                     row.find(".net-tutar").val(toplamTutar.toFixed(2)); // Hidden için ham değer
                     
                     // Tüm fatura toplamlarını güncelle

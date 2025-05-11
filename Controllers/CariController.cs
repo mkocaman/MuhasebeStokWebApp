@@ -66,9 +66,11 @@ namespace MuhasebeStokWebApp.Controllers
                 var tabParam = HttpContext.Request.Query["tab"].ToString();
                 var activeTab = string.IsNullOrEmpty(tabParam) ? "aktif" : tabParam;
 
-                // Tüm carileri alacağız ama görüntülerken filtreleyeceğiz
+                // Tüm carileri getir, ama sadece silinmemişleri
                 var cariler = await _unitOfWork.CariRepository.GetAll()
-                    .IgnoreQueryFilters() // Tüm cari kayıtları almak için filtreleri devre dışı bırak
+                    .IgnoreQueryFilters() // Filtreleri devre dışı bırak
+                    .Where(c => !c.Silindi) // Silinmişleri hariç tut
+                    .Include(c => c.CariHareketler.Where(h => !h.Silindi)) // Cari hareketlerini yükle
                     .ToListAsync();
             
                 // Para birimi listesini view'a gönder
@@ -841,27 +843,43 @@ namespace MuhasebeStokWebApp.Controllers
         [HttpGet]
         public async Task<IActionResult> Musteriler()
         {
-            var cariler = await _unitOfWork.CariRepository.GetAsync(
-                filter: c => !c.Silindi && (c.CariTipi == "Müşteri" || c.CariTipi == "Müşteri ve Tedarikçi"));
-            
-            // Para birimi listesini view'a gönder
-            ViewBag.ParaBirimleri = await _paraBirimiService.GetAllParaBirimleriAsync(true);
-            ViewBag.CariTipi = "Müşteri";
-            
-            return View("CariTipi", cariler);
+            try
+            {
+                var musteriler = await _unitOfWork.CariRepository.GetAll()
+                    .Where(c => c.CariTipi == "Müşteri" && c.AktifMi && !c.Silindi)
+                    .Include(c => c.CariHareketler.Where(h => !h.Silindi)) // Cari hareketlerini yükle
+                    .ToListAsync();
+                
+                ViewBag.ParaBirimleri = await _paraBirimiService.GetAllParaBirimleriAsync(true);
+                return View(musteriler);
+            }
+            catch (Exception ex)
+            {
+                _logger.LogError(ex, "Müşteri listesi yüklenirken hata: {Message}", ex.Message);
+                TempData["ErrorMessage"] = "Müşteri listesi yüklenirken bir hata oluştu.";
+                return View(new List<Data.Entities.Cari>());
+            }
         }
 
         [HttpGet]
         public async Task<IActionResult> Tedarikciler()
         {
-            var cariler = await _unitOfWork.CariRepository.GetAsync(
-                filter: c => !c.Silindi && (c.CariTipi == "Tedarikçi" || c.CariTipi == "Müşteri ve Tedarikçi"));
-            
-            // Para birimi listesini view'a gönder
-            ViewBag.ParaBirimleri = await _paraBirimiService.GetAllParaBirimleriAsync(true);
-            ViewBag.CariTipi = "Tedarikçi";
-            
-            return View("CariTipi", cariler);
+            try
+            {
+                var tedarikciler = await _unitOfWork.CariRepository.GetAll()
+                    .Where(c => c.CariTipi == "Tedarikçi" && c.AktifMi && !c.Silindi)
+                    .Include(c => c.CariHareketler.Where(h => !h.Silindi)) // Cari hareketlerini yükle
+                    .ToListAsync();
+                
+                ViewBag.ParaBirimleri = await _paraBirimiService.GetAllParaBirimleriAsync(true);
+                return View(tedarikciler);
+            }
+            catch (Exception ex)
+            {
+                _logger.LogError(ex, "Tedarikçi listesi yüklenirken hata: {Message}", ex.Message);
+                TempData["ErrorMessage"] = "Tedarikçi listesi yüklenirken bir hata oluştu.";
+                return View(new List<Data.Entities.Cari>());
+            }
         }
 
         [HttpGet]
@@ -1277,7 +1295,11 @@ namespace MuhasebeStokWebApp.Controllers
                 
                 cari.AktifMi = false;
                 cari.GuncellemeTarihi = DateTime.Now;
-                cari.SonGuncelleyenKullaniciId = Guid.Parse(User.FindFirst(System.Security.Claims.ClaimTypes.NameIdentifier)?.Value);
+                var userId = User.FindFirst(System.Security.Claims.ClaimTypes.NameIdentifier)?.Value;
+                if (!string.IsNullOrEmpty(userId))
+                {
+                    cari.SonGuncelleyenKullaniciId = Guid.Parse(userId);
+                }
                 
                 await _unitOfWork.CariRepository.UpdateAsync(cari);
                 await _unitOfWork.SaveAsync();
@@ -1317,7 +1339,11 @@ namespace MuhasebeStokWebApp.Controllers
                 
                 cari.AktifMi = true;
                 cari.GuncellemeTarihi = DateTime.Now;
-                cari.SonGuncelleyenKullaniciId = Guid.Parse(User.FindFirst(System.Security.Claims.ClaimTypes.NameIdentifier)?.Value);
+                var userId = User.FindFirst(System.Security.Claims.ClaimTypes.NameIdentifier)?.Value;
+                if (!string.IsNullOrEmpty(userId))
+                {
+                    cari.SonGuncelleyenKullaniciId = Guid.Parse(userId);
+                }
                 
                 await _unitOfWork.CariRepository.UpdateAsync(cari);
                 await _unitOfWork.SaveAsync();
@@ -1367,7 +1393,11 @@ namespace MuhasebeStokWebApp.Controllers
                 
                 cari.Silindi = true;
                 cari.GuncellemeTarihi = DateTime.Now;
-                cari.SonGuncelleyenKullaniciId = Guid.Parse(User.FindFirst(System.Security.Claims.ClaimTypes.NameIdentifier)?.Value);
+                var userId = User.FindFirst(System.Security.Claims.ClaimTypes.NameIdentifier)?.Value;
+                if (!string.IsNullOrEmpty(userId))
+                {
+                    cari.SonGuncelleyenKullaniciId = Guid.Parse(userId);
+                }
                 
                 await _unitOfWork.CariRepository.UpdateAsync(cari);
                 await _unitOfWork.SaveAsync();

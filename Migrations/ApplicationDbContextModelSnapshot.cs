@@ -1724,6 +1724,44 @@ namespace MuhasebeStokWebApp.Migrations
                     b.ToTable("MenuRoller");
                 });
 
+            modelBuilder.Entity("MuhasebeStokWebApp.Data.Entities.Notification", b =>
+                {
+                    b.Property<int>("Id")
+                        .ValueGeneratedOnAdd()
+                        .HasColumnType("int");
+
+                    SqlServerPropertyBuilderExtensions.UseIdentityColumn(b.Property<int>("Id"));
+
+                    b.Property<string>("Content")
+                        .IsRequired()
+                        .HasMaxLength(500)
+                        .HasColumnType("nvarchar(500)");
+
+                    b.Property<DateTime>("CreatedAt")
+                        .HasColumnType("datetime2");
+
+                    b.Property<bool>("IsRead")
+                        .HasColumnType("bit");
+
+                    b.Property<int?>("RelatedEntityId")
+                        .HasColumnType("int");
+
+                    b.Property<string>("Type")
+                        .IsRequired()
+                        .HasMaxLength(50)
+                        .HasColumnType("nvarchar(50)");
+
+                    b.Property<string>("UserId")
+                        .IsRequired()
+                        .HasColumnType("varchar(128)");
+
+                    b.HasKey("Id");
+
+                    b.HasIndex("UserId");
+
+                    b.ToTable("Notifications");
+                });
+
             modelBuilder.Entity("MuhasebeStokWebApp.Data.Entities.OdemeTuru", b =>
                 {
                     b.Property<int>("OdemeTuruID")
@@ -2447,6 +2485,9 @@ namespace MuhasebeStokWebApp.Migrations
                     b.Property<DateTime>("CikisTarihi")
                         .HasColumnType("datetime2");
 
+                    b.Property<decimal?>("DovizKuru")
+                        .HasColumnType("decimal(18,6)");
+
                     b.Property<string>("HareketTipi")
                         .IsRequired()
                         .HasMaxLength(50)
@@ -2788,11 +2829,30 @@ namespace MuhasebeStokWebApp.Migrations
                         .HasMaxLength(1000)
                         .HasColumnType("nvarchar(1000)");
 
+                    b.Property<bool>("IsArchived")
+                        .HasColumnType("bit");
+
                     b.Property<bool>("IsCompleted")
+                        .HasColumnType("bit");
+
+                    b.Property<bool>("IsDeleted")
+                        .HasColumnType("bit");
+
+                    b.Property<bool>("IsReminderSent")
                         .HasColumnType("bit");
 
                     b.Property<int>("PriorityLevel")
                         .HasColumnType("int");
+
+                    b.Property<DateTime?>("ReminderAt")
+                        .HasColumnType("datetime2");
+
+                    b.Property<int>("Status")
+                        .HasColumnType("int");
+
+                    b.Property<string>("Tags")
+                        .HasMaxLength(200)
+                        .HasColumnType("nvarchar(200)");
 
                     b.Property<string>("TaskCategory")
                         .HasMaxLength(50)
@@ -3325,6 +3385,17 @@ namespace MuhasebeStokWebApp.Migrations
                     b.Navigation("Menu");
 
                     b.Navigation("Rol");
+                });
+
+            modelBuilder.Entity("MuhasebeStokWebApp.Data.Entities.Notification", b =>
+                {
+                    b.HasOne("MuhasebeStokWebApp.Data.Entities.ApplicationUser", "User")
+                        .WithMany()
+                        .HasForeignKey("UserId")
+                        .OnDelete(DeleteBehavior.Cascade)
+                        .IsRequired();
+
+                    b.Navigation("User");
                 });
 
             modelBuilder.Entity("MuhasebeStokWebApp.Data.Entities.ParaBirimiBirlesikModul.KurDegeri", b =>

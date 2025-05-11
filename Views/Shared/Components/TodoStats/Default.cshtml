@@ -1,0 +1,113 @@
+@model MuhasebeStokWebApp.ViewModels.Todo.TodoDashboardStatsViewModel
+
+<div class="row">
+    <!-- Toplam Görev Sayısı -->
+    <div class="col-md-4 col-sm-6 col-12 mb-3">
+        <div class="card bg-light h-100">
+            <div class="card-body text-center">
+                <div class="d-flex align-items-center justify-content-between mb-3">
+                    <h5 class="card-title mb-0">@Model.TotalTaskCount.ToString("N0")</h5>
+                    <div class="icon-bg rounded-circle bg-info p-3">
+                        <i class="fa fa-tasks text-white fa-2x"></i>
+                    </div>
+                </div>
+                <p class="card-text text-muted">@Html.DisplayNameFor(model => model.TotalTaskCount)</p>
+                <a href="@Url.Action("Index", "Todo")" class="stretched-link"></a>
+            </div>
+        </div>
+    </div>
+    
+    <!-- Kullanıcıya Atanan Aktif Görevler -->
+    <div class="col-md-4 col-sm-6 col-12 mb-3">
+        <div class="card bg-light h-100">
+            <div class="card-body text-center">
+                <div class="d-flex align-items-center justify-content-between mb-3">
+                    <h5 class="card-title mb-0">@Model.AssignedTaskCount.ToString("N0")</h5>
+                    <div class="icon-bg rounded-circle bg-primary p-3">
+                        <i class="fa fa-user-check text-white fa-2x"></i>
+                    </div>
+                </div>
+                <p class="card-text text-muted">@Html.DisplayNameFor(model => model.AssignedTaskCount)</p>
+                <a href="@Url.Action("Index", "Todo", new { filter = "active" })" class="stretched-link"></a>
+            </div>
+        </div>
+    </div>
+    
+    <!-- Bugün Hatırlatılacak Görevler -->
+    <div class="col-md-4 col-sm-6 col-12 mb-3">
+        <div class="card bg-light h-100">
+            <div class="card-body text-center">
+                <div class="d-flex align-items-center justify-content-between mb-3">
+                    <h5 class="card-title mb-0">@Model.TodayReminderCount.ToString("N0")</h5>
+                    <div class="icon-bg rounded-circle bg-warning p-3">
+                        <i class="fa fa-bell text-white fa-2x"></i>
+                    </div>
+                </div>
+                <p class="card-text text-muted">@Html.DisplayNameFor(model => model.TodayReminderCount)</p>
+                <a href="@Url.Action("Calendar", "Todo", new { date = DateTime.Today.ToString("yyyy-MM-dd") })" class="stretched-link"></a>
+            </div>
+        </div>
+    </div>
+    
+    <!-- Tamamlanmış Görevler -->
+    <div class="col-md-4 col-sm-6 col-12 mb-3">
+        <div class="card bg-light h-100">
+            <div class="card-body text-center">
+                <div class="d-flex align-items-center justify-content-between mb-3">
+                    <h5 class="card-title mb-0">@Model.CompletedTaskCount.ToString("N0")</h5>
+                    <div class="icon-bg rounded-circle bg-success p-3">
+                        <i class="fa fa-check-circle text-white fa-2x"></i>
+                    </div>
+                </div>
+                <p class="card-text text-muted">@Html.DisplayNameFor(model => model.CompletedTaskCount)</p>
+                <a href="@Url.Action("Index", "Todo", new { filter = "completed" })" class="stretched-link"></a>
+            </div>
+        </div>
+    </div>
+    
+    <!-- Bekleyen / Başlamamış Görevler -->
+    <div class="col-md-4 col-sm-6 col-12 mb-3">
+        <div class="card bg-light h-100">
+            <div class="card-body text-center">
+                <div class="d-flex align-items-center justify-content-between mb-3">
+                    <h5 class="card-title mb-0">@Model.PendingTaskCount.ToString("N0")</h5>
+                    <div class="icon-bg rounded-circle bg-secondary p-3">
+                        <i class="fa fa-pause-circle text-white fa-2x"></i>
+                    </div>
+                </div>
+                <p class="card-text text-muted">@Html.DisplayNameFor(model => model.PendingTaskCount)</p>
+                <a href="@Url.Action("Index", "Todo", new { filter = "pending" })" class="stretched-link"></a>
+            </div>
+        </div>
+    </div>
+    
+    <!-- Arşivlenmiş Görevler -->
+    <div class="col-md-4 col-sm-6 col-12 mb-3">
+        <div class="card bg-light h-100">
+            <div class="card-body text-center">
+                <div class="d-flex align-items-center justify-content-between mb-3">
+                    <h5 class="card-title mb-0">@Model.ArchivedTaskCount.ToString("N0")</h5>
+                    <div class="icon-bg rounded-circle bg-dark p-3">
+                        <i class="fa fa-archive text-white fa-2x"></i>
+                    </div>
+                </div>
+                <p class="card-text text-muted">@Html.DisplayNameFor(model => model.ArchivedTaskCount)</p>
+                <a href="@Url.Action("Index", "Todo", new { filter = "archived" })" class="stretched-link"></a>
+            </div>
+        </div>
+    </div>
+</div>
+
+<style>
+    .icon-bg {
+        height: 48px;
+        width: 48px;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+    }
+    .card-title {
+        font-size: 1.8rem;
+        font-weight: bold;
+    }
+</style> 

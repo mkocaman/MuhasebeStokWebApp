@@ -136,6 +136,15 @@ namespace MuhasebeStokWebApp.ViewModels.Stok
         
         // Aklama kuyrugu
         public List<FaturaAklamaKuyrukViewModel> AklamaKuyrugu { get; set; } = new List<FaturaAklamaKuyrukViewModel>();
+        
+        // Toplam Tahmini Satış Değeri
+        [Display(Name = "Toplam Tahmini Satış Değeri (UZS)")]
+        [DisplayFormat(DataFormatString = "{0:N2} so'm", ApplyFormatInEditMode = false)]
+        public decimal ToplamTahminiSatisDegeriUZS { get; set; }
+        
+        [Display(Name = "Toplam Tahmini Satış Değeri (USD)")]
+        [DisplayFormat(DataFormatString = "{0:N2} $", ApplyFormatInEditMode = false)]
+        public decimal ToplamTahminiSatisDegeriUSD { get; set; }
     }
 
     // Stok Hareket Liste Öğesi ViewModel

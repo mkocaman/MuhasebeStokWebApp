@@ -47,13 +47,17 @@ namespace MuhasebeStokWebApp
             services.AddScoped<ISozlesmeService, SozlesmeService>();
             services.AddScoped<IBirimService, BirimService>();
             services.AddScoped<IStokFifoService, StokFifoService>();
+            services.AddScoped<IStokCikisService, StokFifoService>();
+            services.AddScoped<IStokGirisService, StokFifoService>();
+            services.AddScoped<IStokSorguService, StokFifoService>();
+            services.AddScoped<IStokHareketService, StokHareketService>();
+            services.AddScoped<IStokConcurrencyService, StokFifoService>();
             services.AddScoped<IMaliyetHesaplamaService, MaliyetHesaplamaService>();
             services.AddScoped<ICariHareketService, CariHareketService>();
 
             // Custom services
             services.AddScoped<IFaturaService, FaturaService>();
             services.AddScoped<IFaturaOrchestrationService, FaturaOrchestrationService>();
-            services.AddScoped<IStokHareketService, StokHareketService>();
             services.AddScoped<IFaturaValidationService, FaturaValidationService>();
             services.AddScoped<IIrsaliyeService, IrsaliyeService>();
 
@@ -64,6 +68,9 @@ namespace MuhasebeStokWebApp
             
             // Yapılacaklar listesi servisi
             services.AddScoped<ITodoService, TodoService>();
+
+            // Dashboard servisi ekleniyor
+            services.AddScoped<IDashboardService, DashboardService>();
 
             // EF Core ile veritabanı bağlantısı yapılandırması
             services.AddDbContext<ApplicationDbContext>(options =>

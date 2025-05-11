@@ -528,7 +528,7 @@
         <div class="page-body-wrapper sidebar-icon">
             <!-- Page sidebar starts -->
             <header class="main-nav">
-                <div class="sidebar-user text-center">
+               <!-- <div class="sidebar-user text-center">
                     <a class="setting-primary" href="javascript:void(0)">
                         <i class="material-icons">settings</i>
                     </a>
@@ -540,7 +540,7 @@
                         <h6 class="mt-3 f-14 f-w-600">@User.Identity.Name</h6>
                     </a>
                     <p class="mb-0 font-roboto">Muhasebe Departmanı</p>
-                </div>
+                </div>-->
                 <nav>
                     <div class="main-navbar">
                         <div class="left-arrow" id="left-arrow">
@@ -554,11 +554,49 @@
                                         <i class="fa fa-angle-right ps-2" aria-hidden="true"></i>
                                     </div>
                                 </li>
-                                <li class="sidebar-main-title">
+                              <!--  <li class="sidebar-main-title">
                                     <div>
                                         <h6>Genel</h6>
                                     </div>
+                                </li>-->
+                                
+                                <!-- Sidebar - Brand -->
+                                <a class="sidebar-brand d-flex align-items-center justify-content-center" href="/">
+                                    <div class="sidebar-brand-icon rotate-n-15">
+                                        <i class="fas fa-laugh-wink"></i>
+                                    </div>
+                                    <div class="sidebar-brand-text mx-3">Stok & Muhasebe</div>
+                                </a>
+
+                                <!-- Divider -->
+                                <hr class="sidebar-divider my-0">
+
+                                <!-- Dashboard -->
+                                <li class="nav-item @(ViewData["ActiveMenu"]?.ToString() == "Dashboard" ? "active" : "")">
+                                    <a class="nav-link" href="@Url.Action("Index", "Dashboard")">
+                                        <i class="fas fa-fw fa-chart-line"></i>
+                                        <span>Yönetici Paneli</span>
+                                    </a>
                                 </li>
+
+                                <!-- Divider -->
+                                <hr class="sidebar-divider my-0">
+
+                                <!-- Ana Sayfa -->
+                                <li class="nav-item @(ViewData["ActiveMenu"]?.ToString() == "Anasayfa" ? "active" : "")">
+                                    <a class="nav-link" href="@Url.Action("Index", "Home")">
+                                        <i class="fas fa-fw fa-home"></i>
+                                        <span>Ana Sayfa</span>
+                                    </a>
+                                </li>
+
+                                <!-- Divider -->
+                                <hr class="sidebar-divider">
+
+                                <!-- Heading -->
+                                <div class="sidebar-heading">
+                                    Modüller
+                                </div>
                                 
                                 @if (ViewBag.MenuItems != null && ViewBag.MenuItems.Count > 0)
                                 {
@@ -628,17 +666,6 @@
                                     </li>
                                 }
 
-                                <li class="sidebar-list">
-                                    <a class="sidebar-link sidebar-title @(ViewContext.RouteData.Values["controller"].ToString() == "Home" ? "active" : "")" href="@Url.Action("Index", "Home")">
-                                        <i data-feather="home"></i><span>Ana Sayfa</span>
-                                    </a>
-                                </li>
-                                
-                                <li class="sidebar-list">
-                                    <a class="sidebar-link sidebar-title @(ViewContext.RouteData.Values["controller"].ToString() == "Todo" ? "active" : "")" href="@Url.Action("Index", "Todo")">
-                                        <i data-feather="check-square"></i><span>Yapılacaklar</span>
-                                    </a>
-                                </li>
                             </ul>
                         </div>
                         <div class="right-arrow" id="right-arrow">
@@ -711,7 +738,7 @@
             <!-- Page content ends -->
             
             <!-- footer start-->
-            <footer class="footer">
+            <!--<footer class="footer">
                 <div class="container-fluid">
                     <div class="row">
                         <div class="col-md-12 footer-copyright text-center">
@@ -719,7 +746,19 @@
                         </div>
                     </div>
                 </div>
-            </footer>
+            </footer>-->
+                    <footer class="footer">
+          <div class="container-fluid">
+            <div class="row">
+              <div class="col-md-6 footer-copyright">
+                <p class="mb-0">Copyright © @DateTime.Now.Year Muhasebe Stok Web App</p>
+              </div>
+              <div class="col-md-6">
+                <p class="pull-right mb-0">Hand crafted & made with <i class="fa fa-heart font-secondary"></i></p>
+              </div>
+            </div>
+          </div>
+        </footer>
             <!-- footer end-->
         </div>
         <!-- Page body ends -->
@@ -757,11 +796,17 @@
     <!-- Feather icons -->
     <script src="https://cdn.jsdelivr.net/npm/feather-icons/dist/feather.min.js"></script>
     
-    <!-- Custom Scripts -->
+    <!-- Genel script dosyaları -->
     <script src="~/assets/js/config.js"></script>
     <script src="~/assets/js/script.js"></script>
     <script src="~/assets/js/custom-card/custom-card.js"></script>
     <script src="~/js/site.js" asp-append-version="true"></script>
+    
+    @if (User.Identity.IsAuthenticated)
+    {
+        <!-- Oturum açmış kullanıcılar için bildirim sistemi -->
+        <script src="~/js/notification.js" asp-append-version="true"></script>
+    }
     
     @await RenderSectionAsync("Scripts", required: false)
     

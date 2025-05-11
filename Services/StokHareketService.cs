@@ -57,10 +57,10 @@ namespace MuhasebeStokWebApp.Services
             }
             else
             {
-                // Fatura türü bilinmiyor, ID'ye göre belirle (1: Alış = Giriş, 2: Satış = Çıkış)
+                // Fatura türü bilinmiyor, ID'ye göre belirle (1: Satış = Çıkış, 2: Alış = Giriş)
                 stokHareketTipi = fatura.FaturaTuruID == 1 
-                    ? StokHareketTipi.Giris 
-                    : StokHareketTipi.Cikis;
+                    ? StokHareketTipi.Cikis 
+                    : StokHareketTipi.Giris;
             }
             
             string irsaliyeTuruStr = stokHareketTipi == StokHareketTipi.Giris ? "Giriş" : "Çıkış";

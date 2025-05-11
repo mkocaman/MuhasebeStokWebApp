@@ -55,7 +55,7 @@
                                     <th>Yetkili</th>
                                     <th>Telefon</th>
                                     <th>Para Birimi</th>
-                                    <th>Durum</th>
+                                    <th>Bakiye</th>
                                     <th>İşlemler</th>
                                 </tr>
                             </thead>
@@ -75,6 +75,11 @@
                                         }
                                     }
 
+                                    // Bakiye bilgisini al (varsayılan olarak 0)
+                                    decimal bakiye = item.CariHareketler != null && item.CariHareketler.Any()
+                                        ? item.CariHareketler.Sum(h => h.Alacak - h.Borc)
+                                        : 0;
+
                                     <tr>
                                         <td>@item.Ad</td>
                                         <td>@(string.IsNullOrEmpty(item.Yetkili) ? "-" : item.Yetkili)</td>
@@ -82,15 +87,8 @@
                                         <td class="text-center">
                                             @paraBirimiSembol
                                         </td>
-                                        <td class="text-center">
-                                            @if (item.AktifMi)
-                                            {
-                                                <span class="badge bg-success">Aktif</span>
-                                            }
-                                            else
-                                            {
-                                                <span class="badge bg-danger">Pasif</span>
-                                            }
+                                        <td class="text-end">
+                                            @paraBirimiSembol @bakiye.ToString("N2")
                                         </td>
                                         <td class="text-center">
                                             <div class="btn-group" role="group">

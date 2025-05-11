@@ -2,19 +2,21 @@
 @using MuhasebeStokWebApp.Enums
 @addTagHelper *, Microsoft.AspNetCore.Mvc.TagHelpers
 
-<form asp-action="Edit" asp-controller="Todo" method="post">
+<form id="editTodoForm" method="post">
     <div class="modal-body">
-        <input type="hidden" asp-for="TodoItem.Id" />
-        <input type="hidden" asp-for="TodoItem.TaskCategory" />
+        <input type="hidden" id="TodoItem_Id" name="Id" value="@Model.TodoItem.Id" />
+        <input type="hidden" id="TodoItem_TaskCategory" name="TaskCategory" value="@Model.TodoItem.TaskCategory" />
+        <input type="hidden" id="TodoItem_TaskIcon" name="TaskIcon" value="@Model.TodoItem.TaskIcon" />
         
         <div class="mb-3">
-            <label asp-for="TodoItem.Title" class="form-label">Başlık <span class="text-danger">*</span></label>
-            <input asp-for="TodoItem.Title" class="form-control" required maxlength="200" />
+            <label for="TodoItem_Title" class="form-label">Başlık <span class="text-danger">*</span></label>
+            <input id="TodoItem_Title" name="Title" class="form-control" required maxlength="200" value="@Model.TodoItem.Title" />
+            <div class="invalid-feedback">Başlık alanı zorunludur.</div>
             <small class="form-text text-muted">Başlık değiştirildiğinde kategori otomatik güncellenecektir.</small>
         </div>
         
         <div class="mb-3">
-            <label asp-for="TodoItem.TaskCategory" class="form-label">Kategori</label>
+            <label for="TodoItem_TaskCategory" class="form-label">Kategori</label>
             <div class="input-group">
                 <span class="input-group-text"><i class="@Model.TodoItem.TaskIcon"></i></span>
                 <input type="text" class="form-control" readonly value="@Model.TodoItem.TaskCategory" />
@@ -22,34 +24,260 @@
         </div>
         
         <div class="mb-3">
-            <label asp-for="TodoItem.PriorityLevel" class="form-label">Öncelik <span class="text-danger">*</span></label>
-            <select asp-for="TodoItem.PriorityLevel" class="form-select" asp-items="Html.GetEnumSelectList<PriorityLevel>()"></select>
+            <label for="TodoItem_PriorityLevel" class="form-label">Öncelik <span class="text-danger">*</span></label>
+            <select id="TodoItem_PriorityLevel" name="PriorityLevel" class="form-select">
+                @if (Model.TodoItem.PriorityLevel == MuhasebeStokWebApp.Enums.PriorityLevel.Low)
+                {
+                    <option value="0" selected>Düşük</option>
+                }
+                else
+                {
+                    <option value="0">Düşük</option>
+                }
+                
+                @if (Model.TodoItem.PriorityLevel == MuhasebeStokWebApp.Enums.PriorityLevel.Medium)
+                {
+                    <option value="1" selected>Orta</option>
+                }
+                else
+                {
+                    <option value="1">Orta</option>
+                }
+                
+                @if (Model.TodoItem.PriorityLevel == MuhasebeStokWebApp.Enums.PriorityLevel.High)
+                {
+                    <option value="2" selected>Yüksek</option>
+                }
+                else
+                {
+                    <option value="2">Yüksek</option>
+                }
+            </select>
         </div>
         
         <div class="mb-3">
-            <label asp-for="TodoItem.Description" class="form-label">Açıklama</label>
-            <textarea asp-for="TodoItem.Description" class="form-control" rows="3" maxlength="1000"></textarea>
+            <label for="TodoItem_Description" class="form-label">Açıklama</label>
+            <textarea id="TodoItem_Description" name="Description" class="form-control" rows="3" maxlength="1000">@Model.TodoItem.Description</textarea>
         </div>
         
         <div class="mb-3">
-            <label asp-for="TodoItem.Deadline" class="form-label">Son Tarih</label>
-            <input asp-for="TodoItem.Deadline" type="date" class="form-control" />
+            <label for="TodoItem_Deadline" class="form-label">Son Tarih</label>
+            <input id="TodoItem_Deadline" name="Deadline" type="date" class="form-control" value="@(Model.TodoItem.Deadline.HasValue ? Model.TodoItem.Deadline.Value.ToString("yyyy-MM-dd") : "")" />
         </div>
         
         <div class="mb-3">
-            <label asp-for="TodoItem.AssignedToUserId" class="form-label">Atanan Kullanıcı</label>
-            <select asp-for="TodoItem.AssignedToUserId" asp-items="Model.Users" class="form-select">
+            <label for="TodoItem_Status" class="form-label">Durum</label>
+            <select id="TodoItem_Status" name="Status" class="form-select">
+                @if (Model.TodoItem.Status == MuhasebeStokWebApp.Enums.TaskStatus.Beklemede)
+                {
+                    <option value="0" selected>Beklemede</option>
+                }
+                else
+                {
+                    <option value="0">Beklemede</option>
+                }
+                
+                @if (Model.TodoItem.Status == MuhasebeStokWebApp.Enums.TaskStatus.DevamEdiyor)
+                {
+                    <option value="1" selected>Devam Ediyor</option>
+                }
+                else
+                {
+                    <option value="1">Devam Ediyor</option>
+                }
+                
+                @if (Model.TodoItem.Status == MuhasebeStokWebApp.Enums.TaskStatus.Tamamlandi)
+                {
+                    <option value="2" selected>Tamamlandı</option>
+                }
+                else
+                {
+                    <option value="2">Tamamlandı</option>
+                }
+                
+                @if (Model.TodoItem.Status == MuhasebeStokWebApp.Enums.TaskStatus.IptalEdildi)
+                {
+                    <option value="3" selected>İptal Edildi</option>
+                }
+                else
+                {
+                    <option value="3">İptal Edildi</option>
+                }
+            </select>
+        </div>
+        
+        <div class="mb-3">
+            <label for="TodoItem_AssignedToUserId" class="form-label">Atanan Kullanıcı</label>
+            <select id="TodoItem_AssignedToUserId" name="AssignedToUserId" class="form-select">
                 <option value="">-- Kullanıcı Seçiniz --</option>
+                @foreach (var user in Model.Users)
+                {
+                    if (user.Selected)
+                    {
+                        <option value="@user.Value" selected>@user.Text</option>
+                    }
+                    else
+                    {
+                        <option value="@user.Value">@user.Text</option>
+                    }
+                }
             </select>
         </div>
         
         <div class="mb-3 form-check">
-            <input asp-for="TodoItem.IsCompleted" class="form-check-input" type="checkbox" />
-            <label asp-for="TodoItem.IsCompleted" class="form-check-label">Tamamlandı</label>
+            <input id="TodoItem_IsCompleted" name="IsCompleted" class="form-check-input" type="checkbox" @(Model.TodoItem.IsCompleted ? "checked" : "") />
+            <label for="TodoItem_IsCompleted" class="form-check-label">Tamamlandı</label>
+        </div>
+        
+        <div class="mb-3">
+            <div class="form-check">
+                <input id="editUseReminderCheck" name="UseReminder" class="form-check-input" type="checkbox" @(Model.TodoItem.UseReminder ? "checked" : "") value="true" />
+                <input name="UseReminder" type="hidden" value="false" />
+                <label for="editUseReminderCheck" class="form-check-label">Hatırlatma zamanı eklemek istiyorum</label>
+            </div>
+        </div>
+        
+        <div class="mb-3 edit-reminder-date-container" style="display: @(Model.TodoItem.UseReminder ? "block" : "none");">
+            <label for="TodoItem_ReminderAt" class="form-label">Hatırlatma Zamanı</label>
+            <input id="TodoItem_ReminderAt" name="ReminderAt" type="datetime-local" class="form-control" value="@(Model.TodoItem.ReminderAt.HasValue ? Model.TodoItem.ReminderAt.Value.ToString("yyyy-MM-ddTHH:mm") : "")" />
+            <small class="form-text text-muted">Görevin hatırlatılacağı tarih ve saat</small>
+            
+            @if (Model.TodoItem.IsReminderSent)
+            {
+                <div class="alert alert-info mt-2">
+                    <i class="fa fa-info-circle"></i> Bu görev için hatırlatma gönderilmiştir.
+                </div>
+            }
         </div>
     </div>
     <div class="modal-footer">
         <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">İptal</button>
-        <button type="submit" class="btn btn-primary">Kaydet</button>
+        <button type="submit" class="btn btn-primary save-todo-btn">Kaydet</button>
     </div>
 </form> 
+
+<script>
+    $(document).ready(function() {
+        // Form validasyonu
+        $("#TodoItem_Title").on("input", function() {
+            if ($(this).val().trim() === "") {
+                $(this).addClass("is-invalid");
+                $(this).removeClass("is-valid");
+            } else {
+                $(this).removeClass("is-invalid");
+                $(this).addClass("is-valid");
+            }
+        });
+        
+        // Başlangıçta doğrulama
+        if ($("#TodoItem_Title").val().trim() === "") {
+            $("#TodoItem_Title").addClass("is-invalid");
+        } else {
+            $("#TodoItem_Title").addClass("is-valid");
+        }
+        
+        // Hatırlatma checkbox'ı değişikliğini dinle
+        $("#editUseReminderCheck").change(function() {
+            if ($(this).is(":checked")) {
+                $(".edit-reminder-date-container").slideDown();
+                
+                // Eğer hatırlatma zamanı boşsa, varsayılan olarak şu anki zamanı + 1 saat ayarlayalım
+                var reminderInput = $("#TodoItem_ReminderAt");
+                if (!reminderInput.val()) {
+                    var now = new Date();
+                    now.setHours(now.getHours() + 1); // 1 saat sonra
+                    
+                    var localDatetime = new Date(now.getTime() - now.getTimezoneOffset() * 60000)
+                        .toISOString()
+                        .slice(0, 16);
+                    
+                    reminderInput.val(localDatetime);
+                }
+            } else {
+                $(".edit-reminder-date-container").slideUp();
+            }
+        });
+        
+        // Formu AJAX ile gönder
+        $("#editTodoForm").on("submit", function(e) {
+            e.preventDefault();
+            
+            // Form doğrulama
+            var title = $("#TodoItem_Title").val().trim();
+            if (!title) {
+                $("#TodoItem_Title").addClass("is-invalid").removeClass("is-valid");
+                toastr.error("Başlık alanı zorunludur.");
+                return;
+            } else {
+                $("#TodoItem_Title").removeClass("is-invalid").addClass("is-valid");
+            }
+            
+            // Hatırlatma kontrolü
+            var useReminder = $("#editUseReminderCheck").is(":checked");
+            if (useReminder) {
+                var reminderTime = new Date($("#TodoItem_ReminderAt").val());
+                var now = new Date();
+                
+                if (reminderTime < now) {
+                    toastr.error("Hatırlatma zamanı geçmiş bir zaman olamaz.");
+                    return;
+                }
+            }
+            
+            // Form verilerini serialize edip Ajax ile gönder
+            var formData = $(this).serialize();
+            
+            // UseReminder değerini manuel ayarla
+            formData = formData.replace(/UseReminder=on/g, "UseReminder=" + useReminder);
+            if (!formData.includes("UseReminder=")) {
+                formData += "&UseReminder=" + useReminder;
+            }
+            
+            $.ajax({
+                url: '@Url.Action("Edit", "Todo")',
+                type: "POST",
+                data: formData,
+                success: function(response) {
+                    if (response.success) {
+                        // Modalı kapat
+                        $("#editTodoModal").modal("hide");
+                        
+                        // Başarı mesajı
+                        toastr.success(response.message || "Görev başarıyla güncellendi");
+                        
+                        // Sayfayı yenile
+                        setTimeout(function() {
+                            window.location.reload();
+                        }, 1000);
+                    } else {
+                        toastr.error(response.message || "Görev güncellenirken bir hata oluştu");
+                    }
+                },
+                error: function(xhr) {
+                    toastr.error("Görev güncellenirken bir hata oluştu: " + 
+                        (xhr.responseJSON ? xhr.responseJSON.message : "Bilinmeyen hata"));
+                }
+            });
+        });
+
+        // Tamamlandı değiştiğinde
+        $("#TodoItem_IsCompleted").change(function() {
+            if ($(this).is(":checked")) {
+                // Eğer tamamlandı seçildiyse, durum otomatik olarak Tamamlandı seçilsin
+                $("#TodoItem_Status").val("2"); // 2 = Tamamlandi enum değeri
+            }
+        });
+
+        // Durum değiştiğinde
+        $("#TodoItem_Status").change(function() {
+            var selectedStatus = $(this).val();
+            
+            // Eğer durum Tamamlandı (2) ise, IsCompleted checkbox'ı da otomatik işaretlensin
+            if (selectedStatus === "2") { // 2 = Tamamlandi enum değeri
+                $("#TodoItem_IsCompleted").prop("checked", true);
+            } else if (selectedStatus === "0" || selectedStatus === "1") { // 0 = Beklemede, 1 = DevamEdiyor
+                $("#TodoItem_IsCompleted").prop("checked", false);
+            }
+        });
+    });
+</script> 

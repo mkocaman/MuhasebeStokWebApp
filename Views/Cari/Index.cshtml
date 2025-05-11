@@ -59,7 +59,7 @@
                                     <th>Yetkili</th>
                                     <th>Telefon</th>
                                     <th>Para Birimi</th>
-                                    <th>Durum</th>
+                                    <th>Bakiye</th>
                                     <th>İşlemler</th>
                                 </tr>
                             </thead>
@@ -79,6 +79,11 @@
                                         }
                                     }
                                     
+                                    // Bakiye bilgisini al (varsayılan olarak 0)
+                                    decimal bakiye = item.CariHareketler != null && item.CariHareketler.Any()
+                                        ? item.CariHareketler.Sum(h => h.Alacak - h.Borc)
+                                        : 0;
+                                    
                                     <tr>
                                         <td>@item.Ad</td>
                                         <td>@(string.IsNullOrEmpty(item.Yetkili) ? "-" : item.Yetkili)</td>
@@ -86,15 +91,8 @@
                                         <td class="text-center">
                                             @paraBirimiSembol
                                         </td>
-                                        <td class="text-center">
-                                            @if (item.AktifMi)
-                                            {
-                                                <span class="badge bg-success">Aktif</span>
-                                            }
-                                            else
-                                            {
-                                                <span class="badge bg-danger">Pasif</span>
-                                            }
+                                        <td class="text-end">
+                                            @paraBirimiSembol @bakiye.ToString("N2")
                                         </td>
                                         <td class="text-center">
                                             <div class="btn-group" role="group">
@@ -257,35 +255,48 @@
                 var cariID = $(this).data('id');
                 var cariAdi = $(this).data('name');
                 
-                $('#confirmModalLabel').text('Silme Onayı');
-                $('#confirmModalMessage').text(cariAdi + ' carisini silmek istediğinizden emin misiniz?');
-                $('#confirmModalConfirmBtn').removeClass().addClass('btn btn-danger').text('Sil');
-                
-                $('#confirmModalConfirmBtn').off('click').on('click', function() {
-                    $.ajax({
-                        url: '@Url.Action("Delete")',
-                        type: 'POST',
-                        data: { id: cariID },
-                        success: function(response) {
-                            if (response.success) {
-                                toastr.success(response.message);
-                                setTimeout(function() {
-                                    window.location.reload();
-                                }, 1500);
-                            } else {
-                                toastr.error(response.message);
+                Swal.fire({
+                    title: 'Emin misiniz?',
+                    text: cariAdi + ' carisini silmek istediğinizden emin misiniz?',
+                    icon: 'warning',
+                    showCancelButton: true,
+                    confirmButtonColor: '#d33',
+                    cancelButtonColor: '#3085d6',
+                    confirmButtonText: 'Evet, sil!',
+                    cancelButtonText: 'İptal'
+                }).then((result) => {
+                    if (result.isConfirmed) {
+                        $.ajax({
+                            url: '@Url.Action("SetDelete")',
+                            type: 'POST',
+                            data: { id: cariID },
+                            success: function(result) {
+                                if (result.success) {
+                                    Swal.fire(
+                                        'Silindi!',
+                                        result.message,
+                                        'success'
+                                    ).then(() => {
+                                        window.location.reload();
+                                    });
+                                } else {
+                                    Swal.fire(
+                                        'Hata!',
+                                        result.message,
+                                        'error'
+                                    );
+                                }
+                            },
+                            error: function() {
+                                Swal.fire(
+                                    'Hata!',
+                                    'İşlem sırasında bir hata oluştu.',
+                                    'error'
+                                );
                             }
-                            $('#confirmModal').modal('hide');
-                        },
-                        error: function(error) {
-                            console.error('Hata:', error);
-                            toastr.error('Bir hata oluştu: ' + error.statusText);
-                            $('#confirmModal').modal('hide');
-                        }
-                    });
+                        });
+                    }
                 });
-                
-                $('#confirmModal').modal('show');
             });
         });
     </script>

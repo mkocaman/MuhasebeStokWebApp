@@ -10361,6 +10361,10 @@
       "PackagePath": "staticwebassets/favicon.ico"
     },
     {
+      "Id": "/Users/muhammetkocaman/MuhasebeStokWebApp/wwwroot/images/notification-icon.png",
+      "PackagePath": "staticwebassets/images/notification-icon.png"
+    },
+    {
       "Id": "/Users/muhammetkocaman/MuhasebeStokWebApp/wwwroot/js/MuhasebeStokWebApp.code-workspace",
       "PackagePath": "staticwebassets/js/MuhasebeStokWebApp.code-workspace"
     },
@@ -10371,6 +10375,10 @@
     {
       "Id": "/Users/muhammetkocaman/MuhasebeStokWebApp/wwwroot/js/fatura.js",
       "PackagePath": "staticwebassets/js/fatura.js"
+    },
+    {
+      "Id": "/Users/muhammetkocaman/MuhasebeStokWebApp/wwwroot/js/notification.js",
+      "PackagePath": "staticwebassets/js/notification.js"
     },
     {
       "Id": "/Users/muhammetkocaman/MuhasebeStokWebApp/wwwroot/js/site.js",
@@ -10701,8 +10709,16 @@
       "PackagePath": "staticwebassets/lib/toastr/toastr.min.js"
     },
     {
+      "Id": "/Users/muhammetkocaman/MuhasebeStokWebApp/wwwroot/profilePhotos/80f062bd-700b-4767-8d78-6c82fd195827_638823439514606490.jpeg",
+      "PackagePath": "staticwebassets/profilePhotos/80f062bd-700b-4767-8d78-6c82fd195827_638823439514606490.jpeg"
+    },
+    {
       "Id": "/Users/muhammetkocaman/MuhasebeStokWebApp/wwwroot/profilePhotos/8b547a04-134c-4578-99bb-f831a55b400d_638822481606163490.jpeg",
       "PackagePath": "staticwebassets/profilePhotos/8b547a04-134c-4578-99bb-f831a55b400d_638822481606163490.jpeg"
+    },
+    {
+      "Id": "/Users/muhammetkocaman/MuhasebeStokWebApp/wwwroot/sounds/notification.mp3",
+      "PackagePath": "staticwebassets/sounds/notification.mp3"
     },
     {
       "Id": "obj/Debug/net9.0/staticwebassets/msbuild.MuhasebeStokWebApp.Microsoft.AspNetCore.StaticWebAssetEndpoints.props",

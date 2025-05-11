@@ -127,26 +127,41 @@ namespace MuhasebeStokWebApp.Controllers
                     filter: sf => sf.UrunID == id && !sf.Silindi, // Aktif filtresini kaldırdık
                     orderBy: q => q.OrderByDescending(sf => sf.GirisTarihi));
 
-                // Ortalama maliyeti hesapla - KDV düşme hatası düzeltildi
+                // Ortalama maliyeti hesapla - sadece giriş kayıtlarını ve KalanMiktar > 0 olanları kullan
                 decimal ortalamaMaliyetTL = 0;
                 decimal ortalamaMaliyetUSD = 0;
+                decimal ortalamaMaliyetUZS = 0;
                 
-                if (fifoKayitlari != null && fifoKayitlari.Any() && fifoKayitlari.Sum(f => f.KalanMiktar) > 0)
+                // Sadece aktif giriş kayıtlarını filtrele
+                var aktifGirisKayitlari = fifoKayitlari
+                    .Where(f => f.Aktif && !f.Iptal && f.KalanMiktar > 0 && f.Miktar > 0) // Miktar > 0 olanlar giriş kayıtları
+                    .ToList();
+                
+                if (aktifGirisKayitlari.Any())
                 {
-                    decimal toplamTutar = fifoKayitlari.Sum(f => f.KalanMiktar * f.BirimFiyat);
-                    decimal toplamUSDTutar = fifoKayitlari.Sum(f => f.KalanMiktar * f.BirimFiyatUSD);
-                    decimal toplamKalanMiktar = fifoKayitlari.Sum(f => f.KalanMiktar);
+                    decimal toplamMiktar = aktifGirisKayitlari.Sum(f => f.KalanMiktar);
+                    decimal toplamTutarUSD = 0;
+                    decimal toplamTutarUZS = 0;
                     
-                    if (toplamKalanMiktar > 0)
+                    foreach (var kayit in aktifGirisKayitlari)
                     {
-                        ortalamaMaliyetTL = toplamTutar / toplamKalanMiktar;
-                        ortalamaMaliyetUSD = toplamUSDTutar / toplamKalanMiktar;
+                        // Ağırlıklı ortalama için her kayıttan kalan miktar ile birim fiyatın çarpımını topla
+                        toplamTutarUSD += kayit.KalanMiktar * kayit.BirimFiyatUSD;
+                        toplamTutarUZS += kayit.KalanMiktar * kayit.BirimFiyatUZS;
+                    }
+                    
+                    if (toplamMiktar > 0)
+                    {
+                        // Ağırlıklı ortalama hesaplama (toplam tutar / toplam miktar)
+                        ortalamaMaliyetUSD = toplamTutarUSD / toplamMiktar;
+                        ortalamaMaliyetUZS = toplamTutarUZS / toplamMiktar;
                     }
                 }
                 
                 // Ortalama satış fiyatını hesapla
                 decimal ortalamaSatisFiyatiTL = 0;
                 decimal ortalamaSatisFiyatiUSD = 0;
+                decimal ortalamaSatisFiyatiUZS = 0;
                 
                 // Son 3 ay içindeki satış hareketlerini al
                 var sonUcAy = DateTime.Now.AddMonths(-3);
@@ -155,41 +170,65 @@ namespace MuhasebeStokWebApp.Controllers
                     .Include(fd => fd.Fatura.FaturaTuru)
                     .Where(fd => fd.UrunID == id 
                             && !fd.Silindi 
-                            && fd.Fatura.FaturaTuru.HareketTuru == "Çıkış"
+                            && fd.Fatura.FaturaTuru.HareketTuru == "Çıkış" // Sadece çıkış hareketlerini al
                             && fd.Fatura.FaturaTarihi >= sonUcAy)
                     .ToListAsync();
                 
                 if (satisFaturalari != null && satisFaturalari.Any())
                 {
-                    // BirimFiyat değerleri KDV hariç olduğundan doğrudan kullanabiliriz
-                    decimal toplamSatisTutari = satisFaturalari.Sum(fd => fd.BirimFiyat * fd.Miktar);
-                    decimal toplamSatisMiktari = satisFaturalari.Sum(fd => fd.Miktar);
+                    // Ağırlıklı ortalama hesaplama (miktar * birimfiyat)
+                    decimal toplamSatisTutariUSD = 0;
+                    decimal toplamSatisTutariUZS = 0;
+                    decimal toplamSatisMiktari = 0;
                     
-                    if (toplamSatisMiktari > 0)
+                    foreach (var fd in satisFaturalari)
                     {
-                        ortalamaSatisFiyatiTL = toplamSatisTutari / toplamSatisMiktari;
+                        decimal miktar = fd.Miktar;
+                        toplamSatisMiktari += miktar;
                         
-                        // USD cinsinden ortalama satış fiyatını hesapla
-                        decimal guncelKur = 0;
-                        try 
+                        // BirimFiyatUSD ve BirimFiyatUZS alanlarından direkt hesaplama yap
+                        decimal birimFiyatUSD = 0;
+                        decimal birimFiyatUZS = 0;
+                        
+                        // Stok hareketlerinden USD ve UZS değerlerini al
+                        var stokHareket = await _context.StokHareketleri
+                            .Where(sh => sh.FaturaID == fd.FaturaID && sh.UrunID == fd.UrunID && !sh.Silindi)
+                            .FirstOrDefaultAsync();
+                        
+                        if (stokHareket != null)
                         {
-                            guncelKur = await _dovizKuruService.GetGuncelKurAsync("TRY", "USD");
-                            if (guncelKur <= 0)
+                            // StokHareketleri tablosundan direkt olarak BirimFiyatUSD ve BirimFiyatUZS değerlerini al
+                            birimFiyatUSD = stokHareket.BirimFiyatUSD ?? 0;
+                            birimFiyatUZS = stokHareket.BirimFiyatUZS ?? 0;
+                        }
+                        else
+                        {
+                            // StokHareket yoksa faturadan hesapla
+                            if (fd.Fatura.DovizTuru == "USD")
                             {
-                                throw new Exception("Geçersiz kur değeri: " + guncelKur);
+                                birimFiyatUSD = fd.BirimFiyat;
+                                birimFiyatUZS = fd.Fatura.DovizKuru.HasValue && fd.Fatura.DovizKuru.Value > 0 
+                                    ? fd.BirimFiyat * fd.Fatura.DovizKuru.Value
+                                    : 0;
+                            }
+                            else if (fd.Fatura.DovizTuru == "UZS")
+                            {
+                                birimFiyatUZS = fd.BirimFiyat;
+                                birimFiyatUSD = fd.Fatura.DovizKuru.HasValue && fd.Fatura.DovizKuru.Value > 0 
+                                    ? fd.BirimFiyat / fd.Fatura.DovizKuru.Value
+                                    : 0;
                             }
                         }
-                        catch (Exception ex)
-                        {
-                            _logger.LogError(ex, "TRY/USD kur değeri alınırken hata oluştu.");
-                            TempData["ErrorMessage"] = $"Döviz kuru alınamadı: {ex.Message}. Güncel kur değerleri hesaplanamıyor.";
-                            // Devam ediyoruz ama USD hesaplaması yapılmayacak
-                        }
-                            
-                        if (guncelKur > 0)
-                        {
-                            ortalamaSatisFiyatiUSD = ortalamaSatisFiyatiTL * guncelKur;
-                        }
+                        
+                        toplamSatisTutariUSD += miktar * birimFiyatUSD;
+                        toplamSatisTutariUZS += miktar * birimFiyatUZS;
+                    }
+                    
+                    // Ağırlıklı ortalamayı hesapla
+                    if (toplamSatisMiktari > 0)
+                    {
+                        ortalamaSatisFiyatiUSD = toplamSatisTutariUSD / toplamSatisMiktari;
+                        ortalamaSatisFiyatiUZS = toplamSatisTutariUZS / toplamSatisMiktari;
                     }
                 }
 
@@ -214,8 +253,13 @@ namespace MuhasebeStokWebApp.Controllers
                     StokMiktar = await _stokService.GetDinamikStokMiktari(urun.UrunID),
                     OrtalamaMaliyetTL = ortalamaMaliyetTL,
                     OrtalamaMaliyetUSD = ortalamaMaliyetUSD,
+                    OrtalamaMaliyetUZS = ortalamaMaliyetUZS,
                     OrtalamaSatisFiyatiTL = ortalamaSatisFiyatiTL,
                     OrtalamaSatisFiyatiUSD = ortalamaSatisFiyatiUSD,
+                    OrtalamaSatisFiyatiUZS = ortalamaSatisFiyatiUZS,
+                    // Toplam tahmini satış değerini hesapla (stok miktarı x ortalama satış fiyatı)
+                    ToplamTahminiSatisDegeriUZS = await _stokService.GetDinamikStokMiktari(urun.UrunID) * ortalamaSatisFiyatiUZS,
+                    ToplamTahminiSatisDegeriUSD = await _stokService.GetDinamikStokMiktari(urun.UrunID) * ortalamaSatisFiyatiUSD,
                     StokHareketleri = stokHareketleri.Select(sh => new StokHareketListItemViewModel
                     {
                         StokHareketID = sh.StokHareketID,

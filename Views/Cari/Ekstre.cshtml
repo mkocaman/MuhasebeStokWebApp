@@ -63,15 +63,18 @@
                                             <select id="paraBirimiId" name="paraBirimiId" class="form-control">
                                                 @foreach (var paraBirimi in ViewBag.ParaBirimleri)
                                                 {
-                                                    var isSelected = (Model.VarsayilanParaBirimiId.HasValue && Model.VarsayilanParaBirimiId.Value == paraBirimi.ParaBirimiID) || 
-                                                                    (ViewBag.SeciliParaBirimiId != null && ViewBag.SeciliParaBirimiId == paraBirimi.ParaBirimiID);
-                                                    if (isSelected)
+                                                    if (paraBirimi.Kod != "TRY")
                                                     {
-                                                        <option value="@paraBirimi.ParaBirimiID" selected>@paraBirimi.Kod (@paraBirimi.Sembol)</option>
-                                                    }
-                                                    else
-                                                    {
-                                                        <option value="@paraBirimi.ParaBirimiID">@paraBirimi.Kod (@paraBirimi.Sembol)</option>
+                                                        var isSelected = (Model.VarsayilanParaBirimiId.HasValue && Model.VarsayilanParaBirimiId.Value == paraBirimi.ParaBirimiID) || 
+                                                                        (ViewBag.SeciliParaBirimiId != null && ViewBag.SeciliParaBirimiId == paraBirimi.ParaBirimiID);
+                                                        if (isSelected)
+                                                        {
+                                                            <option value="@paraBirimi.ParaBirimiID" selected>@paraBirimi.Kod (@paraBirimi.Sembol)</option>
+                                                        }
+                                                        else
+                                                        {
+                                                            <option value="@paraBirimi.ParaBirimiID">@paraBirimi.Kod (@paraBirimi.Sembol)</option>
+                                                        }
                                                     }
                                                 }
                                             </select>

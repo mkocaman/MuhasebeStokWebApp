@@ -158,7 +158,8 @@
                     },
                     responsive: true,
                     retrieve: true,
-                    order: [[1, 'desc']] // Tarih sütununa göre azalan sıralama
+                    pageLength: 25,
+                    order: [[0, 'desc']]
                 });
             } catch (e) {
                 console.log("DataTable başlatılırken bir hata oluştu, ancak işlem devam ediyor.");

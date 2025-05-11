@@ -2486,3 +2486,18 @@ Microsoft.CSharp.RuntimeBinder.RuntimeBinderException: 'System.DateTime' does no
 2025-05-07 23:06:45.806 +03:00 [INF] Kimlik doğrulanmış kullanıcı: admin
 2025-05-07 23:06:45.811 +03:00 [INF] Kur değeri önbellekten alındı: TRY -> USD, Değer: 0,03
 2025-05-07 23:06:45.811 +03:00 [INF] Kur değeri önbellekten alındı: UZS -> USD, Değer: 1
+2025-05-07 23:10:40.486 +03:00 [INF] Aktif session bulundu: UserID=8b547a04-134c-4578-99bb-f831a55b400d, UserName=admin
+2025-05-07 23:10:40.487 +03:00 [INF] Admin kullanıcısı tespit edildi
+2025-05-07 23:10:40.487 +03:00 [INF] Kimlik doğrulanmış kullanıcı: admin
+2025-05-07 23:10:40.493 +03:00 [INF] Kur değeri önbellekten alındı: TRY -> USD, Değer: 0,03
+2025-05-07 23:10:40.493 +03:00 [INF] Kur değeri önbellekten alındı: UZS -> USD, Değer: 1
+2025-05-07 23:11:55.966 +03:00 [INF] Giriş denemesi: admin
+2025-05-07 23:11:56.043 +03:00 [INF] Admin kullanıcısı başarıyla giriş yaptı: admin
+2025-05-07 23:11:56.043 +03:00 [INF] Admin session oluşturuldu: UserID=8b547a04-134c-4578-99bb-f831a55b400d, UserName=admin
+2025-05-07 23:11:56.043 +03:00 [INF] Yönlendirme adresi: /Urun
+2025-05-07 23:11:56.044 +03:00 [INF] Admin kullanıcısı /Urun adresine yönlendiriliyor
+2025-05-07 23:11:59.308 +03:00 [INF] Aktif session bulundu: UserID=8b547a04-134c-4578-99bb-f831a55b400d, UserName=admin
+2025-05-07 23:11:59.308 +03:00 [INF] Admin kullanıcısı tespit edildi
+2025-05-07 23:11:59.308 +03:00 [INF] Kimlik doğrulanmış kullanıcı: admin
+2025-05-07 23:11:59.313 +03:00 [INF] Kur değeri önbellekten alındı: TRY -> USD, Değer: 0,03
+2025-05-07 23:11:59.313 +03:00 [INF] Kur değeri önbellekten alındı: UZS -> USD, Değer: 1

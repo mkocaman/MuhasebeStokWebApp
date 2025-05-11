@@ -314,11 +314,26 @@
                                             <td>@FormatDecimal(kalem.Miktar)</td>
                                             <td>@kalem.Birim</td>
                                             <td>@FormatDecimal(kalem.BirimFiyat) @currencySymbol</td>
-                                            <td>@(kalem.BirimFiyatDoviz > 0 ? FormatDecimal(kalem.BirimFiyatDoviz) : FormatDecimal(kalem.BirimFiyat * Model.DovizKuru)) @dovizSymbol</td>
+                                            <td>
+                                            @{
+                                                decimal birimFiyatDoviz;
+                                                if (Model.DovizTuru == "UZS")
+                                                {
+                                                    // UZS para birimi ise USD değerini hesapla (bölme)
+                                                    birimFiyatDoviz = kalem.BirimFiyat / Model.DovizKuru;
+                                                }
+                                                else 
+                                                {
+                                                    // USD para birimi ise UZS değerini hesapla (çarpma)
+                                                    birimFiyatDoviz = kalem.BirimFiyat * Model.DovizKuru;
+                                                }
+                                            }
+                                            @FormatDecimal(birimFiyatDoviz) @dovizSymbol
+                                            </td>
                                             <td>%@kalem.KdvOrani</td>
                                             <td>%@kalem.IndirimOrani</td>
                                             <td>@FormatDecimal(kalem.Tutar) @currencySymbol</td>
-                                            <td>@FormatDecimal(kalem.NetTutar) @currencySymbol</td>
+                                             <td>@FormatDecimal(kalem.NetTutar) @currencySymbol</td>
                                         </tr>
                                     }
                                 }

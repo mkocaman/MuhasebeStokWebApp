@@ -447,5 +447,162 @@ $(document).ready(function () {
             }
         });
     }
+
+    // Bootstrap Tooltip'leri etkinleştir
+    var tooltipTriggerList = [].slice.call(document.querySelectorAll('[data-bs-toggle="tooltip"]'))
+    var tooltipList = tooltipTriggerList.map(function (tooltipTriggerEl) {
+        return new bootstrap.Tooltip(tooltipTriggerEl)
+    });
+    
+    // Toastr ayarları
+    toastr.options = {
+        "closeButton": true,
+        "debug": false,
+        "newestOnTop": true,
+        "progressBar": true,
+        "positionClass": "toast-top-right",
+        "preventDuplicates": false,
+        "onclick": null,
+        "showDuration": "300",
+        "hideDuration": "1000",
+        "timeOut": "5000",
+        "extendedTimeOut": "1000",
+        "showEasing": "swing",
+        "hideEasing": "linear",
+        "showMethod": "fadeIn",
+        "hideMethod": "fadeOut"
+    };
+    
+    // Select2 elementleri
+    if($.fn.select2) {
+        $('.select2').select2({
+            theme: 'bootstrap-5'
+        });
+    }
+    
+    // Feather iconları
+    if(typeof feather !== 'undefined') {
+        feather.replace();
+    }
+    
+    // DataTables
+    if($.fn.DataTable) {
+        $('.datatable').DataTable({
+            "language": {
+                "url": "//cdn.datatables.net/plug-ins/1.10.25/i18n/Turkish.json"
+            },
+            responsive: true
+        });
+    }
+    
+    // Web bildirimleri izin kontrolü
+    if ('Notification' in window) {
+        if (Notification.permission !== 'granted' && Notification.permission !== 'denied') {
+            Notification.requestPermission();
+        }
+    }
 });
+
+// Genel yükleme göstergesi fonksiyonları
+function showLoader() {
+    if ($('.loader-wrapper').length === 0) {
+        $('body').append('<div class="loader-wrapper"><div class="loader-p"></div></div>');
+    }
+    $('.loader-wrapper').fadeIn();
+}
+
+function hideLoader() {
+    $('.loader-wrapper').fadeOut();
+}
+
+// Form doğrulama fonksiyonu
+function validateForm(formSelector) {
+    var isValid = true;
+    
+    // Gerekli alanları kontrol et
+    $(formSelector + ' [required]').each(function() {
+        if ($(this).val().trim() === '') {
+            $(this).addClass('is-invalid');
+            isValid = false;
+        } else {
+            $(this).removeClass('is-invalid');
+        }
+    });
+    
+    // E-posta doğrulama
+    $(formSelector + ' [type="email"]').each(function() {
+        var email = $(this).val().trim();
+        if (email !== '' && !isValidEmail(email)) {
+            $(this).addClass('is-invalid');
+            isValid = false;
+        }
+    });
+    
+    return isValid;
+}
+
+// E-posta doğrulama
+function isValidEmail(email) {
+    var re = /^(([^<>()\[\]\\.,;:\s@"]+(\.[^<>()\[\]\\.,;:\s@"]+)*)|(".+"))@((\[[0-9]{1,3}\.[0-9]{1,3}\.[0-9]{1,3}\.[0-9]{1,3}])|(([a-zA-Z\-0-9]+\.)+[a-zA-Z]{2,}))$/;
+    return re.test(email);
+}
+
+// Bildirim sesi çalma
+function playNotificationSound() {
+    try {
+        // Ses dosyasını başa sar ve çal
+        var sound = new Audio('/sounds/notification.mp3');
+        sound.currentTime = 0;
+        sound.play().catch(function(error) {
+            console.log("Bildirim sesi çalma hatası:", error);
+        });
+    } catch (error) {
+        console.error("Ses çalma hatası:", error);
+    }
+}
+
+// Desktop bildirim gösterme
+function showDesktopNotification(title, message, options = {}) {
+    if (!('Notification' in window)) {
+        console.log('Bu tarayıcı web bildirimlerini desteklemiyor');
+        return;
+    }
+    
+    // İzin kontrolü
+    if (Notification.permission === "granted") {
+        var defaultOptions = {
+            body: message,
+            icon: '/images/notification-icon.png',
+            tag: 'notification',
+            sound: true
+        };
+        
+        var notificationOptions = {...defaultOptions, ...options};
+        var notification = new Notification(title, notificationOptions);
+        
+        notification.onclick = function() {
+            window.focus();
+            if (options.url) {
+                window.location.href = options.url;
+            }
+            notification.close();
+        };
+        
+        // Ses çal
+        if (notificationOptions.sound) {
+            playNotificationSound();
+        }
+        
+        // 10 saniye sonra bildirimi kapat
+        setTimeout(function() {
+            notification.close();
+        }, 10000);
+    } else if (Notification.permission !== 'denied') {
+        Notification.requestPermission().then(function(permission) {
+            if (permission === "granted") {
+                showDesktopNotification(title, message, options);
+            }
+        });
+    }
+}
 

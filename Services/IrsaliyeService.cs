@@ -86,8 +86,8 @@ namespace MuhasebeStokWebApp.Services
                             CariID = cariID,
                             FaturaID = faturaWithDetails.FaturaID,
                             DepoID = depoID,
-                            // Fatura türüne göre irsaliye türünü belirle (1: Alış -> Giriş, 2: Satış -> Çıkış)
-                            IrsaliyeTuru = faturaWithDetails.FaturaTuruID == 1 ? "Giriş" : "Çıkış",
+                            // Fatura türüne göre irsaliye türünü belirle (1: Satış -> Çıkış, 2: Alış -> Giriş)
+                            IrsaliyeTuru = faturaWithDetails.FaturaTuruID == 1 ? "Çıkış" : "Giriş",
                             Aciklama = $"{faturaWithDetails.FaturaNumarasi ?? ""} numaralı faturaya ait otomatik oluşturulan {irsaliyeTuru} irsaliyesi",
                             OlusturmaTarihi = DateTime.Now,
                             OlusturanKullaniciId = currentUserId,

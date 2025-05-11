@@ -37,6 +37,25 @@ namespace MuhasebeStokWebApp.Data.Entities
         // Görev öncelik seviyesi
         public PriorityLevel PriorityLevel { get; set; } = PriorityLevel.Medium;
         
+        // Görev durum seviyesi
+        public MuhasebeStokWebApp.Enums.TaskStatus Status { get; set; } = MuhasebeStokWebApp.Enums.TaskStatus.Beklemede;
+        
+        // Görev etiketleri (virgülle ayrılmış)
+        [MaxLength(200)]
+        public string? Tags { get; set; }
+        
+        // Görev arşivlenmiş mi
+        public bool IsArchived { get; set; } = false;
+        
+        // Soft delete için silindi durumu
+        public bool IsDeleted { get; set; } = false;
+        
+        // Hatırlatıcı zamanı (opsiyonel)
+        public DateTime? ReminderAt { get; set; }
+        
+        // Hatırlatma gönderildi mi
+        public bool IsReminderSent { get; set; } = false;
+        
         // Göreve yapılan yorumlar
         public virtual ICollection<TodoComment>? TodoComments { get; set; }
     }

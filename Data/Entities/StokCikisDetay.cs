@@ -47,6 +47,9 @@ namespace MuhasebeStokWebApp.Data.Entities
         [StringLength(10)]
         public string ParaBirimi { get; set; } = "USD";
         
+        [Column(TypeName = "decimal(18,6)")]
+        public decimal? DovizKuru { get; set; }
+        
         [StringLength(50)]
         public string? ReferansNo { get; set; }
         

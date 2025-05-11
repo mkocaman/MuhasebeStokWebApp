@@ -25,6 +25,7 @@ namespace MuhasebeStokWebApp.Services
         private readonly IStokHareketService _stokHareketService;
         private readonly ICariService _cariService;
         private readonly ApplicationDbContext _context;
+        private readonly IIrsaliyeNumaralandirmaService _irsaliyeNumaralandirmaService;
 
         public FaturaOrchestrationService(
             IFaturaCrudService faturaService,
@@ -35,7 +36,8 @@ namespace MuhasebeStokWebApp.Services
             ICariHareketService cariHareketService,
             IIrsaliyeService irsaliyeService,
             IStokHareketService stokHareketService,
-            ApplicationDbContext context)
+            ApplicationDbContext context,
+            IIrsaliyeNumaralandirmaService irsaliyeNumaralandirmaService)
         {
             _faturaService = faturaService;
             _unitOfWork = unitOfWork;
@@ -46,6 +48,7 @@ namespace MuhasebeStokWebApp.Services
             _irsaliyeService = irsaliyeService;
             _stokHareketService = stokHareketService;
             _context = context;
+            _irsaliyeNumaralandirmaService = irsaliyeNumaralandirmaService;
         }
 
         /// <summary>
@@ -103,13 +106,24 @@ namespace MuhasebeStokWebApp.Services
                 
                 // Fatura detaylarını ekle (geçersiz kalemleri filtrele)
                 int kalemSayisi = 0;
-                bool isAlisFaturasi = fatura.FaturaTuruID == 1; // Alış faturası ID'si 1, Satış faturası ID'si 2
+                bool isAlisFaturasi = await _context.FaturaTurleri
+                    .Where(ft => ft.FaturaTuruID == fatura.FaturaTuruID)
+                    .Select(ft => ft.HareketTuru == "Giriş")
+                    .FirstOrDefaultAsync();
                 var faturaDetaylari = new List<FaturaDetay>();
                 
                 foreach (var kalem in viewModel.FaturaKalemleri.Where(k => k.UrunID != Guid.Empty && k.Miktar > 0))
                 {
                     kalemSayisi++;
                     _logger.LogInformation("Fatura kalemi işleniyor. UrunID: {UrunID}, Miktar: {Miktar}", kalem.UrunID, kalem.Miktar);
+                        
+                    // NetTutar değerini düzelt - 100 ile çarpılmış olabilir, normal değeri kullan
+                    decimal netTutar = kalem.NetTutar;
+                    if (viewModel.DovizTuru == "USD" || viewModel.DovizTuru == "UZS")
+                    {
+                        // NetTutar'ı 100'e böl (çarpılmış olduğu için)
+                        netTutar = kalem.NetTutar / 100;
+                    }
                         
                     var faturaDetay = new FaturaDetay
                     {
@@ -124,7 +138,7 @@ namespace MuhasebeStokWebApp.Services
                         Tutar = kalem.Tutar,
                         KdvTutari = kalem.KdvTutari,
                         IndirimTutari = kalem.IndirimTutari,
-                        NetTutar = kalem.NetTutar,
+                        NetTutar = netTutar,
                         OlusturmaTarihi = DateTime.Now,
                         Silindi = false,
                         SatirToplam = kalem.Tutar,
@@ -151,6 +165,8 @@ namespace MuhasebeStokWebApp.Services
                             $"Fatura No: {fatura.FaturaNumarasi}",
                             fatura.ParaBirimi,
                             fatura.DovizKuru);
+                        
+                        _logger.LogInformation("Alış faturası için stok girişi yapıldı. Ürün: {UrunID}, Miktar: {Miktar}", kalem.UrunID, kalem.Miktar);
                     }
                     else
                     {
@@ -161,7 +177,11 @@ namespace MuhasebeStokWebApp.Services
                             StokHareketTipi.Cikis,
                             fatura.FaturaID,
                             $"Fatura No: {fatura.FaturaNumarasi}",
-                            fatura.ParaBirimi);
+                            fatura.ParaBirimi,
+                            false,
+                            fatura.DovizKuru);
+                        
+                        _logger.LogInformation("Satış faturası için stok çıkışı yapıldı. Ürün: {UrunID}, Miktar: {Miktar}", kalem.UrunID, kalem.Miktar);
                     }
                 }
                 
@@ -212,23 +232,26 @@ namespace MuhasebeStokWebApp.Services
                     // Fatura türüne göre irsaliye türü belirle
                     string irsaliyeTuru = isAlisFaturasi ? "Giriş" : "Çıkış";
                     
+                    // IrsaliyeNumaralandirmaService kullanarak sıralı irsaliye numarası oluştur
+                    var irsaliyeNumarasi = await _irsaliyeNumaralandirmaService.GenerateIrsaliyeNumarasiAsync();
+                    
                     var irsaliye = new Irsaliye
                     {
                         IrsaliyeID = Guid.NewGuid(),
-                        IrsaliyeNumarasi = $"IRS-{DateTime.Now:yyMMdd}-{Guid.NewGuid().ToString().Substring(0, 4)}",
+                        IrsaliyeNumarasi = irsaliyeNumarasi,
                         IrsaliyeTarihi = DateTime.Now,
                         CariID = fatura.CariID ?? Guid.Empty,
                         FaturaID = fatura.FaturaID,
-                        IrsaliyeTuru = irsaliyeTuru,
+                        IrsaliyeTuru = irsaliyeTuru,  // Fatura türü Alış -> İrsaliye türü Giriş, Fatura türü Satış -> İrsaliye türü Çıkış
                         OlusturmaTarihi = DateTime.Now,
                         OlusturanKullaniciId = currentUserId ?? Guid.Empty,
-                        Aciklama = $"Fatura No: {fatura.FaturaNumarasi}",
+                        Aciklama = $"{fatura.FaturaNumarasi ?? ""} numaralı faturaya ait otomatik oluşturulan {irsaliyeTuru.ToLower()} irsaliyesi",
                         Silindi = false,
                         Aktif = true
                     };
                     
                     await _unitOfWork.IrsaliyeRepository.AddAsync(irsaliye);
-                    _logger.LogInformation("Otomatik irsaliye oluşturuldu. IrsaliyeNo: {IrsaliyeNo}", irsaliye.IrsaliyeNumarasi);
+                    _logger.LogInformation("Otomatik irsaliye oluşturuldu. IrsaliyeNo: {IrsaliyeNo}, Türü: {Turu}", irsaliye.IrsaliyeNumarasi, irsaliyeTuru);
                     
                     // İrsaliye detaylarını fatura kalemlerinden oluştur
                     foreach (var kalem in viewModel.FaturaKalemleri.Where(k => k.UrunID != Guid.Empty && k.Miktar > 0))
@@ -312,8 +335,11 @@ namespace MuhasebeStokWebApp.Services
                     throw new Exception($"Güncellenecek fatura bulunamadı (ID: {id})");
                 }
                 
-                // Fatura türünü al
-                var faturaTuru = await _context.FaturaTurleri.FindAsync(viewModel.FaturaTuruID);
+                // FaturaTurleri tablosundan fatura türünü al
+                var faturaTuru = await _context.FaturaTurleri
+                    .Where(ft => ft.FaturaTuruID == fatura.FaturaTuruID)
+                    .FirstOrDefaultAsync();
+                
                 bool isAlisFaturasi = faturaTuru?.HareketTuru == "Giriş";
                 
                 // Fatura bilgilerini güncelle
@@ -394,6 +420,14 @@ namespace MuhasebeStokWebApp.Services
                 {
                     if (kalem.UrunID != Guid.Empty && kalem.Miktar > 0)
                     {
+                        // NetTutar değerini düzelt - 100 ile çarpılmış olabilir, normal değeri kullan
+                        decimal netTutar = kalem.NetTutar;
+                        if (viewModel.DovizTuru == "USD" || viewModel.DovizTuru == "UZS")
+                        {
+                            // NetTutar'ı 100'e böl (çarpılmış olduğu için)
+                            netTutar = kalem.NetTutar / 100;
+                        }
+
                         var faturaDetay = new FaturaDetay
                         {
                             FaturaDetayID = Guid.NewGuid(),
@@ -406,7 +440,7 @@ namespace MuhasebeStokWebApp.Services
                             Tutar = kalem.Tutar,
                             KdvTutari = kalem.KdvTutari,
                             IndirimTutari = kalem.IndirimTutari,
-                            NetTutar = kalem.NetTutar,
+                            NetTutar = netTutar,
                             Aciklama = kalem.Aciklama,
                             Birim = kalem.Birim,
                             OlusturmaTarihi = DateTime.Now,
@@ -475,7 +509,9 @@ namespace MuhasebeStokWebApp.Services
                                 StokHareketTipi.Cikis,
                                 fatura.FaturaID,
                                 $"Fatura No: {fatura.FaturaNumarasi}",
-                                fatura.ParaBirimi);
+                                fatura.ParaBirimi,
+                                false,
+                                fatura.DovizKuru);
                         }
                         _logger.LogInformation("FIFO kaydı oluşturuldu. UrunID: {UrunID}", kalem.UrunID);
                     }

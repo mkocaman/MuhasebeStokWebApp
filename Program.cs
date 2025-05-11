@@ -199,6 +199,9 @@ builder.Services.AddScoped<IStokFifoService, StokFifoService>();
 // TodoService'i ekliyoruz
 builder.Services.AddScoped<ITodoService, TodoService>();
 
+// TodoReminderService'i ekliyoruz
+builder.Services.AddHostedService<TodoReminderService>();
+
 // MaliyetHesaplamaService'i ekliyoruz
 builder.Services.AddScoped<IMaliyetHesaplamaService, MaliyetHesaplamaService>();
 
@@ -286,6 +289,9 @@ builder.Services.AddScoped<IReportService, ReportService>();
 builder.Services.AddScoped<ISozlesmeService, SozlesmeService>();
 builder.Services.AddScoped<IMerkeziAklamaService, MerkeziAklamaService>();
 builder.Services.AddScoped<IStokFifoService, StokFifoService>();
+
+// Dashboard servisi ekleniyor
+builder.Services.AddScoped<IDashboardService, DashboardService>();
 
 // SistemLogService'i interface üzerinden kaydet
 builder.Services.AddScoped<ISistemLogService, SistemLogService>();

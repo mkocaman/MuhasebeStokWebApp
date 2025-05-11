@@ -1,0 +1,991 @@
+2025-05-09 09:48:58.458 +03:00 [INF] Veritabanına bağlantı başarılı. Migrationlar uygulanıyor...
+2025-05-09 09:48:58.842 +03:00 [INF] Veritabanı işlemleri başarıyla tamamlandı.
+2025-05-09 09:48:58.901 +03:00 [INF] Todo Hatırlatıcı Servisi başlatıldı.
+2025-05-09 09:48:58.902 +03:00 [INF] Yaklaşan hatırlatıcılar kontrol ediliyor...
+2025-05-09 09:48:58.969 +03:00 [INF] 3 adet bekleyen hatırlatma bulundu.
+2025-05-09 09:48:58.970 +03:00 [INF] Kullanıcı ID 8b547a04-134c-4578-99bb-f831a55b400d için hatırlatma gönderiliyor: alış
+2025-05-09 09:48:58.970 +03:00 [INF] Kullanıcı Muhammet KOCAMAN için hatırlatma bildirimi gönderildi.
+2025-05-09 09:48:58.993 +03:00 [INF] ID: 5 olan görev için hatırlatma gönderildi.
+2025-05-09 09:48:58.994 +03:00 [INF] Kullanıcı ID 8b547a04-134c-4578-99bb-f831a55b400d için hatırlatma gönderiliyor: alım
+2025-05-09 09:48:58.994 +03:00 [INF] Kullanıcı Muhammet KOCAMAN için hatırlatma bildirimi gönderildi.
+2025-05-09 09:48:58.996 +03:00 [INF] ID: 6 olan görev için hatırlatma gönderildi.
+2025-05-09 09:48:58.996 +03:00 [INF] Kullanıcı ID 8b547a04-134c-4578-99bb-f831a55b400d için hatırlatma gönderiliyor: para
+2025-05-09 09:48:58.996 +03:00 [INF] Kullanıcı Muhammet KOCAMAN için hatırlatma bildirimi gönderildi.
+2025-05-09 09:48:58.998 +03:00 [INF] ID: 8 olan görev için hatırlatma gönderildi.
+2025-05-09 09:54:53.190 +03:00 [INF] Giriş denemesi: admin
+2025-05-09 09:54:53.321 +03:00 [INF] Admin kullanıcısı başarıyla giriş yaptı: admin
+2025-05-09 09:54:53.321 +03:00 [INF] Admin session oluşturuldu: UserID=8b547a04-134c-4578-99bb-f831a55b400d, UserName=admin
+2025-05-09 09:54:53.322 +03:00 [INF] Yönlendirme adresi: /Urun
+2025-05-09 09:54:53.322 +03:00 [INF] Admin kullanıcısı /Urun adresine yönlendiriliyor
+2025-05-09 09:55:03.830 +03:00 [INF] Aktif session bulundu: UserID=8b547a04-134c-4578-99bb-f831a55b400d, UserName=admin
+2025-05-09 09:55:03.834 +03:00 [INF] Admin kullanıcısı tespit edildi
+2025-05-09 09:55:03.834 +03:00 [INF] Kimlik doğrulanmış kullanıcı: admin
+2025-05-09 09:55:03.935 +03:00 [INF] TRY dönüşümü için kur değeri hesaplandı: TRY -> USD, Değer: 0,03
+2025-05-09 09:55:03.948 +03:00 [WRN] Kaynak para birimi kodu bulunamadı: UZS. Varsayılan değer kullanılıyor.
+2025-05-09 09:55:03.949 +03:00 [INF] Kur değeri hesaplandı: UZS -> USD, Değer: 1
+2025-05-09 09:56:43.002 +03:00 [INF] Aktif session bulundu: UserID=8b547a04-134c-4578-99bb-f831a55b400d, UserName=admin
+2025-05-09 09:56:43.002 +03:00 [INF] Admin kullanıcısı tespit edildi
+2025-05-09 09:56:43.002 +03:00 [INF] Kimlik doğrulanmış kullanıcı: admin
+2025-05-09 09:56:43.010 +03:00 [INF] Kur değeri önbellekten alındı: TRY -> USD, Değer: 0,03
+2025-05-09 09:56:43.010 +03:00 [INF] Kur değeri önbellekten alındı: UZS -> USD, Değer: 1
+2025-05-09 09:57:15.634 +03:00 [INF] Aktif session bulundu: UserID=8b547a04-134c-4578-99bb-f831a55b400d, UserName=admin
+2025-05-09 09:57:15.634 +03:00 [INF] Admin kullanıcısı tespit edildi
+2025-05-09 09:57:15.635 +03:00 [INF] Kimlik doğrulanmış kullanıcı: admin
+2025-05-09 09:57:15.637 +03:00 [INF] Kur değeri önbellekten alındı: TRY -> USD, Değer: 0,03
+2025-05-09 09:57:15.638 +03:00 [INF] Kur değeri önbellekten alındı: UZS -> USD, Değer: 1
+2025-05-09 09:57:17.031 +03:00 [INF] Yaklaşan hatırlatıcılar kontrol ediliyor...
+2025-05-09 09:57:17.036 +03:00 [INF] Bekleyen hatırlatma bulunamadı.
+2025-05-09 09:57:29.788 +03:00 [INF] Aktif session bulundu: UserID=8b547a04-134c-4578-99bb-f831a55b400d, UserName=admin
+2025-05-09 09:57:29.789 +03:00 [INF] Admin kullanıcısı tespit edildi
+2025-05-09 09:57:29.789 +03:00 [INF] Kimlik doğrulanmış kullanıcı: admin
+2025-05-09 09:57:29.799 +03:00 [INF] Kur değeri önbellekten alındı: TRY -> USD, Değer: 0,03
+2025-05-09 09:57:29.799 +03:00 [INF] Kur değeri önbellekten alındı: UZS -> USD, Değer: 1
+2025-05-09 09:57:55.791 +03:00 [INF] Aktif session bulundu: UserID=8b547a04-134c-4578-99bb-f831a55b400d, UserName=admin
+2025-05-09 09:57:55.791 +03:00 [INF] Admin kullanıcısı tespit edildi
+2025-05-09 09:57:55.792 +03:00 [INF] Kimlik doğrulanmış kullanıcı: admin
+2025-05-09 09:57:55.799 +03:00 [INF] Kur değeri önbellekten alındı: TRY -> USD, Değer: 0,03
+2025-05-09 09:57:55.799 +03:00 [INF] Kur değeri önbellekten alındı: UZS -> USD, Değer: 1
+2025-05-09 10:02:04.810 +03:00 [INF] Aktif session bulundu: UserID=8b547a04-134c-4578-99bb-f831a55b400d, UserName=admin
+2025-05-09 10:02:04.810 +03:00 [INF] Admin kullanıcısı tespit edildi
+2025-05-09 10:02:04.810 +03:00 [INF] Kimlik doğrulanmış kullanıcı: admin
+2025-05-09 10:02:04.822 +03:00 [INF] Kur değeri önbellekten alındı: TRY -> USD, Değer: 0,03
+2025-05-09 10:02:04.823 +03:00 [INF] Kur değeri önbellekten alındı: UZS -> USD, Değer: 1
+2025-05-09 10:02:07.849 +03:00 [INF] Aktif session bulundu: UserID=8b547a04-134c-4578-99bb-f831a55b400d, UserName=admin
+2025-05-09 10:02:07.849 +03:00 [INF] Admin kullanıcısı tespit edildi
+2025-05-09 10:02:07.849 +03:00 [INF] Kimlik doğrulanmış kullanıcı: admin
+2025-05-09 10:02:07.854 +03:00 [INF] Kur değeri önbellekten alındı: TRY -> USD, Değer: 0,03
+2025-05-09 10:02:07.854 +03:00 [INF] Kur değeri önbellekten alındı: UZS -> USD, Değer: 1
+2025-05-09 10:02:17.038 +03:00 [INF] Yaklaşan hatırlatıcılar kontrol ediliyor...
+2025-05-09 10:02:17.042 +03:00 [INF] Bekleyen hatırlatma bulunamadı.
+2025-05-09 10:02:46.976 +03:00 [INF] Aktif session bulundu: UserID=8b547a04-134c-4578-99bb-f831a55b400d, UserName=admin
+2025-05-09 10:02:46.976 +03:00 [INF] Admin kullanıcısı tespit edildi
+2025-05-09 10:02:46.976 +03:00 [INF] Kimlik doğrulanmış kullanıcı: admin
+2025-05-09 10:02:46.979 +03:00 [INF] Kur değeri önbellekten alındı: TRY -> USD, Değer: 0,03
+2025-05-09 10:02:46.979 +03:00 [INF] Kur değeri önbellekten alındı: UZS -> USD, Değer: 1
+2025-05-09 10:03:53.346 +03:00 [INF] Veritabanına bağlantı başarılı. Migrationlar uygulanıyor...
+2025-05-09 10:03:53.678 +03:00 [INF] Veritabanı işlemleri başarıyla tamamlandı.
+2025-05-09 10:03:53.729 +03:00 [INF] Todo Hatırlatıcı Servisi başlatıldı.
+2025-05-09 10:03:53.729 +03:00 [INF] Yaklaşan hatırlatıcılar kontrol ediliyor...
+2025-05-09 10:03:53.771 +03:00 [INF] Bekleyen hatırlatma bulunamadı.
+2025-05-09 10:03:53.894 +03:00 [ERR] Hosting failed to start
+System.IO.IOException: Failed to bind to address https://127.0.0.1:7118: address already in use.
+ ---> Microsoft.AspNetCore.Connections.AddressInUseException: Address already in use
+ ---> System.Net.Sockets.SocketException (48): Address already in use
+   at System.Net.Sockets.Socket.DoBind(EndPoint endPointSnapshot, SocketAddress socketAddress)
+   at System.Net.Sockets.Socket.Bind(EndPoint localEP)
+   at Microsoft.AspNetCore.Server.Kestrel.Transport.Sockets.SocketTransportOptions.CreateDefaultBoundListenSocket(EndPoint endpoint)
+   at Microsoft.AspNetCore.Server.Kestrel.Transport.Sockets.SocketConnectionListener.Bind()
+   --- End of inner exception stack trace ---
+   at Microsoft.AspNetCore.Server.Kestrel.Transport.Sockets.SocketConnectionListener.Bind()
+   at Microsoft.AspNetCore.Server.Kestrel.Transport.Sockets.SocketTransportFactory.BindAsync(EndPoint endpoint, CancellationToken cancellationToken)
+   at Microsoft.AspNetCore.Server.Kestrel.Core.Internal.Infrastructure.TransportManager.BindAsync(EndPoint endPoint, ConnectionDelegate connectionDelegate, EndpointConfig endpointConfig, CancellationToken cancellationToken)
+   at Microsoft.AspNetCore.Server.Kestrel.Core.KestrelServerImpl.<>c__DisplayClass28_0`1.<<StartAsync>g__OnBind|0>d.MoveNext()
+--- End of stack trace from previous location ---
+   at Microsoft.AspNetCore.Server.Kestrel.Core.Internal.AddressBinder.BindEndpointAsync(ListenOptions endpoint, AddressBindContext context, CancellationToken cancellationToken)
+   --- End of inner exception stack trace ---
+   at Microsoft.AspNetCore.Server.Kestrel.Core.Internal.AddressBinder.BindEndpointAsync(ListenOptions endpoint, AddressBindContext context, CancellationToken cancellationToken)
+   at Microsoft.AspNetCore.Server.Kestrel.Core.LocalhostListenOptions.BindAsync(AddressBindContext context, CancellationToken cancellationToken)
+   at Microsoft.AspNetCore.Server.Kestrel.Core.Internal.AddressBinder.AddressesStrategy.BindAsync(AddressBindContext context, CancellationToken cancellationToken)
+   at Microsoft.AspNetCore.Server.Kestrel.Core.KestrelServerImpl.BindAsync(CancellationToken cancellationToken)
+   at Microsoft.AspNetCore.Server.Kestrel.Core.KestrelServerImpl.StartAsync[TContext](IHttpApplication`1 application, CancellationToken cancellationToken)
+   at Microsoft.AspNetCore.Hosting.GenericWebHostService.StartAsync(CancellationToken cancellationToken)
+   at Microsoft.Extensions.Hosting.Internal.Host.<StartAsync>b__14_1(IHostedService service, CancellationToken token)
+   at Microsoft.Extensions.Hosting.Internal.Host.ForeachService[T](IEnumerable`1 services, CancellationToken token, Boolean concurrent, Boolean abortOnFirstException, List`1 exceptions, Func`3 operation)
+2025-05-09 10:03:53.899 +03:00 [ERR] BackgroundService failed
+System.Threading.Tasks.TaskCanceledException: A task was canceled.
+   at MuhasebeStokWebApp.Services.TodoReminderService.ExecuteAsync(CancellationToken stoppingToken) in /Users/muhammetkocaman/MuhasebeStokWebApp/Services/TodoReminderService.cs:line 46
+   at Microsoft.Extensions.Hosting.Internal.Host.TryExecuteBackgroundServiceAsync(BackgroundService backgroundService)
+2025-05-09 10:03:53.901 +03:00 [FTL] The HostOptions.BackgroundServiceExceptionBehavior is configured to StopHost. A BackgroundService has thrown an unhandled exception, and the IHost instance is stopping. To avoid this behavior, configure this to Ignore; however the BackgroundService will not be restarted.
+System.Threading.Tasks.TaskCanceledException: A task was canceled.
+   at MuhasebeStokWebApp.Services.TodoReminderService.ExecuteAsync(CancellationToken stoppingToken) in /Users/muhammetkocaman/MuhasebeStokWebApp/Services/TodoReminderService.cs:line 46
+   at Microsoft.Extensions.Hosting.Internal.Host.TryExecuteBackgroundServiceAsync(BackgroundService backgroundService)
+2025-05-09 10:04:13.323 +03:00 [INF] Veritabanına bağlantı başarılı. Migrationlar uygulanıyor...
+2025-05-09 10:04:13.651 +03:00 [INF] Veritabanı işlemleri başarıyla tamamlandı.
+2025-05-09 10:04:13.699 +03:00 [INF] Todo Hatırlatıcı Servisi başlatıldı.
+2025-05-09 10:04:13.700 +03:00 [INF] Yaklaşan hatırlatıcılar kontrol ediliyor...
+2025-05-09 10:04:13.741 +03:00 [INF] Bekleyen hatırlatma bulunamadı.
+2025-05-09 10:04:18.651 +03:00 [WRN] Session bulunamadı, kullanıcı giriş yapmamış olabilir
+2025-05-09 10:04:18.653 +03:00 [INF] Kimlik doğrulanmış kullanıcı: admin
+2025-05-09 10:04:18.718 +03:00 [INF] TRY dönüşümü için kur değeri hesaplandı: TRY -> USD, Değer: 0,03
+2025-05-09 10:04:18.727 +03:00 [WRN] Kaynak para birimi kodu bulunamadı: UZS. Varsayılan değer kullanılıyor.
+2025-05-09 10:04:18.728 +03:00 [INF] Kur değeri hesaplandı: UZS -> USD, Değer: 1
+2025-05-09 10:05:02.875 +03:00 [WRN] Session bulunamadı, kullanıcı giriş yapmamış olabilir
+2025-05-09 10:05:02.876 +03:00 [INF] Kimlik doğrulanmış kullanıcı: admin
+2025-05-09 10:05:02.883 +03:00 [INF] Kur değeri önbellekten alındı: TRY -> USD, Değer: 0,03
+2025-05-09 10:05:02.884 +03:00 [INF] Kur değeri önbellekten alındı: UZS -> USD, Değer: 1
+2025-05-09 10:06:56.509 +03:00 [WRN] Session bulunamadı, kullanıcı giriş yapmamış olabilir
+2025-05-09 10:06:56.510 +03:00 [INF] Kimlik doğrulanmış kullanıcı: admin
+2025-05-09 10:06:56.518 +03:00 [INF] Kur değeri önbellekten alındı: TRY -> USD, Değer: 0,03
+2025-05-09 10:06:56.519 +03:00 [INF] Kur değeri önbellekten alındı: UZS -> USD, Değer: 1
+2025-05-09 10:09:13.741 +03:00 [INF] Yaklaşan hatırlatıcılar kontrol ediliyor...
+2025-05-09 10:09:13.748 +03:00 [INF] Bekleyen hatırlatma bulunamadı.
+2025-05-09 10:13:18.337 +03:00 [INF] Veritabanına bağlantı başarılı. Migrationlar uygulanıyor...
+2025-05-09 10:13:18.662 +03:00 [INF] Veritabanı işlemleri başarıyla tamamlandı.
+2025-05-09 10:13:18.714 +03:00 [INF] Todo Hatırlatıcı Servisi başlatıldı.
+2025-05-09 10:13:18.715 +03:00 [INF] Yaklaşan hatırlatıcılar kontrol ediliyor...
+2025-05-09 10:13:18.756 +03:00 [INF] Bekleyen hatırlatma bulunamadı.
+2025-05-09 10:13:26.441 +03:00 [INF] Giriş denemesi: admin
+2025-05-09 10:13:26.540 +03:00 [INF] Admin kullanıcısı başarıyla giriş yaptı: admin
+2025-05-09 10:13:26.540 +03:00 [INF] Admin session oluşturuldu: UserID=8b547a04-134c-4578-99bb-f831a55b400d, UserName=admin
+2025-05-09 10:13:26.540 +03:00 [INF] Yönlendirme adresi: /Urun
+2025-05-09 10:13:26.540 +03:00 [INF] Admin kullanıcısı /Urun adresine yönlendiriliyor
+2025-05-09 10:13:29.356 +03:00 [INF] Aktif session bulundu: UserID=8b547a04-134c-4578-99bb-f831a55b400d, UserName=admin
+2025-05-09 10:13:29.359 +03:00 [INF] Admin kullanıcısı tespit edildi
+2025-05-09 10:13:29.359 +03:00 [INF] Kimlik doğrulanmış kullanıcı: admin
+2025-05-09 10:13:29.436 +03:00 [INF] TRY dönüşümü için kur değeri hesaplandı: TRY -> USD, Değer: 0,03
+2025-05-09 10:13:29.445 +03:00 [WRN] Kaynak para birimi kodu bulunamadı: UZS. Varsayılan değer kullanılıyor.
+2025-05-09 10:13:29.445 +03:00 [INF] Kur değeri hesaplandı: UZS -> USD, Değer: 1
+2025-05-09 10:15:42.135 +03:00 [INF] Aktif session bulundu: UserID=8b547a04-134c-4578-99bb-f831a55b400d, UserName=admin
+2025-05-09 10:15:42.135 +03:00 [INF] Admin kullanıcısı tespit edildi
+2025-05-09 10:15:42.135 +03:00 [INF] Kimlik doğrulanmış kullanıcı: admin
+2025-05-09 10:15:42.149 +03:00 [INF] Kur değeri önbellekten alındı: TRY -> USD, Değer: 0,03
+2025-05-09 10:15:42.149 +03:00 [INF] Kur değeri önbellekten alındı: UZS -> USD, Değer: 1
+2025-05-09 10:16:47.452 +03:00 [INF] Veritabanına bağlantı başarılı. Migrationlar uygulanıyor...
+2025-05-09 10:16:47.776 +03:00 [INF] Veritabanı işlemleri başarıyla tamamlandı.
+2025-05-09 10:16:47.828 +03:00 [INF] Todo Hatırlatıcı Servisi başlatıldı.
+2025-05-09 10:16:47.828 +03:00 [INF] Yaklaşan hatırlatıcılar kontrol ediliyor...
+2025-05-09 10:16:47.870 +03:00 [INF] Bekleyen hatırlatma bulunamadı.
+2025-05-09 10:16:55.853 +03:00 [INF] Giriş denemesi: admin
+2025-05-09 10:16:55.948 +03:00 [INF] Admin kullanıcısı başarıyla giriş yaptı: admin
+2025-05-09 10:16:55.948 +03:00 [INF] Admin session oluşturuldu: UserID=8b547a04-134c-4578-99bb-f831a55b400d, UserName=admin
+2025-05-09 10:16:55.948 +03:00 [INF] Yönlendirme adresi: /Urun
+2025-05-09 10:16:55.948 +03:00 [INF] Admin kullanıcısı /Urun adresine yönlendiriliyor
+2025-05-09 10:16:58.953 +03:00 [INF] Aktif session bulundu: UserID=8b547a04-134c-4578-99bb-f831a55b400d, UserName=admin
+2025-05-09 10:16:58.955 +03:00 [INF] Admin kullanıcısı tespit edildi
+2025-05-09 10:16:58.955 +03:00 [INF] Kimlik doğrulanmış kullanıcı: admin
+2025-05-09 10:16:59.028 +03:00 [INF] TRY dönüşümü için kur değeri hesaplandı: TRY -> USD, Değer: 0,03
+2025-05-09 10:16:59.038 +03:00 [WRN] Kaynak para birimi kodu bulunamadı: UZS. Varsayılan değer kullanılıyor.
+2025-05-09 10:16:59.038 +03:00 [INF] Kur değeri hesaplandı: UZS -> USD, Değer: 1
+2025-05-09 10:17:28.069 +03:00 [INF] Aktif session bulundu: UserID=8b547a04-134c-4578-99bb-f831a55b400d, UserName=admin
+2025-05-09 10:17:28.069 +03:00 [INF] Admin kullanıcısı tespit edildi
+2025-05-09 10:17:28.069 +03:00 [INF] Kimlik doğrulanmış kullanıcı: admin
+2025-05-09 10:17:28.080 +03:00 [INF] Kur değeri önbellekten alındı: TRY -> USD, Değer: 0,03
+2025-05-09 10:17:28.081 +03:00 [INF] Kur değeri önbellekten alındı: UZS -> USD, Değer: 1
+2025-05-09 10:17:43.213 +03:00 [INF] Aktif session bulundu: UserID=8b547a04-134c-4578-99bb-f831a55b400d, UserName=admin
+2025-05-09 10:17:43.213 +03:00 [INF] Admin kullanıcısı tespit edildi
+2025-05-09 10:17:43.213 +03:00 [INF] Kimlik doğrulanmış kullanıcı: admin
+2025-05-09 10:17:43.221 +03:00 [INF] Kur değeri önbellekten alındı: TRY -> USD, Değer: 0,03
+2025-05-09 10:17:43.222 +03:00 [INF] Kur değeri önbellekten alındı: UZS -> USD, Değer: 1
+2025-05-09 10:18:00.291 +03:00 [INF] Aktif session bulundu: UserID=8b547a04-134c-4578-99bb-f831a55b400d, UserName=admin
+2025-05-09 10:18:00.291 +03:00 [INF] Admin kullanıcısı tespit edildi
+2025-05-09 10:18:00.291 +03:00 [INF] Kimlik doğrulanmış kullanıcı: admin
+2025-05-09 10:18:00.297 +03:00 [INF] Kur değeri önbellekten alındı: TRY -> USD, Değer: 0,03
+2025-05-09 10:18:00.298 +03:00 [INF] Kur değeri önbellekten alındı: UZS -> USD, Değer: 1
+2025-05-09 10:21:47.874 +03:00 [INF] Yaklaşan hatırlatıcılar kontrol ediliyor...
+2025-05-09 10:21:47.879 +03:00 [INF] Bekleyen hatırlatma bulunamadı.
+2025-05-09 11:01:43.455 +03:00 [INF] Veritabanına bağlantı başarılı. Migrationlar uygulanıyor...
+2025-05-09 11:01:43.811 +03:00 [INF] Veritabanı işlemleri başarıyla tamamlandı.
+2025-05-09 11:01:43.868 +03:00 [INF] Todo Hatırlatıcı Servisi başlatıldı.
+2025-05-09 11:01:43.869 +03:00 [INF] Yaklaşan hatırlatıcılar kontrol ediliyor...
+2025-05-09 11:01:43.915 +03:00 [INF] Bekleyen hatırlatma bulunamadı.
+2025-05-09 11:01:53.987 +03:00 [INF] Giriş denemesi: admin
+2025-05-09 11:01:54.065 +03:00 [INF] Admin kullanıcısı başarıyla giriş yaptı: admin
+2025-05-09 11:01:54.065 +03:00 [INF] Admin session oluşturuldu: UserID=8b547a04-134c-4578-99bb-f831a55b400d, UserName=admin
+2025-05-09 11:01:54.065 +03:00 [INF] Yönlendirme adresi: /
+2025-05-09 11:01:54.066 +03:00 [INF] Admin kullanıcısı / adresine yönlendiriliyor
+2025-05-09 11:01:54.133 +03:00 [INF] Aktif session bulundu: UserID=8b547a04-134c-4578-99bb-f831a55b400d, UserName=admin
+2025-05-09 11:01:54.134 +03:00 [INF] Admin kullanıcısı tespit edildi
+2025-05-09 11:01:54.134 +03:00 [INF] Kimlik doğrulanmış kullanıcı: admin
+2025-05-09 11:01:54.247 +03:00 [INF] TRY dönüşümü için kur değeri hesaplandı: TRY -> USD, Değer: 0,03
+2025-05-09 11:01:54.255 +03:00 [WRN] Kaynak para birimi kodu bulunamadı: UZS. Varsayılan değer kullanılıyor.
+2025-05-09 11:01:54.255 +03:00 [INF] Kur değeri hesaplandı: UZS -> USD, Değer: 1
+2025-05-09 11:02:46.411 +03:00 [INF] Veritabanına bağlantı başarılı. Migrationlar uygulanıyor...
+2025-05-09 11:02:46.720 +03:00 [INF] Veritabanı işlemleri başarıyla tamamlandı.
+2025-05-09 11:02:46.770 +03:00 [INF] Todo Hatırlatıcı Servisi başlatıldı.
+2025-05-09 11:02:46.771 +03:00 [INF] Yaklaşan hatırlatıcılar kontrol ediliyor...
+2025-05-09 11:02:46.812 +03:00 [INF] Bekleyen hatırlatma bulunamadı.
+2025-05-09 16:31:03.946 +03:00 [INF] Veritabanına bağlantı başarılı. Migrationlar uygulanıyor...
+2025-05-09 16:31:04.295 +03:00 [INF] Veritabanı işlemleri başarıyla tamamlandı.
+2025-05-09 16:31:04.345 +03:00 [INF] Todo Hatırlatıcı Servisi başlatıldı.
+2025-05-09 16:31:04.346 +03:00 [INF] Yaklaşan hatırlatıcılar kontrol ediliyor...
+2025-05-09 16:31:04.401 +03:00 [INF] 3 adet bekleyen hatırlatma bulundu.
+2025-05-09 16:31:04.402 +03:00 [INF] Kullanıcı ID 8b547a04-134c-4578-99bb-f831a55b400d için hatırlatma gönderiliyor: toplantı
+2025-05-09 16:31:04.402 +03:00 [INF] Kullanıcı Muhammet KOCAMAN için hatırlatma bildirimi gönderildi.
+2025-05-09 16:31:04.415 +03:00 [INF] ID: 3 olan görev için hatırlatma gönderildi.
+2025-05-09 16:31:04.415 +03:00 [INF] Kullanıcı ID 8b547a04-134c-4578-99bb-f831a55b400d için hatırlatma gönderiliyor: Test
+2025-05-09 16:31:04.415 +03:00 [INF] Kullanıcı Muhammet KOCAMAN için hatırlatma bildirimi gönderildi.
+2025-05-09 16:31:04.418 +03:00 [INF] ID: 1008 olan görev için hatırlatma gönderildi.
+2025-05-09 16:31:04.418 +03:00 [WRN] Görev ID 1009 için kullanıcı ID'si bulunamadı. Bildirim gönderilemiyor.
+2025-05-09 16:31:04.421 +03:00 [INF] ID: 1009 olan görev için hatırlatma gönderildi.
+2025-05-09 16:31:28.654 +03:00 [INF] Giriş denemesi: admin
+2025-05-09 16:31:28.751 +03:00 [INF] Admin kullanıcısı başarıyla giriş yaptı: admin
+2025-05-09 16:31:28.751 +03:00 [INF] Admin session oluşturuldu: UserID=8b547a04-134c-4578-99bb-f831a55b400d, UserName=admin
+2025-05-09 16:31:28.751 +03:00 [INF] Yönlendirme adresi: /Urun
+2025-05-09 16:31:28.751 +03:00 [INF] Admin kullanıcısı /Urun adresine yönlendiriliyor
+2025-05-09 16:31:43.332 +03:00 [INF] Aktif session bulundu: UserID=8b547a04-134c-4578-99bb-f831a55b400d, UserName=admin
+2025-05-09 16:31:43.334 +03:00 [INF] Admin kullanıcısı tespit edildi
+2025-05-09 16:31:43.334 +03:00 [INF] Kimlik doğrulanmış kullanıcı: admin
+2025-05-09 16:31:43.436 +03:00 [INF] TRY dönüşümü için kur değeri hesaplandı: TRY -> USD, Değer: 0,03
+2025-05-09 16:31:43.446 +03:00 [WRN] Kaynak para birimi kodu bulunamadı: UZS. Varsayılan değer kullanılıyor.
+2025-05-09 16:31:43.446 +03:00 [INF] Kur değeri hesaplandı: UZS -> USD, Değer: 1
+2025-05-09 16:32:07.259 +03:00 [INF] Aktif session bulundu: UserID=8b547a04-134c-4578-99bb-f831a55b400d, UserName=admin
+2025-05-09 16:32:07.259 +03:00 [INF] Admin kullanıcısı tespit edildi
+2025-05-09 16:32:07.259 +03:00 [INF] Kimlik doğrulanmış kullanıcı: admin
+2025-05-09 16:32:07.277 +03:00 [INF] Kur değeri önbellekten alındı: TRY -> USD, Değer: 0,03
+2025-05-09 16:32:07.277 +03:00 [INF] Kur değeri önbellekten alındı: UZS -> USD, Değer: 1
+2025-05-09 16:32:44.113 +03:00 [INF] Aktif session bulundu: UserID=8b547a04-134c-4578-99bb-f831a55b400d, UserName=admin
+2025-05-09 16:32:44.114 +03:00 [INF] Admin kullanıcısı tespit edildi
+2025-05-09 16:32:44.114 +03:00 [INF] Kimlik doğrulanmış kullanıcı: admin
+2025-05-09 16:32:44.126 +03:00 [INF] Kur değeri önbellekten alındı: TRY -> USD, Değer: 0,03
+2025-05-09 16:32:44.127 +03:00 [INF] Kur değeri önbellekten alındı: UZS -> USD, Değer: 1
+2025-05-09 16:33:15.934 +03:00 [INF] Birim sayısı: Aktif=0, Pasif=0, Silinmiş=0
+2025-05-09 16:33:23.507 +03:00 [INF] Aktif session bulundu: UserID=8b547a04-134c-4578-99bb-f831a55b400d, UserName=admin
+2025-05-09 16:33:23.507 +03:00 [INF] Admin kullanıcısı tespit edildi
+2025-05-09 16:33:23.507 +03:00 [INF] Kimlik doğrulanmış kullanıcı: admin
+2025-05-09 16:33:23.519 +03:00 [INF] Kur değeri önbellekten alındı: TRY -> USD, Değer: 0,03
+2025-05-09 16:33:23.520 +03:00 [INF] Kur değeri önbellekten alındı: UZS -> USD, Değer: 1
+2025-05-09 16:36:04.420 +03:00 [INF] Yaklaşan hatırlatıcılar kontrol ediliyor...
+2025-05-09 16:36:04.424 +03:00 [INF] Bekleyen hatırlatma bulunamadı.
+2025-05-09 16:39:24.615 +03:00 [INF] Veritabanına bağlantı başarılı. Migrationlar uygulanıyor...
+2025-05-09 16:39:24.936 +03:00 [INF] Veritabanı işlemleri başarıyla tamamlandı.
+2025-05-09 16:39:24.988 +03:00 [INF] Todo Hatırlatıcı Servisi başlatıldı.
+2025-05-09 16:39:24.989 +03:00 [INF] Yaklaşan hatırlatıcılar kontrol ediliyor...
+2025-05-09 16:39:25.031 +03:00 [INF] Bekleyen hatırlatma bulunamadı.
+2025-05-09 16:39:38.831 +03:00 [INF] Giriş denemesi: admin
+2025-05-09 16:39:38.928 +03:00 [INF] Admin kullanıcısı başarıyla giriş yaptı: admin
+2025-05-09 16:39:38.928 +03:00 [INF] Admin session oluşturuldu: UserID=8b547a04-134c-4578-99bb-f831a55b400d, UserName=admin
+2025-05-09 16:39:38.928 +03:00 [INF] Yönlendirme adresi: /Urun
+2025-05-09 16:39:38.928 +03:00 [INF] Admin kullanıcısı /Urun adresine yönlendiriliyor
+2025-05-09 16:40:08.100 +03:00 [INF] Varsayılan menüleri oluşturma işlemi başlatıldı
+2025-05-09 16:40:08.123 +03:00 [INF] Mevcut 46 menü temizleniyor
+2025-05-09 16:40:08.304 +03:00 [INF] Mevcut menüler başarıyla temizlendi
+2025-05-09 16:40:17.119 +03:00 [INF] Aktif session bulundu: UserID=8b547a04-134c-4578-99bb-f831a55b400d, UserName=admin
+2025-05-09 16:40:17.122 +03:00 [INF] Admin kullanıcısı tespit edildi
+2025-05-09 16:40:17.122 +03:00 [INF] Kimlik doğrulanmış kullanıcı: admin
+2025-05-09 16:40:17.229 +03:00 [INF] TRY dönüşümü için kur değeri hesaplandı: TRY -> USD, Değer: 0,03
+2025-05-09 16:40:17.237 +03:00 [WRN] Kaynak para birimi kodu bulunamadı: UZS. Varsayılan değer kullanılıyor.
+2025-05-09 16:40:17.238 +03:00 [INF] Kur değeri hesaplandı: UZS -> USD, Değer: 1
+2025-05-09 16:40:52.941 +03:00 [INF] Aktif session bulundu: UserID=8b547a04-134c-4578-99bb-f831a55b400d, UserName=admin
+2025-05-09 16:40:52.942 +03:00 [INF] Admin kullanıcısı tespit edildi
+2025-05-09 16:40:52.942 +03:00 [INF] Kimlik doğrulanmış kullanıcı: admin
+2025-05-09 16:40:52.957 +03:00 [INF] Kur değeri önbellekten alındı: TRY -> USD, Değer: 0,03
+2025-05-09 16:40:52.957 +03:00 [INF] Kur değeri önbellekten alındı: UZS -> USD, Değer: 1
+2025-05-09 16:41:06.353 +03:00 [INF] Varsayılan menüleri oluşturma işlemi başlatıldı
+2025-05-09 16:41:06.357 +03:00 [INF] Mevcut 46 menü temizleniyor
+2025-05-09 16:41:06.387 +03:00 [INF] Mevcut menüler başarıyla temizlendi
+2025-05-09 16:50:06.491 +03:00 [INF] Veritabanına bağlantı başarılı. Migrationlar uygulanıyor...
+2025-05-09 16:50:06.820 +03:00 [INF] Veritabanı işlemleri başarıyla tamamlandı.
+2025-05-09 16:50:06.877 +03:00 [INF] Todo Hatırlatıcı Servisi başlatıldı.
+2025-05-09 16:50:06.878 +03:00 [INF] Yaklaşan hatırlatıcılar kontrol ediliyor...
+2025-05-09 16:50:06.921 +03:00 [INF] Bekleyen hatırlatma bulunamadı.
+2025-05-09 16:50:14.082 +03:00 [INF] Giriş denemesi: admin
+2025-05-09 16:50:14.180 +03:00 [INF] Admin kullanıcısı başarıyla giriş yaptı: admin
+2025-05-09 16:50:14.180 +03:00 [INF] Admin session oluşturuldu: UserID=8b547a04-134c-4578-99bb-f831a55b400d, UserName=admin
+2025-05-09 16:50:14.180 +03:00 [INF] Yönlendirme adresi: /Urun
+2025-05-09 16:50:14.180 +03:00 [INF] Admin kullanıcısı /Urun adresine yönlendiriliyor
+2025-05-09 16:50:24.857 +03:00 [INF] Varsayılan menüleri oluşturma işlemi başlatıldı
+2025-05-09 16:50:24.875 +03:00 [INF] Mevcut 46 menü temizleniyor
+2025-05-09 16:50:24.927 +03:00 [INF] Mevcut menüler başarıyla temizlendi
+2025-05-09 16:50:54.290 +03:00 [INF] Aktif session bulundu: UserID=8b547a04-134c-4578-99bb-f831a55b400d, UserName=admin
+2025-05-09 16:50:54.293 +03:00 [INF] Admin kullanıcısı tespit edildi
+2025-05-09 16:50:54.294 +03:00 [INF] Kimlik doğrulanmış kullanıcı: admin
+2025-05-09 16:50:54.405 +03:00 [INF] TRY dönüşümü için kur değeri hesaplandı: TRY -> USD, Değer: 0,03
+2025-05-09 16:50:54.414 +03:00 [WRN] Kaynak para birimi kodu bulunamadı: UZS. Varsayılan değer kullanılıyor.
+2025-05-09 16:50:54.415 +03:00 [INF] Kur değeri hesaplandı: UZS -> USD, Değer: 1
+2025-05-09 16:51:36.421 +03:00 [INF] Aktif session bulundu: UserID=8b547a04-134c-4578-99bb-f831a55b400d, UserName=admin
+2025-05-09 16:51:36.421 +03:00 [INF] Admin kullanıcısı tespit edildi
+2025-05-09 16:51:36.421 +03:00 [INF] Kimlik doğrulanmış kullanıcı: admin
+2025-05-09 16:51:36.438 +03:00 [INF] Kur değeri önbellekten alındı: TRY -> USD, Değer: 0,03
+2025-05-09 16:51:36.438 +03:00 [INF] Kur değeri önbellekten alındı: UZS -> USD, Değer: 1
+2025-05-09 16:51:42.382 +03:00 [INF] Aktif session bulundu: UserID=8b547a04-134c-4578-99bb-f831a55b400d, UserName=admin
+2025-05-09 16:51:42.382 +03:00 [INF] Admin kullanıcısı tespit edildi
+2025-05-09 16:51:42.382 +03:00 [INF] Kimlik doğrulanmış kullanıcı: admin
+2025-05-09 16:51:42.399 +03:00 [INF] Kur değeri önbellekten alındı: TRY -> USD, Değer: 0,03
+2025-05-09 16:51:42.399 +03:00 [INF] Kur değeri önbellekten alındı: UZS -> USD, Değer: 1
+2025-05-09 16:52:45.645 +03:00 [INF] Aktif session bulundu: UserID=8b547a04-134c-4578-99bb-f831a55b400d, UserName=admin
+2025-05-09 16:52:45.645 +03:00 [INF] Admin kullanıcısı tespit edildi
+2025-05-09 16:52:45.645 +03:00 [INF] Kimlik doğrulanmış kullanıcı: admin
+2025-05-09 16:52:45.659 +03:00 [INF] Kur değeri önbellekten alındı: TRY -> USD, Değer: 0,03
+2025-05-09 16:52:45.659 +03:00 [INF] Kur değeri önbellekten alındı: UZS -> USD, Değer: 1
+2025-05-09 18:01:23.361 +03:00 [INF] Veritabanına bağlantı başarılı. Migrationlar uygulanıyor...
+2025-05-09 18:01:23.677 +03:00 [INF] Veritabanı işlemleri başarıyla tamamlandı.
+2025-05-09 18:01:23.729 +03:00 [INF] Todo Hatırlatıcı Servisi başlatıldı.
+2025-05-09 18:01:23.730 +03:00 [INF] Yaklaşan hatırlatıcılar kontrol ediliyor...
+2025-05-09 18:01:23.771 +03:00 [INF] Bekleyen hatırlatma bulunamadı.
+2025-05-09 18:01:36.688 +03:00 [WRN] Session bulunamadı, kullanıcı giriş yapmamış olabilir
+2025-05-09 18:01:36.693 +03:00 [INF] Kimlik doğrulanmış kullanıcı: admin
+2025-05-09 18:01:36.809 +03:00 [INF] TRY dönüşümü için kur değeri hesaplandı: TRY -> USD, Değer: 0,03
+2025-05-09 18:01:36.818 +03:00 [WRN] Kaynak para birimi kodu bulunamadı: UZS. Varsayılan değer kullanılıyor.
+2025-05-09 18:01:36.818 +03:00 [INF] Kur değeri hesaplandı: UZS -> USD, Değer: 1
+2025-05-09 18:01:51.410 +03:00 [INF] Varsayılan menüleri oluşturma işlemi başlatıldı
+2025-05-09 18:01:51.421 +03:00 [INF] Mevcut 49 menü temizleniyor
+2025-05-09 18:01:51.580 +03:00 [INF] Mevcut menüler başarıyla temizlendi
+2025-05-09 18:01:57.510 +03:00 [WRN] Session bulunamadı, kullanıcı giriş yapmamış olabilir
+2025-05-09 18:01:57.510 +03:00 [INF] Kimlik doğrulanmış kullanıcı: admin
+2025-05-09 18:01:57.518 +03:00 [INF] Kur değeri önbellekten alındı: TRY -> USD, Değer: 0,03
+2025-05-09 18:01:57.519 +03:00 [INF] Kur değeri önbellekten alındı: UZS -> USD, Değer: 1
+2025-05-09 18:02:07.575 +03:00 [WRN] Session bulunamadı, kullanıcı giriş yapmamış olabilir
+2025-05-09 18:02:07.576 +03:00 [INF] Kimlik doğrulanmış kullanıcı: admin
+2025-05-09 18:02:07.593 +03:00 [INF] Kur değeri önbellekten alındı: TRY -> USD, Değer: 0,03
+2025-05-09 18:02:07.593 +03:00 [INF] Kur değeri önbellekten alındı: UZS -> USD, Değer: 1
+2025-05-09 18:02:30.380 +03:00 [WRN] Session bulunamadı, kullanıcı giriş yapmamış olabilir
+2025-05-09 18:02:30.381 +03:00 [INF] Kimlik doğrulanmış kullanıcı: admin
+2025-05-09 18:02:30.394 +03:00 [INF] Kur değeri önbellekten alındı: TRY -> USD, Değer: 0,03
+2025-05-09 18:02:30.394 +03:00 [INF] Kur değeri önbellekten alındı: UZS -> USD, Değer: 1
+2025-05-09 18:02:44.636 +03:00 [INF] Start processing HTTP request GET https://v6.exchangerate-api.com/v6/645b5bebcab7cef56e1b609c/latest/USD
+2025-05-09 18:02:44.639 +03:00 [INF] Sending HTTP request GET https://v6.exchangerate-api.com/v6/645b5bebcab7cef56e1b609c/latest/USD
+2025-05-09 18:02:44.995 +03:00 [INF] Received HTTP response headers after 353.5423ms - 200
+2025-05-09 18:02:45.001 +03:00 [INF] End processing HTTP request after 370.1918ms - 200
+2025-05-09 18:02:47.940 +03:00 [INF] Start processing HTTP request GET https://v6.exchangerate-api.com/v6/645b5bebcab7cef56e1b609c/latest/USD
+2025-05-09 18:02:47.940 +03:00 [INF] Sending HTTP request GET https://v6.exchangerate-api.com/v6/645b5bebcab7cef56e1b609c/latest/USD
+2025-05-09 18:02:48.039 +03:00 [INF] Received HTTP response headers after 99.1057ms - 200
+2025-05-09 18:02:48.040 +03:00 [INF] End processing HTTP request after 100.1486ms - 200
+2025-05-09 18:04:04.353 +03:00 [INF] Start processing HTTP request GET https://v6.exchangerate-api.com/v6/645b5bebcab7cef56e1b609c/latest/USD
+2025-05-09 18:04:04.353 +03:00 [INF] Sending HTTP request GET https://v6.exchangerate-api.com/v6/645b5bebcab7cef56e1b609c/latest/USD
+2025-05-09 18:04:04.623 +03:00 [INF] Received HTTP response headers after 269.6127ms - 200
+2025-05-09 18:04:04.624 +03:00 [INF] End processing HTTP request after 270.9395ms - 200
+2025-05-09 18:04:09.156 +03:00 [WRN] Session bulunamadı, kullanıcı giriş yapmamış olabilir
+2025-05-09 18:04:09.156 +03:00 [INF] Kimlik doğrulanmış kullanıcı: admin
+2025-05-09 18:04:09.172 +03:00 [INF] Kur değeri önbellekten alındı: TRY -> USD, Değer: 0,03
+2025-05-09 18:04:09.173 +03:00 [INF] Kur değeri önbellekten alındı: UZS -> USD, Değer: 1
+2025-05-09 18:04:37.869 +03:00 [WRN] Session bulunamadı, kullanıcı giriş yapmamış olabilir
+2025-05-09 18:04:37.869 +03:00 [INF] Kimlik doğrulanmış kullanıcı: admin
+2025-05-09 18:04:37.884 +03:00 [INF] Kur değeri önbellekten alındı: TRY -> USD, Değer: 0,03
+2025-05-09 18:04:37.884 +03:00 [INF] Kur değeri önbellekten alındı: UZS -> USD, Değer: 1
+2025-05-09 18:06:23.770 +03:00 [INF] Yaklaşan hatırlatıcılar kontrol ediliyor...
+2025-05-09 18:06:23.775 +03:00 [INF] Bekleyen hatırlatma bulunamadı.
+2025-05-09 18:09:24.442 +03:00 [WRN] Session bulunamadı, kullanıcı giriş yapmamış olabilir
+2025-05-09 18:09:24.442 +03:00 [INF] Kimlik doğrulanmış kullanıcı: admin
+2025-05-09 18:09:24.461 +03:00 [INF] Kur değeri önbellekten alındı: TRY -> USD, Değer: 0,03
+2025-05-09 18:09:24.461 +03:00 [INF] Kur değeri önbellekten alındı: UZS -> USD, Değer: 1
+2025-05-09 18:10:58.908 +03:00 [WRN] Session bulunamadı, kullanıcı giriş yapmamış olabilir
+2025-05-09 18:10:58.909 +03:00 [INF] Kimlik doğrulanmış kullanıcı: admin
+2025-05-09 18:10:58.926 +03:00 [INF] Kur değeri önbellekten alındı: TRY -> USD, Değer: 0,03
+2025-05-09 18:10:58.926 +03:00 [INF] Kur değeri önbellekten alındı: UZS -> USD, Değer: 1
+2025-05-09 18:11:23.777 +03:00 [INF] Yaklaşan hatırlatıcılar kontrol ediliyor...
+2025-05-09 18:11:23.780 +03:00 [INF] Bekleyen hatırlatma bulunamadı.
+2025-05-09 18:12:47.311 +03:00 [WRN] Session bulunamadı, kullanıcı giriş yapmamış olabilir
+2025-05-09 18:12:47.311 +03:00 [INF] Kimlik doğrulanmış kullanıcı: admin
+2025-05-09 18:12:47.319 +03:00 [INF] Kur değeri önbellekten alındı: TRY -> USD, Değer: 0,03
+2025-05-09 18:12:47.319 +03:00 [INF] Kur değeri önbellekten alındı: UZS -> USD, Değer: 1
+2025-05-09 18:12:56.615 +03:00 [WRN] Session bulunamadı, kullanıcı giriş yapmamış olabilir
+2025-05-09 18:12:56.615 +03:00 [INF] Kimlik doğrulanmış kullanıcı: admin
+2025-05-09 18:12:56.626 +03:00 [INF] Kur değeri önbellekten alındı: TRY -> USD, Değer: 0,03
+2025-05-09 18:12:56.627 +03:00 [INF] Kur değeri önbellekten alındı: UZS -> USD, Değer: 1
+2025-05-09 18:13:10.882 +03:00 [ERR] An exception occurred in the database while saving changes for context type 'MuhasebeStokWebApp.Data.ApplicationDbContext'.
+Microsoft.EntityFrameworkCore.DbUpdateException: An error occurred while saving the entity changes. See the inner exception for details.
+ ---> Microsoft.Data.SqlClient.SqlException (0x80131904): String or binary data would be truncated in table 'MuhasebeStokDB.dbo.GenelSistemAyarlari', column 'SirketVergiDairesi'. Truncated value: 'İstanbul Vergi Daire'.
+   at Microsoft.Data.SqlClient.SqlConnection.OnError(SqlException exception, Boolean breakConnection, Action`1 wrapCloseInAction)
+   at Microsoft.Data.SqlClient.SqlInternalConnection.OnError(SqlException exception, Boolean breakConnection, Action`1 wrapCloseInAction)
+   at Microsoft.Data.SqlClient.TdsParser.ThrowExceptionAndWarning(TdsParserStateObject stateObj, Boolean callerHasConnectionLock, Boolean asyncClose)
+   at Microsoft.Data.SqlClient.TdsParser.TryRun(RunBehavior runBehavior, SqlCommand cmdHandler, SqlDataReader dataStream, BulkCopySimpleResultSet bulkCopyHandler, TdsParserStateObject stateObj, Boolean& dataReady)
+   at Microsoft.Data.SqlClient.SqlDataReader.TryHasMoreRows(Boolean& moreRows)
+   at Microsoft.Data.SqlClient.SqlDataReader.TryReadInternal(Boolean setTimeout, Boolean& more)
+   at Microsoft.Data.SqlClient.SqlDataReader.ReadAsyncExecute(Task task, Object state)
+   at Microsoft.Data.SqlClient.SqlDataReader.InvokeAsyncCall[T](SqlDataReaderBaseAsyncCallContext`1 context)
+--- End of stack trace from previous location ---
+   at Microsoft.EntityFrameworkCore.Update.AffectedCountModificationCommandBatch.ConsumeResultSetAsync(Int32 startCommandIndex, RelationalDataReader reader, CancellationToken cancellationToken)
+ClientConnectionId:d9ff4181-a76d-48c1-80c7-6a731cb46a51
+Error Number:2628,State:1,Class:16
+   --- End of inner exception stack trace ---
+   at Microsoft.EntityFrameworkCore.Update.AffectedCountModificationCommandBatch.ConsumeResultSetAsync(Int32 startCommandIndex, RelationalDataReader reader, CancellationToken cancellationToken)
+   at Microsoft.EntityFrameworkCore.Update.AffectedCountModificationCommandBatch.ConsumeAsync(RelationalDataReader reader, CancellationToken cancellationToken)
+   at Microsoft.EntityFrameworkCore.Update.ReaderModificationCommandBatch.ExecuteAsync(IRelationalConnection connection, CancellationToken cancellationToken)
+   at Microsoft.EntityFrameworkCore.Update.ReaderModificationCommandBatch.ExecuteAsync(IRelationalConnection connection, CancellationToken cancellationToken)
+   at Microsoft.EntityFrameworkCore.SqlServer.Update.Internal.SqlServerModificationCommandBatch.ExecuteAsync(IRelationalConnection connection, CancellationToken cancellationToken)
+   at Microsoft.EntityFrameworkCore.Update.Internal.BatchExecutor.ExecuteAsync(IEnumerable`1 commandBatches, IRelationalConnection connection, CancellationToken cancellationToken)
+   at Microsoft.EntityFrameworkCore.Update.Internal.BatchExecutor.ExecuteAsync(IEnumerable`1 commandBatches, IRelationalConnection connection, CancellationToken cancellationToken)
+   at Microsoft.EntityFrameworkCore.Update.Internal.BatchExecutor.ExecuteAsync(IEnumerable`1 commandBatches, IRelationalConnection connection, CancellationToken cancellationToken)
+   at Microsoft.EntityFrameworkCore.Storage.RelationalDatabase.SaveChangesAsync(IList`1 entries, CancellationToken cancellationToken)
+   at Microsoft.EntityFrameworkCore.ChangeTracking.Internal.StateManager.SaveChangesAsync(IList`1 entriesToSave, CancellationToken cancellationToken)
+   at Microsoft.EntityFrameworkCore.ChangeTracking.Internal.StateManager.SaveChangesAsync(StateManager stateManager, Boolean acceptAllChangesOnSuccess, CancellationToken cancellationToken)
+   at Microsoft.EntityFrameworkCore.SqlServer.Storage.Internal.SqlServerExecutionStrategy.ExecuteAsync[TState,TResult](TState state, Func`4 operation, Func`4 verifySucceeded, CancellationToken cancellationToken)
+   at Microsoft.EntityFrameworkCore.DbContext.SaveChangesAsync(Boolean acceptAllChangesOnSuccess, CancellationToken cancellationToken)
+Microsoft.EntityFrameworkCore.DbUpdateException: An error occurred while saving the entity changes. See the inner exception for details.
+ ---> Microsoft.Data.SqlClient.SqlException (0x80131904): String or binary data would be truncated in table 'MuhasebeStokDB.dbo.GenelSistemAyarlari', column 'SirketVergiDairesi'. Truncated value: 'İstanbul Vergi Daire'.
+   at Microsoft.Data.SqlClient.SqlConnection.OnError(SqlException exception, Boolean breakConnection, Action`1 wrapCloseInAction)
+   at Microsoft.Data.SqlClient.SqlInternalConnection.OnError(SqlException exception, Boolean breakConnection, Action`1 wrapCloseInAction)
+   at Microsoft.Data.SqlClient.TdsParser.ThrowExceptionAndWarning(TdsParserStateObject stateObj, Boolean callerHasConnectionLock, Boolean asyncClose)
+   at Microsoft.Data.SqlClient.TdsParser.TryRun(RunBehavior runBehavior, SqlCommand cmdHandler, SqlDataReader dataStream, BulkCopySimpleResultSet bulkCopyHandler, TdsParserStateObject stateObj, Boolean& dataReady)
+   at Microsoft.Data.SqlClient.SqlDataReader.TryHasMoreRows(Boolean& moreRows)
+   at Microsoft.Data.SqlClient.SqlDataReader.TryReadInternal(Boolean setTimeout, Boolean& more)
+   at Microsoft.Data.SqlClient.SqlDataReader.ReadAsyncExecute(Task task, Object state)
+   at Microsoft.Data.SqlClient.SqlDataReader.InvokeAsyncCall[T](SqlDataReaderBaseAsyncCallContext`1 context)
+--- End of stack trace from previous location ---
+   at Microsoft.EntityFrameworkCore.Update.AffectedCountModificationCommandBatch.ConsumeResultSetAsync(Int32 startCommandIndex, RelationalDataReader reader, CancellationToken cancellationToken)
+ClientConnectionId:d9ff4181-a76d-48c1-80c7-6a731cb46a51
+Error Number:2628,State:1,Class:16
+   --- End of inner exception stack trace ---
+   at Microsoft.EntityFrameworkCore.Update.AffectedCountModificationCommandBatch.ConsumeResultSetAsync(Int32 startCommandIndex, RelationalDataReader reader, CancellationToken cancellationToken)
+   at Microsoft.EntityFrameworkCore.Update.AffectedCountModificationCommandBatch.ConsumeAsync(RelationalDataReader reader, CancellationToken cancellationToken)
+   at Microsoft.EntityFrameworkCore.Update.ReaderModificationCommandBatch.ExecuteAsync(IRelationalConnection connection, CancellationToken cancellationToken)
+   at Microsoft.EntityFrameworkCore.Update.ReaderModificationCommandBatch.ExecuteAsync(IRelationalConnection connection, CancellationToken cancellationToken)
+   at Microsoft.EntityFrameworkCore.SqlServer.Update.Internal.SqlServerModificationCommandBatch.ExecuteAsync(IRelationalConnection connection, CancellationToken cancellationToken)
+   at Microsoft.EntityFrameworkCore.Update.Internal.BatchExecutor.ExecuteAsync(IEnumerable`1 commandBatches, IRelationalConnection connection, CancellationToken cancellationToken)
+   at Microsoft.EntityFrameworkCore.Update.Internal.BatchExecutor.ExecuteAsync(IEnumerable`1 commandBatches, IRelationalConnection connection, CancellationToken cancellationToken)
+   at Microsoft.EntityFrameworkCore.Update.Internal.BatchExecutor.ExecuteAsync(IEnumerable`1 commandBatches, IRelationalConnection connection, CancellationToken cancellationToken)
+   at Microsoft.EntityFrameworkCore.Storage.RelationalDatabase.SaveChangesAsync(IList`1 entries, CancellationToken cancellationToken)
+   at Microsoft.EntityFrameworkCore.ChangeTracking.Internal.StateManager.SaveChangesAsync(IList`1 entriesToSave, CancellationToken cancellationToken)
+   at Microsoft.EntityFrameworkCore.ChangeTracking.Internal.StateManager.SaveChangesAsync(StateManager stateManager, Boolean acceptAllChangesOnSuccess, CancellationToken cancellationToken)
+   at Microsoft.EntityFrameworkCore.SqlServer.Storage.Internal.SqlServerExecutionStrategy.ExecuteAsync[TState,TResult](TState state, Func`4 operation, Func`4 verifySucceeded, CancellationToken cancellationToken)
+   at Microsoft.EntityFrameworkCore.DbContext.SaveChangesAsync(Boolean acceptAllChangesOnSuccess, CancellationToken cancellationToken)
+2025-05-09 18:13:10.883 +03:00 [ERR] InitSistemAyarlari işlemi sırasında hata oluştu
+Microsoft.EntityFrameworkCore.DbUpdateException: An error occurred while saving the entity changes. See the inner exception for details.
+ ---> Microsoft.Data.SqlClient.SqlException (0x80131904): String or binary data would be truncated in table 'MuhasebeStokDB.dbo.GenelSistemAyarlari', column 'SirketVergiDairesi'. Truncated value: 'İstanbul Vergi Daire'.
+   at Microsoft.Data.SqlClient.SqlConnection.OnError(SqlException exception, Boolean breakConnection, Action`1 wrapCloseInAction)
+   at Microsoft.Data.SqlClient.SqlInternalConnection.OnError(SqlException exception, Boolean breakConnection, Action`1 wrapCloseInAction)
+   at Microsoft.Data.SqlClient.TdsParser.ThrowExceptionAndWarning(TdsParserStateObject stateObj, Boolean callerHasConnectionLock, Boolean asyncClose)
+   at Microsoft.Data.SqlClient.TdsParser.TryRun(RunBehavior runBehavior, SqlCommand cmdHandler, SqlDataReader dataStream, BulkCopySimpleResultSet bulkCopyHandler, TdsParserStateObject stateObj, Boolean& dataReady)
+   at Microsoft.Data.SqlClient.SqlDataReader.TryHasMoreRows(Boolean& moreRows)
+   at Microsoft.Data.SqlClient.SqlDataReader.TryReadInternal(Boolean setTimeout, Boolean& more)
+   at Microsoft.Data.SqlClient.SqlDataReader.ReadAsyncExecute(Task task, Object state)
+   at Microsoft.Data.SqlClient.SqlDataReader.InvokeAsyncCall[T](SqlDataReaderBaseAsyncCallContext`1 context)
+--- End of stack trace from previous location ---
+   at Microsoft.EntityFrameworkCore.Update.AffectedCountModificationCommandBatch.ConsumeResultSetAsync(Int32 startCommandIndex, RelationalDataReader reader, CancellationToken cancellationToken)
+ClientConnectionId:d9ff4181-a76d-48c1-80c7-6a731cb46a51
+Error Number:2628,State:1,Class:16
+   --- End of inner exception stack trace ---
+   at Microsoft.EntityFrameworkCore.Update.AffectedCountModificationCommandBatch.ConsumeResultSetAsync(Int32 startCommandIndex, RelationalDataReader reader, CancellationToken cancellationToken)
+   at Microsoft.EntityFrameworkCore.Update.AffectedCountModificationCommandBatch.ConsumeAsync(RelationalDataReader reader, CancellationToken cancellationToken)
+   at Microsoft.EntityFrameworkCore.Update.ReaderModificationCommandBatch.ExecuteAsync(IRelationalConnection connection, CancellationToken cancellationToken)
+   at Microsoft.EntityFrameworkCore.Update.ReaderModificationCommandBatch.ExecuteAsync(IRelationalConnection connection, CancellationToken cancellationToken)
+   at Microsoft.EntityFrameworkCore.SqlServer.Update.Internal.SqlServerModificationCommandBatch.ExecuteAsync(IRelationalConnection connection, CancellationToken cancellationToken)
+   at Microsoft.EntityFrameworkCore.Update.Internal.BatchExecutor.ExecuteAsync(IEnumerable`1 commandBatches, IRelationalConnection connection, CancellationToken cancellationToken)
+   at Microsoft.EntityFrameworkCore.Update.Internal.BatchExecutor.ExecuteAsync(IEnumerable`1 commandBatches, IRelationalConnection connection, CancellationToken cancellationToken)
+   at Microsoft.EntityFrameworkCore.Update.Internal.BatchExecutor.ExecuteAsync(IEnumerable`1 commandBatches, IRelationalConnection connection, CancellationToken cancellationToken)
+   at Microsoft.EntityFrameworkCore.Storage.RelationalDatabase.SaveChangesAsync(IList`1 entries, CancellationToken cancellationToken)
+   at Microsoft.EntityFrameworkCore.ChangeTracking.Internal.StateManager.SaveChangesAsync(IList`1 entriesToSave, CancellationToken cancellationToken)
+   at Microsoft.EntityFrameworkCore.ChangeTracking.Internal.StateManager.SaveChangesAsync(StateManager stateManager, Boolean acceptAllChangesOnSuccess, CancellationToken cancellationToken)
+   at Microsoft.EntityFrameworkCore.SqlServer.Storage.Internal.SqlServerExecutionStrategy.ExecuteAsync[TState,TResult](TState state, Func`4 operation, Func`4 verifySucceeded, CancellationToken cancellationToken)
+   at Microsoft.EntityFrameworkCore.DbContext.SaveChangesAsync(Boolean acceptAllChangesOnSuccess, CancellationToken cancellationToken)
+   at Microsoft.EntityFrameworkCore.DbContext.SaveChangesAsync(Boolean acceptAllChangesOnSuccess, CancellationToken cancellationToken)
+   at MuhasebeStokWebApp.Controllers.DbInitController.InitSistemAyarlari() in /Users/muhammetkocaman/MuhasebeStokWebApp/Controllers/DbInitController.cs:line 284
+2025-05-09 18:13:10.906 +03:00 [ERR] An exception occurred in the database while saving changes for context type 'MuhasebeStokWebApp.Data.ApplicationDbContext'.
+Microsoft.EntityFrameworkCore.DbUpdateException: An error occurred while saving the entity changes. See the inner exception for details.
+ ---> Microsoft.Data.SqlClient.SqlException (0x80131904): String or binary data would be truncated in table 'MuhasebeStokDB.dbo.GenelSistemAyarlari', column 'SirketVergiDairesi'. Truncated value: 'İstanbul Vergi Daire'.
+   at Microsoft.Data.SqlClient.SqlConnection.OnError(SqlException exception, Boolean breakConnection, Action`1 wrapCloseInAction)
+   at Microsoft.Data.SqlClient.SqlInternalConnection.OnError(SqlException exception, Boolean breakConnection, Action`1 wrapCloseInAction)
+   at Microsoft.Data.SqlClient.TdsParser.ThrowExceptionAndWarning(TdsParserStateObject stateObj, Boolean callerHasConnectionLock, Boolean asyncClose)
+   at Microsoft.Data.SqlClient.TdsParser.TryRun(RunBehavior runBehavior, SqlCommand cmdHandler, SqlDataReader dataStream, BulkCopySimpleResultSet bulkCopyHandler, TdsParserStateObject stateObj, Boolean& dataReady)
+   at Microsoft.Data.SqlClient.SqlDataReader.TryHasMoreRows(Boolean& moreRows)
+   at Microsoft.Data.SqlClient.SqlDataReader.TryReadInternal(Boolean setTimeout, Boolean& more)
+   at Microsoft.Data.SqlClient.SqlDataReader.ReadAsyncExecute(Task task, Object state)
+   at Microsoft.Data.SqlClient.SqlDataReader.InvokeAsyncCall[T](SqlDataReaderBaseAsyncCallContext`1 context)
+--- End of stack trace from previous location ---
+   at Microsoft.EntityFrameworkCore.Update.AffectedCountModificationCommandBatch.ConsumeResultSetAsync(Int32 startCommandIndex, RelationalDataReader reader, CancellationToken cancellationToken)
+ClientConnectionId:d9ff4181-a76d-48c1-80c7-6a731cb46a51
+Error Number:2628,State:1,Class:16
+   --- End of inner exception stack trace ---
+   at Microsoft.EntityFrameworkCore.Update.AffectedCountModificationCommandBatch.ConsumeResultSetAsync(Int32 startCommandIndex, RelationalDataReader reader, CancellationToken cancellationToken)
+   at Microsoft.EntityFrameworkCore.Update.AffectedCountModificationCommandBatch.ConsumeAsync(RelationalDataReader reader, CancellationToken cancellationToken)
+   at Microsoft.EntityFrameworkCore.Update.ReaderModificationCommandBatch.ExecuteAsync(IRelationalConnection connection, CancellationToken cancellationToken)
+   at Microsoft.EntityFrameworkCore.Update.ReaderModificationCommandBatch.ExecuteAsync(IRelationalConnection connection, CancellationToken cancellationToken)
+   at Microsoft.EntityFrameworkCore.SqlServer.Update.Internal.SqlServerModificationCommandBatch.ExecuteAsync(IRelationalConnection connection, CancellationToken cancellationToken)
+   at Microsoft.EntityFrameworkCore.Update.Internal.BatchExecutor.ExecuteAsync(IEnumerable`1 commandBatches, IRelationalConnection connection, CancellationToken cancellationToken)
+   at Microsoft.EntityFrameworkCore.Update.Internal.BatchExecutor.ExecuteAsync(IEnumerable`1 commandBatches, IRelationalConnection connection, CancellationToken cancellationToken)
+   at Microsoft.EntityFrameworkCore.Update.Internal.BatchExecutor.ExecuteAsync(IEnumerable`1 commandBatches, IRelationalConnection connection, CancellationToken cancellationToken)
+   at Microsoft.EntityFrameworkCore.Storage.RelationalDatabase.SaveChangesAsync(IList`1 entries, CancellationToken cancellationToken)
+   at Microsoft.EntityFrameworkCore.ChangeTracking.Internal.StateManager.SaveChangesAsync(IList`1 entriesToSave, CancellationToken cancellationToken)
+   at Microsoft.EntityFrameworkCore.ChangeTracking.Internal.StateManager.SaveChangesAsync(StateManager stateManager, Boolean acceptAllChangesOnSuccess, CancellationToken cancellationToken)
+   at Microsoft.EntityFrameworkCore.SqlServer.Storage.Internal.SqlServerExecutionStrategy.ExecuteAsync[TState,TResult](TState state, Func`4 operation, Func`4 verifySucceeded, CancellationToken cancellationToken)
+   at Microsoft.EntityFrameworkCore.DbContext.SaveChangesAsync(Boolean acceptAllChangesOnSuccess, CancellationToken cancellationToken)
+Microsoft.EntityFrameworkCore.DbUpdateException: An error occurred while saving the entity changes. See the inner exception for details.
+ ---> Microsoft.Data.SqlClient.SqlException (0x80131904): String or binary data would be truncated in table 'MuhasebeStokDB.dbo.GenelSistemAyarlari', column 'SirketVergiDairesi'. Truncated value: 'İstanbul Vergi Daire'.
+   at Microsoft.Data.SqlClient.SqlConnection.OnError(SqlException exception, Boolean breakConnection, Action`1 wrapCloseInAction)
+   at Microsoft.Data.SqlClient.SqlInternalConnection.OnError(SqlException exception, Boolean breakConnection, Action`1 wrapCloseInAction)
+   at Microsoft.Data.SqlClient.TdsParser.ThrowExceptionAndWarning(TdsParserStateObject stateObj, Boolean callerHasConnectionLock, Boolean asyncClose)
+   at Microsoft.Data.SqlClient.TdsParser.TryRun(RunBehavior runBehavior, SqlCommand cmdHandler, SqlDataReader dataStream, BulkCopySimpleResultSet bulkCopyHandler, TdsParserStateObject stateObj, Boolean& dataReady)
+   at Microsoft.Data.SqlClient.SqlDataReader.TryHasMoreRows(Boolean& moreRows)
+   at Microsoft.Data.SqlClient.SqlDataReader.TryReadInternal(Boolean setTimeout, Boolean& more)
+   at Microsoft.Data.SqlClient.SqlDataReader.ReadAsyncExecute(Task task, Object state)
+   at Microsoft.Data.SqlClient.SqlDataReader.InvokeAsyncCall[T](SqlDataReaderBaseAsyncCallContext`1 context)
+--- End of stack trace from previous location ---
+   at Microsoft.EntityFrameworkCore.Update.AffectedCountModificationCommandBatch.ConsumeResultSetAsync(Int32 startCommandIndex, RelationalDataReader reader, CancellationToken cancellationToken)
+ClientConnectionId:d9ff4181-a76d-48c1-80c7-6a731cb46a51
+Error Number:2628,State:1,Class:16
+   --- End of inner exception stack trace ---
+   at Microsoft.EntityFrameworkCore.Update.AffectedCountModificationCommandBatch.ConsumeResultSetAsync(Int32 startCommandIndex, RelationalDataReader reader, CancellationToken cancellationToken)
+   at Microsoft.EntityFrameworkCore.Update.AffectedCountModificationCommandBatch.ConsumeAsync(RelationalDataReader reader, CancellationToken cancellationToken)
+   at Microsoft.EntityFrameworkCore.Update.ReaderModificationCommandBatch.ExecuteAsync(IRelationalConnection connection, CancellationToken cancellationToken)
+   at Microsoft.EntityFrameworkCore.Update.ReaderModificationCommandBatch.ExecuteAsync(IRelationalConnection connection, CancellationToken cancellationToken)
+   at Microsoft.EntityFrameworkCore.SqlServer.Update.Internal.SqlServerModificationCommandBatch.ExecuteAsync(IRelationalConnection connection, CancellationToken cancellationToken)
+   at Microsoft.EntityFrameworkCore.Update.Internal.BatchExecutor.ExecuteAsync(IEnumerable`1 commandBatches, IRelationalConnection connection, CancellationToken cancellationToken)
+   at Microsoft.EntityFrameworkCore.Update.Internal.BatchExecutor.ExecuteAsync(IEnumerable`1 commandBatches, IRelationalConnection connection, CancellationToken cancellationToken)
+   at Microsoft.EntityFrameworkCore.Update.Internal.BatchExecutor.ExecuteAsync(IEnumerable`1 commandBatches, IRelationalConnection connection, CancellationToken cancellationToken)
+   at Microsoft.EntityFrameworkCore.Storage.RelationalDatabase.SaveChangesAsync(IList`1 entries, CancellationToken cancellationToken)
+   at Microsoft.EntityFrameworkCore.ChangeTracking.Internal.StateManager.SaveChangesAsync(IList`1 entriesToSave, CancellationToken cancellationToken)
+   at Microsoft.EntityFrameworkCore.ChangeTracking.Internal.StateManager.SaveChangesAsync(StateManager stateManager, Boolean acceptAllChangesOnSuccess, CancellationToken cancellationToken)
+   at Microsoft.EntityFrameworkCore.SqlServer.Storage.Internal.SqlServerExecutionStrategy.ExecuteAsync[TState,TResult](TState state, Func`4 operation, Func`4 verifySucceeded, CancellationToken cancellationToken)
+   at Microsoft.EntityFrameworkCore.DbContext.SaveChangesAsync(Boolean acceptAllChangesOnSuccess, CancellationToken cancellationToken)
+2025-05-09 18:13:10.906 +03:00 [ERR] Log ekleme hatası: DbInitController.InitSistemAyarlari: Hata oluştu: An error occurred while saving the entity changes. See the inner exception for details. - An error occurred while saving the entity changes. See the inner exception for details.
+Microsoft.EntityFrameworkCore.DbUpdateException: An error occurred while saving the entity changes. See the inner exception for details.
+ ---> Microsoft.Data.SqlClient.SqlException (0x80131904): String or binary data would be truncated in table 'MuhasebeStokDB.dbo.GenelSistemAyarlari', column 'SirketVergiDairesi'. Truncated value: 'İstanbul Vergi Daire'.
+   at Microsoft.Data.SqlClient.SqlConnection.OnError(SqlException exception, Boolean breakConnection, Action`1 wrapCloseInAction)
+   at Microsoft.Data.SqlClient.SqlInternalConnection.OnError(SqlException exception, Boolean breakConnection, Action`1 wrapCloseInAction)
+   at Microsoft.Data.SqlClient.TdsParser.ThrowExceptionAndWarning(TdsParserStateObject stateObj, Boolean callerHasConnectionLock, Boolean asyncClose)
+   at Microsoft.Data.SqlClient.TdsParser.TryRun(RunBehavior runBehavior, SqlCommand cmdHandler, SqlDataReader dataStream, BulkCopySimpleResultSet bulkCopyHandler, TdsParserStateObject stateObj, Boolean& dataReady)
+   at Microsoft.Data.SqlClient.SqlDataReader.TryHasMoreRows(Boolean& moreRows)
+   at Microsoft.Data.SqlClient.SqlDataReader.TryReadInternal(Boolean setTimeout, Boolean& more)
+   at Microsoft.Data.SqlClient.SqlDataReader.ReadAsyncExecute(Task task, Object state)
+   at Microsoft.Data.SqlClient.SqlDataReader.InvokeAsyncCall[T](SqlDataReaderBaseAsyncCallContext`1 context)
+--- End of stack trace from previous location ---
+   at Microsoft.EntityFrameworkCore.Update.AffectedCountModificationCommandBatch.ConsumeResultSetAsync(Int32 startCommandIndex, RelationalDataReader reader, CancellationToken cancellationToken)
+ClientConnectionId:d9ff4181-a76d-48c1-80c7-6a731cb46a51
+Error Number:2628,State:1,Class:16
+   --- End of inner exception stack trace ---
+   at Microsoft.EntityFrameworkCore.Update.AffectedCountModificationCommandBatch.ConsumeResultSetAsync(Int32 startCommandIndex, RelationalDataReader reader, CancellationToken cancellationToken)
+   at Microsoft.EntityFrameworkCore.Update.AffectedCountModificationCommandBatch.ConsumeAsync(RelationalDataReader reader, CancellationToken cancellationToken)
+   at Microsoft.EntityFrameworkCore.Update.ReaderModificationCommandBatch.ExecuteAsync(IRelationalConnection connection, CancellationToken cancellationToken)
+   at Microsoft.EntityFrameworkCore.Update.ReaderModificationCommandBatch.ExecuteAsync(IRelationalConnection connection, CancellationToken cancellationToken)
+   at Microsoft.EntityFrameworkCore.SqlServer.Update.Internal.SqlServerModificationCommandBatch.ExecuteAsync(IRelationalConnection connection, CancellationToken cancellationToken)
+   at Microsoft.EntityFrameworkCore.Update.Internal.BatchExecutor.ExecuteAsync(IEnumerable`1 commandBatches, IRelationalConnection connection, CancellationToken cancellationToken)
+   at Microsoft.EntityFrameworkCore.Update.Internal.BatchExecutor.ExecuteAsync(IEnumerable`1 commandBatches, IRelationalConnection connection, CancellationToken cancellationToken)
+   at Microsoft.EntityFrameworkCore.Update.Internal.BatchExecutor.ExecuteAsync(IEnumerable`1 commandBatches, IRelationalConnection connection, CancellationToken cancellationToken)
+   at Microsoft.EntityFrameworkCore.Storage.RelationalDatabase.SaveChangesAsync(IList`1 entries, CancellationToken cancellationToken)
+   at Microsoft.EntityFrameworkCore.ChangeTracking.Internal.StateManager.SaveChangesAsync(IList`1 entriesToSave, CancellationToken cancellationToken)
+   at Microsoft.EntityFrameworkCore.ChangeTracking.Internal.StateManager.SaveChangesAsync(StateManager stateManager, Boolean acceptAllChangesOnSuccess, CancellationToken cancellationToken)
+   at Microsoft.EntityFrameworkCore.SqlServer.Storage.Internal.SqlServerExecutionStrategy.ExecuteAsync[TState,TResult](TState state, Func`4 operation, Func`4 verifySucceeded, CancellationToken cancellationToken)
+   at Microsoft.EntityFrameworkCore.DbContext.SaveChangesAsync(Boolean acceptAllChangesOnSuccess, CancellationToken cancellationToken)
+   at Microsoft.EntityFrameworkCore.DbContext.SaveChangesAsync(Boolean acceptAllChangesOnSuccess, CancellationToken cancellationToken)
+   at MuhasebeStokWebApp.Services.LogService.LogEkleAsync(String mesaj, LogTuru logTuru, String detay) in /Users/muhammetkocaman/MuhasebeStokWebApp/Services/LogService.cs:line 69
+2025-05-09 18:14:01.466 +03:00 [WRN] Session bulunamadı, kullanıcı giriş yapmamış olabilir
+2025-05-09 18:14:01.467 +03:00 [INF] Kimlik doğrulanmış kullanıcı: admin
+2025-05-09 18:14:01.478 +03:00 [INF] Kur değeri önbellekten alındı: TRY -> USD, Değer: 0,03
+2025-05-09 18:14:01.478 +03:00 [INF] Kur değeri önbellekten alındı: UZS -> USD, Değer: 1
+2025-05-09 18:14:04.058 +03:00 [WRN] Session bulunamadı, kullanıcı giriş yapmamış olabilir
+2025-05-09 18:14:04.059 +03:00 [INF] Kimlik doğrulanmış kullanıcı: admin
+2025-05-09 18:14:04.070 +03:00 [INF] Kur değeri önbellekten alındı: TRY -> USD, Değer: 0,03
+2025-05-09 18:14:04.070 +03:00 [INF] Kur değeri önbellekten alındı: UZS -> USD, Değer: 1
+2025-05-09 18:14:06.240 +03:00 [INF] Birim sayısı: Aktif=0, Pasif=0, Silinmiş=0
+2025-05-09 18:14:10.992 +03:00 [INF] Toplam depo sayısı: 0
+2025-05-09 18:14:10.992 +03:00 [INF] Aktif depo sayısı: 0
+2025-05-09 18:14:10.992 +03:00 [INF] Pasif depo sayısı: 0
+2025-05-09 18:14:10.992 +03:00 [INF] Silinmiş depo sayısı: 0
+2025-05-09 18:14:18.966 +03:00 [WRN] Session bulunamadı, kullanıcı giriş yapmamış olabilir
+2025-05-09 18:14:18.966 +03:00 [INF] Kimlik doğrulanmış kullanıcı: admin
+2025-05-09 18:14:18.981 +03:00 [INF] Kur değeri önbellekten alındı: TRY -> USD, Değer: 0,03
+2025-05-09 18:14:18.982 +03:00 [INF] Kur değeri önbellekten alındı: UZS -> USD, Değer: 1
+2025-05-09 18:18:04.047 +03:00 [INF] Veritabanına bağlantı başarılı. Migrationlar uygulanıyor...
+2025-05-09 18:18:04.389 +03:00 [INF] Veritabanı işlemleri başarıyla tamamlandı.
+2025-05-09 18:18:04.444 +03:00 [INF] Todo Hatırlatıcı Servisi başlatıldı.
+2025-05-09 18:18:04.445 +03:00 [INF] Yaklaşan hatırlatıcılar kontrol ediliyor...
+2025-05-09 18:18:04.487 +03:00 [INF] Bekleyen hatırlatma bulunamadı.
+2025-05-09 18:18:32.863 +03:00 [WRN] Session bulunamadı, kullanıcı giriş yapmamış olabilir
+2025-05-09 18:18:32.867 +03:00 [INF] Kimlik doğrulanmış kullanıcı: admin
+2025-05-09 18:18:32.963 +03:00 [INF] TRY dönüşümü için kur değeri hesaplandı: TRY -> USD, Değer: 0,03
+2025-05-09 18:18:33.024 +03:00 [INF] Kur değeri hesaplandı: UZS -> USD, Değer: 0,0000775313262804067879513497
+2025-05-09 18:59:46.673 +03:00 [INF] Giriş denemesi: admin
+2025-05-09 18:59:46.759 +03:00 [INF] Admin kullanıcısı başarıyla giriş yaptı: admin
+2025-05-09 18:59:46.759 +03:00 [INF] Admin session oluşturuldu: UserID=8b547a04-134c-4578-99bb-f831a55b400d, UserName=admin
+2025-05-09 18:59:46.759 +03:00 [INF] Yönlendirme adresi: /Account/Profile
+2025-05-09 18:59:46.759 +03:00 [INF] Admin kullanıcısı /Account/Profile adresine yönlendiriliyor
+2025-05-09 18:59:51.435 +03:00 [INF] Aktif session bulundu: UserID=8b547a04-134c-4578-99bb-f831a55b400d, UserName=admin
+2025-05-09 18:59:51.437 +03:00 [INF] Admin kullanıcısı tespit edildi
+2025-05-09 18:59:51.438 +03:00 [INF] Kimlik doğrulanmış kullanıcı: admin
+2025-05-09 18:59:51.454 +03:00 [INF] Kur değeri önbellekten alındı: TRY -> USD, Değer: 0,03
+2025-05-09 18:59:51.454 +03:00 [INF] Kur değeri önbellekten alındı: UZS -> USD, Değer: 0,0000775313262804067879513497
+2025-05-09 19:00:32.710 +03:00 [INF] Yaklaşan hatırlatıcılar kontrol ediliyor...
+2025-05-09 19:00:32.720 +03:00 [INF] Bekleyen hatırlatma bulunamadı.
+2025-05-09 19:02:06.796 +03:00 [INF] Aktif session bulundu: UserID=8b547a04-134c-4578-99bb-f831a55b400d, UserName=admin
+2025-05-09 19:02:06.796 +03:00 [INF] Admin kullanıcısı tespit edildi
+2025-05-09 19:02:06.796 +03:00 [INF] Kimlik doğrulanmış kullanıcı: admin
+2025-05-09 19:02:06.803 +03:00 [INF] Kur değeri önbellekten alındı: TRY -> USD, Değer: 0,03
+2025-05-09 19:02:06.803 +03:00 [INF] Kur değeri önbellekten alındı: UZS -> USD, Değer: 0,0000775313262804067879513497
+2025-05-09 19:02:34.891 +03:00 [INF] Veritabanına bağlantı başarılı. Migrationlar uygulanıyor...
+2025-05-09 19:02:35.211 +03:00 [INF] Veritabanı işlemleri başarıyla tamamlandı.
+2025-05-09 19:02:35.262 +03:00 [INF] Todo Hatırlatıcı Servisi başlatıldı.
+2025-05-09 19:02:35.263 +03:00 [INF] Yaklaşan hatırlatıcılar kontrol ediliyor...
+2025-05-09 19:02:35.303 +03:00 [INF] Bekleyen hatırlatma bulunamadı.
+2025-05-09 19:02:40.844 +03:00 [WRN] Session bulunamadı, kullanıcı giriş yapmamış olabilir
+2025-05-09 19:02:40.845 +03:00 [INF] Kimlik doğrulanmış kullanıcı: admin
+2025-05-09 19:02:40.945 +03:00 [INF] TRY dönüşümü için kur değeri hesaplandı: TRY -> USD, Değer: 0,03
+2025-05-09 19:02:40.994 +03:00 [INF] Kur değeri hesaplandı: UZS -> USD, Değer: 0,0000775313262804067879513497
+2025-05-09 19:06:15.462 +03:00 [WRN] Session bulunamadı, kullanıcı giriş yapmamış olabilir
+2025-05-09 19:06:15.463 +03:00 [INF] Kimlik doğrulanmış kullanıcı: admin
+2025-05-09 19:06:15.476 +03:00 [INF] Kur değeri önbellekten alındı: TRY -> USD, Değer: 0,03
+2025-05-09 19:06:15.476 +03:00 [INF] Kur değeri önbellekten alındı: UZS -> USD, Değer: 0,0000775313262804067879513497
+2025-05-09 19:07:04.338 +03:00 [INF] Veritabanına bağlantı başarılı. Migrationlar uygulanıyor...
+2025-05-09 19:07:04.660 +03:00 [INF] Veritabanı işlemleri başarıyla tamamlandı.
+2025-05-09 19:07:04.711 +03:00 [INF] Todo Hatırlatıcı Servisi başlatıldı.
+2025-05-09 19:07:04.712 +03:00 [INF] Yaklaşan hatırlatıcılar kontrol ediliyor...
+2025-05-09 19:07:04.753 +03:00 [INF] Bekleyen hatırlatma bulunamadı.
+2025-05-09 19:07:12.662 +03:00 [WRN] Session bulunamadı, kullanıcı giriş yapmamış olabilir
+2025-05-09 19:07:12.664 +03:00 [INF] Kimlik doğrulanmış kullanıcı: admin
+2025-05-09 19:07:12.763 +03:00 [INF] TRY dönüşümü için kur değeri hesaplandı: TRY -> USD, Değer: 0,03
+2025-05-09 19:07:12.810 +03:00 [INF] Kur değeri hesaplandı: UZS -> USD, Değer: 0,0000775313262804067879513497
+2025-05-09 19:08:13.978 +03:00 [WRN] Session bulunamadı, kullanıcı giriş yapmamış olabilir
+2025-05-09 19:08:13.978 +03:00 [INF] Kimlik doğrulanmış kullanıcı: admin
+2025-05-09 19:08:13.997 +03:00 [INF] Kur değeri önbellekten alındı: TRY -> USD, Değer: 0,03
+2025-05-09 19:08:13.997 +03:00 [INF] Kur değeri önbellekten alındı: UZS -> USD, Değer: 0,0000775313262804067879513497
+2025-05-09 19:08:24.119 +03:00 [WRN] Session bulunamadı, kullanıcı giriş yapmamış olabilir
+2025-05-09 19:08:24.120 +03:00 [INF] Kimlik doğrulanmış kullanıcı: admin
+2025-05-09 19:08:24.137 +03:00 [INF] Kur değeri önbellekten alındı: TRY -> USD, Değer: 0,03
+2025-05-09 19:08:24.137 +03:00 [INF] Kur değeri önbellekten alındı: UZS -> USD, Değer: 0,0000775313262804067879513497
+2025-05-09 19:08:31.709 +03:00 [WRN] Session bulunamadı, kullanıcı giriş yapmamış olabilir
+2025-05-09 19:08:31.709 +03:00 [INF] Kimlik doğrulanmış kullanıcı: admin
+2025-05-09 19:08:31.725 +03:00 [INF] Kur değeri önbellekten alındı: TRY -> USD, Değer: 0,03
+2025-05-09 19:08:31.725 +03:00 [INF] Kur değeri önbellekten alındı: UZS -> USD, Değer: 0,0000775313262804067879513497
+2025-05-09 19:09:00.534 +03:00 [WRN] Session bulunamadı, kullanıcı giriş yapmamış olabilir
+2025-05-09 19:09:00.535 +03:00 [INF] Kimlik doğrulanmış kullanıcı: admin
+2025-05-09 19:09:00.548 +03:00 [INF] Kur değeri önbellekten alındı: TRY -> USD, Değer: 0,03
+2025-05-09 19:09:00.549 +03:00 [INF] Kur değeri önbellekten alındı: UZS -> USD, Değer: 0,0000775313262804067879513497
+2025-05-09 19:09:03.036 +03:00 [INF] Birim sayısı: Aktif=0, Pasif=0, Silinmiş=0
+2025-05-09 19:12:04.757 +03:00 [INF] Yaklaşan hatırlatıcılar kontrol ediliyor...
+2025-05-09 19:12:04.763 +03:00 [INF] Bekleyen hatırlatma bulunamadı.
+2025-05-09 19:13:11.287 +03:00 [INF] Birim sayısı: Aktif=0, Pasif=0, Silinmiş=0
+2025-05-09 19:14:22.051 +03:00 [WRN] Session bulunamadı, kullanıcı giriş yapmamış olabilir
+2025-05-09 19:14:22.052 +03:00 [INF] Kimlik doğrulanmış kullanıcı: admin
+2025-05-09 19:14:22.067 +03:00 [INF] Kur değeri önbellekten alındı: TRY -> USD, Değer: 0,03
+2025-05-09 19:14:22.067 +03:00 [INF] Kur değeri önbellekten alındı: UZS -> USD, Değer: 0,0000775313262804067879513497
+2025-05-09 19:15:10.400 +03:00 [WRN] Session bulunamadı, kullanıcı giriş yapmamış olabilir
+2025-05-09 19:15:10.400 +03:00 [INF] Kimlik doğrulanmış kullanıcı: admin
+2025-05-09 19:15:10.406 +03:00 [INF] Kur değeri önbellekten alındı: TRY -> USD, Değer: 0,03
+2025-05-09 19:15:10.406 +03:00 [INF] Kur değeri önbellekten alındı: UZS -> USD, Değer: 0,0000775313262804067879513497
+2025-05-09 19:23:55.529 +03:00 [INF] Veritabanına bağlantı başarılı. Migrationlar uygulanıyor...
+2025-05-09 19:23:55.840 +03:00 [INF] Veritabanı işlemleri başarıyla tamamlandı.
+2025-05-09 19:23:55.888 +03:00 [INF] Todo Hatırlatıcı Servisi başlatıldı.
+2025-05-09 19:23:55.888 +03:00 [INF] Yaklaşan hatırlatıcılar kontrol ediliyor...
+2025-05-09 19:23:55.928 +03:00 [INF] Bekleyen hatırlatma bulunamadı.
+2025-05-09 19:24:05.909 +03:00 [INF] Giriş denemesi: admin
+2025-05-09 19:24:06.008 +03:00 [INF] Admin kullanıcısı başarıyla giriş yaptı: admin
+2025-05-09 19:24:06.008 +03:00 [INF] Admin session oluşturuldu: UserID=8b547a04-134c-4578-99bb-f831a55b400d, UserName=admin
+2025-05-09 19:24:06.009 +03:00 [INF] Yönlendirme adresi: /Urun
+2025-05-09 19:24:06.009 +03:00 [INF] Admin kullanıcısı /Urun adresine yönlendiriliyor
+2025-05-09 19:26:10.866 +03:00 [INF] Veritabanına bağlantı başarılı. Migrationlar uygulanıyor...
+2025-05-09 19:26:11.185 +03:00 [INF] Veritabanı işlemleri başarıyla tamamlandı.
+2025-05-09 19:26:11.237 +03:00 [INF] Todo Hatırlatıcı Servisi başlatıldı.
+2025-05-09 19:26:11.238 +03:00 [INF] Yaklaşan hatırlatıcılar kontrol ediliyor...
+2025-05-09 19:26:11.281 +03:00 [INF] Bekleyen hatırlatma bulunamadı.
+2025-05-09 19:26:18.183 +03:00 [INF] Giriş denemesi: admin
+2025-05-09 19:26:18.281 +03:00 [INF] Admin kullanıcısı başarıyla giriş yaptı: admin
+2025-05-09 19:26:18.281 +03:00 [INF] Admin session oluşturuldu: UserID=8b547a04-134c-4578-99bb-f831a55b400d, UserName=admin
+2025-05-09 19:26:18.281 +03:00 [INF] Yönlendirme adresi: /Urun
+2025-05-09 19:26:18.281 +03:00 [INF] Admin kullanıcısı /Urun adresine yönlendiriliyor
+2025-05-09 19:26:28.983 +03:00 [INF] Birim sayısı: Aktif=0, Pasif=0, Silinmiş=0
+2025-05-09 19:26:30.543 +03:00 [INF] Toplam depo sayısı: 0
+2025-05-09 19:26:30.543 +03:00 [INF] Aktif depo sayısı: 0
+2025-05-09 19:26:30.544 +03:00 [INF] Pasif depo sayısı: 0
+2025-05-09 19:26:30.544 +03:00 [INF] Silinmiş depo sayısı: 0
+2025-05-09 19:26:45.764 +03:00 [INF] Aktif session bulundu: UserID=8b547a04-134c-4578-99bb-f831a55b400d, UserName=admin
+2025-05-09 19:26:45.767 +03:00 [INF] Admin kullanıcısı tespit edildi
+2025-05-09 19:26:45.767 +03:00 [INF] Kimlik doğrulanmış kullanıcı: admin
+2025-05-09 19:26:45.880 +03:00 [INF] TRY dönüşümü için kur değeri hesaplandı: TRY -> USD, Değer: 0,03
+2025-05-09 19:26:45.924 +03:00 [INF] Kur değeri hesaplandı: UZS -> USD, Değer: 0,0000775313262804067879513497
+2025-05-09 19:26:59.468 +03:00 [INF] Birim sayısı: Aktif=0, Pasif=0, Silinmiş=0
+2025-05-09 19:27:11.305 +03:00 [INF] Toplam depo sayısı: 0
+2025-05-09 19:27:11.305 +03:00 [INF] Aktif depo sayısı: 0
+2025-05-09 19:27:11.305 +03:00 [INF] Pasif depo sayısı: 0
+2025-05-09 19:27:11.305 +03:00 [INF] Silinmiş depo sayısı: 0
+2025-05-09 19:31:09.741 +03:00 [INF] Veritabanına bağlantı başarılı. Migrationlar uygulanıyor...
+2025-05-09 19:31:10.066 +03:00 [INF] Veritabanı işlemleri başarıyla tamamlandı.
+2025-05-09 19:31:10.119 +03:00 [INF] Todo Hatırlatıcı Servisi başlatıldı.
+2025-05-09 19:31:10.120 +03:00 [INF] Yaklaşan hatırlatıcılar kontrol ediliyor...
+2025-05-09 19:31:10.161 +03:00 [INF] Bekleyen hatırlatma bulunamadı.
+2025-05-09 19:36:10.163 +03:00 [INF] Yaklaşan hatırlatıcılar kontrol ediliyor...
+2025-05-09 19:36:10.177 +03:00 [INF] Bekleyen hatırlatma bulunamadı.
+2025-05-09 19:37:28.982 +03:00 [INF] Veritabanına bağlantı başarılı. Migrationlar uygulanıyor...
+2025-05-09 19:37:29.304 +03:00 [INF] Veritabanı işlemleri başarıyla tamamlandı.
+2025-05-09 19:37:29.364 +03:00 [INF] Todo Hatırlatıcı Servisi başlatıldı.
+2025-05-09 19:37:29.365 +03:00 [INF] Yaklaşan hatırlatıcılar kontrol ediliyor...
+2025-05-09 19:37:29.406 +03:00 [INF] Bekleyen hatırlatma bulunamadı.
+2025-05-09 19:37:39.787 +03:00 [INF] Birim sayısı: Aktif=0, Pasif=0, Silinmiş=0
+2025-05-09 19:37:41.720 +03:00 [WRN] Session bulunamadı, kullanıcı giriş yapmamış olabilir
+2025-05-09 19:37:41.723 +03:00 [INF] Kimlik doğrulanmış kullanıcı: admin
+2025-05-09 19:37:41.859 +03:00 [INF] TRY dönüşümü için kur değeri hesaplandı: TRY -> USD, Değer: 0,03
+2025-05-09 19:37:41.908 +03:00 [INF] Kur değeri hesaplandı: UZS -> USD, Değer: 0,0000775313262804067879513497
+2025-05-09 19:42:29.399 +03:00 [INF] Yaklaşan hatırlatıcılar kontrol ediliyor...
+2025-05-09 19:42:29.408 +03:00 [INF] Bekleyen hatırlatma bulunamadı.
+2025-05-09 19:45:55.112 +03:00 [INF] Veritabanına bağlantı başarılı. Migrationlar uygulanıyor...
+2025-05-09 19:45:55.441 +03:00 [INF] Veritabanı işlemleri başarıyla tamamlandı.
+2025-05-09 19:45:55.529 +03:00 [INF] Todo Hatırlatıcı Servisi başlatıldı.
+2025-05-09 19:45:55.529 +03:00 [INF] Yaklaşan hatırlatıcılar kontrol ediliyor...
+2025-05-09 19:45:55.570 +03:00 [INF] Bekleyen hatırlatma bulunamadı.
+2025-05-09 19:46:08.590 +03:00 [INF] Giriş denemesi: admin
+2025-05-09 19:46:08.689 +03:00 [INF] Admin kullanıcısı başarıyla giriş yaptı: admin
+2025-05-09 19:46:08.689 +03:00 [INF] Admin session oluşturuldu: UserID=8b547a04-134c-4578-99bb-f831a55b400d, UserName=admin
+2025-05-09 19:46:08.689 +03:00 [INF] Yönlendirme adresi: /Urun
+2025-05-09 19:46:08.689 +03:00 [INF] Admin kullanıcısı /Urun adresine yönlendiriliyor
+2025-05-09 20:59:40.110 +03:00 [INF] Yaklaşan hatırlatıcılar kontrol ediliyor...
+2025-05-09 20:59:40.119 +03:00 [INF] Bekleyen hatırlatma bulunamadı.
+2025-05-09 20:59:46.212 +03:00 [INF] Birim sayısı: Aktif=0, Pasif=0, Silinmiş=0
+2025-05-09 20:59:55.076 +03:00 [ERR] Failed executing DbCommand (9ms) [Parameters=[@p0='?' (DbType = Guid), @p1='?' (Size = 200), @p2='?' (DbType = Boolean), @p3='?' (Size = 50), @p4='?' (Size = 20), @p5='?' (Size = 10), @p6='?' (DbType = DateTime2), @p7='?' (Size = 450), @p8='?' (DbType = DateTime2), @p9='?' (DbType = Boolean), @p10='?' (DbType = Guid), @p11='?' (DbType = Guid)], CommandType='"Text"', CommandTimeout='120']
+SET IMPLICIT_TRANSACTIONS OFF;
+SET NOCOUNT ON;
+INSERT INTO [Birimler] ([BirimID], [Aciklama], [Aktif], [BirimAdi], [BirimKodu], [BirimSembol], [GuncellemeTarihi], [OlusturanKullaniciID], [OlusturmaTarihi], [Silindi], [SirketID], [SonGuncelleyenKullaniciID])
+VALUES (@p0, @p1, @p2, @p3, @p4, @p5, @p6, @p7, @p8, @p9, @p10, @p11);
+2025-05-09 20:59:55.087 +03:00 [ERR] An exception occurred in the database while saving changes for context type 'MuhasebeStokWebApp.Data.ApplicationDbContext'.
+Microsoft.EntityFrameworkCore.DbUpdateException: An error occurred while saving the entity changes. See the inner exception for details.
+ ---> Microsoft.Data.SqlClient.SqlException (0x80131904): Cannot insert the value NULL into column 'Aciklama', table 'MuhasebeStokDB.dbo.Birimler'; column does not allow nulls. INSERT fails.
+The statement has been terminated.
+   at System.Threading.Tasks.ContinuationResultTaskFromResultTask`2.InnerInvoke()
+   at System.Threading.ExecutionContext.RunInternal(ExecutionContext executionContext, ContextCallback callback, Object state)
+--- End of stack trace from previous location ---
+   at System.Threading.ExecutionContext.RunInternal(ExecutionContext executionContext, ContextCallback callback, Object state)
+   at System.Threading.Tasks.Task.ExecuteWithThreadLocal(Task& currentTaskSlot, Thread threadPoolThread)
+--- End of stack trace from previous location ---
+   at Microsoft.EntityFrameworkCore.Storage.RelationalCommand.ExecuteReaderAsync(RelationalCommandParameterObject parameterObject, CancellationToken cancellationToken)
+   at Microsoft.EntityFrameworkCore.Storage.RelationalCommand.ExecuteReaderAsync(RelationalCommandParameterObject parameterObject, CancellationToken cancellationToken)
+   at Microsoft.EntityFrameworkCore.Update.ReaderModificationCommandBatch.ExecuteAsync(IRelationalConnection connection, CancellationToken cancellationToken)
+ClientConnectionId:63fa082f-c01d-455a-8bc8-b82ac710cddb
+Error Number:515,State:2,Class:16
+   --- End of inner exception stack trace ---
+   at Microsoft.EntityFrameworkCore.Update.ReaderModificationCommandBatch.ExecuteAsync(IRelationalConnection connection, CancellationToken cancellationToken)
+   at Microsoft.EntityFrameworkCore.SqlServer.Update.Internal.SqlServerModificationCommandBatch.ExecuteAsync(IRelationalConnection connection, CancellationToken cancellationToken)
+   at Microsoft.EntityFrameworkCore.Update.Internal.BatchExecutor.ExecuteAsync(IEnumerable`1 commandBatches, IRelationalConnection connection, CancellationToken cancellationToken)
+   at Microsoft.EntityFrameworkCore.Update.Internal.BatchExecutor.ExecuteAsync(IEnumerable`1 commandBatches, IRelationalConnection connection, CancellationToken cancellationToken)
+   at Microsoft.EntityFrameworkCore.Update.Internal.BatchExecutor.ExecuteAsync(IEnumerable`1 commandBatches, IRelationalConnection connection, CancellationToken cancellationToken)
+   at Microsoft.EntityFrameworkCore.Storage.RelationalDatabase.SaveChangesAsync(IList`1 entries, CancellationToken cancellationToken)
+   at Microsoft.EntityFrameworkCore.ChangeTracking.Internal.StateManager.SaveChangesAsync(IList`1 entriesToSave, CancellationToken cancellationToken)
+   at Microsoft.EntityFrameworkCore.ChangeTracking.Internal.StateManager.SaveChangesAsync(StateManager stateManager, Boolean acceptAllChangesOnSuccess, CancellationToken cancellationToken)
+   at Microsoft.EntityFrameworkCore.SqlServer.Storage.Internal.SqlServerExecutionStrategy.ExecuteAsync[TState,TResult](TState state, Func`4 operation, Func`4 verifySucceeded, CancellationToken cancellationToken)
+   at Microsoft.EntityFrameworkCore.DbContext.SaveChangesAsync(Boolean acceptAllChangesOnSuccess, CancellationToken cancellationToken)
+Microsoft.EntityFrameworkCore.DbUpdateException: An error occurred while saving the entity changes. See the inner exception for details.
+ ---> Microsoft.Data.SqlClient.SqlException (0x80131904): Cannot insert the value NULL into column 'Aciklama', table 'MuhasebeStokDB.dbo.Birimler'; column does not allow nulls. INSERT fails.
+The statement has been terminated.
+   at System.Threading.Tasks.ContinuationResultTaskFromResultTask`2.InnerInvoke()
+   at System.Threading.ExecutionContext.RunInternal(ExecutionContext executionContext, ContextCallback callback, Object state)
+--- End of stack trace from previous location ---
+   at System.Threading.ExecutionContext.RunInternal(ExecutionContext executionContext, ContextCallback callback, Object state)
+   at System.Threading.Tasks.Task.ExecuteWithThreadLocal(Task& currentTaskSlot, Thread threadPoolThread)
+--- End of stack trace from previous location ---
+   at Microsoft.EntityFrameworkCore.Storage.RelationalCommand.ExecuteReaderAsync(RelationalCommandParameterObject parameterObject, CancellationToken cancellationToken)
+   at Microsoft.EntityFrameworkCore.Storage.RelationalCommand.ExecuteReaderAsync(RelationalCommandParameterObject parameterObject, CancellationToken cancellationToken)
+   at Microsoft.EntityFrameworkCore.Update.ReaderModificationCommandBatch.ExecuteAsync(IRelationalConnection connection, CancellationToken cancellationToken)
+ClientConnectionId:63fa082f-c01d-455a-8bc8-b82ac710cddb
+Error Number:515,State:2,Class:16
+   --- End of inner exception stack trace ---
+   at Microsoft.EntityFrameworkCore.Update.ReaderModificationCommandBatch.ExecuteAsync(IRelationalConnection connection, CancellationToken cancellationToken)
+   at Microsoft.EntityFrameworkCore.SqlServer.Update.Internal.SqlServerModificationCommandBatch.ExecuteAsync(IRelationalConnection connection, CancellationToken cancellationToken)
+   at Microsoft.EntityFrameworkCore.Update.Internal.BatchExecutor.ExecuteAsync(IEnumerable`1 commandBatches, IRelationalConnection connection, CancellationToken cancellationToken)
+   at Microsoft.EntityFrameworkCore.Update.Internal.BatchExecutor.ExecuteAsync(IEnumerable`1 commandBatches, IRelationalConnection connection, CancellationToken cancellationToken)
+   at Microsoft.EntityFrameworkCore.Update.Internal.BatchExecutor.ExecuteAsync(IEnumerable`1 commandBatches, IRelationalConnection connection, CancellationToken cancellationToken)
+   at Microsoft.EntityFrameworkCore.Storage.RelationalDatabase.SaveChangesAsync(IList`1 entries, CancellationToken cancellationToken)
+   at Microsoft.EntityFrameworkCore.ChangeTracking.Internal.StateManager.SaveChangesAsync(IList`1 entriesToSave, CancellationToken cancellationToken)
+   at Microsoft.EntityFrameworkCore.ChangeTracking.Internal.StateManager.SaveChangesAsync(StateManager stateManager, Boolean acceptAllChangesOnSuccess, CancellationToken cancellationToken)
+   at Microsoft.EntityFrameworkCore.SqlServer.Storage.Internal.SqlServerExecutionStrategy.ExecuteAsync[TState,TResult](TState state, Func`4 operation, Func`4 verifySucceeded, CancellationToken cancellationToken)
+   at Microsoft.EntityFrameworkCore.DbContext.SaveChangesAsync(Boolean acceptAllChangesOnSuccess, CancellationToken cancellationToken)
+2025-05-09 21:00:01.964 +03:00 [INF] ClearCacheAsync metodu başlatıldı. Parametre yok
+2025-05-09 21:00:01.965 +03:00 [INF] Birim önbellekleri temizleniyor...
+2025-05-09 21:00:02.012 +03:00 [INF] Tüm birim, ürün ve ilgili önbellekler başarıyla temizlendi
+2025-05-09 21:00:02.012 +03:00 [INF] ClearCacheAsync metodu tamamlandı. Sonuç: True
+2025-05-09 21:00:03.069 +03:00 [INF] Birim sayısı: Aktif=1, Pasif=0, Silinmiş=0
+2025-05-09 21:00:14.757 +03:00 [INF] ClearCacheAsync metodu başlatıldı. Parametre yok
+2025-05-09 21:00:14.757 +03:00 [INF] Birim önbellekleri temizleniyor...
+2025-05-09 21:00:14.763 +03:00 [INF] Tüm birim, ürün ve ilgili önbellekler başarıyla temizlendi
+2025-05-09 21:00:14.763 +03:00 [INF] ClearCacheAsync metodu tamamlandı. Sonuç: True
+2025-05-09 21:00:15.609 +03:00 [INF] Birim sayısı: Aktif=2, Pasif=0, Silinmiş=0
+2025-05-09 21:00:17.140 +03:00 [INF] Toplam depo sayısı: 0
+2025-05-09 21:00:17.140 +03:00 [INF] Aktif depo sayısı: 0
+2025-05-09 21:00:17.140 +03:00 [INF] Pasif depo sayısı: 0
+2025-05-09 21:00:17.140 +03:00 [INF] Silinmiş depo sayısı: 0
+2025-05-09 21:00:26.862 +03:00 [WRN] Hata - Adres: The Adres field is required.
+2025-05-09 21:00:27.956 +03:00 [WRN] Hata - Adres: The Adres field is required.
+2025-05-09 21:00:30.737 +03:00 [INF] Toplam depo sayısı: 1
+2025-05-09 21:00:30.738 +03:00 [INF] Aktif depo sayısı: 1
+2025-05-09 21:00:30.738 +03:00 [INF] Pasif depo sayısı: 0
+2025-05-09 21:00:30.738 +03:00 [INF] Silinmiş depo sayısı: 0
+2025-05-09 21:02:01.331 +03:00 [INF] Yeni cari kodu oluşturuldu: CRI-250509-001
+2025-05-09 21:03:41.990 +03:00 [INF] Yeni cari kodu oluşturuldu: CRI-250509-002
+2025-05-09 21:04:40.118 +03:00 [INF] Yaklaşan hatırlatıcılar kontrol ediliyor...
+2025-05-09 21:04:40.123 +03:00 [INF] Bekleyen hatırlatma bulunamadı.
+2025-05-09 21:42:43.640 +03:00 [INF] Yaklaşan hatırlatıcılar kontrol ediliyor...
+2025-05-09 21:42:43.647 +03:00 [INF] Bekleyen hatırlatma bulunamadı.
+2025-05-09 21:47:43.624 +03:00 [INF] Yaklaşan hatırlatıcılar kontrol ediliyor...
+2025-05-09 21:47:43.632 +03:00 [INF] Bekleyen hatırlatma bulunamadı.
+2025-05-09 21:50:46.445 +03:00 [ERR] The view 'YeniHareket' was not found. Searched locations: ["/Views/Cari/YeniHareket.tr-TR.cshtml","/Views/Cari/YeniHareket.tr.cshtml","/Views/Cari/YeniHareket.cshtml","/Views/Shared/YeniHareket.tr-TR.cshtml","/Views/Shared/YeniHareket.tr.cshtml","/Views/Shared/YeniHareket.cshtml","/Pages/Shared/YeniHareket.tr-TR.cshtml","/Pages/Shared/YeniHareket.tr.cshtml","/Pages/Shared/YeniHareket.cshtml"]
+2025-05-09 21:50:46.456 +03:00 [ERR] Hata: 00-0bf0c4fcdc51e6623f1827aaec6b7e48-8c4f2eea4d325887-00, Kullanıcı: admin, Path: /Cari/YeniHareket, Method: GET, QueryString: ?cariID=45d94791-8604-476c-bc02-0d10468952e8, IP: ::1, UserAgent: Mozilla/5.0 (Macintosh; Intel Mac OS X 10_15_7) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/136.0.0.0 Safari/537.36
+System.InvalidOperationException: The view 'YeniHareket' was not found. The following locations were searched:
+/Views/Cari/YeniHareket.tr-TR.cshtml
+/Views/Cari/YeniHareket.tr.cshtml
+/Views/Cari/YeniHareket.cshtml
+/Views/Shared/YeniHareket.tr-TR.cshtml
+/Views/Shared/YeniHareket.tr.cshtml
+/Views/Shared/YeniHareket.cshtml
+/Pages/Shared/YeniHareket.tr-TR.cshtml
+/Pages/Shared/YeniHareket.tr.cshtml
+/Pages/Shared/YeniHareket.cshtml
+   at Microsoft.AspNetCore.Mvc.ViewFeatures.ViewResultExecutor.ExecuteAsync(ActionContext context, ViewResult result)
+   at Microsoft.AspNetCore.Mvc.ViewResult.ExecuteResultAsync(ActionContext context)
+   at Microsoft.AspNetCore.Mvc.Infrastructure.ResourceInvoker.<InvokeNextResultFilterAsync>g__Awaited|30_0[TFilter,TFilterAsync](ResourceInvoker invoker, Task lastTask, State next, Scope scope, Object state, Boolean isCompleted)
+   at Microsoft.AspNetCore.Mvc.Infrastructure.ResourceInvoker.Rethrow(ResultExecutedContextSealed context)
+   at Microsoft.AspNetCore.Mvc.Infrastructure.ResourceInvoker.ResultNext[TFilter,TFilterAsync](State& next, Scope& scope, Object& state, Boolean& isCompleted)
+   at Microsoft.AspNetCore.Mvc.Infrastructure.ResourceInvoker.InvokeResultFilters()
+--- End of stack trace from previous location ---
+   at Microsoft.AspNetCore.Mvc.Infrastructure.ResourceInvoker.<InvokeNextResourceFilter>g__Awaited|25_0(ResourceInvoker invoker, Task lastTask, State next, Scope scope, Object state, Boolean isCompleted)
+   at Microsoft.AspNetCore.Mvc.Infrastructure.ResourceInvoker.Rethrow(ResourceExecutedContextSealed context)
+   at Microsoft.AspNetCore.Mvc.Infrastructure.ResourceInvoker.Next(State& next, Scope& scope, Object& state, Boolean& isCompleted)
+   at Microsoft.AspNetCore.Mvc.Infrastructure.ResourceInvoker.<InvokeFilterPipelineAsync>g__Awaited|20_0(ResourceInvoker invoker, Task lastTask, State next, Scope scope, Object state, Boolean isCompleted)
+   at Microsoft.AspNetCore.Mvc.Infrastructure.ResourceInvoker.<InvokeAsync>g__Awaited|17_0(ResourceInvoker invoker, Task task, IDisposable scope)
+   at Microsoft.AspNetCore.Mvc.Infrastructure.ResourceInvoker.<InvokeAsync>g__Awaited|17_0(ResourceInvoker invoker, Task task, IDisposable scope)
+   at Microsoft.AspNetCore.Localization.RequestLocalizationMiddleware.Invoke(HttpContext context)
+   at MuhasebeStokWebApp.Middleware.GlobalExceptionHandlingMiddleware.InvokeAsync(HttpContext context) in /Users/muhammetkocaman/MuhasebeStokWebApp/Middleware/GlobalExceptionHandlingMiddleware.cs:line 38
+2025-05-09 21:52:43.631 +03:00 [INF] Yaklaşan hatırlatıcılar kontrol ediliyor...
+2025-05-09 21:52:43.637 +03:00 [INF] Bekleyen hatırlatma bulunamadı.
+2025-05-09 21:53:59.910 +03:00 [ERR] An exception occurred in the database while saving changes for context type 'MuhasebeStokWebApp.Data.ApplicationDbContext'.
+Microsoft.EntityFrameworkCore.DbUpdateException: An error occurred while saving the entity changes. See the inner exception for details.
+ ---> Microsoft.Data.SqlClient.SqlException (0x80131904): Cannot insert the value NULL into column 'CariKodu', table 'MuhasebeStokDB.dbo.Cariler'; column does not allow nulls. UPDATE fails.
+   at Microsoft.Data.SqlClient.SqlConnection.OnError(SqlException exception, Boolean breakConnection, Action`1 wrapCloseInAction)
+   at Microsoft.Data.SqlClient.SqlInternalConnection.OnError(SqlException exception, Boolean breakConnection, Action`1 wrapCloseInAction)
+   at Microsoft.Data.SqlClient.TdsParser.ThrowExceptionAndWarning(TdsParserStateObject stateObj, Boolean callerHasConnectionLock, Boolean asyncClose)
+   at Microsoft.Data.SqlClient.TdsParser.TryRun(RunBehavior runBehavior, SqlCommand cmdHandler, SqlDataReader dataStream, BulkCopySimpleResultSet bulkCopyHandler, TdsParserStateObject stateObj, Boolean& dataReady)
+   at Microsoft.Data.SqlClient.SqlDataReader.TryHasMoreRows(Boolean& moreRows)
+   at Microsoft.Data.SqlClient.SqlDataReader.TryReadInternal(Boolean setTimeout, Boolean& more)
+   at Microsoft.Data.SqlClient.SqlDataReader.ReadAsyncExecute(Task task, Object state)
+   at Microsoft.Data.SqlClient.SqlDataReader.InvokeAsyncCall[T](SqlDataReaderBaseAsyncCallContext`1 context)
+--- End of stack trace from previous location ---
+   at Microsoft.EntityFrameworkCore.Update.AffectedCountModificationCommandBatch.ConsumeResultSetWithRowsAffectedOnlyAsync(Int32 commandIndex, RelationalDataReader reader, CancellationToken cancellationToken)
+   at Microsoft.EntityFrameworkCore.Update.AffectedCountModificationCommandBatch.ConsumeAsync(RelationalDataReader reader, CancellationToken cancellationToken)
+ClientConnectionId:63fa082f-c01d-455a-8bc8-b82ac710cddb
+Error Number:515,State:2,Class:16
+   --- End of inner exception stack trace ---
+   at Microsoft.EntityFrameworkCore.Update.AffectedCountModificationCommandBatch.ConsumeAsync(RelationalDataReader reader, CancellationToken cancellationToken)
+   at Microsoft.EntityFrameworkCore.Update.ReaderModificationCommandBatch.ExecuteAsync(IRelationalConnection connection, CancellationToken cancellationToken)
+   at Microsoft.EntityFrameworkCore.Update.ReaderModificationCommandBatch.ExecuteAsync(IRelationalConnection connection, CancellationToken cancellationToken)
+   at Microsoft.EntityFrameworkCore.SqlServer.Update.Internal.SqlServerModificationCommandBatch.ExecuteAsync(IRelationalConnection connection, CancellationToken cancellationToken)
+   at Microsoft.EntityFrameworkCore.Update.Internal.BatchExecutor.ExecuteAsync(IEnumerable`1 commandBatches, IRelationalConnection connection, CancellationToken cancellationToken)
+   at Microsoft.EntityFrameworkCore.Update.Internal.BatchExecutor.ExecuteAsync(IEnumerable`1 commandBatches, IRelationalConnection connection, CancellationToken cancellationToken)
+   at Microsoft.EntityFrameworkCore.Update.Internal.BatchExecutor.ExecuteAsync(IEnumerable`1 commandBatches, IRelationalConnection connection, CancellationToken cancellationToken)
+   at Microsoft.EntityFrameworkCore.Storage.RelationalDatabase.SaveChangesAsync(IList`1 entries, CancellationToken cancellationToken)
+   at Microsoft.EntityFrameworkCore.ChangeTracking.Internal.StateManager.SaveChangesAsync(IList`1 entriesToSave, CancellationToken cancellationToken)
+   at Microsoft.EntityFrameworkCore.ChangeTracking.Internal.StateManager.SaveChangesAsync(StateManager stateManager, Boolean acceptAllChangesOnSuccess, CancellationToken cancellationToken)
+   at Microsoft.EntityFrameworkCore.SqlServer.Storage.Internal.SqlServerExecutionStrategy.ExecuteAsync[TState,TResult](TState state, Func`4 operation, Func`4 verifySucceeded, CancellationToken cancellationToken)
+   at Microsoft.EntityFrameworkCore.DbContext.SaveChangesAsync(Boolean acceptAllChangesOnSuccess, CancellationToken cancellationToken)
+Microsoft.EntityFrameworkCore.DbUpdateException: An error occurred while saving the entity changes. See the inner exception for details.
+ ---> Microsoft.Data.SqlClient.SqlException (0x80131904): Cannot insert the value NULL into column 'CariKodu', table 'MuhasebeStokDB.dbo.Cariler'; column does not allow nulls. UPDATE fails.
+   at Microsoft.Data.SqlClient.SqlConnection.OnError(SqlException exception, Boolean breakConnection, Action`1 wrapCloseInAction)
+   at Microsoft.Data.SqlClient.SqlInternalConnection.OnError(SqlException exception, Boolean breakConnection, Action`1 wrapCloseInAction)
+   at Microsoft.Data.SqlClient.TdsParser.ThrowExceptionAndWarning(TdsParserStateObject stateObj, Boolean callerHasConnectionLock, Boolean asyncClose)
+   at Microsoft.Data.SqlClient.TdsParser.TryRun(RunBehavior runBehavior, SqlCommand cmdHandler, SqlDataReader dataStream, BulkCopySimpleResultSet bulkCopyHandler, TdsParserStateObject stateObj, Boolean& dataReady)
+   at Microsoft.Data.SqlClient.SqlDataReader.TryHasMoreRows(Boolean& moreRows)
+   at Microsoft.Data.SqlClient.SqlDataReader.TryReadInternal(Boolean setTimeout, Boolean& more)
+   at Microsoft.Data.SqlClient.SqlDataReader.ReadAsyncExecute(Task task, Object state)
+   at Microsoft.Data.SqlClient.SqlDataReader.InvokeAsyncCall[T](SqlDataReaderBaseAsyncCallContext`1 context)
+--- End of stack trace from previous location ---
+   at Microsoft.EntityFrameworkCore.Update.AffectedCountModificationCommandBatch.ConsumeResultSetWithRowsAffectedOnlyAsync(Int32 commandIndex, RelationalDataReader reader, CancellationToken cancellationToken)
+   at Microsoft.EntityFrameworkCore.Update.AffectedCountModificationCommandBatch.ConsumeAsync(RelationalDataReader reader, CancellationToken cancellationToken)
+ClientConnectionId:63fa082f-c01d-455a-8bc8-b82ac710cddb
+Error Number:515,State:2,Class:16
+   --- End of inner exception stack trace ---
+   at Microsoft.EntityFrameworkCore.Update.AffectedCountModificationCommandBatch.ConsumeAsync(RelationalDataReader reader, CancellationToken cancellationToken)
+   at Microsoft.EntityFrameworkCore.Update.ReaderModificationCommandBatch.ExecuteAsync(IRelationalConnection connection, CancellationToken cancellationToken)
+   at Microsoft.EntityFrameworkCore.Update.ReaderModificationCommandBatch.ExecuteAsync(IRelationalConnection connection, CancellationToken cancellationToken)
+   at Microsoft.EntityFrameworkCore.SqlServer.Update.Internal.SqlServerModificationCommandBatch.ExecuteAsync(IRelationalConnection connection, CancellationToken cancellationToken)
+   at Microsoft.EntityFrameworkCore.Update.Internal.BatchExecutor.ExecuteAsync(IEnumerable`1 commandBatches, IRelationalConnection connection, CancellationToken cancellationToken)
+   at Microsoft.EntityFrameworkCore.Update.Internal.BatchExecutor.ExecuteAsync(IEnumerable`1 commandBatches, IRelationalConnection connection, CancellationToken cancellationToken)
+   at Microsoft.EntityFrameworkCore.Update.Internal.BatchExecutor.ExecuteAsync(IEnumerable`1 commandBatches, IRelationalConnection connection, CancellationToken cancellationToken)
+   at Microsoft.EntityFrameworkCore.Storage.RelationalDatabase.SaveChangesAsync(IList`1 entries, CancellationToken cancellationToken)
+   at Microsoft.EntityFrameworkCore.ChangeTracking.Internal.StateManager.SaveChangesAsync(IList`1 entriesToSave, CancellationToken cancellationToken)
+   at Microsoft.EntityFrameworkCore.ChangeTracking.Internal.StateManager.SaveChangesAsync(StateManager stateManager, Boolean acceptAllChangesOnSuccess, CancellationToken cancellationToken)
+   at Microsoft.EntityFrameworkCore.SqlServer.Storage.Internal.SqlServerExecutionStrategy.ExecuteAsync[TState,TResult](TState state, Func`4 operation, Func`4 verifySucceeded, CancellationToken cancellationToken)
+   at Microsoft.EntityFrameworkCore.DbContext.SaveChangesAsync(Boolean acceptAllChangesOnSuccess, CancellationToken cancellationToken)
+2025-05-09 21:53:59.912 +03:00 [ERR] Cari güncellenirken hata: An error occurred while saving the entity changes. See the inner exception for details.
+Microsoft.EntityFrameworkCore.DbUpdateException: An error occurred while saving the entity changes. See the inner exception for details.
+ ---> Microsoft.Data.SqlClient.SqlException (0x80131904): Cannot insert the value NULL into column 'CariKodu', table 'MuhasebeStokDB.dbo.Cariler'; column does not allow nulls. UPDATE fails.
+   at Microsoft.Data.SqlClient.SqlConnection.OnError(SqlException exception, Boolean breakConnection, Action`1 wrapCloseInAction)
+   at Microsoft.Data.SqlClient.SqlInternalConnection.OnError(SqlException exception, Boolean breakConnection, Action`1 wrapCloseInAction)
+   at Microsoft.Data.SqlClient.TdsParser.ThrowExceptionAndWarning(TdsParserStateObject stateObj, Boolean callerHasConnectionLock, Boolean asyncClose)
+   at Microsoft.Data.SqlClient.TdsParser.TryRun(RunBehavior runBehavior, SqlCommand cmdHandler, SqlDataReader dataStream, BulkCopySimpleResultSet bulkCopyHandler, TdsParserStateObject stateObj, Boolean& dataReady)
+   at Microsoft.Data.SqlClient.SqlDataReader.TryHasMoreRows(Boolean& moreRows)
+   at Microsoft.Data.SqlClient.SqlDataReader.TryReadInternal(Boolean setTimeout, Boolean& more)
+   at Microsoft.Data.SqlClient.SqlDataReader.ReadAsyncExecute(Task task, Object state)
+   at Microsoft.Data.SqlClient.SqlDataReader.InvokeAsyncCall[T](SqlDataReaderBaseAsyncCallContext`1 context)
+--- End of stack trace from previous location ---
+   at Microsoft.EntityFrameworkCore.Update.AffectedCountModificationCommandBatch.ConsumeResultSetWithRowsAffectedOnlyAsync(Int32 commandIndex, RelationalDataReader reader, CancellationToken cancellationToken)
+   at Microsoft.EntityFrameworkCore.Update.AffectedCountModificationCommandBatch.ConsumeAsync(RelationalDataReader reader, CancellationToken cancellationToken)
+ClientConnectionId:63fa082f-c01d-455a-8bc8-b82ac710cddb
+Error Number:515,State:2,Class:16
+   --- End of inner exception stack trace ---
+   at Microsoft.EntityFrameworkCore.Update.AffectedCountModificationCommandBatch.ConsumeAsync(RelationalDataReader reader, CancellationToken cancellationToken)
+   at Microsoft.EntityFrameworkCore.Update.ReaderModificationCommandBatch.ExecuteAsync(IRelationalConnection connection, CancellationToken cancellationToken)
+   at Microsoft.EntityFrameworkCore.Update.ReaderModificationCommandBatch.ExecuteAsync(IRelationalConnection connection, CancellationToken cancellationToken)
+   at Microsoft.EntityFrameworkCore.SqlServer.Update.Internal.SqlServerModificationCommandBatch.ExecuteAsync(IRelationalConnection connection, CancellationToken cancellationToken)
+   at Microsoft.EntityFrameworkCore.Update.Internal.BatchExecutor.ExecuteAsync(IEnumerable`1 commandBatches, IRelationalConnection connection, CancellationToken cancellationToken)
+   at Microsoft.EntityFrameworkCore.Update.Internal.BatchExecutor.ExecuteAsync(IEnumerable`1 commandBatches, IRelationalConnection connection, CancellationToken cancellationToken)
+   at Microsoft.EntityFrameworkCore.Update.Internal.BatchExecutor.ExecuteAsync(IEnumerable`1 commandBatches, IRelationalConnection connection, CancellationToken cancellationToken)
+   at Microsoft.EntityFrameworkCore.Storage.RelationalDatabase.SaveChangesAsync(IList`1 entries, CancellationToken cancellationToken)
+   at Microsoft.EntityFrameworkCore.ChangeTracking.Internal.StateManager.SaveChangesAsync(IList`1 entriesToSave, CancellationToken cancellationToken)
+   at Microsoft.EntityFrameworkCore.ChangeTracking.Internal.StateManager.SaveChangesAsync(StateManager stateManager, Boolean acceptAllChangesOnSuccess, CancellationToken cancellationToken)
+   at Microsoft.EntityFrameworkCore.SqlServer.Storage.Internal.SqlServerExecutionStrategy.ExecuteAsync[TState,TResult](TState state, Func`4 operation, Func`4 verifySucceeded, CancellationToken cancellationToken)
+   at Microsoft.EntityFrameworkCore.DbContext.SaveChangesAsync(Boolean acceptAllChangesOnSuccess, CancellationToken cancellationToken)
+   at Microsoft.EntityFrameworkCore.DbContext.SaveChangesAsync(Boolean acceptAllChangesOnSuccess, CancellationToken cancellationToken)
+   at MuhasebeStokWebApp.Data.Repositories.UnitOfWork.SaveAsync() in /Users/muhammetkocaman/MuhasebeStokWebApp/Data/Repositories/UnitOfWork.cs:line 168
+   at MuhasebeStokWebApp.Controllers.CariController.Edit(CariEditViewModel model) in /Users/muhammetkocaman/MuhasebeStokWebApp/Controllers/CariController.cs:line 456
+2025-05-09 21:54:17.593 +03:00 [INF] TRY dönüşümü için kur değeri hesaplandı: USD -> TRY, Değer: 33,33
+2025-05-09 21:57:43.636 +03:00 [INF] Yaklaşan hatırlatıcılar kontrol ediliyor...
+2025-05-09 21:57:43.643 +03:00 [INF] Bekleyen hatırlatma bulunamadı.
+2025-05-09 22:02:43.641 +03:00 [INF] Yaklaşan hatırlatıcılar kontrol ediliyor...
+2025-05-09 22:02:43.696 +03:00 [INF] Bekleyen hatırlatma bulunamadı.
+2025-05-09 22:06:55.092 +03:00 [INF] Veritabanına bağlantı başarılı. Migrationlar uygulanıyor...
+2025-05-09 22:06:55.417 +03:00 [INF] Veritabanı işlemleri başarıyla tamamlandı.
+2025-05-09 22:06:55.467 +03:00 [INF] Todo Hatırlatıcı Servisi başlatıldı.
+2025-05-09 22:06:55.468 +03:00 [INF] Yaklaşan hatırlatıcılar kontrol ediliyor...
+2025-05-09 22:06:55.510 +03:00 [INF] Bekleyen hatırlatma bulunamadı.
+2025-05-09 22:07:24.591 +03:00 [WRN] Session bulunamadı, kullanıcı giriş yapmamış olabilir
+2025-05-09 22:07:24.593 +03:00 [INF] Kimlik doğrulanmış kullanıcı: admin
+2025-05-09 22:07:24.709 +03:00 [INF] TRY dönüşümü için kur değeri hesaplandı: TRY -> USD, Değer: 0,03
+2025-05-09 22:07:24.758 +03:00 [INF] Kur değeri hesaplandı: UZS -> USD, Değer: 0,0000775313262804067879513497
+2025-05-09 22:07:24.857 +03:00 [INF] Kur değeri önbellekten alındı: UZS -> USD, Değer: 0,0000775313262804067879513497
+2025-05-09 22:07:24.857 +03:00 [INF] Çevrilen tutar hesaplandı: UZS -> USD, Tutar: 0,00, Sonuç: 0, Kur: 0,0000775313262804067879513497
+2025-05-09 22:07:24.898 +03:00 [WRN] Session bulunamadı, kullanıcı giriş yapmamış olabilir
+2025-05-09 22:07:24.898 +03:00 [INF] Kimlik doğrulanmış kullanıcı: admin
+2025-05-09 22:07:24.904 +03:00 [INF] Kur değeri önbellekten alındı: TRY -> USD, Değer: 0,03
+2025-05-09 22:07:24.904 +03:00 [INF] Kur değeri önbellekten alındı: UZS -> USD, Değer: 0,0000775313262804067879513497
+2025-05-09 22:07:24.917 +03:00 [INF] Çevrilen tutar önbellekten alındı: UZS -> USD, Tutar: 0,00, Sonuç: 0
+2025-05-09 22:07:28.869 +03:00 [INF] Birim sayısı: Aktif=2, Pasif=0, Silinmiş=0
+2025-05-09 22:08:06.038 +03:00 [INF] Yeni cari kodu oluşturuldu: CRI-250509-003
+2025-05-09 22:10:14.487 +03:00 [INF] Restoring Cari with ID 45d94791-8604-476c-bc02-0d10468952e8
+2025-05-09 22:10:14.527 +03:00 [INF] Cari with ID 45d94791-8604-476c-bc02-0d10468952e8 restored successfully
+2025-05-09 22:11:55.509 +03:00 [INF] Yaklaşan hatırlatıcılar kontrol ediliyor...
+2025-05-09 22:11:55.512 +03:00 [INF] Bekleyen hatırlatma bulunamadı.
+2025-05-09 22:13:39.241 +03:00 [INF] Giriş denemesi: admin
+2025-05-09 22:13:39.328 +03:00 [INF] Admin kullanıcısı başarıyla giriş yaptı: admin
+2025-05-09 22:13:39.328 +03:00 [INF] Admin session oluşturuldu: UserID=8b547a04-134c-4578-99bb-f831a55b400d, UserName=admin
+2025-05-09 22:13:39.328 +03:00 [INF] Yönlendirme adresi: /Cari/Musteriler
+2025-05-09 22:13:39.328 +03:00 [INF] Admin kullanıcısı /Cari/Musteriler adresine yönlendiriliyor
+2025-05-09 22:15:02.087 +03:00 [INF] Restoring Cari with ID 45d94791-8604-476c-bc02-0d10468952e8
+2025-05-09 22:15:02.099 +03:00 [INF] Cari with ID 45d94791-8604-476c-bc02-0d10468952e8 restored successfully
+2025-05-09 22:16:55.511 +03:00 [INF] Yaklaşan hatırlatıcılar kontrol ediliyor...
+2025-05-09 22:16:55.518 +03:00 [INF] Bekleyen hatırlatma bulunamadı.
+2025-05-09 22:39:36.788 +03:00 [INF] Veritabanına bağlantı başarılı. Migrationlar uygulanıyor...
+2025-05-09 22:39:37.109 +03:00 [INF] Veritabanı işlemleri başarıyla tamamlandı.
+2025-05-09 22:39:37.159 +03:00 [INF] Todo Hatırlatıcı Servisi başlatıldı.
+2025-05-09 22:39:37.160 +03:00 [INF] Yaklaşan hatırlatıcılar kontrol ediliyor...
+2025-05-09 22:39:37.202 +03:00 [INF] Bekleyen hatırlatma bulunamadı.
+2025-05-09 22:39:45.068 +03:00 [WRN] Session bulunamadı, kullanıcı giriş yapmamış olabilir
+2025-05-09 22:39:45.070 +03:00 [INF] Kimlik doğrulanmış kullanıcı: admin
+2025-05-09 22:39:45.197 +03:00 [INF] TRY dönüşümü için kur değeri hesaplandı: TRY -> USD, Değer: 0,03
+2025-05-09 22:39:45.261 +03:00 [INF] Kur değeri hesaplandı: UZS -> USD, Değer: 0,0000775313262804067879513497
+2025-05-09 22:39:45.351 +03:00 [INF] Kur değeri önbellekten alındı: UZS -> USD, Değer: 0,0000775313262804067879513497
+2025-05-09 22:39:45.351 +03:00 [INF] Çevrilen tutar hesaplandı: UZS -> USD, Tutar: 0,00, Sonuç: 0, Kur: 0,0000775313262804067879513497
+2025-05-09 22:40:25.432 +03:00 [INF] Restoring Cari with ID 45d94791-8604-476c-bc02-0d10468952e8
+2025-05-09 22:40:25.454 +03:00 [INF] Cari with ID 45d94791-8604-476c-bc02-0d10468952e8 restored successfully
+2025-05-09 22:43:28.619 +03:00 [INF] Yeni ürün oluşturma işlemi başlatılıyor: Kullanıcı=admin
+2025-05-09 22:43:49.380 +03:00 [INF] Giriş denemesi: admin
+2025-05-09 22:43:49.469 +03:00 [INF] Admin kullanıcısı başarıyla giriş yaptı: admin
+2025-05-09 22:43:49.469 +03:00 [INF] Admin session oluşturuldu: UserID=8b547a04-134c-4578-99bb-f831a55b400d, UserName=admin
+2025-05-09 22:43:49.469 +03:00 [INF] Yönlendirme adresi: /Stok/StokDurumu
+2025-05-09 22:43:49.469 +03:00 [INF] Admin kullanıcısı /Stok/StokDurumu adresine yönlendiriliyor
+2025-05-09 22:43:57.043 +03:00 [INF] Aktif session bulundu: UserID=8b547a04-134c-4578-99bb-f831a55b400d, UserName=admin
+2025-05-09 22:43:57.046 +03:00 [INF] Admin kullanıcısı tespit edildi
+2025-05-09 22:43:57.047 +03:00 [INF] Kimlik doğrulanmış kullanıcı: admin
+2025-05-09 22:43:57.062 +03:00 [INF] Kur değeri önbellekten alındı: TRY -> USD, Değer: 0,03
+2025-05-09 22:43:57.062 +03:00 [INF] Kur değeri önbellekten alındı: UZS -> USD, Değer: 0,0000775313262804067879513497
+2025-05-09 22:43:57.082 +03:00 [INF] Çevrilen tutar önbellekten alındı: UZS -> USD, Tutar: 0,00, Sonuç: 0
+2025-05-09 22:44:37.203 +03:00 [INF] Yaklaşan hatırlatıcılar kontrol ediliyor...
+2025-05-09 22:44:37.207 +03:00 [INF] Bekleyen hatırlatma bulunamadı.
+2025-05-09 22:45:01.784 +03:00 [INF] Yeni ürün oluşturma işlemi başlatılıyor: Kullanıcı=admin
+2025-05-09 22:45:12.975 +03:00 [INF] Yeni ürün oluşturma işlemi başlatılıyor: Kullanıcı=admin
+2025-05-09 22:46:15.810 +03:00 [INF] Urun ID: 7c3ac3c5-44e0-4119-98c3-47551fe8cd7f soft delete yapıldı
+2025-05-09 22:46:22.349 +03:00 [INF] Ürün geri getirildi: UrunID=7c3ac3c5-44e0-4119-98c3-47551fe8cd7f, Kullanıcı=admin
+2025-05-09 22:51:42.997 +03:00 [INF] Yaklaşan hatırlatıcılar kontrol ediliyor...
+2025-05-09 22:51:43.011 +03:00 [INF] Bekleyen hatırlatma bulunamadı.
+2025-05-09 23:11:41.158 +03:00 [INF] Yaklaşan hatırlatıcılar kontrol ediliyor...
+2025-05-09 23:11:41.171 +03:00 [INF] Bekleyen hatırlatma bulunamadı.
+2025-05-09 23:16:41.175 +03:00 [INF] Yaklaşan hatırlatıcılar kontrol ediliyor...
+2025-05-09 23:16:41.237 +03:00 [INF] Bekleyen hatırlatma bulunamadı.
+2025-05-09 23:21:41.240 +03:00 [INF] Yaklaşan hatırlatıcılar kontrol ediliyor...
+2025-05-09 23:21:41.247 +03:00 [INF] Bekleyen hatırlatma bulunamadı.
+2025-05-09 23:26:41.260 +03:00 [INF] Yaklaşan hatırlatıcılar kontrol ediliyor...
+2025-05-09 23:26:41.266 +03:00 [INF] Bekleyen hatırlatma bulunamadı.
+2025-05-09 23:31:41.271 +03:00 [INF] Yaklaşan hatırlatıcılar kontrol ediliyor...
+2025-05-09 23:31:41.306 +03:00 [INF] Bekleyen hatırlatma bulunamadı.
+2025-05-09 23:36:41.311 +03:00 [INF] Yaklaşan hatırlatıcılar kontrol ediliyor...
+2025-05-09 23:36:41.318 +03:00 [INF] Bekleyen hatırlatma bulunamadı.
+2025-05-09 23:41:41.322 +03:00 [INF] Yaklaşan hatırlatıcılar kontrol ediliyor...
+2025-05-09 23:41:41.358 +03:00 [INF] Bekleyen hatırlatma bulunamadı.
+2025-05-09 23:46:41.363 +03:00 [INF] Yaklaşan hatırlatıcılar kontrol ediliyor...
+2025-05-09 23:46:41.370 +03:00 [INF] Bekleyen hatırlatma bulunamadı.
+2025-05-09 23:51:41.372 +03:00 [INF] Yaklaşan hatırlatıcılar kontrol ediliyor...
+2025-05-09 23:51:41.409 +03:00 [INF] Bekleyen hatırlatma bulunamadı.
+2025-05-09 23:56:41.414 +03:00 [INF] Yaklaşan hatırlatıcılar kontrol ediliyor...
+2025-05-09 23:56:41.449 +03:00 [INF] Bekleyen hatırlatma bulunamadı.

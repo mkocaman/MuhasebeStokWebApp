@@ -82,15 +82,11 @@
                         {
                             @foreach (var pb in ViewBag.ParaBirimleri)
                             {
-                                if (pb.Kod != "TRY")
-                                {
-                                    <option value="@pb.ParaBirimiID" data-kod="@pb.Kod" data-sembol="@pb.Sembol" data-ad="@pb.Ad">@pb.Ad (@pb.Kod)</option>
-                                }
+                                <option value="@pb.ParaBirimiID" data-kod="@pb.Kod" data-sembol="@pb.Sembol" data-ad="@pb.Ad">@pb.Ad (@pb.Kod)</option>
                             }
                         }
                     </select>
                     <span asp-validation-for="VarsayilanParaBirimiId" class="text-danger"></span>
-                    <small class="text-muted">TRY harici para birimleri listelenmektedir.</small>
                 </div>
             </div>
         </div>
