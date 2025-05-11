@@ -1165,3 +1165,88 @@ System.IO.IOException: The encryption operation failed, see inner exception.
    at Microsoft.AspNetCore.Server.Kestrel.Https.Internal.HttpsConnectionMiddleware.OnConnectionAsync(ConnectionContext context)
    at Microsoft.AspNetCore.Server.Kestrel.Https.Internal.HttpsConnectionMiddleware.OnConnectionAsync(ConnectionContext context)
    at Microsoft.AspNetCore.Server.Kestrel.Core.Internal.Infrastructure.KestrelConnection`1.ExecuteAsync()
+2025-05-11 19:17:33.150 +03:00 [INF] Veritabanına bağlantı başarılı. Migrationlar uygulanıyor...
+2025-05-11 19:17:33.470 +03:00 [INF] Veritabanı işlemleri başarıyla tamamlandı.
+2025-05-11 19:17:33.524 +03:00 [INF] Todo Hatırlatıcı Servisi başlatıldı.
+2025-05-11 19:17:33.525 +03:00 [INF] Yaklaşan hatırlatıcılar kontrol ediliyor...
+2025-05-11 19:17:33.565 +03:00 [INF] Bekleyen hatırlatma bulunamadı.
+2025-05-11 19:17:45.912 +03:00 [INF] Giriş denemesi: admin
+2025-05-11 19:17:45.996 +03:00 [INF] Admin kullanıcısı başarıyla giriş yaptı: admin
+2025-05-11 19:17:45.996 +03:00 [INF] Admin session oluşturuldu: UserID=aa602442-6681-4feb-afa8-832da9bff684, UserName=admin
+2025-05-11 19:17:45.996 +03:00 [INF] Yönlendirme adresi: /
+2025-05-11 19:17:45.996 +03:00 [INF] Admin kullanıcısı / adresine yönlendiriliyor
+2025-05-11 19:17:46.063 +03:00 [INF] Aktif session bulundu: UserID=aa602442-6681-4feb-afa8-832da9bff684, UserName=admin
+2025-05-11 19:17:46.064 +03:00 [INF] Admin kullanıcısı tespit edildi
+2025-05-11 19:17:46.064 +03:00 [INF] Kimlik doğrulanmış kullanıcı: admin
+2025-05-11 19:17:46.175 +03:00 [INF] TRY dönüşümü için kur değeri hesaplandı: TRY -> USD, Değer: 0,03
+2025-05-11 19:17:46.185 +03:00 [WRN] Kaynak para birimi kodu bulunamadı: UZS. Varsayılan değer kullanılıyor.
+2025-05-11 19:17:46.185 +03:00 [INF] Kur değeri hesaplandı: UZS -> USD, Değer: 1
+2025-05-11 19:17:57.019 +03:00 [INF] Aktif session bulundu: UserID=aa602442-6681-4feb-afa8-832da9bff684, UserName=admin
+2025-05-11 19:17:57.020 +03:00 [INF] Admin kullanıcısı tespit edildi
+2025-05-11 19:17:57.020 +03:00 [INF] Kimlik doğrulanmış kullanıcı: admin
+2025-05-11 19:17:57.042 +03:00 [INF] Kur değeri önbellekten alındı: TRY -> USD, Değer: 0,03
+2025-05-11 19:17:57.042 +03:00 [INF] Kur değeri önbellekten alındı: UZS -> USD, Değer: 1
+2025-05-11 19:18:07.279 +03:00 [INF] Fatura oluşturma sayfası yükleniyor: Kullanıcı=admin
+2025-05-11 19:18:07.312 +03:00 [INF] Yeni numara oluşturuldu: FTR-250511-001
+2025-05-11 19:18:07.316 +03:00 [INF] Yeni numara oluşturuldu: SIP-250511-001
+2025-05-11 19:18:07.334 +03:00 [INF] Cari listesi yüklendi, toplam 0 adet cari bulundu.
+2025-05-11 19:18:07.345 +03:00 [INF] Sözleşme listesi yüklendi, toplam 0 adet sözleşme bulundu.
+2025-05-11 19:18:07.359 +03:00 [INF] Ürün listesi yüklendi, toplam 0 adet ürün bulundu.
+2025-05-11 19:18:07.367 +03:00 [INF] Depo listesi yüklendi, toplam 0 adet depo bulundu.
+2025-05-11 19:18:07.390 +03:00 [INF] Birim sayısı: Aktif=0, Pasif=0, Silinmiş=0
+2025-05-11 19:18:07.400 +03:00 [INF] Para birimi listesi yüklendi, toplam 0 adet para birimi bulundu.
+2025-05-11 19:18:17.235 +03:00 [INF] Birim sayısı: Aktif=0, Pasif=0, Silinmiş=0
+2025-05-11 19:18:56.547 +03:00 [INF] Aktif session bulundu: UserID=aa602442-6681-4feb-afa8-832da9bff684, UserName=admin
+2025-05-11 19:18:56.549 +03:00 [INF] Admin kullanıcısı tespit edildi
+2025-05-11 19:18:56.549 +03:00 [INF] Kimlik doğrulanmış kullanıcı: admin
+2025-05-11 19:18:56.564 +03:00 [INF] Kur değeri önbellekten alındı: TRY -> USD, Değer: 0,03
+2025-05-11 19:18:56.564 +03:00 [INF] Kur değeri önbellekten alındı: UZS -> USD, Değer: 1
+2025-05-11 19:19:00.111 +03:00 [INF] Dashboard sayfası yükleniyor...
+2025-05-11 19:19:00.115 +03:00 [INF] Dashboard verileri yükleniyor...
+2025-05-11 19:19:00.419 +03:00 [INF] TRY dönüşümü için kur değeri hesaplandı: USD -> TRY, Değer: 33,33
+2025-05-11 19:19:00.424 +03:00 [WRN] Kaynak para birimi kodu bulunamadı: USD. Varsayılan değer kullanılıyor.
+2025-05-11 19:19:00.424 +03:00 [INF] Kur değeri hesaplandı: USD -> UZS, Değer: 1
+2025-05-11 19:19:00.893 +03:00 [INF] Kur değeri önbellekten alındı: USD -> TRY, Değer: 33,33
+2025-05-11 19:19:00.893 +03:00 [INF] Kur değeri önbellekten alındı: USD -> UZS, Değer: 1
+2025-05-11 19:19:01.510 +03:00 [INF] Kur değeri önbellekten alındı: USD -> TRY, Değer: 33,33
+2025-05-11 19:19:01.511 +03:00 [INF] Kur değeri önbellekten alındı: USD -> UZS, Değer: 1
+2025-05-11 19:19:01.511 +03:00 [INF] Dashboard sayfası başarıyla yüklendi.
+2025-05-11 19:19:13.744 +03:00 [INF] Aktif session bulundu: UserID=aa602442-6681-4feb-afa8-832da9bff684, UserName=admin
+2025-05-11 19:19:13.744 +03:00 [INF] Admin kullanıcısı tespit edildi
+2025-05-11 19:19:13.744 +03:00 [INF] Kimlik doğrulanmış kullanıcı: admin
+2025-05-11 19:19:13.757 +03:00 [INF] Kur değeri önbellekten alındı: TRY -> USD, Değer: 0,03
+2025-05-11 19:19:13.758 +03:00 [INF] Kur değeri önbellekten alındı: UZS -> USD, Değer: 1
+2025-05-11 19:19:22.727 +03:00 [INF] Birim sayısı: Aktif=0, Pasif=0, Silinmiş=0
+2025-05-11 19:19:24.472 +03:00 [INF] Toplam depo sayısı: 0
+2025-05-11 19:19:24.473 +03:00 [INF] Aktif depo sayısı: 0
+2025-05-11 19:19:24.473 +03:00 [INF] Pasif depo sayısı: 0
+2025-05-11 19:19:24.473 +03:00 [INF] Silinmiş depo sayısı: 0
+2025-05-11 19:19:25.356 +03:00 [INF] Aktif session bulundu: UserID=aa602442-6681-4feb-afa8-832da9bff684, UserName=admin
+2025-05-11 19:19:25.356 +03:00 [INF] Admin kullanıcısı tespit edildi
+2025-05-11 19:19:25.357 +03:00 [INF] Kimlik doğrulanmış kullanıcı: admin
+2025-05-11 19:19:25.371 +03:00 [INF] Kur değeri önbellekten alındı: TRY -> USD, Değer: 0,03
+2025-05-11 19:19:25.372 +03:00 [INF] Kur değeri önbellekten alındı: UZS -> USD, Değer: 1
+2025-05-11 19:19:48.245 +03:00 [INF] Aktif session bulundu: UserID=aa602442-6681-4feb-afa8-832da9bff684, UserName=admin
+2025-05-11 19:19:48.245 +03:00 [INF] Admin kullanıcısı tespit edildi
+2025-05-11 19:19:48.245 +03:00 [INF] Kimlik doğrulanmış kullanıcı: admin
+2025-05-11 19:19:48.261 +03:00 [INF] Kur değeri önbellekten alındı: TRY -> USD, Değer: 0,03
+2025-05-11 19:19:48.261 +03:00 [INF] Kur değeri önbellekten alındı: UZS -> USD, Değer: 1
+2025-05-11 19:22:33.564 +03:00 [INF] Yaklaşan hatırlatıcılar kontrol ediliyor...
+2025-05-11 19:22:33.571 +03:00 [INF] Bekleyen hatırlatma bulunamadı.
+2025-05-11 19:27:33.581 +03:00 [INF] Yaklaşan hatırlatıcılar kontrol ediliyor...
+2025-05-11 19:27:33.642 +03:00 [INF] Bekleyen hatırlatma bulunamadı.
+2025-05-11 19:31:17.179 +03:00 [INF] Veritabanına bağlantı başarılı. Migrationlar uygulanıyor...
+2025-05-11 19:31:17.512 +03:00 [INF] Veritabanı işlemleri başarıyla tamamlandı.
+2025-05-11 19:31:17.567 +03:00 [INF] Todo Hatırlatıcı Servisi başlatıldı.
+2025-05-11 19:31:17.568 +03:00 [INF] Yaklaşan hatırlatıcılar kontrol ediliyor...
+2025-05-11 19:31:17.612 +03:00 [INF] Bekleyen hatırlatma bulunamadı.
+2025-05-11 19:31:48.972 +03:00 [WRN] Session bulunamadı, kullanıcı giriş yapmamış olabilir
+2025-05-11 19:31:48.975 +03:00 [INF] Kimlik doğrulanmış kullanıcı: admin
+2025-05-11 19:31:49.084 +03:00 [INF] TRY dönüşümü için kur değeri hesaplandı: TRY -> USD, Değer: 0,03
+2025-05-11 19:31:49.094 +03:00 [WRN] Kaynak para birimi kodu bulunamadı: UZS. Varsayılan değer kullanılıyor.
+2025-05-11 19:31:49.094 +03:00 [INF] Kur değeri hesaplandı: UZS -> USD, Değer: 1
+2025-05-11 19:31:51.065 +03:00 [INF] Birim sayısı: Aktif=0, Pasif=0, Silinmiş=0
+2025-05-11 19:31:52.209 +03:00 [INF] Toplam depo sayısı: 0
+2025-05-11 19:31:52.210 +03:00 [INF] Aktif depo sayısı: 0
+2025-05-11 19:31:52.210 +03:00 [INF] Pasif depo sayısı: 0
+2025-05-11 19:31:52.210 +03:00 [INF] Silinmiş depo sayısı: 0
