@@ -119,10 +119,12 @@ namespace MuhasebeStokWebApp.Services
                         
                     // NetTutar değerini düzelt - 100 ile çarpılmış olabilir, normal değeri kullan
                     decimal netTutar = kalem.NetTutar;
+                    decimal kdvTutar = kalem.KdvTutari;
                     if (viewModel.DovizTuru == "USD" || viewModel.DovizTuru == "UZS")
                     {
                         // NetTutar'ı 100'e böl (çarpılmış olduğu için)
                         netTutar = kalem.NetTutar / 100;
+                        kdvTutar = kalem.KdvTutari / 100;
                     }
                         
                     var faturaDetay = new FaturaDetay
@@ -136,13 +138,13 @@ namespace MuhasebeStokWebApp.Services
                         KdvOrani = kalem.KdvOrani,
                         IndirimOrani = kalem.IndirimOrani,
                         Tutar = kalem.Tutar,
-                        KdvTutari = kalem.KdvTutari,
+                        KdvTutari = kdvTutar,
                         IndirimTutari = kalem.IndirimTutari,
                         NetTutar = netTutar,
                         OlusturmaTarihi = DateTime.Now,
                         Silindi = false,
                         SatirToplam = kalem.Tutar,
-                        SatirKdvToplam = kalem.KdvTutari,
+                        SatirKdvToplam = kdvTutar,
                         Aciklama = kalem.Aciklama
                     };
                     
