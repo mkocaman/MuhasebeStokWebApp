@@ -1,0 +1,122 @@
+@model MuhasebeStokWebApp.ViewModels.SistemAyar.SirketBilgileriViewModel
+@{
+    ViewData["Title"] = "Şirket Bilgileri";
+    Layout = "~/Views/Shared/_Layout.cshtml";
+}
+
+<div class="container-fluid">
+    <div class="card shadow mb-4">
+        <div class="card-header py-3 d-flex flex-row align-items-center justify-content-between">
+            <h6 class="m-0 font-weight-bold">Şirket Bilgileri</h6>
+            <div>
+                <ol class="breadcrumb float-sm-right">
+                    <li class="breadcrumb-item"><a href="/">Ana Sayfa</a></li>
+                    <li class="breadcrumb-item"><a asp-controller="SistemAyar" asp-action="Index">Sistem Ayarları</a></li>
+                    <li class="breadcrumb-item active">Şirket Bilgileri</li>
+                </ol>
+            </div>
+        </div>
+
+        <div class="card-body">
+            @if (TempData["Success"] != null)
+            {
+                <div class="alert alert-success">
+                    <i class="fas fa-check-circle"></i> @TempData["Success"]
+                </div>
+            }
+
+            @if (TempData["ErrorMessage"] != null)
+            {
+                <div class="alert alert-danger">
+                    <i class="fas fa-exclamation-circle"></i> @TempData["ErrorMessage"]
+                </div>
+            }
+
+            <div class="alert alert-info">
+                <i class="fas fa-info-circle"></i> Bu bilgiler fatura yazdırma ekranında gösterilecektir. Bilgilerin doğru ve eksiksiz olduğundan emin olun.
+            </div>
+
+            <form asp-action="SirketBilgileri" method="post">
+                <div asp-validation-summary="ModelOnly" class="text-danger"></div>
+
+                <div class="row">
+                    <div class="col-md-6">
+                        <div class="form-group">
+                            <label asp-for="SirketAdi" class="control-label"></label>
+                            <input asp-for="SirketAdi" class="form-control" />
+                            <span asp-validation-for="SirketAdi" class="text-danger"></span>
+                        </div>
+                    </div>
+                    <div class="col-md-6">
+                        <div class="form-group">
+                            <label asp-for="SirketTelefon" class="control-label"></label>
+                            <input asp-for="SirketTelefon" class="form-control" />
+                            <span asp-validation-for="SirketTelefon" class="text-danger"></span>
+                        </div>
+                    </div>
+                </div>
+
+                <div class="form-group">
+                    <label asp-for="SirketAdresi" class="control-label"></label>
+                    <textarea asp-for="SirketAdresi" class="form-control" rows="3"></textarea>
+                    <span asp-validation-for="SirketAdresi" class="text-danger"></span>
+                </div>
+
+                <div class="row">
+                    <div class="col-md-6">
+                        <div class="form-group">
+                            <label asp-for="SirketEmail" class="control-label"></label>
+                            <input asp-for="SirketEmail" class="form-control" />
+                            <span asp-validation-for="SirketEmail" class="text-danger"></span>
+                        </div>
+                    </div>
+                    <div class="col-md-6">
+                        <div class="form-group">
+                            <label asp-for="SirketVergiNo" class="control-label"></label>
+                            <input asp-for="SirketVergiNo" class="form-control" />
+                            <span asp-validation-for="SirketVergiNo" class="text-danger"></span>
+                        </div>
+                    </div>
+                </div>
+
+                <div class="row">
+                    <div class="col-md-6">
+                        <div class="form-group">
+                            <label asp-for="SirketVergiDairesi" class="control-label"></label>
+                            <input asp-for="SirketVergiDairesi" class="form-control" />
+                            <span asp-validation-for="SirketVergiDairesi" class="text-danger"></span>
+                        </div>
+                    </div>
+                    <div class="col-md-6">
+                        <div class="form-group">
+                            <label asp-for="LogoUrl" class="control-label"></label>
+                            <input asp-for="LogoUrl" class="form-control" />
+                            <small class="form-text text-muted">Logo için resim URL'si girin veya boş bırakın.</small>
+                            <span asp-validation-for="LogoUrl" class="text-danger"></span>
+                        </div>
+                    </div>
+                </div>
+
+                <div class="form-group">
+                    <div class="form-check">
+                        <input asp-for="LogoGoster" class="form-check-input" />
+                        <label asp-for="LogoGoster" class="form-check-label"></label>
+                    </div>
+                </div>
+
+                <div class="form-group mt-4">
+                    <button type="submit" class="btn btn-primary">
+                        <i class="fas fa-save"></i> Bilgileri Kaydet
+                    </button>
+                    <a asp-action="Index" class="btn btn-secondary">
+                        <i class="fas fa-arrow-left"></i> Geri Dön
+                    </a>
+                </div>
+            </form>
+        </div>
+    </div>
+</div>
+
+@section Scripts {
+    @{await Html.RenderPartialAsync("_ValidationScriptsPartial");}
+} 

@@ -1,6 +1,17 @@
 @model MuhasebeStokWebApp.ViewModels.Fatura.FaturaDetailViewModel
 @{
     Layout = null;
+
+    // Şirket bilgilerini buraya çekelim
+    var sirketBilgileriService = Context.RequestServices.GetService<MuhasebeStokWebApp.Services.Interfaces.ISistemAyarService>();
+    var sirketAdi = sirketBilgileriService?.GetSettingAsync("SirketAdi").Result ?? "Şirket Adı";
+    var sirketAdresi = sirketBilgileriService?.GetSettingAsync("SirketAdresi").Result ?? "Adres Satırı 1\nAdres Satırı 2";
+    var sirketTelefon = sirketBilgileriService?.GetSettingAsync("SirketTelefon").Result ?? "(123) 456-7890";
+    var sirketEmail = sirketBilgileriService?.GetSettingAsync("SirketEmail").Result ?? "info@sirket.com";
+    var sirketVergiNo = sirketBilgileriService?.GetSettingAsync("SirketVergiNo").Result ?? "1234567890";
+    var sirketVergiDairesi = sirketBilgileriService?.GetSettingAsync("SirketVergiDairesi").Result ?? "Vergi Dairesi";
+    var logoUrl = sirketBilgileriService?.GetSettingAsync("LogoUrl").Result ?? "/img/logo.png";
+    var logoGoster = sirketBilgileriService?.GetSettingAsync("LogoGoster").Result ?? "True";
 }
 
 <!DOCTYPE html>
@@ -103,7 +114,8 @@
     <div class="container-fluid">
         <div class="no-print text-center mb-4">
             <button class="btn btn-primary" onclick="window.print()">Yazdır</button>
-            <button class="btn btn-secondary" onclick="window.close()">Kapat</button>
+            <button class="btn btn-danger" onclick="window.close()">Kapat</button>
+            <a href="@Url.Action("SirketBilgileri", "SistemAyar")" class="btn btn-secondary">Şirket Bilgilerini Düzenle</a>
         </div>
         
         <div class="invoice-header">
@@ -112,7 +124,10 @@
                     <div class="invoice-title">FATURA</div>
                 </div>
                 <div class="col-6 text-right">
-                    <img src="~/img/logo.png" alt="Şirket Logo" style="max-height: 80px;" />
+                    @if (bool.TryParse(logoGoster, out bool showLogo) && showLogo && !string.IsNullOrEmpty(logoUrl))
+                    {
+                        <img src="@logoUrl" alt="Şirket Logo" style="max-height: 80px;" />
+                    }
                 </div>
             </div>
         </div>
@@ -121,13 +136,12 @@
             <div class="col-6">
                 <div class="company-details">
                     <h5>Şirket Bilgileri</h5>
-                    <p><strong>Şirket Adı</strong><br />
-                    Adres Satırı 1<br />
-                    Adres Satırı 2<br />
-                    Telefon: (123) 456-7890<br />
-                    E-posta: info@sirket.com<br />
-                    Vergi Dairesi: Vergi Dairesi<br />
-                    Vergi No: 1234567890</p>
+                    <p><strong>@sirketAdi</strong><br />
+                    @sirketAdresi.Replace("\n", "<br />")@Html.Raw("<br />")
+                    Telefon: @sirketTelefon<br />
+                    E-posta: @sirketEmail<br />
+                    Vergi Dairesi: @sirketVergiDairesi<br />
+                    Vergi No: @sirketVergiNo</p>
                 </div>
             </div>
             <div class="col-6">

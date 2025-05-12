@@ -78,33 +78,15 @@
             </div>
         </div>
 
-        <div class="row mt-4">
-            <div class="col-md-12">
+        <div class="row">
+            <div class="col-md-4">
                 <div class="card">
                     <div class="card-header">
-                        <h3 class="card-title">Mevcut Sistem Ayarları</h3>
+                        <h3 class="card-title">Şirket Bilgileri</h3>
                     </div>
                     <div class="card-body">
-                        <div class="table-responsive">
-                            <table class="table table-bordered table-striped">
-                                <thead>
-                                    <tr>
-                                        <th>Ayar Adı</th>
-                                        <th>Değer</th>
-                                    </tr>
-                                </thead>
-                                <tbody>
-                                    @foreach (var ayar in Model)
-                                    {
-                                        <tr>
-                                            <td>@ayar.Key</td>
-                                            <td>@ayar.Value</td>
-                                        </tr>
-                                    }
-                                </tbody>
-                            </table>
-                        </div>
-                    </div>
+                    <p>Şirket hakkında genel bilgiler.</p>
+                    <a href="@Url.Action("SirketBilgileri", "SistemAyar")" class="btn btn-primary btn-block">Şirket Bilgilerini Düzenle</a>
                 </div>
             </div>
         </div>

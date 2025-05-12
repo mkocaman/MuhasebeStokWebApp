@@ -366,6 +366,7 @@
         </td>
         <td>
             <select name="FaturaKalemleri[{index}].Birim" class="form-control birim select2-in-table">
+                <option value="">-- Birim Seçiniz --</option>
                 @if (ViewBag.Birimler != null)
                 {
                     foreach (var birim in ViewBag.Birimler)
@@ -409,6 +410,16 @@
         var cariParaBirimleri = @Html.Raw(Json.Serialize(ViewBag.CariParaBirimleri));
         
         $(document).ready(function () {
+            // Select2 için özel dil ayarlarını tanımla
+            $.fn.select2.defaults.set('language', {
+                noResults: function() {
+                    return "Sonuç bulunamadı";
+                },
+                searching: function() {
+                    return "Aranıyor...";
+                }
+            });
+
             // Açıklama ve Fatura Notu alanlarının zorunluluğunu kaldır
             $("#Aciklama").rules("remove", "required");
             $("[name='Aciklama']").removeAttr("data-val-required");
@@ -622,8 +633,13 @@
                 addKalemRow();
             });
 
-            // İlk kalem satırını ekle
-            addKalemRow();
+            // İlk kalem satırını ekle - Sayfa yüklendikten sonra tetiklenir
+            setTimeout(function() {
+                // Önce mevcut satırları temizle
+                $("#kalemlerBody").empty();
+                // İlk satırı ekle
+                addKalemRow();
+            }, 100);
 
             // Kalem satırı ekleme fonksiyonu
             function addKalemRow() {
@@ -648,7 +664,12 @@
                         $urunSelect.select2({
                             dropdownParent: $('#faturaForm'),
                             width: '100%',
-                            placeholder: 'Ürün Seçiniz'
+                            placeholder: '-- Ürün Seçiniz --',
+                            language: {
+                                noResults: function() {
+                                    return "Sonuç bulunamadı";
+                                }
+                            }
                         }).on('select2:open', function() {
                             // Select2 açıldığında zIndex'i yükselt
                             $('.select2-container--open').css('z-index', 9999);
@@ -657,7 +678,12 @@
                         $birimSelect.select2({
                             dropdownParent: $('#faturaForm'),
                             width: '100%',
-                            placeholder: 'Birim Seçiniz'
+                            placeholder: '-- Birim Seçiniz --',
+                            language: {
+                                noResults: function() {
+                                    return "Sonuç bulunamadı";
+                                }
+                            }
                         });
                         
                         // İlk satırı oluştururken doğrudan ilk ürünü seç
@@ -673,7 +699,9 @@
                                 getUrunBilgileri(ilkUrunId, $row);
                                 
                                 // Select2'nin görselini güncellemek için change event'ini tetikle
-                                $urunSelect.trigger('change.select2');
+                                setTimeout(function() {
+                                    $urunSelect.trigger('change.select2');
+                                }, 50);
                                 
                                 // Satır toplamlarını hesapla
                                 calculateRowTotals($row);

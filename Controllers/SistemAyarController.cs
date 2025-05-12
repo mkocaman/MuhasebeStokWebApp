@@ -268,6 +268,81 @@ namespace MuhasebeStokWebApp.Controllers
 
         #endregion
 
+        #region Şirket Bilgileri
+
+        public IActionResult SirketBilgileri()
+        {
+            try
+            {
+                var model = new SirketBilgileriViewModel();
+                
+                // Veritabanından şirket bilgilerini yükleme
+                var sirketAdi = _context.SistemAyarlari.FirstOrDefault(x => x.Anahtar == "SirketAdi")?.Deger;
+                var sirketAdresi = _context.SistemAyarlari.FirstOrDefault(x => x.Anahtar == "SirketAdresi")?.Deger;
+                var sirketTelefon = _context.SistemAyarlari.FirstOrDefault(x => x.Anahtar == "SirketTelefon")?.Deger;
+                var sirketEmail = _context.SistemAyarlari.FirstOrDefault(x => x.Anahtar == "SirketEmail")?.Deger;
+                var sirketVergiNo = _context.SistemAyarlari.FirstOrDefault(x => x.Anahtar == "SirketVergiNo")?.Deger;
+                var sirketVergiDairesi = _context.SistemAyarlari.FirstOrDefault(x => x.Anahtar == "SirketVergiDairesi")?.Deger;
+                var logoUrl = _context.SistemAyarlari.FirstOrDefault(x => x.Anahtar == "LogoUrl")?.Deger;
+                var logoGoster = _context.SistemAyarlari.FirstOrDefault(x => x.Anahtar == "LogoGoster")?.Deger;
+
+                // Bulunan değerleri model'e atama
+                if (sirketAdi != null) model.SirketAdi = sirketAdi;
+                if (sirketAdresi != null) model.SirketAdresi = sirketAdresi;
+                if (sirketTelefon != null) model.SirketTelefon = sirketTelefon;
+                if (sirketEmail != null) model.SirketEmail = sirketEmail;
+                if (sirketVergiNo != null) model.SirketVergiNo = sirketVergiNo;
+                if (sirketVergiDairesi != null) model.SirketVergiDairesi = sirketVergiDairesi;
+                if (logoUrl != null) model.LogoUrl = logoUrl;
+                if (logoGoster != null) model.LogoGoster = bool.TryParse(logoGoster, out bool lg) ? lg : true;
+
+                return View(model);
+            }
+            catch (Exception ex)
+            {
+                _logger.LogError(ex, "Şirket bilgileri görüntülenirken hata oluştu");
+                _logService.LogHata("Şirket bilgileri görüntülenirken hata oluştu", ex.Message, User.Identity?.Name ?? "Anonim");
+                TempData["ErrorMessage"] = "Şirket bilgileri yüklenirken bir hata oluştu: " + ex.Message;
+                return View(new SirketBilgileriViewModel());
+            }
+        }
+
+        [HttpPost]
+        [ValidateAntiForgeryToken]
+        public async Task<IActionResult> SirketBilgileri(SirketBilgileriViewModel model)
+        {
+            try
+            {
+                if (ModelState.IsValid)
+                {
+                    // Şirket bilgilerini kaydetme
+                    await _sistemAyarService.SaveSettingAsync("SirketAdi", model.SirketAdi);
+                    await _sistemAyarService.SaveSettingAsync("SirketAdresi", model.SirketAdresi);
+                    await _sistemAyarService.SaveSettingAsync("SirketTelefon", model.SirketTelefon);
+                    await _sistemAyarService.SaveSettingAsync("SirketEmail", model.SirketEmail);
+                    await _sistemAyarService.SaveSettingAsync("SirketVergiNo", model.SirketVergiNo);
+                    await _sistemAyarService.SaveSettingAsync("SirketVergiDairesi", model.SirketVergiDairesi);
+                    await _sistemAyarService.SaveSettingAsync("LogoUrl", model.LogoUrl ?? "");
+                    await _sistemAyarService.SaveSettingAsync("LogoGoster", model.LogoGoster.ToString());
+
+                    await _logService.AddLogAsync("Bilgi", "Şirket bilgileri güncellendi", "SistemAyarController/SirketBilgileri");
+                    TempData["Success"] = "Şirket bilgileri başarıyla kaydedildi.";
+                    
+                    return RedirectToAction(nameof(SirketBilgileri));
+                }
+                
+                return View(model);
+            }
+            catch (Exception ex)
+            {
+                _logger.LogError(ex, "Şirket bilgileri kaydedilirken hata oluştu");
+                ModelState.AddModelError("", "Şirket bilgileri kaydedilirken bir hata oluştu: " + ex.Message);
+                return View(model);
+            }
+        }
+
+        #endregion
+
         #region Helper Methods
 
         private void UpsertAyar(string anahtar, string deger)
