@@ -1,0 +1,878 @@
+2025-05-20 00:01:33.728 +03:00 [INF] Yaklaşan hatırlatıcılar kontrol ediliyor...
+2025-05-20 00:02:19.914 +03:00 [INF] StokGirisiYap - Mevcut transaction kullanılıyor: Ürün 2216d3ad-9370-49a9-847e-c374b130978d, Miktar 6.00
+2025-05-20 00:02:35.529 +03:00 [INF] Bekleyen hatırlatma bulunamadı.
+2025-05-20 00:02:58.371 +03:00 [ERR] An exception occurred in the database while saving changes for context type 'MuhasebeStokWebApp.Data.ApplicationDbContext'.
+Microsoft.EntityFrameworkCore.DbUpdateException: An error occurred while saving the entity changes. See the inner exception for details.
+ ---> Microsoft.Data.SqlClient.SqlException (0x80131904): NULL değeri 'MuhasebeStokDB.dbo.FaturaDetaylari' tablosunun 'SatirKdvToplam' sütununa eklemez; sütun null değerlere izin vermiyor. INSERT başarısız.
+   at Microsoft.Data.SqlClient.SqlConnection.OnError(SqlException exception, Boolean breakConnection, Action`1 wrapCloseInAction)
+   at Microsoft.Data.SqlClient.SqlInternalConnection.OnError(SqlException exception, Boolean breakConnection, Action`1 wrapCloseInAction)
+   at Microsoft.Data.SqlClient.TdsParser.ThrowExceptionAndWarning(TdsParserStateObject stateObj, Boolean callerHasConnectionLock, Boolean asyncClose)
+   at Microsoft.Data.SqlClient.TdsParser.TryRun(RunBehavior runBehavior, SqlCommand cmdHandler, SqlDataReader dataStream, BulkCopySimpleResultSet bulkCopyHandler, TdsParserStateObject stateObj, Boolean& dataReady)
+   at Microsoft.Data.SqlClient.SqlDataReader.TryHasMoreRows(Boolean& moreRows)
+   at Microsoft.Data.SqlClient.SqlDataReader.TryHasMoreResults(Boolean& moreResults)
+   at Microsoft.Data.SqlClient.SqlDataReader.TryNextResult(Boolean& more)
+   at Microsoft.Data.SqlClient.SqlDataReader.NextResultAsyncExecute(Task task, Object state)
+   at Microsoft.Data.SqlClient.SqlDataReader.InvokeAsyncCall[T](SqlDataReaderBaseAsyncCallContext`1 context)
+--- End of stack trace from previous location ---
+   at Microsoft.EntityFrameworkCore.Update.AffectedCountModificationCommandBatch.ConsumeAsync(RelationalDataReader reader, CancellationToken cancellationToken)
+ClientConnectionId:bf57b31d-8203-4ce5-93a2-b1401122aeb4
+Error Number:515,State:2,Class:16
+   --- End of inner exception stack trace ---
+   at Microsoft.EntityFrameworkCore.Update.AffectedCountModificationCommandBatch.ConsumeAsync(RelationalDataReader reader, CancellationToken cancellationToken)
+   at Microsoft.EntityFrameworkCore.Update.ReaderModificationCommandBatch.ExecuteAsync(IRelationalConnection connection, CancellationToken cancellationToken)
+   at Microsoft.EntityFrameworkCore.Update.ReaderModificationCommandBatch.ExecuteAsync(IRelationalConnection connection, CancellationToken cancellationToken)
+   at Microsoft.EntityFrameworkCore.SqlServer.Update.Internal.SqlServerModificationCommandBatch.ExecuteAsync(IRelationalConnection connection, CancellationToken cancellationToken)
+   at Microsoft.EntityFrameworkCore.Update.Internal.BatchExecutor.ExecuteAsync(IEnumerable`1 commandBatches, IRelationalConnection connection, CancellationToken cancellationToken)
+   at Microsoft.EntityFrameworkCore.Update.Internal.BatchExecutor.ExecuteAsync(IEnumerable`1 commandBatches, IRelationalConnection connection, CancellationToken cancellationToken)
+   at Microsoft.EntityFrameworkCore.Update.Internal.BatchExecutor.ExecuteAsync(IEnumerable`1 commandBatches, IRelationalConnection connection, CancellationToken cancellationToken)
+   at Microsoft.EntityFrameworkCore.Storage.RelationalDatabase.SaveChangesAsync(IList`1 entries, CancellationToken cancellationToken)
+   at Microsoft.EntityFrameworkCore.ChangeTracking.Internal.StateManager.SaveChangesAsync(IList`1 entriesToSave, CancellationToken cancellationToken)
+   at Microsoft.EntityFrameworkCore.ChangeTracking.Internal.StateManager.SaveChangesAsync(StateManager stateManager, Boolean acceptAllChangesOnSuccess, CancellationToken cancellationToken)
+   at Microsoft.EntityFrameworkCore.SqlServer.Storage.Internal.SqlServerExecutionStrategy.ExecuteAsync[TState,TResult](TState state, Func`4 operation, Func`4 verifySucceeded, CancellationToken cancellationToken)
+   at Microsoft.EntityFrameworkCore.DbContext.SaveChangesAsync(Boolean acceptAllChangesOnSuccess, CancellationToken cancellationToken)
+Microsoft.EntityFrameworkCore.DbUpdateException: An error occurred while saving the entity changes. See the inner exception for details.
+ ---> Microsoft.Data.SqlClient.SqlException (0x80131904): NULL değeri 'MuhasebeStokDB.dbo.FaturaDetaylari' tablosunun 'SatirKdvToplam' sütununa eklemez; sütun null değerlere izin vermiyor. INSERT başarısız.
+   at Microsoft.Data.SqlClient.SqlConnection.OnError(SqlException exception, Boolean breakConnection, Action`1 wrapCloseInAction)
+   at Microsoft.Data.SqlClient.SqlInternalConnection.OnError(SqlException exception, Boolean breakConnection, Action`1 wrapCloseInAction)
+   at Microsoft.Data.SqlClient.TdsParser.ThrowExceptionAndWarning(TdsParserStateObject stateObj, Boolean callerHasConnectionLock, Boolean asyncClose)
+   at Microsoft.Data.SqlClient.TdsParser.TryRun(RunBehavior runBehavior, SqlCommand cmdHandler, SqlDataReader dataStream, BulkCopySimpleResultSet bulkCopyHandler, TdsParserStateObject stateObj, Boolean& dataReady)
+   at Microsoft.Data.SqlClient.SqlDataReader.TryHasMoreRows(Boolean& moreRows)
+   at Microsoft.Data.SqlClient.SqlDataReader.TryHasMoreResults(Boolean& moreResults)
+   at Microsoft.Data.SqlClient.SqlDataReader.TryNextResult(Boolean& more)
+   at Microsoft.Data.SqlClient.SqlDataReader.NextResultAsyncExecute(Task task, Object state)
+   at Microsoft.Data.SqlClient.SqlDataReader.InvokeAsyncCall[T](SqlDataReaderBaseAsyncCallContext`1 context)
+--- End of stack trace from previous location ---
+   at Microsoft.EntityFrameworkCore.Update.AffectedCountModificationCommandBatch.ConsumeAsync(RelationalDataReader reader, CancellationToken cancellationToken)
+ClientConnectionId:bf57b31d-8203-4ce5-93a2-b1401122aeb4
+Error Number:515,State:2,Class:16
+   --- End of inner exception stack trace ---
+   at Microsoft.EntityFrameworkCore.Update.AffectedCountModificationCommandBatch.ConsumeAsync(RelationalDataReader reader, CancellationToken cancellationToken)
+   at Microsoft.EntityFrameworkCore.Update.ReaderModificationCommandBatch.ExecuteAsync(IRelationalConnection connection, CancellationToken cancellationToken)
+   at Microsoft.EntityFrameworkCore.Update.ReaderModificationCommandBatch.ExecuteAsync(IRelationalConnection connection, CancellationToken cancellationToken)
+   at Microsoft.EntityFrameworkCore.SqlServer.Update.Internal.SqlServerModificationCommandBatch.ExecuteAsync(IRelationalConnection connection, CancellationToken cancellationToken)
+   at Microsoft.EntityFrameworkCore.Update.Internal.BatchExecutor.ExecuteAsync(IEnumerable`1 commandBatches, IRelationalConnection connection, CancellationToken cancellationToken)
+   at Microsoft.EntityFrameworkCore.Update.Internal.BatchExecutor.ExecuteAsync(IEnumerable`1 commandBatches, IRelationalConnection connection, CancellationToken cancellationToken)
+   at Microsoft.EntityFrameworkCore.Update.Internal.BatchExecutor.ExecuteAsync(IEnumerable`1 commandBatches, IRelationalConnection connection, CancellationToken cancellationToken)
+   at Microsoft.EntityFrameworkCore.Storage.RelationalDatabase.SaveChangesAsync(IList`1 entries, CancellationToken cancellationToken)
+   at Microsoft.EntityFrameworkCore.ChangeTracking.Internal.StateManager.SaveChangesAsync(IList`1 entriesToSave, CancellationToken cancellationToken)
+   at Microsoft.EntityFrameworkCore.ChangeTracking.Internal.StateManager.SaveChangesAsync(StateManager stateManager, Boolean acceptAllChangesOnSuccess, CancellationToken cancellationToken)
+   at Microsoft.EntityFrameworkCore.SqlServer.Storage.Internal.SqlServerExecutionStrategy.ExecuteAsync[TState,TResult](TState state, Func`4 operation, Func`4 verifySucceeded, CancellationToken cancellationToken)
+   at Microsoft.EntityFrameworkCore.DbContext.SaveChangesAsync(Boolean acceptAllChangesOnSuccess, CancellationToken cancellationToken)
+2025-05-20 00:04:38.238 +03:00 [ERR] Stok girişi sırasında hata oluştu: UrunID=2216d3ad-9370-49a9-847e-c374b130978d, Miktar=6.00, BirimFiyat=50.00
+Microsoft.EntityFrameworkCore.DbUpdateException: An error occurred while saving the entity changes. See the inner exception for details.
+ ---> Microsoft.Data.SqlClient.SqlException (0x80131904): NULL değeri 'MuhasebeStokDB.dbo.FaturaDetaylari' tablosunun 'SatirKdvToplam' sütununa eklemez; sütun null değerlere izin vermiyor. INSERT başarısız.
+   at Microsoft.Data.SqlClient.SqlConnection.OnError(SqlException exception, Boolean breakConnection, Action`1 wrapCloseInAction)
+   at Microsoft.Data.SqlClient.SqlInternalConnection.OnError(SqlException exception, Boolean breakConnection, Action`1 wrapCloseInAction)
+   at Microsoft.Data.SqlClient.TdsParser.ThrowExceptionAndWarning(TdsParserStateObject stateObj, Boolean callerHasConnectionLock, Boolean asyncClose)
+   at Microsoft.Data.SqlClient.TdsParser.TryRun(RunBehavior runBehavior, SqlCommand cmdHandler, SqlDataReader dataStream, BulkCopySimpleResultSet bulkCopyHandler, TdsParserStateObject stateObj, Boolean& dataReady)
+   at Microsoft.Data.SqlClient.SqlDataReader.TryHasMoreRows(Boolean& moreRows)
+   at Microsoft.Data.SqlClient.SqlDataReader.TryHasMoreResults(Boolean& moreResults)
+   at Microsoft.Data.SqlClient.SqlDataReader.TryNextResult(Boolean& more)
+   at Microsoft.Data.SqlClient.SqlDataReader.NextResultAsyncExecute(Task task, Object state)
+   at Microsoft.Data.SqlClient.SqlDataReader.InvokeAsyncCall[T](SqlDataReaderBaseAsyncCallContext`1 context)
+--- End of stack trace from previous location ---
+   at Microsoft.EntityFrameworkCore.Update.AffectedCountModificationCommandBatch.ConsumeAsync(RelationalDataReader reader, CancellationToken cancellationToken)
+ClientConnectionId:bf57b31d-8203-4ce5-93a2-b1401122aeb4
+Error Number:515,State:2,Class:16
+   --- End of inner exception stack trace ---
+   at Microsoft.EntityFrameworkCore.Update.AffectedCountModificationCommandBatch.ConsumeAsync(RelationalDataReader reader, CancellationToken cancellationToken)
+   at Microsoft.EntityFrameworkCore.Update.ReaderModificationCommandBatch.ExecuteAsync(IRelationalConnection connection, CancellationToken cancellationToken)
+   at Microsoft.EntityFrameworkCore.Update.ReaderModificationCommandBatch.ExecuteAsync(IRelationalConnection connection, CancellationToken cancellationToken)
+   at Microsoft.EntityFrameworkCore.SqlServer.Update.Internal.SqlServerModificationCommandBatch.ExecuteAsync(IRelationalConnection connection, CancellationToken cancellationToken)
+   at Microsoft.EntityFrameworkCore.Update.Internal.BatchExecutor.ExecuteAsync(IEnumerable`1 commandBatches, IRelationalConnection connection, CancellationToken cancellationToken)
+   at Microsoft.EntityFrameworkCore.Update.Internal.BatchExecutor.ExecuteAsync(IEnumerable`1 commandBatches, IRelationalConnection connection, CancellationToken cancellationToken)
+   at Microsoft.EntityFrameworkCore.Update.Internal.BatchExecutor.ExecuteAsync(IEnumerable`1 commandBatches, IRelationalConnection connection, CancellationToken cancellationToken)
+   at Microsoft.EntityFrameworkCore.Storage.RelationalDatabase.SaveChangesAsync(IList`1 entries, CancellationToken cancellationToken)
+   at Microsoft.EntityFrameworkCore.ChangeTracking.Internal.StateManager.SaveChangesAsync(IList`1 entriesToSave, CancellationToken cancellationToken)
+   at Microsoft.EntityFrameworkCore.ChangeTracking.Internal.StateManager.SaveChangesAsync(StateManager stateManager, Boolean acceptAllChangesOnSuccess, CancellationToken cancellationToken)
+   at Microsoft.EntityFrameworkCore.SqlServer.Storage.Internal.SqlServerExecutionStrategy.ExecuteAsync[TState,TResult](TState state, Func`4 operation, Func`4 verifySucceeded, CancellationToken cancellationToken)
+   at Microsoft.EntityFrameworkCore.DbContext.SaveChangesAsync(Boolean acceptAllChangesOnSuccess, CancellationToken cancellationToken)
+   at Microsoft.EntityFrameworkCore.DbContext.SaveChangesAsync(Boolean acceptAllChangesOnSuccess, CancellationToken cancellationToken)
+   at MuhasebeStokWebApp.Services.StokFifoService.StokGirisiYap(Guid urunID, Decimal miktar, Decimal birimFiyat, String birim, String referansNo, String referansTuru, Nullable`1 referansID, String aciklama, String paraBirimi, Nullable`1 dovizKuru) in D:\cursor-workspace\MuhasebeStokWebApp\Services\StokFifoService.cs:line 218
+2025-05-20 00:04:38.876 +03:00 [ERR] Fatura ve ilişkili kayıtlar güncellenirken hata. FaturaID: "f01cfc7e-5cb3-42c0-911b-98634d9733b4", Hata: An error occurred while saving the entity changes. See the inner exception for details.
+Microsoft.EntityFrameworkCore.DbUpdateException: An error occurred while saving the entity changes. See the inner exception for details.
+ ---> Microsoft.Data.SqlClient.SqlException (0x80131904): NULL değeri 'MuhasebeStokDB.dbo.FaturaDetaylari' tablosunun 'SatirKdvToplam' sütununa eklemez; sütun null değerlere izin vermiyor. INSERT başarısız.
+   at Microsoft.Data.SqlClient.SqlConnection.OnError(SqlException exception, Boolean breakConnection, Action`1 wrapCloseInAction)
+   at Microsoft.Data.SqlClient.SqlInternalConnection.OnError(SqlException exception, Boolean breakConnection, Action`1 wrapCloseInAction)
+   at Microsoft.Data.SqlClient.TdsParser.ThrowExceptionAndWarning(TdsParserStateObject stateObj, Boolean callerHasConnectionLock, Boolean asyncClose)
+   at Microsoft.Data.SqlClient.TdsParser.TryRun(RunBehavior runBehavior, SqlCommand cmdHandler, SqlDataReader dataStream, BulkCopySimpleResultSet bulkCopyHandler, TdsParserStateObject stateObj, Boolean& dataReady)
+   at Microsoft.Data.SqlClient.SqlDataReader.TryHasMoreRows(Boolean& moreRows)
+   at Microsoft.Data.SqlClient.SqlDataReader.TryHasMoreResults(Boolean& moreResults)
+   at Microsoft.Data.SqlClient.SqlDataReader.TryNextResult(Boolean& more)
+   at Microsoft.Data.SqlClient.SqlDataReader.NextResultAsyncExecute(Task task, Object state)
+   at Microsoft.Data.SqlClient.SqlDataReader.InvokeAsyncCall[T](SqlDataReaderBaseAsyncCallContext`1 context)
+--- End of stack trace from previous location ---
+   at Microsoft.EntityFrameworkCore.Update.AffectedCountModificationCommandBatch.ConsumeAsync(RelationalDataReader reader, CancellationToken cancellationToken)
+ClientConnectionId:bf57b31d-8203-4ce5-93a2-b1401122aeb4
+Error Number:515,State:2,Class:16
+   --- End of inner exception stack trace ---
+   at Microsoft.EntityFrameworkCore.Update.AffectedCountModificationCommandBatch.ConsumeAsync(RelationalDataReader reader, CancellationToken cancellationToken)
+   at Microsoft.EntityFrameworkCore.Update.ReaderModificationCommandBatch.ExecuteAsync(IRelationalConnection connection, CancellationToken cancellationToken)
+   at Microsoft.EntityFrameworkCore.Update.ReaderModificationCommandBatch.ExecuteAsync(IRelationalConnection connection, CancellationToken cancellationToken)
+   at Microsoft.EntityFrameworkCore.SqlServer.Update.Internal.SqlServerModificationCommandBatch.ExecuteAsync(IRelationalConnection connection, CancellationToken cancellationToken)
+   at Microsoft.EntityFrameworkCore.Update.Internal.BatchExecutor.ExecuteAsync(IEnumerable`1 commandBatches, IRelationalConnection connection, CancellationToken cancellationToken)
+   at Microsoft.EntityFrameworkCore.Update.Internal.BatchExecutor.ExecuteAsync(IEnumerable`1 commandBatches, IRelationalConnection connection, CancellationToken cancellationToken)
+   at Microsoft.EntityFrameworkCore.Update.Internal.BatchExecutor.ExecuteAsync(IEnumerable`1 commandBatches, IRelationalConnection connection, CancellationToken cancellationToken)
+   at Microsoft.EntityFrameworkCore.Storage.RelationalDatabase.SaveChangesAsync(IList`1 entries, CancellationToken cancellationToken)
+   at Microsoft.EntityFrameworkCore.ChangeTracking.Internal.StateManager.SaveChangesAsync(IList`1 entriesToSave, CancellationToken cancellationToken)
+   at Microsoft.EntityFrameworkCore.ChangeTracking.Internal.StateManager.SaveChangesAsync(StateManager stateManager, Boolean acceptAllChangesOnSuccess, CancellationToken cancellationToken)
+   at Microsoft.EntityFrameworkCore.SqlServer.Storage.Internal.SqlServerExecutionStrategy.ExecuteAsync[TState,TResult](TState state, Func`4 operation, Func`4 verifySucceeded, CancellationToken cancellationToken)
+   at Microsoft.EntityFrameworkCore.DbContext.SaveChangesAsync(Boolean acceptAllChangesOnSuccess, CancellationToken cancellationToken)
+   at Microsoft.EntityFrameworkCore.DbContext.SaveChangesAsync(Boolean acceptAllChangesOnSuccess, CancellationToken cancellationToken)
+   at MuhasebeStokWebApp.Services.StokFifoService.StokGirisiYap(Guid urunID, Decimal miktar, Decimal birimFiyat, String birim, String referansNo, String referansTuru, Nullable`1 referansID, String aciklama, String paraBirimi, Nullable`1 dovizKuru) in D:\cursor-workspace\MuhasebeStokWebApp\Services\StokFifoService.cs:line 218
+   at MuhasebeStokWebApp.Services.StokFifoService.StokGirisiYap(Guid urunID, Decimal miktar, Decimal birimFiyat, String birim, String referansNo, String referansTuru, Nullable`1 referansID, String aciklama, String paraBirimi, Nullable`1 dovizKuru) in D:\cursor-workspace\MuhasebeStokWebApp\Services\StokFifoService.cs:line 240
+   at MuhasebeStokWebApp.Services.StokFifoService.StokGirisiYap(Guid urunID, Decimal miktar, Decimal birimFiyat, String birim, String referansNo, String referansTuru, Nullable`1 referansID, String aciklama, String paraBirimi, Nullable`1 dovizKuru) in D:\cursor-workspace\MuhasebeStokWebApp\Services\StokFifoService.cs:line 249
+   at MuhasebeStokWebApp.Services.FaturaOrchestrationService.UpdateFaturaWithRelations(Guid id, FaturaEditViewModel viewModel, Nullable`1 currentUserId) in D:\cursor-workspace\MuhasebeStokWebApp\Services\FaturaOrchestrationService.cs:line 493
+2025-05-20 00:04:38.920 +03:00 [INF] Fatura güncelleme işlemi geri alındı. FaturaID: "f01cfc7e-5cb3-42c0-911b-98634d9733b4"
+2025-05-20 00:04:39.137 +03:00 [ERR] Fatura güncelleme hatası
+Microsoft.EntityFrameworkCore.DbUpdateException: An error occurred while saving the entity changes. See the inner exception for details.
+ ---> Microsoft.Data.SqlClient.SqlException (0x80131904): NULL değeri 'MuhasebeStokDB.dbo.FaturaDetaylari' tablosunun 'SatirKdvToplam' sütununa eklemez; sütun null değerlere izin vermiyor. INSERT başarısız.
+   at Microsoft.Data.SqlClient.SqlConnection.OnError(SqlException exception, Boolean breakConnection, Action`1 wrapCloseInAction)
+   at Microsoft.Data.SqlClient.SqlInternalConnection.OnError(SqlException exception, Boolean breakConnection, Action`1 wrapCloseInAction)
+   at Microsoft.Data.SqlClient.TdsParser.ThrowExceptionAndWarning(TdsParserStateObject stateObj, Boolean callerHasConnectionLock, Boolean asyncClose)
+   at Microsoft.Data.SqlClient.TdsParser.TryRun(RunBehavior runBehavior, SqlCommand cmdHandler, SqlDataReader dataStream, BulkCopySimpleResultSet bulkCopyHandler, TdsParserStateObject stateObj, Boolean& dataReady)
+   at Microsoft.Data.SqlClient.SqlDataReader.TryHasMoreRows(Boolean& moreRows)
+   at Microsoft.Data.SqlClient.SqlDataReader.TryHasMoreResults(Boolean& moreResults)
+   at Microsoft.Data.SqlClient.SqlDataReader.TryNextResult(Boolean& more)
+   at Microsoft.Data.SqlClient.SqlDataReader.NextResultAsyncExecute(Task task, Object state)
+   at Microsoft.Data.SqlClient.SqlDataReader.InvokeAsyncCall[T](SqlDataReaderBaseAsyncCallContext`1 context)
+--- End of stack trace from previous location ---
+   at Microsoft.EntityFrameworkCore.Update.AffectedCountModificationCommandBatch.ConsumeAsync(RelationalDataReader reader, CancellationToken cancellationToken)
+ClientConnectionId:bf57b31d-8203-4ce5-93a2-b1401122aeb4
+Error Number:515,State:2,Class:16
+   --- End of inner exception stack trace ---
+   at Microsoft.EntityFrameworkCore.Update.AffectedCountModificationCommandBatch.ConsumeAsync(RelationalDataReader reader, CancellationToken cancellationToken)
+   at Microsoft.EntityFrameworkCore.Update.ReaderModificationCommandBatch.ExecuteAsync(IRelationalConnection connection, CancellationToken cancellationToken)
+   at Microsoft.EntityFrameworkCore.Update.ReaderModificationCommandBatch.ExecuteAsync(IRelationalConnection connection, CancellationToken cancellationToken)
+   at Microsoft.EntityFrameworkCore.SqlServer.Update.Internal.SqlServerModificationCommandBatch.ExecuteAsync(IRelationalConnection connection, CancellationToken cancellationToken)
+   at Microsoft.EntityFrameworkCore.Update.Internal.BatchExecutor.ExecuteAsync(IEnumerable`1 commandBatches, IRelationalConnection connection, CancellationToken cancellationToken)
+   at Microsoft.EntityFrameworkCore.Update.Internal.BatchExecutor.ExecuteAsync(IEnumerable`1 commandBatches, IRelationalConnection connection, CancellationToken cancellationToken)
+   at Microsoft.EntityFrameworkCore.Update.Internal.BatchExecutor.ExecuteAsync(IEnumerable`1 commandBatches, IRelationalConnection connection, CancellationToken cancellationToken)
+   at Microsoft.EntityFrameworkCore.Storage.RelationalDatabase.SaveChangesAsync(IList`1 entries, CancellationToken cancellationToken)
+   at Microsoft.EntityFrameworkCore.ChangeTracking.Internal.StateManager.SaveChangesAsync(IList`1 entriesToSave, CancellationToken cancellationToken)
+   at Microsoft.EntityFrameworkCore.ChangeTracking.Internal.StateManager.SaveChangesAsync(StateManager stateManager, Boolean acceptAllChangesOnSuccess, CancellationToken cancellationToken)
+   at Microsoft.EntityFrameworkCore.SqlServer.Storage.Internal.SqlServerExecutionStrategy.ExecuteAsync[TState,TResult](TState state, Func`4 operation, Func`4 verifySucceeded, CancellationToken cancellationToken)
+   at Microsoft.EntityFrameworkCore.DbContext.SaveChangesAsync(Boolean acceptAllChangesOnSuccess, CancellationToken cancellationToken)
+   at Microsoft.EntityFrameworkCore.DbContext.SaveChangesAsync(Boolean acceptAllChangesOnSuccess, CancellationToken cancellationToken)
+   at MuhasebeStokWebApp.Services.StokFifoService.StokGirisiYap(Guid urunID, Decimal miktar, Decimal birimFiyat, String birim, String referansNo, String referansTuru, Nullable`1 referansID, String aciklama, String paraBirimi, Nullable`1 dovizKuru) in D:\cursor-workspace\MuhasebeStokWebApp\Services\StokFifoService.cs:line 218
+   at MuhasebeStokWebApp.Services.StokFifoService.StokGirisiYap(Guid urunID, Decimal miktar, Decimal birimFiyat, String birim, String referansNo, String referansTuru, Nullable`1 referansID, String aciklama, String paraBirimi, Nullable`1 dovizKuru) in D:\cursor-workspace\MuhasebeStokWebApp\Services\StokFifoService.cs:line 240
+   at MuhasebeStokWebApp.Services.StokFifoService.StokGirisiYap(Guid urunID, Decimal miktar, Decimal birimFiyat, String birim, String referansNo, String referansTuru, Nullable`1 referansID, String aciklama, String paraBirimi, Nullable`1 dovizKuru) in D:\cursor-workspace\MuhasebeStokWebApp\Services\StokFifoService.cs:line 249
+   at MuhasebeStokWebApp.Services.FaturaOrchestrationService.UpdateFaturaWithRelations(Guid id, FaturaEditViewModel viewModel, Nullable`1 currentUserId) in D:\cursor-workspace\MuhasebeStokWebApp\Services\FaturaOrchestrationService.cs:line 493
+   at MuhasebeStokWebApp.Services.FaturaOrchestrationService.UpdateFaturaWithRelations(Guid id, FaturaEditViewModel viewModel, Nullable`1 currentUserId) in D:\cursor-workspace\MuhasebeStokWebApp\Services\FaturaOrchestrationService.cs:line 584
+   at MuhasebeStokWebApp.Services.FaturaOrchestrationService.UpdateFaturaWithRelations(Guid id, FaturaEditViewModel viewModel, Nullable`1 currentUserId) in D:\cursor-workspace\MuhasebeStokWebApp\Services\FaturaOrchestrationService.cs:line 592
+   at MuhasebeStokWebApp.Controllers.FaturaController.Edit(Guid id, FaturaEditViewModel viewModel) in D:\cursor-workspace\MuhasebeStokWebApp\Controllers\FaturaController.cs:line 620
+2025-05-20 00:04:47.828 +03:00 [INF] Fatura ve ilişkili kayıtlar güncelleniyor. FaturaID: "f01cfc7e-5cb3-42c0-911b-98634d9733b4"
+2025-05-20 00:04:47.997 +03:00 [INF] UpdateAsync işlemi başlatılıyor
+2025-05-20 00:04:48.109 +03:00 [ERR] FaturaTransactionService.UpdateAsync Parametreler: f01cfc7e-5cb3-42c0-911b-98634d9733b4
+System.InvalidOperationException: The connection is already in a transaction and cannot participate in another transaction.
+   at Microsoft.EntityFrameworkCore.Storage.RelationalConnection.EnsureNoTransactions()
+   at Microsoft.EntityFrameworkCore.Storage.RelationalConnection.BeginTransactionAsync(IsolationLevel isolationLevel, CancellationToken cancellationToken)
+   at Microsoft.EntityFrameworkCore.Storage.RelationalConnection.BeginTransactionAsync(CancellationToken cancellationToken)
+   at MuhasebeStokWebApp.Data.Repositories.UnitOfWork.BeginTransactionAsync() in D:\cursor-workspace\MuhasebeStokWebApp\Data\Repositories\UnitOfWork.cs:line 106
+   at MuhasebeStokWebApp.Services.FaturaTransactionService.EnsureTransactionAsync() in D:\cursor-workspace\MuhasebeStokWebApp\Services\FaturaTransactionService.cs:line 37
+   at MuhasebeStokWebApp.Services.FaturaTransactionService.<>c__DisplayClass8_0`1.<<ExecuteInTransactionAsync>b__0>d.MoveNext() in D:\cursor-workspace\MuhasebeStokWebApp\Services\FaturaTransactionService.cs:line 86
+--- End of stack trace from previous location ---
+   at MuhasebeStokWebApp.Services.ExceptionHandlingService.HandleExceptionAsync[T](Func`1 func, String logContext, Object[] logParams) in D:\cursor-workspace\MuhasebeStokWebApp\Services\ExceptionHandlingService.cs:line 146
+2025-05-20 00:04:48.111 +03:00 [INF] Fatura bilgileri güncellendi. FaturaID: "f01cfc7e-5cb3-42c0-911b-98634d9733b4"
+2025-05-20 00:04:48.112 +03:00 [INF] FIFO kayıtları iptal edilmeye çalışılıyor: ReferansID=f01cfc7e-5cb3-42c0-911b-98634d9733b4, ReferansTuru=Fatura
+2025-05-20 00:04:48.112 +03:00 [INF] FifoKayitlariniIptalEt - Mevcut transaction kullanılıyor: ReferansID=f01cfc7e-5cb3-42c0-911b-98634d9733b4
+2025-05-20 00:04:48.162 +03:00 [INF] FIFO kayıtları iptal ediliyor. Toplam 1 kayıt bulundu.
+2025-05-20 00:04:48.293 +03:00 [INF] İlişkili FIFO kayıtları iptal edildi. FaturaID: "f01cfc7e-5cb3-42c0-911b-98634d9733b4"
+2025-05-20 00:04:48.332 +03:00 [INF] İlişkili stok hareketleri silindi. FaturaID: "f01cfc7e-5cb3-42c0-911b-98634d9733b4"
+2025-05-20 00:04:48.368 +03:00 [INF] Cari hareket silindi. CariHareketID: "6c9f082f-3ec5-4847-8180-4a82265f9193"
+2025-05-20 00:04:48.414 +03:00 [INF] Eski fatura detayları silindi. Toplam 1 detay. FaturaID: "f01cfc7e-5cb3-42c0-911b-98634d9733b4"
+2025-05-20 00:04:48.415 +03:00 [INF] Yeni fatura detayı eklendi. UrunID: "2216d3ad-9370-49a9-847e-c374b130978d"
+2025-05-20 00:04:48.416 +03:00 [INF] Stok hareketi oluşturuldu. UrunID: "2216d3ad-9370-49a9-847e-c374b130978d", Miktar: 6.00
+2025-05-20 00:04:59.598 +03:00 [INF] StokGirisiYap - Mevcut transaction kullanılıyor: Ürün 2216d3ad-9370-49a9-847e-c374b130978d, Miktar 6.00
+2025-05-20 00:11:08.020 +03:00 [INF] Yaklaşan hatırlatıcılar kontrol ediliyor...
+2025-05-20 00:11:08.448 +03:00 [INF] Bekleyen hatırlatma bulunamadı.
+2025-05-20 00:11:08.528 +03:00 [ERR] An exception occurred in the database while saving changes for context type 'MuhasebeStokWebApp.Data.ApplicationDbContext'.
+Microsoft.EntityFrameworkCore.DbUpdateException: An error occurred while saving the entity changes. See the inner exception for details.
+ ---> Microsoft.Data.SqlClient.SqlException (0x80131904): NULL değeri 'MuhasebeStokDB.dbo.FaturaDetaylari' tablosunun 'SatirKdvToplam' sütununa eklemez; sütun null değerlere izin vermiyor. INSERT başarısız.
+   at Microsoft.Data.SqlClient.SqlConnection.OnError(SqlException exception, Boolean breakConnection, Action`1 wrapCloseInAction)
+   at Microsoft.Data.SqlClient.SqlInternalConnection.OnError(SqlException exception, Boolean breakConnection, Action`1 wrapCloseInAction)
+   at Microsoft.Data.SqlClient.TdsParser.ThrowExceptionAndWarning(TdsParserStateObject stateObj, Boolean callerHasConnectionLock, Boolean asyncClose)
+   at Microsoft.Data.SqlClient.TdsParser.TryRun(RunBehavior runBehavior, SqlCommand cmdHandler, SqlDataReader dataStream, BulkCopySimpleResultSet bulkCopyHandler, TdsParserStateObject stateObj, Boolean& dataReady)
+   at Microsoft.Data.SqlClient.SqlDataReader.TryHasMoreRows(Boolean& moreRows)
+   at Microsoft.Data.SqlClient.SqlDataReader.TryHasMoreResults(Boolean& moreResults)
+   at Microsoft.Data.SqlClient.SqlDataReader.TryNextResult(Boolean& more)
+   at Microsoft.Data.SqlClient.SqlDataReader.NextResultAsyncExecute(Task task, Object state)
+   at Microsoft.Data.SqlClient.SqlDataReader.InvokeAsyncCall[T](SqlDataReaderBaseAsyncCallContext`1 context)
+--- End of stack trace from previous location ---
+   at Microsoft.EntityFrameworkCore.Update.AffectedCountModificationCommandBatch.ConsumeAsync(RelationalDataReader reader, CancellationToken cancellationToken)
+ClientConnectionId:bf57b31d-8203-4ce5-93a2-b1401122aeb4
+Error Number:515,State:2,Class:16
+   --- End of inner exception stack trace ---
+   at Microsoft.EntityFrameworkCore.Update.AffectedCountModificationCommandBatch.ConsumeAsync(RelationalDataReader reader, CancellationToken cancellationToken)
+   at Microsoft.EntityFrameworkCore.Update.ReaderModificationCommandBatch.ExecuteAsync(IRelationalConnection connection, CancellationToken cancellationToken)
+   at Microsoft.EntityFrameworkCore.Update.ReaderModificationCommandBatch.ExecuteAsync(IRelationalConnection connection, CancellationToken cancellationToken)
+   at Microsoft.EntityFrameworkCore.SqlServer.Update.Internal.SqlServerModificationCommandBatch.ExecuteAsync(IRelationalConnection connection, CancellationToken cancellationToken)
+   at Microsoft.EntityFrameworkCore.Update.Internal.BatchExecutor.ExecuteAsync(IEnumerable`1 commandBatches, IRelationalConnection connection, CancellationToken cancellationToken)
+   at Microsoft.EntityFrameworkCore.Update.Internal.BatchExecutor.ExecuteAsync(IEnumerable`1 commandBatches, IRelationalConnection connection, CancellationToken cancellationToken)
+   at Microsoft.EntityFrameworkCore.Update.Internal.BatchExecutor.ExecuteAsync(IEnumerable`1 commandBatches, IRelationalConnection connection, CancellationToken cancellationToken)
+   at Microsoft.EntityFrameworkCore.Storage.RelationalDatabase.SaveChangesAsync(IList`1 entries, CancellationToken cancellationToken)
+   at Microsoft.EntityFrameworkCore.ChangeTracking.Internal.StateManager.SaveChangesAsync(IList`1 entriesToSave, CancellationToken cancellationToken)
+   at Microsoft.EntityFrameworkCore.ChangeTracking.Internal.StateManager.SaveChangesAsync(StateManager stateManager, Boolean acceptAllChangesOnSuccess, CancellationToken cancellationToken)
+   at Microsoft.EntityFrameworkCore.SqlServer.Storage.Internal.SqlServerExecutionStrategy.ExecuteAsync[TState,TResult](TState state, Func`4 operation, Func`4 verifySucceeded, CancellationToken cancellationToken)
+   at Microsoft.EntityFrameworkCore.DbContext.SaveChangesAsync(Boolean acceptAllChangesOnSuccess, CancellationToken cancellationToken)
+Microsoft.EntityFrameworkCore.DbUpdateException: An error occurred while saving the entity changes. See the inner exception for details.
+ ---> Microsoft.Data.SqlClient.SqlException (0x80131904): NULL değeri 'MuhasebeStokDB.dbo.FaturaDetaylari' tablosunun 'SatirKdvToplam' sütununa eklemez; sütun null değerlere izin vermiyor. INSERT başarısız.
+   at Microsoft.Data.SqlClient.SqlConnection.OnError(SqlException exception, Boolean breakConnection, Action`1 wrapCloseInAction)
+   at Microsoft.Data.SqlClient.SqlInternalConnection.OnError(SqlException exception, Boolean breakConnection, Action`1 wrapCloseInAction)
+   at Microsoft.Data.SqlClient.TdsParser.ThrowExceptionAndWarning(TdsParserStateObject stateObj, Boolean callerHasConnectionLock, Boolean asyncClose)
+   at Microsoft.Data.SqlClient.TdsParser.TryRun(RunBehavior runBehavior, SqlCommand cmdHandler, SqlDataReader dataStream, BulkCopySimpleResultSet bulkCopyHandler, TdsParserStateObject stateObj, Boolean& dataReady)
+   at Microsoft.Data.SqlClient.SqlDataReader.TryHasMoreRows(Boolean& moreRows)
+   at Microsoft.Data.SqlClient.SqlDataReader.TryHasMoreResults(Boolean& moreResults)
+   at Microsoft.Data.SqlClient.SqlDataReader.TryNextResult(Boolean& more)
+   at Microsoft.Data.SqlClient.SqlDataReader.NextResultAsyncExecute(Task task, Object state)
+   at Microsoft.Data.SqlClient.SqlDataReader.InvokeAsyncCall[T](SqlDataReaderBaseAsyncCallContext`1 context)
+--- End of stack trace from previous location ---
+   at Microsoft.EntityFrameworkCore.Update.AffectedCountModificationCommandBatch.ConsumeAsync(RelationalDataReader reader, CancellationToken cancellationToken)
+ClientConnectionId:bf57b31d-8203-4ce5-93a2-b1401122aeb4
+Error Number:515,State:2,Class:16
+   --- End of inner exception stack trace ---
+   at Microsoft.EntityFrameworkCore.Update.AffectedCountModificationCommandBatch.ConsumeAsync(RelationalDataReader reader, CancellationToken cancellationToken)
+   at Microsoft.EntityFrameworkCore.Update.ReaderModificationCommandBatch.ExecuteAsync(IRelationalConnection connection, CancellationToken cancellationToken)
+   at Microsoft.EntityFrameworkCore.Update.ReaderModificationCommandBatch.ExecuteAsync(IRelationalConnection connection, CancellationToken cancellationToken)
+   at Microsoft.EntityFrameworkCore.SqlServer.Update.Internal.SqlServerModificationCommandBatch.ExecuteAsync(IRelationalConnection connection, CancellationToken cancellationToken)
+   at Microsoft.EntityFrameworkCore.Update.Internal.BatchExecutor.ExecuteAsync(IEnumerable`1 commandBatches, IRelationalConnection connection, CancellationToken cancellationToken)
+   at Microsoft.EntityFrameworkCore.Update.Internal.BatchExecutor.ExecuteAsync(IEnumerable`1 commandBatches, IRelationalConnection connection, CancellationToken cancellationToken)
+   at Microsoft.EntityFrameworkCore.Update.Internal.BatchExecutor.ExecuteAsync(IEnumerable`1 commandBatches, IRelationalConnection connection, CancellationToken cancellationToken)
+   at Microsoft.EntityFrameworkCore.Storage.RelationalDatabase.SaveChangesAsync(IList`1 entries, CancellationToken cancellationToken)
+   at Microsoft.EntityFrameworkCore.ChangeTracking.Internal.StateManager.SaveChangesAsync(IList`1 entriesToSave, CancellationToken cancellationToken)
+   at Microsoft.EntityFrameworkCore.ChangeTracking.Internal.StateManager.SaveChangesAsync(StateManager stateManager, Boolean acceptAllChangesOnSuccess, CancellationToken cancellationToken)
+   at Microsoft.EntityFrameworkCore.SqlServer.Storage.Internal.SqlServerExecutionStrategy.ExecuteAsync[TState,TResult](TState state, Func`4 operation, Func`4 verifySucceeded, CancellationToken cancellationToken)
+   at Microsoft.EntityFrameworkCore.DbContext.SaveChangesAsync(Boolean acceptAllChangesOnSuccess, CancellationToken cancellationToken)
+2025-05-20 00:11:08.604 +03:00 [ERR] Stok girişi sırasında hata oluştu: UrunID=2216d3ad-9370-49a9-847e-c374b130978d, Miktar=6.00, BirimFiyat=50.00
+Microsoft.EntityFrameworkCore.DbUpdateException: An error occurred while saving the entity changes. See the inner exception for details.
+ ---> Microsoft.Data.SqlClient.SqlException (0x80131904): NULL değeri 'MuhasebeStokDB.dbo.FaturaDetaylari' tablosunun 'SatirKdvToplam' sütununa eklemez; sütun null değerlere izin vermiyor. INSERT başarısız.
+   at Microsoft.Data.SqlClient.SqlConnection.OnError(SqlException exception, Boolean breakConnection, Action`1 wrapCloseInAction)
+   at Microsoft.Data.SqlClient.SqlInternalConnection.OnError(SqlException exception, Boolean breakConnection, Action`1 wrapCloseInAction)
+   at Microsoft.Data.SqlClient.TdsParser.ThrowExceptionAndWarning(TdsParserStateObject stateObj, Boolean callerHasConnectionLock, Boolean asyncClose)
+   at Microsoft.Data.SqlClient.TdsParser.TryRun(RunBehavior runBehavior, SqlCommand cmdHandler, SqlDataReader dataStream, BulkCopySimpleResultSet bulkCopyHandler, TdsParserStateObject stateObj, Boolean& dataReady)
+   at Microsoft.Data.SqlClient.SqlDataReader.TryHasMoreRows(Boolean& moreRows)
+   at Microsoft.Data.SqlClient.SqlDataReader.TryHasMoreResults(Boolean& moreResults)
+   at Microsoft.Data.SqlClient.SqlDataReader.TryNextResult(Boolean& more)
+   at Microsoft.Data.SqlClient.SqlDataReader.NextResultAsyncExecute(Task task, Object state)
+   at Microsoft.Data.SqlClient.SqlDataReader.InvokeAsyncCall[T](SqlDataReaderBaseAsyncCallContext`1 context)
+--- End of stack trace from previous location ---
+   at Microsoft.EntityFrameworkCore.Update.AffectedCountModificationCommandBatch.ConsumeAsync(RelationalDataReader reader, CancellationToken cancellationToken)
+ClientConnectionId:bf57b31d-8203-4ce5-93a2-b1401122aeb4
+Error Number:515,State:2,Class:16
+   --- End of inner exception stack trace ---
+   at Microsoft.EntityFrameworkCore.Update.AffectedCountModificationCommandBatch.ConsumeAsync(RelationalDataReader reader, CancellationToken cancellationToken)
+   at Microsoft.EntityFrameworkCore.Update.ReaderModificationCommandBatch.ExecuteAsync(IRelationalConnection connection, CancellationToken cancellationToken)
+   at Microsoft.EntityFrameworkCore.Update.ReaderModificationCommandBatch.ExecuteAsync(IRelationalConnection connection, CancellationToken cancellationToken)
+   at Microsoft.EntityFrameworkCore.SqlServer.Update.Internal.SqlServerModificationCommandBatch.ExecuteAsync(IRelationalConnection connection, CancellationToken cancellationToken)
+   at Microsoft.EntityFrameworkCore.Update.Internal.BatchExecutor.ExecuteAsync(IEnumerable`1 commandBatches, IRelationalConnection connection, CancellationToken cancellationToken)
+   at Microsoft.EntityFrameworkCore.Update.Internal.BatchExecutor.ExecuteAsync(IEnumerable`1 commandBatches, IRelationalConnection connection, CancellationToken cancellationToken)
+   at Microsoft.EntityFrameworkCore.Update.Internal.BatchExecutor.ExecuteAsync(IEnumerable`1 commandBatches, IRelationalConnection connection, CancellationToken cancellationToken)
+   at Microsoft.EntityFrameworkCore.Storage.RelationalDatabase.SaveChangesAsync(IList`1 entries, CancellationToken cancellationToken)
+   at Microsoft.EntityFrameworkCore.ChangeTracking.Internal.StateManager.SaveChangesAsync(IList`1 entriesToSave, CancellationToken cancellationToken)
+   at Microsoft.EntityFrameworkCore.ChangeTracking.Internal.StateManager.SaveChangesAsync(StateManager stateManager, Boolean acceptAllChangesOnSuccess, CancellationToken cancellationToken)
+   at Microsoft.EntityFrameworkCore.SqlServer.Storage.Internal.SqlServerExecutionStrategy.ExecuteAsync[TState,TResult](TState state, Func`4 operation, Func`4 verifySucceeded, CancellationToken cancellationToken)
+   at Microsoft.EntityFrameworkCore.DbContext.SaveChangesAsync(Boolean acceptAllChangesOnSuccess, CancellationToken cancellationToken)
+   at Microsoft.EntityFrameworkCore.DbContext.SaveChangesAsync(Boolean acceptAllChangesOnSuccess, CancellationToken cancellationToken)
+   at MuhasebeStokWebApp.Services.StokFifoService.StokGirisiYap(Guid urunID, Decimal miktar, Decimal birimFiyat, String birim, String referansNo, String referansTuru, Nullable`1 referansID, String aciklama, String paraBirimi, Nullable`1 dovizKuru) in D:\cursor-workspace\MuhasebeStokWebApp\Services\StokFifoService.cs:line 218
+2025-05-20 00:11:08.730 +03:00 [ERR] Fatura ve ilişkili kayıtlar güncellenirken hata. FaturaID: "f01cfc7e-5cb3-42c0-911b-98634d9733b4", Hata: An error occurred while saving the entity changes. See the inner exception for details.
+Microsoft.EntityFrameworkCore.DbUpdateException: An error occurred while saving the entity changes. See the inner exception for details.
+ ---> Microsoft.Data.SqlClient.SqlException (0x80131904): NULL değeri 'MuhasebeStokDB.dbo.FaturaDetaylari' tablosunun 'SatirKdvToplam' sütununa eklemez; sütun null değerlere izin vermiyor. INSERT başarısız.
+   at Microsoft.Data.SqlClient.SqlConnection.OnError(SqlException exception, Boolean breakConnection, Action`1 wrapCloseInAction)
+   at Microsoft.Data.SqlClient.SqlInternalConnection.OnError(SqlException exception, Boolean breakConnection, Action`1 wrapCloseInAction)
+   at Microsoft.Data.SqlClient.TdsParser.ThrowExceptionAndWarning(TdsParserStateObject stateObj, Boolean callerHasConnectionLock, Boolean asyncClose)
+   at Microsoft.Data.SqlClient.TdsParser.TryRun(RunBehavior runBehavior, SqlCommand cmdHandler, SqlDataReader dataStream, BulkCopySimpleResultSet bulkCopyHandler, TdsParserStateObject stateObj, Boolean& dataReady)
+   at Microsoft.Data.SqlClient.SqlDataReader.TryHasMoreRows(Boolean& moreRows)
+   at Microsoft.Data.SqlClient.SqlDataReader.TryHasMoreResults(Boolean& moreResults)
+   at Microsoft.Data.SqlClient.SqlDataReader.TryNextResult(Boolean& more)
+   at Microsoft.Data.SqlClient.SqlDataReader.NextResultAsyncExecute(Task task, Object state)
+   at Microsoft.Data.SqlClient.SqlDataReader.InvokeAsyncCall[T](SqlDataReaderBaseAsyncCallContext`1 context)
+--- End of stack trace from previous location ---
+   at Microsoft.EntityFrameworkCore.Update.AffectedCountModificationCommandBatch.ConsumeAsync(RelationalDataReader reader, CancellationToken cancellationToken)
+ClientConnectionId:bf57b31d-8203-4ce5-93a2-b1401122aeb4
+Error Number:515,State:2,Class:16
+   --- End of inner exception stack trace ---
+   at Microsoft.EntityFrameworkCore.Update.AffectedCountModificationCommandBatch.ConsumeAsync(RelationalDataReader reader, CancellationToken cancellationToken)
+   at Microsoft.EntityFrameworkCore.Update.ReaderModificationCommandBatch.ExecuteAsync(IRelationalConnection connection, CancellationToken cancellationToken)
+   at Microsoft.EntityFrameworkCore.Update.ReaderModificationCommandBatch.ExecuteAsync(IRelationalConnection connection, CancellationToken cancellationToken)
+   at Microsoft.EntityFrameworkCore.SqlServer.Update.Internal.SqlServerModificationCommandBatch.ExecuteAsync(IRelationalConnection connection, CancellationToken cancellationToken)
+   at Microsoft.EntityFrameworkCore.Update.Internal.BatchExecutor.ExecuteAsync(IEnumerable`1 commandBatches, IRelationalConnection connection, CancellationToken cancellationToken)
+   at Microsoft.EntityFrameworkCore.Update.Internal.BatchExecutor.ExecuteAsync(IEnumerable`1 commandBatches, IRelationalConnection connection, CancellationToken cancellationToken)
+   at Microsoft.EntityFrameworkCore.Update.Internal.BatchExecutor.ExecuteAsync(IEnumerable`1 commandBatches, IRelationalConnection connection, CancellationToken cancellationToken)
+   at Microsoft.EntityFrameworkCore.Storage.RelationalDatabase.SaveChangesAsync(IList`1 entries, CancellationToken cancellationToken)
+   at Microsoft.EntityFrameworkCore.ChangeTracking.Internal.StateManager.SaveChangesAsync(IList`1 entriesToSave, CancellationToken cancellationToken)
+   at Microsoft.EntityFrameworkCore.ChangeTracking.Internal.StateManager.SaveChangesAsync(StateManager stateManager, Boolean acceptAllChangesOnSuccess, CancellationToken cancellationToken)
+   at Microsoft.EntityFrameworkCore.SqlServer.Storage.Internal.SqlServerExecutionStrategy.ExecuteAsync[TState,TResult](TState state, Func`4 operation, Func`4 verifySucceeded, CancellationToken cancellationToken)
+   at Microsoft.EntityFrameworkCore.DbContext.SaveChangesAsync(Boolean acceptAllChangesOnSuccess, CancellationToken cancellationToken)
+   at Microsoft.EntityFrameworkCore.DbContext.SaveChangesAsync(Boolean acceptAllChangesOnSuccess, CancellationToken cancellationToken)
+   at MuhasebeStokWebApp.Services.StokFifoService.StokGirisiYap(Guid urunID, Decimal miktar, Decimal birimFiyat, String birim, String referansNo, String referansTuru, Nullable`1 referansID, String aciklama, String paraBirimi, Nullable`1 dovizKuru) in D:\cursor-workspace\MuhasebeStokWebApp\Services\StokFifoService.cs:line 218
+   at MuhasebeStokWebApp.Services.StokFifoService.StokGirisiYap(Guid urunID, Decimal miktar, Decimal birimFiyat, String birim, String referansNo, String referansTuru, Nullable`1 referansID, String aciklama, String paraBirimi, Nullable`1 dovizKuru) in D:\cursor-workspace\MuhasebeStokWebApp\Services\StokFifoService.cs:line 240
+   at MuhasebeStokWebApp.Services.StokFifoService.StokGirisiYap(Guid urunID, Decimal miktar, Decimal birimFiyat, String birim, String referansNo, String referansTuru, Nullable`1 referansID, String aciklama, String paraBirimi, Nullable`1 dovizKuru) in D:\cursor-workspace\MuhasebeStokWebApp\Services\StokFifoService.cs:line 249
+   at MuhasebeStokWebApp.Services.FaturaOrchestrationService.UpdateFaturaWithRelations(Guid id, FaturaEditViewModel viewModel, Nullable`1 currentUserId) in D:\cursor-workspace\MuhasebeStokWebApp\Services\FaturaOrchestrationService.cs:line 493
+2025-05-20 00:11:08.791 +03:00 [INF] Fatura güncelleme işlemi geri alındı. FaturaID: "f01cfc7e-5cb3-42c0-911b-98634d9733b4"
+2025-05-20 00:11:08.934 +03:00 [ERR] Fatura güncelleme hatası
+Microsoft.EntityFrameworkCore.DbUpdateException: An error occurred while saving the entity changes. See the inner exception for details.
+ ---> Microsoft.Data.SqlClient.SqlException (0x80131904): NULL değeri 'MuhasebeStokDB.dbo.FaturaDetaylari' tablosunun 'SatirKdvToplam' sütununa eklemez; sütun null değerlere izin vermiyor. INSERT başarısız.
+   at Microsoft.Data.SqlClient.SqlConnection.OnError(SqlException exception, Boolean breakConnection, Action`1 wrapCloseInAction)
+   at Microsoft.Data.SqlClient.SqlInternalConnection.OnError(SqlException exception, Boolean breakConnection, Action`1 wrapCloseInAction)
+   at Microsoft.Data.SqlClient.TdsParser.ThrowExceptionAndWarning(TdsParserStateObject stateObj, Boolean callerHasConnectionLock, Boolean asyncClose)
+   at Microsoft.Data.SqlClient.TdsParser.TryRun(RunBehavior runBehavior, SqlCommand cmdHandler, SqlDataReader dataStream, BulkCopySimpleResultSet bulkCopyHandler, TdsParserStateObject stateObj, Boolean& dataReady)
+   at Microsoft.Data.SqlClient.SqlDataReader.TryHasMoreRows(Boolean& moreRows)
+   at Microsoft.Data.SqlClient.SqlDataReader.TryHasMoreResults(Boolean& moreResults)
+   at Microsoft.Data.SqlClient.SqlDataReader.TryNextResult(Boolean& more)
+   at Microsoft.Data.SqlClient.SqlDataReader.NextResultAsyncExecute(Task task, Object state)
+   at Microsoft.Data.SqlClient.SqlDataReader.InvokeAsyncCall[T](SqlDataReaderBaseAsyncCallContext`1 context)
+--- End of stack trace from previous location ---
+   at Microsoft.EntityFrameworkCore.Update.AffectedCountModificationCommandBatch.ConsumeAsync(RelationalDataReader reader, CancellationToken cancellationToken)
+ClientConnectionId:bf57b31d-8203-4ce5-93a2-b1401122aeb4
+Error Number:515,State:2,Class:16
+   --- End of inner exception stack trace ---
+   at Microsoft.EntityFrameworkCore.Update.AffectedCountModificationCommandBatch.ConsumeAsync(RelationalDataReader reader, CancellationToken cancellationToken)
+   at Microsoft.EntityFrameworkCore.Update.ReaderModificationCommandBatch.ExecuteAsync(IRelationalConnection connection, CancellationToken cancellationToken)
+   at Microsoft.EntityFrameworkCore.Update.ReaderModificationCommandBatch.ExecuteAsync(IRelationalConnection connection, CancellationToken cancellationToken)
+   at Microsoft.EntityFrameworkCore.SqlServer.Update.Internal.SqlServerModificationCommandBatch.ExecuteAsync(IRelationalConnection connection, CancellationToken cancellationToken)
+   at Microsoft.EntityFrameworkCore.Update.Internal.BatchExecutor.ExecuteAsync(IEnumerable`1 commandBatches, IRelationalConnection connection, CancellationToken cancellationToken)
+   at Microsoft.EntityFrameworkCore.Update.Internal.BatchExecutor.ExecuteAsync(IEnumerable`1 commandBatches, IRelationalConnection connection, CancellationToken cancellationToken)
+   at Microsoft.EntityFrameworkCore.Update.Internal.BatchExecutor.ExecuteAsync(IEnumerable`1 commandBatches, IRelationalConnection connection, CancellationToken cancellationToken)
+   at Microsoft.EntityFrameworkCore.Storage.RelationalDatabase.SaveChangesAsync(IList`1 entries, CancellationToken cancellationToken)
+   at Microsoft.EntityFrameworkCore.ChangeTracking.Internal.StateManager.SaveChangesAsync(IList`1 entriesToSave, CancellationToken cancellationToken)
+   at Microsoft.EntityFrameworkCore.ChangeTracking.Internal.StateManager.SaveChangesAsync(StateManager stateManager, Boolean acceptAllChangesOnSuccess, CancellationToken cancellationToken)
+   at Microsoft.EntityFrameworkCore.SqlServer.Storage.Internal.SqlServerExecutionStrategy.ExecuteAsync[TState,TResult](TState state, Func`4 operation, Func`4 verifySucceeded, CancellationToken cancellationToken)
+   at Microsoft.EntityFrameworkCore.DbContext.SaveChangesAsync(Boolean acceptAllChangesOnSuccess, CancellationToken cancellationToken)
+   at Microsoft.EntityFrameworkCore.DbContext.SaveChangesAsync(Boolean acceptAllChangesOnSuccess, CancellationToken cancellationToken)
+   at MuhasebeStokWebApp.Services.StokFifoService.StokGirisiYap(Guid urunID, Decimal miktar, Decimal birimFiyat, String birim, String referansNo, String referansTuru, Nullable`1 referansID, String aciklama, String paraBirimi, Nullable`1 dovizKuru) in D:\cursor-workspace\MuhasebeStokWebApp\Services\StokFifoService.cs:line 218
+   at MuhasebeStokWebApp.Services.StokFifoService.StokGirisiYap(Guid urunID, Decimal miktar, Decimal birimFiyat, String birim, String referansNo, String referansTuru, Nullable`1 referansID, String aciklama, String paraBirimi, Nullable`1 dovizKuru) in D:\cursor-workspace\MuhasebeStokWebApp\Services\StokFifoService.cs:line 240
+   at MuhasebeStokWebApp.Services.StokFifoService.StokGirisiYap(Guid urunID, Decimal miktar, Decimal birimFiyat, String birim, String referansNo, String referansTuru, Nullable`1 referansID, String aciklama, String paraBirimi, Nullable`1 dovizKuru) in D:\cursor-workspace\MuhasebeStokWebApp\Services\StokFifoService.cs:line 249
+   at MuhasebeStokWebApp.Services.FaturaOrchestrationService.UpdateFaturaWithRelations(Guid id, FaturaEditViewModel viewModel, Nullable`1 currentUserId) in D:\cursor-workspace\MuhasebeStokWebApp\Services\FaturaOrchestrationService.cs:line 493
+   at MuhasebeStokWebApp.Services.FaturaOrchestrationService.UpdateFaturaWithRelations(Guid id, FaturaEditViewModel viewModel, Nullable`1 currentUserId) in D:\cursor-workspace\MuhasebeStokWebApp\Services\FaturaOrchestrationService.cs:line 584
+   at MuhasebeStokWebApp.Services.FaturaOrchestrationService.UpdateFaturaWithRelations(Guid id, FaturaEditViewModel viewModel, Nullable`1 currentUserId) in D:\cursor-workspace\MuhasebeStokWebApp\Services\FaturaOrchestrationService.cs:line 592
+   at MuhasebeStokWebApp.Controllers.FaturaController.Edit(Guid id, FaturaEditViewModel viewModel) in D:\cursor-workspace\MuhasebeStokWebApp\Controllers\FaturaController.cs:line 620
+2025-05-20 00:11:17.078 +03:00 [INF] Fatura ve ilişkili kayıtlar güncelleniyor. FaturaID: "f01cfc7e-5cb3-42c0-911b-98634d9733b4"
+2025-05-20 00:11:27.663 +03:00 [INF] UpdateAsync işlemi başlatılıyor
+2025-05-20 00:11:27.749 +03:00 [ERR] FaturaTransactionService.UpdateAsync Parametreler: f01cfc7e-5cb3-42c0-911b-98634d9733b4
+System.InvalidOperationException: The connection is already in a transaction and cannot participate in another transaction.
+   at Microsoft.EntityFrameworkCore.Storage.RelationalConnection.EnsureNoTransactions()
+   at Microsoft.EntityFrameworkCore.Storage.RelationalConnection.BeginTransactionAsync(IsolationLevel isolationLevel, CancellationToken cancellationToken)
+   at Microsoft.EntityFrameworkCore.Storage.RelationalConnection.BeginTransactionAsync(CancellationToken cancellationToken)
+   at MuhasebeStokWebApp.Data.Repositories.UnitOfWork.BeginTransactionAsync() in D:\cursor-workspace\MuhasebeStokWebApp\Data\Repositories\UnitOfWork.cs:line 106
+   at MuhasebeStokWebApp.Services.FaturaTransactionService.EnsureTransactionAsync() in D:\cursor-workspace\MuhasebeStokWebApp\Services\FaturaTransactionService.cs:line 37
+   at MuhasebeStokWebApp.Services.FaturaTransactionService.<>c__DisplayClass8_0`1.<<ExecuteInTransactionAsync>b__0>d.MoveNext() in D:\cursor-workspace\MuhasebeStokWebApp\Services\FaturaTransactionService.cs:line 86
+--- End of stack trace from previous location ---
+   at MuhasebeStokWebApp.Services.ExceptionHandlingService.HandleExceptionAsync[T](Func`1 func, String logContext, Object[] logParams) in D:\cursor-workspace\MuhasebeStokWebApp\Services\ExceptionHandlingService.cs:line 146
+2025-05-20 00:11:58.621 +03:00 [INF] Fatura bilgileri güncellendi. FaturaID: "f01cfc7e-5cb3-42c0-911b-98634d9733b4"
+2025-05-20 00:11:58.682 +03:00 [INF] FIFO kayıtları iptal edilmeye çalışılıyor: ReferansID=f01cfc7e-5cb3-42c0-911b-98634d9733b4, ReferansTuru=Fatura
+2025-05-20 00:11:58.683 +03:00 [INF] FifoKayitlariniIptalEt - Mevcut transaction kullanılıyor: ReferansID=f01cfc7e-5cb3-42c0-911b-98634d9733b4
+2025-05-20 00:11:58.762 +03:00 [INF] FIFO kayıtları iptal ediliyor. Toplam 1 kayıt bulundu.
+2025-05-20 00:11:59.010 +03:00 [INF] İlişkili FIFO kayıtları iptal edildi. FaturaID: "f01cfc7e-5cb3-42c0-911b-98634d9733b4"
+2025-05-20 00:12:01.318 +03:00 [INF] İlişkili stok hareketleri silindi. FaturaID: "f01cfc7e-5cb3-42c0-911b-98634d9733b4"
+2025-05-20 00:12:03.428 +03:00 [INF] Cari hareket silindi. CariHareketID: "6c9f082f-3ec5-4847-8180-4a82265f9193"
+2025-05-20 00:12:06.947 +03:00 [INF] Eski fatura detayları silindi. Toplam 1 detay. FaturaID: "f01cfc7e-5cb3-42c0-911b-98634d9733b4"
+2025-05-20 00:12:45.554 +03:00 [INF] Yeni fatura detayı eklendi. UrunID: "2216d3ad-9370-49a9-847e-c374b130978d"
+2025-05-20 00:13:59.497 +03:00 [INF] Stok hareketi oluşturuldu. UrunID: "2216d3ad-9370-49a9-847e-c374b130978d", Miktar: 6.00
+2025-05-20 00:13:59.529 +03:00 [INF] StokGirisiYap - Mevcut transaction kullanılıyor: Ürün 2216d3ad-9370-49a9-847e-c374b130978d, Miktar 6.00
+2025-05-20 00:14:01.636 +03:00 [INF] Fatura ve ilişkili kayıtlar güncelleniyor. FaturaID: "f01cfc7e-5cb3-42c0-911b-98634d9733b4"
+2025-05-20 00:14:01.762 +03:00 [ERR] An exception occurred in the database while saving changes for context type 'MuhasebeStokWebApp.Data.ApplicationDbContext'.
+Microsoft.EntityFrameworkCore.DbUpdateException: An error occurred while saving the entity changes. See the inner exception for details.
+ ---> Microsoft.Data.SqlClient.SqlException (0x80131904): NULL değeri 'MuhasebeStokDB.dbo.FaturaDetaylari' tablosunun 'SatirKdvToplam' sütununa eklemez; sütun null değerlere izin vermiyor. INSERT başarısız.
+   at Microsoft.Data.SqlClient.SqlConnection.OnError(SqlException exception, Boolean breakConnection, Action`1 wrapCloseInAction)
+   at Microsoft.Data.SqlClient.SqlInternalConnection.OnError(SqlException exception, Boolean breakConnection, Action`1 wrapCloseInAction)
+   at Microsoft.Data.SqlClient.TdsParser.ThrowExceptionAndWarning(TdsParserStateObject stateObj, Boolean callerHasConnectionLock, Boolean asyncClose)
+   at Microsoft.Data.SqlClient.TdsParser.TryRun(RunBehavior runBehavior, SqlCommand cmdHandler, SqlDataReader dataStream, BulkCopySimpleResultSet bulkCopyHandler, TdsParserStateObject stateObj, Boolean& dataReady)
+   at Microsoft.Data.SqlClient.SqlDataReader.TryHasMoreRows(Boolean& moreRows)
+   at Microsoft.Data.SqlClient.SqlDataReader.TryHasMoreResults(Boolean& moreResults)
+   at Microsoft.Data.SqlClient.SqlDataReader.TryNextResult(Boolean& more)
+   at Microsoft.Data.SqlClient.SqlDataReader.NextResultAsyncExecute(Task task, Object state)
+   at Microsoft.Data.SqlClient.SqlDataReader.InvokeAsyncCall[T](SqlDataReaderBaseAsyncCallContext`1 context)
+--- End of stack trace from previous location ---
+   at Microsoft.EntityFrameworkCore.Update.AffectedCountModificationCommandBatch.ConsumeAsync(RelationalDataReader reader, CancellationToken cancellationToken)
+ClientConnectionId:bf57b31d-8203-4ce5-93a2-b1401122aeb4
+Error Number:515,State:2,Class:16
+   --- End of inner exception stack trace ---
+   at Microsoft.EntityFrameworkCore.Update.AffectedCountModificationCommandBatch.ConsumeAsync(RelationalDataReader reader, CancellationToken cancellationToken)
+   at Microsoft.EntityFrameworkCore.Update.ReaderModificationCommandBatch.ExecuteAsync(IRelationalConnection connection, CancellationToken cancellationToken)
+   at Microsoft.EntityFrameworkCore.Update.ReaderModificationCommandBatch.ExecuteAsync(IRelationalConnection connection, CancellationToken cancellationToken)
+   at Microsoft.EntityFrameworkCore.SqlServer.Update.Internal.SqlServerModificationCommandBatch.ExecuteAsync(IRelationalConnection connection, CancellationToken cancellationToken)
+   at Microsoft.EntityFrameworkCore.Update.Internal.BatchExecutor.ExecuteAsync(IEnumerable`1 commandBatches, IRelationalConnection connection, CancellationToken cancellationToken)
+   at Microsoft.EntityFrameworkCore.Update.Internal.BatchExecutor.ExecuteAsync(IEnumerable`1 commandBatches, IRelationalConnection connection, CancellationToken cancellationToken)
+   at Microsoft.EntityFrameworkCore.Update.Internal.BatchExecutor.ExecuteAsync(IEnumerable`1 commandBatches, IRelationalConnection connection, CancellationToken cancellationToken)
+   at Microsoft.EntityFrameworkCore.Storage.RelationalDatabase.SaveChangesAsync(IList`1 entries, CancellationToken cancellationToken)
+   at Microsoft.EntityFrameworkCore.ChangeTracking.Internal.StateManager.SaveChangesAsync(IList`1 entriesToSave, CancellationToken cancellationToken)
+   at Microsoft.EntityFrameworkCore.ChangeTracking.Internal.StateManager.SaveChangesAsync(StateManager stateManager, Boolean acceptAllChangesOnSuccess, CancellationToken cancellationToken)
+   at Microsoft.EntityFrameworkCore.SqlServer.Storage.Internal.SqlServerExecutionStrategy.ExecuteAsync[TState,TResult](TState state, Func`4 operation, Func`4 verifySucceeded, CancellationToken cancellationToken)
+   at Microsoft.EntityFrameworkCore.DbContext.SaveChangesAsync(Boolean acceptAllChangesOnSuccess, CancellationToken cancellationToken)
+Microsoft.EntityFrameworkCore.DbUpdateException: An error occurred while saving the entity changes. See the inner exception for details.
+ ---> Microsoft.Data.SqlClient.SqlException (0x80131904): NULL değeri 'MuhasebeStokDB.dbo.FaturaDetaylari' tablosunun 'SatirKdvToplam' sütununa eklemez; sütun null değerlere izin vermiyor. INSERT başarısız.
+   at Microsoft.Data.SqlClient.SqlConnection.OnError(SqlException exception, Boolean breakConnection, Action`1 wrapCloseInAction)
+   at Microsoft.Data.SqlClient.SqlInternalConnection.OnError(SqlException exception, Boolean breakConnection, Action`1 wrapCloseInAction)
+   at Microsoft.Data.SqlClient.TdsParser.ThrowExceptionAndWarning(TdsParserStateObject stateObj, Boolean callerHasConnectionLock, Boolean asyncClose)
+   at Microsoft.Data.SqlClient.TdsParser.TryRun(RunBehavior runBehavior, SqlCommand cmdHandler, SqlDataReader dataStream, BulkCopySimpleResultSet bulkCopyHandler, TdsParserStateObject stateObj, Boolean& dataReady)
+   at Microsoft.Data.SqlClient.SqlDataReader.TryHasMoreRows(Boolean& moreRows)
+   at Microsoft.Data.SqlClient.SqlDataReader.TryHasMoreResults(Boolean& moreResults)
+   at Microsoft.Data.SqlClient.SqlDataReader.TryNextResult(Boolean& more)
+   at Microsoft.Data.SqlClient.SqlDataReader.NextResultAsyncExecute(Task task, Object state)
+   at Microsoft.Data.SqlClient.SqlDataReader.InvokeAsyncCall[T](SqlDataReaderBaseAsyncCallContext`1 context)
+--- End of stack trace from previous location ---
+   at Microsoft.EntityFrameworkCore.Update.AffectedCountModificationCommandBatch.ConsumeAsync(RelationalDataReader reader, CancellationToken cancellationToken)
+ClientConnectionId:bf57b31d-8203-4ce5-93a2-b1401122aeb4
+Error Number:515,State:2,Class:16
+   --- End of inner exception stack trace ---
+   at Microsoft.EntityFrameworkCore.Update.AffectedCountModificationCommandBatch.ConsumeAsync(RelationalDataReader reader, CancellationToken cancellationToken)
+   at Microsoft.EntityFrameworkCore.Update.ReaderModificationCommandBatch.ExecuteAsync(IRelationalConnection connection, CancellationToken cancellationToken)
+   at Microsoft.EntityFrameworkCore.Update.ReaderModificationCommandBatch.ExecuteAsync(IRelationalConnection connection, CancellationToken cancellationToken)
+   at Microsoft.EntityFrameworkCore.SqlServer.Update.Internal.SqlServerModificationCommandBatch.ExecuteAsync(IRelationalConnection connection, CancellationToken cancellationToken)
+   at Microsoft.EntityFrameworkCore.Update.Internal.BatchExecutor.ExecuteAsync(IEnumerable`1 commandBatches, IRelationalConnection connection, CancellationToken cancellationToken)
+   at Microsoft.EntityFrameworkCore.Update.Internal.BatchExecutor.ExecuteAsync(IEnumerable`1 commandBatches, IRelationalConnection connection, CancellationToken cancellationToken)
+   at Microsoft.EntityFrameworkCore.Update.Internal.BatchExecutor.ExecuteAsync(IEnumerable`1 commandBatches, IRelationalConnection connection, CancellationToken cancellationToken)
+   at Microsoft.EntityFrameworkCore.Storage.RelationalDatabase.SaveChangesAsync(IList`1 entries, CancellationToken cancellationToken)
+   at Microsoft.EntityFrameworkCore.ChangeTracking.Internal.StateManager.SaveChangesAsync(IList`1 entriesToSave, CancellationToken cancellationToken)
+   at Microsoft.EntityFrameworkCore.ChangeTracking.Internal.StateManager.SaveChangesAsync(StateManager stateManager, Boolean acceptAllChangesOnSuccess, CancellationToken cancellationToken)
+   at Microsoft.EntityFrameworkCore.SqlServer.Storage.Internal.SqlServerExecutionStrategy.ExecuteAsync[TState,TResult](TState state, Func`4 operation, Func`4 verifySucceeded, CancellationToken cancellationToken)
+   at Microsoft.EntityFrameworkCore.DbContext.SaveChangesAsync(Boolean acceptAllChangesOnSuccess, CancellationToken cancellationToken)
+2025-05-20 00:14:01.825 +03:00 [ERR] Stok girişi sırasında hata oluştu: UrunID=2216d3ad-9370-49a9-847e-c374b130978d, Miktar=6.00, BirimFiyat=50.00
+Microsoft.EntityFrameworkCore.DbUpdateException: An error occurred while saving the entity changes. See the inner exception for details.
+ ---> Microsoft.Data.SqlClient.SqlException (0x80131904): NULL değeri 'MuhasebeStokDB.dbo.FaturaDetaylari' tablosunun 'SatirKdvToplam' sütununa eklemez; sütun null değerlere izin vermiyor. INSERT başarısız.
+   at Microsoft.Data.SqlClient.SqlConnection.OnError(SqlException exception, Boolean breakConnection, Action`1 wrapCloseInAction)
+   at Microsoft.Data.SqlClient.SqlInternalConnection.OnError(SqlException exception, Boolean breakConnection, Action`1 wrapCloseInAction)
+   at Microsoft.Data.SqlClient.TdsParser.ThrowExceptionAndWarning(TdsParserStateObject stateObj, Boolean callerHasConnectionLock, Boolean asyncClose)
+   at Microsoft.Data.SqlClient.TdsParser.TryRun(RunBehavior runBehavior, SqlCommand cmdHandler, SqlDataReader dataStream, BulkCopySimpleResultSet bulkCopyHandler, TdsParserStateObject stateObj, Boolean& dataReady)
+   at Microsoft.Data.SqlClient.SqlDataReader.TryHasMoreRows(Boolean& moreRows)
+   at Microsoft.Data.SqlClient.SqlDataReader.TryHasMoreResults(Boolean& moreResults)
+   at Microsoft.Data.SqlClient.SqlDataReader.TryNextResult(Boolean& more)
+   at Microsoft.Data.SqlClient.SqlDataReader.NextResultAsyncExecute(Task task, Object state)
+   at Microsoft.Data.SqlClient.SqlDataReader.InvokeAsyncCall[T](SqlDataReaderBaseAsyncCallContext`1 context)
+--- End of stack trace from previous location ---
+   at Microsoft.EntityFrameworkCore.Update.AffectedCountModificationCommandBatch.ConsumeAsync(RelationalDataReader reader, CancellationToken cancellationToken)
+ClientConnectionId:bf57b31d-8203-4ce5-93a2-b1401122aeb4
+Error Number:515,State:2,Class:16
+   --- End of inner exception stack trace ---
+   at Microsoft.EntityFrameworkCore.Update.AffectedCountModificationCommandBatch.ConsumeAsync(RelationalDataReader reader, CancellationToken cancellationToken)
+   at Microsoft.EntityFrameworkCore.Update.ReaderModificationCommandBatch.ExecuteAsync(IRelationalConnection connection, CancellationToken cancellationToken)
+   at Microsoft.EntityFrameworkCore.Update.ReaderModificationCommandBatch.ExecuteAsync(IRelationalConnection connection, CancellationToken cancellationToken)
+   at Microsoft.EntityFrameworkCore.SqlServer.Update.Internal.SqlServerModificationCommandBatch.ExecuteAsync(IRelationalConnection connection, CancellationToken cancellationToken)
+   at Microsoft.EntityFrameworkCore.Update.Internal.BatchExecutor.ExecuteAsync(IEnumerable`1 commandBatches, IRelationalConnection connection, CancellationToken cancellationToken)
+   at Microsoft.EntityFrameworkCore.Update.Internal.BatchExecutor.ExecuteAsync(IEnumerable`1 commandBatches, IRelationalConnection connection, CancellationToken cancellationToken)
+   at Microsoft.EntityFrameworkCore.Update.Internal.BatchExecutor.ExecuteAsync(IEnumerable`1 commandBatches, IRelationalConnection connection, CancellationToken cancellationToken)
+   at Microsoft.EntityFrameworkCore.Storage.RelationalDatabase.SaveChangesAsync(IList`1 entries, CancellationToken cancellationToken)
+   at Microsoft.EntityFrameworkCore.ChangeTracking.Internal.StateManager.SaveChangesAsync(IList`1 entriesToSave, CancellationToken cancellationToken)
+   at Microsoft.EntityFrameworkCore.ChangeTracking.Internal.StateManager.SaveChangesAsync(StateManager stateManager, Boolean acceptAllChangesOnSuccess, CancellationToken cancellationToken)
+   at Microsoft.EntityFrameworkCore.SqlServer.Storage.Internal.SqlServerExecutionStrategy.ExecuteAsync[TState,TResult](TState state, Func`4 operation, Func`4 verifySucceeded, CancellationToken cancellationToken)
+   at Microsoft.EntityFrameworkCore.DbContext.SaveChangesAsync(Boolean acceptAllChangesOnSuccess, CancellationToken cancellationToken)
+   at Microsoft.EntityFrameworkCore.DbContext.SaveChangesAsync(Boolean acceptAllChangesOnSuccess, CancellationToken cancellationToken)
+   at MuhasebeStokWebApp.Services.StokFifoService.StokGirisiYap(Guid urunID, Decimal miktar, Decimal birimFiyat, String birim, String referansNo, String referansTuru, Nullable`1 referansID, String aciklama, String paraBirimi, Nullable`1 dovizKuru) in D:\cursor-workspace\MuhasebeStokWebApp\Services\StokFifoService.cs:line 218
+2025-05-20 00:14:01.937 +03:00 [ERR] Fatura ve ilişkili kayıtlar güncellenirken hata. FaturaID: "f01cfc7e-5cb3-42c0-911b-98634d9733b4", Hata: An error occurred while saving the entity changes. See the inner exception for details.
+Microsoft.EntityFrameworkCore.DbUpdateException: An error occurred while saving the entity changes. See the inner exception for details.
+ ---> Microsoft.Data.SqlClient.SqlException (0x80131904): NULL değeri 'MuhasebeStokDB.dbo.FaturaDetaylari' tablosunun 'SatirKdvToplam' sütununa eklemez; sütun null değerlere izin vermiyor. INSERT başarısız.
+   at Microsoft.Data.SqlClient.SqlConnection.OnError(SqlException exception, Boolean breakConnection, Action`1 wrapCloseInAction)
+   at Microsoft.Data.SqlClient.SqlInternalConnection.OnError(SqlException exception, Boolean breakConnection, Action`1 wrapCloseInAction)
+   at Microsoft.Data.SqlClient.TdsParser.ThrowExceptionAndWarning(TdsParserStateObject stateObj, Boolean callerHasConnectionLock, Boolean asyncClose)
+   at Microsoft.Data.SqlClient.TdsParser.TryRun(RunBehavior runBehavior, SqlCommand cmdHandler, SqlDataReader dataStream, BulkCopySimpleResultSet bulkCopyHandler, TdsParserStateObject stateObj, Boolean& dataReady)
+   at Microsoft.Data.SqlClient.SqlDataReader.TryHasMoreRows(Boolean& moreRows)
+   at Microsoft.Data.SqlClient.SqlDataReader.TryHasMoreResults(Boolean& moreResults)
+   at Microsoft.Data.SqlClient.SqlDataReader.TryNextResult(Boolean& more)
+   at Microsoft.Data.SqlClient.SqlDataReader.NextResultAsyncExecute(Task task, Object state)
+   at Microsoft.Data.SqlClient.SqlDataReader.InvokeAsyncCall[T](SqlDataReaderBaseAsyncCallContext`1 context)
+--- End of stack trace from previous location ---
+   at Microsoft.EntityFrameworkCore.Update.AffectedCountModificationCommandBatch.ConsumeAsync(RelationalDataReader reader, CancellationToken cancellationToken)
+ClientConnectionId:bf57b31d-8203-4ce5-93a2-b1401122aeb4
+Error Number:515,State:2,Class:16
+   --- End of inner exception stack trace ---
+   at Microsoft.EntityFrameworkCore.Update.AffectedCountModificationCommandBatch.ConsumeAsync(RelationalDataReader reader, CancellationToken cancellationToken)
+   at Microsoft.EntityFrameworkCore.Update.ReaderModificationCommandBatch.ExecuteAsync(IRelationalConnection connection, CancellationToken cancellationToken)
+   at Microsoft.EntityFrameworkCore.Update.ReaderModificationCommandBatch.ExecuteAsync(IRelationalConnection connection, CancellationToken cancellationToken)
+   at Microsoft.EntityFrameworkCore.SqlServer.Update.Internal.SqlServerModificationCommandBatch.ExecuteAsync(IRelationalConnection connection, CancellationToken cancellationToken)
+   at Microsoft.EntityFrameworkCore.Update.Internal.BatchExecutor.ExecuteAsync(IEnumerable`1 commandBatches, IRelationalConnection connection, CancellationToken cancellationToken)
+   at Microsoft.EntityFrameworkCore.Update.Internal.BatchExecutor.ExecuteAsync(IEnumerable`1 commandBatches, IRelationalConnection connection, CancellationToken cancellationToken)
+   at Microsoft.EntityFrameworkCore.Update.Internal.BatchExecutor.ExecuteAsync(IEnumerable`1 commandBatches, IRelationalConnection connection, CancellationToken cancellationToken)
+   at Microsoft.EntityFrameworkCore.Storage.RelationalDatabase.SaveChangesAsync(IList`1 entries, CancellationToken cancellationToken)
+   at Microsoft.EntityFrameworkCore.ChangeTracking.Internal.StateManager.SaveChangesAsync(IList`1 entriesToSave, CancellationToken cancellationToken)
+   at Microsoft.EntityFrameworkCore.ChangeTracking.Internal.StateManager.SaveChangesAsync(StateManager stateManager, Boolean acceptAllChangesOnSuccess, CancellationToken cancellationToken)
+   at Microsoft.EntityFrameworkCore.SqlServer.Storage.Internal.SqlServerExecutionStrategy.ExecuteAsync[TState,TResult](TState state, Func`4 operation, Func`4 verifySucceeded, CancellationToken cancellationToken)
+   at Microsoft.EntityFrameworkCore.DbContext.SaveChangesAsync(Boolean acceptAllChangesOnSuccess, CancellationToken cancellationToken)
+   at Microsoft.EntityFrameworkCore.DbContext.SaveChangesAsync(Boolean acceptAllChangesOnSuccess, CancellationToken cancellationToken)
+   at MuhasebeStokWebApp.Services.StokFifoService.StokGirisiYap(Guid urunID, Decimal miktar, Decimal birimFiyat, String birim, String referansNo, String referansTuru, Nullable`1 referansID, String aciklama, String paraBirimi, Nullable`1 dovizKuru) in D:\cursor-workspace\MuhasebeStokWebApp\Services\StokFifoService.cs:line 218
+   at MuhasebeStokWebApp.Services.StokFifoService.StokGirisiYap(Guid urunID, Decimal miktar, Decimal birimFiyat, String birim, String referansNo, String referansTuru, Nullable`1 referansID, String aciklama, String paraBirimi, Nullable`1 dovizKuru) in D:\cursor-workspace\MuhasebeStokWebApp\Services\StokFifoService.cs:line 240
+   at MuhasebeStokWebApp.Services.StokFifoService.StokGirisiYap(Guid urunID, Decimal miktar, Decimal birimFiyat, String birim, String referansNo, String referansTuru, Nullable`1 referansID, String aciklama, String paraBirimi, Nullable`1 dovizKuru) in D:\cursor-workspace\MuhasebeStokWebApp\Services\StokFifoService.cs:line 249
+   at MuhasebeStokWebApp.Services.FaturaOrchestrationService.UpdateFaturaWithRelations(Guid id, FaturaEditViewModel viewModel, Nullable`1 currentUserId) in D:\cursor-workspace\MuhasebeStokWebApp\Services\FaturaOrchestrationService.cs:line 493
+2025-05-20 00:14:01.984 +03:00 [INF] Fatura güncelleme işlemi geri alındı. FaturaID: "f01cfc7e-5cb3-42c0-911b-98634d9733b4"
+2025-05-20 00:14:02.206 +03:00 [ERR] Fatura güncelleme hatası
+Microsoft.EntityFrameworkCore.DbUpdateException: An error occurred while saving the entity changes. See the inner exception for details.
+ ---> Microsoft.Data.SqlClient.SqlException (0x80131904): NULL değeri 'MuhasebeStokDB.dbo.FaturaDetaylari' tablosunun 'SatirKdvToplam' sütununa eklemez; sütun null değerlere izin vermiyor. INSERT başarısız.
+   at Microsoft.Data.SqlClient.SqlConnection.OnError(SqlException exception, Boolean breakConnection, Action`1 wrapCloseInAction)
+   at Microsoft.Data.SqlClient.SqlInternalConnection.OnError(SqlException exception, Boolean breakConnection, Action`1 wrapCloseInAction)
+   at Microsoft.Data.SqlClient.TdsParser.ThrowExceptionAndWarning(TdsParserStateObject stateObj, Boolean callerHasConnectionLock, Boolean asyncClose)
+   at Microsoft.Data.SqlClient.TdsParser.TryRun(RunBehavior runBehavior, SqlCommand cmdHandler, SqlDataReader dataStream, BulkCopySimpleResultSet bulkCopyHandler, TdsParserStateObject stateObj, Boolean& dataReady)
+   at Microsoft.Data.SqlClient.SqlDataReader.TryHasMoreRows(Boolean& moreRows)
+   at Microsoft.Data.SqlClient.SqlDataReader.TryHasMoreResults(Boolean& moreResults)
+   at Microsoft.Data.SqlClient.SqlDataReader.TryNextResult(Boolean& more)
+   at Microsoft.Data.SqlClient.SqlDataReader.NextResultAsyncExecute(Task task, Object state)
+   at Microsoft.Data.SqlClient.SqlDataReader.InvokeAsyncCall[T](SqlDataReaderBaseAsyncCallContext`1 context)
+--- End of stack trace from previous location ---
+   at Microsoft.EntityFrameworkCore.Update.AffectedCountModificationCommandBatch.ConsumeAsync(RelationalDataReader reader, CancellationToken cancellationToken)
+ClientConnectionId:bf57b31d-8203-4ce5-93a2-b1401122aeb4
+Error Number:515,State:2,Class:16
+   --- End of inner exception stack trace ---
+   at Microsoft.EntityFrameworkCore.Update.AffectedCountModificationCommandBatch.ConsumeAsync(RelationalDataReader reader, CancellationToken cancellationToken)
+   at Microsoft.EntityFrameworkCore.Update.ReaderModificationCommandBatch.ExecuteAsync(IRelationalConnection connection, CancellationToken cancellationToken)
+   at Microsoft.EntityFrameworkCore.Update.ReaderModificationCommandBatch.ExecuteAsync(IRelationalConnection connection, CancellationToken cancellationToken)
+   at Microsoft.EntityFrameworkCore.SqlServer.Update.Internal.SqlServerModificationCommandBatch.ExecuteAsync(IRelationalConnection connection, CancellationToken cancellationToken)
+   at Microsoft.EntityFrameworkCore.Update.Internal.BatchExecutor.ExecuteAsync(IEnumerable`1 commandBatches, IRelationalConnection connection, CancellationToken cancellationToken)
+   at Microsoft.EntityFrameworkCore.Update.Internal.BatchExecutor.ExecuteAsync(IEnumerable`1 commandBatches, IRelationalConnection connection, CancellationToken cancellationToken)
+   at Microsoft.EntityFrameworkCore.Update.Internal.BatchExecutor.ExecuteAsync(IEnumerable`1 commandBatches, IRelationalConnection connection, CancellationToken cancellationToken)
+   at Microsoft.EntityFrameworkCore.Storage.RelationalDatabase.SaveChangesAsync(IList`1 entries, CancellationToken cancellationToken)
+   at Microsoft.EntityFrameworkCore.ChangeTracking.Internal.StateManager.SaveChangesAsync(IList`1 entriesToSave, CancellationToken cancellationToken)
+   at Microsoft.EntityFrameworkCore.ChangeTracking.Internal.StateManager.SaveChangesAsync(StateManager stateManager, Boolean acceptAllChangesOnSuccess, CancellationToken cancellationToken)
+   at Microsoft.EntityFrameworkCore.SqlServer.Storage.Internal.SqlServerExecutionStrategy.ExecuteAsync[TState,TResult](TState state, Func`4 operation, Func`4 verifySucceeded, CancellationToken cancellationToken)
+   at Microsoft.EntityFrameworkCore.DbContext.SaveChangesAsync(Boolean acceptAllChangesOnSuccess, CancellationToken cancellationToken)
+   at Microsoft.EntityFrameworkCore.DbContext.SaveChangesAsync(Boolean acceptAllChangesOnSuccess, CancellationToken cancellationToken)
+   at MuhasebeStokWebApp.Services.StokFifoService.StokGirisiYap(Guid urunID, Decimal miktar, Decimal birimFiyat, String birim, String referansNo, String referansTuru, Nullable`1 referansID, String aciklama, String paraBirimi, Nullable`1 dovizKuru) in D:\cursor-workspace\MuhasebeStokWebApp\Services\StokFifoService.cs:line 218
+   at MuhasebeStokWebApp.Services.StokFifoService.StokGirisiYap(Guid urunID, Decimal miktar, Decimal birimFiyat, String birim, String referansNo, String referansTuru, Nullable`1 referansID, String aciklama, String paraBirimi, Nullable`1 dovizKuru) in D:\cursor-workspace\MuhasebeStokWebApp\Services\StokFifoService.cs:line 240
+   at MuhasebeStokWebApp.Services.StokFifoService.StokGirisiYap(Guid urunID, Decimal miktar, Decimal birimFiyat, String birim, String referansNo, String referansTuru, Nullable`1 referansID, String aciklama, String paraBirimi, Nullable`1 dovizKuru) in D:\cursor-workspace\MuhasebeStokWebApp\Services\StokFifoService.cs:line 249
+   at MuhasebeStokWebApp.Services.FaturaOrchestrationService.UpdateFaturaWithRelations(Guid id, FaturaEditViewModel viewModel, Nullable`1 currentUserId) in D:\cursor-workspace\MuhasebeStokWebApp\Services\FaturaOrchestrationService.cs:line 493
+   at MuhasebeStokWebApp.Services.FaturaOrchestrationService.UpdateFaturaWithRelations(Guid id, FaturaEditViewModel viewModel, Nullable`1 currentUserId) in D:\cursor-workspace\MuhasebeStokWebApp\Services\FaturaOrchestrationService.cs:line 584
+   at MuhasebeStokWebApp.Services.FaturaOrchestrationService.UpdateFaturaWithRelations(Guid id, FaturaEditViewModel viewModel, Nullable`1 currentUserId) in D:\cursor-workspace\MuhasebeStokWebApp\Services\FaturaOrchestrationService.cs:line 592
+   at MuhasebeStokWebApp.Controllers.FaturaController.Edit(Guid id, FaturaEditViewModel viewModel) in D:\cursor-workspace\MuhasebeStokWebApp\Controllers\FaturaController.cs:line 620
+2025-05-20 00:14:04.426 +03:00 [INF] UpdateAsync işlemi başlatılıyor
+2025-05-20 00:14:04.554 +03:00 [ERR] FaturaTransactionService.UpdateAsync Parametreler: f01cfc7e-5cb3-42c0-911b-98634d9733b4
+System.InvalidOperationException: The connection is already in a transaction and cannot participate in another transaction.
+   at Microsoft.EntityFrameworkCore.Storage.RelationalConnection.EnsureNoTransactions()
+   at Microsoft.EntityFrameworkCore.Storage.RelationalConnection.BeginTransactionAsync(IsolationLevel isolationLevel, CancellationToken cancellationToken)
+   at Microsoft.EntityFrameworkCore.Storage.RelationalConnection.BeginTransactionAsync(CancellationToken cancellationToken)
+   at MuhasebeStokWebApp.Data.Repositories.UnitOfWork.BeginTransactionAsync() in D:\cursor-workspace\MuhasebeStokWebApp\Data\Repositories\UnitOfWork.cs:line 106
+   at MuhasebeStokWebApp.Services.FaturaTransactionService.EnsureTransactionAsync() in D:\cursor-workspace\MuhasebeStokWebApp\Services\FaturaTransactionService.cs:line 37
+   at MuhasebeStokWebApp.Services.FaturaTransactionService.<>c__DisplayClass8_0`1.<<ExecuteInTransactionAsync>b__0>d.MoveNext() in D:\cursor-workspace\MuhasebeStokWebApp\Services\FaturaTransactionService.cs:line 86
+--- End of stack trace from previous location ---
+   at MuhasebeStokWebApp.Services.ExceptionHandlingService.HandleExceptionAsync[T](Func`1 func, String logContext, Object[] logParams) in D:\cursor-workspace\MuhasebeStokWebApp\Services\ExceptionHandlingService.cs:line 146
+2025-05-20 00:14:04.557 +03:00 [INF] Fatura bilgileri güncellendi. FaturaID: "f01cfc7e-5cb3-42c0-911b-98634d9733b4"
+2025-05-20 00:14:04.557 +03:00 [INF] FIFO kayıtları iptal edilmeye çalışılıyor: ReferansID=f01cfc7e-5cb3-42c0-911b-98634d9733b4, ReferansTuru=Fatura
+2025-05-20 00:14:04.558 +03:00 [INF] FifoKayitlariniIptalEt - Mevcut transaction kullanılıyor: ReferansID=f01cfc7e-5cb3-42c0-911b-98634d9733b4
+2025-05-20 00:14:04.612 +03:00 [INF] FIFO kayıtları iptal ediliyor. Toplam 1 kayıt bulundu.
+2025-05-20 00:14:04.782 +03:00 [INF] İlişkili FIFO kayıtları iptal edildi. FaturaID: "f01cfc7e-5cb3-42c0-911b-98634d9733b4"
+2025-05-20 00:14:04.826 +03:00 [INF] İlişkili stok hareketleri silindi. FaturaID: "f01cfc7e-5cb3-42c0-911b-98634d9733b4"
+2025-05-20 00:14:04.872 +03:00 [INF] Cari hareket silindi. CariHareketID: "6c9f082f-3ec5-4847-8180-4a82265f9193"
+2025-05-20 00:14:04.924 +03:00 [INF] Eski fatura detayları silindi. Toplam 1 detay. FaturaID: "f01cfc7e-5cb3-42c0-911b-98634d9733b4"
+2025-05-20 00:14:04.925 +03:00 [INF] Yeni fatura detayı eklendi. UrunID: "2216d3ad-9370-49a9-847e-c374b130978d"
+2025-05-20 00:14:04.926 +03:00 [INF] Stok hareketi oluşturuldu. UrunID: "2216d3ad-9370-49a9-847e-c374b130978d", Miktar: 6.00
+2025-05-20 00:14:04.927 +03:00 [INF] StokGirisiYap - Mevcut transaction kullanılıyor: Ürün 2216d3ad-9370-49a9-847e-c374b130978d, Miktar 6.00
+2025-05-20 00:14:06.055 +03:00 [ERR] An exception occurred in the database while saving changes for context type 'MuhasebeStokWebApp.Data.ApplicationDbContext'.
+Microsoft.EntityFrameworkCore.DbUpdateException: An error occurred while saving the entity changes. See the inner exception for details.
+ ---> Microsoft.Data.SqlClient.SqlException (0x80131904): NULL değeri 'MuhasebeStokDB.dbo.FaturaDetaylari' tablosunun 'SatirKdvToplam' sütununa eklemez; sütun null değerlere izin vermiyor. INSERT başarısız.
+   at Microsoft.Data.SqlClient.SqlConnection.OnError(SqlException exception, Boolean breakConnection, Action`1 wrapCloseInAction)
+   at Microsoft.Data.SqlClient.SqlInternalConnection.OnError(SqlException exception, Boolean breakConnection, Action`1 wrapCloseInAction)
+   at Microsoft.Data.SqlClient.TdsParser.ThrowExceptionAndWarning(TdsParserStateObject stateObj, Boolean callerHasConnectionLock, Boolean asyncClose)
+   at Microsoft.Data.SqlClient.TdsParser.TryRun(RunBehavior runBehavior, SqlCommand cmdHandler, SqlDataReader dataStream, BulkCopySimpleResultSet bulkCopyHandler, TdsParserStateObject stateObj, Boolean& dataReady)
+   at Microsoft.Data.SqlClient.SqlDataReader.TryHasMoreRows(Boolean& moreRows)
+   at Microsoft.Data.SqlClient.SqlDataReader.TryHasMoreResults(Boolean& moreResults)
+   at Microsoft.Data.SqlClient.SqlDataReader.TryNextResult(Boolean& more)
+   at Microsoft.Data.SqlClient.SqlDataReader.NextResultAsyncExecute(Task task, Object state)
+   at Microsoft.Data.SqlClient.SqlDataReader.InvokeAsyncCall[T](SqlDataReaderBaseAsyncCallContext`1 context)
+--- End of stack trace from previous location ---
+   at Microsoft.EntityFrameworkCore.Update.AffectedCountModificationCommandBatch.ConsumeAsync(RelationalDataReader reader, CancellationToken cancellationToken)
+ClientConnectionId:e1e5cf6a-008a-40be-a28f-4035c64dd6f6
+Error Number:515,State:2,Class:16
+   --- End of inner exception stack trace ---
+   at Microsoft.EntityFrameworkCore.Update.AffectedCountModificationCommandBatch.ConsumeAsync(RelationalDataReader reader, CancellationToken cancellationToken)
+   at Microsoft.EntityFrameworkCore.Update.ReaderModificationCommandBatch.ExecuteAsync(IRelationalConnection connection, CancellationToken cancellationToken)
+   at Microsoft.EntityFrameworkCore.Update.ReaderModificationCommandBatch.ExecuteAsync(IRelationalConnection connection, CancellationToken cancellationToken)
+   at Microsoft.EntityFrameworkCore.SqlServer.Update.Internal.SqlServerModificationCommandBatch.ExecuteAsync(IRelationalConnection connection, CancellationToken cancellationToken)
+   at Microsoft.EntityFrameworkCore.Update.Internal.BatchExecutor.ExecuteAsync(IEnumerable`1 commandBatches, IRelationalConnection connection, CancellationToken cancellationToken)
+   at Microsoft.EntityFrameworkCore.Update.Internal.BatchExecutor.ExecuteAsync(IEnumerable`1 commandBatches, IRelationalConnection connection, CancellationToken cancellationToken)
+   at Microsoft.EntityFrameworkCore.Update.Internal.BatchExecutor.ExecuteAsync(IEnumerable`1 commandBatches, IRelationalConnection connection, CancellationToken cancellationToken)
+   at Microsoft.EntityFrameworkCore.Storage.RelationalDatabase.SaveChangesAsync(IList`1 entries, CancellationToken cancellationToken)
+   at Microsoft.EntityFrameworkCore.ChangeTracking.Internal.StateManager.SaveChangesAsync(IList`1 entriesToSave, CancellationToken cancellationToken)
+   at Microsoft.EntityFrameworkCore.ChangeTracking.Internal.StateManager.SaveChangesAsync(StateManager stateManager, Boolean acceptAllChangesOnSuccess, CancellationToken cancellationToken)
+   at Microsoft.EntityFrameworkCore.SqlServer.Storage.Internal.SqlServerExecutionStrategy.ExecuteAsync[TState,TResult](TState state, Func`4 operation, Func`4 verifySucceeded, CancellationToken cancellationToken)
+   at Microsoft.EntityFrameworkCore.DbContext.SaveChangesAsync(Boolean acceptAllChangesOnSuccess, CancellationToken cancellationToken)
+Microsoft.EntityFrameworkCore.DbUpdateException: An error occurred while saving the entity changes. See the inner exception for details.
+ ---> Microsoft.Data.SqlClient.SqlException (0x80131904): NULL değeri 'MuhasebeStokDB.dbo.FaturaDetaylari' tablosunun 'SatirKdvToplam' sütununa eklemez; sütun null değerlere izin vermiyor. INSERT başarısız.
+   at Microsoft.Data.SqlClient.SqlConnection.OnError(SqlException exception, Boolean breakConnection, Action`1 wrapCloseInAction)
+   at Microsoft.Data.SqlClient.SqlInternalConnection.OnError(SqlException exception, Boolean breakConnection, Action`1 wrapCloseInAction)
+   at Microsoft.Data.SqlClient.TdsParser.ThrowExceptionAndWarning(TdsParserStateObject stateObj, Boolean callerHasConnectionLock, Boolean asyncClose)
+   at Microsoft.Data.SqlClient.TdsParser.TryRun(RunBehavior runBehavior, SqlCommand cmdHandler, SqlDataReader dataStream, BulkCopySimpleResultSet bulkCopyHandler, TdsParserStateObject stateObj, Boolean& dataReady)
+   at Microsoft.Data.SqlClient.SqlDataReader.TryHasMoreRows(Boolean& moreRows)
+   at Microsoft.Data.SqlClient.SqlDataReader.TryHasMoreResults(Boolean& moreResults)
+   at Microsoft.Data.SqlClient.SqlDataReader.TryNextResult(Boolean& more)
+   at Microsoft.Data.SqlClient.SqlDataReader.NextResultAsyncExecute(Task task, Object state)
+   at Microsoft.Data.SqlClient.SqlDataReader.InvokeAsyncCall[T](SqlDataReaderBaseAsyncCallContext`1 context)
+--- End of stack trace from previous location ---
+   at Microsoft.EntityFrameworkCore.Update.AffectedCountModificationCommandBatch.ConsumeAsync(RelationalDataReader reader, CancellationToken cancellationToken)
+ClientConnectionId:e1e5cf6a-008a-40be-a28f-4035c64dd6f6
+Error Number:515,State:2,Class:16
+   --- End of inner exception stack trace ---
+   at Microsoft.EntityFrameworkCore.Update.AffectedCountModificationCommandBatch.ConsumeAsync(RelationalDataReader reader, CancellationToken cancellationToken)
+   at Microsoft.EntityFrameworkCore.Update.ReaderModificationCommandBatch.ExecuteAsync(IRelationalConnection connection, CancellationToken cancellationToken)
+   at Microsoft.EntityFrameworkCore.Update.ReaderModificationCommandBatch.ExecuteAsync(IRelationalConnection connection, CancellationToken cancellationToken)
+   at Microsoft.EntityFrameworkCore.SqlServer.Update.Internal.SqlServerModificationCommandBatch.ExecuteAsync(IRelationalConnection connection, CancellationToken cancellationToken)
+   at Microsoft.EntityFrameworkCore.Update.Internal.BatchExecutor.ExecuteAsync(IEnumerable`1 commandBatches, IRelationalConnection connection, CancellationToken cancellationToken)
+   at Microsoft.EntityFrameworkCore.Update.Internal.BatchExecutor.ExecuteAsync(IEnumerable`1 commandBatches, IRelationalConnection connection, CancellationToken cancellationToken)
+   at Microsoft.EntityFrameworkCore.Update.Internal.BatchExecutor.ExecuteAsync(IEnumerable`1 commandBatches, IRelationalConnection connection, CancellationToken cancellationToken)
+   at Microsoft.EntityFrameworkCore.Storage.RelationalDatabase.SaveChangesAsync(IList`1 entries, CancellationToken cancellationToken)
+   at Microsoft.EntityFrameworkCore.ChangeTracking.Internal.StateManager.SaveChangesAsync(IList`1 entriesToSave, CancellationToken cancellationToken)
+   at Microsoft.EntityFrameworkCore.ChangeTracking.Internal.StateManager.SaveChangesAsync(StateManager stateManager, Boolean acceptAllChangesOnSuccess, CancellationToken cancellationToken)
+   at Microsoft.EntityFrameworkCore.SqlServer.Storage.Internal.SqlServerExecutionStrategy.ExecuteAsync[TState,TResult](TState state, Func`4 operation, Func`4 verifySucceeded, CancellationToken cancellationToken)
+   at Microsoft.EntityFrameworkCore.DbContext.SaveChangesAsync(Boolean acceptAllChangesOnSuccess, CancellationToken cancellationToken)
+2025-05-20 00:14:06.113 +03:00 [ERR] Stok girişi sırasında hata oluştu: UrunID=2216d3ad-9370-49a9-847e-c374b130978d, Miktar=6.00, BirimFiyat=50.00
+Microsoft.EntityFrameworkCore.DbUpdateException: An error occurred while saving the entity changes. See the inner exception for details.
+ ---> Microsoft.Data.SqlClient.SqlException (0x80131904): NULL değeri 'MuhasebeStokDB.dbo.FaturaDetaylari' tablosunun 'SatirKdvToplam' sütununa eklemez; sütun null değerlere izin vermiyor. INSERT başarısız.
+   at Microsoft.Data.SqlClient.SqlConnection.OnError(SqlException exception, Boolean breakConnection, Action`1 wrapCloseInAction)
+   at Microsoft.Data.SqlClient.SqlInternalConnection.OnError(SqlException exception, Boolean breakConnection, Action`1 wrapCloseInAction)
+   at Microsoft.Data.SqlClient.TdsParser.ThrowExceptionAndWarning(TdsParserStateObject stateObj, Boolean callerHasConnectionLock, Boolean asyncClose)
+   at Microsoft.Data.SqlClient.TdsParser.TryRun(RunBehavior runBehavior, SqlCommand cmdHandler, SqlDataReader dataStream, BulkCopySimpleResultSet bulkCopyHandler, TdsParserStateObject stateObj, Boolean& dataReady)
+   at Microsoft.Data.SqlClient.SqlDataReader.TryHasMoreRows(Boolean& moreRows)
+   at Microsoft.Data.SqlClient.SqlDataReader.TryHasMoreResults(Boolean& moreResults)
+   at Microsoft.Data.SqlClient.SqlDataReader.TryNextResult(Boolean& more)
+   at Microsoft.Data.SqlClient.SqlDataReader.NextResultAsyncExecute(Task task, Object state)
+   at Microsoft.Data.SqlClient.SqlDataReader.InvokeAsyncCall[T](SqlDataReaderBaseAsyncCallContext`1 context)
+--- End of stack trace from previous location ---
+   at Microsoft.EntityFrameworkCore.Update.AffectedCountModificationCommandBatch.ConsumeAsync(RelationalDataReader reader, CancellationToken cancellationToken)
+ClientConnectionId:e1e5cf6a-008a-40be-a28f-4035c64dd6f6
+Error Number:515,State:2,Class:16
+   --- End of inner exception stack trace ---
+   at Microsoft.EntityFrameworkCore.Update.AffectedCountModificationCommandBatch.ConsumeAsync(RelationalDataReader reader, CancellationToken cancellationToken)
+   at Microsoft.EntityFrameworkCore.Update.ReaderModificationCommandBatch.ExecuteAsync(IRelationalConnection connection, CancellationToken cancellationToken)
+   at Microsoft.EntityFrameworkCore.Update.ReaderModificationCommandBatch.ExecuteAsync(IRelationalConnection connection, CancellationToken cancellationToken)
+   at Microsoft.EntityFrameworkCore.SqlServer.Update.Internal.SqlServerModificationCommandBatch.ExecuteAsync(IRelationalConnection connection, CancellationToken cancellationToken)
+   at Microsoft.EntityFrameworkCore.Update.Internal.BatchExecutor.ExecuteAsync(IEnumerable`1 commandBatches, IRelationalConnection connection, CancellationToken cancellationToken)
+   at Microsoft.EntityFrameworkCore.Update.Internal.BatchExecutor.ExecuteAsync(IEnumerable`1 commandBatches, IRelationalConnection connection, CancellationToken cancellationToken)
+   at Microsoft.EntityFrameworkCore.Update.Internal.BatchExecutor.ExecuteAsync(IEnumerable`1 commandBatches, IRelationalConnection connection, CancellationToken cancellationToken)
+   at Microsoft.EntityFrameworkCore.Storage.RelationalDatabase.SaveChangesAsync(IList`1 entries, CancellationToken cancellationToken)
+   at Microsoft.EntityFrameworkCore.ChangeTracking.Internal.StateManager.SaveChangesAsync(IList`1 entriesToSave, CancellationToken cancellationToken)
+   at Microsoft.EntityFrameworkCore.ChangeTracking.Internal.StateManager.SaveChangesAsync(StateManager stateManager, Boolean acceptAllChangesOnSuccess, CancellationToken cancellationToken)
+   at Microsoft.EntityFrameworkCore.SqlServer.Storage.Internal.SqlServerExecutionStrategy.ExecuteAsync[TState,TResult](TState state, Func`4 operation, Func`4 verifySucceeded, CancellationToken cancellationToken)
+   at Microsoft.EntityFrameworkCore.DbContext.SaveChangesAsync(Boolean acceptAllChangesOnSuccess, CancellationToken cancellationToken)
+   at Microsoft.EntityFrameworkCore.DbContext.SaveChangesAsync(Boolean acceptAllChangesOnSuccess, CancellationToken cancellationToken)
+   at MuhasebeStokWebApp.Services.StokFifoService.StokGirisiYap(Guid urunID, Decimal miktar, Decimal birimFiyat, String birim, String referansNo, String referansTuru, Nullable`1 referansID, String aciklama, String paraBirimi, Nullable`1 dovizKuru) in D:\cursor-workspace\MuhasebeStokWebApp\Services\StokFifoService.cs:line 218
+2025-05-20 00:14:06.224 +03:00 [ERR] Fatura ve ilişkili kayıtlar güncellenirken hata. FaturaID: "f01cfc7e-5cb3-42c0-911b-98634d9733b4", Hata: An error occurred while saving the entity changes. See the inner exception for details.
+Microsoft.EntityFrameworkCore.DbUpdateException: An error occurred while saving the entity changes. See the inner exception for details.
+ ---> Microsoft.Data.SqlClient.SqlException (0x80131904): NULL değeri 'MuhasebeStokDB.dbo.FaturaDetaylari' tablosunun 'SatirKdvToplam' sütununa eklemez; sütun null değerlere izin vermiyor. INSERT başarısız.
+   at Microsoft.Data.SqlClient.SqlConnection.OnError(SqlException exception, Boolean breakConnection, Action`1 wrapCloseInAction)
+   at Microsoft.Data.SqlClient.SqlInternalConnection.OnError(SqlException exception, Boolean breakConnection, Action`1 wrapCloseInAction)
+   at Microsoft.Data.SqlClient.TdsParser.ThrowExceptionAndWarning(TdsParserStateObject stateObj, Boolean callerHasConnectionLock, Boolean asyncClose)
+   at Microsoft.Data.SqlClient.TdsParser.TryRun(RunBehavior runBehavior, SqlCommand cmdHandler, SqlDataReader dataStream, BulkCopySimpleResultSet bulkCopyHandler, TdsParserStateObject stateObj, Boolean& dataReady)
+   at Microsoft.Data.SqlClient.SqlDataReader.TryHasMoreRows(Boolean& moreRows)
+   at Microsoft.Data.SqlClient.SqlDataReader.TryHasMoreResults(Boolean& moreResults)
+   at Microsoft.Data.SqlClient.SqlDataReader.TryNextResult(Boolean& more)
+   at Microsoft.Data.SqlClient.SqlDataReader.NextResultAsyncExecute(Task task, Object state)
+   at Microsoft.Data.SqlClient.SqlDataReader.InvokeAsyncCall[T](SqlDataReaderBaseAsyncCallContext`1 context)
+--- End of stack trace from previous location ---
+   at Microsoft.EntityFrameworkCore.Update.AffectedCountModificationCommandBatch.ConsumeAsync(RelationalDataReader reader, CancellationToken cancellationToken)
+ClientConnectionId:e1e5cf6a-008a-40be-a28f-4035c64dd6f6
+Error Number:515,State:2,Class:16
+   --- End of inner exception stack trace ---
+   at Microsoft.EntityFrameworkCore.Update.AffectedCountModificationCommandBatch.ConsumeAsync(RelationalDataReader reader, CancellationToken cancellationToken)
+   at Microsoft.EntityFrameworkCore.Update.ReaderModificationCommandBatch.ExecuteAsync(IRelationalConnection connection, CancellationToken cancellationToken)
+   at Microsoft.EntityFrameworkCore.Update.ReaderModificationCommandBatch.ExecuteAsync(IRelationalConnection connection, CancellationToken cancellationToken)
+   at Microsoft.EntityFrameworkCore.SqlServer.Update.Internal.SqlServerModificationCommandBatch.ExecuteAsync(IRelationalConnection connection, CancellationToken cancellationToken)
+   at Microsoft.EntityFrameworkCore.Update.Internal.BatchExecutor.ExecuteAsync(IEnumerable`1 commandBatches, IRelationalConnection connection, CancellationToken cancellationToken)
+   at Microsoft.EntityFrameworkCore.Update.Internal.BatchExecutor.ExecuteAsync(IEnumerable`1 commandBatches, IRelationalConnection connection, CancellationToken cancellationToken)
+   at Microsoft.EntityFrameworkCore.Update.Internal.BatchExecutor.ExecuteAsync(IEnumerable`1 commandBatches, IRelationalConnection connection, CancellationToken cancellationToken)
+   at Microsoft.EntityFrameworkCore.Storage.RelationalDatabase.SaveChangesAsync(IList`1 entries, CancellationToken cancellationToken)
+   at Microsoft.EntityFrameworkCore.ChangeTracking.Internal.StateManager.SaveChangesAsync(IList`1 entriesToSave, CancellationToken cancellationToken)
+   at Microsoft.EntityFrameworkCore.ChangeTracking.Internal.StateManager.SaveChangesAsync(StateManager stateManager, Boolean acceptAllChangesOnSuccess, CancellationToken cancellationToken)
+   at Microsoft.EntityFrameworkCore.SqlServer.Storage.Internal.SqlServerExecutionStrategy.ExecuteAsync[TState,TResult](TState state, Func`4 operation, Func`4 verifySucceeded, CancellationToken cancellationToken)
+   at Microsoft.EntityFrameworkCore.DbContext.SaveChangesAsync(Boolean acceptAllChangesOnSuccess, CancellationToken cancellationToken)
+   at Microsoft.EntityFrameworkCore.DbContext.SaveChangesAsync(Boolean acceptAllChangesOnSuccess, CancellationToken cancellationToken)
+   at MuhasebeStokWebApp.Services.StokFifoService.StokGirisiYap(Guid urunID, Decimal miktar, Decimal birimFiyat, String birim, String referansNo, String referansTuru, Nullable`1 referansID, String aciklama, String paraBirimi, Nullable`1 dovizKuru) in D:\cursor-workspace\MuhasebeStokWebApp\Services\StokFifoService.cs:line 218
+   at MuhasebeStokWebApp.Services.StokFifoService.StokGirisiYap(Guid urunID, Decimal miktar, Decimal birimFiyat, String birim, String referansNo, String referansTuru, Nullable`1 referansID, String aciklama, String paraBirimi, Nullable`1 dovizKuru) in D:\cursor-workspace\MuhasebeStokWebApp\Services\StokFifoService.cs:line 240
+   at MuhasebeStokWebApp.Services.StokFifoService.StokGirisiYap(Guid urunID, Decimal miktar, Decimal birimFiyat, String birim, String referansNo, String referansTuru, Nullable`1 referansID, String aciklama, String paraBirimi, Nullable`1 dovizKuru) in D:\cursor-workspace\MuhasebeStokWebApp\Services\StokFifoService.cs:line 249
+   at MuhasebeStokWebApp.Services.FaturaOrchestrationService.UpdateFaturaWithRelations(Guid id, FaturaEditViewModel viewModel, Nullable`1 currentUserId) in D:\cursor-workspace\MuhasebeStokWebApp\Services\FaturaOrchestrationService.cs:line 493
+2025-05-20 00:14:06.285 +03:00 [INF] Fatura güncelleme işlemi geri alındı. FaturaID: "f01cfc7e-5cb3-42c0-911b-98634d9733b4"
+2025-05-20 00:14:06.404 +03:00 [ERR] Fatura güncelleme hatası
+Microsoft.EntityFrameworkCore.DbUpdateException: An error occurred while saving the entity changes. See the inner exception for details.
+ ---> Microsoft.Data.SqlClient.SqlException (0x80131904): NULL değeri 'MuhasebeStokDB.dbo.FaturaDetaylari' tablosunun 'SatirKdvToplam' sütununa eklemez; sütun null değerlere izin vermiyor. INSERT başarısız.
+   at Microsoft.Data.SqlClient.SqlConnection.OnError(SqlException exception, Boolean breakConnection, Action`1 wrapCloseInAction)
+   at Microsoft.Data.SqlClient.SqlInternalConnection.OnError(SqlException exception, Boolean breakConnection, Action`1 wrapCloseInAction)
+   at Microsoft.Data.SqlClient.TdsParser.ThrowExceptionAndWarning(TdsParserStateObject stateObj, Boolean callerHasConnectionLock, Boolean asyncClose)
+   at Microsoft.Data.SqlClient.TdsParser.TryRun(RunBehavior runBehavior, SqlCommand cmdHandler, SqlDataReader dataStream, BulkCopySimpleResultSet bulkCopyHandler, TdsParserStateObject stateObj, Boolean& dataReady)
+   at Microsoft.Data.SqlClient.SqlDataReader.TryHasMoreRows(Boolean& moreRows)
+   at Microsoft.Data.SqlClient.SqlDataReader.TryHasMoreResults(Boolean& moreResults)
+   at Microsoft.Data.SqlClient.SqlDataReader.TryNextResult(Boolean& more)
+   at Microsoft.Data.SqlClient.SqlDataReader.NextResultAsyncExecute(Task task, Object state)
+   at Microsoft.Data.SqlClient.SqlDataReader.InvokeAsyncCall[T](SqlDataReaderBaseAsyncCallContext`1 context)
+--- End of stack trace from previous location ---
+   at Microsoft.EntityFrameworkCore.Update.AffectedCountModificationCommandBatch.ConsumeAsync(RelationalDataReader reader, CancellationToken cancellationToken)
+ClientConnectionId:e1e5cf6a-008a-40be-a28f-4035c64dd6f6
+Error Number:515,State:2,Class:16
+   --- End of inner exception stack trace ---
+   at Microsoft.EntityFrameworkCore.Update.AffectedCountModificationCommandBatch.ConsumeAsync(RelationalDataReader reader, CancellationToken cancellationToken)
+   at Microsoft.EntityFrameworkCore.Update.ReaderModificationCommandBatch.ExecuteAsync(IRelationalConnection connection, CancellationToken cancellationToken)
+   at Microsoft.EntityFrameworkCore.Update.ReaderModificationCommandBatch.ExecuteAsync(IRelationalConnection connection, CancellationToken cancellationToken)
+   at Microsoft.EntityFrameworkCore.SqlServer.Update.Internal.SqlServerModificationCommandBatch.ExecuteAsync(IRelationalConnection connection, CancellationToken cancellationToken)
+   at Microsoft.EntityFrameworkCore.Update.Internal.BatchExecutor.ExecuteAsync(IEnumerable`1 commandBatches, IRelationalConnection connection, CancellationToken cancellationToken)
+   at Microsoft.EntityFrameworkCore.Update.Internal.BatchExecutor.ExecuteAsync(IEnumerable`1 commandBatches, IRelationalConnection connection, CancellationToken cancellationToken)
+   at Microsoft.EntityFrameworkCore.Update.Internal.BatchExecutor.ExecuteAsync(IEnumerable`1 commandBatches, IRelationalConnection connection, CancellationToken cancellationToken)
+   at Microsoft.EntityFrameworkCore.Storage.RelationalDatabase.SaveChangesAsync(IList`1 entries, CancellationToken cancellationToken)
+   at Microsoft.EntityFrameworkCore.ChangeTracking.Internal.StateManager.SaveChangesAsync(IList`1 entriesToSave, CancellationToken cancellationToken)
+   at Microsoft.EntityFrameworkCore.ChangeTracking.Internal.StateManager.SaveChangesAsync(StateManager stateManager, Boolean acceptAllChangesOnSuccess, CancellationToken cancellationToken)
+   at Microsoft.EntityFrameworkCore.SqlServer.Storage.Internal.SqlServerExecutionStrategy.ExecuteAsync[TState,TResult](TState state, Func`4 operation, Func`4 verifySucceeded, CancellationToken cancellationToken)
+   at Microsoft.EntityFrameworkCore.DbContext.SaveChangesAsync(Boolean acceptAllChangesOnSuccess, CancellationToken cancellationToken)
+   at Microsoft.EntityFrameworkCore.DbContext.SaveChangesAsync(Boolean acceptAllChangesOnSuccess, CancellationToken cancellationToken)
+   at MuhasebeStokWebApp.Services.StokFifoService.StokGirisiYap(Guid urunID, Decimal miktar, Decimal birimFiyat, String birim, String referansNo, String referansTuru, Nullable`1 referansID, String aciklama, String paraBirimi, Nullable`1 dovizKuru) in D:\cursor-workspace\MuhasebeStokWebApp\Services\StokFifoService.cs:line 218
+   at MuhasebeStokWebApp.Services.StokFifoService.StokGirisiYap(Guid urunID, Decimal miktar, Decimal birimFiyat, String birim, String referansNo, String referansTuru, Nullable`1 referansID, String aciklama, String paraBirimi, Nullable`1 dovizKuru) in D:\cursor-workspace\MuhasebeStokWebApp\Services\StokFifoService.cs:line 240
+   at MuhasebeStokWebApp.Services.StokFifoService.StokGirisiYap(Guid urunID, Decimal miktar, Decimal birimFiyat, String birim, String referansNo, String referansTuru, Nullable`1 referansID, String aciklama, String paraBirimi, Nullable`1 dovizKuru) in D:\cursor-workspace\MuhasebeStokWebApp\Services\StokFifoService.cs:line 249
+   at MuhasebeStokWebApp.Services.FaturaOrchestrationService.UpdateFaturaWithRelations(Guid id, FaturaEditViewModel viewModel, Nullable`1 currentUserId) in D:\cursor-workspace\MuhasebeStokWebApp\Services\FaturaOrchestrationService.cs:line 493
+   at MuhasebeStokWebApp.Services.FaturaOrchestrationService.UpdateFaturaWithRelations(Guid id, FaturaEditViewModel viewModel, Nullable`1 currentUserId) in D:\cursor-workspace\MuhasebeStokWebApp\Services\FaturaOrchestrationService.cs:line 584
+   at MuhasebeStokWebApp.Services.FaturaOrchestrationService.UpdateFaturaWithRelations(Guid id, FaturaEditViewModel viewModel, Nullable`1 currentUserId) in D:\cursor-workspace\MuhasebeStokWebApp\Services\FaturaOrchestrationService.cs:line 592
+   at MuhasebeStokWebApp.Controllers.FaturaController.Edit(Guid id, FaturaEditViewModel viewModel) in D:\cursor-workspace\MuhasebeStokWebApp\Controllers\FaturaController.cs:line 620
+2025-05-20 00:25:27.452 +03:00 [INF] Veritabanına bağlantı başarılı. Migrationlar uygulanıyor...
+2025-05-20 00:25:28.988 +03:00 [INF] Veritabanı işlemleri başarıyla tamamlandı.
+2025-05-20 00:25:29.270 +03:00 [INF] Todo Hatırlatıcı Servisi başlatıldı.
+2025-05-20 00:25:29.272 +03:00 [INF] Yaklaşan hatırlatıcılar kontrol ediliyor...
+2025-05-20 00:25:29.454 +03:00 [INF] Bekleyen hatırlatma bulunamadı.
+2025-05-20 00:25:32.021 +03:00 [INF] Giriş denemesi: admin
+2025-05-20 00:25:32.513 +03:00 [INF] Admin kullanıcısı başarıyla giriş yaptı: admin
+2025-05-20 00:25:32.514 +03:00 [INF] Admin session oluşturuldu: UserID=9e6fc203-37eb-49a7-a470-1551f7bec8b8, UserName=admin
+2025-05-20 00:25:32.515 +03:00 [INF] Yönlendirme adresi: /
+2025-05-20 00:25:32.516 +03:00 [INF] Admin kullanıcısı / adresine yönlendiriliyor
+2025-05-20 00:25:33.045 +03:00 [INF] Aktif session bulundu: UserID=9e6fc203-37eb-49a7-a470-1551f7bec8b8, UserName=admin
+2025-05-20 00:25:33.168 +03:00 [INF] Admin kullanıcısı tespit edildi
+2025-05-20 00:25:33.168 +03:00 [INF] Kimlik doğrulanmış kullanıcı: admin
+2025-05-20 00:25:35.103 +03:00 [INF] TRY dönüşümü için kur değeri hesaplandı: TRY -> USD, Değer: 0.03
+2025-05-20 00:25:35.464 +03:00 [INF] Kur değeri hesaplandı: UZS -> USD, Değer: 0.0000775226832727903141733102
+2025-05-20 00:25:55.231 +03:00 [INF] Fatura ve ilişkili kayıtlar güncelleniyor. FaturaID: "f01cfc7e-5cb3-42c0-911b-98634d9733b4"
+2025-05-20 00:26:01.696 +03:00 [INF] UpdateAsync işlemi başlatılıyor
+2025-05-20 00:26:01.796 +03:00 [ERR] FaturaTransactionService.UpdateAsync Parametreler: f01cfc7e-5cb3-42c0-911b-98634d9733b4
+System.InvalidOperationException: The connection is already in a transaction and cannot participate in another transaction.
+   at Microsoft.EntityFrameworkCore.Storage.RelationalConnection.EnsureNoTransactions()
+   at Microsoft.EntityFrameworkCore.Storage.RelationalConnection.BeginTransactionAsync(IsolationLevel isolationLevel, CancellationToken cancellationToken)
+   at Microsoft.EntityFrameworkCore.Storage.RelationalConnection.BeginTransactionAsync(CancellationToken cancellationToken)
+   at MuhasebeStokWebApp.Data.Repositories.UnitOfWork.BeginTransactionAsync() in D:\cursor-workspace\MuhasebeStokWebApp\Data\Repositories\UnitOfWork.cs:line 106
+   at MuhasebeStokWebApp.Services.FaturaTransactionService.EnsureTransactionAsync() in D:\cursor-workspace\MuhasebeStokWebApp\Services\FaturaTransactionService.cs:line 37
+   at MuhasebeStokWebApp.Services.FaturaTransactionService.<>c__DisplayClass8_0`1.<<ExecuteInTransactionAsync>b__0>d.MoveNext() in D:\cursor-workspace\MuhasebeStokWebApp\Services\FaturaTransactionService.cs:line 86
+--- End of stack trace from previous location ---
+   at MuhasebeStokWebApp.Services.ExceptionHandlingService.HandleExceptionAsync[T](Func`1 func, String logContext, Object[] logParams) in D:\cursor-workspace\MuhasebeStokWebApp\Services\ExceptionHandlingService.cs:line 146
+2025-05-20 00:26:01.823 +03:00 [INF] Fatura bilgileri güncellendi. FaturaID: "f01cfc7e-5cb3-42c0-911b-98634d9733b4"
+2025-05-20 00:26:01.827 +03:00 [INF] FIFO kayıtları iptal edilmeye çalışılıyor: ReferansID=f01cfc7e-5cb3-42c0-911b-98634d9733b4, ReferansTuru=Fatura
+2025-05-20 00:26:01.828 +03:00 [INF] FifoKayitlariniIptalEt - Mevcut transaction kullanılıyor: ReferansID=f01cfc7e-5cb3-42c0-911b-98634d9733b4
+2025-05-20 00:26:01.925 +03:00 [INF] FIFO kayıtları iptal ediliyor. Toplam 1 kayıt bulundu.
+2025-05-20 00:26:02.249 +03:00 [INF] İlişkili FIFO kayıtları iptal edildi. FaturaID: "f01cfc7e-5cb3-42c0-911b-98634d9733b4"
+2025-05-20 00:26:02.342 +03:00 [INF] İlişkili stok hareketleri silindi. FaturaID: "f01cfc7e-5cb3-42c0-911b-98634d9733b4"
+2025-05-20 00:26:02.402 +03:00 [INF] Cari hareket silindi. CariHareketID: "6c9f082f-3ec5-4847-8180-4a82265f9193"
+2025-05-20 00:26:02.466 +03:00 [INF] Eski fatura detayları silindi. Toplam 1 detay. FaturaID: "f01cfc7e-5cb3-42c0-911b-98634d9733b4"
+2025-05-20 00:26:02.483 +03:00 [INF] Yeni fatura detayı eklendi. UrunID: "2216d3ad-9370-49a9-847e-c374b130978d"
+2025-05-20 00:26:02.488 +03:00 [INF] Stok hareketi oluşturuldu. UrunID: "2216d3ad-9370-49a9-847e-c374b130978d", Miktar: 6.00
+2025-05-20 00:26:02.492 +03:00 [INF] StokGirisiYap - Mevcut transaction kullanılıyor: Ürün 2216d3ad-9370-49a9-847e-c374b130978d, Miktar 6.00
+2025-05-20 00:26:04.442 +03:00 [INF] Stok girişi başarıyla tamamlandı: UrunID=2216d3ad-9370-49a9-847e-c374b130978d, Miktar=6.00, BirimFiyat=50.00, ParaBirimi=USD, Mahsuplaşan=0
+2025-05-20 00:26:04.443 +03:00 [INF] FIFO kaydı oluşturuldu. UrunID: "2216d3ad-9370-49a9-847e-c374b130978d"
+2025-05-20 00:26:04.447 +03:00 [INF] Cari hareket oluşturuldu. CariID: "fdc7e9f0-d79f-4008-834e-32856a40c18b"
+2025-05-20 00:26:04.551 +03:00 [INF] İrsaliye güncellendi. IrsaliyeID: "f8f4916d-9984-4eed-b370-c5c9b61e22a1"
+2025-05-20 00:26:04.721 +03:00 [INF] Fatura ve ilişkili tüm kayıtlar başarıyla güncellendi. FaturaID: "f01cfc7e-5cb3-42c0-911b-98634d9733b4"
+2025-05-20 00:26:04.724 +03:00 [INF] Fatura başarıyla güncellendi. FaturaID: f01cfc7e-5cb3-42c0-911b-98634d9733b4
+2025-05-20 00:28:33.036 +03:00 [INF] Veritabanına bağlantı başarılı. Migrationlar uygulanıyor...
+2025-05-20 00:28:34.691 +03:00 [INF] Veritabanı işlemleri başarıyla tamamlandı.
+2025-05-20 00:28:34.944 +03:00 [INF] Todo Hatırlatıcı Servisi başlatıldı.
+2025-05-20 00:28:34.948 +03:00 [INF] Yaklaşan hatırlatıcılar kontrol ediliyor...
+2025-05-20 00:28:35.120 +03:00 [INF] Bekleyen hatırlatma bulunamadı.
+2025-05-20 00:28:36.743 +03:00 [WRN] Session bulunamadı, kullanıcı giriş yapmamış olabilir
+2025-05-20 00:28:36.781 +03:00 [INF] Kimlik doğrulanmış kullanıcı: admin
+2025-05-20 00:28:38.777 +03:00 [INF] TRY dönüşümü için kur değeri hesaplandı: TRY -> USD, Değer: 0.03
+2025-05-20 00:28:39.161 +03:00 [INF] Kur değeri hesaplandı: UZS -> USD, Değer: 0.0000775226832727903141733102
+2025-05-20 00:29:00.408 +03:00 [INF] Fatura ve ilişkili kayıtlar güncelleniyor. FaturaID: "f01cfc7e-5cb3-42c0-911b-98634d9733b4"
+2025-05-20 00:29:07.516 +03:00 [INF] UpdateAsync işlemi başlatılıyor
+2025-05-20 00:29:07.615 +03:00 [ERR] FaturaTransactionService.UpdateAsync Parametreler: f01cfc7e-5cb3-42c0-911b-98634d9733b4
+System.InvalidOperationException: The connection is already in a transaction and cannot participate in another transaction.
+   at Microsoft.EntityFrameworkCore.Storage.RelationalConnection.EnsureNoTransactions()
+   at Microsoft.EntityFrameworkCore.Storage.RelationalConnection.BeginTransactionAsync(IsolationLevel isolationLevel, CancellationToken cancellationToken)
+   at Microsoft.EntityFrameworkCore.Storage.RelationalConnection.BeginTransactionAsync(CancellationToken cancellationToken)
+   at MuhasebeStokWebApp.Data.Repositories.UnitOfWork.BeginTransactionAsync() in D:\cursor-workspace\MuhasebeStokWebApp\Data\Repositories\UnitOfWork.cs:line 106
+   at MuhasebeStokWebApp.Services.FaturaTransactionService.EnsureTransactionAsync() in D:\cursor-workspace\MuhasebeStokWebApp\Services\FaturaTransactionService.cs:line 37
+   at MuhasebeStokWebApp.Services.FaturaTransactionService.<>c__DisplayClass8_0`1.<<ExecuteInTransactionAsync>b__0>d.MoveNext() in D:\cursor-workspace\MuhasebeStokWebApp\Services\FaturaTransactionService.cs:line 86
+--- End of stack trace from previous location ---
+   at MuhasebeStokWebApp.Services.ExceptionHandlingService.HandleExceptionAsync[T](Func`1 func, String logContext, Object[] logParams) in D:\cursor-workspace\MuhasebeStokWebApp\Services\ExceptionHandlingService.cs:line 146
+2025-05-20 00:29:07.638 +03:00 [INF] Fatura bilgileri güncellendi. FaturaID: "f01cfc7e-5cb3-42c0-911b-98634d9733b4"
+2025-05-20 00:29:07.641 +03:00 [INF] FIFO kayıtları iptal edilmeye çalışılıyor: ReferansID=f01cfc7e-5cb3-42c0-911b-98634d9733b4, ReferansTuru=Fatura
+2025-05-20 00:29:07.642 +03:00 [INF] FifoKayitlariniIptalEt - Mevcut transaction kullanılıyor: ReferansID=f01cfc7e-5cb3-42c0-911b-98634d9733b4
+2025-05-20 00:29:07.734 +03:00 [INF] FIFO kayıtları iptal ediliyor. Toplam 1 kayıt bulundu.
+2025-05-20 00:29:08.059 +03:00 [INF] İlişkili FIFO kayıtları iptal edildi. FaturaID: "f01cfc7e-5cb3-42c0-911b-98634d9733b4"
+2025-05-20 00:29:08.169 +03:00 [INF] İlişkili stok hareketleri silindi. FaturaID: "f01cfc7e-5cb3-42c0-911b-98634d9733b4"
+2025-05-20 00:29:08.242 +03:00 [INF] Cari hareket silindi. CariHareketID: "45411609-6061-4405-b7cd-25eb7e113c10"
+2025-05-20 00:29:08.299 +03:00 [INF] Eski fatura detayları silindi. Toplam 1 detay. FaturaID: "f01cfc7e-5cb3-42c0-911b-98634d9733b4"
+2025-05-20 00:29:08.315 +03:00 [INF] Yeni fatura detayı eklendi. UrunID: "2216d3ad-9370-49a9-847e-c374b130978d"
+2025-05-20 00:29:08.320 +03:00 [INF] Stok hareketi oluşturuldu. UrunID: "2216d3ad-9370-49a9-847e-c374b130978d", Miktar: 6
+2025-05-20 00:29:08.324 +03:00 [INF] StokGirisiYap - Mevcut transaction kullanılıyor: Ürün 2216d3ad-9370-49a9-847e-c374b130978d, Miktar 6
+2025-05-20 00:29:09.080 +03:00 [INF] Stok girişi başarıyla tamamlandı: UrunID=2216d3ad-9370-49a9-847e-c374b130978d, Miktar=6, BirimFiyat=50.00, ParaBirimi=USD, Mahsuplaşan=0
+2025-05-20 00:29:09.081 +03:00 [INF] FIFO kaydı oluşturuldu. UrunID: "2216d3ad-9370-49a9-847e-c374b130978d"
+2025-05-20 00:29:09.084 +03:00 [INF] Cari hareket oluşturuldu. CariID: "fdc7e9f0-d79f-4008-834e-32856a40c18b"
+2025-05-20 00:29:09.177 +03:00 [INF] İrsaliye güncellendi. IrsaliyeID: "f8f4916d-9984-4eed-b370-c5c9b61e22a1"
+2025-05-20 00:29:09.315 +03:00 [INF] Fatura ve ilişkili tüm kayıtlar başarıyla güncellendi. FaturaID: "f01cfc7e-5cb3-42c0-911b-98634d9733b4"
+2025-05-20 00:29:09.319 +03:00 [INF] Fatura başarıyla güncellendi. FaturaID: f01cfc7e-5cb3-42c0-911b-98634d9733b4
+2025-05-20 00:29:49.375 +03:00 [INF] Fatura ve ilişkili kayıtlar güncelleniyor. FaturaID: "f01cfc7e-5cb3-42c0-911b-98634d9733b4"
+2025-05-20 00:29:51.129 +03:00 [INF] UpdateAsync işlemi başlatılıyor
+2025-05-20 00:29:51.214 +03:00 [ERR] FaturaTransactionService.UpdateAsync Parametreler: f01cfc7e-5cb3-42c0-911b-98634d9733b4
+System.InvalidOperationException: The connection is already in a transaction and cannot participate in another transaction.
+   at Microsoft.EntityFrameworkCore.Storage.RelationalConnection.EnsureNoTransactions()
+   at Microsoft.EntityFrameworkCore.Storage.RelationalConnection.BeginTransactionAsync(IsolationLevel isolationLevel, CancellationToken cancellationToken)
+   at Microsoft.EntityFrameworkCore.Storage.RelationalConnection.BeginTransactionAsync(CancellationToken cancellationToken)
+   at MuhasebeStokWebApp.Data.Repositories.UnitOfWork.BeginTransactionAsync() in D:\cursor-workspace\MuhasebeStokWebApp\Data\Repositories\UnitOfWork.cs:line 106
+   at MuhasebeStokWebApp.Services.FaturaTransactionService.EnsureTransactionAsync() in D:\cursor-workspace\MuhasebeStokWebApp\Services\FaturaTransactionService.cs:line 37
+   at MuhasebeStokWebApp.Services.FaturaTransactionService.<>c__DisplayClass8_0`1.<<ExecuteInTransactionAsync>b__0>d.MoveNext() in D:\cursor-workspace\MuhasebeStokWebApp\Services\FaturaTransactionService.cs:line 86
+--- End of stack trace from previous location ---
+   at MuhasebeStokWebApp.Services.ExceptionHandlingService.HandleExceptionAsync[T](Func`1 func, String logContext, Object[] logParams) in D:\cursor-workspace\MuhasebeStokWebApp\Services\ExceptionHandlingService.cs:line 146
+2025-05-20 00:29:51.218 +03:00 [INF] Fatura bilgileri güncellendi. FaturaID: "f01cfc7e-5cb3-42c0-911b-98634d9733b4"
+2025-05-20 00:29:51.218 +03:00 [INF] FIFO kayıtları iptal edilmeye çalışılıyor: ReferansID=f01cfc7e-5cb3-42c0-911b-98634d9733b4, ReferansTuru=Fatura
+2025-05-20 00:29:51.219 +03:00 [INF] FifoKayitlariniIptalEt - Mevcut transaction kullanılıyor: ReferansID=f01cfc7e-5cb3-42c0-911b-98634d9733b4
+2025-05-20 00:29:51.299 +03:00 [INF] FIFO kayıtları iptal ediliyor. Toplam 1 kayıt bulundu.
+2025-05-20 00:29:51.439 +03:00 [INF] İlişkili FIFO kayıtları iptal edildi. FaturaID: "f01cfc7e-5cb3-42c0-911b-98634d9733b4"
+2025-05-20 00:29:51.504 +03:00 [INF] İlişkili stok hareketleri silindi. FaturaID: "f01cfc7e-5cb3-42c0-911b-98634d9733b4"
+2025-05-20 00:29:51.562 +03:00 [INF] Cari hareket silindi. CariHareketID: "0f1a272e-9f72-44da-9103-7052f90e256a"
+2025-05-20 00:29:51.619 +03:00 [INF] Eski fatura detayları silindi. Toplam 1 detay. FaturaID: "f01cfc7e-5cb3-42c0-911b-98634d9733b4"
+2025-05-20 00:29:51.620 +03:00 [INF] Yeni fatura detayı eklendi. UrunID: "2216d3ad-9370-49a9-847e-c374b130978d"
+2025-05-20 00:29:51.621 +03:00 [INF] Stok hareketi oluşturuldu. UrunID: "2216d3ad-9370-49a9-847e-c374b130978d", Miktar: 6
+2025-05-20 00:29:51.622 +03:00 [INF] StokGirisiYap - Mevcut transaction kullanılıyor: Ürün 2216d3ad-9370-49a9-847e-c374b130978d, Miktar 6
+2025-05-20 00:29:52.247 +03:00 [INF] Stok girişi başarıyla tamamlandı: UrunID=2216d3ad-9370-49a9-847e-c374b130978d, Miktar=6, BirimFiyat=50.00, ParaBirimi=USD, Mahsuplaşan=0
+2025-05-20 00:29:52.248 +03:00 [INF] FIFO kaydı oluşturuldu. UrunID: "2216d3ad-9370-49a9-847e-c374b130978d"
+2025-05-20 00:29:52.249 +03:00 [INF] Cari hareket oluşturuldu. CariID: "fdc7e9f0-d79f-4008-834e-32856a40c18b"
+2025-05-20 00:29:52.285 +03:00 [INF] İrsaliye güncellendi. IrsaliyeID: "f8f4916d-9984-4eed-b370-c5c9b61e22a1"
+2025-05-20 00:29:52.408 +03:00 [INF] Fatura ve ilişkili tüm kayıtlar başarıyla güncellendi. FaturaID: "f01cfc7e-5cb3-42c0-911b-98634d9733b4"
+2025-05-20 00:29:52.409 +03:00 [INF] Fatura başarıyla güncellendi. FaturaID: f01cfc7e-5cb3-42c0-911b-98634d9733b4
+2025-05-20 01:06:18.007 +03:00 [INF] Veritabanına bağlantı başarılı. Migrationlar uygulanıyor...
+2025-05-20 01:06:19.693 +03:00 [INF] Veritabanı işlemleri başarıyla tamamlandı.
+2025-05-20 01:06:19.914 +03:00 [INF] Todo Hatırlatıcı Servisi başlatıldı.
+2025-05-20 01:06:19.916 +03:00 [INF] Yaklaşan hatırlatıcılar kontrol ediliyor...
+2025-05-20 01:06:20.050 +03:00 [INF] Bekleyen hatırlatma bulunamadı.
+2025-05-20 01:06:22.586 +03:00 [INF] Giriş denemesi: admin
+2025-05-20 01:06:22.990 +03:00 [INF] Admin kullanıcısı başarıyla giriş yaptı: admin
+2025-05-20 01:06:22.991 +03:00 [INF] Admin session oluşturuldu: UserID=9e6fc203-37eb-49a7-a470-1551f7bec8b8, UserName=admin
+2025-05-20 01:06:22.992 +03:00 [INF] Yönlendirme adresi: /
+2025-05-20 01:06:22.993 +03:00 [INF] Admin kullanıcısı / adresine yönlendiriliyor
+2025-05-20 01:06:23.478 +03:00 [INF] Aktif session bulundu: UserID=9e6fc203-37eb-49a7-a470-1551f7bec8b8, UserName=admin
+2025-05-20 01:06:23.569 +03:00 [INF] Admin kullanıcısı tespit edildi
+2025-05-20 01:06:23.570 +03:00 [INF] Kimlik doğrulanmış kullanıcı: admin
+2025-05-20 01:06:25.334 +03:00 [INF] TRY dönüşümü için kur değeri hesaplandı: TRY -> USD, Değer: 0.03
+2025-05-20 01:06:25.703 +03:00 [INF] Kur değeri hesaplandı: UZS -> USD, Değer: 0.0000775226832727903141733102
+2025-05-20 01:07:36.796 +03:00 [INF] Fatura ve ilişkili kayıtlar güncelleniyor. FaturaID: "f01cfc7e-5cb3-42c0-911b-98634d9733b4"
+2025-05-20 01:07:40.809 +03:00 [INF] UpdateAsync işlemi başlatılıyor
+2025-05-20 01:07:40.973 +03:00 [ERR] FaturaTransactionService.UpdateAsync Parametreler: f01cfc7e-5cb3-42c0-911b-98634d9733b4
+System.InvalidOperationException: The connection is already in a transaction and cannot participate in another transaction.
+   at Microsoft.EntityFrameworkCore.Storage.RelationalConnection.EnsureNoTransactions()
+   at Microsoft.EntityFrameworkCore.Storage.RelationalConnection.BeginTransactionAsync(IsolationLevel isolationLevel, CancellationToken cancellationToken)
+   at Microsoft.EntityFrameworkCore.Storage.RelationalConnection.BeginTransactionAsync(CancellationToken cancellationToken)
+   at MuhasebeStokWebApp.Data.Repositories.UnitOfWork.BeginTransactionAsync() in D:\cursor-workspace\MuhasebeStokWebApp\Data\Repositories\UnitOfWork.cs:line 106
+   at MuhasebeStokWebApp.Services.FaturaTransactionService.EnsureTransactionAsync() in D:\cursor-workspace\MuhasebeStokWebApp\Services\FaturaTransactionService.cs:line 37
+   at MuhasebeStokWebApp.Services.FaturaTransactionService.<>c__DisplayClass8_0`1.<<ExecuteInTransactionAsync>b__0>d.MoveNext() in D:\cursor-workspace\MuhasebeStokWebApp\Services\FaturaTransactionService.cs:line 86
+--- End of stack trace from previous location ---
+   at MuhasebeStokWebApp.Services.ExceptionHandlingService.HandleExceptionAsync[T](Func`1 func, String logContext, Object[] logParams) in D:\cursor-workspace\MuhasebeStokWebApp\Services\ExceptionHandlingService.cs:line 146
+2025-05-20 01:07:40.991 +03:00 [INF] Fatura bilgileri güncellendi. FaturaID: "f01cfc7e-5cb3-42c0-911b-98634d9733b4"
+2025-05-20 01:07:40.994 +03:00 [INF] FIFO kayıtları iptal edilmeye çalışılıyor: ReferansID=f01cfc7e-5cb3-42c0-911b-98634d9733b4, ReferansTuru=Fatura
+2025-05-20 01:07:40.995 +03:00 [INF] FifoKayitlariniIptalEt - Mevcut transaction kullanılıyor: ReferansID=f01cfc7e-5cb3-42c0-911b-98634d9733b4
+2025-05-20 01:07:41.102 +03:00 [INF] FIFO kayıtları iptal ediliyor. Toplam 1 kayıt bulundu.
+2025-05-20 01:07:41.394 +03:00 [INF] İlişkili FIFO kayıtları iptal edildi. FaturaID: "f01cfc7e-5cb3-42c0-911b-98634d9733b4"
+2025-05-20 01:07:41.499 +03:00 [INF] İlişkili stok hareketleri silindi. FaturaID: "f01cfc7e-5cb3-42c0-911b-98634d9733b4"
+2025-05-20 01:07:41.556 +03:00 [INF] Cari hareket silindi. CariHareketID: "8cff699d-0263-4b58-9bb6-9c106c445242"
+2025-05-20 01:07:41.617 +03:00 [INF] Eski fatura detayları silindi. Toplam 1 detay. FaturaID: "f01cfc7e-5cb3-42c0-911b-98634d9733b4"
+2025-05-20 01:07:58.252 +03:00 [INF] Yeni fatura detayı eklendi. UrunID: "2216d3ad-9370-49a9-847e-c374b130978d"
+2025-05-20 01:07:58.258 +03:00 [INF] Stok hareketi oluşturuldu. UrunID: "2216d3ad-9370-49a9-847e-c374b130978d", Miktar: 6.00
+2025-05-20 01:07:58.261 +03:00 [INF] StokGirisiYap - Mevcut transaction kullanılıyor: Ürün 2216d3ad-9370-49a9-847e-c374b130978d, Miktar 6.00
+2025-05-20 01:07:59.234 +03:00 [INF] Stok girişi başarıyla tamamlandı: UrunID=2216d3ad-9370-49a9-847e-c374b130978d, Miktar=6.00, BirimFiyat=50.00, ParaBirimi=USD, Mahsuplaşan=0
+2025-05-20 01:07:59.235 +03:00 [INF] FIFO kaydı oluşturuldu. UrunID: "2216d3ad-9370-49a9-847e-c374b130978d"
+2025-05-20 01:07:59.238 +03:00 [INF] Cari hareket oluşturuldu. CariID: "fdc7e9f0-d79f-4008-834e-32856a40c18b"
+2025-05-20 01:07:59.320 +03:00 [INF] İrsaliye güncellendi. IrsaliyeID: "f8f4916d-9984-4eed-b370-c5c9b61e22a1"
+2025-05-20 01:07:59.461 +03:00 [INF] Fatura ve ilişkili tüm kayıtlar başarıyla güncellendi. FaturaID: "f01cfc7e-5cb3-42c0-911b-98634d9733b4"
+2025-05-20 01:07:59.464 +03:00 [INF] Fatura başarıyla güncellendi. FaturaID: f01cfc7e-5cb3-42c0-911b-98634d9733b4
+2025-05-20 01:11:27.256 +03:00 [INF] Veritabanına bağlantı başarılı. Migrationlar uygulanıyor...
+2025-05-20 01:11:28.761 +03:00 [INF] Veritabanı işlemleri başarıyla tamamlandı.
+2025-05-20 01:11:28.979 +03:00 [INF] Todo Hatırlatıcı Servisi başlatıldı.
+2025-05-20 01:11:28.981 +03:00 [INF] Yaklaşan hatırlatıcılar kontrol ediliyor...
+2025-05-20 01:11:29.184 +03:00 [INF] Bekleyen hatırlatma bulunamadı.
+2025-05-20 01:11:30.383 +03:00 [WRN] Session bulunamadı, kullanıcı giriş yapmamış olabilir
+2025-05-20 01:11:30.426 +03:00 [INF] Kimlik doğrulanmış kullanıcı: admin
+2025-05-20 01:11:32.588 +03:00 [INF] TRY dönüşümü için kur değeri hesaplandı: TRY -> USD, Değer: 0.03
+2025-05-20 01:11:32.956 +03:00 [INF] Kur değeri hesaplandı: UZS -> USD, Değer: 0.0000775226832727903141733102

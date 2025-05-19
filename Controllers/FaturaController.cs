@@ -445,7 +445,7 @@ namespace MuhasebeStokWebApp.Controllers
                 GuncellemeTarihi = fatura.GuncellemeTarihi,
 
                 // Fatura kalemleri
-                FaturaKalemleri = fatura.FaturaDetaylari.Select(fd => new FaturaKalemDetailViewModel
+                FaturaKalemleri = fatura.FaturaDetaylari.Where(fd=>fd.Silindi!=true).Select(fd => new FaturaKalemDetailViewModel
                 {
                     KalemID = fd.FaturaDetayID,
                     UrunID = fd.UrunID,

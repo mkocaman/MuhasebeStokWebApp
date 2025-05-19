@@ -119,12 +119,12 @@ namespace MuhasebeStokWebApp.Services
                         
                     // NetTutar değerini düzelt - 100 ile çarpılmış olabilir, normal değeri kullan
                     decimal netTutar = kalem.NetTutar;
-                    decimal kdvTutar = kalem.KdvTutari;
+                    decimal kdvTutari = kalem.KdvTutari;
                     if (viewModel.DovizTuru == "USD" || viewModel.DovizTuru == "UZS")
                     {
                         // NetTutar'ı 100'e böl (çarpılmış olduğu için)
                         netTutar = kalem.NetTutar / 100;
-                        kdvTutar = kalem.KdvTutari / 100;
+                        kdvTutari = kalem.KdvTutari / 100;
                     }
                         
                     var faturaDetay = new FaturaDetay
@@ -138,14 +138,17 @@ namespace MuhasebeStokWebApp.Services
                         KdvOrani = kalem.KdvOrani,
                         IndirimOrani = kalem.IndirimOrani,
                         Tutar = kalem.Tutar,
-                        KdvTutari = kdvTutar,
+                        KdvTutari = kdvTutari,
                         IndirimTutari = kalem.IndirimTutari,
                         NetTutar = netTutar,
+                        Aciklama = kalem.Aciklama,
                         OlusturmaTarihi = DateTime.Now,
+                        GuncellemeTarihi = DateTime.Now,
+                        OlusturanKullaniciID = currentUserId,
+                        SonGuncelleyenKullaniciID = currentUserId,
                         Silindi = false,
                         SatirToplam = kalem.Tutar,
-                        SatirKdvToplam = kdvTutar,
-                        Aciklama = kalem.Aciklama
+                        SatirKdvToplam = kdvTutari
                     };
                     
                     faturaDetaylari.Add(faturaDetay);
@@ -205,27 +208,27 @@ namespace MuhasebeStokWebApp.Services
                     {
                         CariHareketID = Guid.NewGuid(),
                         CariID = fatura.CariID.Value,
-                        HareketTuru = isAlisFaturasi ? "Borç" : "Alacak", // Alış -> Biz tedarikçiye borçlanıyoruz, Satış -> Müşteri bize borçlanıyor (biz alacaklıyız)
+                        HareketTuru = isAlisFaturasi ? "Borç" : "Alacak",
                         Tutar = fatura.GenelToplam ?? 0,
-                        Borc = isAlisFaturasi ? (fatura.GenelToplam ?? 0) : 0, // Alış faturasında borç
-                        Alacak = isAlisFaturasi ? 0 : (fatura.GenelToplam ?? 0), // Satış faturasında alacak
+                        Borc = isAlisFaturasi ? (fatura.GenelToplam ?? 0) : 0,
+                        Alacak = isAlisFaturasi ? 0 : (fatura.GenelToplam ?? 0),
                         Tarih = fatura.FaturaTarihi ?? DateTime.Now,
                         VadeTarihi = fatura.VadeTarihi,
                         ReferansNo = fatura.FaturaNumarasi,
                         ReferansTuru = "Fatura",
                         ReferansID = fatura.FaturaID,
-                        Aciklama = $"Fatura No: {fatura.FaturaNumarasi}",
+                        Aciklama = $"Fatura No: {fatura.FaturaNumarasi} (Güncellendi)",
                         OlusturmaTarihi = DateTime.Now,
                         OlusturanKullaniciID = currentUserId,
                         Silindi = false,
                         ParaBirimi = fatura.ParaBirimi ?? "USD",
                         TutarDoviz = fatura.GenelToplamDoviz ?? 0,
-                        BorcDoviz = isAlisFaturasi ? (fatura.GenelToplamDoviz ?? 0) : 0, // Dövizli borç miktarı
-                        AlacakDoviz = isAlisFaturasi ? 0 : (fatura.GenelToplamDoviz ?? 0) // Dövizli alacak miktarı
+                        BorcDoviz = isAlisFaturasi ? (fatura.GenelToplamDoviz ?? 0) : 0,
+                        AlacakDoviz = isAlisFaturasi ? 0 : (fatura.GenelToplamDoviz ?? 0)
                     };
                     
                     await _unitOfWork.CariHareketRepository.AddAsync(cariHareket);
-                    _logger.LogInformation("Cari hareket eklendi. CariID: {CariID}", fatura.CariID);
+                    _logger.LogInformation("Cari hareket oluşturuldu. CariID: {CariID}", fatura.CariID);
                 }
                 
                 // Otomatik irsaliye oluştur
@@ -357,11 +360,32 @@ namespace MuhasebeStokWebApp.Services
                 fatura.AraToplam = viewModel.AraToplam;
                 fatura.KDVToplam = viewModel.KdvToplam;
                 fatura.GenelToplam = viewModel.GenelToplam;
-                fatura.IndirimTutari = viewModel.IndirimTutari;
+                fatura.IndirimTutari = viewModel.IndirimTutari ?? 0;
                 fatura.DovizTuru = viewModel.DovizTuru;
+                fatura.ParaBirimi = viewModel.DovizTuru; // DovizTuru'nu ParaBirimi olarak kullan
                 fatura.DovizKuru = viewModel.DovizKuru;
                 fatura.ResmiMi = viewModel.ResmiMi;
                 fatura.SozlesmeID = viewModel.SozlesmeID;
+                
+                // Döviz cinsinden toplamları hesapla
+                decimal dovizKuru = fatura.DovizKuru ?? 1;
+                
+                // TRY ise döviz değerleri TL değerleriyle aynı olur
+                if (fatura.DovizTuru == "TRY")
+                {
+                    fatura.AraToplamDoviz = fatura.AraToplam;
+                    fatura.KDVToplamDoviz = fatura.KDVToplam;
+                    fatura.GenelToplamDoviz = fatura.GenelToplam;
+                    fatura.IndirimTutariDoviz = fatura.IndirimTutari;
+                }
+                else
+                {
+                    // Döviz kuruna bölerek döviz tutarlarını hesapla
+                    fatura.AraToplamDoviz = dovizKuru > 0 ? fatura.AraToplam / dovizKuru : 0;
+                    fatura.KDVToplamDoviz = dovizKuru > 0 ? fatura.KDVToplam / dovizKuru : 0;
+                    fatura.GenelToplamDoviz = dovizKuru > 0 ? fatura.GenelToplam / dovizKuru : 0;
+                    fatura.IndirimTutariDoviz = dovizKuru > 0 ? fatura.IndirimTutari / dovizKuru : 0;
+                }
                 
                 await _faturaService.UpdateAsync(fatura);
                 _logger.LogInformation("Fatura bilgileri güncellendi. FaturaID: {FaturaID}", id);
@@ -424,11 +448,13 @@ namespace MuhasebeStokWebApp.Services
                     {
                         // NetTutar değerini düzelt - 100 ile çarpılmış olabilir, normal değeri kullan
                         decimal netTutar = kalem.NetTutar;
-                        if (viewModel.DovizTuru == "USD" || viewModel.DovizTuru == "UZS")
-                        {
-                            // NetTutar'ı 100'e böl (çarpılmış olduğu için)
-                            netTutar = kalem.NetTutar / 100;
-                        }
+                        decimal kdvTutari = kalem.KdvTutari;
+                        //if (viewModel.DovizTuru == "USD" || viewModel.DovizTuru == "UZS")
+                        //{
+                        //    // NetTutar'ı 100'e böl (çarpılmış olduğu için)
+                        //    netTutar = kalem.NetTutar / 100;
+                        //    kdvTutari = kalem.KdvTutari / 100;
+                        //}
 
                         var faturaDetay = new FaturaDetay
                         {
@@ -440,7 +466,7 @@ namespace MuhasebeStokWebApp.Services
                             KdvOrani = kalem.KdvOrani,
                             IndirimOrani = kalem.IndirimOrani,
                             Tutar = kalem.Tutar,
-                            KdvTutari = kalem.KdvTutari,
+                            KdvTutari = kdvTutari,
                             IndirimTutari = kalem.IndirimTutari,
                             NetTutar = netTutar,
                             Aciklama = kalem.Aciklama,
@@ -449,7 +475,9 @@ namespace MuhasebeStokWebApp.Services
                             GuncellemeTarihi = DateTime.Now,
                             OlusturanKullaniciID = currentUserId,
                             SonGuncelleyenKullaniciID = currentUserId,
-                            Silindi = false
+                            Silindi = false,
+                            SatirToplam = kalem.Tutar,
+                            SatirKdvToplam = kdvTutari
                         };
                         
                         await _context.FaturaDetaylari.AddAsync(faturaDetay);
@@ -526,6 +554,7 @@ namespace MuhasebeStokWebApp.Services
                     {
                         CariHareketID = Guid.NewGuid(),
                         CariID = fatura.CariID.Value,
+                        HareketTuru = isAlisFaturasi ? "Borç" : "Alacak",
                         Tutar = fatura.GenelToplam ?? 0,
                         Borc = isAlisFaturasi ? (fatura.GenelToplam ?? 0) : 0,
                         Alacak = isAlisFaturasi ? 0 : (fatura.GenelToplam ?? 0),
@@ -538,7 +567,10 @@ namespace MuhasebeStokWebApp.Services
                         OlusturmaTarihi = DateTime.Now,
                         OlusturanKullaniciID = currentUserId,
                         Silindi = false,
-                        ParaBirimi = fatura.DovizTuru ?? "USD"
+                        ParaBirimi = fatura.ParaBirimi ?? "USD",
+                        TutarDoviz = fatura.GenelToplamDoviz ?? 0,
+                        BorcDoviz = isAlisFaturasi ? (fatura.GenelToplamDoviz ?? 0) : 0,
+                        AlacakDoviz = isAlisFaturasi ? 0 : (fatura.GenelToplamDoviz ?? 0)
                     };
                     
                     await _unitOfWork.CariHareketRepository.AddAsync(cariHareket);

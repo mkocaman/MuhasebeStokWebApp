@@ -1,0 +1,39 @@
+[
+  {
+    "ContainingType": "MuhasebeStokWebApp.Controllers.ParaBirimiModulu.API.KurController",
+    "Method": "GetGuncelKur",
+    "RelativePath": "api/Kur/GetGuncelKur",
+    "HttpMethod": "GET",
+    "IsController": true,
+    "Order": 0,
+    "Parameters": [
+      {
+        "Name": "kod",
+        "Type": "System.String",
+        "IsRequired": false
+      }
+    ],
+    "ReturnTypes": []
+  },
+  {
+    "ContainingType": "MuhasebeStokWebApp.Controllers.ParaBirimiModulu.API.KurController",
+    "Method": "GetParaBirimleriArasiKur",
+    "RelativePath": "api/Kur/GetParaBirimleriArasiKur",
+    "HttpMethod": "GET",
+    "IsController": true,
+    "Order": 0,
+    "Parameters": [
+      {
+        "Name": "kaynakKod",
+        "Type": "System.String",
+        "IsRequired": false
+      },
+      {
+        "Name": "hedefKod",
+        "Type": "System.String",
+        "IsRequired": false
+      }
+    ],
+    "ReturnTypes": []
+  }
+]

@@ -2074,9 +2074,7 @@ D:\cursor-workspace\MuhasebeStokWebApp\obj\Debug\net9.0\MuhasebeStokWebApp.MvcAp
 D:\cursor-workspace\MuhasebeStokWebApp\obj\Debug\net9.0\MuhasebeStokWebApp.RazorAssemblyInfo.cache
 D:\cursor-workspace\MuhasebeStokWebApp\obj\Debug\net9.0\MuhasebeStokWebApp.RazorAssemblyInfo.cs
 D:\cursor-workspace\MuhasebeStokWebApp\obj\Debug\net9.0\MuhasebeStokWebApp.sourcelink.json
-D:\cursor-workspace\MuhasebeStokWebApp\obj\Debug\net9.0\en\MuhasebeStokWebApp.resources.cs
 D:\cursor-workspace\MuhasebeStokWebApp\obj\Debug\net9.0\en\MuhasebeStokWebApp.resources.dll
-D:\cursor-workspace\MuhasebeStokWebApp\obj\Debug\net9.0\tr\MuhasebeStokWebApp.resources.cs
 D:\cursor-workspace\MuhasebeStokWebApp\obj\Debug\net9.0\tr\MuhasebeStokWebApp.resources.dll
 D:\cursor-workspace\MuhasebeStokWebApp\obj\Debug\net9.0\scopedcss\Views\Shared\_Layout.cshtml.rz.scp.css
 D:\cursor-workspace\MuhasebeStokWebApp\obj\Debug\net9.0\scopedcss\bundle\MuhasebeStokWebApp.styles.css
@@ -3691,3 +3689,4 @@ D:\cursor-workspace\MuhasebeStokWebApp\obj\Debug\net9.0\refint\MuhasebeStokWebAp
 D:\cursor-workspace\MuhasebeStokWebApp\obj\Debug\net9.0\MuhasebeStokWebApp.pdb
 D:\cursor-workspace\MuhasebeStokWebApp\obj\Debug\net9.0\MuhasebeStokWebApp.genruntimeconfig.cache
 D:\cursor-workspace\MuhasebeStokWebApp\obj\Debug\net9.0\ref\MuhasebeStokWebApp.dll
+D:\cursor-workspace\MuhasebeStokWebApp\obj\Debug\net9.0\staticwebassets.upToDateCheck.txt
