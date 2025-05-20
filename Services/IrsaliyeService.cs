@@ -10,6 +10,8 @@ using MuhasebeStokWebApp.Data;
 using MuhasebeStokWebApp.Data.Entities;
 using MuhasebeStokWebApp.Data.Repositories;
 using MuhasebeStokWebApp.Services.Interfaces;
+using MuhasebeStokWebApp.ViewModels.Irsaliye;
+using MuhasebeStokWebApp.ViewModels.Fatura;
 
 namespace MuhasebeStokWebApp.Services
 {
@@ -383,6 +385,115 @@ namespace MuhasebeStokWebApp.Services
             _unitOfWork.IrsaliyeDetayRepository.Update(irsaliyeDetay);
             await _unitOfWork.SaveChangesAsync();
             return irsaliyeDetay;
+        }
+
+        /// <summary>
+        /// Bir faturaya ait irsaliyeleri fatura bilgileriyle günceller
+        /// </summary>
+        public async Task<bool> UpdateIrsaliyeFromFaturaAsync(Guid faturaID, FaturaEditViewModel viewModel, Guid? currentUserId)
+        {
+            try
+            {
+                // 1. Faturaya bağlı irsaliyeleri al
+                var irsaliyeler = await _unitOfWork.IrsaliyeRepository.GetAllAsync(
+                    filter: i => i.FaturaID == faturaID && !i.Silindi
+                );
+                
+                // 2. İrsaliye bulunamadıysa işlem başarılı sayılır
+                if (!irsaliyeler.Any())
+                {
+                    _logger.LogInformation("Güncelleme yapılacak irsaliye bulunamadı. FaturaID: {FaturaID}", faturaID);
+                    return true;
+                }
+                
+                _logger.LogInformation("Fatura güncelleme işlemi için {IrsaliyeSayisi} adet irsaliye güncelleniyor. FaturaID: {FaturaID}", 
+                    irsaliyeler.Count(), faturaID);
+                
+                // 3. Her bir irsaliyeyi güncelle
+                foreach (var irsaliye in irsaliyeler)
+                {
+                    // 3.1 İrsaliye ana bilgilerini güncelle
+                    await GuncelleIrsaliyeBilgileri(irsaliye, viewModel, currentUserId);
+                    
+                    // 3.2 İrsaliye detaylarını güncelle
+                    await GuncelleIrsaliyeDetaylari(irsaliye.IrsaliyeID, viewModel, currentUserId);
+                }
+                
+                _logger.LogInformation("Faturaya bağlı tüm irsaliyeler başarıyla güncellendi. FaturaID: {FaturaID}", faturaID);
+                return true;
+            }
+            catch (Exception ex)
+            {
+                _logger.LogError(ex, "UpdateIrsaliyeFromFaturaAsync hatası. FaturaID: {FaturaID}, Hata: {Message}", 
+                    faturaID, ex.Message);
+                throw;
+            }
+        }
+        
+        /// <summary>
+        /// İrsaliye ana bilgilerini günceller
+        /// </summary>
+        private async Task GuncelleIrsaliyeBilgileri(Irsaliye irsaliye, FaturaEditViewModel viewModel, Guid? currentUserId)
+        {
+            // İrsaliye ana bilgilerini güncelle
+            irsaliye.CariID = viewModel.CariID;
+            irsaliye.GuncellemeTarihi = DateTime.Now;
+            irsaliye.SonGuncelleyenKullaniciId = currentUserId;
+            irsaliye.Aciklama = $"Fatura No: {viewModel.FaturaNumarasi} (Güncellendi)";
+            
+            _unitOfWork.IrsaliyeRepository.Update(irsaliye);
+            _logger.LogInformation("İrsaliye ana bilgileri güncellendi. IrsaliyeID: {IrsaliyeID}", irsaliye.IrsaliyeID);
+        }
+        
+        /// <summary>
+        /// İrsaliye detaylarını günceller
+        /// </summary>
+        private async Task GuncelleIrsaliyeDetaylari(Guid irsaliyeID, FaturaEditViewModel viewModel, Guid? currentUserId)
+        {
+            // 1. İrsaliye detaylarını al
+            var irsaliyeDetaylari = await _unitOfWork.IrsaliyeDetayRepository.GetAllAsync(
+                filter: d => d.IrsaliyeID == irsaliyeID && !d.Silindi
+            );
+            
+            // 2. Mevcut detayları mantıksal olarak sil
+            foreach (var detay in irsaliyeDetaylari)
+            {
+                detay.Silindi = true;
+                detay.GuncellemeTarihi = DateTime.Now;
+                detay.SonGuncelleyenKullaniciId = currentUserId;
+                _unitOfWork.IrsaliyeDetayRepository.Update(detay);
+            }
+            
+            _logger.LogInformation("{Count} adet irsaliye detayı silindi. IrsaliyeID: {IrsaliyeID}", 
+                irsaliyeDetaylari.Count(), irsaliyeID);
+            
+            // 3. Fatura kalemlerinden yeni detaylar oluştur
+            foreach (var kalem in viewModel.FaturaKalemleri.Where(k => k.UrunID != Guid.Empty && k.Miktar > 0))
+            {
+                var irsaliyeDetay = new IrsaliyeDetay
+                {
+                    IrsaliyeDetayID = Guid.NewGuid(),
+                    IrsaliyeID = irsaliyeID,
+                    UrunID = kalem.UrunID,
+                    Miktar = kalem.Miktar,
+                    BirimFiyat = kalem.BirimFiyat,
+                    KdvOrani = kalem.KdvOrani,
+                    IndirimOrani = kalem.IndirimOrani,
+                    Birim = kalem.Birim ?? "Adet",
+                    Aciklama = kalem.Aciklama ?? "",
+                    OlusturmaTarihi = DateTime.Now,
+                    GuncellemeTarihi = DateTime.Now,
+                    SonGuncelleyenKullaniciId = currentUserId,
+                    SatirToplam = kalem.Tutar,
+                    SatirKdvToplam = kalem.KdvTutari,
+                    Aktif = true,
+                    Silindi = false
+                };
+                
+                await _unitOfWork.IrsaliyeDetayRepository.AddAsync(irsaliyeDetay);
+            }
+            
+            _logger.LogInformation("Yeni irsaliye detayları eklendi. IrsaliyeID: {IrsaliyeID}", irsaliyeID);
         }
     }
 } 

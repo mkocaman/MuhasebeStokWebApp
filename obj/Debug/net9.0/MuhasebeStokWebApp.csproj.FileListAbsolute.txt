@@ -3689,4 +3689,5 @@ D:\cursor-workspace\MuhasebeStokWebApp\obj\Debug\net9.0\refint\MuhasebeStokWebAp
 D:\cursor-workspace\MuhasebeStokWebApp\obj\Debug\net9.0\MuhasebeStokWebApp.pdb
 D:\cursor-workspace\MuhasebeStokWebApp\obj\Debug\net9.0\MuhasebeStokWebApp.genruntimeconfig.cache
 D:\cursor-workspace\MuhasebeStokWebApp\obj\Debug\net9.0\ref\MuhasebeStokWebApp.dll
-D:\cursor-workspace\MuhasebeStokWebApp\obj\Debug\net9.0\staticwebassets.upToDateCheck.txt
+D:\cursor-workspace\MuhasebeStokWebApp\obj\Debug\net9.0\en\MuhasebeStokWebApp.resources.cs
+D:\cursor-workspace\MuhasebeStokWebApp\obj\Debug\net9.0\tr\MuhasebeStokWebApp.resources.cs

@@ -9,10 +9,6 @@
     {
       "AbsoluteMoniker": "D:0:0:{13DA124A-8333-3350-EC15-46DC296FA620}|MuhasebeStokWebApp.csproj|d:\\cursor-workspace\\muhasebestokwebapp\\services\\stokfifoservice.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}",
       "RelativeMoniker": "D:0:0:{13DA124A-8333-3350-EC15-46DC296FA620}|MuhasebeStokWebApp.csproj|solutionrelative:services\\stokfifoservice.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}"
-    },
-    {
-      "AbsoluteMoniker": "D:0:0:{13DA124A-8333-3350-EC15-46DC296FA620}|MuhasebeStokWebApp.csproj|d:\\cursor-workspace\\muhasebestokwebapp\\services\\faturaorchestrationservice.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}",
-      "RelativeMoniker": "D:0:0:{13DA124A-8333-3350-EC15-46DC296FA620}|MuhasebeStokWebApp.csproj|solutionrelative:services\\faturaorchestrationservice.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}"
     }
   ],
   "DocumentGroupContainers": [
@@ -36,7 +32,7 @@
               "RelativeDocumentMoniker": "Controllers\\FaturaController.cs",
               "ToolTip": "D:\\cursor-workspace\\MuhasebeStokWebApp\\Controllers\\FaturaController.cs",
               "RelativeToolTip": "Controllers\\FaturaController.cs",
-              "ViewState": "AgIAALMBAAAAAAAAAAAtwMMBAAA3AAAAAAAAAA==",
+              "ViewState": "AgIAAEIBAAAAAAAAAAApwMMBAAA3AAAAAAAAAA==",
               "Icon": "ae27a6b0-e345-4288-96df-5eaf394ee369.000738|",
               "WhenOpened": "2025-05-19T22:08:29.434Z",
               "EditorCaption": ""
@@ -49,22 +45,9 @@
               "RelativeDocumentMoniker": "Services\\StokFifoService.cs",
               "ToolTip": "D:\\cursor-workspace\\MuhasebeStokWebApp\\Services\\StokFifoService.cs",
               "RelativeToolTip": "Services\\StokFifoService.cs",
-              "ViewState": "AgIAALAAAAAAAAAAAAApwNkAAAAQAAAAAAAAAA==",
+              "ViewState": "AgIAALkAAAAAAAAAAAAAANkAAAAQAAAAAAAAAA==",
               "Icon": "ae27a6b0-e345-4288-96df-5eaf394ee369.000738|",
               "WhenOpened": "2025-05-19T21:25:24.469Z",
-              "EditorCaption": ""
-            },
-            {
-              "$type": "Document",
-              "DocumentIndex": 2,
-              "Title": "FaturaOrchestrationService.cs",
-              "DocumentMoniker": "D:\\cursor-workspace\\MuhasebeStokWebApp\\Services\\FaturaOrchestrationService.cs",
-              "RelativeDocumentMoniker": "Services\\FaturaOrchestrationService.cs",
-              "ToolTip": "D:\\cursor-workspace\\MuhasebeStokWebApp\\Services\\FaturaOrchestrationService.cs",
-              "RelativeToolTip": "Services\\FaturaOrchestrationService.cs",
-              "ViewState": "AgIAAL4BAAAAAAAAAAApwMoBAAAYAAAAAAAAAA==",
-              "Icon": "ae27a6b0-e345-4288-96df-5eaf394ee369.000738|",
-              "WhenOpened": "2025-05-19T21:25:24.475Z",
               "EditorCaption": ""
             }
           ]

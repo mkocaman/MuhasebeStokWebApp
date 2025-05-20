@@ -876,3 +876,740 @@ System.InvalidOperationException: The connection is already in a transaction and
 2025-05-20 01:11:30.426 +03:00 [INF] Kimlik doğrulanmış kullanıcı: admin
 2025-05-20 01:11:32.588 +03:00 [INF] TRY dönüşümü için kur değeri hesaplandı: TRY -> USD, Değer: 0.03
 2025-05-20 01:11:32.956 +03:00 [INF] Kur değeri hesaplandı: UZS -> USD, Değer: 0.0000775226832727903141733102
+2025-05-20 01:25:57.334 +03:00 [INF] Veritabanına bağlantı başarılı. Migrationlar uygulanıyor...
+2025-05-20 01:25:58.893 +03:00 [INF] Veritabanı işlemleri başarıyla tamamlandı.
+2025-05-20 01:25:59.016 +03:00 [INF] Todo Hatırlatıcı Servisi başlatıldı.
+2025-05-20 01:25:59.018 +03:00 [INF] Yaklaşan hatırlatıcılar kontrol ediliyor...
+2025-05-20 01:25:59.168 +03:00 [INF] Bekleyen hatırlatma bulunamadı.
+2025-05-20 01:30:40.423 +03:00 [WRN] Session bulunamadı, kullanıcı giriş yapmamış olabilir
+2025-05-20 01:30:40.426 +03:00 [INF] Kimlik doğrulanmış kullanıcı: admin
+2025-05-20 01:30:40.969 +03:00 [INF] TRY dönüşümü için kur değeri hesaplandı: TRY -> USD, Değer: 0.03
+2025-05-20 01:30:41.314 +03:00 [INF] Kur değeri hesaplandı: UZS -> USD, Değer: 0.0000775226832727903141733102
+2025-05-20 01:30:59.178 +03:00 [INF] Yaklaşan hatırlatıcılar kontrol ediliyor...
+2025-05-20 01:30:59.259 +03:00 [INF] Bekleyen hatırlatma bulunamadı.
+2025-05-20 01:31:58.702 +03:00 [INF] Fatura ve ilişkili kayıtlar güncelleniyor. FaturaID: "f01cfc7e-5cb3-42c0-911b-98634d9733b4"
+2025-05-20 01:31:58.934 +03:00 [INF] UpdateAsync işlemi başlatılıyor
+2025-05-20 01:31:58.936 +03:00 [ERR] FaturaTransactionService.UpdateAsync Parametreler: f01cfc7e-5cb3-42c0-911b-98634d9733b4
+System.InvalidOperationException: The connection is already in a transaction and cannot participate in another transaction.
+   at Microsoft.EntityFrameworkCore.Storage.RelationalConnection.EnsureNoTransactions()
+   at Microsoft.EntityFrameworkCore.Storage.RelationalConnection.BeginTransactionAsync(IsolationLevel isolationLevel, CancellationToken cancellationToken)
+   at Microsoft.EntityFrameworkCore.Storage.RelationalConnection.BeginTransactionAsync(CancellationToken cancellationToken)
+   at MuhasebeStokWebApp.Data.Repositories.UnitOfWork.BeginTransactionAsync() in D:\cursor-workspace\MuhasebeStokWebApp\Data\Repositories\UnitOfWork.cs:line 106
+   at MuhasebeStokWebApp.Services.FaturaTransactionService.EnsureTransactionAsync() in D:\cursor-workspace\MuhasebeStokWebApp\Services\FaturaTransactionService.cs:line 37
+   at MuhasebeStokWebApp.Services.FaturaTransactionService.<>c__DisplayClass8_0`1.<<ExecuteInTransactionAsync>b__0>d.MoveNext() in D:\cursor-workspace\MuhasebeStokWebApp\Services\FaturaTransactionService.cs:line 86
+--- End of stack trace from previous location ---
+   at MuhasebeStokWebApp.Services.ExceptionHandlingService.HandleExceptionAsync[T](Func`1 func, String logContext, Object[] logParams) in D:\cursor-workspace\MuhasebeStokWebApp\Services\ExceptionHandlingService.cs:line 146
+2025-05-20 01:31:58.955 +03:00 [INF] Fatura bilgileri güncellendi. FaturaID: "f01cfc7e-5cb3-42c0-911b-98634d9733b4"
+2025-05-20 01:31:58.959 +03:00 [INF] FIFO kayıtları iptal edilmeye çalışılıyor: ReferansID=f01cfc7e-5cb3-42c0-911b-98634d9733b4, ReferansTuru=Fatura
+2025-05-20 01:31:58.960 +03:00 [INF] FifoKayitlariniIptalEt - Mevcut transaction kullanılıyor: ReferansID=f01cfc7e-5cb3-42c0-911b-98634d9733b4
+2025-05-20 01:31:59.074 +03:00 [INF] FIFO kayıtları iptal ediliyor. Toplam 1 kayıt bulundu.
+2025-05-20 01:31:59.332 +03:00 [INF] İlişkili FIFO kayıtları iptal edildi. FaturaID: "f01cfc7e-5cb3-42c0-911b-98634d9733b4"
+2025-05-20 01:31:59.423 +03:00 [INF] İlişkili stok hareketleri silindi. FaturaID: "f01cfc7e-5cb3-42c0-911b-98634d9733b4"
+2025-05-20 01:31:59.482 +03:00 [INF] Cari hareket silindi. CariHareketID: "94660ce4-e1a2-4dc9-b9d3-873f1bb266a1"
+2025-05-20 01:31:59.545 +03:00 [INF] Eski fatura detayları silindi. Toplam 1 detay. FaturaID: "f01cfc7e-5cb3-42c0-911b-98634d9733b4"
+2025-05-20 01:31:59.563 +03:00 [INF] Yeni fatura detayı eklendi. UrunID: "2216d3ad-9370-49a9-847e-c374b130978d"
+2025-05-20 01:31:59.567 +03:00 [INF] Stok hareketi oluşturuldu. UrunID: "2216d3ad-9370-49a9-847e-c374b130978d", Miktar: 6.00
+2025-05-20 01:31:59.571 +03:00 [INF] StokGirisiYap - Mevcut transaction kullanılıyor: Ürün 2216d3ad-9370-49a9-847e-c374b130978d, Miktar 6.00
+2025-05-20 01:31:59.783 +03:00 [INF] Stok girişi başarıyla tamamlandı: UrunID=2216d3ad-9370-49a9-847e-c374b130978d, Miktar=6.00, BirimFiyat=50.00, ParaBirimi=USD, Mahsuplaşan=0
+2025-05-20 01:31:59.784 +03:00 [INF] FIFO kaydı oluşturuldu. UrunID: "2216d3ad-9370-49a9-847e-c374b130978d"
+2025-05-20 01:31:59.876 +03:00 [INF] Fatura güncelleme işlemi için 1 adet irsaliye güncelleniyor. FaturaID: "f01cfc7e-5cb3-42c0-911b-98634d9733b4"
+2025-05-20 01:31:59.878 +03:00 [ERR] UpdateIrsaliyeFromFaturaAsync Parametreler: f01cfc7e-5cb3-42c0-911b-98634d9733b4
+System.InvalidOperationException: The connection is already in a transaction and cannot participate in another transaction.
+   at Microsoft.EntityFrameworkCore.Storage.RelationalConnection.EnsureNoTransactions()
+   at Microsoft.EntityFrameworkCore.Storage.RelationalConnection.BeginTransactionAsync(IsolationLevel isolationLevel, CancellationToken cancellationToken)
+   at Microsoft.EntityFrameworkCore.Storage.RelationalConnection.BeginTransactionAsync(CancellationToken cancellationToken)
+   at MuhasebeStokWebApp.Data.Repositories.UnitOfWork.BeginTransactionAsync() in D:\cursor-workspace\MuhasebeStokWebApp\Data\Repositories\UnitOfWork.cs:line 106
+   at MuhasebeStokWebApp.Services.IrsaliyeService.<>c__DisplayClass13_0.<<UpdateIrsaliyeFromFaturaAsync>b__0>d.MoveNext() in D:\cursor-workspace\MuhasebeStokWebApp\Services\IrsaliyeService.cs:line 411
+--- End of stack trace from previous location ---
+   at MuhasebeStokWebApp.Services.ExceptionHandlingService.HandleExceptionAsync[T](Func`1 func, String logContext, Object[] logParams) in D:\cursor-workspace\MuhasebeStokWebApp\Services\ExceptionHandlingService.cs:line 146
+2025-05-20 01:31:59.881 +03:00 [INF] Faturaya ait irsaliyeler güncellendi. FaturaID: "f01cfc7e-5cb3-42c0-911b-98634d9733b4"
+2025-05-20 01:31:59.934 +03:00 [INF] Fatura ve ilişkili tüm kayıtlar başarıyla güncellendi. FaturaID: "f01cfc7e-5cb3-42c0-911b-98634d9733b4"
+2025-05-20 01:31:59.937 +03:00 [INF] Fatura başarıyla güncellendi. FaturaID: f01cfc7e-5cb3-42c0-911b-98634d9733b4
+2025-05-20 09:26:00.746 +03:00 [WRN] Veritabanına bağlantı sağlanamadı. Veritabanı oluşturuluyor...
+2025-05-20 09:26:00.867 +03:00 [ERR] Veritabanı oluşturulurken veya migrationlar uygulanırken bir hata oluştu.
+System.InvalidOperationException: An exception has been raised that is likely due to a transient failure. Consider enabling transient error resiliency by adding 'EnableRetryOnFailure' to the 'UseSqlServer' call.
+ ---> Microsoft.Data.SqlClient.SqlException (0x80131904): A network-related or instance-specific error occurred while establishing a connection to SQL Server. The server was not found or was not accessible. Verify that the instance name is correct and that SQL Server is configured to allow remote connections. (provider: TCP Provider, error: 0 - Bağlanılan uygun olarak belli bir süre içinde yanıt vermediğinden veya kurulan
+bağlantı bağlanılan ana bilgisayar yanıt vermediğinden bir bağlantı kurulamadı.)
+ ---> System.ComponentModel.Win32Exception (10060): Bağlanılan uygun olarak belli bir süre içinde yanıt vermediğinden veya kurulan
+bağlantı bağlanılan ana bilgisayar yanıt vermediğinden bir bağlantı kurulamadı.
+   at Microsoft.Data.ProviderBase.DbConnectionPool.TryGetConnection(DbConnection owningObject, UInt32 waitForMultipleObjectsTimeout, Boolean allowCreate, Boolean onlyOneCheckConnection, DbConnectionOptions userOptions, DbConnectionInternal& connection)
+   at Microsoft.Data.ProviderBase.DbConnectionPool.TryGetConnection(DbConnection owningObject, TaskCompletionSource`1 retry, DbConnectionOptions userOptions, DbConnectionInternal& connection)
+   at Microsoft.Data.ProviderBase.DbConnectionFactory.TryGetConnection(DbConnection owningConnection, TaskCompletionSource`1 retry, DbConnectionOptions userOptions, DbConnectionInternal oldConnection, DbConnectionInternal& connection)
+   at Microsoft.Data.ProviderBase.DbConnectionInternal.TryOpenConnectionInternal(DbConnection outerConnection, DbConnectionFactory connectionFactory, TaskCompletionSource`1 retry, DbConnectionOptions userOptions)
+   at Microsoft.Data.ProviderBase.DbConnectionClosed.TryOpenConnection(DbConnection outerConnection, DbConnectionFactory connectionFactory, TaskCompletionSource`1 retry, DbConnectionOptions userOptions)
+   at Microsoft.Data.SqlClient.SqlConnection.TryOpen(TaskCompletionSource`1 retry, SqlConnectionOverrides overrides)
+   at Microsoft.Data.SqlClient.SqlConnection.Open(SqlConnectionOverrides overrides)
+   at Microsoft.EntityFrameworkCore.SqlServer.Storage.Internal.SqlServerConnection.OpenDbConnection(Boolean errorsExpected)
+   at Microsoft.EntityFrameworkCore.Storage.RelationalConnection.OpenInternal(Boolean errorsExpected)
+   at Microsoft.EntityFrameworkCore.Storage.RelationalConnection.Open(Boolean errorsExpected)
+   at Microsoft.EntityFrameworkCore.SqlServer.Storage.Internal.SqlServerDatabaseCreator.<>c__DisplayClass18_0.<Exists>b__0(DateTime giveUp)
+   at Microsoft.EntityFrameworkCore.ExecutionStrategyExtensions.<>c__DisplayClass12_0`2.<Execute>b__0(DbContext _, TState s)
+   at Microsoft.EntityFrameworkCore.SqlServer.Storage.Internal.SqlServerExecutionStrategy.Execute[TState,TResult](TState state, Func`3 operation, Func`3 verifySucceeded)
+ClientConnectionId:00000000-0000-0000-0000-000000000000
+Error Number:10060,State:0,Class:20
+   --- End of inner exception stack trace ---
+   at Microsoft.EntityFrameworkCore.SqlServer.Storage.Internal.SqlServerExecutionStrategy.Execute[TState,TResult](TState state, Func`3 operation, Func`3 verifySucceeded)
+   at Microsoft.EntityFrameworkCore.ExecutionStrategyExtensions.Execute[TState,TResult](IExecutionStrategy strategy, TState state, Func`2 operation, Func`2 verifySucceeded)
+   at Microsoft.EntityFrameworkCore.SqlServer.Storage.Internal.SqlServerDatabaseCreator.Exists(Boolean retryOnNotExists)
+   at Microsoft.EntityFrameworkCore.SqlServer.Storage.Internal.SqlServerDatabaseCreator.Exists()
+   at Microsoft.EntityFrameworkCore.Storage.RelationalDatabaseCreator.EnsureCreated()
+   at Microsoft.EntityFrameworkCore.Infrastructure.DatabaseFacade.EnsureCreated()
+   at Program.<Main>$(String[] args) in D:\cursor-workspace\MuhasebeStokWebApp\Program.cs:line 407
+2025-05-20 09:26:01.295 +03:00 [INF] Todo Hatırlatıcı Servisi başlatıldı.
+2025-05-20 09:26:01.298 +03:00 [INF] Yaklaşan hatırlatıcılar kontrol ediliyor...
+2025-05-20 09:26:01.852 +03:00 [ERR] An error occurred using the connection to database 'MuhasebeStokDB' on server '212.253.106.115,1453'.
+2025-05-20 09:26:01.947 +03:00 [ERR] An exception occurred while iterating over the results of a query for context type 'MuhasebeStokWebApp.Data.ApplicationDbContext'.
+System.InvalidOperationException: An exception has been raised that is likely due to a transient failure. Consider enabling transient error resiliency by adding 'EnableRetryOnFailure' to the 'UseSqlServer' call.
+ ---> Microsoft.Data.SqlClient.SqlException (0x80131904): A network-related or instance-specific error occurred while establishing a connection to SQL Server. The server was not found or was not accessible. Verify that the instance name is correct and that SQL Server is configured to allow remote connections. (provider: TCP Provider, error: 0 - Bağlanılan uygun olarak belli bir süre içinde yanıt vermediğinden veya kurulan
+bağlantı bağlanılan ana bilgisayar yanıt vermediğinden bir bağlantı kurulamadı.)
+ ---> System.ComponentModel.Win32Exception (10060): Bağlanılan uygun olarak belli bir süre içinde yanıt vermediğinden veya kurulan
+bağlantı bağlanılan ana bilgisayar yanıt vermediğinden bir bağlantı kurulamadı.
+   at Microsoft.Data.ProviderBase.DbConnectionPool.TryGetConnection(DbConnection owningObject, UInt32 waitForMultipleObjectsTimeout, Boolean allowCreate, Boolean onlyOneCheckConnection, DbConnectionOptions userOptions, DbConnectionInternal& connection)
+   at Microsoft.Data.ProviderBase.DbConnectionPool.TryGetConnection(DbConnection owningObject, TaskCompletionSource`1 retry, DbConnectionOptions userOptions, DbConnectionInternal& connection)
+   at Microsoft.Data.ProviderBase.DbConnectionFactory.TryGetConnection(DbConnection owningConnection, TaskCompletionSource`1 retry, DbConnectionOptions userOptions, DbConnectionInternal oldConnection, DbConnectionInternal& connection)
+   at Microsoft.Data.ProviderBase.DbConnectionInternal.TryOpenConnectionInternal(DbConnection outerConnection, DbConnectionFactory connectionFactory, TaskCompletionSource`1 retry, DbConnectionOptions userOptions)
+   at Microsoft.Data.ProviderBase.DbConnectionClosed.TryOpenConnection(DbConnection outerConnection, DbConnectionFactory connectionFactory, TaskCompletionSource`1 retry, DbConnectionOptions userOptions)
+   at Microsoft.Data.SqlClient.SqlConnection.TryOpen(TaskCompletionSource`1 retry, SqlConnectionOverrides overrides)
+   at Microsoft.Data.SqlClient.SqlConnection.InternalOpenAsync(CancellationToken cancellationToken)
+--- End of stack trace from previous location ---
+   at Microsoft.EntityFrameworkCore.Storage.RelationalConnection.OpenInternalAsync(Boolean errorsExpected, CancellationToken cancellationToken)
+   at Microsoft.EntityFrameworkCore.Storage.RelationalConnection.OpenInternalAsync(Boolean errorsExpected, CancellationToken cancellationToken)
+   at Microsoft.EntityFrameworkCore.Storage.RelationalConnection.OpenAsync(CancellationToken cancellationToken, Boolean errorsExpected)
+   at Microsoft.EntityFrameworkCore.Storage.RelationalCommand.ExecuteReaderAsync(RelationalCommandParameterObject parameterObject, CancellationToken cancellationToken)
+   at Microsoft.EntityFrameworkCore.Query.Internal.SplitQueryingEnumerable`1.AsyncEnumerator.InitializeReaderAsync(AsyncEnumerator enumerator, CancellationToken cancellationToken)
+   at Microsoft.EntityFrameworkCore.SqlServer.Storage.Internal.SqlServerExecutionStrategy.ExecuteAsync[TState,TResult](TState state, Func`4 operation, Func`4 verifySucceeded, CancellationToken cancellationToken)
+ClientConnectionId:00000000-0000-0000-0000-000000000000
+Error Number:10060,State:0,Class:20
+   --- End of inner exception stack trace ---
+   at Microsoft.EntityFrameworkCore.SqlServer.Storage.Internal.SqlServerExecutionStrategy.ExecuteAsync[TState,TResult](TState state, Func`4 operation, Func`4 verifySucceeded, CancellationToken cancellationToken)
+   at Microsoft.EntityFrameworkCore.Query.Internal.SplitQueryingEnumerable`1.AsyncEnumerator.MoveNextAsync()
+System.InvalidOperationException: An exception has been raised that is likely due to a transient failure. Consider enabling transient error resiliency by adding 'EnableRetryOnFailure' to the 'UseSqlServer' call.
+ ---> Microsoft.Data.SqlClient.SqlException (0x80131904): A network-related or instance-specific error occurred while establishing a connection to SQL Server. The server was not found or was not accessible. Verify that the instance name is correct and that SQL Server is configured to allow remote connections. (provider: TCP Provider, error: 0 - Bağlanılan uygun olarak belli bir süre içinde yanıt vermediğinden veya kurulan
+bağlantı bağlanılan ana bilgisayar yanıt vermediğinden bir bağlantı kurulamadı.)
+ ---> System.ComponentModel.Win32Exception (10060): Bağlanılan uygun olarak belli bir süre içinde yanıt vermediğinden veya kurulan
+bağlantı bağlanılan ana bilgisayar yanıt vermediğinden bir bağlantı kurulamadı.
+   at Microsoft.Data.ProviderBase.DbConnectionPool.TryGetConnection(DbConnection owningObject, UInt32 waitForMultipleObjectsTimeout, Boolean allowCreate, Boolean onlyOneCheckConnection, DbConnectionOptions userOptions, DbConnectionInternal& connection)
+   at Microsoft.Data.ProviderBase.DbConnectionPool.TryGetConnection(DbConnection owningObject, TaskCompletionSource`1 retry, DbConnectionOptions userOptions, DbConnectionInternal& connection)
+   at Microsoft.Data.ProviderBase.DbConnectionFactory.TryGetConnection(DbConnection owningConnection, TaskCompletionSource`1 retry, DbConnectionOptions userOptions, DbConnectionInternal oldConnection, DbConnectionInternal& connection)
+   at Microsoft.Data.ProviderBase.DbConnectionInternal.TryOpenConnectionInternal(DbConnection outerConnection, DbConnectionFactory connectionFactory, TaskCompletionSource`1 retry, DbConnectionOptions userOptions)
+   at Microsoft.Data.ProviderBase.DbConnectionClosed.TryOpenConnection(DbConnection outerConnection, DbConnectionFactory connectionFactory, TaskCompletionSource`1 retry, DbConnectionOptions userOptions)
+   at Microsoft.Data.SqlClient.SqlConnection.TryOpen(TaskCompletionSource`1 retry, SqlConnectionOverrides overrides)
+   at Microsoft.Data.SqlClient.SqlConnection.InternalOpenAsync(CancellationToken cancellationToken)
+--- End of stack trace from previous location ---
+   at Microsoft.EntityFrameworkCore.Storage.RelationalConnection.OpenInternalAsync(Boolean errorsExpected, CancellationToken cancellationToken)
+   at Microsoft.EntityFrameworkCore.Storage.RelationalConnection.OpenInternalAsync(Boolean errorsExpected, CancellationToken cancellationToken)
+   at Microsoft.EntityFrameworkCore.Storage.RelationalConnection.OpenAsync(CancellationToken cancellationToken, Boolean errorsExpected)
+   at Microsoft.EntityFrameworkCore.Storage.RelationalCommand.ExecuteReaderAsync(RelationalCommandParameterObject parameterObject, CancellationToken cancellationToken)
+   at Microsoft.EntityFrameworkCore.Query.Internal.SplitQueryingEnumerable`1.AsyncEnumerator.InitializeReaderAsync(AsyncEnumerator enumerator, CancellationToken cancellationToken)
+   at Microsoft.EntityFrameworkCore.SqlServer.Storage.Internal.SqlServerExecutionStrategy.ExecuteAsync[TState,TResult](TState state, Func`4 operation, Func`4 verifySucceeded, CancellationToken cancellationToken)
+ClientConnectionId:00000000-0000-0000-0000-000000000000
+Error Number:10060,State:0,Class:20
+   --- End of inner exception stack trace ---
+   at Microsoft.EntityFrameworkCore.SqlServer.Storage.Internal.SqlServerExecutionStrategy.ExecuteAsync[TState,TResult](TState state, Func`4 operation, Func`4 verifySucceeded, CancellationToken cancellationToken)
+   at Microsoft.EntityFrameworkCore.Query.Internal.SplitQueryingEnumerable`1.AsyncEnumerator.MoveNextAsync()
+2025-05-20 09:26:02.016 +03:00 [ERR] Yaklaşan hatırlatmalar getirilirken hata oluştu
+System.InvalidOperationException: An exception has been raised that is likely due to a transient failure. Consider enabling transient error resiliency by adding 'EnableRetryOnFailure' to the 'UseSqlServer' call.
+ ---> Microsoft.Data.SqlClient.SqlException (0x80131904): A network-related or instance-specific error occurred while establishing a connection to SQL Server. The server was not found or was not accessible. Verify that the instance name is correct and that SQL Server is configured to allow remote connections. (provider: TCP Provider, error: 0 - Bağlanılan uygun olarak belli bir süre içinde yanıt vermediğinden veya kurulan
+bağlantı bağlanılan ana bilgisayar yanıt vermediğinden bir bağlantı kurulamadı.)
+ ---> System.ComponentModel.Win32Exception (10060): Bağlanılan uygun olarak belli bir süre içinde yanıt vermediğinden veya kurulan
+bağlantı bağlanılan ana bilgisayar yanıt vermediğinden bir bağlantı kurulamadı.
+   at Microsoft.Data.ProviderBase.DbConnectionPool.TryGetConnection(DbConnection owningObject, UInt32 waitForMultipleObjectsTimeout, Boolean allowCreate, Boolean onlyOneCheckConnection, DbConnectionOptions userOptions, DbConnectionInternal& connection)
+   at Microsoft.Data.ProviderBase.DbConnectionPool.TryGetConnection(DbConnection owningObject, TaskCompletionSource`1 retry, DbConnectionOptions userOptions, DbConnectionInternal& connection)
+   at Microsoft.Data.ProviderBase.DbConnectionFactory.TryGetConnection(DbConnection owningConnection, TaskCompletionSource`1 retry, DbConnectionOptions userOptions, DbConnectionInternal oldConnection, DbConnectionInternal& connection)
+   at Microsoft.Data.ProviderBase.DbConnectionInternal.TryOpenConnectionInternal(DbConnection outerConnection, DbConnectionFactory connectionFactory, TaskCompletionSource`1 retry, DbConnectionOptions userOptions)
+   at Microsoft.Data.ProviderBase.DbConnectionClosed.TryOpenConnection(DbConnection outerConnection, DbConnectionFactory connectionFactory, TaskCompletionSource`1 retry, DbConnectionOptions userOptions)
+   at Microsoft.Data.SqlClient.SqlConnection.TryOpen(TaskCompletionSource`1 retry, SqlConnectionOverrides overrides)
+   at Microsoft.Data.SqlClient.SqlConnection.InternalOpenAsync(CancellationToken cancellationToken)
+--- End of stack trace from previous location ---
+   at Microsoft.EntityFrameworkCore.Storage.RelationalConnection.OpenInternalAsync(Boolean errorsExpected, CancellationToken cancellationToken)
+   at Microsoft.EntityFrameworkCore.Storage.RelationalConnection.OpenInternalAsync(Boolean errorsExpected, CancellationToken cancellationToken)
+   at Microsoft.EntityFrameworkCore.Storage.RelationalConnection.OpenAsync(CancellationToken cancellationToken, Boolean errorsExpected)
+   at Microsoft.EntityFrameworkCore.Storage.RelationalCommand.ExecuteReaderAsync(RelationalCommandParameterObject parameterObject, CancellationToken cancellationToken)
+   at Microsoft.EntityFrameworkCore.Query.Internal.SplitQueryingEnumerable`1.AsyncEnumerator.InitializeReaderAsync(AsyncEnumerator enumerator, CancellationToken cancellationToken)
+   at Microsoft.EntityFrameworkCore.SqlServer.Storage.Internal.SqlServerExecutionStrategy.ExecuteAsync[TState,TResult](TState state, Func`4 operation, Func`4 verifySucceeded, CancellationToken cancellationToken)
+ClientConnectionId:00000000-0000-0000-0000-000000000000
+Error Number:10060,State:0,Class:20
+   --- End of inner exception stack trace ---
+   at Microsoft.EntityFrameworkCore.SqlServer.Storage.Internal.SqlServerExecutionStrategy.ExecuteAsync[TState,TResult](TState state, Func`4 operation, Func`4 verifySucceeded, CancellationToken cancellationToken)
+   at Microsoft.EntityFrameworkCore.Query.Internal.SplitQueryingEnumerable`1.AsyncEnumerator.MoveNextAsync()
+   at Microsoft.EntityFrameworkCore.EntityFrameworkQueryableExtensions.ToListAsync[TSource](IQueryable`1 source, CancellationToken cancellationToken)
+   at Microsoft.EntityFrameworkCore.EntityFrameworkQueryableExtensions.ToListAsync[TSource](IQueryable`1 source, CancellationToken cancellationToken)
+   at MuhasebeStokWebApp.Services.TodoService.GetPendingRemindersAsync() in D:\cursor-workspace\MuhasebeStokWebApp\Services\TodoService.cs:line 600
+2025-05-20 09:26:02.023 +03:00 [INF] Bekleyen hatırlatma bulunamadı.
+2025-05-20 09:26:04.739 +03:00 [INF] Giriş denemesi: admin
+2025-05-20 09:26:04.877 +03:00 [ERR] An error occurred using the connection to database 'MuhasebeStokDB' on server '212.253.106.115,1453'.
+2025-05-20 09:26:05.024 +03:00 [ERR] An exception occurred while iterating over the results of a query for context type 'MuhasebeStokWebApp.Data.ApplicationDbContext'.
+System.InvalidOperationException: An exception has been raised that is likely due to a transient failure. Consider enabling transient error resiliency by adding 'EnableRetryOnFailure' to the 'UseSqlServer' call.
+ ---> Microsoft.Data.SqlClient.SqlException (0x80131904): A network-related or instance-specific error occurred while establishing a connection to SQL Server. The server was not found or was not accessible. Verify that the instance name is correct and that SQL Server is configured to allow remote connections. (provider: TCP Provider, error: 0 - Bağlanılan uygun olarak belli bir süre içinde yanıt vermediğinden veya kurulan
+bağlantı bağlanılan ana bilgisayar yanıt vermediğinden bir bağlantı kurulamadı.)
+ ---> System.ComponentModel.Win32Exception (10060): Bağlanılan uygun olarak belli bir süre içinde yanıt vermediğinden veya kurulan
+bağlantı bağlanılan ana bilgisayar yanıt vermediğinden bir bağlantı kurulamadı.
+   at Microsoft.Data.ProviderBase.DbConnectionPool.TryGetConnection(DbConnection owningObject, UInt32 waitForMultipleObjectsTimeout, Boolean allowCreate, Boolean onlyOneCheckConnection, DbConnectionOptions userOptions, DbConnectionInternal& connection)
+   at Microsoft.Data.ProviderBase.DbConnectionPool.TryGetConnection(DbConnection owningObject, TaskCompletionSource`1 retry, DbConnectionOptions userOptions, DbConnectionInternal& connection)
+   at Microsoft.Data.ProviderBase.DbConnectionFactory.TryGetConnection(DbConnection owningConnection, TaskCompletionSource`1 retry, DbConnectionOptions userOptions, DbConnectionInternal oldConnection, DbConnectionInternal& connection)
+   at Microsoft.Data.ProviderBase.DbConnectionInternal.TryOpenConnectionInternal(DbConnection outerConnection, DbConnectionFactory connectionFactory, TaskCompletionSource`1 retry, DbConnectionOptions userOptions)
+   at Microsoft.Data.ProviderBase.DbConnectionClosed.TryOpenConnection(DbConnection outerConnection, DbConnectionFactory connectionFactory, TaskCompletionSource`1 retry, DbConnectionOptions userOptions)
+   at Microsoft.Data.SqlClient.SqlConnection.TryOpen(TaskCompletionSource`1 retry, SqlConnectionOverrides overrides)
+   at Microsoft.Data.SqlClient.SqlConnection.InternalOpenAsync(CancellationToken cancellationToken)
+--- End of stack trace from previous location ---
+   at Microsoft.EntityFrameworkCore.Storage.RelationalConnection.OpenInternalAsync(Boolean errorsExpected, CancellationToken cancellationToken)
+   at Microsoft.EntityFrameworkCore.Storage.RelationalConnection.OpenInternalAsync(Boolean errorsExpected, CancellationToken cancellationToken)
+   at Microsoft.EntityFrameworkCore.Storage.RelationalConnection.OpenAsync(CancellationToken cancellationToken, Boolean errorsExpected)
+   at Microsoft.EntityFrameworkCore.Storage.RelationalCommand.ExecuteReaderAsync(RelationalCommandParameterObject parameterObject, CancellationToken cancellationToken)
+   at Microsoft.EntityFrameworkCore.Query.Internal.SplitQueryingEnumerable`1.AsyncEnumerator.InitializeReaderAsync(AsyncEnumerator enumerator, CancellationToken cancellationToken)
+   at Microsoft.EntityFrameworkCore.SqlServer.Storage.Internal.SqlServerExecutionStrategy.ExecuteAsync[TState,TResult](TState state, Func`4 operation, Func`4 verifySucceeded, CancellationToken cancellationToken)
+ClientConnectionId:00000000-0000-0000-0000-000000000000
+Error Number:10060,State:0,Class:20
+   --- End of inner exception stack trace ---
+   at Microsoft.EntityFrameworkCore.SqlServer.Storage.Internal.SqlServerExecutionStrategy.ExecuteAsync[TState,TResult](TState state, Func`4 operation, Func`4 verifySucceeded, CancellationToken cancellationToken)
+   at Microsoft.EntityFrameworkCore.Query.Internal.SplitQueryingEnumerable`1.AsyncEnumerator.MoveNextAsync()
+System.InvalidOperationException: An exception has been raised that is likely due to a transient failure. Consider enabling transient error resiliency by adding 'EnableRetryOnFailure' to the 'UseSqlServer' call.
+ ---> Microsoft.Data.SqlClient.SqlException (0x80131904): A network-related or instance-specific error occurred while establishing a connection to SQL Server. The server was not found or was not accessible. Verify that the instance name is correct and that SQL Server is configured to allow remote connections. (provider: TCP Provider, error: 0 - Bağlanılan uygun olarak belli bir süre içinde yanıt vermediğinden veya kurulan
+bağlantı bağlanılan ana bilgisayar yanıt vermediğinden bir bağlantı kurulamadı.)
+ ---> System.ComponentModel.Win32Exception (10060): Bağlanılan uygun olarak belli bir süre içinde yanıt vermediğinden veya kurulan
+bağlantı bağlanılan ana bilgisayar yanıt vermediğinden bir bağlantı kurulamadı.
+   at Microsoft.Data.ProviderBase.DbConnectionPool.TryGetConnection(DbConnection owningObject, UInt32 waitForMultipleObjectsTimeout, Boolean allowCreate, Boolean onlyOneCheckConnection, DbConnectionOptions userOptions, DbConnectionInternal& connection)
+   at Microsoft.Data.ProviderBase.DbConnectionPool.TryGetConnection(DbConnection owningObject, TaskCompletionSource`1 retry, DbConnectionOptions userOptions, DbConnectionInternal& connection)
+   at Microsoft.Data.ProviderBase.DbConnectionFactory.TryGetConnection(DbConnection owningConnection, TaskCompletionSource`1 retry, DbConnectionOptions userOptions, DbConnectionInternal oldConnection, DbConnectionInternal& connection)
+   at Microsoft.Data.ProviderBase.DbConnectionInternal.TryOpenConnectionInternal(DbConnection outerConnection, DbConnectionFactory connectionFactory, TaskCompletionSource`1 retry, DbConnectionOptions userOptions)
+   at Microsoft.Data.ProviderBase.DbConnectionClosed.TryOpenConnection(DbConnection outerConnection, DbConnectionFactory connectionFactory, TaskCompletionSource`1 retry, DbConnectionOptions userOptions)
+   at Microsoft.Data.SqlClient.SqlConnection.TryOpen(TaskCompletionSource`1 retry, SqlConnectionOverrides overrides)
+   at Microsoft.Data.SqlClient.SqlConnection.InternalOpenAsync(CancellationToken cancellationToken)
+--- End of stack trace from previous location ---
+   at Microsoft.EntityFrameworkCore.Storage.RelationalConnection.OpenInternalAsync(Boolean errorsExpected, CancellationToken cancellationToken)
+   at Microsoft.EntityFrameworkCore.Storage.RelationalConnection.OpenInternalAsync(Boolean errorsExpected, CancellationToken cancellationToken)
+   at Microsoft.EntityFrameworkCore.Storage.RelationalConnection.OpenAsync(CancellationToken cancellationToken, Boolean errorsExpected)
+   at Microsoft.EntityFrameworkCore.Storage.RelationalCommand.ExecuteReaderAsync(RelationalCommandParameterObject parameterObject, CancellationToken cancellationToken)
+   at Microsoft.EntityFrameworkCore.Query.Internal.SplitQueryingEnumerable`1.AsyncEnumerator.InitializeReaderAsync(AsyncEnumerator enumerator, CancellationToken cancellationToken)
+   at Microsoft.EntityFrameworkCore.SqlServer.Storage.Internal.SqlServerExecutionStrategy.ExecuteAsync[TState,TResult](TState state, Func`4 operation, Func`4 verifySucceeded, CancellationToken cancellationToken)
+ClientConnectionId:00000000-0000-0000-0000-000000000000
+Error Number:10060,State:0,Class:20
+   --- End of inner exception stack trace ---
+   at Microsoft.EntityFrameworkCore.SqlServer.Storage.Internal.SqlServerExecutionStrategy.ExecuteAsync[TState,TResult](TState state, Func`4 operation, Func`4 verifySucceeded, CancellationToken cancellationToken)
+   at Microsoft.EntityFrameworkCore.Query.Internal.SplitQueryingEnumerable`1.AsyncEnumerator.MoveNextAsync()
+2025-05-20 09:26:05.164 +03:00 [ERR] Giriş sırasında hata oluştu
+System.InvalidOperationException: An exception has been raised that is likely due to a transient failure. Consider enabling transient error resiliency by adding 'EnableRetryOnFailure' to the 'UseSqlServer' call.
+ ---> Microsoft.Data.SqlClient.SqlException (0x80131904): A network-related or instance-specific error occurred while establishing a connection to SQL Server. The server was not found or was not accessible. Verify that the instance name is correct and that SQL Server is configured to allow remote connections. (provider: TCP Provider, error: 0 - Bağlanılan uygun olarak belli bir süre içinde yanıt vermediğinden veya kurulan
+bağlantı bağlanılan ana bilgisayar yanıt vermediğinden bir bağlantı kurulamadı.)
+ ---> System.ComponentModel.Win32Exception (10060): Bağlanılan uygun olarak belli bir süre içinde yanıt vermediğinden veya kurulan
+bağlantı bağlanılan ana bilgisayar yanıt vermediğinden bir bağlantı kurulamadı.
+   at Microsoft.Data.ProviderBase.DbConnectionPool.TryGetConnection(DbConnection owningObject, UInt32 waitForMultipleObjectsTimeout, Boolean allowCreate, Boolean onlyOneCheckConnection, DbConnectionOptions userOptions, DbConnectionInternal& connection)
+   at Microsoft.Data.ProviderBase.DbConnectionPool.TryGetConnection(DbConnection owningObject, TaskCompletionSource`1 retry, DbConnectionOptions userOptions, DbConnectionInternal& connection)
+   at Microsoft.Data.ProviderBase.DbConnectionFactory.TryGetConnection(DbConnection owningConnection, TaskCompletionSource`1 retry, DbConnectionOptions userOptions, DbConnectionInternal oldConnection, DbConnectionInternal& connection)
+   at Microsoft.Data.ProviderBase.DbConnectionInternal.TryOpenConnectionInternal(DbConnection outerConnection, DbConnectionFactory connectionFactory, TaskCompletionSource`1 retry, DbConnectionOptions userOptions)
+   at Microsoft.Data.ProviderBase.DbConnectionClosed.TryOpenConnection(DbConnection outerConnection, DbConnectionFactory connectionFactory, TaskCompletionSource`1 retry, DbConnectionOptions userOptions)
+   at Microsoft.Data.SqlClient.SqlConnection.TryOpen(TaskCompletionSource`1 retry, SqlConnectionOverrides overrides)
+   at Microsoft.Data.SqlClient.SqlConnection.InternalOpenAsync(CancellationToken cancellationToken)
+--- End of stack trace from previous location ---
+   at Microsoft.EntityFrameworkCore.Storage.RelationalConnection.OpenInternalAsync(Boolean errorsExpected, CancellationToken cancellationToken)
+   at Microsoft.EntityFrameworkCore.Storage.RelationalConnection.OpenInternalAsync(Boolean errorsExpected, CancellationToken cancellationToken)
+   at Microsoft.EntityFrameworkCore.Storage.RelationalConnection.OpenAsync(CancellationToken cancellationToken, Boolean errorsExpected)
+   at Microsoft.EntityFrameworkCore.Storage.RelationalCommand.ExecuteReaderAsync(RelationalCommandParameterObject parameterObject, CancellationToken cancellationToken)
+   at Microsoft.EntityFrameworkCore.Query.Internal.SplitQueryingEnumerable`1.AsyncEnumerator.InitializeReaderAsync(AsyncEnumerator enumerator, CancellationToken cancellationToken)
+   at Microsoft.EntityFrameworkCore.SqlServer.Storage.Internal.SqlServerExecutionStrategy.ExecuteAsync[TState,TResult](TState state, Func`4 operation, Func`4 verifySucceeded, CancellationToken cancellationToken)
+ClientConnectionId:00000000-0000-0000-0000-000000000000
+Error Number:10060,State:0,Class:20
+   --- End of inner exception stack trace ---
+   at Microsoft.EntityFrameworkCore.SqlServer.Storage.Internal.SqlServerExecutionStrategy.ExecuteAsync[TState,TResult](TState state, Func`4 operation, Func`4 verifySucceeded, CancellationToken cancellationToken)
+   at Microsoft.EntityFrameworkCore.Query.Internal.SplitQueryingEnumerable`1.AsyncEnumerator.MoveNextAsync()
+   at Microsoft.EntityFrameworkCore.Query.ShapedQueryCompilingExpressionVisitor.SingleOrDefaultAsync[TSource](IAsyncEnumerable`1 asyncEnumerable, CancellationToken cancellationToken)
+   at Microsoft.EntityFrameworkCore.Query.ShapedQueryCompilingExpressionVisitor.SingleOrDefaultAsync[TSource](IAsyncEnumerable`1 asyncEnumerable, CancellationToken cancellationToken)
+   at Microsoft.AspNetCore.Identity.UserManager`1.FindByNameAsync(String userName)
+   at Microsoft.AspNetCore.Identity.SignInManager`1.PasswordSignInAsync(String userName, String password, Boolean isPersistent, Boolean lockoutOnFailure)
+   at MuhasebeStokWebApp.Controllers.AccountController.Login(String username, String password, String rememberMe, String returnUrl) in D:\cursor-workspace\MuhasebeStokWebApp\Controllers\AccountController.cs:line 94
+2025-05-20 09:26:07.038 +03:00 [INF] Giriş denemesi: admin
+2025-05-20 09:26:28.172 +03:00 [ERR] An error occurred using the connection to database 'MuhasebeStokDB' on server '212.253.106.115,1453'.
+2025-05-20 09:26:28.294 +03:00 [ERR] An exception occurred while iterating over the results of a query for context type 'MuhasebeStokWebApp.Data.ApplicationDbContext'.
+System.InvalidOperationException: An exception has been raised that is likely due to a transient failure. Consider enabling transient error resiliency by adding 'EnableRetryOnFailure' to the 'UseSqlServer' call.
+ ---> Microsoft.Data.SqlClient.SqlException (0x80131904): A network-related or instance-specific error occurred while establishing a connection to SQL Server. The server was not found or was not accessible. Verify that the instance name is correct and that SQL Server is configured to allow remote connections. (provider: TCP Provider, error: 0 - Bağlanılan uygun olarak belli bir süre içinde yanıt vermediğinden veya kurulan
+bağlantı bağlanılan ana bilgisayar yanıt vermediğinden bir bağlantı kurulamadı.)
+ ---> System.ComponentModel.Win32Exception (10060): Bağlanılan uygun olarak belli bir süre içinde yanıt vermediğinden veya kurulan
+bağlantı bağlanılan ana bilgisayar yanıt vermediğinden bir bağlantı kurulamadı.
+   at Microsoft.Data.SqlClient.SqlInternalConnection.OnError(SqlException exception, Boolean breakConnection, Action`1 wrapCloseInAction)
+   at Microsoft.Data.SqlClient.TdsParser.ThrowExceptionAndWarning(TdsParserStateObject stateObj, Boolean callerHasConnectionLock, Boolean asyncClose)
+   at Microsoft.Data.SqlClient.TdsParser.Connect(ServerInfo serverInfo, SqlInternalConnectionTds connHandler, Boolean ignoreSniOpenTimeout, Int64 timerExpire, SqlConnectionString connectionOptions, Boolean withFailover)
+   at Microsoft.Data.SqlClient.SqlInternalConnectionTds.AttemptOneLogin(ServerInfo serverInfo, String newPassword, SecureString newSecurePassword, Boolean ignoreSniOpenTimeout, TimeoutTimer timeout, Boolean withFailover)
+   at Microsoft.Data.SqlClient.SqlInternalConnectionTds.LoginNoFailover(ServerInfo serverInfo, String newPassword, SecureString newSecurePassword, Boolean redirectedUserInstance, SqlConnectionString connectionOptions, SqlCredential credential, TimeoutTimer timeout)
+   at Microsoft.Data.SqlClient.SqlInternalConnectionTds.OpenLoginEnlist(TimeoutTimer timeout, SqlConnectionString connectionOptions, SqlCredential credential, String newPassword, SecureString newSecurePassword, Boolean redirectedUserInstance)
+   at Microsoft.Data.SqlClient.SqlInternalConnectionTds..ctor(DbConnectionPoolIdentity identity, SqlConnectionString connectionOptions, SqlCredential credential, Object providerInfo, String newPassword, SecureString newSecurePassword, Boolean redirectedUserInstance, SqlConnectionString userConnectionOptions, SessionData reconnectSessionData, Boolean applyTransientFaultHandling, String accessToken, DbConnectionPool pool)
+   at Microsoft.Data.SqlClient.SqlConnectionFactory.CreateConnection(DbConnectionOptions options, DbConnectionPoolKey poolKey, Object poolGroupProviderInfo, DbConnectionPool pool, DbConnection owningConnection, DbConnectionOptions userOptions)
+   at Microsoft.Data.ProviderBase.DbConnectionFactory.CreatePooledConnection(DbConnectionPool pool, DbConnection owningObject, DbConnectionOptions options, DbConnectionPoolKey poolKey, DbConnectionOptions userOptions)
+   at Microsoft.Data.ProviderBase.DbConnectionPool.CreateObject(DbConnection owningObject, DbConnectionOptions userOptions, DbConnectionInternal oldConnection)
+   at Microsoft.Data.ProviderBase.DbConnectionPool.UserCreateRequest(DbConnection owningObject, DbConnectionOptions userOptions, DbConnectionInternal oldConnection)
+   at Microsoft.Data.ProviderBase.DbConnectionPool.TryGetConnection(DbConnection owningObject, UInt32 waitForMultipleObjectsTimeout, Boolean allowCreate, Boolean onlyOneCheckConnection, DbConnectionOptions userOptions, DbConnectionInternal& connection)
+   at Microsoft.Data.ProviderBase.DbConnectionPool.WaitForPendingOpen()
+--- End of stack trace from previous location ---
+   at Microsoft.EntityFrameworkCore.Storage.RelationalConnection.OpenInternalAsync(Boolean errorsExpected, CancellationToken cancellationToken)
+   at Microsoft.EntityFrameworkCore.Storage.RelationalConnection.OpenInternalAsync(Boolean errorsExpected, CancellationToken cancellationToken)
+   at Microsoft.EntityFrameworkCore.Storage.RelationalConnection.OpenAsync(CancellationToken cancellationToken, Boolean errorsExpected)
+   at Microsoft.EntityFrameworkCore.Storage.RelationalCommand.ExecuteReaderAsync(RelationalCommandParameterObject parameterObject, CancellationToken cancellationToken)
+   at Microsoft.EntityFrameworkCore.Query.Internal.SplitQueryingEnumerable`1.AsyncEnumerator.InitializeReaderAsync(AsyncEnumerator enumerator, CancellationToken cancellationToken)
+   at Microsoft.EntityFrameworkCore.SqlServer.Storage.Internal.SqlServerExecutionStrategy.ExecuteAsync[TState,TResult](TState state, Func`4 operation, Func`4 verifySucceeded, CancellationToken cancellationToken)
+ClientConnectionId:00000000-0000-0000-0000-000000000000
+Error Number:10060,State:0,Class:20
+   --- End of inner exception stack trace ---
+   at Microsoft.EntityFrameworkCore.SqlServer.Storage.Internal.SqlServerExecutionStrategy.ExecuteAsync[TState,TResult](TState state, Func`4 operation, Func`4 verifySucceeded, CancellationToken cancellationToken)
+   at Microsoft.EntityFrameworkCore.Query.Internal.SplitQueryingEnumerable`1.AsyncEnumerator.MoveNextAsync()
+System.InvalidOperationException: An exception has been raised that is likely due to a transient failure. Consider enabling transient error resiliency by adding 'EnableRetryOnFailure' to the 'UseSqlServer' call.
+ ---> Microsoft.Data.SqlClient.SqlException (0x80131904): A network-related or instance-specific error occurred while establishing a connection to SQL Server. The server was not found or was not accessible. Verify that the instance name is correct and that SQL Server is configured to allow remote connections. (provider: TCP Provider, error: 0 - Bağlanılan uygun olarak belli bir süre içinde yanıt vermediğinden veya kurulan
+bağlantı bağlanılan ana bilgisayar yanıt vermediğinden bir bağlantı kurulamadı.)
+ ---> System.ComponentModel.Win32Exception (10060): Bağlanılan uygun olarak belli bir süre içinde yanıt vermediğinden veya kurulan
+bağlantı bağlanılan ana bilgisayar yanıt vermediğinden bir bağlantı kurulamadı.
+   at Microsoft.Data.SqlClient.SqlInternalConnection.OnError(SqlException exception, Boolean breakConnection, Action`1 wrapCloseInAction)
+   at Microsoft.Data.SqlClient.TdsParser.ThrowExceptionAndWarning(TdsParserStateObject stateObj, Boolean callerHasConnectionLock, Boolean asyncClose)
+   at Microsoft.Data.SqlClient.TdsParser.Connect(ServerInfo serverInfo, SqlInternalConnectionTds connHandler, Boolean ignoreSniOpenTimeout, Int64 timerExpire, SqlConnectionString connectionOptions, Boolean withFailover)
+   at Microsoft.Data.SqlClient.SqlInternalConnectionTds.AttemptOneLogin(ServerInfo serverInfo, String newPassword, SecureString newSecurePassword, Boolean ignoreSniOpenTimeout, TimeoutTimer timeout, Boolean withFailover)
+   at Microsoft.Data.SqlClient.SqlInternalConnectionTds.LoginNoFailover(ServerInfo serverInfo, String newPassword, SecureString newSecurePassword, Boolean redirectedUserInstance, SqlConnectionString connectionOptions, SqlCredential credential, TimeoutTimer timeout)
+   at Microsoft.Data.SqlClient.SqlInternalConnectionTds.OpenLoginEnlist(TimeoutTimer timeout, SqlConnectionString connectionOptions, SqlCredential credential, String newPassword, SecureString newSecurePassword, Boolean redirectedUserInstance)
+   at Microsoft.Data.SqlClient.SqlInternalConnectionTds..ctor(DbConnectionPoolIdentity identity, SqlConnectionString connectionOptions, SqlCredential credential, Object providerInfo, String newPassword, SecureString newSecurePassword, Boolean redirectedUserInstance, SqlConnectionString userConnectionOptions, SessionData reconnectSessionData, Boolean applyTransientFaultHandling, String accessToken, DbConnectionPool pool)
+   at Microsoft.Data.SqlClient.SqlConnectionFactory.CreateConnection(DbConnectionOptions options, DbConnectionPoolKey poolKey, Object poolGroupProviderInfo, DbConnectionPool pool, DbConnection owningConnection, DbConnectionOptions userOptions)
+   at Microsoft.Data.ProviderBase.DbConnectionFactory.CreatePooledConnection(DbConnectionPool pool, DbConnection owningObject, DbConnectionOptions options, DbConnectionPoolKey poolKey, DbConnectionOptions userOptions)
+   at Microsoft.Data.ProviderBase.DbConnectionPool.CreateObject(DbConnection owningObject, DbConnectionOptions userOptions, DbConnectionInternal oldConnection)
+   at Microsoft.Data.ProviderBase.DbConnectionPool.UserCreateRequest(DbConnection owningObject, DbConnectionOptions userOptions, DbConnectionInternal oldConnection)
+   at Microsoft.Data.ProviderBase.DbConnectionPool.TryGetConnection(DbConnection owningObject, UInt32 waitForMultipleObjectsTimeout, Boolean allowCreate, Boolean onlyOneCheckConnection, DbConnectionOptions userOptions, DbConnectionInternal& connection)
+   at Microsoft.Data.ProviderBase.DbConnectionPool.WaitForPendingOpen()
+--- End of stack trace from previous location ---
+   at Microsoft.EntityFrameworkCore.Storage.RelationalConnection.OpenInternalAsync(Boolean errorsExpected, CancellationToken cancellationToken)
+   at Microsoft.EntityFrameworkCore.Storage.RelationalConnection.OpenInternalAsync(Boolean errorsExpected, CancellationToken cancellationToken)
+   at Microsoft.EntityFrameworkCore.Storage.RelationalConnection.OpenAsync(CancellationToken cancellationToken, Boolean errorsExpected)
+   at Microsoft.EntityFrameworkCore.Storage.RelationalCommand.ExecuteReaderAsync(RelationalCommandParameterObject parameterObject, CancellationToken cancellationToken)
+   at Microsoft.EntityFrameworkCore.Query.Internal.SplitQueryingEnumerable`1.AsyncEnumerator.InitializeReaderAsync(AsyncEnumerator enumerator, CancellationToken cancellationToken)
+   at Microsoft.EntityFrameworkCore.SqlServer.Storage.Internal.SqlServerExecutionStrategy.ExecuteAsync[TState,TResult](TState state, Func`4 operation, Func`4 verifySucceeded, CancellationToken cancellationToken)
+ClientConnectionId:00000000-0000-0000-0000-000000000000
+Error Number:10060,State:0,Class:20
+   --- End of inner exception stack trace ---
+   at Microsoft.EntityFrameworkCore.SqlServer.Storage.Internal.SqlServerExecutionStrategy.ExecuteAsync[TState,TResult](TState state, Func`4 operation, Func`4 verifySucceeded, CancellationToken cancellationToken)
+   at Microsoft.EntityFrameworkCore.Query.Internal.SplitQueryingEnumerable`1.AsyncEnumerator.MoveNextAsync()
+2025-05-20 09:26:28.514 +03:00 [ERR] Giriş sırasında hata oluştu
+System.InvalidOperationException: An exception has been raised that is likely due to a transient failure. Consider enabling transient error resiliency by adding 'EnableRetryOnFailure' to the 'UseSqlServer' call.
+ ---> Microsoft.Data.SqlClient.SqlException (0x80131904): A network-related or instance-specific error occurred while establishing a connection to SQL Server. The server was not found or was not accessible. Verify that the instance name is correct and that SQL Server is configured to allow remote connections. (provider: TCP Provider, error: 0 - Bağlanılan uygun olarak belli bir süre içinde yanıt vermediğinden veya kurulan
+bağlantı bağlanılan ana bilgisayar yanıt vermediğinden bir bağlantı kurulamadı.)
+ ---> System.ComponentModel.Win32Exception (10060): Bağlanılan uygun olarak belli bir süre içinde yanıt vermediğinden veya kurulan
+bağlantı bağlanılan ana bilgisayar yanıt vermediğinden bir bağlantı kurulamadı.
+   at Microsoft.Data.SqlClient.SqlInternalConnection.OnError(SqlException exception, Boolean breakConnection, Action`1 wrapCloseInAction)
+   at Microsoft.Data.SqlClient.TdsParser.ThrowExceptionAndWarning(TdsParserStateObject stateObj, Boolean callerHasConnectionLock, Boolean asyncClose)
+   at Microsoft.Data.SqlClient.TdsParser.Connect(ServerInfo serverInfo, SqlInternalConnectionTds connHandler, Boolean ignoreSniOpenTimeout, Int64 timerExpire, SqlConnectionString connectionOptions, Boolean withFailover)
+   at Microsoft.Data.SqlClient.SqlInternalConnectionTds.AttemptOneLogin(ServerInfo serverInfo, String newPassword, SecureString newSecurePassword, Boolean ignoreSniOpenTimeout, TimeoutTimer timeout, Boolean withFailover)
+   at Microsoft.Data.SqlClient.SqlInternalConnectionTds.LoginNoFailover(ServerInfo serverInfo, String newPassword, SecureString newSecurePassword, Boolean redirectedUserInstance, SqlConnectionString connectionOptions, SqlCredential credential, TimeoutTimer timeout)
+   at Microsoft.Data.SqlClient.SqlInternalConnectionTds.OpenLoginEnlist(TimeoutTimer timeout, SqlConnectionString connectionOptions, SqlCredential credential, String newPassword, SecureString newSecurePassword, Boolean redirectedUserInstance)
+   at Microsoft.Data.SqlClient.SqlInternalConnectionTds..ctor(DbConnectionPoolIdentity identity, SqlConnectionString connectionOptions, SqlCredential credential, Object providerInfo, String newPassword, SecureString newSecurePassword, Boolean redirectedUserInstance, SqlConnectionString userConnectionOptions, SessionData reconnectSessionData, Boolean applyTransientFaultHandling, String accessToken, DbConnectionPool pool)
+   at Microsoft.Data.SqlClient.SqlConnectionFactory.CreateConnection(DbConnectionOptions options, DbConnectionPoolKey poolKey, Object poolGroupProviderInfo, DbConnectionPool pool, DbConnection owningConnection, DbConnectionOptions userOptions)
+   at Microsoft.Data.ProviderBase.DbConnectionFactory.CreatePooledConnection(DbConnectionPool pool, DbConnection owningObject, DbConnectionOptions options, DbConnectionPoolKey poolKey, DbConnectionOptions userOptions)
+   at Microsoft.Data.ProviderBase.DbConnectionPool.CreateObject(DbConnection owningObject, DbConnectionOptions userOptions, DbConnectionInternal oldConnection)
+   at Microsoft.Data.ProviderBase.DbConnectionPool.UserCreateRequest(DbConnection owningObject, DbConnectionOptions userOptions, DbConnectionInternal oldConnection)
+   at Microsoft.Data.ProviderBase.DbConnectionPool.TryGetConnection(DbConnection owningObject, UInt32 waitForMultipleObjectsTimeout, Boolean allowCreate, Boolean onlyOneCheckConnection, DbConnectionOptions userOptions, DbConnectionInternal& connection)
+   at Microsoft.Data.ProviderBase.DbConnectionPool.WaitForPendingOpen()
+--- End of stack trace from previous location ---
+   at Microsoft.EntityFrameworkCore.Storage.RelationalConnection.OpenInternalAsync(Boolean errorsExpected, CancellationToken cancellationToken)
+   at Microsoft.EntityFrameworkCore.Storage.RelationalConnection.OpenInternalAsync(Boolean errorsExpected, CancellationToken cancellationToken)
+   at Microsoft.EntityFrameworkCore.Storage.RelationalConnection.OpenAsync(CancellationToken cancellationToken, Boolean errorsExpected)
+   at Microsoft.EntityFrameworkCore.Storage.RelationalCommand.ExecuteReaderAsync(RelationalCommandParameterObject parameterObject, CancellationToken cancellationToken)
+   at Microsoft.EntityFrameworkCore.Query.Internal.SplitQueryingEnumerable`1.AsyncEnumerator.InitializeReaderAsync(AsyncEnumerator enumerator, CancellationToken cancellationToken)
+   at Microsoft.EntityFrameworkCore.SqlServer.Storage.Internal.SqlServerExecutionStrategy.ExecuteAsync[TState,TResult](TState state, Func`4 operation, Func`4 verifySucceeded, CancellationToken cancellationToken)
+ClientConnectionId:00000000-0000-0000-0000-000000000000
+Error Number:10060,State:0,Class:20
+   --- End of inner exception stack trace ---
+   at Microsoft.EntityFrameworkCore.SqlServer.Storage.Internal.SqlServerExecutionStrategy.ExecuteAsync[TState,TResult](TState state, Func`4 operation, Func`4 verifySucceeded, CancellationToken cancellationToken)
+   at Microsoft.EntityFrameworkCore.Query.Internal.SplitQueryingEnumerable`1.AsyncEnumerator.MoveNextAsync()
+   at Microsoft.EntityFrameworkCore.Query.ShapedQueryCompilingExpressionVisitor.SingleOrDefaultAsync[TSource](IAsyncEnumerable`1 asyncEnumerable, CancellationToken cancellationToken)
+   at Microsoft.EntityFrameworkCore.Query.ShapedQueryCompilingExpressionVisitor.SingleOrDefaultAsync[TSource](IAsyncEnumerable`1 asyncEnumerable, CancellationToken cancellationToken)
+   at Microsoft.AspNetCore.Identity.UserManager`1.FindByNameAsync(String userName)
+   at Microsoft.AspNetCore.Identity.SignInManager`1.PasswordSignInAsync(String userName, String password, Boolean isPersistent, Boolean lockoutOnFailure)
+   at MuhasebeStokWebApp.Controllers.AccountController.Login(String username, String password, String rememberMe, String returnUrl) in D:\cursor-workspace\MuhasebeStokWebApp\Controllers\AccountController.cs:line 94
+2025-05-20 09:27:52.485 +03:00 [INF] Giriş denemesi: admin
+2025-05-20 09:27:53.421 +03:00 [INF] Admin kullanıcısı başarıyla giriş yaptı: admin
+2025-05-20 09:27:53.422 +03:00 [INF] Admin session oluşturuldu: UserID=9e6fc203-37eb-49a7-a470-1551f7bec8b8, UserName=admin
+2025-05-20 09:27:53.423 +03:00 [INF] Yönlendirme adresi: Ana Sayfa
+2025-05-20 09:27:53.423 +03:00 [INF] Admin kullanıcısı ana sayfaya yönlendiriliyor
+2025-05-20 09:27:53.922 +03:00 [INF] Home/Index'e auth parametresi ile erişildi: admin_success
+2025-05-20 09:27:53.923 +03:00 [INF] Aktif session bulundu: UserID=9e6fc203-37eb-49a7-a470-1551f7bec8b8, UserName=admin
+2025-05-20 09:27:54.026 +03:00 [INF] Admin kullanıcısı tespit edildi
+2025-05-20 09:27:54.027 +03:00 [INF] Kimlik doğrulanmış kullanıcı: admin
+2025-05-20 09:27:55.828 +03:00 [INF] TRY dönüşümü için kur değeri hesaplandı: TRY -> USD, Değer: 0.03
+2025-05-20 09:27:56.174 +03:00 [INF] Kur değeri hesaplandı: UZS -> USD, Değer: 0.0000775226832727903141733102
+2025-05-20 09:28:26.111 +03:00 [INF] Fatura ve ilişkili kayıtlar güncelleniyor. FaturaID: "f01cfc7e-5cb3-42c0-911b-98634d9733b4"
+2025-05-20 09:28:32.064 +03:00 [INF] UpdateAsync işlemi başlatılıyor
+2025-05-20 09:28:32.160 +03:00 [ERR] FaturaTransactionService.UpdateAsync Parametreler: f01cfc7e-5cb3-42c0-911b-98634d9733b4
+System.InvalidOperationException: The connection is already in a transaction and cannot participate in another transaction.
+   at Microsoft.EntityFrameworkCore.Storage.RelationalConnection.EnsureNoTransactions()
+   at Microsoft.EntityFrameworkCore.Storage.RelationalConnection.BeginTransactionAsync(IsolationLevel isolationLevel, CancellationToken cancellationToken)
+   at Microsoft.EntityFrameworkCore.Storage.RelationalConnection.BeginTransactionAsync(CancellationToken cancellationToken)
+   at MuhasebeStokWebApp.Data.Repositories.UnitOfWork.BeginTransactionAsync() in D:\cursor-workspace\MuhasebeStokWebApp\Data\Repositories\UnitOfWork.cs:line 106
+   at MuhasebeStokWebApp.Services.FaturaTransactionService.EnsureTransactionAsync() in D:\cursor-workspace\MuhasebeStokWebApp\Services\FaturaTransactionService.cs:line 37
+   at MuhasebeStokWebApp.Services.FaturaTransactionService.<>c__DisplayClass8_0`1.<<ExecuteInTransactionAsync>b__0>d.MoveNext() in D:\cursor-workspace\MuhasebeStokWebApp\Services\FaturaTransactionService.cs:line 86
+--- End of stack trace from previous location ---
+   at MuhasebeStokWebApp.Services.ExceptionHandlingService.HandleExceptionAsync[T](Func`1 func, String logContext, Object[] logParams) in D:\cursor-workspace\MuhasebeStokWebApp\Services\ExceptionHandlingService.cs:line 146
+2025-05-20 09:28:32.163 +03:00 [INF] Fatura bilgileri güncellendi. FaturaID: "f01cfc7e-5cb3-42c0-911b-98634d9733b4"
+2025-05-20 09:28:32.167 +03:00 [INF] FIFO kayıtları iptal edilmeye çalışılıyor: ReferansID=f01cfc7e-5cb3-42c0-911b-98634d9733b4, ReferansTuru=Fatura
+2025-05-20 09:28:32.168 +03:00 [INF] FifoKayitlariniIptalEt - Mevcut transaction kullanılıyor: ReferansID=f01cfc7e-5cb3-42c0-911b-98634d9733b4
+2025-05-20 09:28:32.283 +03:00 [INF] FIFO kayıtları iptal ediliyor. Toplam 1 kayıt bulundu.
+2025-05-20 09:28:32.669 +03:00 [INF] İlişkili FIFO kayıtları iptal edildi. FaturaID: "f01cfc7e-5cb3-42c0-911b-98634d9733b4"
+2025-05-20 09:28:32.789 +03:00 [INF] İlişkili stok hareketleri silindi. FaturaID: "f01cfc7e-5cb3-42c0-911b-98634d9733b4"
+2025-05-20 09:28:32.899 +03:00 [INF] Eski fatura detayları silindi. Toplam 1 detay. FaturaID: "f01cfc7e-5cb3-42c0-911b-98634d9733b4"
+2025-05-20 09:28:32.919 +03:00 [INF] Yeni fatura detayı eklendi. UrunID: "2216d3ad-9370-49a9-847e-c374b130978d"
+2025-05-20 09:28:32.923 +03:00 [INF] Stok hareketi oluşturuldu. UrunID: "2216d3ad-9370-49a9-847e-c374b130978d", Miktar: 6.00
+2025-05-20 09:28:32.926 +03:00 [INF] StokGirisiYap - Mevcut transaction kullanılıyor: Ürün 2216d3ad-9370-49a9-847e-c374b130978d, Miktar 6.00
+2025-05-20 09:28:33.135 +03:00 [INF] Stok girişi başarıyla tamamlandı: UrunID=2216d3ad-9370-49a9-847e-c374b130978d, Miktar=6.00, BirimFiyat=50.00, ParaBirimi=USD, Mahsuplaşan=0
+2025-05-20 09:28:33.136 +03:00 [INF] FIFO kaydı oluşturuldu. UrunID: "2216d3ad-9370-49a9-847e-c374b130978d"
+2025-05-20 09:28:33.231 +03:00 [INF] Fatura güncelleme işlemi için 1 adet irsaliye güncelleniyor. FaturaID: "f01cfc7e-5cb3-42c0-911b-98634d9733b4"
+2025-05-20 09:28:33.311 +03:00 [ERR] UpdateIrsaliyeFromFaturaAsync Parametreler: f01cfc7e-5cb3-42c0-911b-98634d9733b4
+System.InvalidOperationException: The connection is already in a transaction and cannot participate in another transaction.
+   at Microsoft.EntityFrameworkCore.Storage.RelationalConnection.EnsureNoTransactions()
+   at Microsoft.EntityFrameworkCore.Storage.RelationalConnection.BeginTransactionAsync(IsolationLevel isolationLevel, CancellationToken cancellationToken)
+   at Microsoft.EntityFrameworkCore.Storage.RelationalConnection.BeginTransactionAsync(CancellationToken cancellationToken)
+   at MuhasebeStokWebApp.Data.Repositories.UnitOfWork.BeginTransactionAsync() in D:\cursor-workspace\MuhasebeStokWebApp\Data\Repositories\UnitOfWork.cs:line 106
+   at MuhasebeStokWebApp.Services.IrsaliyeService.<>c__DisplayClass13_0.<<UpdateIrsaliyeFromFaturaAsync>b__0>d.MoveNext() in D:\cursor-workspace\MuhasebeStokWebApp\Services\IrsaliyeService.cs:line 411
+--- End of stack trace from previous location ---
+   at MuhasebeStokWebApp.Services.ExceptionHandlingService.HandleExceptionAsync[T](Func`1 func, String logContext, Object[] logParams) in D:\cursor-workspace\MuhasebeStokWebApp\Services\ExceptionHandlingService.cs:line 146
+2025-05-20 09:28:33.313 +03:00 [INF] Faturaya ait irsaliyeler güncellendi. FaturaID: "f01cfc7e-5cb3-42c0-911b-98634d9733b4"
+2025-05-20 09:28:33.362 +03:00 [INF] Fatura ve ilişkili tüm kayıtlar başarıyla güncellendi. FaturaID: "f01cfc7e-5cb3-42c0-911b-98634d9733b4"
+2025-05-20 09:28:33.365 +03:00 [INF] Fatura başarıyla güncellendi. FaturaID: f01cfc7e-5cb3-42c0-911b-98634d9733b4
+2025-05-20 09:29:07.497 +03:00 [INF] Fatura ve ilişkili kayıtlar güncelleniyor. FaturaID: "f01cfc7e-5cb3-42c0-911b-98634d9733b4"
+2025-05-20 09:29:07.678 +03:00 [INF] UpdateAsync işlemi başlatılıyor
+2025-05-20 09:29:07.775 +03:00 [ERR] FaturaTransactionService.UpdateAsync Parametreler: f01cfc7e-5cb3-42c0-911b-98634d9733b4
+System.InvalidOperationException: The connection is already in a transaction and cannot participate in another transaction.
+   at Microsoft.EntityFrameworkCore.Storage.RelationalConnection.EnsureNoTransactions()
+   at Microsoft.EntityFrameworkCore.Storage.RelationalConnection.BeginTransactionAsync(IsolationLevel isolationLevel, CancellationToken cancellationToken)
+   at Microsoft.EntityFrameworkCore.Storage.RelationalConnection.BeginTransactionAsync(CancellationToken cancellationToken)
+   at MuhasebeStokWebApp.Data.Repositories.UnitOfWork.BeginTransactionAsync() in D:\cursor-workspace\MuhasebeStokWebApp\Data\Repositories\UnitOfWork.cs:line 106
+   at MuhasebeStokWebApp.Services.FaturaTransactionService.EnsureTransactionAsync() in D:\cursor-workspace\MuhasebeStokWebApp\Services\FaturaTransactionService.cs:line 37
+   at MuhasebeStokWebApp.Services.FaturaTransactionService.<>c__DisplayClass8_0`1.<<ExecuteInTransactionAsync>b__0>d.MoveNext() in D:\cursor-workspace\MuhasebeStokWebApp\Services\FaturaTransactionService.cs:line 86
+--- End of stack trace from previous location ---
+   at MuhasebeStokWebApp.Services.ExceptionHandlingService.HandleExceptionAsync[T](Func`1 func, String logContext, Object[] logParams) in D:\cursor-workspace\MuhasebeStokWebApp\Services\ExceptionHandlingService.cs:line 146
+2025-05-20 09:29:07.777 +03:00 [INF] Fatura bilgileri güncellendi. FaturaID: "f01cfc7e-5cb3-42c0-911b-98634d9733b4"
+2025-05-20 09:29:07.778 +03:00 [INF] FIFO kayıtları iptal edilmeye çalışılıyor: ReferansID=f01cfc7e-5cb3-42c0-911b-98634d9733b4, ReferansTuru=Fatura
+2025-05-20 09:29:07.780 +03:00 [INF] FifoKayitlariniIptalEt - Mevcut transaction kullanılıyor: ReferansID=f01cfc7e-5cb3-42c0-911b-98634d9733b4
+2025-05-20 09:29:07.840 +03:00 [INF] FIFO kayıtları iptal ediliyor. Toplam 1 kayıt bulundu.
+2025-05-20 09:29:07.972 +03:00 [INF] İlişkili FIFO kayıtları iptal edildi. FaturaID: "f01cfc7e-5cb3-42c0-911b-98634d9733b4"
+2025-05-20 09:29:08.012 +03:00 [INF] İlişkili stok hareketleri silindi. FaturaID: "f01cfc7e-5cb3-42c0-911b-98634d9733b4"
+2025-05-20 09:29:08.100 +03:00 [INF] Eski fatura detayları silindi. Toplam 1 detay. FaturaID: "f01cfc7e-5cb3-42c0-911b-98634d9733b4"
+2025-05-20 09:29:08.102 +03:00 [INF] Yeni fatura detayı eklendi. UrunID: "2216d3ad-9370-49a9-847e-c374b130978d"
+2025-05-20 09:29:08.103 +03:00 [INF] Stok hareketi oluşturuldu. UrunID: "2216d3ad-9370-49a9-847e-c374b130978d", Miktar: 6.00
+2025-05-20 09:29:08.104 +03:00 [INF] StokGirisiYap - Mevcut transaction kullanılıyor: Ürün 2216d3ad-9370-49a9-847e-c374b130978d, Miktar 6.00
+2025-05-20 09:29:08.236 +03:00 [INF] Stok girişi başarıyla tamamlandı: UrunID=2216d3ad-9370-49a9-847e-c374b130978d, Miktar=6.00, BirimFiyat=50.00, ParaBirimi=USD, Mahsuplaşan=0
+2025-05-20 09:29:08.237 +03:00 [INF] FIFO kaydı oluşturuldu. UrunID: "2216d3ad-9370-49a9-847e-c374b130978d"
+2025-05-20 09:29:25.937 +03:00 [INF] Fatura güncelleme işlemi için 1 adet irsaliye güncelleniyor. FaturaID: "f01cfc7e-5cb3-42c0-911b-98634d9733b4"
+2025-05-20 09:29:27.752 +03:00 [ERR] UpdateIrsaliyeFromFaturaAsync Parametreler: f01cfc7e-5cb3-42c0-911b-98634d9733b4
+System.InvalidOperationException: The connection is already in a transaction and cannot participate in another transaction.
+   at Microsoft.EntityFrameworkCore.Storage.RelationalConnection.EnsureNoTransactions()
+   at Microsoft.EntityFrameworkCore.Storage.RelationalConnection.BeginTransactionAsync(IsolationLevel isolationLevel, CancellationToken cancellationToken)
+   at Microsoft.EntityFrameworkCore.Storage.RelationalConnection.BeginTransactionAsync(CancellationToken cancellationToken)
+   at MuhasebeStokWebApp.Data.Repositories.UnitOfWork.BeginTransactionAsync() in D:\cursor-workspace\MuhasebeStokWebApp\Data\Repositories\UnitOfWork.cs:line 106
+   at MuhasebeStokWebApp.Services.IrsaliyeService.<>c__DisplayClass13_0.<<UpdateIrsaliyeFromFaturaAsync>b__0>d.MoveNext() in D:\cursor-workspace\MuhasebeStokWebApp\Services\IrsaliyeService.cs:line 411
+--- End of stack trace from previous location ---
+   at MuhasebeStokWebApp.Services.ExceptionHandlingService.HandleExceptionAsync[T](Func`1 func, String logContext, Object[] logParams) in D:\cursor-workspace\MuhasebeStokWebApp\Services\ExceptionHandlingService.cs:line 146
+2025-05-20 09:30:16.066 +03:00 [INF] Faturaya ait irsaliyeler güncellendi. FaturaID: "f01cfc7e-5cb3-42c0-911b-98634d9733b4"
+2025-05-20 09:30:16.245 +03:00 [INF] Fatura ve ilişkili tüm kayıtlar başarıyla güncellendi. FaturaID: "f01cfc7e-5cb3-42c0-911b-98634d9733b4"
+2025-05-20 09:30:16.253 +03:00 [INF] Fatura başarıyla güncellendi. FaturaID: f01cfc7e-5cb3-42c0-911b-98634d9733b4
+2025-05-20 09:30:16.579 +03:00 [INF] Fatura ve ilişkili kayıtlar güncelleniyor. FaturaID: "f01cfc7e-5cb3-42c0-911b-98634d9733b4"
+2025-05-20 09:30:16.782 +03:00 [INF] UpdateAsync işlemi başlatılıyor
+2025-05-20 09:30:16.863 +03:00 [ERR] FaturaTransactionService.UpdateAsync Parametreler: f01cfc7e-5cb3-42c0-911b-98634d9733b4
+System.InvalidOperationException: The connection is already in a transaction and cannot participate in another transaction.
+   at Microsoft.EntityFrameworkCore.Storage.RelationalConnection.EnsureNoTransactions()
+   at Microsoft.EntityFrameworkCore.Storage.RelationalConnection.BeginTransactionAsync(IsolationLevel isolationLevel, CancellationToken cancellationToken)
+   at Microsoft.EntityFrameworkCore.Storage.RelationalConnection.BeginTransactionAsync(CancellationToken cancellationToken)
+   at MuhasebeStokWebApp.Data.Repositories.UnitOfWork.BeginTransactionAsync() in D:\cursor-workspace\MuhasebeStokWebApp\Data\Repositories\UnitOfWork.cs:line 106
+   at MuhasebeStokWebApp.Services.FaturaTransactionService.EnsureTransactionAsync() in D:\cursor-workspace\MuhasebeStokWebApp\Services\FaturaTransactionService.cs:line 37
+   at MuhasebeStokWebApp.Services.FaturaTransactionService.<>c__DisplayClass8_0`1.<<ExecuteInTransactionAsync>b__0>d.MoveNext() in D:\cursor-workspace\MuhasebeStokWebApp\Services\FaturaTransactionService.cs:line 86
+--- End of stack trace from previous location ---
+   at MuhasebeStokWebApp.Services.ExceptionHandlingService.HandleExceptionAsync[T](Func`1 func, String logContext, Object[] logParams) in D:\cursor-workspace\MuhasebeStokWebApp\Services\ExceptionHandlingService.cs:line 146
+2025-05-20 09:30:16.865 +03:00 [INF] Fatura bilgileri güncellendi. FaturaID: "f01cfc7e-5cb3-42c0-911b-98634d9733b4"
+2025-05-20 09:30:16.866 +03:00 [INF] FIFO kayıtları iptal edilmeye çalışılıyor: ReferansID=f01cfc7e-5cb3-42c0-911b-98634d9733b4, ReferansTuru=Fatura
+2025-05-20 09:30:16.866 +03:00 [INF] FifoKayitlariniIptalEt - Mevcut transaction kullanılıyor: ReferansID=f01cfc7e-5cb3-42c0-911b-98634d9733b4
+2025-05-20 09:30:16.916 +03:00 [INF] FIFO kayıtları iptal ediliyor. Toplam 1 kayıt bulundu.
+2025-05-20 09:30:17.067 +03:00 [INF] İlişkili FIFO kayıtları iptal edildi. FaturaID: "f01cfc7e-5cb3-42c0-911b-98634d9733b4"
+2025-05-20 09:30:17.135 +03:00 [INF] İlişkili stok hareketleri silindi. FaturaID: "f01cfc7e-5cb3-42c0-911b-98634d9733b4"
+2025-05-20 09:30:17.225 +03:00 [INF] Eski fatura detayları silindi. Toplam 1 detay. FaturaID: "f01cfc7e-5cb3-42c0-911b-98634d9733b4"
+2025-05-20 09:30:17.226 +03:00 [INF] Yeni fatura detayı eklendi. UrunID: "2216d3ad-9370-49a9-847e-c374b130978d"
+2025-05-20 09:30:17.227 +03:00 [INF] Stok hareketi oluşturuldu. UrunID: "2216d3ad-9370-49a9-847e-c374b130978d", Miktar: 6.00
+2025-05-20 09:30:17.228 +03:00 [INF] StokGirisiYap - Mevcut transaction kullanılıyor: Ürün 2216d3ad-9370-49a9-847e-c374b130978d, Miktar 6.00
+2025-05-20 09:30:17.407 +03:00 [INF] Stok girişi başarıyla tamamlandı: UrunID=2216d3ad-9370-49a9-847e-c374b130978d, Miktar=6.00, BirimFiyat=50.00, ParaBirimi=USD, Mahsuplaşan=0
+2025-05-20 09:30:17.407 +03:00 [INF] FIFO kaydı oluşturuldu. UrunID: "2216d3ad-9370-49a9-847e-c374b130978d"
+2025-05-20 09:30:49.732 +03:00 [INF] Fatura güncelleme işlemi için 1 adet irsaliye güncelleniyor. FaturaID: "f01cfc7e-5cb3-42c0-911b-98634d9733b4"
+2025-05-20 09:30:49.804 +03:00 [ERR] UpdateIrsaliyeFromFaturaAsync Parametreler: f01cfc7e-5cb3-42c0-911b-98634d9733b4
+System.InvalidOperationException: The connection is already in a transaction and cannot participate in another transaction.
+   at Microsoft.EntityFrameworkCore.Storage.RelationalConnection.EnsureNoTransactions()
+   at Microsoft.EntityFrameworkCore.Storage.RelationalConnection.BeginTransactionAsync(IsolationLevel isolationLevel, CancellationToken cancellationToken)
+   at Microsoft.EntityFrameworkCore.Storage.RelationalConnection.BeginTransactionAsync(CancellationToken cancellationToken)
+   at MuhasebeStokWebApp.Data.Repositories.UnitOfWork.BeginTransactionAsync() in D:\cursor-workspace\MuhasebeStokWebApp\Data\Repositories\UnitOfWork.cs:line 106
+   at MuhasebeStokWebApp.Services.IrsaliyeService.<>c__DisplayClass13_0.<<UpdateIrsaliyeFromFaturaAsync>b__0>d.MoveNext() in D:\cursor-workspace\MuhasebeStokWebApp\Services\IrsaliyeService.cs:line 411
+--- End of stack trace from previous location ---
+   at MuhasebeStokWebApp.Services.ExceptionHandlingService.HandleExceptionAsync[T](Func`1 func, String logContext, Object[] logParams) in D:\cursor-workspace\MuhasebeStokWebApp\Services\ExceptionHandlingService.cs:line 146
+2025-05-20 09:30:49.807 +03:00 [INF] Faturaya ait irsaliyeler güncellendi. FaturaID: "f01cfc7e-5cb3-42c0-911b-98634d9733b4"
+2025-05-20 09:30:49.837 +03:00 [INF] Fatura ve ilişkili tüm kayıtlar başarıyla güncellendi. FaturaID: "f01cfc7e-5cb3-42c0-911b-98634d9733b4"
+2025-05-20 09:30:49.838 +03:00 [INF] Fatura başarıyla güncellendi. FaturaID: f01cfc7e-5cb3-42c0-911b-98634d9733b4
+2025-05-20 09:31:02.024 +03:00 [INF] Yaklaşan hatırlatıcılar kontrol ediliyor...
+2025-05-20 09:31:02.118 +03:00 [INF] Bekleyen hatırlatma bulunamadı.
+2025-05-20 09:31:02.593 +03:00 [INF] Fatura ve ilişkili kayıtlar güncelleniyor. FaturaID: "f01cfc7e-5cb3-42c0-911b-98634d9733b4"
+2025-05-20 09:31:02.759 +03:00 [INF] UpdateAsync işlemi başlatılıyor
+2025-05-20 09:31:02.861 +03:00 [ERR] FaturaTransactionService.UpdateAsync Parametreler: f01cfc7e-5cb3-42c0-911b-98634d9733b4
+System.InvalidOperationException: The connection is already in a transaction and cannot participate in another transaction.
+   at Microsoft.EntityFrameworkCore.Storage.RelationalConnection.EnsureNoTransactions()
+   at Microsoft.EntityFrameworkCore.Storage.RelationalConnection.BeginTransactionAsync(IsolationLevel isolationLevel, CancellationToken cancellationToken)
+   at Microsoft.EntityFrameworkCore.Storage.RelationalConnection.BeginTransactionAsync(CancellationToken cancellationToken)
+   at MuhasebeStokWebApp.Data.Repositories.UnitOfWork.BeginTransactionAsync() in D:\cursor-workspace\MuhasebeStokWebApp\Data\Repositories\UnitOfWork.cs:line 106
+   at MuhasebeStokWebApp.Services.FaturaTransactionService.EnsureTransactionAsync() in D:\cursor-workspace\MuhasebeStokWebApp\Services\FaturaTransactionService.cs:line 37
+   at MuhasebeStokWebApp.Services.FaturaTransactionService.<>c__DisplayClass8_0`1.<<ExecuteInTransactionAsync>b__0>d.MoveNext() in D:\cursor-workspace\MuhasebeStokWebApp\Services\FaturaTransactionService.cs:line 86
+--- End of stack trace from previous location ---
+   at MuhasebeStokWebApp.Services.ExceptionHandlingService.HandleExceptionAsync[T](Func`1 func, String logContext, Object[] logParams) in D:\cursor-workspace\MuhasebeStokWebApp\Services\ExceptionHandlingService.cs:line 146
+2025-05-20 09:31:02.863 +03:00 [INF] Fatura bilgileri güncellendi. FaturaID: "f01cfc7e-5cb3-42c0-911b-98634d9733b4"
+2025-05-20 09:31:02.864 +03:00 [INF] FIFO kayıtları iptal edilmeye çalışılıyor: ReferansID=f01cfc7e-5cb3-42c0-911b-98634d9733b4, ReferansTuru=Fatura
+2025-05-20 09:31:02.864 +03:00 [INF] FifoKayitlariniIptalEt - Mevcut transaction kullanılıyor: ReferansID=f01cfc7e-5cb3-42c0-911b-98634d9733b4
+2025-05-20 09:31:02.929 +03:00 [INF] FIFO kayıtları iptal ediliyor. Toplam 1 kayıt bulundu.
+2025-05-20 09:31:03.089 +03:00 [INF] İlişkili FIFO kayıtları iptal edildi. FaturaID: "f01cfc7e-5cb3-42c0-911b-98634d9733b4"
+2025-05-20 09:31:03.135 +03:00 [INF] İlişkili stok hareketleri silindi. FaturaID: "f01cfc7e-5cb3-42c0-911b-98634d9733b4"
+2025-05-20 09:31:03.225 +03:00 [INF] Eski fatura detayları silindi. Toplam 1 detay. FaturaID: "f01cfc7e-5cb3-42c0-911b-98634d9733b4"
+2025-05-20 09:31:03.226 +03:00 [INF] Yeni fatura detayı eklendi. UrunID: "2216d3ad-9370-49a9-847e-c374b130978d"
+2025-05-20 09:31:03.227 +03:00 [INF] Stok hareketi oluşturuldu. UrunID: "2216d3ad-9370-49a9-847e-c374b130978d", Miktar: 6.00
+2025-05-20 09:31:03.228 +03:00 [INF] StokGirisiYap - Mevcut transaction kullanılıyor: Ürün 2216d3ad-9370-49a9-847e-c374b130978d, Miktar 6.00
+2025-05-20 09:31:03.391 +03:00 [INF] Stok girişi başarıyla tamamlandı: UrunID=2216d3ad-9370-49a9-847e-c374b130978d, Miktar=6.00, BirimFiyat=50.00, ParaBirimi=USD, Mahsuplaşan=0
+2025-05-20 09:31:03.391 +03:00 [INF] FIFO kaydı oluşturuldu. UrunID: "2216d3ad-9370-49a9-847e-c374b130978d"
+2025-05-20 09:31:05.849 +03:00 [INF] Fatura güncelleme işlemi için 1 adet irsaliye güncelleniyor. FaturaID: "f01cfc7e-5cb3-42c0-911b-98634d9733b4"
+2025-05-20 09:31:05.919 +03:00 [ERR] UpdateIrsaliyeFromFaturaAsync Parametreler: f01cfc7e-5cb3-42c0-911b-98634d9733b4
+System.InvalidOperationException: The connection is already in a transaction and cannot participate in another transaction.
+   at Microsoft.EntityFrameworkCore.Storage.RelationalConnection.EnsureNoTransactions()
+   at Microsoft.EntityFrameworkCore.Storage.RelationalConnection.BeginTransactionAsync(IsolationLevel isolationLevel, CancellationToken cancellationToken)
+   at Microsoft.EntityFrameworkCore.Storage.RelationalConnection.BeginTransactionAsync(CancellationToken cancellationToken)
+   at MuhasebeStokWebApp.Data.Repositories.UnitOfWork.BeginTransactionAsync() in D:\cursor-workspace\MuhasebeStokWebApp\Data\Repositories\UnitOfWork.cs:line 106
+   at MuhasebeStokWebApp.Services.IrsaliyeService.<>c__DisplayClass13_0.<<UpdateIrsaliyeFromFaturaAsync>b__0>d.MoveNext() in D:\cursor-workspace\MuhasebeStokWebApp\Services\IrsaliyeService.cs:line 411
+--- End of stack trace from previous location ---
+   at MuhasebeStokWebApp.Services.ExceptionHandlingService.HandleExceptionAsync[T](Func`1 func, String logContext, Object[] logParams) in D:\cursor-workspace\MuhasebeStokWebApp\Services\ExceptionHandlingService.cs:line 146
+2025-05-20 09:31:05.921 +03:00 [INF] Faturaya ait irsaliyeler güncellendi. FaturaID: "f01cfc7e-5cb3-42c0-911b-98634d9733b4"
+2025-05-20 09:31:05.953 +03:00 [INF] Fatura ve ilişkili tüm kayıtlar başarıyla güncellendi. FaturaID: "f01cfc7e-5cb3-42c0-911b-98634d9733b4"
+2025-05-20 09:31:05.954 +03:00 [INF] Fatura başarıyla güncellendi. FaturaID: f01cfc7e-5cb3-42c0-911b-98634d9733b4
+2025-05-20 09:36:02.126 +03:00 [INF] Yaklaşan hatırlatıcılar kontrol ediliyor...
+2025-05-20 09:36:02.382 +03:00 [INF] Bekleyen hatırlatma bulunamadı.
+2025-05-20 09:39:07.601 +03:00 [INF] Veritabanına bağlantı başarılı. Migrationlar uygulanıyor...
+2025-05-20 09:39:09.253 +03:00 [INF] Veritabanı işlemleri başarıyla tamamlandı.
+2025-05-20 09:39:09.487 +03:00 [INF] Todo Hatırlatıcı Servisi başlatıldı.
+2025-05-20 09:39:09.490 +03:00 [INF] Yaklaşan hatırlatıcılar kontrol ediliyor...
+2025-05-20 09:39:09.719 +03:00 [INF] Bekleyen hatırlatma bulunamadı.
+2025-05-20 09:39:19.731 +03:00 [INF] Giriş denemesi: admin
+2025-05-20 09:39:20.149 +03:00 [INF] Admin kullanıcısı başarıyla giriş yaptı: admin
+2025-05-20 09:39:20.149 +03:00 [INF] Admin session oluşturuldu: UserID=9e6fc203-37eb-49a7-a470-1551f7bec8b8, UserName=admin
+2025-05-20 09:39:20.150 +03:00 [INF] Yönlendirme adresi: /
+2025-05-20 09:39:20.151 +03:00 [INF] Admin kullanıcısı / adresine yönlendiriliyor
+2025-05-20 09:39:20.671 +03:00 [INF] Aktif session bulundu: UserID=9e6fc203-37eb-49a7-a470-1551f7bec8b8, UserName=admin
+2025-05-20 09:39:20.765 +03:00 [INF] Admin kullanıcısı tespit edildi
+2025-05-20 09:39:20.766 +03:00 [INF] Kimlik doğrulanmış kullanıcı: admin
+2025-05-20 09:39:22.581 +03:00 [INF] TRY dönüşümü için kur değeri hesaplandı: TRY -> USD, Değer: 0.03
+2025-05-20 09:39:22.948 +03:00 [INF] Kur değeri hesaplandı: UZS -> USD, Değer: 0.0000775226832727903141733102
+2025-05-20 09:39:52.417 +03:00 [INF] Fatura ve ilişkili kayıtlar güncelleniyor. FaturaID: "f01cfc7e-5cb3-42c0-911b-98634d9733b4"
+2025-05-20 09:39:52.648 +03:00 [INF] UpdateAsync işlemi başlatılıyor
+2025-05-20 09:39:52.758 +03:00 [ERR] FaturaTransactionService.UpdateAsync Parametreler: f01cfc7e-5cb3-42c0-911b-98634d9733b4
+System.InvalidOperationException: The connection is already in a transaction and cannot participate in another transaction.
+   at Microsoft.EntityFrameworkCore.Storage.RelationalConnection.EnsureNoTransactions()
+   at Microsoft.EntityFrameworkCore.Storage.RelationalConnection.BeginTransactionAsync(IsolationLevel isolationLevel, CancellationToken cancellationToken)
+   at Microsoft.EntityFrameworkCore.Storage.RelationalConnection.BeginTransactionAsync(CancellationToken cancellationToken)
+   at MuhasebeStokWebApp.Data.Repositories.UnitOfWork.BeginTransactionAsync() in D:\cursor-workspace\MuhasebeStokWebApp\Data\Repositories\UnitOfWork.cs:line 106
+   at MuhasebeStokWebApp.Services.FaturaTransactionService.EnsureTransactionAsync() in D:\cursor-workspace\MuhasebeStokWebApp\Services\FaturaTransactionService.cs:line 37
+   at MuhasebeStokWebApp.Services.FaturaTransactionService.<>c__DisplayClass8_0`1.<<ExecuteInTransactionAsync>b__0>d.MoveNext() in D:\cursor-workspace\MuhasebeStokWebApp\Services\FaturaTransactionService.cs:line 86
+--- End of stack trace from previous location ---
+   at MuhasebeStokWebApp.Services.ExceptionHandlingService.HandleExceptionAsync[T](Func`1 func, String logContext, Object[] logParams) in D:\cursor-workspace\MuhasebeStokWebApp\Services\ExceptionHandlingService.cs:line 146
+2025-05-20 09:39:52.785 +03:00 [INF] Fatura bilgileri güncellendi. FaturaID: "f01cfc7e-5cb3-42c0-911b-98634d9733b4"
+2025-05-20 09:39:52.789 +03:00 [INF] FIFO kayıtları iptal edilmeye çalışılıyor: ReferansID=f01cfc7e-5cb3-42c0-911b-98634d9733b4, ReferansTuru=Fatura
+2025-05-20 09:39:52.790 +03:00 [INF] FifoKayitlariniIptalEt - Mevcut transaction kullanılıyor: ReferansID=f01cfc7e-5cb3-42c0-911b-98634d9733b4
+2025-05-20 09:39:52.894 +03:00 [INF] FIFO kayıtları iptal ediliyor. Toplam 1 kayıt bulundu.
+2025-05-20 09:39:53.189 +03:00 [INF] İlişkili FIFO kayıtları iptal edildi. FaturaID: "f01cfc7e-5cb3-42c0-911b-98634d9733b4"
+2025-05-20 09:39:53.291 +03:00 [INF] İlişkili stok hareketleri silindi. FaturaID: "f01cfc7e-5cb3-42c0-911b-98634d9733b4"
+2025-05-20 09:39:53.419 +03:00 [INF] Eski fatura detayları silindi. Toplam 1 detay. FaturaID: "f01cfc7e-5cb3-42c0-911b-98634d9733b4"
+2025-05-20 09:39:53.439 +03:00 [INF] Yeni fatura detayı eklendi. UrunID: "2216d3ad-9370-49a9-847e-c374b130978d"
+2025-05-20 09:39:53.445 +03:00 [INF] Stok hareketi oluşturuldu. UrunID: "2216d3ad-9370-49a9-847e-c374b130978d", Miktar: 6.00
+2025-05-20 09:39:53.449 +03:00 [INF] StokGirisiYap - Mevcut transaction kullanılıyor: Ürün 2216d3ad-9370-49a9-847e-c374b130978d, Miktar 6.00
+2025-05-20 09:39:53.625 +03:00 [INF] Stok girişi başarıyla tamamlandı: UrunID=2216d3ad-9370-49a9-847e-c374b130978d, Miktar=6.00, BirimFiyat=50.00, ParaBirimi=USD, Mahsuplaşan=0
+2025-05-20 09:39:53.626 +03:00 [INF] FIFO kaydı oluşturuldu. UrunID: "2216d3ad-9370-49a9-847e-c374b130978d"
+2025-05-20 09:39:53.629 +03:00 [INF] UpdateIrsaliyeFromFaturaAsync başlatıldı. FaturaID: f01cfc7e-5cb3-42c0-911b-98634d9733b4
+2025-05-20 09:39:53.741 +03:00 [INF] Fatura güncelleme işlemi için 1 adet irsaliye güncelleniyor. FaturaID: "f01cfc7e-5cb3-42c0-911b-98634d9733b4"
+2025-05-20 09:39:53.801 +03:00 [ERR] UpdateIrsaliyeFromFaturaAsync genel hata. FaturaID: f01cfc7e-5cb3-42c0-911b-98634d9733b4, Hata: The connection is already in a transaction and cannot participate in another transaction.
+System.InvalidOperationException: The connection is already in a transaction and cannot participate in another transaction.
+   at Microsoft.EntityFrameworkCore.Storage.RelationalConnection.EnsureNoTransactions()
+   at Microsoft.EntityFrameworkCore.Storage.RelationalConnection.BeginTransactionAsync(IsolationLevel isolationLevel, CancellationToken cancellationToken)
+   at Microsoft.EntityFrameworkCore.Storage.RelationalConnection.BeginTransactionAsync(CancellationToken cancellationToken)
+   at MuhasebeStokWebApp.Data.Repositories.UnitOfWork.BeginTransactionAsync() in D:\cursor-workspace\MuhasebeStokWebApp\Data\Repositories\UnitOfWork.cs:line 106
+   at MuhasebeStokWebApp.Services.IrsaliyeService.UpdateIrsaliyeFromFaturaAsync(Guid faturaID, FaturaEditViewModel viewModel, Nullable`1 currentUserId) in D:\cursor-workspace\MuhasebeStokWebApp\Services\IrsaliyeService.cs:line 465
+2025-05-20 09:39:53.842 +03:00 [ERR] Fatura ve ilişkili kayıtlar güncellenirken hata. FaturaID: "f01cfc7e-5cb3-42c0-911b-98634d9733b4", Hata: The connection is already in a transaction and cannot participate in another transaction.
+System.InvalidOperationException: The connection is already in a transaction and cannot participate in another transaction.
+   at Microsoft.EntityFrameworkCore.Storage.RelationalConnection.EnsureNoTransactions()
+   at Microsoft.EntityFrameworkCore.Storage.RelationalConnection.BeginTransactionAsync(IsolationLevel isolationLevel, CancellationToken cancellationToken)
+   at Microsoft.EntityFrameworkCore.Storage.RelationalConnection.BeginTransactionAsync(CancellationToken cancellationToken)
+   at MuhasebeStokWebApp.Data.Repositories.UnitOfWork.BeginTransactionAsync() in D:\cursor-workspace\MuhasebeStokWebApp\Data\Repositories\UnitOfWork.cs:line 106
+   at MuhasebeStokWebApp.Services.IrsaliyeService.UpdateIrsaliyeFromFaturaAsync(Guid faturaID, FaturaEditViewModel viewModel, Nullable`1 currentUserId) in D:\cursor-workspace\MuhasebeStokWebApp\Services\IrsaliyeService.cs:line 465
+   at MuhasebeStokWebApp.Services.FaturaOrchestrationService.UpdateFaturaWithRelations(Guid id, FaturaEditViewModel viewModel, Nullable`1 currentUserId) in D:\cursor-workspace\MuhasebeStokWebApp\Services\FaturaOrchestrationService.cs:line 551
+2025-05-20 09:39:53.886 +03:00 [INF] Fatura güncelleme işlemi geri alındı. FaturaID: "f01cfc7e-5cb3-42c0-911b-98634d9733b4"
+2025-05-20 09:39:53.956 +03:00 [ERR] Fatura güncelleme hatası
+System.InvalidOperationException: The connection is already in a transaction and cannot participate in another transaction.
+   at Microsoft.EntityFrameworkCore.Storage.RelationalConnection.EnsureNoTransactions()
+   at Microsoft.EntityFrameworkCore.Storage.RelationalConnection.BeginTransactionAsync(IsolationLevel isolationLevel, CancellationToken cancellationToken)
+   at Microsoft.EntityFrameworkCore.Storage.RelationalConnection.BeginTransactionAsync(CancellationToken cancellationToken)
+   at MuhasebeStokWebApp.Data.Repositories.UnitOfWork.BeginTransactionAsync() in D:\cursor-workspace\MuhasebeStokWebApp\Data\Repositories\UnitOfWork.cs:line 106
+   at MuhasebeStokWebApp.Services.IrsaliyeService.UpdateIrsaliyeFromFaturaAsync(Guid faturaID, FaturaEditViewModel viewModel, Nullable`1 currentUserId) in D:\cursor-workspace\MuhasebeStokWebApp\Services\IrsaliyeService.cs:line 465
+   at MuhasebeStokWebApp.Services.FaturaOrchestrationService.UpdateFaturaWithRelations(Guid id, FaturaEditViewModel viewModel, Nullable`1 currentUserId) in D:\cursor-workspace\MuhasebeStokWebApp\Services\FaturaOrchestrationService.cs:line 551
+   at MuhasebeStokWebApp.Services.FaturaOrchestrationService.UpdateFaturaWithRelations(Guid id, FaturaEditViewModel viewModel, Nullable`1 currentUserId) in D:\cursor-workspace\MuhasebeStokWebApp\Services\FaturaOrchestrationService.cs:line 575
+   at MuhasebeStokWebApp.Services.FaturaOrchestrationService.UpdateFaturaWithRelations(Guid id, FaturaEditViewModel viewModel, Nullable`1 currentUserId) in D:\cursor-workspace\MuhasebeStokWebApp\Services\FaturaOrchestrationService.cs:line 583
+   at MuhasebeStokWebApp.Controllers.FaturaController.Edit(Guid id, FaturaEditViewModel viewModel) in D:\cursor-workspace\MuhasebeStokWebApp\Controllers\FaturaController.cs:line 620
+2025-05-20 09:39:59.588 +03:00 [INF] Fatura ve ilişkili kayıtlar güncelleniyor. FaturaID: "f01cfc7e-5cb3-42c0-911b-98634d9733b4"
+2025-05-20 09:39:59.732 +03:00 [INF] UpdateAsync işlemi başlatılıyor
+2025-05-20 09:39:59.838 +03:00 [ERR] FaturaTransactionService.UpdateAsync Parametreler: f01cfc7e-5cb3-42c0-911b-98634d9733b4
+System.InvalidOperationException: The connection is already in a transaction and cannot participate in another transaction.
+   at Microsoft.EntityFrameworkCore.Storage.RelationalConnection.EnsureNoTransactions()
+   at Microsoft.EntityFrameworkCore.Storage.RelationalConnection.BeginTransactionAsync(IsolationLevel isolationLevel, CancellationToken cancellationToken)
+   at Microsoft.EntityFrameworkCore.Storage.RelationalConnection.BeginTransactionAsync(CancellationToken cancellationToken)
+   at MuhasebeStokWebApp.Data.Repositories.UnitOfWork.BeginTransactionAsync() in D:\cursor-workspace\MuhasebeStokWebApp\Data\Repositories\UnitOfWork.cs:line 106
+   at MuhasebeStokWebApp.Services.FaturaTransactionService.EnsureTransactionAsync() in D:\cursor-workspace\MuhasebeStokWebApp\Services\FaturaTransactionService.cs:line 37
+   at MuhasebeStokWebApp.Services.FaturaTransactionService.<>c__DisplayClass8_0`1.<<ExecuteInTransactionAsync>b__0>d.MoveNext() in D:\cursor-workspace\MuhasebeStokWebApp\Services\FaturaTransactionService.cs:line 86
+--- End of stack trace from previous location ---
+   at MuhasebeStokWebApp.Services.ExceptionHandlingService.HandleExceptionAsync[T](Func`1 func, String logContext, Object[] logParams) in D:\cursor-workspace\MuhasebeStokWebApp\Services\ExceptionHandlingService.cs:line 146
+2025-05-20 09:39:59.841 +03:00 [INF] Fatura bilgileri güncellendi. FaturaID: "f01cfc7e-5cb3-42c0-911b-98634d9733b4"
+2025-05-20 09:39:59.842 +03:00 [INF] FIFO kayıtları iptal edilmeye çalışılıyor: ReferansID=f01cfc7e-5cb3-42c0-911b-98634d9733b4, ReferansTuru=Fatura
+2025-05-20 09:39:59.842 +03:00 [INF] FifoKayitlariniIptalEt - Mevcut transaction kullanılıyor: ReferansID=f01cfc7e-5cb3-42c0-911b-98634d9733b4
+2025-05-20 09:39:59.894 +03:00 [INF] FIFO kayıtları iptal ediliyor. Toplam 1 kayıt bulundu.
+2025-05-20 09:40:00.028 +03:00 [INF] İlişkili FIFO kayıtları iptal edildi. FaturaID: "f01cfc7e-5cb3-42c0-911b-98634d9733b4"
+2025-05-20 09:40:00.078 +03:00 [INF] İlişkili stok hareketleri silindi. FaturaID: "f01cfc7e-5cb3-42c0-911b-98634d9733b4"
+2025-05-20 09:40:00.169 +03:00 [INF] Eski fatura detayları silindi. Toplam 1 detay. FaturaID: "f01cfc7e-5cb3-42c0-911b-98634d9733b4"
+2025-05-20 09:40:00.170 +03:00 [INF] Yeni fatura detayı eklendi. UrunID: "2216d3ad-9370-49a9-847e-c374b130978d"
+2025-05-20 09:40:00.171 +03:00 [INF] Stok hareketi oluşturuldu. UrunID: "2216d3ad-9370-49a9-847e-c374b130978d", Miktar: 6.00
+2025-05-20 09:40:00.172 +03:00 [INF] StokGirisiYap - Mevcut transaction kullanılıyor: Ürün 2216d3ad-9370-49a9-847e-c374b130978d, Miktar 6.00
+2025-05-20 09:40:00.320 +03:00 [INF] Stok girişi başarıyla tamamlandı: UrunID=2216d3ad-9370-49a9-847e-c374b130978d, Miktar=6.00, BirimFiyat=50.00, ParaBirimi=USD, Mahsuplaşan=0
+2025-05-20 09:40:00.321 +03:00 [INF] FIFO kaydı oluşturuldu. UrunID: "2216d3ad-9370-49a9-847e-c374b130978d"
+2025-05-20 09:40:00.322 +03:00 [INF] UpdateIrsaliyeFromFaturaAsync başlatıldı. FaturaID: f01cfc7e-5cb3-42c0-911b-98634d9733b4
+2025-05-20 09:40:00.364 +03:00 [INF] Fatura güncelleme işlemi için 1 adet irsaliye güncelleniyor. FaturaID: "f01cfc7e-5cb3-42c0-911b-98634d9733b4"
+2025-05-20 09:40:00.416 +03:00 [ERR] UpdateIrsaliyeFromFaturaAsync genel hata. FaturaID: f01cfc7e-5cb3-42c0-911b-98634d9733b4, Hata: The connection is already in a transaction and cannot participate in another transaction.
+System.InvalidOperationException: The connection is already in a transaction and cannot participate in another transaction.
+   at Microsoft.EntityFrameworkCore.Storage.RelationalConnection.EnsureNoTransactions()
+   at Microsoft.EntityFrameworkCore.Storage.RelationalConnection.BeginTransactionAsync(IsolationLevel isolationLevel, CancellationToken cancellationToken)
+   at Microsoft.EntityFrameworkCore.Storage.RelationalConnection.BeginTransactionAsync(CancellationToken cancellationToken)
+   at MuhasebeStokWebApp.Data.Repositories.UnitOfWork.BeginTransactionAsync() in D:\cursor-workspace\MuhasebeStokWebApp\Data\Repositories\UnitOfWork.cs:line 106
+   at MuhasebeStokWebApp.Services.IrsaliyeService.UpdateIrsaliyeFromFaturaAsync(Guid faturaID, FaturaEditViewModel viewModel, Nullable`1 currentUserId) in D:\cursor-workspace\MuhasebeStokWebApp\Services\IrsaliyeService.cs:line 465
+2025-05-20 09:40:00.454 +03:00 [ERR] Fatura ve ilişkili kayıtlar güncellenirken hata. FaturaID: "f01cfc7e-5cb3-42c0-911b-98634d9733b4", Hata: The connection is already in a transaction and cannot participate in another transaction.
+System.InvalidOperationException: The connection is already in a transaction and cannot participate in another transaction.
+   at Microsoft.EntityFrameworkCore.Storage.RelationalConnection.EnsureNoTransactions()
+   at Microsoft.EntityFrameworkCore.Storage.RelationalConnection.BeginTransactionAsync(IsolationLevel isolationLevel, CancellationToken cancellationToken)
+   at Microsoft.EntityFrameworkCore.Storage.RelationalConnection.BeginTransactionAsync(CancellationToken cancellationToken)
+   at MuhasebeStokWebApp.Data.Repositories.UnitOfWork.BeginTransactionAsync() in D:\cursor-workspace\MuhasebeStokWebApp\Data\Repositories\UnitOfWork.cs:line 106
+   at MuhasebeStokWebApp.Services.IrsaliyeService.UpdateIrsaliyeFromFaturaAsync(Guid faturaID, FaturaEditViewModel viewModel, Nullable`1 currentUserId) in D:\cursor-workspace\MuhasebeStokWebApp\Services\IrsaliyeService.cs:line 465
+   at MuhasebeStokWebApp.Services.FaturaOrchestrationService.UpdateFaturaWithRelations(Guid id, FaturaEditViewModel viewModel, Nullable`1 currentUserId) in D:\cursor-workspace\MuhasebeStokWebApp\Services\FaturaOrchestrationService.cs:line 551
+2025-05-20 09:40:00.495 +03:00 [INF] Fatura güncelleme işlemi geri alındı. FaturaID: "f01cfc7e-5cb3-42c0-911b-98634d9733b4"
+2025-05-20 09:40:00.587 +03:00 [ERR] Fatura güncelleme hatası
+System.InvalidOperationException: The connection is already in a transaction and cannot participate in another transaction.
+   at Microsoft.EntityFrameworkCore.Storage.RelationalConnection.EnsureNoTransactions()
+   at Microsoft.EntityFrameworkCore.Storage.RelationalConnection.BeginTransactionAsync(IsolationLevel isolationLevel, CancellationToken cancellationToken)
+   at Microsoft.EntityFrameworkCore.Storage.RelationalConnection.BeginTransactionAsync(CancellationToken cancellationToken)
+   at MuhasebeStokWebApp.Data.Repositories.UnitOfWork.BeginTransactionAsync() in D:\cursor-workspace\MuhasebeStokWebApp\Data\Repositories\UnitOfWork.cs:line 106
+   at MuhasebeStokWebApp.Services.IrsaliyeService.UpdateIrsaliyeFromFaturaAsync(Guid faturaID, FaturaEditViewModel viewModel, Nullable`1 currentUserId) in D:\cursor-workspace\MuhasebeStokWebApp\Services\IrsaliyeService.cs:line 465
+   at MuhasebeStokWebApp.Services.FaturaOrchestrationService.UpdateFaturaWithRelations(Guid id, FaturaEditViewModel viewModel, Nullable`1 currentUserId) in D:\cursor-workspace\MuhasebeStokWebApp\Services\FaturaOrchestrationService.cs:line 551
+   at MuhasebeStokWebApp.Services.FaturaOrchestrationService.UpdateFaturaWithRelations(Guid id, FaturaEditViewModel viewModel, Nullable`1 currentUserId) in D:\cursor-workspace\MuhasebeStokWebApp\Services\FaturaOrchestrationService.cs:line 575
+   at MuhasebeStokWebApp.Services.FaturaOrchestrationService.UpdateFaturaWithRelations(Guid id, FaturaEditViewModel viewModel, Nullable`1 currentUserId) in D:\cursor-workspace\MuhasebeStokWebApp\Services\FaturaOrchestrationService.cs:line 583
+   at MuhasebeStokWebApp.Controllers.FaturaController.Edit(Guid id, FaturaEditViewModel viewModel) in D:\cursor-workspace\MuhasebeStokWebApp\Controllers\FaturaController.cs:line 620
+2025-05-20 23:22:00.012 +03:00 [INF] Veritabanına bağlantı başarılı. Migrationlar uygulanıyor...
+2025-05-20 23:22:01.815 +03:00 [INF] Veritabanı işlemleri başarıyla tamamlandı.
+2025-05-20 23:22:02.008 +03:00 [INF] Todo Hatırlatıcı Servisi başlatıldı.
+2025-05-20 23:22:02.011 +03:00 [INF] Yaklaşan hatırlatıcılar kontrol ediliyor...
+2025-05-20 23:22:02.164 +03:00 [INF] Bekleyen hatırlatma bulunamadı.
+2025-05-20 23:24:07.485 +03:00 [INF] Giriş denemesi: admin
+2025-05-20 23:24:07.983 +03:00 [INF] Admin kullanıcısı başarıyla giriş yaptı: admin
+2025-05-20 23:24:07.984 +03:00 [INF] Admin session oluşturuldu: UserID=9e6fc203-37eb-49a7-a470-1551f7bec8b8, UserName=admin
+2025-05-20 23:24:07.985 +03:00 [INF] Yönlendirme adresi: /
+2025-05-20 23:24:07.985 +03:00 [INF] Admin kullanıcısı / adresine yönlendiriliyor
+2025-05-20 23:24:08.426 +03:00 [INF] Aktif session bulundu: UserID=9e6fc203-37eb-49a7-a470-1551f7bec8b8, UserName=admin
+2025-05-20 23:24:08.429 +03:00 [INF] Admin kullanıcısı tespit edildi
+2025-05-20 23:24:08.429 +03:00 [INF] Kimlik doğrulanmış kullanıcı: admin
+2025-05-20 23:24:09.184 +03:00 [INF] TRY dönüşümü için kur değeri hesaplandı: TRY -> USD, Değer: 0.03
+2025-05-20 23:24:09.506 +03:00 [INF] Kur değeri hesaplandı: UZS -> USD, Değer: 0.0000775226832727903141733102
+2025-05-20 23:26:05.198 +03:00 [INF] Fatura ve ilişkili kayıtlar güncelleniyor. FaturaID: "f01cfc7e-5cb3-42c0-911b-98634d9733b4"
+2025-05-20 23:26:05.455 +03:00 [INF] UpdateAsync işlemi başlatılıyor
+2025-05-20 23:26:05.458 +03:00 [ERR] FaturaTransactionService.UpdateAsync Parametreler: f01cfc7e-5cb3-42c0-911b-98634d9733b4
+System.InvalidOperationException: The connection is already in a transaction and cannot participate in another transaction.
+   at Microsoft.EntityFrameworkCore.Storage.RelationalConnection.EnsureNoTransactions()
+   at Microsoft.EntityFrameworkCore.Storage.RelationalConnection.BeginTransactionAsync(IsolationLevel isolationLevel, CancellationToken cancellationToken)
+   at Microsoft.EntityFrameworkCore.Storage.RelationalConnection.BeginTransactionAsync(CancellationToken cancellationToken)
+   at MuhasebeStokWebApp.Data.Repositories.UnitOfWork.BeginTransactionAsync() in D:\cursor-workspace\MuhasebeStokWebApp\Data\Repositories\UnitOfWork.cs:line 106
+   at MuhasebeStokWebApp.Services.FaturaTransactionService.EnsureTransactionAsync() in D:\cursor-workspace\MuhasebeStokWebApp\Services\FaturaTransactionService.cs:line 37
+   at MuhasebeStokWebApp.Services.FaturaTransactionService.<>c__DisplayClass8_0`1.<<ExecuteInTransactionAsync>b__0>d.MoveNext() in D:\cursor-workspace\MuhasebeStokWebApp\Services\FaturaTransactionService.cs:line 86
+--- End of stack trace from previous location ---
+   at MuhasebeStokWebApp.Services.ExceptionHandlingService.HandleExceptionAsync[T](Func`1 func, String logContext, Object[] logParams) in D:\cursor-workspace\MuhasebeStokWebApp\Services\ExceptionHandlingService.cs:line 146
+2025-05-20 23:26:05.484 +03:00 [INF] Fatura bilgileri güncellendi. FaturaID: "f01cfc7e-5cb3-42c0-911b-98634d9733b4"
+2025-05-20 23:26:05.489 +03:00 [INF] FIFO kayıtları iptal edilmeye çalışılıyor: ReferansID=f01cfc7e-5cb3-42c0-911b-98634d9733b4, ReferansTuru=Fatura
+2025-05-20 23:26:05.490 +03:00 [INF] FifoKayitlariniIptalEt - Mevcut transaction kullanılıyor: ReferansID=f01cfc7e-5cb3-42c0-911b-98634d9733b4
+2025-05-20 23:26:05.594 +03:00 [INF] FIFO kayıtları iptal ediliyor. Toplam 1 kayıt bulundu.
+2025-05-20 23:26:05.897 +03:00 [INF] İlişkili FIFO kayıtları iptal edildi. FaturaID: "f01cfc7e-5cb3-42c0-911b-98634d9733b4"
+2025-05-20 23:26:06.007 +03:00 [INF] İlişkili stok hareketleri silindi. FaturaID: "f01cfc7e-5cb3-42c0-911b-98634d9733b4"
+2025-05-20 23:26:06.150 +03:00 [INF] Eski fatura detayları silindi. Toplam 1 detay. FaturaID: "f01cfc7e-5cb3-42c0-911b-98634d9733b4"
+2025-05-20 23:26:06.167 +03:00 [INF] Yeni fatura detayı eklendi. UrunID: "2216d3ad-9370-49a9-847e-c374b130978d"
+2025-05-20 23:26:06.171 +03:00 [INF] Stok hareketi oluşturuldu. UrunID: "2216d3ad-9370-49a9-847e-c374b130978d", Miktar: 6.00
+2025-05-20 23:26:06.175 +03:00 [INF] StokGirisiYap - Mevcut transaction kullanılıyor: Ürün 2216d3ad-9370-49a9-847e-c374b130978d, Miktar 6.00
+2025-05-20 23:26:06.371 +03:00 [INF] Stok girişi başarıyla tamamlandı: UrunID=2216d3ad-9370-49a9-847e-c374b130978d, Miktar=6.00, BirimFiyat=50.00, ParaBirimi=USD, Mahsuplaşan=0
+2025-05-20 23:26:06.373 +03:00 [INF] FIFO kaydı oluşturuldu. UrunID: "2216d3ad-9370-49a9-847e-c374b130978d"
+2025-05-20 23:26:06.480 +03:00 [INF] Fatura güncelleme işlemi için 1 adet irsaliye güncelleniyor. FaturaID: "f01cfc7e-5cb3-42c0-911b-98634d9733b4"
+2025-05-20 23:26:06.482 +03:00 [ERR] UpdateIrsaliyeFromFaturaAsync Parametreler: f01cfc7e-5cb3-42c0-911b-98634d9733b4
+System.InvalidOperationException: The connection is already in a transaction and cannot participate in another transaction.
+   at Microsoft.EntityFrameworkCore.Storage.RelationalConnection.EnsureNoTransactions()
+   at Microsoft.EntityFrameworkCore.Storage.RelationalConnection.BeginTransactionAsync(IsolationLevel isolationLevel, CancellationToken cancellationToken)
+   at Microsoft.EntityFrameworkCore.Storage.RelationalConnection.BeginTransactionAsync(CancellationToken cancellationToken)
+   at MuhasebeStokWebApp.Data.Repositories.UnitOfWork.BeginTransactionAsync() in D:\cursor-workspace\MuhasebeStokWebApp\Data\Repositories\UnitOfWork.cs:line 106
+   at MuhasebeStokWebApp.Services.IrsaliyeService.<>c__DisplayClass13_0.<<UpdateIrsaliyeFromFaturaAsync>b__0>d.MoveNext() in D:\cursor-workspace\MuhasebeStokWebApp\Services\IrsaliyeService.cs:line 411
+--- End of stack trace from previous location ---
+   at MuhasebeStokWebApp.Services.ExceptionHandlingService.HandleExceptionAsync[T](Func`1 func, String logContext, Object[] logParams) in D:\cursor-workspace\MuhasebeStokWebApp\Services\ExceptionHandlingService.cs:line 146
+2025-05-20 23:26:06.486 +03:00 [INF] Faturaya ait irsaliyeler güncellendi. FaturaID: "f01cfc7e-5cb3-42c0-911b-98634d9733b4"
+2025-05-20 23:26:06.546 +03:00 [INF] Fatura ve ilişkili tüm kayıtlar başarıyla güncellendi. FaturaID: "f01cfc7e-5cb3-42c0-911b-98634d9733b4"
+2025-05-20 23:26:06.548 +03:00 [INF] Fatura başarıyla güncellendi. FaturaID: f01cfc7e-5cb3-42c0-911b-98634d9733b4
+2025-05-20 23:27:02.207 +03:00 [INF] Yaklaşan hatırlatıcılar kontrol ediliyor...
+2025-05-20 23:27:02.775 +03:00 [INF] Bekleyen hatırlatma bulunamadı.
+2025-05-20 23:30:35.537 +03:00 [INF] Veritabanına bağlantı başarılı. Migrationlar uygulanıyor...
+2025-05-20 23:30:36.977 +03:00 [INF] Veritabanı işlemleri başarıyla tamamlandı.
+2025-05-20 23:30:37.150 +03:00 [INF] Todo Hatırlatıcı Servisi başlatıldı.
+2025-05-20 23:30:37.152 +03:00 [INF] Yaklaşan hatırlatıcılar kontrol ediliyor...
+2025-05-20 23:30:37.328 +03:00 [INF] Bekleyen hatırlatma bulunamadı.
+2025-05-20 23:31:05.922 +03:00 [INF] Fatura ve ilişkili kayıtlar güncelleniyor. FaturaID: "f01cfc7e-5cb3-42c0-911b-98634d9733b4"
+2025-05-20 23:31:06.180 +03:00 [INF] UpdateAsync işlemi başlatılıyor
+2025-05-20 23:31:06.186 +03:00 [ERR] FaturaTransactionService.UpdateAsync Parametreler: f01cfc7e-5cb3-42c0-911b-98634d9733b4
+System.InvalidOperationException: The connection is already in a transaction and cannot participate in another transaction.
+   at Microsoft.EntityFrameworkCore.Storage.RelationalConnection.EnsureNoTransactions()
+   at Microsoft.EntityFrameworkCore.Storage.RelationalConnection.BeginTransactionAsync(IsolationLevel isolationLevel, CancellationToken cancellationToken)
+   at Microsoft.EntityFrameworkCore.Storage.RelationalConnection.BeginTransactionAsync(CancellationToken cancellationToken)
+   at MuhasebeStokWebApp.Data.Repositories.UnitOfWork.BeginTransactionAsync() in D:\cursor-workspace\MuhasebeStokWebApp\Data\Repositories\UnitOfWork.cs:line 106
+   at MuhasebeStokWebApp.Services.FaturaTransactionService.EnsureTransactionAsync() in D:\cursor-workspace\MuhasebeStokWebApp\Services\FaturaTransactionService.cs:line 37
+   at MuhasebeStokWebApp.Services.FaturaTransactionService.<>c__DisplayClass8_0`1.<<ExecuteInTransactionAsync>b__0>d.MoveNext() in D:\cursor-workspace\MuhasebeStokWebApp\Services\FaturaTransactionService.cs:line 86
+--- End of stack trace from previous location ---
+   at MuhasebeStokWebApp.Services.ExceptionHandlingService.HandleExceptionAsync[T](Func`1 func, String logContext, Object[] logParams) in D:\cursor-workspace\MuhasebeStokWebApp\Services\ExceptionHandlingService.cs:line 146
+2025-05-20 23:31:06.207 +03:00 [INF] Fatura bilgileri güncellendi. FaturaID: "f01cfc7e-5cb3-42c0-911b-98634d9733b4"
+2025-05-20 23:31:06.212 +03:00 [INF] FIFO kayıtları iptal edilmeye çalışılıyor: ReferansID=f01cfc7e-5cb3-42c0-911b-98634d9733b4, ReferansTuru=Fatura
+2025-05-20 23:31:06.213 +03:00 [INF] FifoKayitlariniIptalEt - Mevcut transaction kullanılıyor: ReferansID=f01cfc7e-5cb3-42c0-911b-98634d9733b4
+2025-05-20 23:31:06.298 +03:00 [INF] FIFO kayıtları iptal ediliyor. Toplam 1 kayıt bulundu.
+2025-05-20 23:31:06.607 +03:00 [INF] İlişkili FIFO kayıtları iptal edildi. FaturaID: "f01cfc7e-5cb3-42c0-911b-98634d9733b4"
+2025-05-20 23:31:06.712 +03:00 [INF] İlişkili stok hareketleri silindi. FaturaID: "f01cfc7e-5cb3-42c0-911b-98634d9733b4"
+2025-05-20 23:31:06.841 +03:00 [INF] Eski fatura detayları silindi. Toplam 1 detay. FaturaID: "f01cfc7e-5cb3-42c0-911b-98634d9733b4"
+2025-05-20 23:31:06.859 +03:00 [INF] Yeni fatura detayı eklendi. UrunID: "2216d3ad-9370-49a9-847e-c374b130978d"
+2025-05-20 23:31:06.863 +03:00 [INF] Stok hareketi oluşturuldu. UrunID: "2216d3ad-9370-49a9-847e-c374b130978d", Miktar: 6.00
+2025-05-20 23:31:06.868 +03:00 [INF] StokGirisiYap - Mevcut transaction kullanılıyor: Ürün 2216d3ad-9370-49a9-847e-c374b130978d, Miktar 6.00
+2025-05-20 23:31:07.061 +03:00 [INF] Stok girişi başarıyla tamamlandı: UrunID=2216d3ad-9370-49a9-847e-c374b130978d, Miktar=6.00, BirimFiyat=50.00, ParaBirimi=USD, Mahsuplaşan=0
+2025-05-20 23:31:07.062 +03:00 [INF] FIFO kaydı oluşturuldu. UrunID: "2216d3ad-9370-49a9-847e-c374b130978d"
+2025-05-20 23:31:07.121 +03:00 [INF] Fatura güncelleme işlemi için 1 adet irsaliye güncelleniyor. FaturaID: "f01cfc7e-5cb3-42c0-911b-98634d9733b4"
+2025-05-20 23:31:07.122 +03:00 [ERR] UpdateIrsaliyeFromFaturaAsync hatası. FaturaID: "f01cfc7e-5cb3-42c0-911b-98634d9733b4", Hata: The connection is already in a transaction and cannot participate in another transaction.
+System.InvalidOperationException: The connection is already in a transaction and cannot participate in another transaction.
+   at Microsoft.EntityFrameworkCore.Storage.RelationalConnection.EnsureNoTransactions()
+   at Microsoft.EntityFrameworkCore.Storage.RelationalConnection.BeginTransactionAsync(IsolationLevel isolationLevel, CancellationToken cancellationToken)
+   at Microsoft.EntityFrameworkCore.Storage.RelationalConnection.BeginTransactionAsync(CancellationToken cancellationToken)
+   at MuhasebeStokWebApp.Data.Repositories.UnitOfWork.BeginTransactionAsync() in D:\cursor-workspace\MuhasebeStokWebApp\Data\Repositories\UnitOfWork.cs:line 106
+   at MuhasebeStokWebApp.Services.IrsaliyeService.UpdateIrsaliyeFromFaturaAsync(Guid faturaID, FaturaEditViewModel viewModel, Nullable`1 currentUserId) in D:\cursor-workspace\MuhasebeStokWebApp\Services\IrsaliyeService.cs:line 413
+2025-05-20 23:31:07.125 +03:00 [ERR] Fatura ve ilişkili kayıtlar güncellenirken hata. FaturaID: "f01cfc7e-5cb3-42c0-911b-98634d9733b4", Hata: The connection is already in a transaction and cannot participate in another transaction.
+System.InvalidOperationException: The connection is already in a transaction and cannot participate in another transaction.
+   at Microsoft.EntityFrameworkCore.Storage.RelationalConnection.EnsureNoTransactions()
+   at Microsoft.EntityFrameworkCore.Storage.RelationalConnection.BeginTransactionAsync(IsolationLevel isolationLevel, CancellationToken cancellationToken)
+   at Microsoft.EntityFrameworkCore.Storage.RelationalConnection.BeginTransactionAsync(CancellationToken cancellationToken)
+   at MuhasebeStokWebApp.Data.Repositories.UnitOfWork.BeginTransactionAsync() in D:\cursor-workspace\MuhasebeStokWebApp\Data\Repositories\UnitOfWork.cs:line 106
+   at MuhasebeStokWebApp.Services.IrsaliyeService.UpdateIrsaliyeFromFaturaAsync(Guid faturaID, FaturaEditViewModel viewModel, Nullable`1 currentUserId) in D:\cursor-workspace\MuhasebeStokWebApp\Services\IrsaliyeService.cs:line 413
+   at MuhasebeStokWebApp.Services.FaturaOrchestrationService.UpdateFaturaWithRelations(Guid id, FaturaEditViewModel viewModel, Nullable`1 currentUserId) in D:\cursor-workspace\MuhasebeStokWebApp\Services\FaturaOrchestrationService.cs:line 551
+2025-05-20 23:31:07.173 +03:00 [INF] Fatura güncelleme işlemi geri alındı. FaturaID: "f01cfc7e-5cb3-42c0-911b-98634d9733b4"
+2025-05-20 23:31:07.176 +03:00 [ERR] Fatura güncelleme hatası
+System.InvalidOperationException: The connection is already in a transaction and cannot participate in another transaction.
+   at Microsoft.EntityFrameworkCore.Storage.RelationalConnection.EnsureNoTransactions()
+   at Microsoft.EntityFrameworkCore.Storage.RelationalConnection.BeginTransactionAsync(IsolationLevel isolationLevel, CancellationToken cancellationToken)
+   at Microsoft.EntityFrameworkCore.Storage.RelationalConnection.BeginTransactionAsync(CancellationToken cancellationToken)
+   at MuhasebeStokWebApp.Data.Repositories.UnitOfWork.BeginTransactionAsync() in D:\cursor-workspace\MuhasebeStokWebApp\Data\Repositories\UnitOfWork.cs:line 106
+   at MuhasebeStokWebApp.Services.IrsaliyeService.UpdateIrsaliyeFromFaturaAsync(Guid faturaID, FaturaEditViewModel viewModel, Nullable`1 currentUserId) in D:\cursor-workspace\MuhasebeStokWebApp\Services\IrsaliyeService.cs:line 413
+   at MuhasebeStokWebApp.Services.FaturaOrchestrationService.UpdateFaturaWithRelations(Guid id, FaturaEditViewModel viewModel, Nullable`1 currentUserId) in D:\cursor-workspace\MuhasebeStokWebApp\Services\FaturaOrchestrationService.cs:line 551
+   at MuhasebeStokWebApp.Services.FaturaOrchestrationService.UpdateFaturaWithRelations(Guid id, FaturaEditViewModel viewModel, Nullable`1 currentUserId) in D:\cursor-workspace\MuhasebeStokWebApp\Services\FaturaOrchestrationService.cs:line 575
+   at MuhasebeStokWebApp.Services.FaturaOrchestrationService.UpdateFaturaWithRelations(Guid id, FaturaEditViewModel viewModel, Nullable`1 currentUserId) in D:\cursor-workspace\MuhasebeStokWebApp\Services\FaturaOrchestrationService.cs:line 583
+   at MuhasebeStokWebApp.Controllers.FaturaController.Edit(Guid id, FaturaEditViewModel viewModel) in D:\cursor-workspace\MuhasebeStokWebApp\Controllers\FaturaController.cs:line 620
+2025-05-20 23:35:37.342 +03:00 [INF] Yaklaşan hatırlatıcılar kontrol ediliyor...
+2025-05-20 23:35:37.447 +03:00 [INF] Bekleyen hatırlatma bulunamadı.

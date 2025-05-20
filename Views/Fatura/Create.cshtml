@@ -638,7 +638,7 @@
                 // Önce mevcut satırları temizle
                 $("#kalemlerBody").empty();
                 // İlk satırı ekle
-                addKalemRow();
+            addKalemRow();
             }, 100);
 
             // Kalem satırı ekleme fonksiyonu
@@ -700,7 +700,7 @@
                                 
                                 // Select2'nin görselini güncellemek için change event'ini tetikle
                                 setTimeout(function() {
-                                    $urunSelect.trigger('change.select2');
+                                $urunSelect.trigger('change.select2');
                                 }, 50);
                                 
                                 // Satır toplamlarını hesapla

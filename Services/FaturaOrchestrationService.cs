@@ -228,7 +228,7 @@ namespace MuhasebeStokWebApp.Services
                     };
                     
                     await _unitOfWork.CariHareketRepository.AddAsync(cariHareket);
-                    _logger.LogInformation("Cari hareket oluşturuldu. CariID: {CariID}", fatura.CariID);
+                    _logger.LogInformation("Cari hareket oluşturuldu. CariID: {0}", fatura.CariID);
                 }
                 
                 // Otomatik irsaliye oluştur
@@ -547,50 +547,9 @@ namespace MuhasebeStokWebApp.Services
                     }
                 }
                 
-                // Cari hareket oluştur
-                if (fatura.CariID.HasValue && fatura.CariID != Guid.Empty)
-                {
-                    var cariHareket = new CariHareket
-                    {
-                        CariHareketID = Guid.NewGuid(),
-                        CariID = fatura.CariID.Value,
-                        HareketTuru = isAlisFaturasi ? "Borç" : "Alacak",
-                        Tutar = fatura.GenelToplam ?? 0,
-                        Borc = isAlisFaturasi ? (fatura.GenelToplam ?? 0) : 0,
-                        Alacak = isAlisFaturasi ? 0 : (fatura.GenelToplam ?? 0),
-                        Tarih = fatura.FaturaTarihi ?? DateTime.Now,
-                        VadeTarihi = fatura.VadeTarihi,
-                        ReferansNo = fatura.FaturaNumarasi,
-                        ReferansTuru = "Fatura",
-                        ReferansID = fatura.FaturaID,
-                        Aciklama = $"Fatura No: {fatura.FaturaNumarasi} (Güncellendi)",
-                        OlusturmaTarihi = DateTime.Now,
-                        OlusturanKullaniciID = currentUserId,
-                        Silindi = false,
-                        ParaBirimi = fatura.ParaBirimi ?? "USD",
-                        TutarDoviz = fatura.GenelToplamDoviz ?? 0,
-                        BorcDoviz = isAlisFaturasi ? (fatura.GenelToplamDoviz ?? 0) : 0,
-                        AlacakDoviz = isAlisFaturasi ? 0 : (fatura.GenelToplamDoviz ?? 0)
-                    };
-                    
-                    await _unitOfWork.CariHareketRepository.AddAsync(cariHareket);
-                    _logger.LogInformation("Cari hareket oluşturuldu. CariID: {CariID}", fatura.CariID);
-                }
-                
-                // İlişkili irsaliyeleri güncelle
-                var irsaliyeler = await _unitOfWork.IrsaliyeRepository.GetAsync(
-                    filter: i => i.FaturaID == id && !i.Silindi
-                );
-                
-                foreach (var irsaliye in irsaliyeler)
-                {
-                    irsaliye.CariID = fatura.CariID ?? Guid.Empty;
-                    irsaliye.GuncellemeTarihi = DateTime.Now;
-                    irsaliye.SonGuncelleyenKullaniciId = currentUserId;
-                    irsaliye.Aciklama = $"Fatura No: {fatura.FaturaNumarasi} (Güncellendi)";
-                    _unitOfWork.IrsaliyeRepository.Update(irsaliye);
-                    _logger.LogInformation("İrsaliye güncellendi. IrsaliyeID: {IrsaliyeID}", irsaliye.IrsaliyeID);
-                }
+                // İrsaliye servisini kullanarak irsaliyeleri güncelle
+                await _irsaliyeService.UpdateIrsaliyeFromFaturaAsync(id, viewModel, currentUserId);
+                _logger.LogInformation("Faturaya ait irsaliyeler güncellendi. FaturaID: {0}", id);
                 
                 // Değişiklikleri kaydet
                 await _unitOfWork.SaveChangesAsync();
