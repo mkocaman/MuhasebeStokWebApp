@@ -1,95 +1,134 @@
 @model MuhasebeStokWebApp.ViewModels.Kasa.KasaHareketViewModel
 @{
-    ViewData["Title"] = "Yeni Kasa Hareketi";
-    var kasalar = ViewBag.Kasalar as List<MuhasebeStokWebApp.Data.Entities.Kasa> ?? new List<MuhasebeStokWebApp.Data.Entities.Kasa>();
-    var cariler = ViewBag.Cariler as List<MuhasebeStokWebApp.Data.Entities.Cari> ?? new List<MuhasebeStokWebApp.Data.Entities.Cari>();
-    var secilenKasa = ViewBag.SecilenKasa as MuhasebeStokWebApp.Data.Entities.Kasa;
-    var secilenCari = ViewBag.SecilenCari as MuhasebeStokWebApp.Data.Entities.Cari;
+	ViewData["Title"] = "Yeni Kasa Hareketi";
+	var kasalar = ViewBag.Kasalar as List<MuhasebeStokWebApp.Data.Entities.Kasa> ?? new List<MuhasebeStokWebApp.Data.Entities.Kasa>();
+	var cariler = ViewBag.Cariler as List<MuhasebeStokWebApp.Data.Entities.Cari> ?? new List<MuhasebeStokWebApp.Data.Entities.Cari>();
+	var secilenKasa = ViewBag.SecilenKasa as MuhasebeStokWebApp.Data.Entities.Kasa;
+	var secilenCari = ViewBag.SecilenCari as MuhasebeStokWebApp.Data.Entities.Cari;
 }
 
 <div class="container-fluid">
-    <div class="card shadow mb-4">
-        <div class="card-header py-3 d-flex justify-content-between align-items-center">
-            <h6 class="m-0 font-weight-bold text-primary">Yeni Kasa Hareketi</h6>
-            <a asp-action="Index" class="btn btn-outline-secondary btn-sm">
-                <i class="fas fa-arrow-left"></i> Listeye Dön
-            </a>
-        </div>
-        <div class="card-body">
-            <form asp-action="YeniHareket" method="post" id="kasaHareketForm">
-                <div asp-validation-summary="ModelOnly" class="text-danger"></div>
-                
-                <div class="row">
-                    <div class="col-md-6">
-                        <div class="form-group">
-                            <label for="KasaID" class="control-label">Kasa</label>
-                            <select id="KasaID" name="KasaID" class="form-control" required>
-                                <option value="">Kasa Seçiniz</option>
-                                @foreach (var kasa in kasalar)
-                                {
-                                    if (Model.KasaID == kasa.KasaID)
-                                    {
-                                        <option value="@kasa.KasaID" data-parabirimi="@kasa.ParaBirimi" selected>
-                                            @kasa.KasaAdi (@kasa.ParaBirimi) - Bakiye: @kasa.GuncelBakiye.ToString("N2")
-                                        </option>
-                                    }
-                                    else
-                                    {
-                                        <option value="@kasa.KasaID" data-parabirimi="@kasa.ParaBirimi">
-                                            @kasa.KasaAdi (@kasa.ParaBirimi) - Bakiye: @kasa.GuncelBakiye.ToString("N2")
-                                        </option>
-                                    }
-                                }
-                            </select>
-                            <span asp-validation-for="KasaID" class="text-danger"></span>
-                        </div>
-                    </div>
-                    <div class="col-md-6">
-                        <div class="form-group">
-                            <label for="HareketTuru" class="control-label">Hareket Türü</label>
-                            <select id="HareketTuru" name="HareketTuru" class="form-control" required>
-                                <option value="">Hareket Türü Seçiniz</option>
-                                <option value="Giriş">Giriş</option>
-                                <option value="Çıkış">Çıkış</option>
-                            </select>
-                            <span asp-validation-for="HareketTuru" class="text-danger"></span>
-                        </div>
-                    </div>
-                </div>
-                
-                <div class="row">
-                    <div class="col-md-6">
-                        <div class="form-group">
-                            <label for="CariID" class="control-label">Cari</label>
-                            <select id="CariID" name="CariID" class="form-control">
-                                <option value="">Cari Seçiniz</option>
-                                @foreach (var cari in cariler)
-                                {
-                                    if (Model.CariID == cari.CariID)
-                                    {
-                                        <option value="@cari.CariID" selected>
-                                            @cari.Ad - @cari.CariTipi
-                                        </option>
-                                    }
-                                    else
-                                    {
-                                        <option value="@cari.CariID">
-                                            @cari.Ad - @cari.CariTipi
-                                        </option>
-                                    }
-                                }
-                            </select>
-                            <span asp-validation-for="CariID" class="text-danger"></span>
-                        </div>
-                        <div class="form-check mb-3">
-                            <input type="checkbox" id="CariIleDengelensin" name="CariIleDengelensin" class="form-check-input" @(Model.CariIleDengelensin ? "checked" : "") />
-                            <label class="form-check-label" for="CariIleDengelensin">Cari ile Dengelensin</label>
-                        </div>
-                        
-                        <div class="form-check mb-3">
-                            <input type="checkbox" id="HesabaKaydet" name="HesabaKaydet" class="form-check-input" checked />
-                            <label class="form-check-label" for="HesabaKaydet">Hesap Modülüne Kaydet</label>
-                        </div>
+	<div class="card shadow mb-4">
+		<div class="card-header py-3 d-flex justify-content-between align-items-center">
+			<h6 class="m-0 font-weight-bold text-primary">Yeni Kasa Hareketi</h6>
+			<a asp-action="Index" class="btn btn-outline-secondary btn-sm">
+				<i class="fas fa-arrow-left"></i> Listeye Dön
+			</a>
+		</div>
+		<div class="card-body">
+			<form asp-action="YeniHareket" method="post" id="kasaHareketForm">
+				<div asp-validation-summary="ModelOnly" class="text-danger"></div>
+
+				<div class="row">
+					<div class="col-md-6">
+						<div class="form-group">
+							<label for="KasaID" class="control-label">Kasa</label>
+							@{
+								bool isDisabled = kasalar.Any(k => k.KasaID == Model.KasaID);
+							}
+							<select id="KasaID" name="KasaID" class="form-control" required @(isDisabled ? "disabled" : "")>
+								<option value="">Kasa Seçiniz</option>
+								@foreach (var kasa in kasalar)
+								{
+									if (Model.KasaID == kasa.KasaID)
+									{
+
+										<option value="@kasa.KasaID" data-parabirimi="@kasa.ParaBirimi" selected >
+											@kasa.KasaAdi (@kasa.ParaBirimi) - Bakiye: @kasa.GuncelBakiye.ToString("N2")
+										</option>
+									}
+									else
+									{
+										<option value="@kasa.KasaID" data-parabirimi="@kasa.ParaBirimi">
+											@kasa.KasaAdi (@kasa.ParaBirimi) - Bakiye: @kasa.GuncelBakiye.ToString("N2")
+										</option>
+									}
+								}
+							</select>
+							<span asp-validation-for="KasaID" class="text-danger"></span>
+						</div>
+					</div>
+					<div class="col-md-6">
+						<div class="form-group">
+							<label for="HareketTuru" class="control-label">Hareket Türü</label>
+							<select id="HareketTuru" name="HareketTuru" class="form-control" for="HareketTuru" required>
+								<option value="">Hareket Türü Seçiniz</option>
+								@if(Model.HareketTuru=="Giriş")
+								{
+									<option value="Giriş" selected>Giriş</option>
+									<option value="Çıkış">Çıkış</option>
+								}
+								else if(Model.HareketTuru=="Çıkış")
+								{
+									<option value="Giriş">Giriş</option>
+									<option value="Çıkış" selected>Çıkış</option>
+								}
+								else
+								{
+									<option value="Giriş">Giriş</option>
+									<option value="Çıkış">Çıkış</option>
+								}
+
+							</select>
+							<span asp-validation-for="HareketTuru" class="text-danger"></span>
+						</div>
+					</div>
+				</div>
+
+				<div class="row">
+					<div class="col-md-6">
+						<div class="form-group">
+							<label for="CariID" class="control-label">Cari</label>
+							<select id="CariID" name="CariID" for="CariID" class="form-control">
+								<option value="">Cari Seçiniz</option>
+								@foreach (var cari in cariler)
+								{
+									if (Model.CariID == cari.CariID)
+									{
+										<option value="@cari.CariID" data-parabirimi="@cari.VarsayilanParaBirimi.Kod" selected>
+											@cari.Ad - @cari.CariTipi
+										</option>
+									}
+									else
+									{
+										<option value="@cari.CariID" data-parabirimi="@cari.VarsayilanParaBirimi.Kod">
+											@cari.Ad - @cari.CariTipi
+										</option>
+									}
+								}
+							</select>
+							<span asp-validation-for="CariID" class="text-danger"></span>
+						</div>
+						@if(Model.CariIleDengelensin==false)
+						{
+							<div class="form-group form-check mb-3">
+								<input asp-for="CariIleDengelensin" type="checkbox" id="CariIleDengelensin" name="CariIleDengelensin" class="form-group form-check-input" />
+								<label asp-for="CariIleDengelensin" class="form-check-label" for="CariIleDengelensin">Cari ile Dengelensin</label>
+							</div>
+						}
+						else
+						{
+							<div class="form-group form-check mb-3">
+								<input asp-for="CariIleDengelensin" type="checkbox" id="CariIleDengelensin" name="CariIleDengelensin" class="form-group form-check-input" checked />
+								<label asp-for="CariIleDengelensin" class="form-check-label" for="CariIleDengelensin">Cari ile Dengelensin</label>
+							</div>
+						}
+
+						@if(Model.HesabaKaydet==false)
+						{
+							<div class="form-group form-check mb-3">
+								<input asp-for="HesabaKaydet" type="checkbox" id="HesabaKaydet" name="HesabaKaydet" class="form-group form-check-input" />
+								<label asp-for="HesabaKaydet" class="form-check-label" for="HesabaKaydet">Hesap Modülüne Kaydet</label>
+							</div>
+						}
+						else
+						{
+							<div class="form-group form-check mb-3">
+								<input asp-for="HesabaKaydet" type="checkbox" id="HesabaKaydet" name="HesabaKaydet" class="form-group form-check-input" checked />
+								<label asp-for="HesabaKaydet" class="form-check-label" for="HesabaKaydet">Hesap Modülüne Kaydet</label>
+							</div>
+						}
+
                     </div>
                     <div class="col-md-6">
                         <div class="form-group">
@@ -112,12 +151,49 @@
                     <div class="col-md-6">
                         <div class="form-group">
                             <label for="ReferansTuru" class="control-label">Referans Türü</label>
-                            <select id="ReferansTuru" name="ReferansTuru" class="form-control">
-                                <option value="">Referans Türü Seçiniz</option>
-                                <option value="Tahsilat">Tahsilat</option>
-                                <option value="Ödeme">Ödeme</option>
-                                <option value="Nakit">Nakit</option>
-                                <option value="Diğer">Diğer</option>
+							<select id="ReferansTuru" name="ReferansTuru" class="form-control" for="ReferansTuru">
+								@if (Model.HareketTuru == "Tahsilat")
+								{
+									<option value="">Referans Türü Seçiniz</option>
+									<option value="Tahsilat" selected>Tahsilat</option>
+									<option value="Ödeme">Ödeme</option>
+									<option value="Nakit">Nakit</option>
+									<option value="Diğer">Diğer</option>
+								}
+								else if (Model.HareketTuru == "Ödeme")
+								{
+									<option value="">Referans Türü Seçiniz</option>
+									<option value="Tahsilat">Tahsilat</option>
+									<option value="Ödeme" selected>Ödeme</option>
+									<option value="Nakit">Nakit</option>
+									<option value="Diğer">Diğer</option>
+								}
+								else if (Model.HareketTuru == "Nakit")
+								{
+									<option value="">Referans Türü Seçiniz</option>
+									<option value="Tahsilat">Tahsilat</option>
+									<option value="Ödeme">Ödeme</option>
+									<option value="Nakit" selected>Nakit</option>
+									<option value="Diğer">Diğer</option>
+								}
+								else if (Model.HareketTuru == "Diğer")
+								{
+									<option value="">Referans Türü Seçiniz</option>
+									<option value="Tahsilat">Tahsilat</option>
+									<option value="Ödeme">Ödeme</option>
+									<option value="Nakit">Nakit</option>
+									<option value="Diğer" selected>Diğer</option>
+								}
+								else
+								{
+									<option value="">Referans Türü Seçiniz</option>
+									<option value="Tahsilat">Tahsilat</option>
+									<option value="Ödeme">Ödeme</option>
+									<option value="Nakit">Nakit</option>
+									<option value="Diğer">Diğer</option>
+								}
+
+								
                             </select>
                             <span asp-validation-for="ReferansTuru" class="text-danger"></span>
                         </div>
@@ -173,12 +249,17 @@
     <script>
         $(document).ready(function() {
             // Kasa seçildiğinde para birimini güncelle
-            $("#KasaID").change(function() {
+            $("#CariID").change(function() {
                 var selectedOption = $(this).find("option:selected");
                 var paraBirimi = selectedOption.data("parabirimi") || "TRY";
-                $("#paraBirimiLabel").text(paraBirimi);
                 $("#KarsiParaBirimi").val(paraBirimi);
             });
+
+			$("#KasaID").change(function() {
+				var selectedOption = $(this).find("option:selected");
+				var paraBirimi = selectedOption.data("parabirimi") || "TRY";
+				$("#paraBirimiLabel").text(paraBirimi);
+			});
             
             // Hareket türü değiştiğinde referans türlerini güncelle
             $("#HareketTuru").change(function() {
@@ -249,6 +330,7 @@
             // Form gönderilmeden önce kontrol
             $("#kasaHareketForm").submit(function(e) {
                 var kasaID = $("#KasaID").val();
+				var cariID=$("#CariID").val();
                 var hareketTuru = $("#HareketTuru").val();
                 var tutar = parseFloat($("#Tutar").val()) || 0;
                 var karsiParaBirimi = $("#KarsiParaBirimi").val();
@@ -256,6 +338,12 @@
                 if (!kasaID) {
                     e.preventDefault();
                     alert("Lütfen bir kasa seçin!");
+                    return false;
+                }
+
+				if (!cariID) {
+                    e.preventDefault();
+                    alert("Lütfen bir cari seçin!");
                     return false;
                 }
                 

@@ -518,10 +518,12 @@ namespace MuhasebeStokWebApp.Controllers
                 }
 
                 // Carileri getir
-                var cariler = await _unitOfWork.Repository<Cari>().GetAsync(
-                    filter: c => !c.Silindi && c.AktifMi,
-                    orderBy: q => q.OrderBy(c => c.Ad)
-                );
+                var cariler = await _unitOfWork.CariRepository.GetAll()
+                    .IgnoreQueryFilters() // Filtreleri devre dışı bırak
+                    .Where(c => !c.Silindi && c.AktifMi)
+                    .OrderBy(c=>c.Ad)
+                    .Include(c=>c.VarsayilanParaBirimi)
+                    .ToListAsync();
 
                 ViewBag.Kasalar = kasalar.ToList();
                 ViewBag.Cariler = cariler.ToList();
@@ -687,9 +689,29 @@ namespace MuhasebeStokWebApp.Controllers
                 new SelectListItem { Text = "Çıkış", Value = "Çıkış" }
             };
 
-            var kasaInfo = await _unitOfWork.Repository<Kasa>().GetByIdAsync(viewModel.KasaID);
-            ViewBag.Kasa = kasaInfo;
-            
+            //var kasaInfo = await _unitOfWork.Repository<Kasa>().GetByIdAsync(viewModel.KasaID);
+            //ViewBag.Kasalar = kasaInfo;
+            var kasalar = await _unitOfWork.Repository<Kasa>().GetAsync(
+                    filter: k => !k.Silindi && k.Aktif,
+                    orderBy: q => q.OrderBy(k => k.KasaAdi)
+                );
+
+            if (!kasalar.Any())
+            {
+                TempData["ErrorMessage"] = "Sistemde kayıtlı aktif kasa bulunamadı. Lütfen önce bir kasa ekleyin.";
+                return RedirectToAction(nameof(Index));
+            }
+
+            // Carileri getir
+            var cariler = await _unitOfWork.CariRepository.GetAll()
+                .IgnoreQueryFilters() // Filtreleri devre dışı bırak
+                .Where(c => !c.Silindi && c.AktifMi)
+                .OrderBy(c => c.Ad)
+                .Include(c => c.VarsayilanParaBirimi)
+                .ToListAsync();
+
+            ViewBag.Kasalar = kasalar.ToList();
+            ViewBag.Cariler = cariler.ToList();
             return View(viewModel);
         }
 

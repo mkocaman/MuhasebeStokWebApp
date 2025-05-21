@@ -42,11 +42,8 @@
                         </div>
                         <div class="form-group">
                             <label asp-for="ParaBirimi" class="control-label"></label>
-                            <select asp-for="ParaBirimi" class="form-control">
-                                <option value="TRY">Türk Lirası (TRY)</option>
-                                <option value="USD">Amerikan Doları (USD)</option>
-                                <option value="EUR">Euro (EUR)</option>
-                                <option value="GBP">İngiliz Sterlini (GBP)</option>
+                            <select asp-for="ParaBirimi" class="form-control" asp-items="ViewBag.ParaBirimleri">
+                                <option value="0">Para Birimi Seçiniz</option>
                             </select>
                             <span asp-validation-for="ParaBirimi" class="text-danger"></span>
                         </div>

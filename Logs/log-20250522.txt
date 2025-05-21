@@ -1,0 +1,83 @@
+2025-05-22 00:05:31.426 +03:00 [INF] Yaklaşan hatırlatıcılar kontrol ediliyor...
+2025-05-22 00:05:39.156 +03:00 [INF] Bekleyen hatırlatma bulunamadı.
+2025-05-22 00:10:34.770 +03:00 [INF] Veritabanına bağlantı başarılı. Migrationlar uygulanıyor...
+2025-05-22 00:10:36.521 +03:00 [INF] Veritabanı işlemleri başarıyla tamamlandı.
+2025-05-22 00:10:36.737 +03:00 [INF] Todo Hatırlatıcı Servisi başlatıldı.
+2025-05-22 00:10:36.739 +03:00 [INF] Yaklaşan hatırlatıcılar kontrol ediliyor...
+2025-05-22 00:10:36.883 +03:00 [INF] Bekleyen hatırlatma bulunamadı.
+2025-05-22 00:10:39.574 +03:00 [INF] Giriş denemesi: admin
+2025-05-22 00:10:40.073 +03:00 [INF] Admin kullanıcısı başarıyla giriş yaptı: admin
+2025-05-22 00:10:40.074 +03:00 [INF] Admin session oluşturuldu: UserID=9e6fc203-37eb-49a7-a470-1551f7bec8b8, UserName=admin
+2025-05-22 00:10:40.075 +03:00 [INF] Yönlendirme adresi: /
+2025-05-22 00:10:40.076 +03:00 [INF] Admin kullanıcısı / adresine yönlendiriliyor
+2025-05-22 00:10:40.649 +03:00 [INF] Aktif session bulundu: UserID=9e6fc203-37eb-49a7-a470-1551f7bec8b8, UserName=admin
+2025-05-22 00:10:40.783 +03:00 [INF] Admin kullanıcısı tespit edildi
+2025-05-22 00:10:40.784 +03:00 [INF] Kimlik doğrulanmış kullanıcı: admin
+2025-05-22 00:10:42.776 +03:00 [INF] TRY dönüşümü için kur değeri hesaplandı: TRY -> USD, Değer: 0.03
+2025-05-22 00:10:43.152 +03:00 [INF] Kur değeri hesaplandı: UZS -> USD, Değer: 0.0000775226832727903141733102
+2025-05-22 00:10:44.148 +03:00 [WRN] Kaynak para birimi kodu bulunamadı: EUR. Varsayılan değer kullanılıyor.
+2025-05-22 00:16:55.336 +03:00 [INF] Veritabanına bağlantı başarılı. Migrationlar uygulanıyor...
+2025-05-22 00:16:56.963 +03:00 [INF] Veritabanı işlemleri başarıyla tamamlandı.
+2025-05-22 00:16:57.182 +03:00 [INF] Todo Hatırlatıcı Servisi başlatıldı.
+2025-05-22 00:16:57.184 +03:00 [INF] Yaklaşan hatırlatıcılar kontrol ediliyor...
+2025-05-22 00:16:57.369 +03:00 [INF] Bekleyen hatırlatma bulunamadı.
+2025-05-22 00:17:00.336 +03:00 [INF] Giriş denemesi: admin
+2025-05-22 00:17:00.805 +03:00 [INF] Admin kullanıcısı başarıyla giriş yaptı: admin
+2025-05-22 00:17:00.806 +03:00 [INF] Admin session oluşturuldu: UserID=9e6fc203-37eb-49a7-a470-1551f7bec8b8, UserName=admin
+2025-05-22 00:17:00.807 +03:00 [INF] Yönlendirme adresi: /
+2025-05-22 00:17:00.808 +03:00 [INF] Admin kullanıcısı / adresine yönlendiriliyor
+2025-05-22 00:17:01.305 +03:00 [INF] Aktif session bulundu: UserID=9e6fc203-37eb-49a7-a470-1551f7bec8b8, UserName=admin
+2025-05-22 00:17:01.425 +03:00 [INF] Admin kullanıcısı tespit edildi
+2025-05-22 00:17:01.427 +03:00 [INF] Kimlik doğrulanmış kullanıcı: admin
+2025-05-22 00:17:03.449 +03:00 [INF] TRY dönüşümü için kur değeri hesaplandı: TRY -> USD, Değer: 0.03
+2025-05-22 00:17:03.788 +03:00 [INF] Kur değeri hesaplandı: UZS -> USD, Değer: 0.0000775226832727903141733102
+2025-05-22 00:17:04.755 +03:00 [WRN] Kaynak para birimi kodu bulunamadı: EUR. Varsayılan değer kullanılıyor.
+2025-05-22 00:21:57.380 +03:00 [INF] Yaklaşan hatırlatıcılar kontrol ediliyor...
+2025-05-22 00:21:57.441 +03:00 [INF] Bekleyen hatırlatma bulunamadı.
+2025-05-22 00:26:57.450 +03:00 [INF] Yaklaşan hatırlatıcılar kontrol ediliyor...
+2025-05-22 00:26:57.674 +03:00 [INF] Bekleyen hatırlatma bulunamadı.
+2025-05-22 00:30:06.236 +03:00 [INF] Veritabanına bağlantı başarılı. Migrationlar uygulanıyor...
+2025-05-22 00:30:07.892 +03:00 [INF] Veritabanı işlemleri başarıyla tamamlandı.
+2025-05-22 00:30:08.133 +03:00 [INF] Todo Hatırlatıcı Servisi başlatıldı.
+2025-05-22 00:30:08.135 +03:00 [INF] Yaklaşan hatırlatıcılar kontrol ediliyor...
+2025-05-22 00:30:08.293 +03:00 [INF] Bekleyen hatırlatma bulunamadı.
+2025-05-22 00:30:12.718 +03:00 [INF] Giriş denemesi: admin
+2025-05-22 00:30:13.209 +03:00 [INF] Admin kullanıcısı başarıyla giriş yaptı: admin
+2025-05-22 00:30:13.209 +03:00 [INF] Admin session oluşturuldu: UserID=9e6fc203-37eb-49a7-a470-1551f7bec8b8, UserName=admin
+2025-05-22 00:30:13.210 +03:00 [INF] Yönlendirme adresi: /
+2025-05-22 00:30:13.211 +03:00 [INF] Admin kullanıcısı / adresine yönlendiriliyor
+2025-05-22 00:30:13.702 +03:00 [INF] Aktif session bulundu: UserID=9e6fc203-37eb-49a7-a470-1551f7bec8b8, UserName=admin
+2025-05-22 00:30:13.802 +03:00 [INF] Admin kullanıcısı tespit edildi
+2025-05-22 00:30:13.803 +03:00 [INF] Kimlik doğrulanmış kullanıcı: admin
+2025-05-22 00:30:15.664 +03:00 [INF] TRY dönüşümü için kur değeri hesaplandı: TRY -> USD, Değer: 0.03
+2025-05-22 00:30:16.030 +03:00 [INF] Kur değeri hesaplandı: UZS -> USD, Değer: 0.0000775226832727903141733102
+2025-05-22 00:30:16.982 +03:00 [WRN] Kaynak para birimi kodu bulunamadı: EUR. Varsayılan değer kullanılıyor.
+2025-05-22 00:30:56.117 +03:00 [INF] TRY dönüşümü için kur değeri hesaplandı: USD -> TRY, Değer: 33.33
+2025-05-22 00:32:03.203 +03:00 [ERR] The view 'YeniHareket' was not found. Searched locations: ["/Views/Cari/YeniHareket.en-US.cshtml","/Views/Cari/YeniHareket.en.cshtml","/Views/Cari/YeniHareket.cshtml","/Views/Shared/YeniHareket.en-US.cshtml","/Views/Shared/YeniHareket.en.cshtml","/Views/Shared/YeniHareket.cshtml","/Pages/Shared/YeniHareket.en-US.cshtml","/Pages/Shared/YeniHareket.en.cshtml","/Pages/Shared/YeniHareket.cshtml"]
+2025-05-22 00:32:03.415 +03:00 [ERR] Hata: 00-ea624398f4f4d649f9f0ff5c2f2e9aed-bb63db68d2fcd04b-00, Kullanıcı: admin, Path: /Cari/YeniHareket, Method: GET, QueryString: ?cariID=fdc7e9f0-d79f-4008-834e-32856a40c18b, IP: ::1, UserAgent: Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/136.0.0.0 Safari/537.36
+System.InvalidOperationException: The view 'YeniHareket' was not found. The following locations were searched:
+/Views/Cari/YeniHareket.en-US.cshtml
+/Views/Cari/YeniHareket.en.cshtml
+/Views/Cari/YeniHareket.cshtml
+/Views/Shared/YeniHareket.en-US.cshtml
+/Views/Shared/YeniHareket.en.cshtml
+/Views/Shared/YeniHareket.cshtml
+/Pages/Shared/YeniHareket.en-US.cshtml
+/Pages/Shared/YeniHareket.en.cshtml
+/Pages/Shared/YeniHareket.cshtml
+   at Microsoft.AspNetCore.Mvc.ViewEngines.ViewEngineResult.EnsureSuccessful(IEnumerable`1 originalLocations)
+   at Microsoft.AspNetCore.Mvc.ViewFeatures.ViewResultExecutor.ExecuteAsync(ActionContext context, ViewResult result)
+   at Microsoft.AspNetCore.Mvc.ViewResult.ExecuteResultAsync(ActionContext context)
+   at Microsoft.AspNetCore.Mvc.Infrastructure.ResourceInvoker.<InvokeNextResultFilterAsync>g__Awaited|30_0[TFilter,TFilterAsync](ResourceInvoker invoker, Task lastTask, State next, Scope scope, Object state, Boolean isCompleted)
+   at Microsoft.AspNetCore.Mvc.Infrastructure.ResourceInvoker.Rethrow(ResultExecutedContextSealed context)
+   at Microsoft.AspNetCore.Mvc.Infrastructure.ResourceInvoker.ResultNext[TFilter,TFilterAsync](State& next, Scope& scope, Object& state, Boolean& isCompleted)
+   at Microsoft.AspNetCore.Mvc.Infrastructure.ResourceInvoker.InvokeResultFilters()
+--- End of stack trace from previous location ---
+   at Microsoft.AspNetCore.Mvc.Infrastructure.ResourceInvoker.<InvokeNextResourceFilter>g__Awaited|25_0(ResourceInvoker invoker, Task lastTask, State next, Scope scope, Object state, Boolean isCompleted)
+   at Microsoft.AspNetCore.Mvc.Infrastructure.ResourceInvoker.Rethrow(ResourceExecutedContextSealed context)
+   at Microsoft.AspNetCore.Mvc.Infrastructure.ResourceInvoker.Next(State& next, Scope& scope, Object& state, Boolean& isCompleted)
+   at Microsoft.AspNetCore.Mvc.Infrastructure.ResourceInvoker.<InvokeFilterPipelineAsync>g__Awaited|20_0(ResourceInvoker invoker, Task lastTask, State next, Scope scope, Object state, Boolean isCompleted)
+   at Microsoft.AspNetCore.Mvc.Infrastructure.ResourceInvoker.<InvokeAsync>g__Awaited|17_0(ResourceInvoker invoker, Task task, IDisposable scope)
+   at Microsoft.AspNetCore.Mvc.Infrastructure.ResourceInvoker.<InvokeAsync>g__Awaited|17_0(ResourceInvoker invoker, Task task, IDisposable scope)
+   at Microsoft.AspNetCore.Localization.RequestLocalizationMiddleware.Invoke(HttpContext context)
+   at MuhasebeStokWebApp.Middleware.GlobalExceptionHandlingMiddleware.InvokeAsync(HttpContext context) in D:\cursor-workspace\MuhasebeStokWebApp\Middleware\GlobalExceptionHandlingMiddleware.cs:line 38

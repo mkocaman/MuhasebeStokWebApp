@@ -1613,3 +1613,40 @@ System.InvalidOperationException: The connection is already in a transaction and
    at MuhasebeStokWebApp.Controllers.FaturaController.Edit(Guid id, FaturaEditViewModel viewModel) in D:\cursor-workspace\MuhasebeStokWebApp\Controllers\FaturaController.cs:line 620
 2025-05-20 23:35:37.342 +03:00 [INF] Yaklaşan hatırlatıcılar kontrol ediliyor...
 2025-05-20 23:35:37.447 +03:00 [INF] Bekleyen hatırlatma bulunamadı.
+2025-05-20 23:39:30.510 +03:00 [INF] Veritabanına bağlantı başarılı. Migrationlar uygulanıyor...
+2025-05-20 23:39:32.229 +03:00 [INF] Veritabanı işlemleri başarıyla tamamlandı.
+2025-05-20 23:39:32.397 +03:00 [INF] Todo Hatırlatıcı Servisi başlatıldı.
+2025-05-20 23:39:32.400 +03:00 [INF] Yaklaşan hatırlatıcılar kontrol ediliyor...
+2025-05-20 23:39:32.594 +03:00 [INF] Bekleyen hatırlatma bulunamadı.
+2025-05-20 23:39:33.323 +03:00 [INF] Fatura ve ilişkili kayıtlar güncelleniyor. FaturaID: "f01cfc7e-5cb3-42c0-911b-98634d9733b4"
+2025-05-20 23:39:33.943 +03:00 [INF] UpdateAsync işlemi başlatılıyor
+2025-05-20 23:39:33.945 +03:00 [ERR] FaturaTransactionService.UpdateAsync Parametreler: f01cfc7e-5cb3-42c0-911b-98634d9733b4
+System.InvalidOperationException: The connection is already in a transaction and cannot participate in another transaction.
+   at Microsoft.EntityFrameworkCore.Storage.RelationalConnection.EnsureNoTransactions()
+   at Microsoft.EntityFrameworkCore.Storage.RelationalConnection.BeginTransactionAsync(IsolationLevel isolationLevel, CancellationToken cancellationToken)
+   at Microsoft.EntityFrameworkCore.Storage.RelationalConnection.BeginTransactionAsync(CancellationToken cancellationToken)
+   at MuhasebeStokWebApp.Data.Repositories.UnitOfWork.BeginTransactionAsync() in D:\cursor-workspace\MuhasebeStokWebApp\Data\Repositories\UnitOfWork.cs:line 106
+   at MuhasebeStokWebApp.Services.FaturaTransactionService.EnsureTransactionAsync() in D:\cursor-workspace\MuhasebeStokWebApp\Services\FaturaTransactionService.cs:line 37
+   at MuhasebeStokWebApp.Services.FaturaTransactionService.<>c__DisplayClass8_0`1.<<ExecuteInTransactionAsync>b__0>d.MoveNext() in D:\cursor-workspace\MuhasebeStokWebApp\Services\FaturaTransactionService.cs:line 86
+--- End of stack trace from previous location ---
+   at MuhasebeStokWebApp.Services.ExceptionHandlingService.HandleExceptionAsync[T](Func`1 func, String logContext, Object[] logParams) in D:\cursor-workspace\MuhasebeStokWebApp\Services\ExceptionHandlingService.cs:line 146
+2025-05-20 23:39:33.965 +03:00 [INF] Fatura bilgileri güncellendi. FaturaID: "f01cfc7e-5cb3-42c0-911b-98634d9733b4"
+2025-05-20 23:39:33.970 +03:00 [INF] FIFO kayıtları iptal edilmeye çalışılıyor: ReferansID=f01cfc7e-5cb3-42c0-911b-98634d9733b4, ReferansTuru=Fatura
+2025-05-20 23:39:33.971 +03:00 [INF] FifoKayitlariniIptalEt - Mevcut transaction kullanılıyor: ReferansID=f01cfc7e-5cb3-42c0-911b-98634d9733b4
+2025-05-20 23:39:34.071 +03:00 [INF] FIFO kayıtları iptal ediliyor. Toplam 1 kayıt bulundu.
+2025-05-20 23:39:34.390 +03:00 [INF] İlişkili FIFO kayıtları iptal edildi. FaturaID: "f01cfc7e-5cb3-42c0-911b-98634d9733b4"
+2025-05-20 23:39:34.506 +03:00 [INF] İlişkili stok hareketleri silindi. FaturaID: "f01cfc7e-5cb3-42c0-911b-98634d9733b4"
+2025-05-20 23:39:34.660 +03:00 [INF] Eski fatura detayları silindi. Toplam 1 detay. FaturaID: "f01cfc7e-5cb3-42c0-911b-98634d9733b4"
+2025-05-20 23:39:34.677 +03:00 [INF] Yeni fatura detayı eklendi. UrunID: "2216d3ad-9370-49a9-847e-c374b130978d"
+2025-05-20 23:39:34.683 +03:00 [INF] Stok hareketi oluşturuldu. UrunID: "2216d3ad-9370-49a9-847e-c374b130978d", Miktar: 6.00
+2025-05-20 23:39:34.689 +03:00 [INF] StokGirisiYap - Mevcut transaction kullanılıyor: Ürün 2216d3ad-9370-49a9-847e-c374b130978d, Miktar 6.00
+2025-05-20 23:39:34.917 +03:00 [INF] Stok girişi başarıyla tamamlandı: UrunID=2216d3ad-9370-49a9-847e-c374b130978d, Miktar=6.00, BirimFiyat=50.00, ParaBirimi=USD, Mahsuplaşan=0
+2025-05-20 23:39:34.918 +03:00 [INF] FIFO kaydı oluşturuldu. UrunID: "2216d3ad-9370-49a9-847e-c374b130978d"
+2025-05-20 23:39:35.017 +03:00 [INF] Fatura güncelleme işlemi için 1 adet irsaliye güncelleniyor. FaturaID: "f01cfc7e-5cb3-42c0-911b-98634d9733b4"
+2025-05-20 23:39:35.019 +03:00 [INF] İrsaliye ana bilgileri güncellendi. IrsaliyeID: "f8f4916d-9984-4eed-b370-c5c9b61e22a1"
+2025-05-20 23:39:35.109 +03:00 [INF] 1 adet irsaliye detayı silindi. IrsaliyeID: "f8f4916d-9984-4eed-b370-c5c9b61e22a1"
+2025-05-20 23:39:35.117 +03:00 [INF] Yeni irsaliye detayları eklendi. IrsaliyeID: "f8f4916d-9984-4eed-b370-c5c9b61e22a1"
+2025-05-20 23:39:35.118 +03:00 [INF] Faturaya bağlı tüm irsaliyeler başarıyla güncellendi. FaturaID: "f01cfc7e-5cb3-42c0-911b-98634d9733b4"
+2025-05-20 23:39:35.119 +03:00 [INF] Faturaya ait irsaliyeler güncellendi. FaturaID: "f01cfc7e-5cb3-42c0-911b-98634d9733b4"
+2025-05-20 23:39:35.314 +03:00 [INF] Fatura ve ilişkili tüm kayıtlar başarıyla güncellendi. FaturaID: "f01cfc7e-5cb3-42c0-911b-98634d9733b4"
+2025-05-20 23:39:35.316 +03:00 [INF] Fatura başarıyla güncellendi. FaturaID: f01cfc7e-5cb3-42c0-911b-98634d9733b4
