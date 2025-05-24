@@ -3,24 +3,36 @@
   "WorkspaceRootPath": "D:\\cursor-workspace\\MuhasebeStokWebApp\\",
   "Documents": [
     {
-      "AbsoluteMoniker": "D:0:0:{13DA124A-8333-3350-EC15-46DC296FA620}|MuhasebeStokWebApp.csproj|d:\\cursor-workspace\\muhasebestokwebapp\\views\\kasa\\yenihareket.cshtml||{40D31677-CBC0-4297-A9EF-89D907823A98}",
-      "RelativeMoniker": "D:0:0:{13DA124A-8333-3350-EC15-46DC296FA620}|MuhasebeStokWebApp.csproj|solutionrelative:views\\kasa\\yenihareket.cshtml||{40D31677-CBC0-4297-A9EF-89D907823A98}"
+      "AbsoluteMoniker": "D:0:0:{13DA124A-8333-3350-EC15-46DC296FA620}|MuhasebeStokWebApp.csproj|d:\\cursor-workspace\\muhasebestokwebapp\\views\\kasa\\index.cshtml||{40D31677-CBC0-4297-A9EF-89D907823A98}",
+      "RelativeMoniker": "D:0:0:{13DA124A-8333-3350-EC15-46DC296FA620}|MuhasebeStokWebApp.csproj|solutionrelative:views\\kasa\\index.cshtml||{40D31677-CBC0-4297-A9EF-89D907823A98}"
+    },
+    {
+      "AbsoluteMoniker": "D:0:0:{13DA124A-8333-3350-EC15-46DC296FA620}|MuhasebeStokWebApp.csproj|d:\\cursor-workspace\\muhasebestokwebapp\\views\\cari\\index.cshtml||{40D31677-CBC0-4297-A9EF-89D907823A98}",
+      "RelativeMoniker": "D:0:0:{13DA124A-8333-3350-EC15-46DC296FA620}|MuhasebeStokWebApp.csproj|solutionrelative:views\\cari\\index.cshtml||{40D31677-CBC0-4297-A9EF-89D907823A98}"
     },
     {
       "AbsoluteMoniker": "D:0:0:{13DA124A-8333-3350-EC15-46DC296FA620}|MuhasebeStokWebApp.csproj|d:\\cursor-workspace\\muhasebestokwebapp\\controllers\\kasacontroller.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}",
       "RelativeMoniker": "D:0:0:{13DA124A-8333-3350-EC15-46DC296FA620}|MuhasebeStokWebApp.csproj|solutionrelative:controllers\\kasacontroller.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}"
     },
     {
-      "AbsoluteMoniker": "D:0:0:{13DA124A-8333-3350-EC15-46DC296FA620}|MuhasebeStokWebApp.csproj|d:\\cursor-workspace\\muhasebestokwebapp\\controllers\\bankacontroller.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}",
-      "RelativeMoniker": "D:0:0:{13DA124A-8333-3350-EC15-46DC296FA620}|MuhasebeStokWebApp.csproj|solutionrelative:controllers\\bankacontroller.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}"
+      "AbsoluteMoniker": "D:0:0:{13DA124A-8333-3350-EC15-46DC296FA620}|MuhasebeStokWebApp.csproj|d:\\cursor-workspace\\muhasebestokwebapp\\views\\kasa\\_yenihareketpartial.cshtml||{40D31677-CBC0-4297-A9EF-89D907823A98}",
+      "RelativeMoniker": "D:0:0:{13DA124A-8333-3350-EC15-46DC296FA620}|MuhasebeStokWebApp.csproj|solutionrelative:views\\kasa\\_yenihareketpartial.cshtml||{40D31677-CBC0-4297-A9EF-89D907823A98}"
     },
     {
       "AbsoluteMoniker": "D:0:0:{13DA124A-8333-3350-EC15-46DC296FA620}|MuhasebeStokWebApp.csproj|d:\\cursor-workspace\\muhasebestokwebapp\\controllers\\caricontroller.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}",
       "RelativeMoniker": "D:0:0:{13DA124A-8333-3350-EC15-46DC296FA620}|MuhasebeStokWebApp.csproj|solutionrelative:controllers\\caricontroller.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}"
     },
     {
-      "AbsoluteMoniker": "D:0:0:{13DA124A-8333-3350-EC15-46DC296FA620}|MuhasebeStokWebApp.csproj|d:\\cursor-workspace\\muhasebestokwebapp\\views\\cari\\index.cshtml||{40D31677-CBC0-4297-A9EF-89D907823A98}",
-      "RelativeMoniker": "D:0:0:{13DA124A-8333-3350-EC15-46DC296FA620}|MuhasebeStokWebApp.csproj|solutionrelative:views\\cari\\index.cshtml||{40D31677-CBC0-4297-A9EF-89D907823A98}"
+      "AbsoluteMoniker": "D:0:0:{13DA124A-8333-3350-EC15-46DC296FA620}|MuhasebeStokWebApp.csproj|d:\\cursor-workspace\\muhasebestokwebapp\\views\\kasa\\yenihareket.cshtml||{40D31677-CBC0-4297-A9EF-89D907823A98}",
+      "RelativeMoniker": "D:0:0:{13DA124A-8333-3350-EC15-46DC296FA620}|MuhasebeStokWebApp.csproj|solutionrelative:views\\kasa\\yenihareket.cshtml||{40D31677-CBC0-4297-A9EF-89D907823A98}"
+    },
+    {
+      "AbsoluteMoniker": "D:0:0:{13DA124A-8333-3350-EC15-46DC296FA620}|MuhasebeStokWebApp.csproj|d:\\cursor-workspace\\muhasebestokwebapp\\views\\kasa\\hareketler.cshtml||{40D31677-CBC0-4297-A9EF-89D907823A98}",
+      "RelativeMoniker": "D:0:0:{13DA124A-8333-3350-EC15-46DC296FA620}|MuhasebeStokWebApp.csproj|solutionrelative:views\\kasa\\hareketler.cshtml||{40D31677-CBC0-4297-A9EF-89D907823A98}"
+    },
+    {
+      "AbsoluteMoniker": "D:0:0:{13DA124A-8333-3350-EC15-46DC296FA620}|MuhasebeStokWebApp.csproj|d:\\cursor-workspace\\muhasebestokwebapp\\controllers\\bankacontroller.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}",
+      "RelativeMoniker": "D:0:0:{13DA124A-8333-3350-EC15-46DC296FA620}|MuhasebeStokWebApp.csproj|solutionrelative:controllers\\bankacontroller.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}"
     },
     {
       "AbsoluteMoniker": "D:0:0:{13DA124A-8333-3350-EC15-46DC296FA620}|MuhasebeStokWebApp.csproj|d:\\cursor-workspace\\muhasebestokwebapp\\controllers\\faturacontroller.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}",
@@ -42,7 +54,7 @@
       "DocumentGroups": [
         {
           "DockedWidth": 200,
-          "SelectedChildIndex": 3,
+          "SelectedChildIndex": 2,
           "Children": [
             {
               "$type": "Bookmark",
@@ -50,7 +62,46 @@
             },
             {
               "$type": "Document",
+              "DocumentIndex": 6,
+              "Title": "Hareketler.cshtml",
+              "DocumentMoniker": "D:\\cursor-workspace\\MuhasebeStokWebApp\\Views\\Kasa\\Hareketler.cshtml",
+              "RelativeDocumentMoniker": "Views\\Kasa\\Hareketler.cshtml",
+              "ToolTip": "D:\\cursor-workspace\\MuhasebeStokWebApp\\Views\\Kasa\\Hareketler.cshtml",
+              "RelativeToolTip": "Views\\Kasa\\Hareketler.cshtml",
+              "ViewState": "AgIAAMMAAAAAAAAAAAApwAAAAAAAAAAAAAAAAA==",
+              "Icon": "ae27a6b0-e345-4288-96df-5eaf394ee369.000759|",
+              "WhenOpened": "2025-05-24T13:09:43.885Z",
+              "EditorCaption": ""
+            },
+            {
+              "$type": "Document",
+              "DocumentIndex": 0,
+              "Title": "Index.cshtml",
+              "DocumentMoniker": "D:\\cursor-workspace\\MuhasebeStokWebApp\\Views\\Kasa\\Index.cshtml",
+              "RelativeDocumentMoniker": "Views\\Kasa\\Index.cshtml",
+              "ToolTip": "D:\\cursor-workspace\\MuhasebeStokWebApp\\Views\\Kasa\\Index.cshtml",
+              "RelativeToolTip": "Views\\Kasa\\Index.cshtml",
+              "ViewState": "AgIAABIAAAAAAAAAAAAAACYAAABLAAAAAAAAAA==",
+              "Icon": "ae27a6b0-e345-4288-96df-5eaf394ee369.000759|",
+              "WhenOpened": "2025-05-24T13:09:36.156Z",
+              "EditorCaption": ""
+            },
+            {
+              "$type": "Document",
               "DocumentIndex": 3,
+              "Title": "_YeniHareketPartial.cshtml",
+              "DocumentMoniker": "D:\\cursor-workspace\\MuhasebeStokWebApp\\Views\\Kasa\\_YeniHareketPartial.cshtml",
+              "RelativeDocumentMoniker": "Views\\Kasa\\_YeniHareketPartial.cshtml",
+              "ToolTip": "D:\\cursor-workspace\\MuhasebeStokWebApp\\Views\\Kasa\\_YeniHareketPartial.cshtml",
+              "RelativeToolTip": "Views\\Kasa\\_YeniHareketPartial.cshtml",
+              "ViewState": "AgIAAJEAAAAAAAAAAAAgwKoAAAAtAAAAAAAAAA==",
+              "Icon": "ae27a6b0-e345-4288-96df-5eaf394ee369.000759|",
+              "WhenOpened": "2025-05-24T12:57:33.229Z",
+              "EditorCaption": ""
+            },
+            {
+              "$type": "Document",
+              "DocumentIndex": 4,
               "Title": "CariController.cs",
               "DocumentMoniker": "D:\\cursor-workspace\\MuhasebeStokWebApp\\Controllers\\CariController.cs",
               "RelativeDocumentMoniker": "Controllers\\CariController.cs",
@@ -63,46 +114,46 @@
             },
             {
               "$type": "Document",
-              "DocumentIndex": 4,
+              "DocumentIndex": 1,
               "Title": "Index.cshtml",
               "DocumentMoniker": "D:\\cursor-workspace\\MuhasebeStokWebApp\\Views\\Cari\\Index.cshtml",
               "RelativeDocumentMoniker": "Views\\Cari\\Index.cshtml",
               "ToolTip": "D:\\cursor-workspace\\MuhasebeStokWebApp\\Views\\Cari\\Index.cshtml",
               "RelativeToolTip": "Views\\Cari\\Index.cshtml",
-              "ViewState": "AgIAACoAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAA==",
+              "ViewState": "AgIAAA8AAAAAAAAAAAAAAAAAAAAAAAAAAAAAAA==",
               "Icon": "ae27a6b0-e345-4288-96df-5eaf394ee369.000759|",
               "WhenOpened": "2025-05-21T20:28:07.487Z",
               "EditorCaption": ""
             },
             {
               "$type": "Document",
-              "DocumentIndex": 0,
+              "DocumentIndex": 5,
               "Title": "YeniHareket.cshtml",
               "DocumentMoniker": "D:\\cursor-workspace\\MuhasebeStokWebApp\\Views\\Kasa\\YeniHareket.cshtml",
               "RelativeDocumentMoniker": "Views\\Kasa\\YeniHareket.cshtml",
               "ToolTip": "D:\\cursor-workspace\\MuhasebeStokWebApp\\Views\\Kasa\\YeniHareket.cshtml",
               "RelativeToolTip": "Views\\Kasa\\YeniHareket.cshtml",
-              "ViewState": "AgIAAFoAAAAAAAAAAAApwHwAAAAHAAAAAAAAAA==",
+              "ViewState": "AgIAAJAAAAAAAAAAAAAAAKgAAAAYAAAAAAAAAA==",
               "Icon": "ae27a6b0-e345-4288-96df-5eaf394ee369.000759|",
               "WhenOpened": "2025-05-21T20:13:55.113Z",
               "EditorCaption": ""
             },
             {
               "$type": "Document",
-              "DocumentIndex": 1,
+              "DocumentIndex": 2,
               "Title": "KasaController.cs",
               "DocumentMoniker": "D:\\cursor-workspace\\MuhasebeStokWebApp\\Controllers\\KasaController.cs",
               "RelativeDocumentMoniker": "Controllers\\KasaController.cs",
               "ToolTip": "D:\\cursor-workspace\\MuhasebeStokWebApp\\Controllers\\KasaController.cs",
               "RelativeToolTip": "Controllers\\KasaController.cs",
-              "ViewState": "AgIAAKUCAAAAAAAAAAAgwMsCAAAIAAAAAAAAAA==",
+              "ViewState": "AgIAAHECAAAAAAAAAAAAAI4CAABQAAAAAAAAAA==",
               "Icon": "ae27a6b0-e345-4288-96df-5eaf394ee369.000738|",
               "WhenOpened": "2025-05-21T16:42:32.002Z",
               "EditorCaption": ""
             },
             {
               "$type": "Document",
-              "DocumentIndex": 2,
+              "DocumentIndex": 7,
               "Title": "BankaController.cs",
               "DocumentMoniker": "D:\\cursor-workspace\\MuhasebeStokWebApp\\Controllers\\BankaController.cs",
               "RelativeDocumentMoniker": "Controllers\\BankaController.cs",
@@ -110,12 +161,11 @@
               "RelativeToolTip": "Controllers\\BankaController.cs",
               "ViewState": "AgIAAB0BAAAAAAAAAAAcwDUBAAA9AAAAAAAAAA==",
               "Icon": "ae27a6b0-e345-4288-96df-5eaf394ee369.000738|",
-              "WhenOpened": "2025-05-21T16:42:01.456Z",
-              "EditorCaption": ""
+              "WhenOpened": "2025-05-21T16:42:01.456Z"
             },
             {
               "$type": "Document",
-              "DocumentIndex": 7,
+              "DocumentIndex": 10,
               "Title": "IrsaliyeService.cs",
               "DocumentMoniker": "D:\\cursor-workspace\\MuhasebeStokWebApp\\Services\\IrsaliyeService.cs",
               "RelativeDocumentMoniker": "Services\\IrsaliyeService.cs",
@@ -128,7 +178,7 @@
             },
             {
               "$type": "Document",
-              "DocumentIndex": 5,
+              "DocumentIndex": 8,
               "Title": "FaturaController.cs",
               "DocumentMoniker": "D:\\cursor-workspace\\MuhasebeStokWebApp\\Controllers\\FaturaController.cs",
               "RelativeDocumentMoniker": "Controllers\\FaturaController.cs",
@@ -136,12 +186,11 @@
               "RelativeToolTip": "Controllers\\FaturaController.cs",
               "ViewState": "AgIAAC0BAAAAAAAAAAApwMMBAAA3AAAAAAAAAA==",
               "Icon": "ae27a6b0-e345-4288-96df-5eaf394ee369.000738|",
-              "WhenOpened": "2025-05-19T22:08:29.434Z",
-              "EditorCaption": ""
+              "WhenOpened": "2025-05-19T22:08:29.434Z"
             },
             {
               "$type": "Document",
-              "DocumentIndex": 6,
+              "DocumentIndex": 9,
               "Title": "StokFifoService.cs",
               "DocumentMoniker": "D:\\cursor-workspace\\MuhasebeStokWebApp\\Services\\StokFifoService.cs",
               "RelativeDocumentMoniker": "Services\\StokFifoService.cs",
@@ -149,8 +198,7 @@
               "RelativeToolTip": "Services\\StokFifoService.cs",
               "ViewState": "AgIAAAAAAAAAAAAAAAAAANkAAAAQAAAAAAAAAA==",
               "Icon": "ae27a6b0-e345-4288-96df-5eaf394ee369.000738|",
-              "WhenOpened": "2025-05-19T21:25:24.469Z",
-              "EditorCaption": ""
+              "WhenOpened": "2025-05-19T21:25:24.469Z"
             }
           ]
         }

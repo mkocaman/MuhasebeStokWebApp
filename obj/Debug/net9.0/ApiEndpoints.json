@@ -1,6 +1,37 @@
 [
   {
     "ContainingType": "MuhasebeStokWebApp.Controllers.ParaBirimiModulu.API.KurController",
+    "Method": "GetParaBirimleriArasiKur",
+    "RelativePath": "api/Kur/DovizKuru",
+    "HttpMethod": "GET",
+    "IsController": true,
+    "Order": 0,
+    "Parameters": [
+      {
+        "Name": "kaynakKod",
+        "Type": "System.String",
+        "IsRequired": false
+      },
+      {
+        "Name": "hedefKod",
+        "Type": "System.String",
+        "IsRequired": false
+      },
+      {
+        "Name": "fromCurrency",
+        "Type": "System.String",
+        "IsRequired": false
+      },
+      {
+        "Name": "toCurrency",
+        "Type": "System.String",
+        "IsRequired": false
+      }
+    ],
+    "ReturnTypes": []
+  },
+  {
+    "ContainingType": "MuhasebeStokWebApp.Controllers.ParaBirimiModulu.API.KurController",
     "Method": "GetGuncelKur",
     "RelativePath": "api/Kur/GetGuncelKur",
     "HttpMethod": "GET",
@@ -30,6 +61,16 @@
       },
       {
         "Name": "hedefKod",
+        "Type": "System.String",
+        "IsRequired": false
+      },
+      {
+        "Name": "fromCurrency",
+        "Type": "System.String",
+        "IsRequired": false
+      },
+      {
+        "Name": "toCurrency",
         "Type": "System.String",
         "IsRequired": false
       }

@@ -1,0 +1,492 @@
+@model MuhasebeStokWebApp.ViewModels.Kasa.KasaHareketViewModel
+
+<div class="modal-header">
+    <h5 class="modal-title">Yeni Kasa Hareketi</h5>
+    <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+</div>
+
+<form id="kasaHareketForm" asp-controller="Kasa" asp-action="YeniHareket" method="post">
+    <div class="modal-body">
+        <div id="createFormAlert" class="alert alert-danger d-none" role="alert"></div>
+        <div asp-validation-summary="ModelOnly" class="text-danger"></div>
+
+        <div class="row">
+            <div class="col-md-6">
+                <div class="form-group mb-3">
+                    <label for="KasaID" class="form-label">Kasa</label>
+                    @{
+                        bool isDisabled = Model.KasaID != Guid.Empty;
+                        var kasalar = ViewBag.Kasalar as List<MuhasebeStokWebApp.Data.Entities.Kasa> ?? new List<MuhasebeStokWebApp.Data.Entities.Kasa>();
+                        var secilenKasa = ViewBag.SecilenKasa as MuhasebeStokWebApp.Data.Entities.Kasa;
+                    }
+                    <select id="KasaID" name="KasaID" class="form-select" required @(isDisabled ? "disabled" : "")>
+                        <option value="">Kasa Seçiniz</option>
+                        @foreach (var kasa in kasalar)
+                        {
+                            if (Model.KasaID == kasa.KasaID)
+                            {
+                                <option value="@kasa.KasaID" data-parabirimi="@kasa.ParaBirimi" selected="selected">
+                                    @kasa.KasaAdi (@kasa.ParaBirimi) - Bakiye: @kasa.GuncelBakiye.ToString("N2")
+                                </option>
+                            }
+                            else
+                            {
+                                <option value="@kasa.KasaID" data-parabirimi="@kasa.ParaBirimi">
+                                    @kasa.KasaAdi (@kasa.ParaBirimi) - Bakiye: @kasa.GuncelBakiye.ToString("N2")
+                                </option>
+                            }
+                        }
+                    </select>
+                    @if (isDisabled && Model.KasaID != Guid.Empty)
+                    {
+                        <input type="hidden" name="KasaID" value="@Model.KasaID" />
+                    }
+                    <span asp-validation-for="KasaID" class="text-danger"></span>
+                </div>
+            </div>
+            <div class="col-md-6">
+                <div class="form-group mb-3">
+                    <label for="HareketTuru" class="form-label">Hareket Türü</label>
+                    <select id="HareketTuru" name="HareketTuru" class="form-select" required>
+                        <option value="">Hareket Türü Seçiniz</option>
+                        <option value="Giriş" selected="@(Model.HareketTuru == "Giriş")">Giriş</option>
+                        <option value="Çıkış" selected="@(Model.HareketTuru == "Çıkış")">Çıkış</option>
+                    </select>
+                    <span asp-validation-for="HareketTuru" class="text-danger"></span>
+                </div>
+            </div>
+        </div>
+
+        <div class="row">
+            <div class="col-md-6">
+                <div class="form-group mb-3">
+                    <label for="CariID" class="form-label">Cari</label>
+                    @{
+                        var cariler = ViewBag.Cariler as List<MuhasebeStokWebApp.Data.Entities.Cari> ?? new List<MuhasebeStokWebApp.Data.Entities.Cari>();
+                        var secilenCari = ViewBag.SecilenCari as MuhasebeStokWebApp.Data.Entities.Cari;
+                    }
+                    <select id="CariID" name="CariID" class="form-select">
+                        <option value="">Cari Seçiniz</option>
+                        @foreach (var cari in cariler)
+                        {
+                            if (Model.CariID == cari.CariID)
+                            {
+                                <option value="@cari.CariID" data-parabirimi="@cari.VarsayilanParaBirimi.Kod" selected>
+                                    @cari.Ad - @cari.CariTipi
+                                </option>
+                            }
+                            else
+                            {
+                                <option value="@cari.CariID" data-parabirimi="@cari.VarsayilanParaBirimi.Kod">
+                                    @cari.Ad - @cari.CariTipi
+                                </option>
+                            }
+                        }
+                    </select>
+                    <span asp-validation-for="CariID" class="text-danger"></span>
+                </div>
+                
+                <div class="form-check mb-3">
+                    <input asp-for="CariIleDengelensin" type="checkbox" id="CariIleDengelensin" name="CariIleDengelensin" class="form-check-input" />
+                    <label asp-for="CariIleDengelensin" class="form-check-label" for="CariIleDengelensin">Cari ile Dengelensin</label>
+                </div>
+
+            </div>
+            <div class="col-md-6">
+                <div class="form-group mb-3">
+                    <label for="Tutar" class="form-label">Tutar</label>
+                    <div class="input-group">
+                        <input type="number" id="Tutar" name="Tutar" class="form-control" 
+                               min="0.01" step="0.01" required value="@(Model.Tutar > 0 ? Model.Tutar : 0)" />
+                        <span class="input-group-text" id="paraBirimiLabel">
+                            @(secilenKasa != null ? secilenKasa.ParaBirimi : "TRY")
+                        </span>
+                    </div>
+                    <span asp-validation-for="Tutar" class="text-danger"></span>
+                </div>
+            </div>
+        </div>
+
+        <div id="dovizRow" class="row @(secilenKasa != null && secilenCari != null && secilenKasa.ParaBirimi != secilenCari.VarsayilanParaBirimi.Kod ? "" : "d-none")">
+            <div class="col-md-6">
+                <div class="form-group mb-3">
+                    <label for="DovizKuru" class="form-label">Döviz Kuru</label>
+                    <div class="input-group">
+                        <input type="number" id="DovizKuru" name="DovizKuru" class="form-control" 
+                               value="@(Model.DovizKuru ?? 1)" step="0.0001" min="0.0001" />
+                        <button type="button" class="btn btn-info" id="btnGetirKur">
+                            <i class="fas fa-sync"></i> Kur Getir
+                        </button>
+                    </div>
+                    <span asp-validation-for="DovizKuru" class="text-danger"></span>
+                </div>
+            </div>
+            <div class="col-md-6">
+                <div class="form-group mb-3">
+                    <label for="DovizKarsiligi" class="form-label">Döviz Karşılığı</label>
+                    <div class="input-group">
+                        <input type="number" id="DovizKarsiligi" name="DovizKarsiligi" class="form-control" 
+                               min="0.01" step="0.01" value="0" />
+                        <span class="input-group-text" id="karsiParaBirimiLabel">
+                            @(Model.KarsiParaBirimi ?? "TRY")
+                        </span>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <!--<div class="row">
+            <div class="col-md-6">
+                <div class="form-group mb-3">
+                    <label for="ReferansTuru" class="form-label">Referans Türü</label>
+                    <select id="ReferansTuru" name="ReferansTuru" class="form-select">
+                        <option value="">Referans Türü Seçiniz</option>
+                        <option value="Tahsilat" selected="@(Model.ReferansTuru == "Tahsilat")">Tahsilat</option>
+                        <option value="Ödeme" selected="@(Model.ReferansTuru == "Ödeme")">Ödeme</option>
+                        <option value="Nakit" selected="@(Model.ReferansTuru == "Nakit")">Nakit</option>
+                        <option value="Diğer" selected="@(Model.ReferansTuru == "Diğer")">Diğer</option>
+                    </select>
+                    <span asp-validation-for="ReferansTuru" class="text-danger"></span>
+                </div>
+            </div>
+            <div class="col-md-6">
+                <div class="form-group mb-3">
+                    <label for="ReferansNo" class="form-label">Referans No</label>
+                    <input type="text" id="ReferansNo" name="ReferansNo" class="form-control" value="@Model.ReferansNo" />
+                    <span asp-validation-for="ReferansNo" class="text-danger"></span>
+                    <small class="form-text text-muted">İşlem numarası otomatik olarak oluşturulur (Format: KAS-YYMMDD-000)</small>
+                </div>
+            </div>
+        </div>
+
+        <div class="row">
+            <div class="col-md-6">
+                <div class="form-group mb-3">
+                    <label for="KarsiParaBirimi" class="form-label">Karşı Para Birimi</label>
+                    <input type="text" id="KarsiParaBirimi" name="KarsiParaBirimi" class="form-control" value="@(Model.KarsiParaBirimi ?? secilenKasa?.ParaBirimi ?? "TRY")" required />
+                    <span asp-validation-for="KarsiParaBirimi" class="text-danger"></span>
+                </div>
+            </div>
+            <div class="col-md-6">
+                <div class="form-group mb-3">
+                    <label for="Tarih" class="form-label">Tarih</label>
+                    <input type="datetime-local" id="Tarih" name="Tarih" class="form-control" value="@Model.Tarih.ToString("yyyy-MM-ddTHH:mm")" required />
+                    <span asp-validation-for="Tarih" class="text-danger"></span>
+                </div>
+            </div>
+        </div>-->
+        
+        <div class="form-group mb-3">
+            <label for="Aciklama" class="form-label">Açıklama</label>
+            <textarea id="Aciklama" name="Aciklama" class="form-control" rows="3">@Model.Aciklama</textarea>
+            <span asp-validation-for="Aciklama" class="text-danger"></span>
+        </div>
+    </div>
+    <div class="modal-footer">
+        <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">İptal</button>
+        <button type="submit" class="btn btn-primary">Kaydet</button>
+    </div>
+</form>
+
+<script>
+    $(document).ready(function() {
+        // Form gönderimini AJAX ile yap
+        $("#kasaHareketForm").submit(function(e) {
+            e.preventDefault();
+            var form = $(this);
+            
+            // Form verilerini al
+            var formData = form.serialize();
+            
+            // AJAX isteği
+            $.ajax({
+                url: form.attr('action'),
+                type: form.attr('method'),
+                data: formData,
+                headers: {
+                    'X-Requested-With': 'XMLHttpRequest'
+                },
+                success: function(response) {
+                    if (response.success) {
+                        // Başarılı olursa Sweet Alert göster
+                        Swal.fire({
+                            icon: 'success',
+                            title: 'Başarılı!',
+                            text: response.message || 'Kasa hareketi başarıyla oluşturuldu.',
+                            confirmButtonText: 'Tamam'
+                        }).then((result) => {
+                            // Başarılı işlem olayını tetikle
+                            $(document).trigger('kasaHareketiEklendi', [response]);
+
+                            // Modal'ı kapat ve sayfayı yenile veya yönlendir
+                            $('#yeniKasaHareketModal').modal('hide');
+                            if (response.redirectUrl) {
+                                window.location.href = response.redirectUrl;
+                            } else {
+                                location.reload();
+                            }
+                        });
+                    } else {
+                        // Başarısız olursa Sweet Alert göster
+                        Swal.fire({
+                            icon: 'error',
+                            title: 'Hata!',
+                            text: response.message || 'Kasa hareketi oluşturulurken bir hata oluştu.',
+                            confirmButtonText: 'Tamam'
+                        });
+                        
+                        // Hata mesajlarını göster (varsa)
+                        if (response.errors && response.errors.length > 0) {
+                            var errorList = '';
+                            $.each(response.errors, function(index, error) {
+                                errorList += error + '<br>';
+                            });
+                            
+                            $('#createFormAlert').html(errorList).removeClass('d-none');
+                        }
+                    }
+                },
+                error: function(xhr, status, error) {
+                    // AJAX hatası olursa Sweet Alert göster
+                    Swal.fire({
+                        icon: 'error',
+                        title: 'Hata!',
+                        text: 'Kasa hareketi oluşturulurken bir hata oluştu. Lütfen tekrar deneyin.',
+                        confirmButtonText: 'Tamam'
+                    });
+                    
+                    // Hata mesajını göster
+                    $('#createFormAlert').text('Kasa hareketi kaydı sırasında bir hata oluştu: ' + error).removeClass('d-none');
+                }
+            });
+        });
+
+        // Para birimi değişikliği
+        function updateParaBirimleri() {
+            var kasaParaBirimi = $("#KasaID option:selected").data("parabirimi") || "TRY";
+            var cariParaBirimi = $("#CariID option:selected").data("parabirimi") || "TRY";
+            
+            $("#paraBirimiLabel").text(kasaParaBirimi);
+            $("#KarsiParaBirimi").val(cariParaBirimi);
+            $("#karsiParaBirimiLabel").text(cariParaBirimi);
+            
+            // Para birimleri farklı ise döviz alanlarını göster
+            if (kasaParaBirimi !== cariParaBirimi) {
+                $("#dovizRow").removeClass("d-none");
+                // Güncel döviz kurunu çek
+                getDovizKuru(kasaParaBirimi, cariParaBirimi);
+            } else {
+                $("#dovizRow").addClass("d-none");
+            }
+        }
+        
+        // Döviz kuru servisi
+        function getDovizKuru(from, to) {
+            // Sweet Alert ile işlem sürerken bekle mesajı göster
+            Swal.fire({
+                title: 'Döviz Kuru Getiriliyor',
+                html: 'Lütfen bekleyin...',
+                allowOutsideClick: false,
+                didOpen: () => {
+                    Swal.showLoading();
+                }
+            });
+            
+            $.ajax({
+                url: '/api/Kur/DovizKuru',
+                type: 'GET',
+                data: { fromCurrency: from, toCurrency: to },
+                success: function(data) {
+                    Swal.close();
+                    if (data && data.success) {
+                        $("#DovizKuru").val(parseFloat(data.kurDegeri).toFixed(4));
+                        hesaplaDovizKarsiligi();
+                        
+                        // Başarı mesajı göster
+                        Swal.fire({
+                            icon: 'success',
+                            title: 'Başarılı!',
+                            text: 'Döviz kuru başarıyla getirildi.',
+                            confirmButtonText: 'Tamam',
+                            timer: 1500
+                        });
+                    } else {
+                        // Hata mesajı göster
+                        Swal.fire({
+                            icon: 'error',
+                            title: 'Hata!',
+                            text: 'Döviz kuru getirilemedi. Lütfen manuel olarak girin.',
+                            confirmButtonText: 'Tamam'
+                        });
+                        
+                        // Varsayılan değer olarak 1 atama
+                        $("#DovizKuru").val("1.0000");
+                    }
+                },
+                error: function(xhr, status, error) {
+                    Swal.close();
+                    
+                    // Hata mesajı göster
+                    Swal.fire({
+                        icon: 'error',
+                        title: 'Hata!',
+                        text: 'Döviz kuru getirilemedi: ' + error,
+                        confirmButtonText: 'Tamam'
+                    });
+                    
+                    // Varsayılan değer olarak 1 atama
+                    $("#DovizKuru").val("1.0000");
+                }
+            });
+        }
+        
+        // Kur Getir butonuna tıklanınca
+        $(document).on('click', '#btnGetirKur', function() {
+            var kasaParaBirimi = $("#KasaID option:selected").data("parabirimi") || "TRY";
+            var cariParaBirimi = $("#CariID option:selected").data("parabirimi") || "TRY";
+            
+            if (kasaParaBirimi === cariParaBirimi) {
+                Swal.fire({
+                    icon: 'info',
+                    title: 'Bilgi',
+                    text: 'Kasa ve cari para birimleri aynı olduğu için kur değeri 1 olarak ayarlandı.',
+                    confirmButtonText: 'Tamam'
+                });
+                $("#DovizKuru").val("1.0000");
+                return;
+            }
+            
+            getDovizKuru(kasaParaBirimi, cariParaBirimi);
+        });
+        
+        // Tutar değiştiğinde döviz karşılığını hesapla
+        function hesaplaDovizKarsiligi() {
+            var tutar = parseFloat($("#Tutar").val()) || 0;
+            var dovizKuru = parseFloat($("#DovizKuru").val()) || 1;
+            
+            if (tutar > 0 && dovizKuru > 0) {
+                var dovizKarsiligi = tutar * dovizKuru;
+                $("#DovizKarsiligi").val(dovizKarsiligi.toFixed(2));
+            }
+        }
+        
+        // Döviz karşılığı değiştiğinde tutarı hesapla
+        function hesaplaTutar() {
+            var dovizKarsiligi = parseFloat($("#DovizKarsiligi").val()) || 0;
+            var dovizKuru = parseFloat($("#DovizKuru").val()) || 1;
+            
+            if (dovizKarsiligi > 0 && dovizKuru > 0) {
+                var tutar = dovizKarsiligi / dovizKuru;
+                $("#Tutar").val(tutar.toFixed(2));
+            }
+        }
+        
+        // Döviz kuru değiştiğinde döviz karşılığını hesapla
+        function hesaplaDovizKuruDegisince() {
+            var tutar = parseFloat($("#Tutar").val()) || 0;
+            var dovizKuru = parseFloat($("#DovizKuru").val()) || 1;
+            
+            if (tutar > 0 && dovizKuru > 0) {
+                var dovizKarsiligi = tutar * dovizKuru;
+                $("#DovizKarsiligi").val(dovizKarsiligi.toFixed(2));
+            }
+        }
+
+        // Kasa seçildiğinde
+        $("#KasaID").change(function() {
+            updateParaBirimleri();
+        });
+
+        // Cari seçildiğinde
+        $("#CariID").change(function() {
+            updateParaBirimleri();
+        });
+        
+        // Tutar değiştiğinde - input olayı kullanılıyor
+        $("#Tutar").on('input', function() {
+            hesaplaDovizKarsiligi();
+        });
+        
+        // Döviz karşılığı değiştiğinde - input olayı kullanılıyor
+        $("#DovizKarsiligi").on('input', function() {
+            hesaplaTutar();
+        });
+        
+        // Döviz kuru değiştiğinde - input olayı kullanılıyor
+        $("#DovizKuru").on('input', function() {
+            hesaplaDovizKuruDegisince();
+        });
+        
+        // Hareket türü değiştiğinde referans türlerini güncelle
+        $("#HareketTuru").change(function() {
+            var hareketTuru = $(this).val();
+            var referansTuruSelect = $("#ReferansTuru");
+            
+            if (referansTuruSelect.length > 0) {  // Eğer element mevcutsa
+                referansTuruSelect.empty();
+                referansTuruSelect.append('<option value="">Referans Türü Seçiniz</option>');
+                
+                if (hareketTuru === "Giriş") {
+                    referansTuruSelect.append('<option value="Tahsilat">Tahsilat</option>');
+                    referansTuruSelect.append('<option value="Nakit">Nakit</option>');
+                    referansTuruSelect.append('<option value="Diğer">Diğer</option>');
+                } else if (hareketTuru === "Çıkış") {
+                    referansTuruSelect.append('<option value="Ödeme">Ödeme</option>');
+                    referansTuruSelect.append('<option value="Nakit">Nakit</option>');
+                    referansTuruSelect.append('<option value="Diğer">Diğer</option>');
+                }
+                
+                // İşlem numarası oluştur
+                generateReferenceNumber(hareketTuru);
+            }
+        });
+        
+        // Referans türü seçildiğinde referans no oluştur
+        $("#ReferansTuru").change(function() {
+            var referansTuru = $(this).val();
+            var referansNoElement = $("#ReferansNo");
+            
+            if (referansNoElement.length > 0 && referansTuru && !referansNoElement.val()) {
+                var prefix = "";
+                switch (referansTuru) {
+                    case "Tahsilat": prefix = "TAH"; break;
+                    case "Ödeme": prefix = "ODE"; break;
+                    case "Nakit": prefix = "NAK"; break;
+                    default: prefix = "REF"; break;
+                }
+                
+                var today = new Date();
+                var year = today.getFullYear().toString().substr(-2);
+                var month = (today.getMonth() + 1).toString().padStart(2, '0');
+                var day = today.getDate().toString().padStart(2, '0');
+                var random = Math.floor(Math.random() * 1000).toString().padStart(3, '0');
+                
+                referansNoElement.val(prefix + "-" + year + month + day + "-" + random);
+            }
+        });
+        
+        // İşlem numarası oluşturma fonksiyonu
+        function generateReferenceNumber(hareketTuru) {
+            var referansNoElement = $("#ReferansNo");
+            
+            if (referansNoElement.length > 0) {
+                var today = new Date();
+                var year = today.getFullYear().toString().substr(-2);
+                var month = (today.getMonth() + 1).toString().padStart(2, '0');
+                var day = today.getDate().toString().padStart(2, '0');
+                var random = Math.floor(Math.random() * 1000).toString().padStart(3, '0');
+                
+                referansNoElement.val("KAS-" + year + month + day + "-" + random);
+            }
+        }
+        
+        // Sayfa yüklendiğinde
+        var referansNoElement = $("#ReferansNo");
+        if (referansNoElement.length > 0 && !referansNoElement.val()) {
+            generateReferenceNumber();
+        }
+        
+        // Başlangıçta para birimlerini güncelle
+        updateParaBirimleri();
+    });
+</script> 

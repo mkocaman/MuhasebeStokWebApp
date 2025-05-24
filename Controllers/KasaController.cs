@@ -535,27 +535,20 @@ namespace MuhasebeStokWebApp.Controllers
                     new SelectListItem { Text = "Çıkış", Value = "Çıkış" }
                 };
 
-                // Model oluştur
-                var kasaHareket = new KasaHareket
+                // Yeni ViewModel oluştur
+                var viewModel = new KasaHareketViewModel
                 {
                     KasaHareketID = Guid.NewGuid(),
                     Tarih = DateTime.Now,
-                    ReferansNo = "REF-" + DateTime.Now.ToString("yyyyMMddHHmmss")
-                };
-
-                // KasaHareket modelini ViewModel'e dönüştür
-                var viewModel = new KasaHareketViewModel
-                {
-                    KasaHareketID = kasaHareket.KasaHareketID,
-                    Tarih = kasaHareket.Tarih,
-                    ReferansNo = kasaHareket.ReferansNo,
+                    ReferansNo = "KAS-" + DateTime.Now.ToString("yyMMdd") + "-" + new Random().Next(100, 999).ToString(),
                     HareketTuru = "Giriş", // Varsayılan değer
                     Tutar = 0,
-                    CariIleDengelensin = false
+                    CariIleDengelensin = false,
+                    KasaID = id ?? Guid.Empty
                 };
 
                 // Kasa ID varsa
-                if (id.HasValue)
+                if (id.HasValue && id.Value != Guid.Empty)
                 {
                     var kasa = await _unitOfWork.Repository<Kasa>().GetByIdAsync(id.Value);
                     if (kasa != null && !kasa.Silindi)
@@ -566,7 +559,7 @@ namespace MuhasebeStokWebApp.Controllers
                 }
 
                 // Cari ID varsa
-                if (cariId.HasValue)
+                if (cariId.HasValue && cariId.Value != Guid.Empty)
                 {
                     var cari = await _unitOfWork.Repository<Cari>().GetByIdAsync(cariId.Value);
                     if (cari != null && !cari.Silindi)
@@ -574,6 +567,12 @@ namespace MuhasebeStokWebApp.Controllers
                         viewModel.CariID = cari.CariID;
                         ViewBag.SecilenCari = cari;
                     }
+                }
+
+                // AJAX isteği ise partial view döndür
+                if (Request.Headers["X-Requested-With"] == "XMLHttpRequest")
+                {
+                    return PartialView("_YeniHareketPartial", viewModel);
                 }
 
                 return View(viewModel);
@@ -593,6 +592,9 @@ namespace MuhasebeStokWebApp.Controllers
         [ValidateAntiForgeryToken]
         public async Task<IActionResult> YeniHareket(KasaHareketViewModel viewModel)
         {
+            // AJAX isteği kontrolü
+            bool isAjaxRequest = Request.Headers["X-Requested-With"] == "XMLHttpRequest";
+            
             if (ModelState.IsValid)
             {
                 try
@@ -605,6 +607,8 @@ namespace MuhasebeStokWebApp.Controllers
                         var kasa = await _unitOfWork.Repository<Kasa>().GetByIdAsync(viewModel.KasaID);
                         if (kasa == null || kasa.Silindi)
                         {
+                            if (isAjaxRequest)
+                                return Json(new { success = false, message = "Kasa bulunamadı veya silinmiş durumda." });
                             return NotFound();
                         }
 
@@ -650,12 +654,6 @@ namespace MuhasebeStokWebApp.Controllers
                             bool borcMu = viewModel.HareketTuru == "Giriş" ? false : true;
                             await _cariHareketService.CreateFromKasaHareketAsync(hareket, borcMu);
                         }
-                        // Hesap modülüne kaydetme seçeneği işaretlenmişse ve henüz Cari hareketi oluşturulmadıysa
-                        else if (viewModel.HesabaKaydet && viewModel.CariID.HasValue && viewModel.CariID != Guid.Empty)
-                        {
-                            bool borcMu = viewModel.HareketTuru == "Giriş" ? false : true;
-                            await _cariHareketService.CreateFromKasaHareketAsync(hareket, borcMu);
-                        }
 
                         // Transaction'ı tamamla
                         await transaction.CommitAsync();
@@ -666,6 +664,19 @@ namespace MuhasebeStokWebApp.Controllers
                             Enums.LogTuru.Bilgi
                         );
 
+                        if (isAjaxRequest)
+                        {
+                            // AJAX yanıtı
+                            return Json(new { 
+                                success = true, 
+                                message = "Kasa hareketi başarıyla oluşturuldu.", 
+                                redirectUrl = Url.Action("Hareketler", new { id = viewModel.KasaID }),
+                                kasaId = viewModel.KasaID
+                            });
+                        }
+
+                        // Normal form gönderimi yanıtı
+                        TempData["SuccessMessage"] = "Kasa hareketi başarıyla oluşturuldu.";
                         return RedirectToAction(nameof(Hareketler), new { id = viewModel.KasaID });
                     }
                     catch (Exception ex)
@@ -678,8 +689,28 @@ namespace MuhasebeStokWebApp.Controllers
                 catch (Exception ex)
                 {
                     _logger.LogError(ex, "Kasa hareketi oluşturulurken hata oluştu. Kasa ID: {KasaId}", viewModel.KasaID);
+                    
+                    if (isAjaxRequest)
+                    {
+                        var errors = ModelState.Values.SelectMany(v => v.Errors).Select(e => e.ErrorMessage).ToList();
+                        return Json(new { 
+                            success = false, 
+                            message = "Kasa hareketi oluşturulurken bir hata oluştu: " + ex.Message, 
+                            errors = errors
+                        });
+                    }
+                    
                     ModelState.AddModelError("", "Kasa hareketi oluşturulurken bir hata oluştu. Lütfen tekrar deneyin.");
                 }
+            }
+            else if (isAjaxRequest)
+            {
+                var errors = ModelState.Values.SelectMany(v => v.Errors).Select(e => e.ErrorMessage).ToList();
+                return Json(new { 
+                    success = false, 
+                    message = "Geçersiz form verileri, lütfen kontrol ediniz.", 
+                    errors = errors 
+                });
             }
 
             // Hata durumunda dropdown'ları yeniden hazırla
@@ -689,8 +720,6 @@ namespace MuhasebeStokWebApp.Controllers
                 new SelectListItem { Text = "Çıkış", Value = "Çıkış" }
             };
 
-            //var kasaInfo = await _unitOfWork.Repository<Kasa>().GetByIdAsync(viewModel.KasaID);
-            //ViewBag.Kasalar = kasaInfo;
             var kasalar = await _unitOfWork.Repository<Kasa>().GetAsync(
                     filter: k => !k.Silindi && k.Aktif,
                     orderBy: q => q.OrderBy(k => k.KasaAdi)

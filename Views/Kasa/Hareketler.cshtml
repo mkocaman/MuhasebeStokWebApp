@@ -39,9 +39,9 @@
                             <h5 class="mb-0">@(kasa?.KasaAdi ?? "Kasa Bilgisi Bulunamadı")</h5>
                         </div>
                         <div class="col-md-6 text-end">
-                            <a asp-action="YeniHareket" asp-route-id="@kasa?.KasaID" class="btn btn-sm btn-light">
+                            <button type="button" class="btn btn-sm btn-light" data-bs-toggle="modal" data-bs-target="#yeniKasaHareketModal" data-id="@kasa?.KasaID">
                                 <i class="fas fa-plus"></i> Yeni Hareket
-                            </a>
+                            </button>
                             <a asp-action="Edit" asp-route-id="@(kasa?.KasaID ?? Guid.Empty)" class="btn btn-sm btn-light">
                                 <i class="fas fa-edit"></i> Kasayı Düzenle
                             </a>
@@ -112,9 +112,25 @@
     </div>
 </div>
 
+<!-- Yeni Kasa Hareketi Modal -->
+<div class="modal fade" id="yeniKasaHareketModal" tabindex="-1" aria-labelledby="yeniKasaHareketModalLabel" aria-hidden="true">
+    <div class="modal-dialog modal-lg">
+        <div class="modal-content">
+            <div id="yeniKasaHareketContainer">
+                <div class="modal-body text-center">
+                    <div class="spinner-border" role="status">
+                        <span class="visually-hidden">Yükleniyor...</span>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+
 @section Scripts {
     <script>
         $(document).ready(function () {
+            // DataTables başlat
             var table = $('#hareketlerTable').DataTable({
                 "processing": true,
                 "serverSide": true,
@@ -181,6 +197,60 @@
                     $(this).remove();
                 });
             }, 4000);
+
+            // Yeni Kasa Hareketi Modal
+            $('#yeniKasaHareketModal').on('shown.bs.modal', function (e) {
+                var button = $(e.relatedTarget);
+                var kasaId = button.data('id');
+                
+                // Modal içeriğini temizle
+                $('#yeniKasaHareketContainer').html('<div class="modal-body text-center"><div class="spinner-border" role="status"><span class="visually-hidden">Yükleniyor...</span></div></div>');
+                
+                // Modal içeriğini yükle
+                $.ajax({
+                    url: '@Url.Action("YeniHareket", "Kasa")',
+                    type: 'GET',
+                    data: { id: kasaId },
+                    headers: {
+                        'X-Requested-With': 'XMLHttpRequest'
+                    },
+                    success: function(data) {
+                        $('#yeniKasaHareketContainer').html(data);
+                    },
+                    error: function(xhr, status, error) {
+                        Swal.fire({
+                            icon: 'error',
+                            title: 'Hata!',
+                            text: 'Kasa hareketi formu yüklenirken bir hata oluştu: ' + error,
+                            confirmButtonText: 'Tamam'
+                        });
+                        $('#yeniKasaHareketModal').modal('hide');
+                    }
+                });
+            });
+            
+            // Modal kapandığında event
+            $('#yeniKasaHareketModal').on('hidden.bs.modal', function () {
+                // Modal içeriğini temizle
+                $('#yeniKasaHareketContainer').html('');
+            });
+            
+            // İşlem başarılı olduğunda tabloyu yenile
+            $(document).on('kasaHareketiEklendi', function(event, data) {
+                // DataTable'ı yenile
+                table.ajax.reload();
+                
+                // Başarı mesajı göster
+                Swal.fire({
+                    icon: 'success',
+                    title: 'Başarılı!',
+                    text: 'Kasa hareketi başarıyla eklendi.',
+                    confirmButtonText: 'Tamam'
+                });
+                
+                // Modal'ı kapat
+                $('#yeniKasaHareketModal').modal('hide');
+            });
         });
     </script>
 } 

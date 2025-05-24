@@ -114,20 +114,6 @@
 							</div>
 						}
 
-						@if(Model.HesabaKaydet==false)
-						{
-							<div class="form-group form-check mb-3">
-								<input asp-for="HesabaKaydet" type="checkbox" id="HesabaKaydet" name="HesabaKaydet" class="form-group form-check-input" />
-								<label asp-for="HesabaKaydet" class="form-check-label" for="HesabaKaydet">Hesap Modülüne Kaydet</label>
-							</div>
-						}
-						else
-						{
-							<div class="form-group form-check mb-3">
-								<input asp-for="HesabaKaydet" type="checkbox" id="HesabaKaydet" name="HesabaKaydet" class="form-group form-check-input" checked />
-								<label asp-for="HesabaKaydet" class="form-check-label" for="HesabaKaydet">Hesap Modülüne Kaydet</label>
-							</div>
-						}
 
                     </div>
                     <div class="col-md-6">
@@ -147,53 +133,16 @@
                     </div>
                 </div>
                 
-                <div class="row">
+                <!--<div class="row">
                     <div class="col-md-6">
                         <div class="form-group">
                             <label for="ReferansTuru" class="control-label">Referans Türü</label>
 							<select id="ReferansTuru" name="ReferansTuru" class="form-control" for="ReferansTuru">
-								@if (Model.HareketTuru == "Tahsilat")
-								{
-									<option value="">Referans Türü Seçiniz</option>
-									<option value="Tahsilat" selected>Tahsilat</option>
-									<option value="Ödeme">Ödeme</option>
-									<option value="Nakit">Nakit</option>
-									<option value="Diğer">Diğer</option>
-								}
-								else if (Model.HareketTuru == "Ödeme")
-								{
-									<option value="">Referans Türü Seçiniz</option>
-									<option value="Tahsilat">Tahsilat</option>
-									<option value="Ödeme" selected>Ödeme</option>
-									<option value="Nakit">Nakit</option>
-									<option value="Diğer">Diğer</option>
-								}
-								else if (Model.HareketTuru == "Nakit")
-								{
-									<option value="">Referans Türü Seçiniz</option>
-									<option value="Tahsilat">Tahsilat</option>
-									<option value="Ödeme">Ödeme</option>
-									<option value="Nakit" selected>Nakit</option>
-									<option value="Diğer">Diğer</option>
-								}
-								else if (Model.HareketTuru == "Diğer")
-								{
-									<option value="">Referans Türü Seçiniz</option>
-									<option value="Tahsilat">Tahsilat</option>
-									<option value="Ödeme">Ödeme</option>
-									<option value="Nakit">Nakit</option>
-									<option value="Diğer" selected>Diğer</option>
-								}
-								else
-								{
-									<option value="">Referans Türü Seçiniz</option>
-									<option value="Tahsilat">Tahsilat</option>
-									<option value="Ödeme">Ödeme</option>
-									<option value="Nakit">Nakit</option>
-									<option value="Diğer">Diğer</option>
-								}
-
-								
+								<option value="">Referans Türü Seçiniz</option>
+								<option value="Tahsilat" selected="@(Model.ReferansTuru == "Tahsilat")">Tahsilat</option>
+								<option value="Ödeme" selected="@(Model.ReferansTuru == "Ödeme")">Ödeme</option>
+								<option value="Nakit" selected="@(Model.ReferansTuru == "Nakit")">Nakit</option>
+								<option value="Diğer" selected="@(Model.ReferansTuru == "Diğer")">Diğer</option>
                             </select>
                             <span asp-validation-for="ReferansTuru" class="text-danger"></span>
                         </div>
@@ -223,7 +172,7 @@
                             <span asp-validation-for="KarsiParaBirimi" class="text-danger"></span>
                         </div>
                     </div>
-                </div>
+				</div>-->
                 
                 <div class="form-group">
                     <label for="Aciklama" class="control-label">Açıklama</label>

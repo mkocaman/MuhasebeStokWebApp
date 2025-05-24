@@ -88,17 +88,22 @@ namespace MuhasebeStokWebApp.Controllers.ParaBirimiModulu.API
         /// <param name="hedefKod">Hedef para birimi kodu</param>
         /// <returns>İki para birimi arasındaki güncel kur değeri</returns>
         [HttpGet("GetParaBirimleriArasiKur")]
-        public async Task<IActionResult> GetParaBirimleriArasiKur(string kaynakKod, string hedefKod)
+        [HttpGet("DovizKuru")]
+        public async Task<IActionResult> GetParaBirimleriArasiKur(string kaynakKod, string hedefKod, string fromCurrency = null, string toCurrency = null)
         {
             try
             {
-                if (string.IsNullOrEmpty(kaynakKod) || string.IsNullOrEmpty(hedefKod))
+                // fromCurrency ve toCurrency parametrelerini de destekleyelim
+                string from = fromCurrency ?? kaynakKod;
+                string to = toCurrency ?? hedefKod;
+                
+                if (string.IsNullOrEmpty(from) || string.IsNullOrEmpty(to))
                 {
                     return BadRequest(new { success = false, message = "Kaynak ve hedef para birimi kodları belirtilmelidir." });
                 }
 
                 // Döviz kuru servisini kullan
-                var kurDegeri = await _dovizKuruService.GetGuncelKurAsync(kaynakKod, hedefKod);
+                var kurDegeri = await _dovizKuruService.GetGuncelKurAsync(from, to);
                 
                 return Ok(new { success = true, kurDegeri = kurDegeri, message = "Kur değeri başarıyla getirildi." });
             }
