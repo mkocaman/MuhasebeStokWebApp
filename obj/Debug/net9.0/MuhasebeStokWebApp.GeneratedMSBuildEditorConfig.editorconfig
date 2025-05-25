@@ -364,6 +364,10 @@ build_metadata.AdditionalFiles.CssScope =
 build_metadata.AdditionalFiles.TargetPath = Vmlld3NcS2FzYVxZZW5pSGFyZWtldC5jc2h0bWw=
 build_metadata.AdditionalFiles.CssScope = 
 
+[d:/cursor-workspace/MuhasebeStokWebApp/Views/Kasa/_TransferModalPartial.cshtml]
+build_metadata.AdditionalFiles.TargetPath = Vmlld3NcS2FzYVxfVHJhbnNmZXJNb2RhbFBhcnRpYWwuY3NodG1s
+build_metadata.AdditionalFiles.CssScope = 
+
 [d:/cursor-workspace/MuhasebeStokWebApp/Views/Kasa/_YeniHareketPartial.cshtml]
 build_metadata.AdditionalFiles.TargetPath = Vmlld3NcS2FzYVxfWWVuaUhhcmVrZXRQYXJ0aWFsLmNzaHRtbA==
 build_metadata.AdditionalFiles.CssScope = 
@@ -798,6 +802,10 @@ build_metadata.AdditionalFiles.CssScope =
 
 [d:/cursor-workspace/MuhasebeStokWebApp/Views/Todo/_EditTodo.cshtml]
 build_metadata.AdditionalFiles.TargetPath = Vmlld3NcVG9kb1xfRWRpdFRvZG8uY3NodG1s
+build_metadata.AdditionalFiles.CssScope = 
+
+[d:/cursor-workspace/MuhasebeStokWebApp/Views/Transfer/YeniTransfer.cshtml]
+build_metadata.AdditionalFiles.TargetPath = Vmlld3NcVHJhbnNmZXJcWWVuaVRyYW5zZmVyLmNzaHRtbA==
 build_metadata.AdditionalFiles.CssScope = 
 
 [d:/cursor-workspace/MuhasebeStokWebApp/Views/UrunFiyat/Create.cshtml]

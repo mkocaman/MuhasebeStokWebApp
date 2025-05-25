@@ -43,6 +43,9 @@
                             <button type="button" class="btn btn-success" data-bs-toggle="modal" data-bs-target="#yeniKasaHareketModal">
                                 <i class="fa fa-exchange-alt"></i> Yeni Kasa Hareketi
                             </button>
+                            <button type="button" class="btn btn-info" id="btnYeniTransfer">
+                                <i class="fa fa-sync"></i> İç Transfer
+                            </button>
                         </div>
                     </div>
                 </div>
@@ -71,36 +74,39 @@
                                 </tr>
                             </thead>
                             <tbody>
-                                @foreach (var item in Model.Kasalar)
+                                @foreach (var kasa in Model.Kasalar)
                                 {
                                     <tr>
-                                        <td>@item.KasaAdi</td>
-                                        <td>@item.ParaBirimi</td>
-                                        <td class="text-right">@item.GuncelBakiye.ToString("N2")</td>
-                                        <td>@item.Aciklama</td>
+                                        <td>@kasa.KasaAdi</td>
+                                        <td>@kasa.ParaBirimi</td>
+                                        <td class="text-end">@kasa.GuncelBakiye.ToString("N2")</td>
+                                        <td>@kasa.Aciklama</td>
                                         <td>
-                                            @if (item.Aktif)
+                                            @if (kasa.Aktif)
                                             {
-                                                <span class="badge badge-success">Aktif</span>
+                                                <span class="badge bg-success">Aktif</span>
                                             }
                                             else
                                             {
-                                                <span class="badge badge-danger">Pasif</span>
+                                                <span class="badge bg-danger">Pasif</span>
                                             }
                                         </td>
                                         <td>
-                                            <div class="btn-group" role="group">
-                                                <a asp-action="Details" asp-route-id="@item.KasaID" class="btn btn-info btn-sm">
-                                                    <i class="fa fa-info-circle"></i>
+                                            <div class="btn-group">
+                                                <a asp-action="Hareketler" asp-route-id="@kasa.KasaID" class="btn btn-sm btn-info" title="Hareketler">
+                                                    <i class="fa fa-list"></i>
                                                 </a>
-                                                <a asp-action="Edit" asp-route-id="@item.KasaID" class="btn btn-primary btn-sm">
+                                                <button type="button" class="btn btn-sm btn-success btn-hareket" data-kasa-id="@kasa.KasaID" title="Hareket Ekle">
+                                                    <i class="fa fa-exchange-alt"></i>
+                                                </button>
+                                                <button type="button" class="btn btn-sm btn-primary btn-transfer" data-kasa-id="@kasa.KasaID" title="Transfer Yap">
+                                                    <i class="fa fa-sync"></i>
+                                                </button>
+                                                <a asp-action="Edit" asp-route-id="@kasa.KasaID" class="btn btn-sm btn-warning" title="Düzenle">
                                                     <i class="fa fa-edit"></i>
                                                 </a>
-                                                <a asp-action="Delete" asp-route-id="@item.KasaID" class="btn btn-danger btn-sm">
+                                                <a asp-action="Delete" asp-route-id="@kasa.KasaID" class="btn btn-sm btn-danger" title="Sil">
                                                     <i class="fa fa-trash"></i>
-                                                </a>
-                                                <a asp-action="Hareketler" asp-route-id="@item.KasaID" class="btn btn-secondary btn-sm">
-                                                    <i class="fa fa-exchange-alt"></i>
                                                 </a>
                                             </div>
                                         </td>
@@ -115,17 +121,20 @@
     </div>
 </div>
 
-<!-- Yeni Kasa Hareketi Modal -->
-<div class="modal fade" id="yeniKasaHareketModal" tabindex="-1" aria-labelledby="yeniKasaHareketModalLabel" aria-hidden="true">
+<!-- Kasa Hareketi Modal -->
+<div class="modal fade modal-lg" id="yeniKasaHareketModal" tabindex="-1" aria-labelledby="kasaHareketModalLabel" aria-hidden="true">
     <div class="modal-dialog modal-lg">
-        <div class="modal-content">
-            <div id="yeniKasaHareketContainer">
-                <div class="modal-body text-center">
-                    <div class="spinner-border" role="status">
-                        <span class="visually-hidden">Yükleniyor...</span>
-                    </div>
-                </div>
-            </div>
+        <div class="modal-content" id="yeniKasaHareketContent">
+            <!-- Modal içeriği AJAX ile yüklenecek -->
+        </div>
+    </div>
+</div>
+
+<!-- İç Transfer Modal -->
+<div class="modal fade modal-lg" id="transferModal" tabindex="-1" aria-labelledby="transferModalLabel" aria-hidden="true">
+    <div class="modal-dialog modal-lg">
+        <div class="modal-content" id="transferModalContent">
+            <!-- Modal içeriği AJAX ile yüklenecek -->
         </div>
     </div>
 </div>
@@ -169,25 +178,46 @@
             }
             
             // Yeni Kasa Hareketi Modal
-            $('#yeniKasaHareketModal').on('shown.bs.modal', function (e) {
-                // Modal içeriğini yükle
-                $.ajax({
-                    url: '@Url.Action("YeniHareket", "Kasa")',
-                    type: 'GET',
-                    headers: {
-                        'X-Requested-With': 'XMLHttpRequest'
-                    },
-                    success: function(data) {
-                        $('#yeniKasaHareketContainer').html(data);
-                    },
-                    error: function(xhr, status, error) {
-                        Swal.fire({
-                            icon: 'error',
-                            title: 'Hata!',
-                            text: 'Kasa hareketi formu yüklenirken bir hata oluştu.',
-                            confirmButtonText: 'Tamam'
-                        });
-                    }
+            $('#yeniKasaHareketModal').on('show.bs.modal', function (e) {
+                var kasaID = $(e.relatedTarget).data('kasa-id');
+                var url = '/Kasa/YeniHareket';
+                
+                if (kasaID) {
+                    url += '?id=' + kasaID;
+                }
+                
+                $('#yeniKasaHareketContent').load(url);
+            });
+            
+            // İç Transfer Modal
+            $('#btnYeniTransfer').click(function() {
+                var url = '/Kasa/YeniTransfer';
+                $('#transferModalContent').load(url, function() {
+                    $('#transferModal').modal('show');
+                });
+            });
+            
+            // Tablodan kasa ID ile transfer modalını açma
+            $(document).on('click', '.btn-transfer', function() {
+                var kasaID = $(this).data('kasa-id');
+                var url = '/Kasa/YeniTransfer';
+                
+                if (kasaID) {
+                    url += '?kasaId=' + kasaID;
+                }
+                
+                $('#transferModalContent').load(url, function() {
+                    $('#transferModal').modal('show');
+                });
+            });
+
+            // Tablodan kasa ID ile hareket modalını açma
+            $(document).on('click', '.btn-hareket', function() {
+                var kasaID = $(this).data('kasa-id');
+                var url = '/Kasa/YeniHareket?id=' + kasaID;
+                
+                $('#yeniKasaHareketContent').load(url, function() {
+                    $('#yeniKasaHareketModal').modal('show');
                 });
             });
         });

@@ -1,0 +1,528 @@
+@model MuhasebeStokWebApp.ViewModels.Transfer.IcTransferViewModel
+@{
+    ViewData["Title"] = "Yeni İç Transfer";
+}
+
+<div class="container-fluid">
+    <div class="page-title">
+        <div class="row">
+            <div class="col-6">
+                <h3>Yeni İç Transfer</h3>
+            </div>
+            <div class="col-6">
+                <ol class="breadcrumb">
+                    <li class="breadcrumb-item"><a href="/"><i data-feather="home"></i></a></li>
+                    <li class="breadcrumb-item">Finans</li>
+                    <li class="breadcrumb-item active">Yeni İç Transfer</li>
+                </ol>
+            </div>
+        </div>
+    </div>
+</div>
+
+<div class="container-fluid">
+    <div class="row">
+        <div class="col-md-12">
+            <div class="card">
+                <div class="card-header pb-0">
+                    <h5>İç Transfer İşlemi</h5>
+                    <span>Kasa-Banka arasında para transferi yapabilirsiniz</span>
+                </div>
+                <div class="card-body">
+                    <form id="transferForm" asp-controller="Transfer" asp-action="YeniTransfer" method="post">
+                        <div id="createFormAlert" class="alert alert-danger d-none" role="alert"></div>
+                        <div asp-validation-summary="ModelOnly" class="text-danger"></div>
+
+                        <div class="row mb-3">
+                            <div class="col-md-12">
+                                <div class="form-group">
+                                    <label asp-for="TransferTuru" class="form-label">Transfer Türü</label>
+                                    <select asp-for="TransferTuru" class="form-select" id="TransferTuru" required>
+                                        <option value="KasadanKasaya" selected="@(Model.TransferTuru == "KasadanKasaya")">Kasadan Kasaya</option>
+                                        <option value="KasadanBankaya" selected="@(Model.TransferTuru == "KasadanBankaya")">Kasadan Bankaya</option>
+                                        <option value="BankadanKasaya" selected="@(Model.TransferTuru == "BankadanKasaya")">Bankadan Kasaya</option>
+                                        <option value="BankadanBankaya" selected="@(Model.TransferTuru == "BankadanBankaya")">Bankadan Bankaya</option>
+                                    </select>
+                                    <span asp-validation-for="TransferTuru" class="text-danger"></span>
+                                </div>
+                            </div>
+                        </div>
+
+                        <!-- Kaynak Seçimi -->
+                        <div class="row mb-3">
+                            <div class="col-md-12">
+                                <div class="card border-primary mb-3">
+                                    <div class="card-header bg-primary text-white">
+                                        <h5 class="mb-0">Kaynak Bilgileri</h5>
+                                    </div>
+                                    <div class="card-body">
+                                        <div class="row">
+                                            <!-- Kasa Kaynak -->
+                                            <div class="col-md-12 kaynak-kasa-secim">
+                                                <div class="form-group mb-3">
+                                                    <label asp-for="KaynakKasaID" class="form-label">Kaynak Kasa</label>
+                                                    <select asp-for="KaynakKasaID" class="form-select" id="KaynakKasaID">
+                                                        <option value="">Kasa Seçiniz</option>
+                                                        @foreach (var kasa in ViewBag.Kasalar)
+                                                        {
+                                                            <option value="@kasa.KasaID" data-parabirimi="@kasa.ParaBirimi" data-bakiye="@kasa.GuncelBakiye.ToString("N2")">
+                                                                @kasa.KasaAdi (@kasa.ParaBirimi) - Bakiye: @kasa.GuncelBakiye.ToString("N2")
+                                                            </option>
+                                                        }
+                                                    </select>
+                                                    <span asp-validation-for="KaynakKasaID" class="text-danger"></span>
+                                                </div>
+                                            </div>
+                                            
+                                            <!-- Banka Kaynak -->
+                                            <div class="col-md-12 kaynak-banka-secim d-none">
+                                                <div class="form-group mb-3">
+                                                    <label asp-for="KaynakBankaHesapID" class="form-label">Kaynak Banka Hesabı</label>
+                                                    <select asp-for="KaynakBankaHesapID" class="form-select" id="KaynakBankaHesapID">
+                                                        <option value="">Banka Hesabı Seçiniz</option>
+                                                        @foreach (var hesap in ViewBag.BankaHesaplari)
+                                                        {
+                                                            <option value="@hesap.BankaHesapID" data-parabirimi="@hesap.ParaBirimi" data-bakiye="@hesap.GuncelBakiye.ToString("N2")">
+                                                                @hesap.Banka.BankaAdi - @hesap.HesapAdi (@hesap.ParaBirimi) - Bakiye: @hesap.GuncelBakiye.ToString("N2")
+                                                            </option>
+                                                        }
+                                                    </select>
+                                                    <span asp-validation-for="KaynakBankaHesapID" class="text-danger"></span>
+                                                </div>
+                                            </div>
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+
+                        <!-- Hedef Seçimi -->
+                        <div class="row mb-3">
+                            <div class="col-md-12">
+                                <div class="card border-success mb-3">
+                                    <div class="card-header bg-success text-white">
+                                        <h5 class="mb-0">Hedef Bilgileri</h5>
+                                    </div>
+                                    <div class="card-body">
+                                        <div class="row">
+                                            <!-- Kasa Hedef -->
+                                            <div class="col-md-12 hedef-kasa-secim">
+                                                <div class="form-group mb-3">
+                                                    <label asp-for="HedefKasaID" class="form-label">Hedef Kasa</label>
+                                                    <select asp-for="HedefKasaID" class="form-select" id="HedefKasaID">
+                                                        <option value="">Kasa Seçiniz</option>
+                                                        @foreach (var kasa in ViewBag.Kasalar)
+                                                        {
+                                                            <option value="@kasa.KasaID" data-parabirimi="@kasa.ParaBirimi" data-bakiye="@kasa.GuncelBakiye.ToString("N2")">
+                                                                @kasa.KasaAdi (@kasa.ParaBirimi) - Bakiye: @kasa.GuncelBakiye.ToString("N2")
+                                                            </option>
+                                                        }
+                                                    </select>
+                                                    <span asp-validation-for="HedefKasaID" class="text-danger"></span>
+                                                </div>
+                                            </div>
+                                            
+                                            <!-- Banka Hedef -->
+                                            <div class="col-md-12 hedef-banka-secim d-none">
+                                                <div class="form-group mb-3">
+                                                    <label asp-for="HedefBankaHesapID" class="form-label">Hedef Banka Hesabı</label>
+                                                    <select asp-for="HedefBankaHesapID" class="form-select" id="HedefBankaHesapID">
+                                                        <option value="">Banka Hesabı Seçiniz</option>
+                                                        @foreach (var hesap in ViewBag.BankaHesaplari)
+                                                        {
+                                                            <option value="@hesap.BankaHesapID" data-parabirimi="@hesap.ParaBirimi" data-bakiye="@hesap.GuncelBakiye.ToString("N2")">
+                                                                @hesap.Banka.BankaAdi - @hesap.HesapAdi (@hesap.ParaBirimi) - Bakiye: @hesap.GuncelBakiye.ToString("N2")
+                                                            </option>
+                                                        }
+                                                    </select>
+                                                    <span asp-validation-for="HedefBankaHesapID" class="text-danger"></span>
+                                                </div>
+                                            </div>
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+
+                        <!-- Transfer Detayları -->
+                        <div class="row mb-3">
+                            <div class="col-md-12">
+                                <div class="card border-info mb-3">
+                                    <div class="card-header bg-info text-white">
+                                        <h5 class="mb-0">Transfer Detayları</h5>
+                                    </div>
+                                    <div class="card-body">
+                                        <div class="row">
+                                            <div class="col-md-6">
+                                                <div class="form-group mb-3">
+                                                    <label asp-for="Tutar" class="form-label">Tutar</label>
+                                                    <div class="input-group">
+                                                        <input asp-for="Tutar" type="number" class="form-control" min="0.01" step="0.01" required />
+                                                        <span class="input-group-text" id="kaynakParaBirimiText">TRY</span>
+                                                    </div>
+                                                    <span asp-validation-for="Tutar" class="text-danger"></span>
+                                                </div>
+                                            </div>
+                                            <div class="col-md-6">
+                                                <div class="form-group mb-3">
+                                                    <label asp-for="Tarih" class="form-label">Tarih</label>
+                                                    <input asp-for="Tarih" type="datetime-local" class="form-control" required />
+                                                    <span asp-validation-for="Tarih" class="text-danger"></span>
+                                                </div>
+                                            </div>
+                                        </div>
+
+                                        <div class="row" id="dovizBilgileri">
+                                            <div class="col-md-4">
+                                                <div class="form-group mb-3">
+                                                    <label for="KaynakParaBirimi" class="form-label">Kaynak Para Birimi</label>
+                                                    <input asp-for="KaynakParaBirimi" type="text" class="form-control" readonly />
+                                                </div>
+                                            </div>
+                                            <div class="col-md-4">
+                                                <div class="form-group mb-3">
+                                                    <label for="HedefParaBirimi" class="form-label">Hedef Para Birimi</label>
+                                                    <input asp-for="HedefParaBirimi" type="text" class="form-control" readonly />
+                                                </div>
+                                            </div>
+                                            <div class="col-md-4">
+                                                <div class="form-group mb-3">
+                                                    <label asp-for="DovizKuru" class="form-label">Döviz Kuru</label>
+                                                    <div class="input-group">
+                                                        <input asp-for="DovizKuru" type="number" class="form-control" step="0.0001" min="0.0001" />
+                                                        <button class="btn btn-outline-secondary" type="button" id="btnGetirKur">
+                                                            <i class="fa fa-refresh"></i> Getir
+                                                        </button>
+                                                    </div>
+                                                    <span asp-validation-for="DovizKuru" class="text-danger"></span>
+                                                </div>
+                                            </div>
+                                        </div>
+
+                                        <div class="row">
+                                            <div class="col-md-6">
+                                                <div class="form-group mb-3">
+                                                    <label asp-for="DovizKarsiligi" class="form-label">Döviz Karşılığı</label>
+                                                    <div class="input-group">
+                                                        <input asp-for="DovizKarsiligi" type="number" class="form-control" min="0.01" step="0.01" readonly />
+                                                        <span class="input-group-text" id="hedefParaBirimiText">TRY</span>
+                                                    </div>
+                                                    <span asp-validation-for="DovizKarsiligi" class="text-danger"></span>
+                                                </div>
+                                            </div>
+                                            <div class="col-md-6">
+                                                <div class="form-group mb-3">
+                                                    <label asp-for="ReferansNo" class="form-label">Referans No</label>
+                                                    <input asp-for="ReferansNo" type="text" class="form-control" />
+                                                    <span asp-validation-for="ReferansNo" class="text-danger"></span>
+                                                </div>
+                                            </div>
+                                        </div>
+
+                                        <div class="form-group mb-3">
+                                            <label asp-for="Aciklama" class="form-label">Açıklama</label>
+                                            <textarea asp-for="Aciklama" class="form-control" rows="3"></textarea>
+                                            <span asp-validation-for="Aciklama" class="text-danger"></span>
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+
+                        <div class="row">
+                            <div class="col-12 text-center">
+                                <button type="submit" class="btn btn-primary btn-lg">Transfer İşlemini Gerçekleştir</button>
+                                <a href="javascript:history.back()" class="btn btn-secondary btn-lg">İptal</a>
+                            </div>
+                        </div>
+                    </form>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+
+@section Scripts {
+    @{await Html.RenderPartialAsync("_ValidationScriptsPartial");}
+
+<script>
+    $(document).ready(function() {
+        // Transfer türüne göre alanları göster/gizle
+        function updateFormFields() {
+            var transferTuru = $("#TransferTuru").val();
+            
+            // Tüm alanları gizle
+            $(".kaynak-kasa-secim, .kaynak-banka-secim, .hedef-kasa-secim, .hedef-banka-secim").addClass("d-none");
+            
+            // İlgili alanları göster
+            switch (transferTuru) {
+                case "KasadanKasaya":
+                    $(".kaynak-kasa-secim, .hedef-kasa-secim").removeClass("d-none");
+                    break;
+                case "KasadanBankaya":
+                    $(".kaynak-kasa-secim, .hedef-banka-secim").removeClass("d-none");
+                    break;
+                case "BankadanKasaya":
+                    $(".kaynak-banka-secim, .hedef-kasa-secim").removeClass("d-none");
+                    break;
+                case "BankadanBankaya":
+                    $(".kaynak-banka-secim, .hedef-banka-secim").removeClass("d-none");
+                    break;
+            }
+            
+            // Form validation için gerekli alanları güncelle
+            updateRequiredFields();
+            
+            // Para birimlerini güncelle
+            updateParaBirimleri();
+        }
+        
+        // Required alanları güncelle
+        function updateRequiredFields() {
+            var transferTuru = $("#TransferTuru").val();
+            
+            // Tüm required niteliklerini kaldır
+            $("#KaynakKasaID, #KaynakBankaHesapID, #HedefKasaID, #HedefBankaHesapID").removeAttr("required");
+            
+            // İlgili alanlara required ekle
+            switch (transferTuru) {
+                case "KasadanKasaya":
+                    $("#KaynakKasaID, #HedefKasaID").attr("required", "required");
+                    break;
+                case "KasadanBankaya":
+                    $("#KaynakKasaID, #HedefBankaHesapID").attr("required", "required");
+                    break;
+                case "BankadanKasaya":
+                    $("#KaynakBankaHesapID, #HedefKasaID").attr("required", "required");
+                    break;
+                case "BankadanBankaya":
+                    $("#KaynakBankaHesapID, #HedefBankaHesapID").attr("required", "required");
+                    break;
+            }
+        }
+        
+        // Para birimlerini güncelle
+        function updateParaBirimleri() {
+            var transferTuru = $("#TransferTuru").val();
+            var kaynakParaBirimi = "";
+            var hedefParaBirimi = "";
+            
+            // Transfer türüne göre para birimlerini al
+            switch (transferTuru) {
+                case "KasadanKasaya":
+                    kaynakParaBirimi = $("#KaynakKasaID option:selected").data("parabirimi") || "TRY";
+                    hedefParaBirimi = $("#HedefKasaID option:selected").data("parabirimi") || "TRY";
+                    break;
+                case "KasadanBankaya":
+                    kaynakParaBirimi = $("#KaynakKasaID option:selected").data("parabirimi") || "TRY";
+                    hedefParaBirimi = $("#HedefBankaHesapID option:selected").data("parabirimi") || "TRY";
+                    break;
+                case "BankadanKasaya":
+                    kaynakParaBirimi = $("#KaynakBankaHesapID option:selected").data("parabirimi") || "TRY";
+                    hedefParaBirimi = $("#HedefKasaID option:selected").data("parabirimi") || "TRY";
+                    break;
+                case "BankadanBankaya":
+                    kaynakParaBirimi = $("#KaynakBankaHesapID option:selected").data("parabirimi") || "TRY";
+                    hedefParaBirimi = $("#HedefBankaHesapID option:selected").data("parabirimi") || "TRY";
+                    break;
+            }
+            
+            // Para birimlerini güncelle
+            $("#KaynakParaBirimi").val(kaynakParaBirimi);
+            $("#HedefParaBirimi").val(hedefParaBirimi);
+            $("#kaynakParaBirimiText").text(kaynakParaBirimi);
+            $("#hedefParaBirimiText").text(hedefParaBirimi);
+            
+            // Para birimleri farklı ise döviz alanlarını göster, değilse gizle
+            if (kaynakParaBirimi !== hedefParaBirimi) {
+                $("#dovizBilgileri").removeClass("d-none");
+                // Döviz kurunu getir
+                getDovizKuru(kaynakParaBirimi, hedefParaBirimi);
+            } else {
+                $("#dovizBilgileri").addClass("d-none");
+                $("#DovizKuru").val(1);
+                hesaplaDovizKarsiligi();
+            }
+        }
+        
+        // Döviz kuru servisi
+        function getDovizKuru(from, to) {
+            // Eğer para birimleri aynı ise 1 dön
+            if (from === to) {
+                $("#DovizKuru").val(1);
+                hesaplaDovizKarsiligi();
+                return;
+            }
+
+			Swal.fire({
+				title: 'Döviz Kuru Getiriliyor',
+				html: 'Lütfen bekleyin...',
+				allowOutsideClick: false,
+				didOpen: () => {
+					Swal.showLoading();
+				}
+			});
+
+			$.ajax({
+				url: '/api/Kur/DovizKuru',
+				type: 'GET',
+				data: { fromCurrency: from, toCurrency: to },
+				success: function(data) {
+					Swal.close();
+					if (data && data.success) {
+						$("#DovizKuru").val(parseFloat(data.kurDegeri).toFixed(4));
+						hesaplaDovizKarsiligi();
+
+						// Başarı mesajı göster
+						Swal.fire({
+							icon: 'success',
+							title: 'Başarılı!',
+							text: 'Döviz kuru başarıyla getirildi.',
+							confirmButtonText: 'Tamam',
+							timer: 1500
+						});
+					} else {
+						// Hata mesajı göster
+						Swal.fire({
+							icon: 'error',
+							title: 'Hata!',
+							text: 'Döviz kuru getirilemedi. Lütfen manuel olarak girin.',
+							confirmButtonText: 'Tamam'
+						});
+
+						// Varsayılan değer olarak 1 atama
+						$("#DovizKuru").val("1.0000");
+					}
+				},
+				error: function(xhr, status, error) {
+					Swal.close();
+
+					// Hata mesajı göster
+					Swal.fire({
+						icon: 'error',
+						title: 'Hata!',
+						text: 'Döviz kuru getirilemedi: ' + error,
+						confirmButtonText: 'Tamam'
+					});
+
+					// Varsayılan değer olarak 1 atama
+					$("#DovizKuru").val("1.0000");
+				}
+			});
+        }
+        
+        // Tutar değiştiğinde döviz karşılığını hesapla
+        function hesaplaDovizKarsiligi() {
+            var tutar = parseFloat($("#Tutar").val()) || 0;
+            var dovizKuru = parseFloat($("#DovizKuru").val()) || 1;
+            
+            if (tutar > 0 && dovizKuru > 0) {
+                var dovizKarsiligi = tutar * dovizKuru;
+                $("#DovizKarsiligi").val(dovizKarsiligi.toFixed(2));
+            }
+        }
+        
+        // Event listeners
+        $("#TransferTuru").change(function() {
+            updateFormFields();
+        });
+        
+        $("#KaynakKasaID, #KaynakBankaHesapID, #HedefKasaID, #HedefBankaHesapID").change(function() {
+            updateParaBirimleri();
+        });
+        
+        $("#Tutar").on('input', function() {
+            hesaplaDovizKarsiligi();
+        });
+        
+        $("#DovizKuru").on('input', function() {
+            hesaplaDovizKarsiligi();
+        });
+        
+        $("#btnGetirKur").click(function() {
+            var kaynakParaBirimi = $("#KaynakParaBirimi").val();
+            var hedefParaBirimi = $("#HedefParaBirimi").val();
+            
+            if (kaynakParaBirimi === hedefParaBirimi) {
+                Swal.fire({
+                    icon: 'info',
+                    title: 'Bilgi',
+                    text: 'Kaynak ve hedef para birimleri aynı olduğu için kur değeri 1 olarak ayarlandı.',
+                    confirmButtonText: 'Tamam'
+                });
+                $("#DovizKuru").val("1.0000");
+                hesaplaDovizKarsiligi();
+                return;
+            }
+            
+            getDovizKuru(kaynakParaBirimi, hedefParaBirimi);
+        });
+        
+        // Form gönderimini AJAX ile yap
+        $("#transferForm").submit(function(e) {
+            e.preventDefault();
+            var form = $(this);
+            
+            // Form verilerini al
+            var formData = form.serialize();
+            
+            // AJAX isteği
+            $.ajax({
+                url: form.attr('action'),
+                type: form.attr('method'),
+                data: formData,
+                headers: {
+                    'X-Requested-With': 'XMLHttpRequest'
+                },
+                success: function(response) {
+                    if (response.success) {
+                        // Başarılı olursa Sweet Alert göster
+                        Swal.fire({
+                            icon: 'success',
+                            title: 'Başarılı!',
+                            text: response.message || 'Transfer işlemi başarıyla gerçekleştirildi.',
+                            confirmButtonText: 'Tamam'
+                        }).then((result) => {
+                            // Sayfayı yenile veya yönlendir
+                            window.location.href = '/Kasa';
+                        });
+                    } else {
+                        // Başarısız olursa Sweet Alert göster
+                        Swal.fire({
+                            icon: 'error',
+                            title: 'Hata!',
+                            text: response.message || 'Transfer işlemi sırasında bir hata oluştu.',
+                            confirmButtonText: 'Tamam'
+                        });
+                        
+                        // Hata mesajlarını göster (varsa)
+                        if (response.errors && response.errors.length > 0) {
+                            var errorList = '';
+                            $.each(response.errors, function(index, error) {
+                                errorList += error + '<br>';
+                            });
+                            
+                            $('#createFormAlert').html(errorList).removeClass('d-none');
+                        }
+                    }
+                },
+                error: function(xhr, status, error) {
+                    // AJAX hatası olursa Sweet Alert göster
+                    Swal.fire({
+                        icon: 'error',
+                        title: 'Hata!',
+                        text: 'Transfer işlemi sırasında bir hata oluştu. Lütfen tekrar deneyin.',
+                        confirmButtonText: 'Tamam'
+                    });
+                    
+                    // Hata mesajını göster
+                    $('#createFormAlert').text('Transfer işlemi sırasında bir hata oluştu: ' + error).removeClass('d-none');
+                }
+            });
+        });
+        
+        // Sayfa yüklendiğinde form alanlarını güncelle
+        updateFormFields();
+    });
+</script>
+} 

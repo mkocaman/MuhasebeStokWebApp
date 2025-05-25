@@ -16,6 +16,7 @@ using Microsoft.AspNetCore.Identity;
 using MuhasebeStokWebApp.Services.Interfaces;
 using System.Security.Claims;
 using MuhasebeStokWebApp.ViewModels.Doviz;
+using MuhasebeStokWebApp.ViewModels.Transfer;
 
 namespace MuhasebeStokWebApp.Controllers
 {
@@ -617,11 +618,12 @@ namespace MuhasebeStokWebApp.Controllers
                         {
                             KasaHareketID = Guid.NewGuid(),
                             KasaID = viewModel.KasaID,
-                            Tarih = viewModel.Tarih,
+                            Tarih = DateTime.Now,
+                            DovizKuru = viewModel.DovizKuru ?? 1,
                             IslemTuru = viewModel.IslemTuru ?? "Normal",
                             HareketTuru = viewModel.HareketTuru,
                             Tutar = viewModel.Tutar,
-                            Aciklama = viewModel.Aciklama,
+                            Aciklama = $"Kasa hareketi: {viewModel.Aciklama}",
                             ReferansNo = viewModel.ReferansNo ?? $"KAS-{DateTime.Now:yyMMdd}-{new Random().Next(100, 999)}",
                             ReferansTuru = viewModel.ReferansTuru ?? (viewModel.HareketTuru == "Giriş" ? "Tahsilat" : "Ödeme"),
                             CariID = viewModel.CariID,
@@ -1104,6 +1106,44 @@ namespace MuhasebeStokWebApp.Controllers
                     data = new List<object>() 
                 });
             }
+        }
+
+        /// <summary>
+        /// Kasa-Banka arası transfer işlemleri için modal formu açar
+        /// </summary>
+        public async Task<IActionResult> YeniTransfer(Guid? kasaId = null)
+        {
+            // Kasaları getir
+            var kasalar = await _unitOfWork.Repository<Kasa>().GetAsync(
+                filter: k => !k.Silindi && k.Aktif,
+                orderBy: q => q.OrderBy(k => k.KasaAdi)
+            );
+
+            if (!kasalar.Any())
+            {
+                return Json(new { success = false, message = "Sistemde kayıtlı aktif kasa bulunamadı. Lütfen önce bir kasa ekleyin." });
+            }
+
+            // Banka hesaplarını getir
+            var bankaHesaplari = await _context.BankaHesaplari
+                .Include(h => h.Banka)
+                .Where(h => !h.Silindi && h.Aktif)
+                .OrderBy(h => h.Banka.BankaAdi)
+                .ThenBy(h => h.HesapAdi)
+                .ToListAsync();
+
+            ViewBag.Kasalar = kasalar.ToList();
+            ViewBag.BankaHesaplari = bankaHesaplari;
+
+            var model = new MuhasebeStokWebApp.ViewModels.Transfer.IcTransferViewModel
+            {
+                TransferTuru = "KasadanKasaya",
+                Tarih = DateTime.Now,
+                ReferansNo = "TRF-" + DateTime.Now.ToString("yyMMdd") + "-" + new Random().Next(100, 999).ToString(),
+                KaynakKasaID = kasaId
+            };
+
+            return PartialView("_TransferModalPartial", model);
         }
     }
 } 

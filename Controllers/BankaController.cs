@@ -17,6 +17,7 @@ using MuhasebeStokWebApp.Services;
 using MuhasebeStokWebApp.Models;
 using MuhasebeStokWebApp.Services.Menu;
 using MuhasebeStokWebApp.Services.Interfaces;
+using MuhasebeStokWebApp.ViewModels.Transfer;
 
 namespace MuhasebeStokWebApp.Controllers
 {
@@ -1345,6 +1346,44 @@ namespace MuhasebeStokWebApp.Controllers
             ViewBag.BankaHesap = hesap;
 
             return View(model);
+        }
+
+        /// <summary>
+        /// Banka-Kasa arası transfer işlemleri için modal formu açar
+        /// </summary>
+        public async Task<IActionResult> YeniTransfer(Guid? hesapId = null)
+        {
+            // Kasaları getir
+            var kasalar = await _unitOfWork.Repository<Kasa>().GetAsync(
+                filter: k => !k.Silindi && k.Aktif,
+                orderBy: q => q.OrderBy(k => k.KasaAdi)
+            );
+
+            // Banka hesaplarını getir
+            var bankaHesaplari = await _context.BankaHesaplari
+                .Include(h => h.Banka)
+                .Where(h => !h.Silindi && h.Aktif)
+                .OrderBy(h => h.Banka.BankaAdi)
+                .ThenBy(h => h.HesapAdi)
+                .ToListAsync();
+
+            if (!bankaHesaplari.Any())
+            {
+                return Json(new { success = false, message = "Sistemde kayıtlı aktif banka hesabı bulunamadı. Lütfen önce bir banka hesabı ekleyin." });
+            }
+
+            ViewBag.Kasalar = kasalar.ToList();
+            ViewBag.BankaHesaplari = bankaHesaplari;
+
+            var model = new MuhasebeStokWebApp.ViewModels.Transfer.IcTransferViewModel
+            {
+                TransferTuru = "BankadanKasaya",
+                Tarih = DateTime.Now,
+                ReferansNo = "TRNSFR-" + DateTime.Now.ToString("yyMMdd") + "-" + new Random().Next(100, 999).ToString(),
+                KaynakBankaHesapID = hesapId
+            };
+
+            return PartialView("~/Views/Transfer/_TransferModalPartial.cshtml", model);
         }
     }
 } 
