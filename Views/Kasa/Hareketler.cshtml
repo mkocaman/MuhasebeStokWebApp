@@ -89,14 +89,12 @@
                     <div class="table-responsive">
                         <table id="hareketlerTable" class="table table-bordered table-striped table-hover">
                             <thead>
-                                <tr>
-                                    <th>İşlem No</th>
+								<tr>
+									<th>Referans No</th>
+									<th>Referans Türü</th>
                                     <th>Tarih</th>
                                     <th>Hareket Türü</th>
                                     <th>Tutar</th>
-                                    <th>Referans No</th>
-                                    <th>Referans Türü</th>
-                                    <th>Açıklama</th>
                                     <th>Cari</th>
                                     <th width="150">İşlemler</th>
                                 </tr>
@@ -129,67 +127,64 @@
 
 @section Scripts {
     <script>
-        $(document).ready(function () {
-            // DataTables başlat
-            var table = $('#hareketlerTable').DataTable({
-                "processing": true,
-                "serverSide": true,
-                "filter": true,
-                "orderMulti": false,
-                "pageLength": 10,
-                "language": {
-                    "url": "/lib/datatables/tr.json"
-                },
-                "ajax": {
-                    "url": "@Url.Action("GetKasaHareketler", "Kasa", new { id = kasa?.KasaID })",
-                    "type": "POST",
-                    "datatype": "json"
-                },
-                "columnDefs": [
-                    {
-                        "targets": 3,
-                        "className": "text-end",
-                        "render": function (data, type, row) {
-                            var islemTuru = row.hareketTuru;
-                            var tutar = parseFloat(data).toLocaleString('tr-TR', { minimumFractionDigits: 2, maximumFractionDigits: 2 });
-                            var paraBirimi = '@(kasa?.ParaBirimi ?? "TRY")';
-                            
-                            if (islemTuru === "Giriş" || islemTuru === "Açılış Bakiyesi" || islemTuru === "Bakiye Artışı") {
-                                return `<span class="text-success">+${tutar} ${paraBirimi}</span>`;
-                            } else {
-                                return `<span class="text-danger">-${tutar} ${paraBirimi}</span>`;
-                            }
-                        }
-                    },
-                    {
-                        "targets": -1,
-                        "data": null,
-                        "orderable": false,
-                        "searchable": false,
-                        "render": function (data, type, row) {
-                            var referansTuru = row.referansTuru;
-                            var isManuel = referansTuru === "Normal";
-                            var detayBtn = `<a href="/Kasa/HareketDetay/${row.kasaHareketID}" class="btn btn-sm btn-info me-1" title="Detay"><i class="fas fa-info-circle"></i></a>`;
-                            var duzenleBtn = isManuel ? `<a href="/Kasa/HareketDuzenle/${row.kasaHareketID}" class="btn btn-sm btn-warning me-1" title="Düzenle"><i class="fas fa-edit"></i></a>` : '';
-                            var silBtn = isManuel ? `<a href="/Kasa/HareketSil/${row.kasaHareketID}" class="btn btn-sm btn-danger" title="Sil"><i class="fas fa-trash"></i></a>` : '';
-                            
-                            return detayBtn + duzenleBtn + silBtn;
-                        }
-                    }
-                ],
-                "columns": [
-                    { "data": "kasaHareketID", "name": "KasaHareketID", "autoWidth": true },
-                    { "data": "tarih", "name": "Tarih", "autoWidth": true },
-                    { "data": "hareketTuru", "name": "HareketTuru", "autoWidth": true },
-                    { "data": "tutar", "name": "Tutar", "autoWidth": true },
-                    { "data": "referansNo", "name": "ReferansNo", "autoWidth": true },
-                    { "data": "referansTuru", "name": "ReferansTuru", "autoWidth": true },
-                    { "data": "aciklama", "name": "Aciklama", "autoWidth": true },
-                    { "data": "cariUnvani", "name": "CariUnvani", "autoWidth": true },
-                    { "data": null, "name": "İşlemler", "autoWidth": true }
-                ],
-                "order": [[1, "desc"]]
-            });
+		$(document).ready(function () {
+			var table = $('#hareketlerTable').DataTable({
+				processing: true,
+				serverSide: true,
+				filter: true,
+				orderMulti: false,
+				pageLength: 10,
+				language: { url: "/lib/datatables/tr.json" },
+				ajax: {
+					url: "@Url.Action("GetKasaHareketler", "Kasa", new { id = kasa?.KasaID })",
+					type: "POST",
+					datatype: "json"
+				},
+				columnDefs: [
+					{
+						// "Tutar" kolonunu sağa yasla (şimdi 0:refNo,1:refTür,2:tarih,3:hareketT,4:tutar)
+						targets: 4,
+						className: "text-end",
+						render: function (data, type, row) {
+							var islemTuru = row.hareketTuru;
+							var tutar = parseFloat(data).toLocaleString('tr-TR', {
+								minimumFractionDigits: 2,
+								maximumFractionDigits: 2
+							});
+							var paraBirimi = '@(kasa?.ParaBirimi ?? "TRY")';
+							if (islemTuru === "Giriş" || islemTuru === "Açılış Bakiyesi" || islemTuru === "Bakiye Artışı") {
+								return `<span class="text-success">+${tutar} ${paraBirimi}</span>`;
+							} else {
+								return `<span class="text-danger">-${tutar} ${paraBirimi}</span>`;
+							}
+						}
+					},
+					{
+						// son kolon: işlemler butonları
+						targets: -1,
+						orderable: false,
+						searchable: false,
+						render: function (data, type, row) {
+							var detayBtn = `<a href="/Kasa/HareketDetay/${row.kasaHareketID}" class="btn btn-sm btn-info me-1" title="Detay"><i class="fas fa-info-circle"></i></a>`;
+							
+							var editKasaBtn = `<a href="/Kasa/HareketDuzenle/${row.kasaHareketID}" class="btn btn-sm btn-warning ms-1" title="Düzenle"><i class="fa fa-edit"></i></a>`;
+							var deleteKasaBtn = `<a href="/Kasa/HareketSil/${row.kasaHareketID}" class="btn btn-sm btn-danger ms-1" title="Sil"><i class="fa fa-trash"></i></a>`;
+
+							return detayBtn + editKasaBtn + deleteKasaBtn;
+						}
+					}
+				],
+				columns: [
+					{ data: "referansNo",    name: "ReferansNo",    autoWidth: true },
+					{ data: "referansTuru",  name: "ReferansTuru",  autoWidth: true },
+					{ data: "tarih",         name: "Tarih",         autoWidth: true },
+					{ data: "hareketTuru",   name: "HareketTuru",   autoWidth: true },
+					{ data: "tutar",         name: "Tutar",         autoWidth: true },
+					{ data: "cariUnvani",    name: "CariUnvani",    autoWidth: true },
+					{ data: null,            name: "İşlemler",      autoWidth: true }
+				],
+				order: [[2, "desc"]] // Tarihe göre sıralar (şimdi 2. kolon)
+			});
             
             // Otomatik kapanan alertler
             window.setTimeout(function() {
@@ -253,4 +248,16 @@
             });
         });
     </script>
+	<style>
+				#hareketlerTable td:last-child, #hareketlerTable th:last-child {
+			white-space: nowrap;
+			width: 130px; /* Örneğin */
+		}
+
+		/* Butonların genişliklerini küçült */
+		#hareketlerTable .btn-sm {
+			padding: 0.25rem 0.4rem;
+			font-size: 0.875rem;
+		}
+	</style>
 } 

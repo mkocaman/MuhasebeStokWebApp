@@ -344,12 +344,24 @@ build_metadata.AdditionalFiles.CssScope =
 build_metadata.AdditionalFiles.TargetPath = Vmlld3NcS2FzYVxFZGl0LmNzaHRtbA==
 build_metadata.AdditionalFiles.CssScope = 
 
+[d:/cursor-workspace/MuhasebeStokWebApp/Views/Kasa/HareketDetay.cshtml]
+build_metadata.AdditionalFiles.TargetPath = Vmlld3NcS2FzYVxIYXJla2V0RGV0YXkuY3NodG1s
+build_metadata.AdditionalFiles.CssScope = 
+
+[d:/cursor-workspace/MuhasebeStokWebApp/Views/Kasa/HareketDuzenle.cshtml]
+build_metadata.AdditionalFiles.TargetPath = Vmlld3NcS2FzYVxIYXJla2V0RHV6ZW5sZS5jc2h0bWw=
+build_metadata.AdditionalFiles.CssScope = 
+
 [d:/cursor-workspace/MuhasebeStokWebApp/Views/Kasa/Hareketler.cshtml]
 build_metadata.AdditionalFiles.TargetPath = Vmlld3NcS2FzYVxIYXJla2V0bGVyLmNzaHRtbA==
 build_metadata.AdditionalFiles.CssScope = 
 
 [d:/cursor-workspace/MuhasebeStokWebApp/Views/Kasa/HareketlerTarih.cshtml]
 build_metadata.AdditionalFiles.TargetPath = Vmlld3NcS2FzYVxIYXJla2V0bGVyVGFyaWguY3NodG1s
+build_metadata.AdditionalFiles.CssScope = 
+
+[d:/cursor-workspace/MuhasebeStokWebApp/Views/Kasa/HareketSil.cshtml]
+build_metadata.AdditionalFiles.TargetPath = Vmlld3NcS2FzYVxIYXJla2V0U2lsLmNzaHRtbA==
 build_metadata.AdditionalFiles.CssScope = 
 
 [d:/cursor-workspace/MuhasebeStokWebApp/Views/Kasa/Index.cshtml]

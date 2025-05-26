@@ -1,0 +1,163 @@
+@model MuhasebeStokWebApp.ViewModels.Kasa.KasaHareketViewModel
+@{
+    ViewData["Title"] = "Kasa Hareketi Detayı";
+    var isTransfer = !string.IsNullOrEmpty(Model.IslemTuru) && Model.IslemTuru == "KasaTransfer";
+}
+
+<div class="container-fluid">
+    <div class="page-title">
+        <div class="row">
+            <div class="col-6">
+                <h3>Kasa Hareketi Detayı</h3>
+            </div>
+            <div class="col-6">
+                <ol class="breadcrumb">
+                    <li class="breadcrumb-item"><a href="/"><i data-feather="home"></i></a></li>
+                    <li class="breadcrumb-item"><a asp-controller="Kasa" asp-action="Index">Kasalar</a></li>
+                    <li class="breadcrumb-item"><a asp-action="Hareketler" asp-route-id="@Model.KasaID">Kasa Hareketleri</a></li>
+                    <li class="breadcrumb-item active">Hareket Detayı</li>
+                </ol>
+            </div>
+        </div>
+    </div>
+</div>
+
+<div class="container-fluid">
+    <div class="row">
+        <div class="col-md-12">
+            <div class="card">
+                <div class="card-header">
+                    <h5>Kasa Hareketi Detayı</h5>
+                </div>
+                <div class="card-body">
+                    <div class="row mb-4">
+                        <div class="col-md-6">
+                            <div class="mb-3">
+                                <h6 class="text-muted">Kasa Bilgisi</h6>
+                                <h5>@Model.KasaAdi</h5>
+                            </div>
+                            <div class="mb-3">
+                                <h6 class="text-muted">İşlem Tarihi</h6>
+                                <h5>@Model.Tarih.ToString("dd.MM.yyyy HH:mm")</h5>
+                            </div>
+                            <div class="mb-3">
+                                <h6 class="text-muted">İşlem Türü</h6>
+                                <h5>
+                                    @if (Model.HareketTuru == "Giriş")
+                                    {
+                                        <span class="badge bg-success">@Model.HareketTuru</span>
+                                    }
+                                    else
+                                    {
+                                        <span class="badge bg-danger">@Model.HareketTuru</span>
+                                    }
+                                    
+                                    @if (isTransfer)
+                                    {
+                                        <span class="badge bg-info">Transfer</span>
+                                    }
+                                </h5>
+                            </div>
+                        </div>
+                        <div class="col-md-6">
+                            <div class="mb-3">
+                                <h6 class="text-muted">Referans No</h6>
+                                <h5>@Model.ReferansNo</h5>
+                            </div>
+                            <div class="mb-3">
+                                <h6 class="text-muted">Referans Türü</h6>
+                                <h5>@Model.ReferansTuru</h5>
+                            </div>
+                            <div class="mb-3">
+                                <h6 class="text-muted">Tutar</h6>
+                                <h5 class="@(Model.HareketTuru == "Giriş" ? "text-success" : "text-danger")">
+                                    @(Model.HareketTuru == "Giriş" ? "+" : "-")@Model.Tutar.ToString("N2") @Model.ParaBirimi
+                                </h5>
+                            </div>
+                        </div>
+                    </div>
+
+                    @if (isTransfer)
+                    {
+                        <div class="row mb-4">
+                            <div class="col-md-12">
+                                <div class="alert alert-info">
+                                    <i class="fa fa-exchange-alt"></i> <strong>Transfer İşlemi</strong>
+                                </div>
+                            </div>
+                            <div class="col-md-6">
+                                @if (Model.HedefKasaID.HasValue && !string.IsNullOrEmpty(Model.HedefKasaAdi))
+                                {
+                                    <div class="mb-3">
+                                        <h6 class="text-muted">Hedef Kasa</h6>
+                                        <h5>@Model.HedefKasaAdi</h5>
+                                    </div>
+                                }
+                                
+                                @if (Model.KaynakBankaID.HasValue && !string.IsNullOrEmpty(Model.KaynakBankaAdi))
+                                {
+                                    <div class="mb-3">
+                                        <h6 class="text-muted">Kaynak Banka</h6>
+                                        <h5>@Model.KaynakBankaAdi</h5>
+                                    </div>
+                                }
+                            </div>
+                            <div class="col-md-6">
+                                @if (Model.DovizKuru.HasValue && Model.DovizKuru.Value != 1)
+                                {
+                                    <div class="mb-3">
+                                        <h6 class="text-muted">Döviz Kuru</h6>
+                                        <h5>@Model.DovizKuru.Value.ToString("N6")</h5>
+                                    </div>
+                                    
+                                    <div class="mb-3">
+                                        <h6 class="text-muted">Karşı Para Birimi</h6>
+                                        <h5>@Model.KarsiParaBirimi</h5>
+                                    </div>
+                                }
+                            </div>
+                        </div>
+                    }
+
+                    <div class="row mb-4">
+                        <div class="col-md-12">
+                            <div class="mb-3">
+                                <h6 class="text-muted">Açıklama</h6>
+                                <p>@Model.Aciklama</p>
+                            </div>
+                        </div>
+                    </div>
+
+                    @if (!string.IsNullOrEmpty(Model.CariAdi))
+                    {
+                        <div class="row mb-4">
+                            <div class="col-md-12">
+                                <div class="mb-3">
+                                    <h6 class="text-muted">İlişkili Cari</h6>
+                                    <h5>@Model.CariAdi</h5>
+                                </div>
+                            </div>
+                        </div>
+                    }
+
+                    <div class="row">
+                        <div class="col-md-12 text-center">
+                            @if (Model.ReferansTuru == "Normal" || Model.ReferansTuru == "Tahsilat" || Model.ReferansTuru == "Ödeme" || isTransfer)
+                            {
+                                <a asp-action="HareketDuzenle" asp-route-id="@Model.KasaHareketID" class="btn btn-primary">
+                                    <i class="fa fa-edit"></i> Düzenle
+                                </a>
+                                <a asp-action="HareketSil" asp-route-id="@Model.KasaHareketID" class="btn btn-danger">
+                                    <i class="fa fa-trash"></i> Sil
+                                </a>
+                            }
+                            <a asp-action="Hareketler" asp-route-id="@Model.KasaID" class="btn btn-secondary">
+                                <i class="fa fa-arrow-left"></i> Kasa Hareketlerine Dön
+                            </a>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</div> 

@@ -1,0 +1,158 @@
+@model MuhasebeStokWebApp.ViewModels.Kasa.KasaHareketViewModel
+@{
+    ViewData["Title"] = "Kasa Hareketi Sil";
+    var isTransfer = !string.IsNullOrEmpty(Model.IslemTuru) && Model.IslemTuru == "KasaTransfer";
+}
+
+<div class="container-fluid">
+    <div class="page-title">
+        <div class="row">
+            <div class="col-6">
+                <h3>Kasa Hareketi Sil</h3>
+            </div>
+            <div class="col-6">
+                <ol class="breadcrumb">
+                    <li class="breadcrumb-item"><a href="/"><i data-feather="home"></i></a></li>
+                    <li class="breadcrumb-item"><a asp-controller="Kasa" asp-action="Index">Kasalar</a></li>
+                    <li class="breadcrumb-item"><a asp-action="Hareketler" asp-route-id="@Model.KasaID">Kasa Hareketleri</a></li>
+                    <li class="breadcrumb-item active">Hareket Sil</li>
+                </ol>
+            </div>
+        </div>
+    </div>
+</div>
+
+<div class="container-fluid">
+    <div class="row">
+        <div class="col-md-12">
+            <div class="card">
+                <div class="card-header bg-danger text-white">
+                    <h5>Kasa Hareketi Silme Onayı</h5>
+                </div>
+                <div class="card-body">
+                    <div class="alert alert-warning" role="alert">
+                        <h4 class="alert-heading">Dikkat!</h4>
+                        <p>Bu kasa hareketini silmek istediğinizden emin misiniz? Bu işlem kasa bakiyesini ve ilişkili kayıtları etkileyecektir.</p>
+                        <hr>
+                        <p class="mb-0">Silme işlemi geri alınamaz.</p>
+                    </div>
+
+                    @if (isTransfer)
+                    {
+                        <div class="alert alert-info" role="alert">
+                            <i class="fa fa-info-circle"></i> <strong>Transfer işlemi:</strong> Bu hareket bir transfer işlemine aittir. 
+                            Silme işlemi hem bu hareketi hem de karşı taraftaki transfer hareketini silecektir.
+                        </div>
+                    }
+
+                    <div class="row mb-4">
+                        <div class="col-md-6">
+                            <div class="mb-3">
+                                <h6 class="text-muted">Kasa Bilgisi</h6>
+                                <h5>@Model.KasaAdi</h5>
+                            </div>
+                            <div class="mb-3">
+                                <h6 class="text-muted">İşlem Tarihi</h6>
+                                <h5>@Model.Tarih.ToString("dd.MM.yyyy HH:mm")</h5>
+                            </div>
+                            <div class="mb-3">
+                                <h6 class="text-muted">İşlem Türü</h6>
+                                <h5>
+                                    @if (Model.HareketTuru == "Giriş")
+                                    {
+                                        <span class="badge bg-success">@Model.HareketTuru</span>
+                                    }
+                                    else
+                                    {
+                                        <span class="badge bg-danger">@Model.HareketTuru</span>
+                                    }
+                                    @if (isTransfer)
+                                    {
+                                        <span class="badge bg-info">Transfer</span>
+                                    }
+                                </h5>
+                            </div>
+                        </div>
+                        <div class="col-md-6">
+                            <div class="mb-3">
+                                <h6 class="text-muted">Referans No</h6>
+                                <h5>@Model.ReferansNo</h5>
+                            </div>
+                            <div class="mb-3">
+                                <h6 class="text-muted">Referans Türü</h6>
+                                <h5>@Model.ReferansTuru</h5>
+                            </div>
+                            <div class="mb-3">
+                                <h6 class="text-muted">Tutar</h6>
+                                <h5 class="@(Model.HareketTuru == "Giriş" ? "text-success" : "text-danger")">
+                                    @(Model.HareketTuru == "Giriş" ? "+" : "-")@Model.Tutar.ToString("N2") @Model.ParaBirimi
+                                </h5>
+                            </div>
+                        </div>
+                    </div>
+
+                    <div class="row mb-4">
+                        <div class="col-md-12">
+                            <div class="mb-3">
+                                <h6 class="text-muted">Açıklama</h6>
+                                <p>@Model.Aciklama</p>
+                            </div>
+                        </div>
+                    </div>
+
+                    @if (isTransfer)
+                    {
+                        <div class="row mb-4">
+                            <div class="col-md-12">
+                                <div class="mb-3">
+                                    <h6 class="text-muted">Transfer Bilgileri</h6>
+                                    @if (Model.HedefKasaID.HasValue)
+                                    {
+                                        <h5>Hedef Kasa: @Model.HedefKasaAdi</h5>
+                                    }
+                                    else if (Model.KaynakBankaID.HasValue)
+                                    {
+                                        <h5>Kaynak Banka Hesabı</h5>
+                                    }
+                                    <div class="alert alert-warning">
+                                        <i class="fa fa-exclamation-triangle"></i> Bu işlem transfer zincirindeki tüm hareketleri silecektir.
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                    }
+                    else if (!string.IsNullOrEmpty(Model.CariAdi))
+                    {
+                        <div class="row mb-4">
+                            <div class="col-md-12">
+                                <div class="mb-3">
+                                    <h6 class="text-muted">İlişkili Cari</h6>
+                                    <h5>@Model.CariAdi</h5>
+                                    <div class="alert alert-info">
+                                        <i class="fa fa-info-circle"></i> Bu kasa hareketi ile ilişkili cari hareket kaydı da silinecektir.
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                    }
+
+                    <form asp-action="HareketSil">
+                        <input type="hidden" asp-for="KasaHareketID" />
+                        <input type="hidden" asp-for="TransferID" />
+                        <input type="hidden" asp-for="IslemTuru" />
+                        <div class="row">
+                            <div class="col-md-12 text-center">
+                                <button type="submit" class="btn btn-danger">
+                                    <i class="fa fa-trash"></i> Evet, Sil
+                                </button>
+                                <a asp-action="Hareketler" asp-route-id="@Model.KasaID" class="btn btn-secondary">
+                                    <i class="fa fa-arrow-left"></i> İptal
+                                </a>
+                            </div>
+                        </div>
+                    </form>
+                </div>
+            </div>
+        </div>
+    </div>
+</div> 

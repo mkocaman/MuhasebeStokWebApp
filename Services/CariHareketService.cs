@@ -239,5 +239,155 @@ namespace MuhasebeStokWebApp.Services
             
             return true;
         }
+
+        /// <summary>
+        /// Cari hareket kaydını günceller
+        /// </summary>
+        public async Task<CariHareket> UpdateHareketAsync(CariHareket hareket)
+        {
+            if (hareket == null)
+                throw new ArgumentNullException(nameof(hareket));
+
+            // Mevcut hareketi kontrol et
+            var mevcutHareket = await _context.CariHareketler
+                .FirstOrDefaultAsync(ch => ch.CariHareketID == hareket.CariHareketID && !ch.Silindi);
+
+            if (mevcutHareket == null)
+                throw new InvalidOperationException($"Güncellenecek cari hareket bulunamadı. ID: {hareket.CariHareketID}");
+
+            // Değerleri güncelle
+            mevcutHareket.Tarih = hareket.Tarih;
+            mevcutHareket.Aciklama = hareket.Aciklama;
+            mevcutHareket.Borc = hareket.Borc;
+            mevcutHareket.Alacak = hareket.Alacak;
+            mevcutHareket.Tutar = hareket.Tutar;
+            mevcutHareket.GuncellemeTarihi = DateTime.Now;
+
+            _context.CariHareketler.Update(mevcutHareket);
+            await _context.SaveChangesAsync();
+
+            await _logService.Log(
+                $"Cari hareket güncellendi: CariHareketID: {mevcutHareket.CariHareketID}, Tutar: {mevcutHareket.Tutar}",
+                LogTuru.Bilgi
+            );
+
+            return mevcutHareket;
+        }
+
+        /// <summary>
+        /// Cari hareket kaydını siler (soft delete)
+        /// </summary>
+        public async Task<bool> DeleteHareketAsync(Guid id)
+        {
+            var hareket = await _context.CariHareketler
+                .FirstOrDefaultAsync(ch => ch.CariHareketID == id && !ch.Silindi);
+
+            if (hareket == null)
+            {
+                _logger.LogWarning($"Silinecek cari hareket bulunamadı. ID: {id}");
+                return false;
+            }
+
+            // Soft delete işlemi
+            hareket.Silindi = true;
+            hareket.GuncellemeTarihi = DateTime.Now;
+            hareket.Aciklama += " (Silindi)";
+
+            _context.CariHareketler.Update(hareket);
+            await _context.SaveChangesAsync();
+
+            await _logService.Log(
+                $"Cari hareket silindi: CariHareketID: {hareket.CariHareketID}, CariID: {hareket.CariID}, Tutar: {hareket.Tutar}",
+                LogTuru.Bilgi
+            );
+
+            return true;
+        }
+
+        /// <summary>
+        /// Referans bilgilerine göre cari hareket kaydını bulur (KasaHareket, BankaHareket vs.)
+        /// </summary>
+        public async Task<CariHareket> GetByReferenceAsync(Guid referansId, string referansTuru)
+        {
+            return await _context.CariHareketler
+                .Include(c => c.Cari)
+                .FirstOrDefaultAsync(c => c.ReferansID == referansId && c.ReferansTuru == referansTuru && !c.Silindi);
+        }
+
+        /// <summary>
+        /// Kasa hareketi silme işlemi için bağlı cari hareket kaydını iptal eder
+        /// </summary>
+        public async Task<bool> IptalEtCariHareketFromKasaAsync(Guid kasaHareketId)
+        {
+            // Kasa hareketine ait cari hareketleri bul
+            var cariHareketler = await _context.CariHareketler
+                .Where(ch => ch.ReferansID == kasaHareketId && ch.ReferansTuru == "KasaHareket" && !ch.Silindi)
+                .ToListAsync();
+            
+            if (cariHareketler == null || !cariHareketler.Any())
+            {
+                _logger.LogWarning($"KasaHareketID: {kasaHareketId} için iptal edilecek cari hareket bulunamadı.");
+                return false;
+            }
+            
+            foreach (var hareket in cariHareketler)
+            {
+                // Cari hareketi silinmiş olarak işaretle
+                hareket.Silindi = true;
+                hareket.GuncellemeTarihi = DateTime.Now;
+                hareket.Aciklama += " (İptal edildi - Kasa Hareketi Silindi)";
+                
+                _context.CariHareketler.Update(hareket);
+                
+                _logger.LogInformation($"Kasa hareketine bağlı cari hareket iptal edildi: CariHareketID: {hareket.CariHareketID}, KasaHareketID: {kasaHareketId}");
+            }
+            
+            await _context.SaveChangesAsync();
+            
+            await _logService.Log(
+                $"Kasa hareketi silme işlemi için {cariHareketler.Count} adet cari hareket iptal edildi. KasaHareketID: {kasaHareketId}",
+                LogTuru.Bilgi
+            );
+            
+            return true;
+        }
+
+        /// <summary>
+        /// Banka hareketi silme işlemi için bağlı cari hareket kaydını iptal eder
+        /// </summary>
+        public async Task<bool> IptalEtCariHareketFromBankaAsync(Guid bankaHareketId)
+        {
+            // Banka hareketine ait cari hareketleri bul
+            var cariHareketler = await _context.CariHareketler
+                .Where(ch => ch.ReferansID == bankaHareketId && ch.ReferansTuru == "BankaHareket" && !ch.Silindi)
+                .ToListAsync();
+            
+            if (cariHareketler == null || !cariHareketler.Any())
+            {
+                _logger.LogWarning($"BankaHareketID: {bankaHareketId} için iptal edilecek cari hareket bulunamadı.");
+                return false;
+            }
+            
+            foreach (var hareket in cariHareketler)
+            {
+                // Cari hareketi silinmiş olarak işaretle
+                hareket.Silindi = true;
+                hareket.GuncellemeTarihi = DateTime.Now;
+                hareket.Aciklama += " (İptal edildi - Banka Hareketi Silindi)";
+                
+                _context.CariHareketler.Update(hareket);
+                
+                _logger.LogInformation($"Banka hareketine bağlı cari hareket iptal edildi: CariHareketID: {hareket.CariHareketID}, BankaHareketID: {bankaHareketId}");
+            }
+            
+            await _context.SaveChangesAsync();
+            
+            await _logService.Log(
+                $"Banka hareketi silme işlemi için {cariHareketler.Count} adet cari hareket iptal edildi. BankaHareketID: {bankaHareketId}",
+                LogTuru.Bilgi
+            );
+            
+            return true;
+        }
     }
 } 
