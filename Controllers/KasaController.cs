@@ -17,6 +17,7 @@ using MuhasebeStokWebApp.Services.Interfaces;
 using System.Security.Claims;
 using MuhasebeStokWebApp.ViewModels.Doviz;
 using MuhasebeStokWebApp.ViewModels.Transfer;
+using System.Globalization;
 
 namespace MuhasebeStokWebApp.Controllers
 {
@@ -1285,7 +1286,9 @@ namespace MuhasebeStokWebApp.Controllers
                     new SelectListItem { Text = "Giriş", Value = "Giriş" },
                     new SelectListItem { Text = "Çıkış", Value = "Çıkış" }
                 };
-                
+                decimal? dovizKuru = hareket.DovizKuru;
+                string formattedKur = hareket.DovizKuru.ToString("N4", new CultureInfo("tr-TR"));
+                decimal? yeniKur = decimal.Parse(formattedKur, new CultureInfo("tr-TR"));
                 // Entity'yi ViewModel'e dönüştür
                 var viewModel = new KasaHareketViewModel
                 {
@@ -1304,17 +1307,11 @@ namespace MuhasebeStokWebApp.Controllers
                     TransferID = hareket.TransferID,
                     HedefKasaID = hareket.HedefKasaID,
                     KaynakBankaID = hareket.KaynakBankaID,
-                    DovizKuru = hareket.DovizKuru,
+                    DovizKuru = yeniKur,
                     KarsiParaBirimi = hareket.KarsiParaBirimi,
                     CariIleDengelensin = hareket.CariID.HasValue
                 };
 
-                if (viewModel.ReferansTuru == "")
-                    viewModel.ReferansTuru = "a";
-                if (viewModel.IslemTuru == "")
-                    viewModel.IslemTuru = "a";
-                if (viewModel.KarsiParaBirimi == "")
-                    viewModel.KarsiParaBirimi = "TRY";
                 // Transfer işlemi mi kontrol et
                 bool isTransfer = hareket.ReferansTuru == "Transfer";
                 

@@ -329,6 +329,7 @@ namespace MuhasebeStokWebApp.Controllers
                 ReferansNo = model.ReferansNo,
                 ReferansTuru = "Transfer",
                 TransferID = model.TransferID,
+                DekontNo = model.ReferansNo,
                 KaynakKasaID = kaynakKasa.KasaID,
                 KarsiParaBirimi = kaynakKasa.ParaBirimi,
                 IslemYapanKullaniciID = GetCurrentUserId(),
@@ -340,12 +341,23 @@ namespace MuhasebeStokWebApp.Controllers
             hedefBankaHesap.GuncelBakiye += hedefTutar;
 
             // Veritabanına kaydet
-            await _unitOfWork.Repository<KasaHareket>().AddAsync(kasaHareket);
-            _context.BankaHesapHareketleri.Add(bankaHesapHareket);
-            _unitOfWork.Repository<Kasa>().Update(kaynakKasa);
-            _context.BankaHesaplari.Update(hedefBankaHesap);
-            await _unitOfWork.CompleteAsync();
-            await _context.SaveChangesAsync();
+            try
+            {
+                await _unitOfWork.Repository<KasaHareket>().AddAsync(kasaHareket);
+                _context.BankaHesapHareketleri.Add(bankaHesapHareket);
+                _unitOfWork.Repository<Kasa>().Update(kaynakKasa);
+                _context.BankaHesaplari.Update(hedefBankaHesap);
+
+                await _unitOfWork.CompleteAsync();
+                await _context.SaveChangesAsync();
+            }
+            catch (DbUpdateException ex)
+            {
+                // Inner exception'daki gerçek SQL hatasını al
+                var sqlEx = ex.InnerException?.Message ?? ex.Message;
+                Console.WriteLine("Veritabanı güncelleme hatası: " + sqlEx);
+                throw;
+            }
         }
 
         // Bankadan Kasaya Transfer
@@ -387,6 +399,7 @@ namespace MuhasebeStokWebApp.Controllers
                 HareketTuru = "Para Çekme",
                 Tutar = model.Tutar,
                 Tarih = model.Tarih,
+                DekontNo = model.ReferansNo,
                 Aciklama = model.Aciklama ?? $"Bankadan kasaya transfer: {kaynakBankaHesap.Banka.BankaAdi} - {kaynakBankaHesap.HesapAdi} -> {hedefKasa.KasaAdi}",
                 ReferansNo = model.ReferansNo,
                 ReferansTuru = "Transfer",
@@ -476,6 +489,7 @@ namespace MuhasebeStokWebApp.Controllers
                 Tarih = model.Tarih,
                 Aciklama = model.Aciklama ?? $"Bankadan bankaya transfer: {kaynakBankaHesap.Banka.BankaAdi} - {kaynakBankaHesap.HesapAdi} -> {hedefBankaHesap.Banka.BankaAdi} - {hedefBankaHesap.HesapAdi}",
                 ReferansNo = model.ReferansNo,
+                DekontNo = model.ReferansNo,
                 ReferansTuru = "Transfer",
                 TransferID = model.TransferID,
                 KarsiParaBirimi = hedefBankaHesap.ParaBirimi,
@@ -494,6 +508,7 @@ namespace MuhasebeStokWebApp.Controllers
                 Tarih = model.Tarih,
                 Aciklama = model.Aciklama ?? $"Bankadan bankaya transfer: {kaynakBankaHesap.Banka.BankaAdi} - {kaynakBankaHesap.HesapAdi} -> {hedefBankaHesap.Banka.BankaAdi} - {hedefBankaHesap.HesapAdi}",
                 ReferansNo = model.ReferansNo,
+                DekontNo = model.ReferansNo,
                 ReferansTuru = "Transfer",
                 TransferID = model.TransferID,
                 KarsiParaBirimi = kaynakBankaHesap.ParaBirimi,

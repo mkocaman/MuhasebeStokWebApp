@@ -1,0 +1,664 @@
+2025-06-03 16:42:39.857 +03:00 [INF] Veritabanına bağlantı başarılı. Migrationlar uygulanıyor...
+2025-06-03 16:42:41.340 +03:00 [INF] Veritabanı işlemleri başarıyla tamamlandı.
+2025-06-03 16:42:41.615 +03:00 [INF] Todo Hatırlatıcı Servisi başlatıldı.
+2025-06-03 16:42:41.617 +03:00 [INF] Yaklaşan hatırlatıcılar kontrol ediliyor...
+2025-06-03 16:42:41.743 +03:00 [INF] Bekleyen hatırlatma bulunamadı.
+2025-06-03 16:42:46.371 +03:00 [INF] Giriş denemesi: admin
+2025-06-03 16:42:46.706 +03:00 [INF] Admin kullanıcısı başarıyla giriş yaptı: admin
+2025-06-03 16:42:46.707 +03:00 [INF] Admin session oluşturuldu: UserID=9e6fc203-37eb-49a7-a470-1551f7bec8b8, UserName=admin
+2025-06-03 16:42:46.708 +03:00 [INF] Yönlendirme adresi: /
+2025-06-03 16:42:46.708 +03:00 [INF] Admin kullanıcısı / adresine yönlendiriliyor
+2025-06-03 16:42:47.088 +03:00 [INF] Aktif session bulundu: UserID=9e6fc203-37eb-49a7-a470-1551f7bec8b8, UserName=admin
+2025-06-03 16:42:47.176 +03:00 [INF] Admin kullanıcısı tespit edildi
+2025-06-03 16:42:47.177 +03:00 [INF] Kimlik doğrulanmış kullanıcı: admin
+2025-06-03 16:42:48.826 +03:00 [INF] TRY dönüşümü için kur değeri hesaplandı: TRY -> USD, Değer: 0.03
+2025-06-03 16:42:49.064 +03:00 [INF] Kur değeri hesaplandı: UZS -> USD, Değer: 0.0000775226832727903141733102
+2025-06-03 16:42:49.740 +03:00 [WRN] Kaynak para birimi kodu bulunamadı: EUR. Varsayılan değer kullanılıyor.
+2025-06-03 16:43:08.443 +03:00 [INF] Kur değeri önbellekten alındı: TRY -> USD, Değer: 0.03
+2025-06-03 16:43:22.794 +03:00 [INF] Kur değeri önbellekten alındı: TRY -> USD, Değer: 0.03
+2025-06-03 16:44:32.335 +03:00 [INF] Veritabanına bağlantı başarılı. Migrationlar uygulanıyor...
+2025-06-03 16:44:33.583 +03:00 [INF] Veritabanı işlemleri başarıyla tamamlandı.
+2025-06-03 16:44:33.828 +03:00 [INF] Todo Hatırlatıcı Servisi başlatıldı.
+2025-06-03 16:44:33.830 +03:00 [INF] Yaklaşan hatırlatıcılar kontrol ediliyor...
+2025-06-03 16:44:33.948 +03:00 [INF] Bekleyen hatırlatma bulunamadı.
+2025-06-03 16:44:45.420 +03:00 [INF] Giriş denemesi: admin
+2025-06-03 16:44:45.724 +03:00 [INF] Admin kullanıcısı başarıyla giriş yaptı: admin
+2025-06-03 16:44:45.725 +03:00 [INF] Admin session oluşturuldu: UserID=9e6fc203-37eb-49a7-a470-1551f7bec8b8, UserName=admin
+2025-06-03 16:44:45.725 +03:00 [INF] Yönlendirme adresi: /
+2025-06-03 16:44:45.726 +03:00 [INF] Admin kullanıcısı / adresine yönlendiriliyor
+2025-06-03 16:44:46.096 +03:00 [INF] Aktif session bulundu: UserID=9e6fc203-37eb-49a7-a470-1551f7bec8b8, UserName=admin
+2025-06-03 16:44:46.244 +03:00 [INF] Admin kullanıcısı tespit edildi
+2025-06-03 16:44:46.244 +03:00 [INF] Kimlik doğrulanmış kullanıcı: admin
+2025-06-03 16:44:47.840 +03:00 [INF] TRY dönüşümü için kur değeri hesaplandı: TRY -> USD, Değer: 0.03
+2025-06-03 16:44:48.059 +03:00 [INF] Kur değeri hesaplandı: UZS -> USD, Değer: 0.0000775226832727903141733102
+2025-06-03 16:44:48.783 +03:00 [WRN] Kaynak para birimi kodu bulunamadı: EUR. Varsayılan değer kullanılıyor.
+2025-06-03 16:45:05.908 +03:00 [INF] Kur değeri önbellekten alındı: TRY -> USD, Değer: 0.03
+2025-06-03 16:45:10.818 +03:00 [INF] Kur değeri önbellekten alındı: TRY -> USD, Değer: 0.03
+2025-06-03 16:46:17.126 +03:00 [INF] Kur değeri önbellekten alındı: TRY -> USD, Değer: 0.03
+2025-06-03 16:49:33.945 +03:00 [INF] Yaklaşan hatırlatıcılar kontrol ediliyor...
+2025-06-03 16:49:33.977 +03:00 [INF] Bekleyen hatırlatma bulunamadı.
+2025-06-03 16:50:33.485 +03:00 [INF] Veritabanına bağlantı başarılı. Migrationlar uygulanıyor...
+2025-06-03 16:50:34.922 +03:00 [INF] Veritabanı işlemleri başarıyla tamamlandı.
+2025-06-03 16:50:35.239 +03:00 [INF] Todo Hatırlatıcı Servisi başlatıldı.
+2025-06-03 16:50:35.242 +03:00 [INF] Yaklaşan hatırlatıcılar kontrol ediliyor...
+2025-06-03 16:50:35.396 +03:00 [INF] Bekleyen hatırlatma bulunamadı.
+2025-06-03 16:50:39.566 +03:00 [INF] Giriş denemesi: admin
+2025-06-03 16:50:39.944 +03:00 [INF] Admin kullanıcısı başarıyla giriş yaptı: admin
+2025-06-03 16:50:39.945 +03:00 [INF] Admin session oluşturuldu: UserID=9e6fc203-37eb-49a7-a470-1551f7bec8b8, UserName=admin
+2025-06-03 16:50:39.945 +03:00 [INF] Yönlendirme adresi: /
+2025-06-03 16:50:39.946 +03:00 [INF] Admin kullanıcısı / adresine yönlendiriliyor
+2025-06-03 16:50:40.366 +03:00 [INF] Aktif session bulundu: UserID=9e6fc203-37eb-49a7-a470-1551f7bec8b8, UserName=admin
+2025-06-03 16:50:40.455 +03:00 [INF] Admin kullanıcısı tespit edildi
+2025-06-03 16:50:40.455 +03:00 [INF] Kimlik doğrulanmış kullanıcı: admin
+2025-06-03 16:50:42.156 +03:00 [INF] TRY dönüşümü için kur değeri hesaplandı: TRY -> USD, Değer: 0.03
+2025-06-03 16:50:42.382 +03:00 [INF] Kur değeri hesaplandı: UZS -> USD, Değer: 0.0000775226832727903141733102
+2025-06-03 16:50:43.084 +03:00 [WRN] Kaynak para birimi kodu bulunamadı: EUR. Varsayılan değer kullanılıyor.
+2025-06-03 16:55:35.405 +03:00 [INF] Yaklaşan hatırlatıcılar kontrol ediliyor...
+2025-06-03 16:55:35.433 +03:00 [INF] Bekleyen hatırlatma bulunamadı.
+2025-06-03 16:57:11.072 +03:00 [INF] Kur değeri önbellekten alındı: TRY -> USD, Değer: 0.03
+2025-06-03 16:57:54.288 +03:00 [INF] Kur değeri önbellekten alındı: TRY -> USD, Değer: 0.03
+2025-06-03 17:04:27.265 +03:00 [INF] Veritabanına bağlantı başarılı. Migrationlar uygulanıyor...
+2025-06-03 17:04:28.514 +03:00 [INF] Veritabanı işlemleri başarıyla tamamlandı.
+2025-06-03 17:04:28.730 +03:00 [INF] Todo Hatırlatıcı Servisi başlatıldı.
+2025-06-03 17:04:28.733 +03:00 [INF] Yaklaşan hatırlatıcılar kontrol ediliyor...
+2025-06-03 17:04:28.841 +03:00 [INF] Bekleyen hatırlatma bulunamadı.
+2025-06-03 17:04:30.275 +03:00 [ERR] Hata: 00-6bf8478013fb4998e41ef22bb88ea9b4-b58eb15aa90b67f8-00, Kullanıcı: anonymous, Path: /Account/Login, Method: GET, QueryString: ?ReturnUrl=%2F, IP: ::1, UserAgent: Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/137.0.0.0 Safari/537.36
+System.InvalidOperationException: No service for type 'Microsoft.AspNetCore.Localization.IRequestCultureFeature' has been registered.
+   at Microsoft.Extensions.DependencyInjection.ServiceProviderServiceExtensions.GetRequiredService(IServiceProvider provider, Type serviceType)
+   at Microsoft.AspNetCore.Mvc.Razor.RazorPagePropertyActivator.<>c__DisplayClass8_0.<CreateActivateInfo>b__2(ViewContext context)
+   at Microsoft.Extensions.Internal.PropertyActivator`1.Activate(Object instance, TContext context)
+   at Microsoft.AspNetCore.Mvc.Razor.RazorPagePropertyActivator.Activate(Object page, ViewContext context)
+   at Microsoft.AspNetCore.Mvc.Razor.RazorView.RenderPageCoreAsync(IRazorPage page, ViewContext context)
+   at Microsoft.AspNetCore.Mvc.Razor.RazorView.RenderViewStartsAsync(ViewContext context)
+   at Microsoft.AspNetCore.Mvc.Razor.RazorView.RenderPageAsync(IRazorPage page, ViewContext context, Boolean invokeViewStarts)
+   at Microsoft.AspNetCore.Mvc.Razor.RazorView.RenderAsync(ViewContext context)
+   at Microsoft.AspNetCore.Mvc.ViewFeatures.ViewExecutor.ExecuteAsync(ViewContext viewContext, String contentType, Nullable`1 statusCode)
+   at Microsoft.AspNetCore.Mvc.ViewFeatures.ViewExecutor.ExecuteAsync(ViewContext viewContext, String contentType, Nullable`1 statusCode)
+   at Microsoft.AspNetCore.Mvc.ViewFeatures.ViewExecutor.ExecuteAsync(ActionContext actionContext, IView view, ViewDataDictionary viewData, ITempDataDictionary tempData, String contentType, Nullable`1 statusCode)
+   at Microsoft.AspNetCore.Mvc.ViewFeatures.ViewResultExecutor.ExecuteAsync(ActionContext context, ViewResult result)
+   at Microsoft.AspNetCore.Mvc.ViewResult.ExecuteResultAsync(ActionContext context)
+   at Microsoft.AspNetCore.Mvc.Infrastructure.ResourceInvoker.<InvokeNextResultFilterAsync>g__Awaited|30_0[TFilter,TFilterAsync](ResourceInvoker invoker, Task lastTask, State next, Scope scope, Object state, Boolean isCompleted)
+   at Microsoft.AspNetCore.Mvc.Infrastructure.ResourceInvoker.Rethrow(ResultExecutedContextSealed context)
+   at Microsoft.AspNetCore.Mvc.Infrastructure.ResourceInvoker.ResultNext[TFilter,TFilterAsync](State& next, Scope& scope, Object& state, Boolean& isCompleted)
+   at Microsoft.AspNetCore.Mvc.Infrastructure.ResourceInvoker.InvokeResultFilters()
+--- End of stack trace from previous location ---
+   at Microsoft.AspNetCore.Mvc.Infrastructure.ResourceInvoker.<InvokeNextResourceFilter>g__Awaited|25_0(ResourceInvoker invoker, Task lastTask, State next, Scope scope, Object state, Boolean isCompleted)
+   at Microsoft.AspNetCore.Mvc.Infrastructure.ResourceInvoker.Rethrow(ResourceExecutedContextSealed context)
+   at Microsoft.AspNetCore.Mvc.Infrastructure.ResourceInvoker.Next(State& next, Scope& scope, Object& state, Boolean& isCompleted)
+   at Microsoft.AspNetCore.Mvc.Infrastructure.ResourceInvoker.InvokeFilterPipelineAsync()
+--- End of stack trace from previous location ---
+   at Microsoft.AspNetCore.Mvc.Infrastructure.ResourceInvoker.<InvokeAsync>g__Awaited|17_0(ResourceInvoker invoker, Task task, IDisposable scope)
+   at Microsoft.AspNetCore.Mvc.Infrastructure.ResourceInvoker.<InvokeAsync>g__Awaited|17_0(ResourceInvoker invoker, Task task, IDisposable scope)
+   at Microsoft.AspNetCore.Localization.RequestLocalizationMiddleware.Invoke(HttpContext context)
+   at MuhasebeStokWebApp.Middleware.GlobalExceptionHandlingMiddleware.InvokeAsync(HttpContext context) in D:\cursor-workspace\MuhasebeStokWebApp\Middleware\GlobalExceptionHandlingMiddleware.cs:line 38
+2025-06-03 17:05:19.196 +03:00 [INF] Veritabanına bağlantı başarılı. Migrationlar uygulanıyor...
+2025-06-03 17:05:20.399 +03:00 [INF] Veritabanı işlemleri başarıyla tamamlandı.
+2025-06-03 17:05:20.642 +03:00 [INF] Todo Hatırlatıcı Servisi başlatıldı.
+2025-06-03 17:05:20.645 +03:00 [INF] Yaklaşan hatırlatıcılar kontrol ediliyor...
+2025-06-03 17:05:20.777 +03:00 [INF] Bekleyen hatırlatma bulunamadı.
+2025-06-03 17:05:23.805 +03:00 [INF] Giriş denemesi: admin
+2025-06-03 17:05:24.172 +03:00 [INF] Admin kullanıcısı başarıyla giriş yaptı: admin
+2025-06-03 17:05:24.173 +03:00 [INF] Admin session oluşturuldu: UserID=9e6fc203-37eb-49a7-a470-1551f7bec8b8, UserName=admin
+2025-06-03 17:05:24.174 +03:00 [INF] Yönlendirme adresi: /
+2025-06-03 17:05:24.175 +03:00 [INF] Admin kullanıcısı / adresine yönlendiriliyor
+2025-06-03 17:05:24.651 +03:00 [INF] Aktif session bulundu: UserID=9e6fc203-37eb-49a7-a470-1551f7bec8b8, UserName=admin
+2025-06-03 17:05:24.769 +03:00 [INF] Admin kullanıcısı tespit edildi
+2025-06-03 17:05:24.770 +03:00 [INF] Kimlik doğrulanmış kullanıcı: admin
+2025-06-03 17:05:26.562 +03:00 [INF] TRY dönüşümü için kur değeri hesaplandı: TRY -> USD, Değer: 0.03
+2025-06-03 17:05:26.790 +03:00 [INF] Kur değeri hesaplandı: UZS -> USD, Değer: 0.0000775226832727903141733102
+2025-06-03 17:05:27.463 +03:00 [WRN] Kaynak para birimi kodu bulunamadı: EUR. Varsayılan değer kullanılıyor.
+2025-06-03 17:10:20.790 +03:00 [INF] Yaklaşan hatırlatıcılar kontrol ediliyor...
+2025-06-03 17:10:20.821 +03:00 [INF] Bekleyen hatırlatma bulunamadı.
+2025-06-03 17:15:20.829 +03:00 [INF] Yaklaşan hatırlatıcılar kontrol ediliyor...
+2025-06-03 17:15:20.978 +03:00 [INF] Bekleyen hatırlatma bulunamadı.
+2025-06-03 17:20:20.981 +03:00 [INF] Yaklaşan hatırlatıcılar kontrol ediliyor...
+2025-06-03 17:20:21.016 +03:00 [INF] Bekleyen hatırlatma bulunamadı.
+2025-06-03 17:25:21.028 +03:00 [INF] Yaklaşan hatırlatıcılar kontrol ediliyor...
+2025-06-03 17:25:21.056 +03:00 [INF] Bekleyen hatırlatma bulunamadı.
+2025-06-03 17:30:21.055 +03:00 [INF] Yaklaşan hatırlatıcılar kontrol ediliyor...
+2025-06-03 17:30:21.205 +03:00 [INF] Bekleyen hatırlatma bulunamadı.
+2025-06-03 17:35:21.213 +03:00 [INF] Yaklaşan hatırlatıcılar kontrol ediliyor...
+2025-06-03 17:35:21.246 +03:00 [INF] Bekleyen hatırlatma bulunamadı.
+2025-06-03 17:40:21.261 +03:00 [INF] Yaklaşan hatırlatıcılar kontrol ediliyor...
+2025-06-03 17:40:21.414 +03:00 [INF] Bekleyen hatırlatma bulunamadı.
+2025-06-03 17:42:55.524 +03:00 [INF] Veritabanına bağlantı başarılı. Migrationlar uygulanıyor...
+2025-06-03 17:42:56.813 +03:00 [INF] Veritabanı işlemleri başarıyla tamamlandı.
+2025-06-03 17:42:57.071 +03:00 [INF] Todo Hatırlatıcı Servisi başlatıldı.
+2025-06-03 17:42:57.074 +03:00 [INF] Yaklaşan hatırlatıcılar kontrol ediliyor...
+2025-06-03 17:42:57.207 +03:00 [INF] Bekleyen hatırlatma bulunamadı.
+2025-06-03 17:43:09.847 +03:00 [INF] Giriş denemesi: admin
+2025-06-03 17:43:10.194 +03:00 [INF] Admin kullanıcısı başarıyla giriş yaptı: admin
+2025-06-03 17:43:10.195 +03:00 [INF] Admin session oluşturuldu: UserID=9e6fc203-37eb-49a7-a470-1551f7bec8b8, UserName=admin
+2025-06-03 17:43:10.196 +03:00 [INF] Yönlendirme adresi: /
+2025-06-03 17:43:10.197 +03:00 [INF] Admin kullanıcısı / adresine yönlendiriliyor
+2025-06-03 17:43:10.597 +03:00 [INF] Aktif session bulundu: UserID=9e6fc203-37eb-49a7-a470-1551f7bec8b8, UserName=admin
+2025-06-03 17:43:10.695 +03:00 [INF] Admin kullanıcısı tespit edildi
+2025-06-03 17:43:10.696 +03:00 [INF] Kimlik doğrulanmış kullanıcı: admin
+2025-06-03 17:43:12.460 +03:00 [INF] TRY dönüşümü için kur değeri hesaplandı: TRY -> USD, Değer: 0.03
+2025-06-03 17:43:12.714 +03:00 [INF] Kur değeri hesaplandı: UZS -> USD, Değer: 0.0000775226832727903141733102
+2025-06-03 17:43:13.399 +03:00 [WRN] Kaynak para birimi kodu bulunamadı: EUR. Varsayılan değer kullanılıyor.
+2025-06-03 17:47:57.211 +03:00 [INF] Yaklaşan hatırlatıcılar kontrol ediliyor...
+2025-06-03 17:47:57.244 +03:00 [INF] Bekleyen hatırlatma bulunamadı.
+2025-06-03 17:52:57.255 +03:00 [INF] Yaklaşan hatırlatıcılar kontrol ediliyor...
+2025-06-03 17:52:57.412 +03:00 [INF] Bekleyen hatırlatma bulunamadı.
+2025-06-03 17:55:41.778 +03:00 [WRN] Unable to configure Browser Link script injection on the response. 
+2025-06-03 17:55:49.095 +03:00 [INF] Kur değeri önbellekten alındı: TRY -> USD, Değer: 0.03
+2025-06-03 17:55:56.024 +03:00 [INF] TRY dönüşümü için kur değeri hesaplandı: USD -> TRY, Değer: 33.33
+2025-06-03 17:57:17.103 +03:00 [INF] Veritabanına bağlantı başarılı. Migrationlar uygulanıyor...
+2025-06-03 17:57:18.295 +03:00 [INF] Veritabanı işlemleri başarıyla tamamlandı.
+2025-06-03 17:57:18.521 +03:00 [INF] Todo Hatırlatıcı Servisi başlatıldı.
+2025-06-03 17:57:18.524 +03:00 [INF] Yaklaşan hatırlatıcılar kontrol ediliyor...
+2025-06-03 17:57:18.665 +03:00 [INF] Bekleyen hatırlatma bulunamadı.
+2025-06-03 17:57:39.515 +03:00 [INF] Giriş denemesi: admin
+2025-06-03 17:57:39.818 +03:00 [INF] Admin kullanıcısı başarıyla giriş yaptı: admin
+2025-06-03 17:57:39.819 +03:00 [INF] Admin session oluşturuldu: UserID=9e6fc203-37eb-49a7-a470-1551f7bec8b8, UserName=admin
+2025-06-03 17:57:39.820 +03:00 [INF] Yönlendirme adresi: /
+2025-06-03 17:57:39.821 +03:00 [INF] Admin kullanıcısı / adresine yönlendiriliyor
+2025-06-03 17:57:40.182 +03:00 [INF] Aktif session bulundu: UserID=9e6fc203-37eb-49a7-a470-1551f7bec8b8, UserName=admin
+2025-06-03 17:57:40.272 +03:00 [INF] Admin kullanıcısı tespit edildi
+2025-06-03 17:57:40.273 +03:00 [INF] Kimlik doğrulanmış kullanıcı: admin
+2025-06-03 17:57:41.824 +03:00 [INF] TRY dönüşümü için kur değeri hesaplandı: TRY -> USD, Değer: 0.03
+2025-06-03 17:57:42.040 +03:00 [INF] Kur değeri hesaplandı: UZS -> USD, Değer: 0.0000775226832727903141733102
+2025-06-03 17:57:42.687 +03:00 [WRN] Kaynak para birimi kodu bulunamadı: EUR. Varsayılan değer kullanılıyor.
+2025-06-03 18:00:07.743 +03:00 [WRN] Unable to configure Browser Link script injection on the response. 
+2025-06-03 18:00:11.566 +03:00 [INF] TRY dönüşümü için kur değeri hesaplandı: USD -> TRY, Değer: 33.33
+2025-06-03 18:00:24.152 +03:00 [WRN] Hedef para birimi kodu bulunamadı: EUR. Varsayılan değer kullanılıyor.
+2025-06-03 18:00:24.153 +03:00 [INF] Kur değeri hesaplandı: USD -> EUR, Değer: 1
+2025-06-03 18:00:34.961 +03:00 [ERR] An exception occurred in the database while saving changes for context type 'MuhasebeStokWebApp.Data.ApplicationDbContext'.
+Microsoft.EntityFrameworkCore.DbUpdateException: An error occurred while saving the entity changes. See the inner exception for details.
+ ---> Microsoft.Data.SqlClient.SqlException (0x80131904): NULL değeri 'MuhasebeStokDB.dbo.BankaHesapHareketleri' tablosunun 'DekontNo' sütununa eklemez; sütun null değerlere izin vermiyor. INSERT başarısız.
+   at Microsoft.Data.SqlClient.SqlConnection.OnError(SqlException exception, Boolean breakConnection, Action`1 wrapCloseInAction)
+   at Microsoft.Data.SqlClient.SqlInternalConnection.OnError(SqlException exception, Boolean breakConnection, Action`1 wrapCloseInAction)
+   at Microsoft.Data.SqlClient.TdsParser.ThrowExceptionAndWarning(TdsParserStateObject stateObj, Boolean callerHasConnectionLock, Boolean asyncClose)
+   at Microsoft.Data.SqlClient.TdsParser.TryRun(RunBehavior runBehavior, SqlCommand cmdHandler, SqlDataReader dataStream, BulkCopySimpleResultSet bulkCopyHandler, TdsParserStateObject stateObj, Boolean& dataReady)
+   at Microsoft.Data.SqlClient.SqlDataReader.TryHasMoreRows(Boolean& moreRows)
+   at Microsoft.Data.SqlClient.SqlDataReader.TryReadInternal(Boolean setTimeout, Boolean& more)
+   at Microsoft.Data.SqlClient.SqlDataReader.ReadAsyncExecute(Task task, Object state)
+   at Microsoft.Data.SqlClient.SqlDataReader.InvokeAsyncCall[T](SqlDataReaderBaseAsyncCallContext`1 context)
+--- End of stack trace from previous location ---
+   at Microsoft.EntityFrameworkCore.Update.AffectedCountModificationCommandBatch.ConsumeResultSetAsync(Int32 startCommandIndex, RelationalDataReader reader, CancellationToken cancellationToken)
+ClientConnectionId:c8322d78-b7fd-4e83-bde7-32fb42f00494
+Error Number:515,State:2,Class:16
+   --- End of inner exception stack trace ---
+   at Microsoft.EntityFrameworkCore.Update.AffectedCountModificationCommandBatch.ConsumeResultSetAsync(Int32 startCommandIndex, RelationalDataReader reader, CancellationToken cancellationToken)
+   at Microsoft.EntityFrameworkCore.Update.AffectedCountModificationCommandBatch.ConsumeAsync(RelationalDataReader reader, CancellationToken cancellationToken)
+   at Microsoft.EntityFrameworkCore.Update.ReaderModificationCommandBatch.ExecuteAsync(IRelationalConnection connection, CancellationToken cancellationToken)
+   at Microsoft.EntityFrameworkCore.Update.ReaderModificationCommandBatch.ExecuteAsync(IRelationalConnection connection, CancellationToken cancellationToken)
+   at Microsoft.EntityFrameworkCore.SqlServer.Update.Internal.SqlServerModificationCommandBatch.ExecuteAsync(IRelationalConnection connection, CancellationToken cancellationToken)
+   at Microsoft.EntityFrameworkCore.Update.Internal.BatchExecutor.ExecuteAsync(IEnumerable`1 commandBatches, IRelationalConnection connection, CancellationToken cancellationToken)
+   at Microsoft.EntityFrameworkCore.Update.Internal.BatchExecutor.ExecuteAsync(IEnumerable`1 commandBatches, IRelationalConnection connection, CancellationToken cancellationToken)
+   at Microsoft.EntityFrameworkCore.Update.Internal.BatchExecutor.ExecuteAsync(IEnumerable`1 commandBatches, IRelationalConnection connection, CancellationToken cancellationToken)
+   at Microsoft.EntityFrameworkCore.Storage.RelationalDatabase.SaveChangesAsync(IList`1 entries, CancellationToken cancellationToken)
+   at Microsoft.EntityFrameworkCore.ChangeTracking.Internal.StateManager.SaveChangesAsync(IList`1 entriesToSave, CancellationToken cancellationToken)
+   at Microsoft.EntityFrameworkCore.ChangeTracking.Internal.StateManager.SaveChangesAsync(StateManager stateManager, Boolean acceptAllChangesOnSuccess, CancellationToken cancellationToken)
+   at Microsoft.EntityFrameworkCore.SqlServer.Storage.Internal.SqlServerExecutionStrategy.ExecuteAsync[TState,TResult](TState state, Func`4 operation, Func`4 verifySucceeded, CancellationToken cancellationToken)
+   at Microsoft.EntityFrameworkCore.DbContext.SaveChangesAsync(Boolean acceptAllChangesOnSuccess, CancellationToken cancellationToken)
+Microsoft.EntityFrameworkCore.DbUpdateException: An error occurred while saving the entity changes. See the inner exception for details.
+ ---> Microsoft.Data.SqlClient.SqlException (0x80131904): NULL değeri 'MuhasebeStokDB.dbo.BankaHesapHareketleri' tablosunun 'DekontNo' sütununa eklemez; sütun null değerlere izin vermiyor. INSERT başarısız.
+   at Microsoft.Data.SqlClient.SqlConnection.OnError(SqlException exception, Boolean breakConnection, Action`1 wrapCloseInAction)
+   at Microsoft.Data.SqlClient.SqlInternalConnection.OnError(SqlException exception, Boolean breakConnection, Action`1 wrapCloseInAction)
+   at Microsoft.Data.SqlClient.TdsParser.ThrowExceptionAndWarning(TdsParserStateObject stateObj, Boolean callerHasConnectionLock, Boolean asyncClose)
+   at Microsoft.Data.SqlClient.TdsParser.TryRun(RunBehavior runBehavior, SqlCommand cmdHandler, SqlDataReader dataStream, BulkCopySimpleResultSet bulkCopyHandler, TdsParserStateObject stateObj, Boolean& dataReady)
+   at Microsoft.Data.SqlClient.SqlDataReader.TryHasMoreRows(Boolean& moreRows)
+   at Microsoft.Data.SqlClient.SqlDataReader.TryReadInternal(Boolean setTimeout, Boolean& more)
+   at Microsoft.Data.SqlClient.SqlDataReader.ReadAsyncExecute(Task task, Object state)
+   at Microsoft.Data.SqlClient.SqlDataReader.InvokeAsyncCall[T](SqlDataReaderBaseAsyncCallContext`1 context)
+--- End of stack trace from previous location ---
+   at Microsoft.EntityFrameworkCore.Update.AffectedCountModificationCommandBatch.ConsumeResultSetAsync(Int32 startCommandIndex, RelationalDataReader reader, CancellationToken cancellationToken)
+ClientConnectionId:c8322d78-b7fd-4e83-bde7-32fb42f00494
+Error Number:515,State:2,Class:16
+   --- End of inner exception stack trace ---
+   at Microsoft.EntityFrameworkCore.Update.AffectedCountModificationCommandBatch.ConsumeResultSetAsync(Int32 startCommandIndex, RelationalDataReader reader, CancellationToken cancellationToken)
+   at Microsoft.EntityFrameworkCore.Update.AffectedCountModificationCommandBatch.ConsumeAsync(RelationalDataReader reader, CancellationToken cancellationToken)
+   at Microsoft.EntityFrameworkCore.Update.ReaderModificationCommandBatch.ExecuteAsync(IRelationalConnection connection, CancellationToken cancellationToken)
+   at Microsoft.EntityFrameworkCore.Update.ReaderModificationCommandBatch.ExecuteAsync(IRelationalConnection connection, CancellationToken cancellationToken)
+   at Microsoft.EntityFrameworkCore.SqlServer.Update.Internal.SqlServerModificationCommandBatch.ExecuteAsync(IRelationalConnection connection, CancellationToken cancellationToken)
+   at Microsoft.EntityFrameworkCore.Update.Internal.BatchExecutor.ExecuteAsync(IEnumerable`1 commandBatches, IRelationalConnection connection, CancellationToken cancellationToken)
+   at Microsoft.EntityFrameworkCore.Update.Internal.BatchExecutor.ExecuteAsync(IEnumerable`1 commandBatches, IRelationalConnection connection, CancellationToken cancellationToken)
+   at Microsoft.EntityFrameworkCore.Update.Internal.BatchExecutor.ExecuteAsync(IEnumerable`1 commandBatches, IRelationalConnection connection, CancellationToken cancellationToken)
+   at Microsoft.EntityFrameworkCore.Storage.RelationalDatabase.SaveChangesAsync(IList`1 entries, CancellationToken cancellationToken)
+   at Microsoft.EntityFrameworkCore.ChangeTracking.Internal.StateManager.SaveChangesAsync(IList`1 entriesToSave, CancellationToken cancellationToken)
+   at Microsoft.EntityFrameworkCore.ChangeTracking.Internal.StateManager.SaveChangesAsync(StateManager stateManager, Boolean acceptAllChangesOnSuccess, CancellationToken cancellationToken)
+   at Microsoft.EntityFrameworkCore.SqlServer.Storage.Internal.SqlServerExecutionStrategy.ExecuteAsync[TState,TResult](TState state, Func`4 operation, Func`4 verifySucceeded, CancellationToken cancellationToken)
+   at Microsoft.EntityFrameworkCore.DbContext.SaveChangesAsync(Boolean acceptAllChangesOnSuccess, CancellationToken cancellationToken)
+2025-06-03 18:00:35.205 +03:00 [ERR] Transfer işlemi sırasında hata oluştu.
+Microsoft.EntityFrameworkCore.DbUpdateException: An error occurred while saving the entity changes. See the inner exception for details.
+ ---> Microsoft.Data.SqlClient.SqlException (0x80131904): NULL değeri 'MuhasebeStokDB.dbo.BankaHesapHareketleri' tablosunun 'DekontNo' sütununa eklemez; sütun null değerlere izin vermiyor. INSERT başarısız.
+   at Microsoft.Data.SqlClient.SqlConnection.OnError(SqlException exception, Boolean breakConnection, Action`1 wrapCloseInAction)
+   at Microsoft.Data.SqlClient.SqlInternalConnection.OnError(SqlException exception, Boolean breakConnection, Action`1 wrapCloseInAction)
+   at Microsoft.Data.SqlClient.TdsParser.ThrowExceptionAndWarning(TdsParserStateObject stateObj, Boolean callerHasConnectionLock, Boolean asyncClose)
+   at Microsoft.Data.SqlClient.TdsParser.TryRun(RunBehavior runBehavior, SqlCommand cmdHandler, SqlDataReader dataStream, BulkCopySimpleResultSet bulkCopyHandler, TdsParserStateObject stateObj, Boolean& dataReady)
+   at Microsoft.Data.SqlClient.SqlDataReader.TryHasMoreRows(Boolean& moreRows)
+   at Microsoft.Data.SqlClient.SqlDataReader.TryReadInternal(Boolean setTimeout, Boolean& more)
+   at Microsoft.Data.SqlClient.SqlDataReader.ReadAsyncExecute(Task task, Object state)
+   at Microsoft.Data.SqlClient.SqlDataReader.InvokeAsyncCall[T](SqlDataReaderBaseAsyncCallContext`1 context)
+--- End of stack trace from previous location ---
+   at Microsoft.EntityFrameworkCore.Update.AffectedCountModificationCommandBatch.ConsumeResultSetAsync(Int32 startCommandIndex, RelationalDataReader reader, CancellationToken cancellationToken)
+ClientConnectionId:c8322d78-b7fd-4e83-bde7-32fb42f00494
+Error Number:515,State:2,Class:16
+   --- End of inner exception stack trace ---
+   at MuhasebeStokWebApp.Controllers.TransferController.YeniTransfer(IcTransferViewModel model) in D:\cursor-workspace\MuhasebeStokWebApp\Controllers\TransferController.cs:line 138
+2025-06-03 18:04:29.421 +03:00 [INF] Yaklaşan hatırlatıcılar kontrol ediliyor...
+2025-06-03 18:04:30.768 +03:00 [INF] Bekleyen hatırlatma bulunamadı.
+2025-06-03 18:04:30.769 +03:00 [ERR] An exception occurred in the database while saving changes for context type 'MuhasebeStokWebApp.Data.ApplicationDbContext'.
+Microsoft.EntityFrameworkCore.DbUpdateException: An error occurred while saving the entity changes. See the inner exception for details.
+ ---> Microsoft.Data.SqlClient.SqlException (0x80131904): NULL değeri 'MuhasebeStokDB.dbo.BankaHesapHareketleri' tablosunun 'DekontNo' sütununa eklemez; sütun null değerlere izin vermiyor. INSERT başarısız.
+   at Microsoft.Data.SqlClient.SqlConnection.OnError(SqlException exception, Boolean breakConnection, Action`1 wrapCloseInAction)
+   at Microsoft.Data.SqlClient.SqlInternalConnection.OnError(SqlException exception, Boolean breakConnection, Action`1 wrapCloseInAction)
+   at Microsoft.Data.SqlClient.TdsParser.ThrowExceptionAndWarning(TdsParserStateObject stateObj, Boolean callerHasConnectionLock, Boolean asyncClose)
+   at Microsoft.Data.SqlClient.TdsParser.TryRun(RunBehavior runBehavior, SqlCommand cmdHandler, SqlDataReader dataStream, BulkCopySimpleResultSet bulkCopyHandler, TdsParserStateObject stateObj, Boolean& dataReady)
+   at Microsoft.Data.SqlClient.SqlDataReader.TryHasMoreRows(Boolean& moreRows)
+   at Microsoft.Data.SqlClient.SqlDataReader.TryReadInternal(Boolean setTimeout, Boolean& more)
+   at Microsoft.Data.SqlClient.SqlDataReader.ReadAsyncExecute(Task task, Object state)
+   at Microsoft.Data.SqlClient.SqlDataReader.InvokeAsyncCall[T](SqlDataReaderBaseAsyncCallContext`1 context)
+--- End of stack trace from previous location ---
+   at Microsoft.EntityFrameworkCore.Update.AffectedCountModificationCommandBatch.ConsumeResultSetAsync(Int32 startCommandIndex, RelationalDataReader reader, CancellationToken cancellationToken)
+ClientConnectionId:c8322d78-b7fd-4e83-bde7-32fb42f00494
+Error Number:515,State:2,Class:16
+   --- End of inner exception stack trace ---
+   at Microsoft.EntityFrameworkCore.Update.AffectedCountModificationCommandBatch.ConsumeResultSetAsync(Int32 startCommandIndex, RelationalDataReader reader, CancellationToken cancellationToken)
+   at Microsoft.EntityFrameworkCore.Update.AffectedCountModificationCommandBatch.ConsumeAsync(RelationalDataReader reader, CancellationToken cancellationToken)
+   at Microsoft.EntityFrameworkCore.Update.ReaderModificationCommandBatch.ExecuteAsync(IRelationalConnection connection, CancellationToken cancellationToken)
+   at Microsoft.EntityFrameworkCore.Update.ReaderModificationCommandBatch.ExecuteAsync(IRelationalConnection connection, CancellationToken cancellationToken)
+   at Microsoft.EntityFrameworkCore.SqlServer.Update.Internal.SqlServerModificationCommandBatch.ExecuteAsync(IRelationalConnection connection, CancellationToken cancellationToken)
+   at Microsoft.EntityFrameworkCore.Update.Internal.BatchExecutor.ExecuteAsync(IEnumerable`1 commandBatches, IRelationalConnection connection, CancellationToken cancellationToken)
+   at Microsoft.EntityFrameworkCore.Update.Internal.BatchExecutor.ExecuteAsync(IEnumerable`1 commandBatches, IRelationalConnection connection, CancellationToken cancellationToken)
+   at Microsoft.EntityFrameworkCore.Update.Internal.BatchExecutor.ExecuteAsync(IEnumerable`1 commandBatches, IRelationalConnection connection, CancellationToken cancellationToken)
+   at Microsoft.EntityFrameworkCore.Storage.RelationalDatabase.SaveChangesAsync(IList`1 entries, CancellationToken cancellationToken)
+   at Microsoft.EntityFrameworkCore.ChangeTracking.Internal.StateManager.SaveChangesAsync(IList`1 entriesToSave, CancellationToken cancellationToken)
+   at Microsoft.EntityFrameworkCore.ChangeTracking.Internal.StateManager.SaveChangesAsync(StateManager stateManager, Boolean acceptAllChangesOnSuccess, CancellationToken cancellationToken)
+   at Microsoft.EntityFrameworkCore.SqlServer.Storage.Internal.SqlServerExecutionStrategy.ExecuteAsync[TState,TResult](TState state, Func`4 operation, Func`4 verifySucceeded, CancellationToken cancellationToken)
+   at Microsoft.EntityFrameworkCore.DbContext.SaveChangesAsync(Boolean acceptAllChangesOnSuccess, CancellationToken cancellationToken)
+Microsoft.EntityFrameworkCore.DbUpdateException: An error occurred while saving the entity changes. See the inner exception for details.
+ ---> Microsoft.Data.SqlClient.SqlException (0x80131904): NULL değeri 'MuhasebeStokDB.dbo.BankaHesapHareketleri' tablosunun 'DekontNo' sütununa eklemez; sütun null değerlere izin vermiyor. INSERT başarısız.
+   at Microsoft.Data.SqlClient.SqlConnection.OnError(SqlException exception, Boolean breakConnection, Action`1 wrapCloseInAction)
+   at Microsoft.Data.SqlClient.SqlInternalConnection.OnError(SqlException exception, Boolean breakConnection, Action`1 wrapCloseInAction)
+   at Microsoft.Data.SqlClient.TdsParser.ThrowExceptionAndWarning(TdsParserStateObject stateObj, Boolean callerHasConnectionLock, Boolean asyncClose)
+   at Microsoft.Data.SqlClient.TdsParser.TryRun(RunBehavior runBehavior, SqlCommand cmdHandler, SqlDataReader dataStream, BulkCopySimpleResultSet bulkCopyHandler, TdsParserStateObject stateObj, Boolean& dataReady)
+   at Microsoft.Data.SqlClient.SqlDataReader.TryHasMoreRows(Boolean& moreRows)
+   at Microsoft.Data.SqlClient.SqlDataReader.TryReadInternal(Boolean setTimeout, Boolean& more)
+   at Microsoft.Data.SqlClient.SqlDataReader.ReadAsyncExecute(Task task, Object state)
+   at Microsoft.Data.SqlClient.SqlDataReader.InvokeAsyncCall[T](SqlDataReaderBaseAsyncCallContext`1 context)
+--- End of stack trace from previous location ---
+   at Microsoft.EntityFrameworkCore.Update.AffectedCountModificationCommandBatch.ConsumeResultSetAsync(Int32 startCommandIndex, RelationalDataReader reader, CancellationToken cancellationToken)
+ClientConnectionId:c8322d78-b7fd-4e83-bde7-32fb42f00494
+Error Number:515,State:2,Class:16
+   --- End of inner exception stack trace ---
+   at Microsoft.EntityFrameworkCore.Update.AffectedCountModificationCommandBatch.ConsumeResultSetAsync(Int32 startCommandIndex, RelationalDataReader reader, CancellationToken cancellationToken)
+   at Microsoft.EntityFrameworkCore.Update.AffectedCountModificationCommandBatch.ConsumeAsync(RelationalDataReader reader, CancellationToken cancellationToken)
+   at Microsoft.EntityFrameworkCore.Update.ReaderModificationCommandBatch.ExecuteAsync(IRelationalConnection connection, CancellationToken cancellationToken)
+   at Microsoft.EntityFrameworkCore.Update.ReaderModificationCommandBatch.ExecuteAsync(IRelationalConnection connection, CancellationToken cancellationToken)
+   at Microsoft.EntityFrameworkCore.SqlServer.Update.Internal.SqlServerModificationCommandBatch.ExecuteAsync(IRelationalConnection connection, CancellationToken cancellationToken)
+   at Microsoft.EntityFrameworkCore.Update.Internal.BatchExecutor.ExecuteAsync(IEnumerable`1 commandBatches, IRelationalConnection connection, CancellationToken cancellationToken)
+   at Microsoft.EntityFrameworkCore.Update.Internal.BatchExecutor.ExecuteAsync(IEnumerable`1 commandBatches, IRelationalConnection connection, CancellationToken cancellationToken)
+   at Microsoft.EntityFrameworkCore.Update.Internal.BatchExecutor.ExecuteAsync(IEnumerable`1 commandBatches, IRelationalConnection connection, CancellationToken cancellationToken)
+   at Microsoft.EntityFrameworkCore.Storage.RelationalDatabase.SaveChangesAsync(IList`1 entries, CancellationToken cancellationToken)
+   at Microsoft.EntityFrameworkCore.ChangeTracking.Internal.StateManager.SaveChangesAsync(IList`1 entriesToSave, CancellationToken cancellationToken)
+   at Microsoft.EntityFrameworkCore.ChangeTracking.Internal.StateManager.SaveChangesAsync(StateManager stateManager, Boolean acceptAllChangesOnSuccess, CancellationToken cancellationToken)
+   at Microsoft.EntityFrameworkCore.SqlServer.Storage.Internal.SqlServerExecutionStrategy.ExecuteAsync[TState,TResult](TState state, Func`4 operation, Func`4 verifySucceeded, CancellationToken cancellationToken)
+   at Microsoft.EntityFrameworkCore.DbContext.SaveChangesAsync(Boolean acceptAllChangesOnSuccess, CancellationToken cancellationToken)
+2025-06-03 18:04:31.082 +03:00 [ERR] Transfer işlemi sırasında hata oluştu.
+Microsoft.EntityFrameworkCore.DbUpdateException: An error occurred while saving the entity changes. See the inner exception for details.
+ ---> Microsoft.Data.SqlClient.SqlException (0x80131904): NULL değeri 'MuhasebeStokDB.dbo.BankaHesapHareketleri' tablosunun 'DekontNo' sütununa eklemez; sütun null değerlere izin vermiyor. INSERT başarısız.
+   at Microsoft.Data.SqlClient.SqlConnection.OnError(SqlException exception, Boolean breakConnection, Action`1 wrapCloseInAction)
+   at Microsoft.Data.SqlClient.SqlInternalConnection.OnError(SqlException exception, Boolean breakConnection, Action`1 wrapCloseInAction)
+   at Microsoft.Data.SqlClient.TdsParser.ThrowExceptionAndWarning(TdsParserStateObject stateObj, Boolean callerHasConnectionLock, Boolean asyncClose)
+   at Microsoft.Data.SqlClient.TdsParser.TryRun(RunBehavior runBehavior, SqlCommand cmdHandler, SqlDataReader dataStream, BulkCopySimpleResultSet bulkCopyHandler, TdsParserStateObject stateObj, Boolean& dataReady)
+   at Microsoft.Data.SqlClient.SqlDataReader.TryHasMoreRows(Boolean& moreRows)
+   at Microsoft.Data.SqlClient.SqlDataReader.TryReadInternal(Boolean setTimeout, Boolean& more)
+   at Microsoft.Data.SqlClient.SqlDataReader.ReadAsyncExecute(Task task, Object state)
+   at Microsoft.Data.SqlClient.SqlDataReader.InvokeAsyncCall[T](SqlDataReaderBaseAsyncCallContext`1 context)
+--- End of stack trace from previous location ---
+   at Microsoft.EntityFrameworkCore.Update.AffectedCountModificationCommandBatch.ConsumeResultSetAsync(Int32 startCommandIndex, RelationalDataReader reader, CancellationToken cancellationToken)
+ClientConnectionId:c8322d78-b7fd-4e83-bde7-32fb42f00494
+Error Number:515,State:2,Class:16
+   --- End of inner exception stack trace ---
+   at MuhasebeStokWebApp.Controllers.TransferController.YeniTransfer(IcTransferViewModel model) in D:\cursor-workspace\MuhasebeStokWebApp\Controllers\TransferController.cs:line 138
+2025-06-03 18:05:17.906 +03:00 [ERR] An exception occurred in the database while saving changes for context type 'MuhasebeStokWebApp.Data.ApplicationDbContext'.
+Microsoft.EntityFrameworkCore.DbUpdateException: An error occurred while saving the entity changes. See the inner exception for details.
+ ---> Microsoft.Data.SqlClient.SqlException (0x80131904): NULL değeri 'MuhasebeStokDB.dbo.BankaHesapHareketleri' tablosunun 'DekontNo' sütununa eklemez; sütun null değerlere izin vermiyor. INSERT başarısız.
+   at Microsoft.Data.SqlClient.SqlConnection.OnError(SqlException exception, Boolean breakConnection, Action`1 wrapCloseInAction)
+   at Microsoft.Data.SqlClient.SqlInternalConnection.OnError(SqlException exception, Boolean breakConnection, Action`1 wrapCloseInAction)
+   at Microsoft.Data.SqlClient.TdsParser.ThrowExceptionAndWarning(TdsParserStateObject stateObj, Boolean callerHasConnectionLock, Boolean asyncClose)
+   at Microsoft.Data.SqlClient.TdsParser.TryRun(RunBehavior runBehavior, SqlCommand cmdHandler, SqlDataReader dataStream, BulkCopySimpleResultSet bulkCopyHandler, TdsParserStateObject stateObj, Boolean& dataReady)
+   at Microsoft.Data.SqlClient.SqlDataReader.TryHasMoreRows(Boolean& moreRows)
+   at Microsoft.Data.SqlClient.SqlDataReader.TryReadInternal(Boolean setTimeout, Boolean& more)
+   at Microsoft.Data.SqlClient.SqlDataReader.ReadAsyncExecute(Task task, Object state)
+   at Microsoft.Data.SqlClient.SqlDataReader.InvokeAsyncCall[T](SqlDataReaderBaseAsyncCallContext`1 context)
+--- End of stack trace from previous location ---
+   at Microsoft.EntityFrameworkCore.Update.AffectedCountModificationCommandBatch.ConsumeResultSetAsync(Int32 startCommandIndex, RelationalDataReader reader, CancellationToken cancellationToken)
+ClientConnectionId:ea3a3b66-f2ee-4601-84ad-f807ca4a7684
+Error Number:515,State:2,Class:16
+   --- End of inner exception stack trace ---
+   at Microsoft.EntityFrameworkCore.Update.AffectedCountModificationCommandBatch.ConsumeResultSetAsync(Int32 startCommandIndex, RelationalDataReader reader, CancellationToken cancellationToken)
+   at Microsoft.EntityFrameworkCore.Update.AffectedCountModificationCommandBatch.ConsumeAsync(RelationalDataReader reader, CancellationToken cancellationToken)
+   at Microsoft.EntityFrameworkCore.Update.ReaderModificationCommandBatch.ExecuteAsync(IRelationalConnection connection, CancellationToken cancellationToken)
+   at Microsoft.EntityFrameworkCore.Update.ReaderModificationCommandBatch.ExecuteAsync(IRelationalConnection connection, CancellationToken cancellationToken)
+   at Microsoft.EntityFrameworkCore.SqlServer.Update.Internal.SqlServerModificationCommandBatch.ExecuteAsync(IRelationalConnection connection, CancellationToken cancellationToken)
+   at Microsoft.EntityFrameworkCore.Update.Internal.BatchExecutor.ExecuteAsync(IEnumerable`1 commandBatches, IRelationalConnection connection, CancellationToken cancellationToken)
+   at Microsoft.EntityFrameworkCore.Update.Internal.BatchExecutor.ExecuteAsync(IEnumerable`1 commandBatches, IRelationalConnection connection, CancellationToken cancellationToken)
+   at Microsoft.EntityFrameworkCore.Update.Internal.BatchExecutor.ExecuteAsync(IEnumerable`1 commandBatches, IRelationalConnection connection, CancellationToken cancellationToken)
+   at Microsoft.EntityFrameworkCore.Storage.RelationalDatabase.SaveChangesAsync(IList`1 entries, CancellationToken cancellationToken)
+   at Microsoft.EntityFrameworkCore.ChangeTracking.Internal.StateManager.SaveChangesAsync(IList`1 entriesToSave, CancellationToken cancellationToken)
+   at Microsoft.EntityFrameworkCore.ChangeTracking.Internal.StateManager.SaveChangesAsync(StateManager stateManager, Boolean acceptAllChangesOnSuccess, CancellationToken cancellationToken)
+   at Microsoft.EntityFrameworkCore.SqlServer.Storage.Internal.SqlServerExecutionStrategy.ExecuteAsync[TState,TResult](TState state, Func`4 operation, Func`4 verifySucceeded, CancellationToken cancellationToken)
+   at Microsoft.EntityFrameworkCore.DbContext.SaveChangesAsync(Boolean acceptAllChangesOnSuccess, CancellationToken cancellationToken)
+Microsoft.EntityFrameworkCore.DbUpdateException: An error occurred while saving the entity changes. See the inner exception for details.
+ ---> Microsoft.Data.SqlClient.SqlException (0x80131904): NULL değeri 'MuhasebeStokDB.dbo.BankaHesapHareketleri' tablosunun 'DekontNo' sütununa eklemez; sütun null değerlere izin vermiyor. INSERT başarısız.
+   at Microsoft.Data.SqlClient.SqlConnection.OnError(SqlException exception, Boolean breakConnection, Action`1 wrapCloseInAction)
+   at Microsoft.Data.SqlClient.SqlInternalConnection.OnError(SqlException exception, Boolean breakConnection, Action`1 wrapCloseInAction)
+   at Microsoft.Data.SqlClient.TdsParser.ThrowExceptionAndWarning(TdsParserStateObject stateObj, Boolean callerHasConnectionLock, Boolean asyncClose)
+   at Microsoft.Data.SqlClient.TdsParser.TryRun(RunBehavior runBehavior, SqlCommand cmdHandler, SqlDataReader dataStream, BulkCopySimpleResultSet bulkCopyHandler, TdsParserStateObject stateObj, Boolean& dataReady)
+   at Microsoft.Data.SqlClient.SqlDataReader.TryHasMoreRows(Boolean& moreRows)
+   at Microsoft.Data.SqlClient.SqlDataReader.TryReadInternal(Boolean setTimeout, Boolean& more)
+   at Microsoft.Data.SqlClient.SqlDataReader.ReadAsyncExecute(Task task, Object state)
+   at Microsoft.Data.SqlClient.SqlDataReader.InvokeAsyncCall[T](SqlDataReaderBaseAsyncCallContext`1 context)
+--- End of stack trace from previous location ---
+   at Microsoft.EntityFrameworkCore.Update.AffectedCountModificationCommandBatch.ConsumeResultSetAsync(Int32 startCommandIndex, RelationalDataReader reader, CancellationToken cancellationToken)
+ClientConnectionId:ea3a3b66-f2ee-4601-84ad-f807ca4a7684
+Error Number:515,State:2,Class:16
+   --- End of inner exception stack trace ---
+   at Microsoft.EntityFrameworkCore.Update.AffectedCountModificationCommandBatch.ConsumeResultSetAsync(Int32 startCommandIndex, RelationalDataReader reader, CancellationToken cancellationToken)
+   at Microsoft.EntityFrameworkCore.Update.AffectedCountModificationCommandBatch.ConsumeAsync(RelationalDataReader reader, CancellationToken cancellationToken)
+   at Microsoft.EntityFrameworkCore.Update.ReaderModificationCommandBatch.ExecuteAsync(IRelationalConnection connection, CancellationToken cancellationToken)
+   at Microsoft.EntityFrameworkCore.Update.ReaderModificationCommandBatch.ExecuteAsync(IRelationalConnection connection, CancellationToken cancellationToken)
+   at Microsoft.EntityFrameworkCore.SqlServer.Update.Internal.SqlServerModificationCommandBatch.ExecuteAsync(IRelationalConnection connection, CancellationToken cancellationToken)
+   at Microsoft.EntityFrameworkCore.Update.Internal.BatchExecutor.ExecuteAsync(IEnumerable`1 commandBatches, IRelationalConnection connection, CancellationToken cancellationToken)
+   at Microsoft.EntityFrameworkCore.Update.Internal.BatchExecutor.ExecuteAsync(IEnumerable`1 commandBatches, IRelationalConnection connection, CancellationToken cancellationToken)
+   at Microsoft.EntityFrameworkCore.Update.Internal.BatchExecutor.ExecuteAsync(IEnumerable`1 commandBatches, IRelationalConnection connection, CancellationToken cancellationToken)
+   at Microsoft.EntityFrameworkCore.Storage.RelationalDatabase.SaveChangesAsync(IList`1 entries, CancellationToken cancellationToken)
+   at Microsoft.EntityFrameworkCore.ChangeTracking.Internal.StateManager.SaveChangesAsync(IList`1 entriesToSave, CancellationToken cancellationToken)
+   at Microsoft.EntityFrameworkCore.ChangeTracking.Internal.StateManager.SaveChangesAsync(StateManager stateManager, Boolean acceptAllChangesOnSuccess, CancellationToken cancellationToken)
+   at Microsoft.EntityFrameworkCore.SqlServer.Storage.Internal.SqlServerExecutionStrategy.ExecuteAsync[TState,TResult](TState state, Func`4 operation, Func`4 verifySucceeded, CancellationToken cancellationToken)
+   at Microsoft.EntityFrameworkCore.DbContext.SaveChangesAsync(Boolean acceptAllChangesOnSuccess, CancellationToken cancellationToken)
+2025-06-03 18:05:18.247 +03:00 [ERR] Transfer işlemi sırasında hata oluştu.
+Microsoft.EntityFrameworkCore.DbUpdateException: An error occurred while saving the entity changes. See the inner exception for details.
+ ---> Microsoft.Data.SqlClient.SqlException (0x80131904): NULL değeri 'MuhasebeStokDB.dbo.BankaHesapHareketleri' tablosunun 'DekontNo' sütununa eklemez; sütun null değerlere izin vermiyor. INSERT başarısız.
+   at Microsoft.Data.SqlClient.SqlConnection.OnError(SqlException exception, Boolean breakConnection, Action`1 wrapCloseInAction)
+   at Microsoft.Data.SqlClient.SqlInternalConnection.OnError(SqlException exception, Boolean breakConnection, Action`1 wrapCloseInAction)
+   at Microsoft.Data.SqlClient.TdsParser.ThrowExceptionAndWarning(TdsParserStateObject stateObj, Boolean callerHasConnectionLock, Boolean asyncClose)
+   at Microsoft.Data.SqlClient.TdsParser.TryRun(RunBehavior runBehavior, SqlCommand cmdHandler, SqlDataReader dataStream, BulkCopySimpleResultSet bulkCopyHandler, TdsParserStateObject stateObj, Boolean& dataReady)
+   at Microsoft.Data.SqlClient.SqlDataReader.TryHasMoreRows(Boolean& moreRows)
+   at Microsoft.Data.SqlClient.SqlDataReader.TryReadInternal(Boolean setTimeout, Boolean& more)
+   at Microsoft.Data.SqlClient.SqlDataReader.ReadAsyncExecute(Task task, Object state)
+   at Microsoft.Data.SqlClient.SqlDataReader.InvokeAsyncCall[T](SqlDataReaderBaseAsyncCallContext`1 context)
+--- End of stack trace from previous location ---
+   at Microsoft.EntityFrameworkCore.Update.AffectedCountModificationCommandBatch.ConsumeResultSetAsync(Int32 startCommandIndex, RelationalDataReader reader, CancellationToken cancellationToken)
+ClientConnectionId:ea3a3b66-f2ee-4601-84ad-f807ca4a7684
+Error Number:515,State:2,Class:16
+   --- End of inner exception stack trace ---
+   at MuhasebeStokWebApp.Controllers.TransferController.YeniTransfer(IcTransferViewModel model)
+2025-06-03 18:06:54.664 +03:00 [WRN] Unable to configure Browser Link script injection on the response. 
+2025-06-03 18:06:59.511 +03:00 [INF] Kur değeri önbellekten alındı: USD -> TRY, Değer: 33.33
+2025-06-03 18:07:02.516 +03:00 [INF] Kur değeri önbellekten alındı: USD -> EUR, Değer: 1
+2025-06-03 18:07:29.797 +03:00 [ERR] An exception occurred in the database while saving changes for context type 'MuhasebeStokWebApp.Data.ApplicationDbContext'.
+Microsoft.EntityFrameworkCore.DbUpdateException: An error occurred while saving the entity changes. See the inner exception for details.
+ ---> Microsoft.Data.SqlClient.SqlException (0x80131904): NULL değeri 'MuhasebeStokDB.dbo.BankaHesapHareketleri' tablosunun 'DekontNo' sütununa eklemez; sütun null değerlere izin vermiyor. INSERT başarısız.
+   at Microsoft.Data.SqlClient.SqlConnection.OnError(SqlException exception, Boolean breakConnection, Action`1 wrapCloseInAction)
+   at Microsoft.Data.SqlClient.SqlInternalConnection.OnError(SqlException exception, Boolean breakConnection, Action`1 wrapCloseInAction)
+   at Microsoft.Data.SqlClient.TdsParser.ThrowExceptionAndWarning(TdsParserStateObject stateObj, Boolean callerHasConnectionLock, Boolean asyncClose)
+   at Microsoft.Data.SqlClient.TdsParser.TryRun(RunBehavior runBehavior, SqlCommand cmdHandler, SqlDataReader dataStream, BulkCopySimpleResultSet bulkCopyHandler, TdsParserStateObject stateObj, Boolean& dataReady)
+   at Microsoft.Data.SqlClient.SqlDataReader.TryHasMoreRows(Boolean& moreRows)
+   at Microsoft.Data.SqlClient.SqlDataReader.TryReadInternal(Boolean setTimeout, Boolean& more)
+   at Microsoft.Data.SqlClient.SqlDataReader.ReadAsyncExecute(Task task, Object state)
+   at Microsoft.Data.SqlClient.SqlDataReader.InvokeAsyncCall[T](SqlDataReaderBaseAsyncCallContext`1 context)
+--- End of stack trace from previous location ---
+   at Microsoft.EntityFrameworkCore.Update.AffectedCountModificationCommandBatch.ConsumeResultSetAsync(Int32 startCommandIndex, RelationalDataReader reader, CancellationToken cancellationToken)
+ClientConnectionId:87268e99-1022-4a12-9770-6747e2fa7645
+Error Number:515,State:2,Class:16
+   --- End of inner exception stack trace ---
+   at Microsoft.EntityFrameworkCore.Update.AffectedCountModificationCommandBatch.ConsumeResultSetAsync(Int32 startCommandIndex, RelationalDataReader reader, CancellationToken cancellationToken)
+   at Microsoft.EntityFrameworkCore.Update.AffectedCountModificationCommandBatch.ConsumeAsync(RelationalDataReader reader, CancellationToken cancellationToken)
+   at Microsoft.EntityFrameworkCore.Update.ReaderModificationCommandBatch.ExecuteAsync(IRelationalConnection connection, CancellationToken cancellationToken)
+   at Microsoft.EntityFrameworkCore.Update.ReaderModificationCommandBatch.ExecuteAsync(IRelationalConnection connection, CancellationToken cancellationToken)
+   at Microsoft.EntityFrameworkCore.SqlServer.Update.Internal.SqlServerModificationCommandBatch.ExecuteAsync(IRelationalConnection connection, CancellationToken cancellationToken)
+   at Microsoft.EntityFrameworkCore.Update.Internal.BatchExecutor.ExecuteAsync(IEnumerable`1 commandBatches, IRelationalConnection connection, CancellationToken cancellationToken)
+   at Microsoft.EntityFrameworkCore.Update.Internal.BatchExecutor.ExecuteAsync(IEnumerable`1 commandBatches, IRelationalConnection connection, CancellationToken cancellationToken)
+   at Microsoft.EntityFrameworkCore.Update.Internal.BatchExecutor.ExecuteAsync(IEnumerable`1 commandBatches, IRelationalConnection connection, CancellationToken cancellationToken)
+   at Microsoft.EntityFrameworkCore.Storage.RelationalDatabase.SaveChangesAsync(IList`1 entries, CancellationToken cancellationToken)
+   at Microsoft.EntityFrameworkCore.ChangeTracking.Internal.StateManager.SaveChangesAsync(IList`1 entriesToSave, CancellationToken cancellationToken)
+   at Microsoft.EntityFrameworkCore.ChangeTracking.Internal.StateManager.SaveChangesAsync(StateManager stateManager, Boolean acceptAllChangesOnSuccess, CancellationToken cancellationToken)
+   at Microsoft.EntityFrameworkCore.SqlServer.Storage.Internal.SqlServerExecutionStrategy.ExecuteAsync[TState,TResult](TState state, Func`4 operation, Func`4 verifySucceeded, CancellationToken cancellationToken)
+   at Microsoft.EntityFrameworkCore.DbContext.SaveChangesAsync(Boolean acceptAllChangesOnSuccess, CancellationToken cancellationToken)
+Microsoft.EntityFrameworkCore.DbUpdateException: An error occurred while saving the entity changes. See the inner exception for details.
+ ---> Microsoft.Data.SqlClient.SqlException (0x80131904): NULL değeri 'MuhasebeStokDB.dbo.BankaHesapHareketleri' tablosunun 'DekontNo' sütununa eklemez; sütun null değerlere izin vermiyor. INSERT başarısız.
+   at Microsoft.Data.SqlClient.SqlConnection.OnError(SqlException exception, Boolean breakConnection, Action`1 wrapCloseInAction)
+   at Microsoft.Data.SqlClient.SqlInternalConnection.OnError(SqlException exception, Boolean breakConnection, Action`1 wrapCloseInAction)
+   at Microsoft.Data.SqlClient.TdsParser.ThrowExceptionAndWarning(TdsParserStateObject stateObj, Boolean callerHasConnectionLock, Boolean asyncClose)
+   at Microsoft.Data.SqlClient.TdsParser.TryRun(RunBehavior runBehavior, SqlCommand cmdHandler, SqlDataReader dataStream, BulkCopySimpleResultSet bulkCopyHandler, TdsParserStateObject stateObj, Boolean& dataReady)
+   at Microsoft.Data.SqlClient.SqlDataReader.TryHasMoreRows(Boolean& moreRows)
+   at Microsoft.Data.SqlClient.SqlDataReader.TryReadInternal(Boolean setTimeout, Boolean& more)
+   at Microsoft.Data.SqlClient.SqlDataReader.ReadAsyncExecute(Task task, Object state)
+   at Microsoft.Data.SqlClient.SqlDataReader.InvokeAsyncCall[T](SqlDataReaderBaseAsyncCallContext`1 context)
+--- End of stack trace from previous location ---
+   at Microsoft.EntityFrameworkCore.Update.AffectedCountModificationCommandBatch.ConsumeResultSetAsync(Int32 startCommandIndex, RelationalDataReader reader, CancellationToken cancellationToken)
+ClientConnectionId:87268e99-1022-4a12-9770-6747e2fa7645
+Error Number:515,State:2,Class:16
+   --- End of inner exception stack trace ---
+   at Microsoft.EntityFrameworkCore.Update.AffectedCountModificationCommandBatch.ConsumeResultSetAsync(Int32 startCommandIndex, RelationalDataReader reader, CancellationToken cancellationToken)
+   at Microsoft.EntityFrameworkCore.Update.AffectedCountModificationCommandBatch.ConsumeAsync(RelationalDataReader reader, CancellationToken cancellationToken)
+   at Microsoft.EntityFrameworkCore.Update.ReaderModificationCommandBatch.ExecuteAsync(IRelationalConnection connection, CancellationToken cancellationToken)
+   at Microsoft.EntityFrameworkCore.Update.ReaderModificationCommandBatch.ExecuteAsync(IRelationalConnection connection, CancellationToken cancellationToken)
+   at Microsoft.EntityFrameworkCore.SqlServer.Update.Internal.SqlServerModificationCommandBatch.ExecuteAsync(IRelationalConnection connection, CancellationToken cancellationToken)
+   at Microsoft.EntityFrameworkCore.Update.Internal.BatchExecutor.ExecuteAsync(IEnumerable`1 commandBatches, IRelationalConnection connection, CancellationToken cancellationToken)
+   at Microsoft.EntityFrameworkCore.Update.Internal.BatchExecutor.ExecuteAsync(IEnumerable`1 commandBatches, IRelationalConnection connection, CancellationToken cancellationToken)
+   at Microsoft.EntityFrameworkCore.Update.Internal.BatchExecutor.ExecuteAsync(IEnumerable`1 commandBatches, IRelationalConnection connection, CancellationToken cancellationToken)
+   at Microsoft.EntityFrameworkCore.Storage.RelationalDatabase.SaveChangesAsync(IList`1 entries, CancellationToken cancellationToken)
+   at Microsoft.EntityFrameworkCore.ChangeTracking.Internal.StateManager.SaveChangesAsync(IList`1 entriesToSave, CancellationToken cancellationToken)
+   at Microsoft.EntityFrameworkCore.ChangeTracking.Internal.StateManager.SaveChangesAsync(StateManager stateManager, Boolean acceptAllChangesOnSuccess, CancellationToken cancellationToken)
+   at Microsoft.EntityFrameworkCore.SqlServer.Storage.Internal.SqlServerExecutionStrategy.ExecuteAsync[TState,TResult](TState state, Func`4 operation, Func`4 verifySucceeded, CancellationToken cancellationToken)
+   at Microsoft.EntityFrameworkCore.DbContext.SaveChangesAsync(Boolean acceptAllChangesOnSuccess, CancellationToken cancellationToken)
+2025-06-03 18:07:30.212 +03:00 [ERR] Transfer işlemi sırasında hata oluştu.
+Microsoft.EntityFrameworkCore.DbUpdateException: An error occurred while saving the entity changes. See the inner exception for details.
+ ---> Microsoft.Data.SqlClient.SqlException (0x80131904): NULL değeri 'MuhasebeStokDB.dbo.BankaHesapHareketleri' tablosunun 'DekontNo' sütununa eklemez; sütun null değerlere izin vermiyor. INSERT başarısız.
+   at Microsoft.Data.SqlClient.SqlConnection.OnError(SqlException exception, Boolean breakConnection, Action`1 wrapCloseInAction)
+   at Microsoft.Data.SqlClient.SqlInternalConnection.OnError(SqlException exception, Boolean breakConnection, Action`1 wrapCloseInAction)
+   at Microsoft.Data.SqlClient.TdsParser.ThrowExceptionAndWarning(TdsParserStateObject stateObj, Boolean callerHasConnectionLock, Boolean asyncClose)
+   at Microsoft.Data.SqlClient.TdsParser.TryRun(RunBehavior runBehavior, SqlCommand cmdHandler, SqlDataReader dataStream, BulkCopySimpleResultSet bulkCopyHandler, TdsParserStateObject stateObj, Boolean& dataReady)
+   at Microsoft.Data.SqlClient.SqlDataReader.TryHasMoreRows(Boolean& moreRows)
+   at Microsoft.Data.SqlClient.SqlDataReader.TryReadInternal(Boolean setTimeout, Boolean& more)
+   at Microsoft.Data.SqlClient.SqlDataReader.ReadAsyncExecute(Task task, Object state)
+   at Microsoft.Data.SqlClient.SqlDataReader.InvokeAsyncCall[T](SqlDataReaderBaseAsyncCallContext`1 context)
+--- End of stack trace from previous location ---
+   at Microsoft.EntityFrameworkCore.Update.AffectedCountModificationCommandBatch.ConsumeResultSetAsync(Int32 startCommandIndex, RelationalDataReader reader, CancellationToken cancellationToken)
+ClientConnectionId:87268e99-1022-4a12-9770-6747e2fa7645
+Error Number:515,State:2,Class:16
+   --- End of inner exception stack trace ---
+   at MuhasebeStokWebApp.Controllers.TransferController.YeniTransfer(IcTransferViewModel model)
+2025-06-03 18:09:30.770 +03:00 [INF] Yaklaşan hatırlatıcılar kontrol ediliyor...
+2025-06-03 18:09:30.799 +03:00 [INF] Bekleyen hatırlatma bulunamadı.
+2025-06-03 18:12:50.282 +03:00 [INF] Veritabanına bağlantı başarılı. Migrationlar uygulanıyor...
+2025-06-03 18:12:51.501 +03:00 [INF] Veritabanı işlemleri başarıyla tamamlandı.
+2025-06-03 18:12:51.728 +03:00 [INF] Todo Hatırlatıcı Servisi başlatıldı.
+2025-06-03 18:12:51.731 +03:00 [INF] Yaklaşan hatırlatıcılar kontrol ediliyor...
+2025-06-03 18:12:51.909 +03:00 [INF] Bekleyen hatırlatma bulunamadı.
+2025-06-03 18:13:08.422 +03:00 [INF] Giriş denemesi: admin
+2025-06-03 18:13:08.745 +03:00 [INF] Admin kullanıcısı başarıyla giriş yaptı: admin
+2025-06-03 18:13:08.746 +03:00 [INF] Admin session oluşturuldu: UserID=9e6fc203-37eb-49a7-a470-1551f7bec8b8, UserName=admin
+2025-06-03 18:13:08.746 +03:00 [INF] Yönlendirme adresi: /
+2025-06-03 18:13:08.747 +03:00 [INF] Admin kullanıcısı / adresine yönlendiriliyor
+2025-06-03 18:13:09.178 +03:00 [INF] Aktif session bulundu: UserID=9e6fc203-37eb-49a7-a470-1551f7bec8b8, UserName=admin
+2025-06-03 18:13:09.289 +03:00 [INF] Admin kullanıcısı tespit edildi
+2025-06-03 18:13:09.290 +03:00 [INF] Kimlik doğrulanmış kullanıcı: admin
+2025-06-03 18:13:11.007 +03:00 [INF] TRY dönüşümü için kur değeri hesaplandı: TRY -> USD, Değer: 0.03
+2025-06-03 18:13:11.249 +03:00 [INF] Kur değeri hesaplandı: UZS -> USD, Değer: 0.0000775226832727903141733102
+2025-06-03 18:13:12.001 +03:00 [WRN] Kaynak para birimi kodu bulunamadı: EUR. Varsayılan değer kullanılıyor.
+2025-06-03 18:13:20.048 +03:00 [WRN] Unable to configure Browser Link script injection on the response. 
+2025-06-03 18:13:22.653 +03:00 [INF] TRY dönüşümü için kur değeri hesaplandı: USD -> TRY, Değer: 33.33
+2025-06-03 18:13:24.813 +03:00 [WRN] Hedef para birimi kodu bulunamadı: EUR. Varsayılan değer kullanılıyor.
+2025-06-03 18:13:24.815 +03:00 [INF] Kur değeri hesaplandı: USD -> EUR, Değer: 1
+2025-06-03 18:13:42.740 +03:00 [ERR] An exception occurred in the database while saving changes for context type 'MuhasebeStokWebApp.Data.ApplicationDbContext'.
+Microsoft.EntityFrameworkCore.DbUpdateException: An error occurred while saving the entity changes. See the inner exception for details.
+ ---> Microsoft.Data.SqlClient.SqlException (0x80131904): NULL değeri 'MuhasebeStokDB.dbo.BankaHesapHareketleri' tablosunun 'DekontNo' sütununa eklemez; sütun null değerlere izin vermiyor. INSERT başarısız.
+   at Microsoft.Data.SqlClient.SqlConnection.OnError(SqlException exception, Boolean breakConnection, Action`1 wrapCloseInAction)
+   at Microsoft.Data.SqlClient.SqlInternalConnection.OnError(SqlException exception, Boolean breakConnection, Action`1 wrapCloseInAction)
+   at Microsoft.Data.SqlClient.TdsParser.ThrowExceptionAndWarning(TdsParserStateObject stateObj, Boolean callerHasConnectionLock, Boolean asyncClose)
+   at Microsoft.Data.SqlClient.TdsParser.TryRun(RunBehavior runBehavior, SqlCommand cmdHandler, SqlDataReader dataStream, BulkCopySimpleResultSet bulkCopyHandler, TdsParserStateObject stateObj, Boolean& dataReady)
+   at Microsoft.Data.SqlClient.SqlDataReader.TryHasMoreRows(Boolean& moreRows)
+   at Microsoft.Data.SqlClient.SqlDataReader.TryReadInternal(Boolean setTimeout, Boolean& more)
+   at Microsoft.Data.SqlClient.SqlDataReader.ReadAsyncExecute(Task task, Object state)
+   at Microsoft.Data.SqlClient.SqlDataReader.InvokeAsyncCall[T](SqlDataReaderBaseAsyncCallContext`1 context)
+--- End of stack trace from previous location ---
+   at Microsoft.EntityFrameworkCore.Update.AffectedCountModificationCommandBatch.ConsumeResultSetAsync(Int32 startCommandIndex, RelationalDataReader reader, CancellationToken cancellationToken)
+ClientConnectionId:97ddf4e6-3ed4-4281-9819-65169d756278
+Error Number:515,State:2,Class:16
+   --- End of inner exception stack trace ---
+   at Microsoft.EntityFrameworkCore.Update.AffectedCountModificationCommandBatch.ConsumeResultSetAsync(Int32 startCommandIndex, RelationalDataReader reader, CancellationToken cancellationToken)
+   at Microsoft.EntityFrameworkCore.Update.AffectedCountModificationCommandBatch.ConsumeAsync(RelationalDataReader reader, CancellationToken cancellationToken)
+   at Microsoft.EntityFrameworkCore.Update.ReaderModificationCommandBatch.ExecuteAsync(IRelationalConnection connection, CancellationToken cancellationToken)
+   at Microsoft.EntityFrameworkCore.Update.ReaderModificationCommandBatch.ExecuteAsync(IRelationalConnection connection, CancellationToken cancellationToken)
+   at Microsoft.EntityFrameworkCore.SqlServer.Update.Internal.SqlServerModificationCommandBatch.ExecuteAsync(IRelationalConnection connection, CancellationToken cancellationToken)
+   at Microsoft.EntityFrameworkCore.Update.Internal.BatchExecutor.ExecuteAsync(IEnumerable`1 commandBatches, IRelationalConnection connection, CancellationToken cancellationToken)
+   at Microsoft.EntityFrameworkCore.Update.Internal.BatchExecutor.ExecuteAsync(IEnumerable`1 commandBatches, IRelationalConnection connection, CancellationToken cancellationToken)
+   at Microsoft.EntityFrameworkCore.Update.Internal.BatchExecutor.ExecuteAsync(IEnumerable`1 commandBatches, IRelationalConnection connection, CancellationToken cancellationToken)
+   at Microsoft.EntityFrameworkCore.Storage.RelationalDatabase.SaveChangesAsync(IList`1 entries, CancellationToken cancellationToken)
+   at Microsoft.EntityFrameworkCore.ChangeTracking.Internal.StateManager.SaveChangesAsync(IList`1 entriesToSave, CancellationToken cancellationToken)
+   at Microsoft.EntityFrameworkCore.ChangeTracking.Internal.StateManager.SaveChangesAsync(StateManager stateManager, Boolean acceptAllChangesOnSuccess, CancellationToken cancellationToken)
+   at Microsoft.EntityFrameworkCore.SqlServer.Storage.Internal.SqlServerExecutionStrategy.ExecuteAsync[TState,TResult](TState state, Func`4 operation, Func`4 verifySucceeded, CancellationToken cancellationToken)
+   at Microsoft.EntityFrameworkCore.DbContext.SaveChangesAsync(Boolean acceptAllChangesOnSuccess, CancellationToken cancellationToken)
+Microsoft.EntityFrameworkCore.DbUpdateException: An error occurred while saving the entity changes. See the inner exception for details.
+ ---> Microsoft.Data.SqlClient.SqlException (0x80131904): NULL değeri 'MuhasebeStokDB.dbo.BankaHesapHareketleri' tablosunun 'DekontNo' sütununa eklemez; sütun null değerlere izin vermiyor. INSERT başarısız.
+   at Microsoft.Data.SqlClient.SqlConnection.OnError(SqlException exception, Boolean breakConnection, Action`1 wrapCloseInAction)
+   at Microsoft.Data.SqlClient.SqlInternalConnection.OnError(SqlException exception, Boolean breakConnection, Action`1 wrapCloseInAction)
+   at Microsoft.Data.SqlClient.TdsParser.ThrowExceptionAndWarning(TdsParserStateObject stateObj, Boolean callerHasConnectionLock, Boolean asyncClose)
+   at Microsoft.Data.SqlClient.TdsParser.TryRun(RunBehavior runBehavior, SqlCommand cmdHandler, SqlDataReader dataStream, BulkCopySimpleResultSet bulkCopyHandler, TdsParserStateObject stateObj, Boolean& dataReady)
+   at Microsoft.Data.SqlClient.SqlDataReader.TryHasMoreRows(Boolean& moreRows)
+   at Microsoft.Data.SqlClient.SqlDataReader.TryReadInternal(Boolean setTimeout, Boolean& more)
+   at Microsoft.Data.SqlClient.SqlDataReader.ReadAsyncExecute(Task task, Object state)
+   at Microsoft.Data.SqlClient.SqlDataReader.InvokeAsyncCall[T](SqlDataReaderBaseAsyncCallContext`1 context)
+--- End of stack trace from previous location ---
+   at Microsoft.EntityFrameworkCore.Update.AffectedCountModificationCommandBatch.ConsumeResultSetAsync(Int32 startCommandIndex, RelationalDataReader reader, CancellationToken cancellationToken)
+ClientConnectionId:97ddf4e6-3ed4-4281-9819-65169d756278
+Error Number:515,State:2,Class:16
+   --- End of inner exception stack trace ---
+   at Microsoft.EntityFrameworkCore.Update.AffectedCountModificationCommandBatch.ConsumeResultSetAsync(Int32 startCommandIndex, RelationalDataReader reader, CancellationToken cancellationToken)
+   at Microsoft.EntityFrameworkCore.Update.AffectedCountModificationCommandBatch.ConsumeAsync(RelationalDataReader reader, CancellationToken cancellationToken)
+   at Microsoft.EntityFrameworkCore.Update.ReaderModificationCommandBatch.ExecuteAsync(IRelationalConnection connection, CancellationToken cancellationToken)
+   at Microsoft.EntityFrameworkCore.Update.ReaderModificationCommandBatch.ExecuteAsync(IRelationalConnection connection, CancellationToken cancellationToken)
+   at Microsoft.EntityFrameworkCore.SqlServer.Update.Internal.SqlServerModificationCommandBatch.ExecuteAsync(IRelationalConnection connection, CancellationToken cancellationToken)
+   at Microsoft.EntityFrameworkCore.Update.Internal.BatchExecutor.ExecuteAsync(IEnumerable`1 commandBatches, IRelationalConnection connection, CancellationToken cancellationToken)
+   at Microsoft.EntityFrameworkCore.Update.Internal.BatchExecutor.ExecuteAsync(IEnumerable`1 commandBatches, IRelationalConnection connection, CancellationToken cancellationToken)
+   at Microsoft.EntityFrameworkCore.Update.Internal.BatchExecutor.ExecuteAsync(IEnumerable`1 commandBatches, IRelationalConnection connection, CancellationToken cancellationToken)
+   at Microsoft.EntityFrameworkCore.Storage.RelationalDatabase.SaveChangesAsync(IList`1 entries, CancellationToken cancellationToken)
+   at Microsoft.EntityFrameworkCore.ChangeTracking.Internal.StateManager.SaveChangesAsync(IList`1 entriesToSave, CancellationToken cancellationToken)
+   at Microsoft.EntityFrameworkCore.ChangeTracking.Internal.StateManager.SaveChangesAsync(StateManager stateManager, Boolean acceptAllChangesOnSuccess, CancellationToken cancellationToken)
+   at Microsoft.EntityFrameworkCore.SqlServer.Storage.Internal.SqlServerExecutionStrategy.ExecuteAsync[TState,TResult](TState state, Func`4 operation, Func`4 verifySucceeded, CancellationToken cancellationToken)
+   at Microsoft.EntityFrameworkCore.DbContext.SaveChangesAsync(Boolean acceptAllChangesOnSuccess, CancellationToken cancellationToken)
+2025-06-03 18:14:18.023 +03:00 [ERR] Transfer işlemi sırasında hata oluştu.
+Microsoft.EntityFrameworkCore.DbUpdateException: An error occurred while saving the entity changes. See the inner exception for details.
+ ---> Microsoft.Data.SqlClient.SqlException (0x80131904): NULL değeri 'MuhasebeStokDB.dbo.BankaHesapHareketleri' tablosunun 'DekontNo' sütununa eklemez; sütun null değerlere izin vermiyor. INSERT başarısız.
+   at Microsoft.Data.SqlClient.SqlConnection.OnError(SqlException exception, Boolean breakConnection, Action`1 wrapCloseInAction)
+   at Microsoft.Data.SqlClient.SqlInternalConnection.OnError(SqlException exception, Boolean breakConnection, Action`1 wrapCloseInAction)
+   at Microsoft.Data.SqlClient.TdsParser.ThrowExceptionAndWarning(TdsParserStateObject stateObj, Boolean callerHasConnectionLock, Boolean asyncClose)
+   at Microsoft.Data.SqlClient.TdsParser.TryRun(RunBehavior runBehavior, SqlCommand cmdHandler, SqlDataReader dataStream, BulkCopySimpleResultSet bulkCopyHandler, TdsParserStateObject stateObj, Boolean& dataReady)
+   at Microsoft.Data.SqlClient.SqlDataReader.TryHasMoreRows(Boolean& moreRows)
+   at Microsoft.Data.SqlClient.SqlDataReader.TryReadInternal(Boolean setTimeout, Boolean& more)
+   at Microsoft.Data.SqlClient.SqlDataReader.ReadAsyncExecute(Task task, Object state)
+   at Microsoft.Data.SqlClient.SqlDataReader.InvokeAsyncCall[T](SqlDataReaderBaseAsyncCallContext`1 context)
+--- End of stack trace from previous location ---
+   at Microsoft.EntityFrameworkCore.Update.AffectedCountModificationCommandBatch.ConsumeResultSetAsync(Int32 startCommandIndex, RelationalDataReader reader, CancellationToken cancellationToken)
+ClientConnectionId:97ddf4e6-3ed4-4281-9819-65169d756278
+Error Number:515,State:2,Class:16
+   --- End of inner exception stack trace ---
+   at MuhasebeStokWebApp.Controllers.TransferController.YeniTransfer(IcTransferViewModel model) in D:\cursor-workspace\MuhasebeStokWebApp\Controllers\TransferController.cs:line 138
+2025-06-03 18:14:21.586 +03:00 [ERR] An exception occurred in the database while saving changes for context type 'MuhasebeStokWebApp.Data.ApplicationDbContext'.
+Microsoft.EntityFrameworkCore.DbUpdateException: An error occurred while saving the entity changes. See the inner exception for details.
+ ---> Microsoft.Data.SqlClient.SqlException (0x80131904): NULL değeri 'MuhasebeStokDB.dbo.BankaHesapHareketleri' tablosunun 'DekontNo' sütununa eklemez; sütun null değerlere izin vermiyor. INSERT başarısız.
+   at Microsoft.Data.SqlClient.SqlConnection.OnError(SqlException exception, Boolean breakConnection, Action`1 wrapCloseInAction)
+   at Microsoft.Data.SqlClient.SqlInternalConnection.OnError(SqlException exception, Boolean breakConnection, Action`1 wrapCloseInAction)
+   at Microsoft.Data.SqlClient.TdsParser.ThrowExceptionAndWarning(TdsParserStateObject stateObj, Boolean callerHasConnectionLock, Boolean asyncClose)
+   at Microsoft.Data.SqlClient.TdsParser.TryRun(RunBehavior runBehavior, SqlCommand cmdHandler, SqlDataReader dataStream, BulkCopySimpleResultSet bulkCopyHandler, TdsParserStateObject stateObj, Boolean& dataReady)
+   at Microsoft.Data.SqlClient.SqlDataReader.TryHasMoreRows(Boolean& moreRows)
+   at Microsoft.Data.SqlClient.SqlDataReader.TryReadInternal(Boolean setTimeout, Boolean& more)
+   at Microsoft.Data.SqlClient.SqlDataReader.ReadAsyncExecute(Task task, Object state)
+   at Microsoft.Data.SqlClient.SqlDataReader.InvokeAsyncCall[T](SqlDataReaderBaseAsyncCallContext`1 context)
+--- End of stack trace from previous location ---
+   at Microsoft.EntityFrameworkCore.Update.AffectedCountModificationCommandBatch.ConsumeResultSetAsync(Int32 startCommandIndex, RelationalDataReader reader, CancellationToken cancellationToken)
+ClientConnectionId:97ddf4e6-3ed4-4281-9819-65169d756278
+Error Number:515,State:2,Class:16
+   --- End of inner exception stack trace ---
+   at Microsoft.EntityFrameworkCore.Update.AffectedCountModificationCommandBatch.ConsumeResultSetAsync(Int32 startCommandIndex, RelationalDataReader reader, CancellationToken cancellationToken)
+   at Microsoft.EntityFrameworkCore.Update.AffectedCountModificationCommandBatch.ConsumeAsync(RelationalDataReader reader, CancellationToken cancellationToken)
+   at Microsoft.EntityFrameworkCore.Update.ReaderModificationCommandBatch.ExecuteAsync(IRelationalConnection connection, CancellationToken cancellationToken)
+   at Microsoft.EntityFrameworkCore.Update.ReaderModificationCommandBatch.ExecuteAsync(IRelationalConnection connection, CancellationToken cancellationToken)
+   at Microsoft.EntityFrameworkCore.SqlServer.Update.Internal.SqlServerModificationCommandBatch.ExecuteAsync(IRelationalConnection connection, CancellationToken cancellationToken)
+   at Microsoft.EntityFrameworkCore.Update.Internal.BatchExecutor.ExecuteAsync(IEnumerable`1 commandBatches, IRelationalConnection connection, CancellationToken cancellationToken)
+   at Microsoft.EntityFrameworkCore.Update.Internal.BatchExecutor.ExecuteAsync(IEnumerable`1 commandBatches, IRelationalConnection connection, CancellationToken cancellationToken)
+   at Microsoft.EntityFrameworkCore.Update.Internal.BatchExecutor.ExecuteAsync(IEnumerable`1 commandBatches, IRelationalConnection connection, CancellationToken cancellationToken)
+   at Microsoft.EntityFrameworkCore.Storage.RelationalDatabase.SaveChangesAsync(IList`1 entries, CancellationToken cancellationToken)
+   at Microsoft.EntityFrameworkCore.ChangeTracking.Internal.StateManager.SaveChangesAsync(IList`1 entriesToSave, CancellationToken cancellationToken)
+   at Microsoft.EntityFrameworkCore.ChangeTracking.Internal.StateManager.SaveChangesAsync(StateManager stateManager, Boolean acceptAllChangesOnSuccess, CancellationToken cancellationToken)
+   at Microsoft.EntityFrameworkCore.SqlServer.Storage.Internal.SqlServerExecutionStrategy.ExecuteAsync[TState,TResult](TState state, Func`4 operation, Func`4 verifySucceeded, CancellationToken cancellationToken)
+   at Microsoft.EntityFrameworkCore.DbContext.SaveChangesAsync(Boolean acceptAllChangesOnSuccess, CancellationToken cancellationToken)
+Microsoft.EntityFrameworkCore.DbUpdateException: An error occurred while saving the entity changes. See the inner exception for details.
+ ---> Microsoft.Data.SqlClient.SqlException (0x80131904): NULL değeri 'MuhasebeStokDB.dbo.BankaHesapHareketleri' tablosunun 'DekontNo' sütununa eklemez; sütun null değerlere izin vermiyor. INSERT başarısız.
+   at Microsoft.Data.SqlClient.SqlConnection.OnError(SqlException exception, Boolean breakConnection, Action`1 wrapCloseInAction)
+   at Microsoft.Data.SqlClient.SqlInternalConnection.OnError(SqlException exception, Boolean breakConnection, Action`1 wrapCloseInAction)
+   at Microsoft.Data.SqlClient.TdsParser.ThrowExceptionAndWarning(TdsParserStateObject stateObj, Boolean callerHasConnectionLock, Boolean asyncClose)
+   at Microsoft.Data.SqlClient.TdsParser.TryRun(RunBehavior runBehavior, SqlCommand cmdHandler, SqlDataReader dataStream, BulkCopySimpleResultSet bulkCopyHandler, TdsParserStateObject stateObj, Boolean& dataReady)
+   at Microsoft.Data.SqlClient.SqlDataReader.TryHasMoreRows(Boolean& moreRows)
+   at Microsoft.Data.SqlClient.SqlDataReader.TryReadInternal(Boolean setTimeout, Boolean& more)
+   at Microsoft.Data.SqlClient.SqlDataReader.ReadAsyncExecute(Task task, Object state)
+   at Microsoft.Data.SqlClient.SqlDataReader.InvokeAsyncCall[T](SqlDataReaderBaseAsyncCallContext`1 context)
+--- End of stack trace from previous location ---
+   at Microsoft.EntityFrameworkCore.Update.AffectedCountModificationCommandBatch.ConsumeResultSetAsync(Int32 startCommandIndex, RelationalDataReader reader, CancellationToken cancellationToken)
+ClientConnectionId:97ddf4e6-3ed4-4281-9819-65169d756278
+Error Number:515,State:2,Class:16
+   --- End of inner exception stack trace ---
+   at Microsoft.EntityFrameworkCore.Update.AffectedCountModificationCommandBatch.ConsumeResultSetAsync(Int32 startCommandIndex, RelationalDataReader reader, CancellationToken cancellationToken)
+   at Microsoft.EntityFrameworkCore.Update.AffectedCountModificationCommandBatch.ConsumeAsync(RelationalDataReader reader, CancellationToken cancellationToken)
+   at Microsoft.EntityFrameworkCore.Update.ReaderModificationCommandBatch.ExecuteAsync(IRelationalConnection connection, CancellationToken cancellationToken)
+   at Microsoft.EntityFrameworkCore.Update.ReaderModificationCommandBatch.ExecuteAsync(IRelationalConnection connection, CancellationToken cancellationToken)
+   at Microsoft.EntityFrameworkCore.SqlServer.Update.Internal.SqlServerModificationCommandBatch.ExecuteAsync(IRelationalConnection connection, CancellationToken cancellationToken)
+   at Microsoft.EntityFrameworkCore.Update.Internal.BatchExecutor.ExecuteAsync(IEnumerable`1 commandBatches, IRelationalConnection connection, CancellationToken cancellationToken)
+   at Microsoft.EntityFrameworkCore.Update.Internal.BatchExecutor.ExecuteAsync(IEnumerable`1 commandBatches, IRelationalConnection connection, CancellationToken cancellationToken)
+   at Microsoft.EntityFrameworkCore.Update.Internal.BatchExecutor.ExecuteAsync(IEnumerable`1 commandBatches, IRelationalConnection connection, CancellationToken cancellationToken)
+   at Microsoft.EntityFrameworkCore.Storage.RelationalDatabase.SaveChangesAsync(IList`1 entries, CancellationToken cancellationToken)
+   at Microsoft.EntityFrameworkCore.ChangeTracking.Internal.StateManager.SaveChangesAsync(IList`1 entriesToSave, CancellationToken cancellationToken)
+   at Microsoft.EntityFrameworkCore.ChangeTracking.Internal.StateManager.SaveChangesAsync(StateManager stateManager, Boolean acceptAllChangesOnSuccess, CancellationToken cancellationToken)
+   at Microsoft.EntityFrameworkCore.SqlServer.Storage.Internal.SqlServerExecutionStrategy.ExecuteAsync[TState,TResult](TState state, Func`4 operation, Func`4 verifySucceeded, CancellationToken cancellationToken)
+   at Microsoft.EntityFrameworkCore.DbContext.SaveChangesAsync(Boolean acceptAllChangesOnSuccess, CancellationToken cancellationToken)
+2025-06-03 18:14:21.881 +03:00 [ERR] Transfer işlemi sırasında hata oluştu.
+Microsoft.EntityFrameworkCore.DbUpdateException: An error occurred while saving the entity changes. See the inner exception for details.
+ ---> Microsoft.Data.SqlClient.SqlException (0x80131904): NULL değeri 'MuhasebeStokDB.dbo.BankaHesapHareketleri' tablosunun 'DekontNo' sütununa eklemez; sütun null değerlere izin vermiyor. INSERT başarısız.
+   at Microsoft.Data.SqlClient.SqlConnection.OnError(SqlException exception, Boolean breakConnection, Action`1 wrapCloseInAction)
+   at Microsoft.Data.SqlClient.SqlInternalConnection.OnError(SqlException exception, Boolean breakConnection, Action`1 wrapCloseInAction)
+   at Microsoft.Data.SqlClient.TdsParser.ThrowExceptionAndWarning(TdsParserStateObject stateObj, Boolean callerHasConnectionLock, Boolean asyncClose)
+   at Microsoft.Data.SqlClient.TdsParser.TryRun(RunBehavior runBehavior, SqlCommand cmdHandler, SqlDataReader dataStream, BulkCopySimpleResultSet bulkCopyHandler, TdsParserStateObject stateObj, Boolean& dataReady)
+   at Microsoft.Data.SqlClient.SqlDataReader.TryHasMoreRows(Boolean& moreRows)
+   at Microsoft.Data.SqlClient.SqlDataReader.TryReadInternal(Boolean setTimeout, Boolean& more)
+   at Microsoft.Data.SqlClient.SqlDataReader.ReadAsyncExecute(Task task, Object state)
+   at Microsoft.Data.SqlClient.SqlDataReader.InvokeAsyncCall[T](SqlDataReaderBaseAsyncCallContext`1 context)
+--- End of stack trace from previous location ---
+   at Microsoft.EntityFrameworkCore.Update.AffectedCountModificationCommandBatch.ConsumeResultSetAsync(Int32 startCommandIndex, RelationalDataReader reader, CancellationToken cancellationToken)
+ClientConnectionId:97ddf4e6-3ed4-4281-9819-65169d756278
+Error Number:515,State:2,Class:16
+   --- End of inner exception stack trace ---
+   at MuhasebeStokWebApp.Controllers.TransferController.YeniTransfer(IcTransferViewModel model) in D:\cursor-workspace\MuhasebeStokWebApp\Controllers\TransferController.cs:line 138
+2025-06-03 18:17:51.912 +03:00 [INF] Yaklaşan hatırlatıcılar kontrol ediliyor...
+2025-06-03 18:17:51.944 +03:00 [INF] Bekleyen hatırlatma bulunamadı.
+2025-06-03 18:22:51.955 +03:00 [INF] Yaklaşan hatırlatıcılar kontrol ediliyor...
+2025-06-03 18:22:52.106 +03:00 [INF] Bekleyen hatırlatma bulunamadı.
+2025-06-03 18:26:04.101 +03:00 [INF] Veritabanına bağlantı başarılı. Migrationlar uygulanıyor...
+2025-06-03 18:26:05.376 +03:00 [INF] Veritabanı işlemleri başarıyla tamamlandı.
+2025-06-03 18:26:05.622 +03:00 [INF] Todo Hatırlatıcı Servisi başlatıldı.
+2025-06-03 18:26:05.625 +03:00 [INF] Yaklaşan hatırlatıcılar kontrol ediliyor...
+2025-06-03 18:26:05.743 +03:00 [INF] Bekleyen hatırlatma bulunamadı.
+2025-06-03 18:26:14.735 +03:00 [INF] Giriş denemesi: admin
+2025-06-03 18:26:15.083 +03:00 [INF] Admin kullanıcısı başarıyla giriş yaptı: admin
+2025-06-03 18:26:15.084 +03:00 [INF] Admin session oluşturuldu: UserID=9e6fc203-37eb-49a7-a470-1551f7bec8b8, UserName=admin
+2025-06-03 18:26:15.085 +03:00 [INF] Yönlendirme adresi: /
+2025-06-03 18:26:15.086 +03:00 [INF] Admin kullanıcısı / adresine yönlendiriliyor
+2025-06-03 18:26:15.509 +03:00 [INF] Aktif session bulundu: UserID=9e6fc203-37eb-49a7-a470-1551f7bec8b8, UserName=admin
+2025-06-03 18:26:15.613 +03:00 [INF] Admin kullanıcısı tespit edildi
+2025-06-03 18:26:15.614 +03:00 [INF] Kimlik doğrulanmış kullanıcı: admin
+2025-06-03 18:26:17.313 +03:00 [INF] TRY dönüşümü için kur değeri hesaplandı: TRY -> USD, Değer: 0.03
+2025-06-03 18:26:17.550 +03:00 [INF] Kur değeri hesaplandı: UZS -> USD, Değer: 0.0000775226832727903141733102
+2025-06-03 18:26:18.217 +03:00 [WRN] Kaynak para birimi kodu bulunamadı: EUR. Varsayılan değer kullanılıyor.
+2025-06-03 18:26:25.372 +03:00 [WRN] Unable to configure Browser Link script injection on the response. 
+2025-06-03 18:26:28.219 +03:00 [INF] TRY dönüşümü için kur değeri hesaplandı: USD -> TRY, Değer: 33.33
+2025-06-03 18:26:30.389 +03:00 [WRN] Hedef para birimi kodu bulunamadı: EUR. Varsayılan değer kullanılıyor.
+2025-06-03 18:26:30.391 +03:00 [INF] Kur değeri hesaplandı: USD -> EUR, Değer: 1
+2025-06-03 18:28:04.556 +03:00 [WRN] Unable to configure Browser Link script injection on the response. 
+2025-06-03 18:28:20.341 +03:00 [INF] Kur değeri önbellekten alındı: USD -> TRY, Değer: 33.33
+2025-06-03 18:28:22.425 +03:00 [INF] Kur değeri önbellekten alındı: USD -> EUR, Değer: 1
