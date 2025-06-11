@@ -1,6 +1,6 @@
 {
   "version": 2,
-  "dgSpecHash": "bJ9lFXd0/WA=",
+  "dgSpecHash": "WdBQlqQ5270=",
   "success": true,
   "projectFilePath": "D:\\cursor-workspace\\MuhasebeStokWebApp\\MuhasebeStokWebApp.csproj",
   "expectedPackageFiles": [
@@ -219,12 +219,5 @@
     "C:\\Users\\Ömer Faruk KOCAMAN\\.nuget\\packages\\system.xml.readerwriter\\4.3.0\\system.xml.readerwriter.4.3.0.nupkg.sha512",
     "C:\\Users\\Ömer Faruk KOCAMAN\\.nuget\\packages\\system.xml.xmldocument\\4.3.0\\system.xml.xmldocument.4.3.0.nupkg.sha512"
   ],
-  "logs": [
-    {
-      "code": "NU1900",
-      "level": "Warning",
-      "warningLevel": 1,
-      "message": "Paket güvenlik açığı verileri alınırken hata oluştu: https://api.nuget.org/v3/index.json kaynağı için hizmet dizini yüklenemiyor."
-    }
-  ]
+  "logs": []
 }

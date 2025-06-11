@@ -142,3 +142,669 @@
 2025-06-11 18:11:16.465 +03:00 [INF] TRY dönüşümü için kur değeri hesaplandı: TRY -> USD, Değer: 0.03
 2025-06-11 18:11:16.726 +03:00 [INF] Kur değeri hesaplandı: UZS -> USD, Değer: 0.0000775226832727903141733102
 2025-06-11 18:11:17.417 +03:00 [WRN] Kaynak para birimi kodu bulunamadı: EUR. Varsayılan değer kullanılıyor.
+2025-06-11 18:25:31.343 +03:00 [INF] Veritabanına bağlantı başarılı. Migrationlar uygulanıyor...
+2025-06-11 18:25:32.798 +03:00 [INF] Veritabanı işlemleri başarıyla tamamlandı.
+2025-06-11 18:25:33.046 +03:00 [INF] Todo Hatırlatıcı Servisi başlatıldı.
+2025-06-11 18:25:33.048 +03:00 [INF] Yaklaşan hatırlatıcılar kontrol ediliyor...
+2025-06-11 18:25:33.166 +03:00 [INF] Bekleyen hatırlatma bulunamadı.
+2025-06-11 18:25:42.205 +03:00 [INF] Giriş denemesi: admin
+2025-06-11 18:25:42.529 +03:00 [INF] Admin kullanıcısı başarıyla giriş yaptı: admin
+2025-06-11 18:25:42.530 +03:00 [INF] Admin session oluşturuldu: UserID=9e6fc203-37eb-49a7-a470-1551f7bec8b8, UserName=admin
+2025-06-11 18:25:42.531 +03:00 [INF] Yönlendirme adresi: /
+2025-06-11 18:25:42.531 +03:00 [INF] Admin kullanıcısı / adresine yönlendiriliyor
+2025-06-11 18:25:42.940 +03:00 [INF] Aktif session bulundu: UserID=9e6fc203-37eb-49a7-a470-1551f7bec8b8, UserName=admin
+2025-06-11 18:25:43.035 +03:00 [INF] Admin kullanıcısı tespit edildi
+2025-06-11 18:25:43.036 +03:00 [INF] Kimlik doğrulanmış kullanıcı: admin
+2025-06-11 18:25:44.888 +03:00 [INF] TRY dönüşümü için kur değeri hesaplandı: TRY -> USD, Değer: 0.03
+2025-06-11 18:25:45.137 +03:00 [INF] Kur değeri hesaplandı: UZS -> USD, Değer: 0.0000775226832727903141733102
+2025-06-11 18:25:45.838 +03:00 [WRN] Kaynak para birimi kodu bulunamadı: EUR. Varsayılan değer kullanılıyor.
+2025-06-11 18:28:11.404 +03:00 [INF] Veritabanına bağlantı başarılı. Migrationlar uygulanıyor...
+2025-06-11 18:28:16.053 +03:00 [INF] Veritabanı işlemleri başarıyla tamamlandı.
+2025-06-11 18:28:16.378 +03:00 [INF] Todo Hatırlatıcı Servisi başlatıldı.
+2025-06-11 18:28:16.381 +03:00 [INF] Yaklaşan hatırlatıcılar kontrol ediliyor...
+2025-06-11 18:28:16.543 +03:00 [INF] Bekleyen hatırlatma bulunamadı.
+2025-06-11 18:28:23.310 +03:00 [INF] Giriş denemesi: admin
+2025-06-11 18:28:23.827 +03:00 [INF] Giriş denemesi: admin
+2025-06-11 18:28:26.089 +03:00 [INF] Admin kullanıcısı başarıyla giriş yaptı: admin
+2025-06-11 18:28:26.090 +03:00 [INF] Admin session oluşturuldu: UserID=9e6fc203-37eb-49a7-a470-1551f7bec8b8, UserName=admin
+2025-06-11 18:28:26.091 +03:00 [INF] Yönlendirme adresi: /
+2025-06-11 18:28:26.092 +03:00 [INF] Admin kullanıcısı / adresine yönlendiriliyor
+2025-06-11 18:28:26.824 +03:00 [INF] Admin kullanıcısı başarıyla giriş yaptı: admin
+2025-06-11 18:28:26.826 +03:00 [INF] Admin session oluşturuldu: UserID=9e6fc203-37eb-49a7-a470-1551f7bec8b8, UserName=admin
+2025-06-11 18:28:26.827 +03:00 [INF] Yönlendirme adresi: /
+2025-06-11 18:28:26.828 +03:00 [INF] Admin kullanıcısı / adresine yönlendiriliyor
+2025-06-11 18:28:27.319 +03:00 [INF] Aktif session bulundu: UserID=9e6fc203-37eb-49a7-a470-1551f7bec8b8, UserName=admin
+2025-06-11 18:28:27.452 +03:00 [INF] Admin kullanıcısı tespit edildi
+2025-06-11 18:28:27.453 +03:00 [INF] Kimlik doğrulanmış kullanıcı: admin
+2025-06-11 18:28:29.595 +03:00 [INF] TRY dönüşümü için kur değeri hesaplandı: TRY -> USD, Değer: 0.03
+2025-06-11 18:28:29.869 +03:00 [INF] Kur değeri hesaplandı: UZS -> USD, Değer: 0.0000775226832727903141733102
+2025-06-11 18:28:30.698 +03:00 [WRN] Kaynak para birimi kodu bulunamadı: EUR. Varsayılan değer kullanılıyor.
+2025-06-11 18:30:51.689 +03:00 [INF] Veritabanına bağlantı başarılı. Migrationlar uygulanıyor...
+2025-06-11 18:30:53.354 +03:00 [INF] Veritabanı işlemleri başarıyla tamamlandı.
+2025-06-11 18:30:53.725 +03:00 [INF] Todo Hatırlatıcı Servisi başlatıldı.
+2025-06-11 18:30:53.728 +03:00 [INF] Yaklaşan hatırlatıcılar kontrol ediliyor...
+2025-06-11 18:30:53.881 +03:00 [INF] Bekleyen hatırlatma bulunamadı.
+2025-06-11 18:30:56.888 +03:00 [INF] Giriş denemesi: admin
+2025-06-11 18:30:57.314 +03:00 [INF] Admin kullanıcısı başarıyla giriş yaptı: admin
+2025-06-11 18:30:57.316 +03:00 [INF] Admin session oluşturuldu: UserID=9e6fc203-37eb-49a7-a470-1551f7bec8b8, UserName=admin
+2025-06-11 18:30:57.317 +03:00 [INF] Yönlendirme adresi: /
+2025-06-11 18:30:57.319 +03:00 [INF] Admin kullanıcısı / adresine yönlendiriliyor
+2025-06-11 18:30:57.908 +03:00 [INF] Aktif session bulundu: UserID=9e6fc203-37eb-49a7-a470-1551f7bec8b8, UserName=admin
+2025-06-11 18:30:58.046 +03:00 [INF] Admin kullanıcısı tespit edildi
+2025-06-11 18:30:58.054 +03:00 [INF] Kimlik doğrulanmış kullanıcı: admin
+2025-06-11 18:31:00.460 +03:00 [INF] TRY dönüşümü için kur değeri hesaplandı: TRY -> USD, Değer: 0.03
+2025-06-11 18:31:00.740 +03:00 [INF] Kur değeri hesaplandı: UZS -> USD, Değer: 0.0000775226832727903141733102
+2025-06-11 18:31:01.713 +03:00 [WRN] Kaynak para birimi kodu bulunamadı: EUR. Varsayılan değer kullanılıyor.
+2025-06-11 18:33:34.360 +03:00 [INF] Veritabanına bağlantı başarılı. Migrationlar uygulanıyor...
+2025-06-11 18:33:38.806 +03:00 [INF] Veritabanı işlemleri başarıyla tamamlandı.
+2025-06-11 18:33:39.130 +03:00 [INF] Todo Hatırlatıcı Servisi başlatıldı.
+2025-06-11 18:33:39.134 +03:00 [INF] Yaklaşan hatırlatıcılar kontrol ediliyor...
+2025-06-11 18:33:39.290 +03:00 [INF] Bekleyen hatırlatma bulunamadı.
+2025-06-11 18:34:03.239 +03:00 [INF] Giriş denemesi: admin
+2025-06-11 18:34:03.690 +03:00 [INF] Admin kullanıcısı başarıyla giriş yaptı: admin
+2025-06-11 18:34:03.691 +03:00 [INF] Admin session oluşturuldu: UserID=9e6fc203-37eb-49a7-a470-1551f7bec8b8, UserName=admin
+2025-06-11 18:34:03.691 +03:00 [INF] Yönlendirme adresi: /
+2025-06-11 18:34:03.692 +03:00 [INF] Admin kullanıcısı / adresine yönlendiriliyor
+2025-06-11 18:34:04.160 +03:00 [INF] Aktif session bulundu: UserID=9e6fc203-37eb-49a7-a470-1551f7bec8b8, UserName=admin
+2025-06-11 18:34:04.291 +03:00 [INF] Admin kullanıcısı tespit edildi
+2025-06-11 18:34:04.292 +03:00 [INF] Kimlik doğrulanmış kullanıcı: admin
+2025-06-11 18:34:06.500 +03:00 [INF] TRY dönüşümü için kur değeri hesaplandı: TRY -> USD, Değer: 0.03
+2025-06-11 18:34:06.760 +03:00 [INF] Kur değeri hesaplandı: UZS -> USD, Değer: 0.0000775226832727903141733102
+2025-06-11 18:34:07.574 +03:00 [WRN] Kaynak para birimi kodu bulunamadı: EUR. Varsayılan değer kullanılıyor.
+2025-06-11 18:38:39.297 +03:00 [INF] Yaklaşan hatırlatıcılar kontrol ediliyor...
+2025-06-11 18:38:39.330 +03:00 [INF] Bekleyen hatırlatma bulunamadı.
+2025-06-11 18:42:58.088 +03:00 [INF] TRY dönüşümü için kur değeri hesaplandı: USD -> TRY, Değer: 33.33
+2025-06-11 18:43:39.384 +03:00 [INF] Yaklaşan hatırlatıcılar kontrol ediliyor...
+2025-06-11 18:43:39.473 +03:00 [INF] Bekleyen hatırlatma bulunamadı.
+2025-06-11 18:48:39.482 +03:00 [INF] Yaklaşan hatırlatıcılar kontrol ediliyor...
+2025-06-11 18:48:39.515 +03:00 [INF] Bekleyen hatırlatma bulunamadı.
+2025-06-11 18:55:11.002 +03:00 [INF] Veritabanına bağlantı başarılı. Migrationlar uygulanıyor...
+2025-06-11 18:55:12.260 +03:00 [INF] Veritabanı işlemleri başarıyla tamamlandı.
+2025-06-11 18:55:12.528 +03:00 [INF] Todo Hatırlatıcı Servisi başlatıldı.
+2025-06-11 18:55:12.531 +03:00 [INF] Yaklaşan hatırlatıcılar kontrol ediliyor...
+2025-06-11 18:55:12.652 +03:00 [INF] Bekleyen hatırlatma bulunamadı.
+2025-06-11 18:55:22.031 +03:00 [INF] Giriş denemesi: admin
+2025-06-11 18:55:22.374 +03:00 [INF] Admin kullanıcısı başarıyla giriş yaptı: admin
+2025-06-11 18:55:22.375 +03:00 [INF] Admin session oluşturuldu: UserID=9e6fc203-37eb-49a7-a470-1551f7bec8b8, UserName=admin
+2025-06-11 18:55:22.376 +03:00 [INF] Yönlendirme adresi: /
+2025-06-11 18:55:22.377 +03:00 [INF] Admin kullanıcısı / adresine yönlendiriliyor
+2025-06-11 18:55:22.761 +03:00 [INF] Aktif session bulundu: UserID=9e6fc203-37eb-49a7-a470-1551f7bec8b8, UserName=admin
+2025-06-11 18:55:22.857 +03:00 [INF] Admin kullanıcısı tespit edildi
+2025-06-11 18:55:22.858 +03:00 [INF] Kimlik doğrulanmış kullanıcı: admin
+2025-06-11 18:55:24.512 +03:00 [INF] TRY dönüşümü için kur değeri hesaplandı: TRY -> USD, Değer: 0.03
+2025-06-11 18:55:24.739 +03:00 [INF] Kur değeri hesaplandı: UZS -> USD, Değer: 0.0000775226832727903141733102
+2025-06-11 18:55:25.437 +03:00 [WRN] Kaynak para birimi kodu bulunamadı: EUR. Varsayılan değer kullanılıyor.
+2025-06-11 18:57:07.754 +03:00 [WRN] Unable to configure Browser Link script injection on the response. 
+2025-06-11 18:57:30.653 +03:00 [INF] TRY dönüşümü için kur değeri hesaplandı: TRY -> UZS, Değer: 387.02221122112211221122112207
+2025-06-11 19:00:12.661 +03:00 [INF] Yaklaşan hatırlatıcılar kontrol ediliyor...
+2025-06-11 19:00:12.692 +03:00 [INF] Bekleyen hatırlatma bulunamadı.
+2025-06-11 19:05:12.712 +03:00 [INF] Yaklaşan hatırlatıcılar kontrol ediliyor...
+2025-06-11 19:05:12.748 +03:00 [INF] Bekleyen hatırlatma bulunamadı.
+2025-06-11 19:10:12.753 +03:00 [INF] Yaklaşan hatırlatıcılar kontrol ediliyor...
+2025-06-11 19:10:12.799 +03:00 [INF] Bekleyen hatırlatma bulunamadı.
+2025-06-11 19:13:45.841 +03:00 [INF] Veritabanına bağlantı başarılı. Migrationlar uygulanıyor...
+2025-06-11 19:13:47.185 +03:00 [INF] Veritabanı işlemleri başarıyla tamamlandı.
+2025-06-11 19:13:47.465 +03:00 [INF] Todo Hatırlatıcı Servisi başlatıldı.
+2025-06-11 19:13:47.467 +03:00 [INF] Yaklaşan hatırlatıcılar kontrol ediliyor...
+2025-06-11 19:13:47.576 +03:00 [INF] Bekleyen hatırlatma bulunamadı.
+2025-06-11 19:13:49.181 +03:00 [WRN] Session bulunamadı, kullanıcı giriş yapmamış olabilir
+2025-06-11 19:13:49.230 +03:00 [INF] Kimlik doğrulanmış kullanıcı: admin
+2025-06-11 19:13:51.364 +03:00 [INF] TRY dönüşümü için kur değeri hesaplandı: TRY -> USD, Değer: 0.03
+2025-06-11 19:13:51.671 +03:00 [INF] Kur değeri hesaplandı: UZS -> USD, Değer: 0.0000775226832727903141733102
+2025-06-11 19:13:52.376 +03:00 [WRN] Kaynak para birimi kodu bulunamadı: EUR. Varsayılan değer kullanılıyor.
+2025-06-11 19:15:36.710 +03:00 [INF] Veritabanına bağlantı başarılı. Migrationlar uygulanıyor...
+2025-06-11 19:15:38.201 +03:00 [INF] Veritabanı işlemleri başarıyla tamamlandı.
+2025-06-11 19:15:38.481 +03:00 [INF] Todo Hatırlatıcı Servisi başlatıldı.
+2025-06-11 19:15:38.484 +03:00 [INF] Yaklaşan hatırlatıcılar kontrol ediliyor...
+2025-06-11 19:15:38.621 +03:00 [INF] Bekleyen hatırlatma bulunamadı.
+2025-06-11 19:15:39.916 +03:00 [WRN] Session bulunamadı, kullanıcı giriş yapmamış olabilir
+2025-06-11 19:15:39.959 +03:00 [INF] Kimlik doğrulanmış kullanıcı: admin
+2025-06-11 19:15:42.233 +03:00 [INF] TRY dönüşümü için kur değeri hesaplandı: TRY -> USD, Değer: 0.03
+2025-06-11 19:15:42.481 +03:00 [INF] Kur değeri hesaplandı: UZS -> USD, Değer: 0.0000775226832727903141733102
+2025-06-11 19:15:43.243 +03:00 [WRN] Kaynak para birimi kodu bulunamadı: EUR. Varsayılan değer kullanılıyor.
+2025-06-11 19:23:01.106 +03:00 [INF] Veritabanına bağlantı başarılı. Migrationlar uygulanıyor...
+2025-06-11 19:23:03.267 +03:00 [INF] Veritabanı işlemleri başarıyla tamamlandı.
+2025-06-11 19:23:03.534 +03:00 [INF] Todo Hatırlatıcı Servisi başlatıldı.
+2025-06-11 19:23:03.536 +03:00 [INF] Yaklaşan hatırlatıcılar kontrol ediliyor...
+2025-06-11 19:23:03.672 +03:00 [INF] Bekleyen hatırlatma bulunamadı.
+2025-06-11 19:23:04.819 +03:00 [WRN] Session bulunamadı, kullanıcı giriş yapmamış olabilir
+2025-06-11 19:23:04.860 +03:00 [INF] Kimlik doğrulanmış kullanıcı: admin
+2025-06-11 19:23:06.911 +03:00 [INF] TRY dönüşümü için kur değeri hesaplandı: TRY -> USD, Değer: 0.03
+2025-06-11 19:23:07.159 +03:00 [INF] Kur değeri hesaplandı: UZS -> USD, Değer: 0.0000775226832727903141733102
+2025-06-11 19:23:07.800 +03:00 [WRN] Kaynak para birimi kodu bulunamadı: EUR. Varsayılan değer kullanılıyor.
+2025-06-11 19:23:30.250 +03:00 [INF] Kur değeri hesaplandı: USD -> UZS, Değer: 12899.450300
+2025-06-11 19:23:32.953 +03:00 [INF] Kur değeri önbellekten alındı: USD -> UZS, Değer: 12899.450300
+2025-06-11 19:23:36.385 +03:00 [INF] Kur değeri önbellekten alındı: USD -> UZS, Değer: 12899.450300
+2025-06-11 19:24:09.311 +03:00 [INF] Kur değeri önbellekten alındı: USD -> UZS, Değer: 12899.450300
+2025-06-11 19:25:50.733 +03:00 [INF] Kur değeri önbellekten alındı: USD -> UZS, Değer: 12899.450300
+2025-06-11 19:25:54.011 +03:00 [INF] Kur değeri önbellekten alındı: USD -> UZS, Değer: 12899.450300
+2025-06-11 19:25:56.588 +03:00 [INF] Kur değeri önbellekten alındı: USD -> UZS, Değer: 12899.450300
+2025-06-11 19:26:00.774 +03:00 [INF] Giriş denemesi: admin
+2025-06-11 19:26:01.047 +03:00 [INF] Admin kullanıcısı başarıyla giriş yaptı: admin
+2025-06-11 19:26:01.048 +03:00 [INF] Admin session oluşturuldu: UserID=9e6fc203-37eb-49a7-a470-1551f7bec8b8, UserName=admin
+2025-06-11 19:26:01.048 +03:00 [INF] Yönlendirme adresi: /Banka/HareketDuzenle/fed06827-cb92-4de4-8169-a4a8bf542eb8
+2025-06-11 19:26:01.049 +03:00 [INF] Admin kullanıcısı /Banka/HareketDuzenle/fed06827-cb92-4de4-8169-a4a8bf542eb8 adresine yönlendiriliyor
+2025-06-11 19:26:01.985 +03:00 [INF] Kur değeri önbellekten alındı: USD -> UZS, Değer: 12899.450300
+2025-06-11 19:26:06.312 +03:00 [INF] Kur değeri önbellekten alındı: USD -> UZS, Değer: 12899.450300
+2025-06-11 19:26:10.755 +03:00 [INF] Kur değeri önbellekten alındı: USD -> UZS, Değer: 12899.450300
+2025-06-11 19:28:03.684 +03:00 [INF] Yaklaşan hatırlatıcılar kontrol ediliyor...
+2025-06-11 19:28:03.719 +03:00 [INF] Bekleyen hatırlatma bulunamadı.
+2025-06-11 19:29:50.019 +03:00 [INF] Kur değeri önbellekten alındı: USD -> UZS, Değer: 12899.450300
+2025-06-11 19:30:00.930 +03:00 [INF] Kur değeri önbellekten alındı: USD -> UZS, Değer: 12899.450300
+2025-06-11 19:30:17.613 +03:00 [INF] Kur değeri önbellekten alındı: USD -> UZS, Değer: 12899.450300
+2025-06-11 19:33:03.721 +03:00 [INF] Yaklaşan hatırlatıcılar kontrol ediliyor...
+2025-06-11 19:33:03.756 +03:00 [INF] Bekleyen hatırlatma bulunamadı.
+2025-06-11 19:34:18.500 +03:00 [INF] Veritabanına bağlantı başarılı. Migrationlar uygulanıyor...
+2025-06-11 19:34:19.784 +03:00 [INF] Veritabanı işlemleri başarıyla tamamlandı.
+2025-06-11 19:34:20.027 +03:00 [INF] Todo Hatırlatıcı Servisi başlatıldı.
+2025-06-11 19:34:20.029 +03:00 [INF] Yaklaşan hatırlatıcılar kontrol ediliyor...
+2025-06-11 19:34:20.198 +03:00 [INF] Bekleyen hatırlatma bulunamadı.
+2025-06-11 19:34:22.710 +03:00 [INF] Giriş denemesi: admin
+2025-06-11 19:34:23.036 +03:00 [INF] Admin kullanıcısı başarıyla giriş yaptı: admin
+2025-06-11 19:34:23.037 +03:00 [INF] Admin session oluşturuldu: UserID=9e6fc203-37eb-49a7-a470-1551f7bec8b8, UserName=admin
+2025-06-11 19:34:23.038 +03:00 [INF] Yönlendirme adresi: /
+2025-06-11 19:34:23.038 +03:00 [INF] Admin kullanıcısı / adresine yönlendiriliyor
+2025-06-11 19:34:23.480 +03:00 [INF] Aktif session bulundu: UserID=9e6fc203-37eb-49a7-a470-1551f7bec8b8, UserName=admin
+2025-06-11 19:34:23.581 +03:00 [INF] Admin kullanıcısı tespit edildi
+2025-06-11 19:34:23.582 +03:00 [INF] Kimlik doğrulanmış kullanıcı: admin
+2025-06-11 19:34:25.477 +03:00 [INF] TRY dönüşümü için kur değeri hesaplandı: TRY -> USD, Değer: 0.03
+2025-06-11 19:34:25.718 +03:00 [INF] Kur değeri hesaplandı: UZS -> USD, Değer: 0.0000775226832727903141733102
+2025-06-11 19:34:26.487 +03:00 [WRN] Kaynak para birimi kodu bulunamadı: EUR. Varsayılan değer kullanılıyor.
+2025-06-11 19:34:48.863 +03:00 [INF] Kur değeri hesaplandı: USD -> UZS, Değer: 12899.450300
+2025-06-11 19:34:51.605 +03:00 [INF] Kur değeri önbellekten alındı: USD -> UZS, Değer: 12899.450300
+2025-06-11 19:34:55.046 +03:00 [INF] Kur değeri önbellekten alındı: USD -> UZS, Değer: 12899.450300
+2025-06-11 19:34:57.477 +03:00 [INF] Kur değeri önbellekten alındı: USD -> UZS, Değer: 12899.450300
+2025-06-11 19:36:07.851 +03:00 [INF] Kur değeri önbellekten alındı: USD -> UZS, Değer: 12899.450300
+2025-06-11 19:36:09.739 +03:00 [INF] Kur değeri önbellekten alındı: USD -> UZS, Değer: 12899.450300
+2025-06-11 19:39:20.200 +03:00 [INF] Yaklaşan hatırlatıcılar kontrol ediliyor...
+2025-06-11 19:39:20.229 +03:00 [INF] Bekleyen hatırlatma bulunamadı.
+2025-06-11 19:39:44.526 +03:00 [INF] Kur değeri önbellekten alındı: USD -> UZS, Değer: 12899.450300
+2025-06-11 19:40:53.338 +03:00 [INF] Veritabanına bağlantı başarılı. Migrationlar uygulanıyor...
+2025-06-11 19:40:54.738 +03:00 [INF] Veritabanı işlemleri başarıyla tamamlandı.
+2025-06-11 19:40:55.041 +03:00 [INF] Todo Hatırlatıcı Servisi başlatıldı.
+2025-06-11 19:40:55.044 +03:00 [INF] Yaklaşan hatırlatıcılar kontrol ediliyor...
+2025-06-11 19:40:55.229 +03:00 [INF] Bekleyen hatırlatma bulunamadı.
+2025-06-11 19:40:57.671 +03:00 [INF] Giriş denemesi: admin
+2025-06-11 19:40:58.017 +03:00 [INF] Admin kullanıcısı başarıyla giriş yaptı: admin
+2025-06-11 19:40:58.018 +03:00 [INF] Admin session oluşturuldu: UserID=9e6fc203-37eb-49a7-a470-1551f7bec8b8, UserName=admin
+2025-06-11 19:40:58.019 +03:00 [INF] Yönlendirme adresi: /
+2025-06-11 19:40:58.020 +03:00 [INF] Admin kullanıcısı / adresine yönlendiriliyor
+2025-06-11 19:40:58.531 +03:00 [INF] Aktif session bulundu: UserID=9e6fc203-37eb-49a7-a470-1551f7bec8b8, UserName=admin
+2025-06-11 19:40:58.642 +03:00 [INF] Admin kullanıcısı tespit edildi
+2025-06-11 19:40:58.643 +03:00 [INF] Kimlik doğrulanmış kullanıcı: admin
+2025-06-11 19:41:00.431 +03:00 [INF] TRY dönüşümü için kur değeri hesaplandı: TRY -> USD, Değer: 0.03
+2025-06-11 19:41:00.675 +03:00 [INF] Kur değeri hesaplandı: UZS -> USD, Değer: 0.0000775226832727903141733102
+2025-06-11 19:41:01.454 +03:00 [WRN] Kaynak para birimi kodu bulunamadı: EUR. Varsayılan değer kullanılıyor.
+2025-06-11 20:06:59.758 +03:00 [INF] Veritabanına bağlantı başarılı. Migrationlar uygulanıyor...
+2025-06-11 20:07:01.136 +03:00 [INF] Veritabanı işlemleri başarıyla tamamlandı.
+2025-06-11 20:07:01.443 +03:00 [INF] Todo Hatırlatıcı Servisi başlatıldı.
+2025-06-11 20:07:01.446 +03:00 [INF] Yaklaşan hatırlatıcılar kontrol ediliyor...
+2025-06-11 20:07:01.591 +03:00 [INF] Bekleyen hatırlatma bulunamadı.
+2025-06-11 20:07:04.279 +03:00 [INF] Giriş denemesi: admin
+2025-06-11 20:07:04.620 +03:00 [INF] Admin kullanıcısı başarıyla giriş yaptı: admin
+2025-06-11 20:07:04.621 +03:00 [INF] Admin session oluşturuldu: UserID=9e6fc203-37eb-49a7-a470-1551f7bec8b8, UserName=admin
+2025-06-11 20:07:04.621 +03:00 [INF] Yönlendirme adresi: /
+2025-06-11 20:07:04.622 +03:00 [INF] Admin kullanıcısı / adresine yönlendiriliyor
+2025-06-11 20:07:05.060 +03:00 [INF] Aktif session bulundu: UserID=9e6fc203-37eb-49a7-a470-1551f7bec8b8, UserName=admin
+2025-06-11 20:07:05.209 +03:00 [INF] Admin kullanıcısı tespit edildi
+2025-06-11 20:07:05.210 +03:00 [INF] Kimlik doğrulanmış kullanıcı: admin
+2025-06-11 20:07:06.948 +03:00 [INF] TRY dönüşümü için kur değeri hesaplandı: TRY -> USD, Değer: 0.03
+2025-06-11 20:07:07.216 +03:00 [INF] Kur değeri hesaplandı: UZS -> USD, Değer: 0.0000775226832727903141733102
+2025-06-11 20:07:07.956 +03:00 [WRN] Kaynak para birimi kodu bulunamadı: EUR. Varsayılan değer kullanılıyor.
+2025-06-11 20:08:43.610 +03:00 [INF] Veritabanına bağlantı başarılı. Migrationlar uygulanıyor...
+2025-06-11 20:08:44.892 +03:00 [INF] Veritabanı işlemleri başarıyla tamamlandı.
+2025-06-11 20:08:45.140 +03:00 [INF] Todo Hatırlatıcı Servisi başlatıldı.
+2025-06-11 20:08:45.142 +03:00 [INF] Yaklaşan hatırlatıcılar kontrol ediliyor...
+2025-06-11 20:08:45.262 +03:00 [INF] Bekleyen hatırlatma bulunamadı.
+2025-06-11 20:08:51.340 +03:00 [INF] Giriş denemesi: admin
+2025-06-11 20:08:51.677 +03:00 [INF] Admin kullanıcısı başarıyla giriş yaptı: admin
+2025-06-11 20:08:51.678 +03:00 [INF] Admin session oluşturuldu: UserID=9e6fc203-37eb-49a7-a470-1551f7bec8b8, UserName=admin
+2025-06-11 20:08:51.679 +03:00 [INF] Yönlendirme adresi: /
+2025-06-11 20:08:51.680 +03:00 [INF] Admin kullanıcısı / adresine yönlendiriliyor
+2025-06-11 20:08:52.067 +03:00 [INF] Aktif session bulundu: UserID=9e6fc203-37eb-49a7-a470-1551f7bec8b8, UserName=admin
+2025-06-11 20:08:52.156 +03:00 [INF] Admin kullanıcısı tespit edildi
+2025-06-11 20:08:52.157 +03:00 [INF] Kimlik doğrulanmış kullanıcı: admin
+2025-06-11 20:08:53.840 +03:00 [INF] TRY dönüşümü için kur değeri hesaplandı: TRY -> USD, Değer: 0.03
+2025-06-11 20:08:54.096 +03:00 [INF] Kur değeri hesaplandı: UZS -> USD, Değer: 0.0000775226832727903141733102
+2025-06-11 20:08:54.864 +03:00 [WRN] Kaynak para birimi kodu bulunamadı: EUR. Varsayılan değer kullanılıyor.
+2025-06-11 20:10:37.485 +03:00 [INF] Veritabanına bağlantı başarılı. Migrationlar uygulanıyor...
+2025-06-11 20:10:38.880 +03:00 [INF] Veritabanı işlemleri başarıyla tamamlandı.
+2025-06-11 20:10:39.171 +03:00 [INF] Todo Hatırlatıcı Servisi başlatıldı.
+2025-06-11 20:10:39.174 +03:00 [INF] Yaklaşan hatırlatıcılar kontrol ediliyor...
+2025-06-11 20:10:39.311 +03:00 [INF] Bekleyen hatırlatma bulunamadı.
+2025-06-11 20:10:41.860 +03:00 [INF] Giriş denemesi: admin
+2025-06-11 20:10:42.227 +03:00 [INF] Admin kullanıcısı başarıyla giriş yaptı: admin
+2025-06-11 20:10:42.227 +03:00 [INF] Admin session oluşturuldu: UserID=9e6fc203-37eb-49a7-a470-1551f7bec8b8, UserName=admin
+2025-06-11 20:10:42.228 +03:00 [INF] Yönlendirme adresi: /
+2025-06-11 20:10:42.229 +03:00 [INF] Admin kullanıcısı / adresine yönlendiriliyor
+2025-06-11 20:10:42.633 +03:00 [INF] Aktif session bulundu: UserID=9e6fc203-37eb-49a7-a470-1551f7bec8b8, UserName=admin
+2025-06-11 20:10:42.752 +03:00 [INF] Admin kullanıcısı tespit edildi
+2025-06-11 20:10:42.753 +03:00 [INF] Kimlik doğrulanmış kullanıcı: admin
+2025-06-11 20:10:44.578 +03:00 [INF] TRY dönüşümü için kur değeri hesaplandı: TRY -> USD, Değer: 0.03
+2025-06-11 20:10:44.848 +03:00 [INF] Kur değeri hesaplandı: UZS -> USD, Değer: 0.0000775226832727903141733102
+2025-06-11 20:10:45.594 +03:00 [WRN] Kaynak para birimi kodu bulunamadı: EUR. Varsayılan değer kullanılıyor.
+2025-06-11 20:18:40.481 +03:00 [INF] Veritabanına bağlantı başarılı. Migrationlar uygulanıyor...
+2025-06-11 20:18:41.850 +03:00 [INF] Veritabanı işlemleri başarıyla tamamlandı.
+2025-06-11 20:18:42.097 +03:00 [INF] Todo Hatırlatıcı Servisi başlatıldı.
+2025-06-11 20:18:42.100 +03:00 [INF] Yaklaşan hatırlatıcılar kontrol ediliyor...
+2025-06-11 20:18:42.323 +03:00 [INF] Bekleyen hatırlatma bulunamadı.
+2025-06-11 20:18:48.241 +03:00 [INF] Giriş denemesi: admin
+2025-06-11 20:18:48.566 +03:00 [INF] Admin kullanıcısı başarıyla giriş yaptı: admin
+2025-06-11 20:18:48.566 +03:00 [INF] Admin session oluşturuldu: UserID=9e6fc203-37eb-49a7-a470-1551f7bec8b8, UserName=admin
+2025-06-11 20:18:48.567 +03:00 [INF] Yönlendirme adresi: /
+2025-06-11 20:18:48.568 +03:00 [INF] Admin kullanıcısı / adresine yönlendiriliyor
+2025-06-11 20:18:48.981 +03:00 [INF] Aktif session bulundu: UserID=9e6fc203-37eb-49a7-a470-1551f7bec8b8, UserName=admin
+2025-06-11 20:18:49.072 +03:00 [INF] Admin kullanıcısı tespit edildi
+2025-06-11 20:18:49.073 +03:00 [INF] Kimlik doğrulanmış kullanıcı: admin
+2025-06-11 20:18:50.899 +03:00 [INF] TRY dönüşümü için kur değeri hesaplandı: TRY -> USD, Değer: 0.03
+2025-06-11 20:18:52.860 +03:00 [INF] Kur değeri hesaplandı: UZS -> USD, Değer: 0.0000775226832727903141733102
+2025-06-11 20:18:54.434 +03:00 [WRN] Kaynak para birimi kodu bulunamadı: EUR. Varsayılan değer kullanılıyor.
+2025-06-11 20:23:42.325 +03:00 [INF] Yaklaşan hatırlatıcılar kontrol ediliyor...
+2025-06-11 20:23:42.356 +03:00 [INF] Bekleyen hatırlatma bulunamadı.
+2025-06-11 20:28:42.359 +03:00 [INF] Yaklaşan hatırlatıcılar kontrol ediliyor...
+2025-06-11 20:28:42.561 +03:00 [INF] Bekleyen hatırlatma bulunamadı.
+2025-06-11 20:33:42.568 +03:00 [INF] Yaklaşan hatırlatıcılar kontrol ediliyor...
+2025-06-11 20:33:42.602 +03:00 [INF] Bekleyen hatırlatma bulunamadı.
+2025-06-11 20:38:42.610 +03:00 [INF] Yaklaşan hatırlatıcılar kontrol ediliyor...
+2025-06-11 20:38:42.646 +03:00 [INF] Bekleyen hatırlatma bulunamadı.
+2025-06-11 20:43:42.655 +03:00 [INF] Yaklaşan hatırlatıcılar kontrol ediliyor...
+2025-06-11 20:43:42.858 +03:00 [INF] Bekleyen hatırlatma bulunamadı.
+2025-06-11 20:48:42.867 +03:00 [INF] Yaklaşan hatırlatıcılar kontrol ediliyor...
+2025-06-11 20:48:42.905 +03:00 [INF] Bekleyen hatırlatma bulunamadı.
+2025-06-11 20:53:53.309 +03:00 [INF] Veritabanına bağlantı başarılı. Migrationlar uygulanıyor...
+2025-06-11 20:53:54.629 +03:00 [INF] Veritabanı işlemleri başarıyla tamamlandı.
+2025-06-11 20:53:54.937 +03:00 [INF] Todo Hatırlatıcı Servisi başlatıldı.
+2025-06-11 20:53:54.940 +03:00 [INF] Yaklaşan hatırlatıcılar kontrol ediliyor...
+2025-06-11 20:53:55.060 +03:00 [INF] Bekleyen hatırlatma bulunamadı.
+2025-06-11 20:53:58.807 +03:00 [INF] Giriş denemesi: admin
+2025-06-11 20:53:59.192 +03:00 [INF] Admin kullanıcısı başarıyla giriş yaptı: admin
+2025-06-11 20:53:59.193 +03:00 [INF] Admin session oluşturuldu: UserID=9e6fc203-37eb-49a7-a470-1551f7bec8b8, UserName=admin
+2025-06-11 20:53:59.193 +03:00 [INF] Yönlendirme adresi: /
+2025-06-11 20:53:59.194 +03:00 [INF] Admin kullanıcısı / adresine yönlendiriliyor
+2025-06-11 20:53:59.662 +03:00 [INF] Aktif session bulundu: UserID=9e6fc203-37eb-49a7-a470-1551f7bec8b8, UserName=admin
+2025-06-11 20:53:59.772 +03:00 [INF] Admin kullanıcısı tespit edildi
+2025-06-11 20:53:59.773 +03:00 [INF] Kimlik doğrulanmış kullanıcı: admin
+2025-06-11 20:54:01.527 +03:00 [INF] TRY dönüşümü için kur değeri hesaplandı: TRY -> USD, Değer: 0.03
+2025-06-11 20:54:01.771 +03:00 [INF] Kur değeri hesaplandı: UZS -> USD, Değer: 0.0000775226832727903141733102
+2025-06-11 20:54:02.471 +03:00 [WRN] Kaynak para birimi kodu bulunamadı: EUR. Varsayılan değer kullanılıyor.
+2025-06-11 20:56:57.099 +03:00 [INF] Veritabanına bağlantı başarılı. Migrationlar uygulanıyor...
+2025-06-11 20:56:58.364 +03:00 [INF] Veritabanı işlemleri başarıyla tamamlandı.
+2025-06-11 20:56:58.642 +03:00 [INF] Todo Hatırlatıcı Servisi başlatıldı.
+2025-06-11 20:56:58.644 +03:00 [INF] Yaklaşan hatırlatıcılar kontrol ediliyor...
+2025-06-11 20:56:58.811 +03:00 [INF] Bekleyen hatırlatma bulunamadı.
+2025-06-11 20:57:02.103 +03:00 [INF] Giriş denemesi: admin
+2025-06-11 20:57:04.898 +03:00 [INF] Admin kullanıcısı başarıyla giriş yaptı: admin
+2025-06-11 20:57:04.900 +03:00 [INF] Admin session oluşturuldu: UserID=9e6fc203-37eb-49a7-a470-1551f7bec8b8, UserName=admin
+2025-06-11 20:57:04.900 +03:00 [INF] Yönlendirme adresi: /
+2025-06-11 20:57:04.901 +03:00 [INF] Admin kullanıcısı / adresine yönlendiriliyor
+2025-06-11 20:57:05.341 +03:00 [INF] Aktif session bulundu: UserID=9e6fc203-37eb-49a7-a470-1551f7bec8b8, UserName=admin
+2025-06-11 20:57:05.428 +03:00 [INF] Admin kullanıcısı tespit edildi
+2025-06-11 20:57:05.428 +03:00 [INF] Kimlik doğrulanmış kullanıcı: admin
+2025-06-11 20:57:07.033 +03:00 [INF] TRY dönüşümü için kur değeri hesaplandı: TRY -> USD, Değer: 0.03
+2025-06-11 20:57:07.277 +03:00 [INF] Kur değeri hesaplandı: UZS -> USD, Değer: 0.0000775226832727903141733102
+2025-06-11 20:57:08.010 +03:00 [WRN] Kaynak para birimi kodu bulunamadı: EUR. Varsayılan değer kullanılıyor.
+2025-06-11 21:41:53.823 +03:00 [INF] Veritabanına bağlantı başarılı. Migrationlar uygulanıyor...
+2025-06-11 21:41:55.286 +03:00 [INF] Veritabanı işlemleri başarıyla tamamlandı.
+2025-06-11 21:41:55.537 +03:00 [INF] Todo Hatırlatıcı Servisi başlatıldı.
+2025-06-11 21:41:55.540 +03:00 [INF] Yaklaşan hatırlatıcılar kontrol ediliyor...
+2025-06-11 21:41:55.674 +03:00 [INF] Bekleyen hatırlatma bulunamadı.
+2025-06-11 21:42:06.897 +03:00 [INF] Giriş denemesi: admin
+2025-06-11 21:42:07.376 +03:00 [INF] Admin kullanıcısı başarıyla giriş yaptı: admin
+2025-06-11 21:42:07.382 +03:00 [INF] Admin session oluşturuldu: UserID=9e6fc203-37eb-49a7-a470-1551f7bec8b8, UserName=admin
+2025-06-11 21:42:07.382 +03:00 [INF] Yönlendirme adresi: /
+2025-06-11 21:42:07.383 +03:00 [INF] Admin kullanıcısı / adresine yönlendiriliyor
+2025-06-11 21:42:08.471 +03:00 [INF] Aktif session bulundu: UserID=9e6fc203-37eb-49a7-a470-1551f7bec8b8, UserName=admin
+2025-06-11 21:42:08.563 +03:00 [INF] Admin kullanıcısı tespit edildi
+2025-06-11 21:42:08.564 +03:00 [INF] Kimlik doğrulanmış kullanıcı: admin
+2025-06-11 21:42:11.211 +03:00 [INF] TRY dönüşümü için kur değeri hesaplandı: TRY -> USD, Değer: 0.03
+2025-06-11 21:42:11.616 +03:00 [INF] Kur değeri hesaplandı: UZS -> USD, Değer: 0.0000775226832727903141733102
+2025-06-11 21:42:12.291 +03:00 [WRN] Kaynak para birimi kodu bulunamadı: EUR. Varsayılan değer kullanılıyor.
+2025-06-11 21:42:29.349 +03:00 [ERR] Hata: 00-1e3b7b5d76c677c5dbbf178da9ec55f9-eec1435d2430f595-00, Kullanıcı: admin, Path: /Banka/HareketDuzenle/fed06827-cb92-4de4-8169-a4a8bf542eb8, Method: GET, QueryString: , IP: ::1, UserAgent: Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/137.0.0.0 Safari/537.36
+Microsoft.CSharp.RuntimeBinder.RuntimeBinderException: 'Microsoft.AspNetCore.Mvc.Rendering.SelectListItem' does not contain a definition for 'CariID'
+   at CallSite.Target(Closure, CallSite, Object)
+   at System.Dynamic.UpdateDelegates.UpdateAndExecute1[T0,TRet](CallSite site, T0 arg0)
+   at AspNetCoreGeneratedDocument.Views_Banka_HareketDuzenle.<>c__DisplayClass38_0.<<ExecuteAsync>b__46>d.MoveNext() in D:\cursor-workspace\MuhasebeStokWebApp\Views\Banka\HareketDuzenle.cshtml:line 103
+--- End of stack trace from previous location ---
+   at Microsoft.AspNetCore.Razor.Runtime.TagHelpers.TagHelperExecutionContext.SetOutputContentAsync()
+   at AspNetCoreGeneratedDocument.Views_Banka_HareketDuzenle.<>c__DisplayClass38_0.<<ExecuteAsync>b__1>d.MoveNext() in D:\cursor-workspace\MuhasebeStokWebApp\Views\Banka\HareketDuzenle.cshtml:line 96
+--- End of stack trace from previous location ---
+   at Microsoft.AspNetCore.Razor.Runtime.TagHelpers.TagHelperExecutionContext.GetChildContentAsync(Boolean useCachedResult, HtmlEncoder encoder)
+   at Microsoft.AspNetCore.Mvc.TagHelpers.RenderAtEndOfFormTagHelper.ProcessAsync(TagHelperContext context, TagHelperOutput output)
+   at Microsoft.AspNetCore.Razor.Runtime.TagHelpers.TagHelperRunner.<RunAsync>g__Awaited|0_0(Task task, TagHelperExecutionContext executionContext, Int32 i, Int32 count)
+   at AspNetCoreGeneratedDocument.Views_Banka_HareketDuzenle.ExecuteAsync() in D:\cursor-workspace\MuhasebeStokWebApp\Views\Banka\HareketDuzenle.cshtml:line 8
+   at Microsoft.AspNetCore.Mvc.Razor.RazorView.RenderPageCoreAsync(IRazorPage page, ViewContext context)
+   at Microsoft.AspNetCore.Mvc.Razor.RazorView.RenderPageAsync(IRazorPage page, ViewContext context, Boolean invokeViewStarts)
+   at Microsoft.AspNetCore.Mvc.Razor.RazorView.RenderAsync(ViewContext context)
+   at Microsoft.AspNetCore.Mvc.ViewFeatures.ViewExecutor.ExecuteAsync(ViewContext viewContext, String contentType, Nullable`1 statusCode)
+   at Microsoft.AspNetCore.Mvc.ViewFeatures.ViewExecutor.ExecuteAsync(ViewContext viewContext, String contentType, Nullable`1 statusCode)
+   at Microsoft.AspNetCore.Mvc.ViewFeatures.ViewExecutor.ExecuteAsync(ActionContext actionContext, IView view, ViewDataDictionary viewData, ITempDataDictionary tempData, String contentType, Nullable`1 statusCode)
+   at Microsoft.AspNetCore.Mvc.ViewFeatures.ViewResultExecutor.ExecuteAsync(ActionContext context, ViewResult result)
+   at Microsoft.AspNetCore.Mvc.ViewResult.ExecuteResultAsync(ActionContext context)
+   at Microsoft.AspNetCore.Mvc.Infrastructure.ResourceInvoker.<InvokeNextResultFilterAsync>g__Awaited|30_0[TFilter,TFilterAsync](ResourceInvoker invoker, Task lastTask, State next, Scope scope, Object state, Boolean isCompleted)
+   at Microsoft.AspNetCore.Mvc.Infrastructure.ResourceInvoker.Rethrow(ResultExecutedContextSealed context)
+   at Microsoft.AspNetCore.Mvc.Infrastructure.ResourceInvoker.ResultNext[TFilter,TFilterAsync](State& next, Scope& scope, Object& state, Boolean& isCompleted)
+   at Microsoft.AspNetCore.Mvc.Infrastructure.ResourceInvoker.InvokeResultFilters()
+--- End of stack trace from previous location ---
+   at Microsoft.AspNetCore.Mvc.Infrastructure.ResourceInvoker.<InvokeNextResourceFilter>g__Awaited|25_0(ResourceInvoker invoker, Task lastTask, State next, Scope scope, Object state, Boolean isCompleted)
+   at Microsoft.AspNetCore.Mvc.Infrastructure.ResourceInvoker.Rethrow(ResourceExecutedContextSealed context)
+   at Microsoft.AspNetCore.Mvc.Infrastructure.ResourceInvoker.Next(State& next, Scope& scope, Object& state, Boolean& isCompleted)
+   at Microsoft.AspNetCore.Mvc.Infrastructure.ResourceInvoker.<InvokeFilterPipelineAsync>g__Awaited|20_0(ResourceInvoker invoker, Task lastTask, State next, Scope scope, Object state, Boolean isCompleted)
+   at Microsoft.AspNetCore.Mvc.Infrastructure.ResourceInvoker.<InvokeAsync>g__Awaited|17_0(ResourceInvoker invoker, Task task, IDisposable scope)
+   at Microsoft.AspNetCore.Mvc.Infrastructure.ResourceInvoker.<InvokeAsync>g__Awaited|17_0(ResourceInvoker invoker, Task task, IDisposable scope)
+   at Microsoft.AspNetCore.Localization.RequestLocalizationMiddleware.Invoke(HttpContext context)
+   at MuhasebeStokWebApp.Middleware.GlobalExceptionHandlingMiddleware.InvokeAsync(HttpContext context) in D:\cursor-workspace\MuhasebeStokWebApp\Middleware\GlobalExceptionHandlingMiddleware.cs:line 38
+2025-06-11 21:46:55.681 +03:00 [INF] Yaklaşan hatırlatıcılar kontrol ediliyor...
+2025-06-11 21:46:55.718 +03:00 [INF] Bekleyen hatırlatma bulunamadı.
+2025-06-11 21:55:21.973 +03:00 [INF] Veritabanına bağlantı başarılı. Migrationlar uygulanıyor...
+2025-06-11 21:55:23.418 +03:00 [INF] Veritabanı işlemleri başarıyla tamamlandı.
+2025-06-11 21:55:23.680 +03:00 [INF] Todo Hatırlatıcı Servisi başlatıldı.
+2025-06-11 21:55:23.682 +03:00 [INF] Yaklaşan hatırlatıcılar kontrol ediliyor...
+2025-06-11 21:55:23.819 +03:00 [INF] Bekleyen hatırlatma bulunamadı.
+2025-06-11 21:55:29.258 +03:00 [INF] Giriş denemesi: admin
+2025-06-11 21:55:29.598 +03:00 [INF] Admin kullanıcısı başarıyla giriş yaptı: admin
+2025-06-11 21:55:29.598 +03:00 [INF] Admin session oluşturuldu: UserID=9e6fc203-37eb-49a7-a470-1551f7bec8b8, UserName=admin
+2025-06-11 21:55:29.599 +03:00 [INF] Yönlendirme adresi: /
+2025-06-11 21:55:29.600 +03:00 [INF] Admin kullanıcısı / adresine yönlendiriliyor
+2025-06-11 21:55:29.991 +03:00 [INF] Aktif session bulundu: UserID=9e6fc203-37eb-49a7-a470-1551f7bec8b8, UserName=admin
+2025-06-11 21:55:30.087 +03:00 [INF] Admin kullanıcısı tespit edildi
+2025-06-11 21:55:30.088 +03:00 [INF] Kimlik doğrulanmış kullanıcı: admin
+2025-06-11 21:55:31.805 +03:00 [INF] TRY dönüşümü için kur değeri hesaplandı: TRY -> USD, Değer: 0.03
+2025-06-11 21:55:32.056 +03:00 [INF] Kur değeri hesaplandı: UZS -> USD, Değer: 0.0000775226832727903141733102
+2025-06-11 21:55:32.813 +03:00 [WRN] Kaynak para birimi kodu bulunamadı: EUR. Varsayılan değer kullanılıyor.
+2025-06-11 22:00:23.824 +03:00 [INF] Yaklaşan hatırlatıcılar kontrol ediliyor...
+2025-06-11 22:00:23.867 +03:00 [INF] Bekleyen hatırlatma bulunamadı.
+2025-06-11 22:05:25.103 +03:00 [INF] Veritabanına bağlantı başarılı. Migrationlar uygulanıyor...
+2025-06-11 22:05:28.187 +03:00 [INF] Veritabanı işlemleri başarıyla tamamlandı.
+2025-06-11 22:05:28.441 +03:00 [INF] Todo Hatırlatıcı Servisi başlatıldı.
+2025-06-11 22:05:28.444 +03:00 [INF] Yaklaşan hatırlatıcılar kontrol ediliyor...
+2025-06-11 22:05:28.629 +03:00 [INF] Bekleyen hatırlatma bulunamadı.
+2025-06-11 22:05:32.110 +03:00 [INF] Giriş denemesi: admin
+2025-06-11 22:05:32.503 +03:00 [INF] Admin kullanıcısı başarıyla giriş yaptı: admin
+2025-06-11 22:05:32.504 +03:00 [INF] Admin session oluşturuldu: UserID=9e6fc203-37eb-49a7-a470-1551f7bec8b8, UserName=admin
+2025-06-11 22:05:32.505 +03:00 [INF] Yönlendirme adresi: /
+2025-06-11 22:05:32.506 +03:00 [INF] Admin kullanıcısı / adresine yönlendiriliyor
+2025-06-11 22:05:33.366 +03:00 [INF] Aktif session bulundu: UserID=9e6fc203-37eb-49a7-a470-1551f7bec8b8, UserName=admin
+2025-06-11 22:05:33.634 +03:00 [INF] Admin kullanıcısı tespit edildi
+2025-06-11 22:05:33.635 +03:00 [INF] Kimlik doğrulanmış kullanıcı: admin
+2025-06-11 22:05:35.892 +03:00 [INF] TRY dönüşümü için kur değeri hesaplandı: TRY -> USD, Değer: 0.03
+2025-06-11 22:05:36.209 +03:00 [INF] Kur değeri hesaplandı: UZS -> USD, Değer: 0.0000775226832727903141733102
+2025-06-11 22:05:36.912 +03:00 [WRN] Kaynak para birimi kodu bulunamadı: EUR. Varsayılan değer kullanılıyor.
+2025-06-11 22:06:59.940 +03:00 [INF] TRY dönüşümü için kur değeri hesaplandı: USD -> TRY, Değer: 33.33
+2025-06-11 22:08:03.946 +03:00 [INF] Kur değeri önbellekten alındı: USD -> TRY, Değer: 33.33
+2025-06-11 22:09:56.174 +03:00 [INF] Kur değeri önbellekten alındı: USD -> TRY, Değer: 33.33
+2025-06-11 22:10:28.636 +03:00 [INF] Yaklaşan hatırlatıcılar kontrol ediliyor...
+2025-06-11 22:10:28.667 +03:00 [INF] Bekleyen hatırlatma bulunamadı.
+2025-06-11 22:15:28.677 +03:00 [INF] Yaklaşan hatırlatıcılar kontrol ediliyor...
+2025-06-11 22:15:28.835 +03:00 [INF] Bekleyen hatırlatma bulunamadı.
+2025-06-11 22:20:28.837 +03:00 [INF] Yaklaşan hatırlatıcılar kontrol ediliyor...
+2025-06-11 22:20:28.870 +03:00 [INF] Bekleyen hatırlatma bulunamadı.
+2025-06-11 22:25:28.875 +03:00 [INF] Yaklaşan hatırlatıcılar kontrol ediliyor...
+2025-06-11 22:25:29.134 +03:00 [INF] Bekleyen hatırlatma bulunamadı.
+2025-06-11 22:30:02.688 +03:00 [INF] Veritabanına bağlantı başarılı. Migrationlar uygulanıyor...
+2025-06-11 22:30:04.045 +03:00 [INF] Veritabanı işlemleri başarıyla tamamlandı.
+2025-06-11 22:30:04.290 +03:00 [INF] Todo Hatırlatıcı Servisi başlatıldı.
+2025-06-11 22:30:04.293 +03:00 [INF] Yaklaşan hatırlatıcılar kontrol ediliyor...
+2025-06-11 22:30:04.446 +03:00 [INF] Bekleyen hatırlatma bulunamadı.
+2025-06-11 22:30:21.283 +03:00 [INF] Giriş denemesi: admin
+2025-06-11 22:30:21.629 +03:00 [INF] Admin kullanıcısı başarıyla giriş yaptı: admin
+2025-06-11 22:30:21.630 +03:00 [INF] Admin session oluşturuldu: UserID=9e6fc203-37eb-49a7-a470-1551f7bec8b8, UserName=admin
+2025-06-11 22:30:21.630 +03:00 [INF] Yönlendirme adresi: /
+2025-06-11 22:30:21.631 +03:00 [INF] Admin kullanıcısı / adresine yönlendiriliyor
+2025-06-11 22:30:22.137 +03:00 [INF] Aktif session bulundu: UserID=9e6fc203-37eb-49a7-a470-1551f7bec8b8, UserName=admin
+2025-06-11 22:30:22.249 +03:00 [INF] Admin kullanıcısı tespit edildi
+2025-06-11 22:30:22.250 +03:00 [INF] Kimlik doğrulanmış kullanıcı: admin
+2025-06-11 22:30:24.051 +03:00 [INF] TRY dönüşümü için kur değeri hesaplandı: TRY -> USD, Değer: 0.03
+2025-06-11 22:30:24.301 +03:00 [INF] Kur değeri hesaplandı: UZS -> USD, Değer: 0.0000775226832727903141733102
+2025-06-11 22:30:25.036 +03:00 [WRN] Kaynak para birimi kodu bulunamadı: EUR. Varsayılan değer kullanılıyor.
+2025-06-11 22:35:04.461 +03:00 [INF] Yaklaşan hatırlatıcılar kontrol ediliyor...
+2025-06-11 22:35:04.489 +03:00 [INF] Bekleyen hatırlatma bulunamadı.
+2025-06-11 22:38:50.933 +03:00 [INF] Veritabanına bağlantı başarılı. Migrationlar uygulanıyor...
+2025-06-11 22:38:52.361 +03:00 [INF] Veritabanı işlemleri başarıyla tamamlandı.
+2025-06-11 22:38:52.632 +03:00 [INF] Todo Hatırlatıcı Servisi başlatıldı.
+2025-06-11 22:38:52.635 +03:00 [INF] Yaklaşan hatırlatıcılar kontrol ediliyor...
+2025-06-11 22:38:52.769 +03:00 [INF] Bekleyen hatırlatma bulunamadı.
+2025-06-11 22:38:56.304 +03:00 [INF] Giriş denemesi: admin
+2025-06-11 22:38:56.687 +03:00 [INF] Admin kullanıcısı başarıyla giriş yaptı: admin
+2025-06-11 22:38:56.688 +03:00 [INF] Admin session oluşturuldu: UserID=9e6fc203-37eb-49a7-a470-1551f7bec8b8, UserName=admin
+2025-06-11 22:38:56.689 +03:00 [INF] Yönlendirme adresi: /
+2025-06-11 22:38:56.690 +03:00 [INF] Admin kullanıcısı / adresine yönlendiriliyor
+2025-06-11 22:38:57.145 +03:00 [INF] Aktif session bulundu: UserID=9e6fc203-37eb-49a7-a470-1551f7bec8b8, UserName=admin
+2025-06-11 22:38:57.243 +03:00 [INF] Admin kullanıcısı tespit edildi
+2025-06-11 22:38:57.244 +03:00 [INF] Kimlik doğrulanmış kullanıcı: admin
+2025-06-11 22:38:59.109 +03:00 [INF] TRY dönüşümü için kur değeri hesaplandı: TRY -> USD, Değer: 0.03
+2025-06-11 22:38:59.347 +03:00 [INF] Kur değeri hesaplandı: UZS -> USD, Değer: 0.0000775226832727903141733102
+2025-06-11 22:39:00.046 +03:00 [WRN] Kaynak para birimi kodu bulunamadı: EUR. Varsayılan değer kullanılıyor.
+2025-06-11 22:43:52.771 +03:00 [INF] Yaklaşan hatırlatıcılar kontrol ediliyor...
+2025-06-11 22:43:52.800 +03:00 [INF] Bekleyen hatırlatma bulunamadı.
+2025-06-11 22:46:23.245 +03:00 [INF] Veritabanına bağlantı başarılı. Migrationlar uygulanıyor...
+2025-06-11 22:46:24.517 +03:00 [INF] Veritabanı işlemleri başarıyla tamamlandı.
+2025-06-11 22:46:24.822 +03:00 [INF] Todo Hatırlatıcı Servisi başlatıldı.
+2025-06-11 22:46:24.825 +03:00 [INF] Yaklaşan hatırlatıcılar kontrol ediliyor...
+2025-06-11 22:46:24.947 +03:00 [INF] Bekleyen hatırlatma bulunamadı.
+2025-06-11 22:46:29.116 +03:00 [INF] Giriş denemesi: admin
+2025-06-11 22:46:29.514 +03:00 [INF] Admin kullanıcısı başarıyla giriş yaptı: admin
+2025-06-11 22:46:29.515 +03:00 [INF] Admin session oluşturuldu: UserID=9e6fc203-37eb-49a7-a470-1551f7bec8b8, UserName=admin
+2025-06-11 22:46:29.516 +03:00 [INF] Yönlendirme adresi: /
+2025-06-11 22:46:29.517 +03:00 [INF] Admin kullanıcısı / adresine yönlendiriliyor
+2025-06-11 22:46:29.929 +03:00 [INF] Aktif session bulundu: UserID=9e6fc203-37eb-49a7-a470-1551f7bec8b8, UserName=admin
+2025-06-11 22:46:30.076 +03:00 [INF] Admin kullanıcısı tespit edildi
+2025-06-11 22:46:30.077 +03:00 [INF] Kimlik doğrulanmış kullanıcı: admin
+2025-06-11 22:46:32.338 +03:00 [INF] TRY dönüşümü için kur değeri hesaplandı: TRY -> USD, Değer: 0.03
+2025-06-11 22:46:33.366 +03:00 [INF] Kur değeri hesaplandı: UZS -> USD, Değer: 0.0000775226832727903141733102
+2025-06-11 22:46:34.923 +03:00 [WRN] Kaynak para birimi kodu bulunamadı: EUR. Varsayılan değer kullanılıyor.
+2025-06-11 22:51:24.950 +03:00 [INF] Yaklaşan hatırlatıcılar kontrol ediliyor...
+2025-06-11 22:51:24.984 +03:00 [INF] Bekleyen hatırlatma bulunamadı.
+2025-06-11 22:56:24.989 +03:00 [INF] Yaklaşan hatırlatıcılar kontrol ediliyor...
+2025-06-11 22:56:25.198 +03:00 [INF] Bekleyen hatırlatma bulunamadı.
+2025-06-11 23:01:25.205 +03:00 [INF] Yaklaşan hatırlatıcılar kontrol ediliyor...
+2025-06-11 23:01:25.251 +03:00 [INF] Bekleyen hatırlatma bulunamadı.
+2025-06-11 23:06:25.266 +03:00 [INF] Yaklaşan hatırlatıcılar kontrol ediliyor...
+2025-06-11 23:06:25.297 +03:00 [INF] Bekleyen hatırlatma bulunamadı.
+2025-06-11 23:10:01.269 +03:00 [INF] Veritabanına bağlantı başarılı. Migrationlar uygulanıyor...
+2025-06-11 23:10:02.605 +03:00 [INF] Veritabanı işlemleri başarıyla tamamlandı.
+2025-06-11 23:10:02.880 +03:00 [INF] Todo Hatırlatıcı Servisi başlatıldı.
+2025-06-11 23:10:02.883 +03:00 [INF] Yaklaşan hatırlatıcılar kontrol ediliyor...
+2025-06-11 23:10:03.039 +03:00 [INF] Bekleyen hatırlatma bulunamadı.
+2025-06-11 23:10:06.936 +03:00 [INF] Giriş denemesi: admin
+2025-06-11 23:10:07.295 +03:00 [INF] Admin kullanıcısı başarıyla giriş yaptı: admin
+2025-06-11 23:10:07.296 +03:00 [INF] Admin session oluşturuldu: UserID=9e6fc203-37eb-49a7-a470-1551f7bec8b8, UserName=admin
+2025-06-11 23:10:07.296 +03:00 [INF] Yönlendirme adresi: /
+2025-06-11 23:10:07.297 +03:00 [INF] Admin kullanıcısı / adresine yönlendiriliyor
+2025-06-11 23:10:07.758 +03:00 [INF] Aktif session bulundu: UserID=9e6fc203-37eb-49a7-a470-1551f7bec8b8, UserName=admin
+2025-06-11 23:10:07.947 +03:00 [INF] Admin kullanıcısı tespit edildi
+2025-06-11 23:10:07.949 +03:00 [INF] Kimlik doğrulanmış kullanıcı: admin
+2025-06-11 23:10:10.011 +03:00 [INF] TRY dönüşümü için kur değeri hesaplandı: TRY -> USD, Değer: 0.03
+2025-06-11 23:10:10.252 +03:00 [INF] Kur değeri hesaplandı: UZS -> USD, Değer: 0.0000775226832727903141733102
+2025-06-11 23:10:10.982 +03:00 [WRN] Kaynak para birimi kodu bulunamadı: EUR. Varsayılan değer kullanılıyor.
+2025-06-11 23:15:03.051 +03:00 [INF] Yaklaşan hatırlatıcılar kontrol ediliyor...
+2025-06-11 23:15:03.234 +03:00 [INF] Bekleyen hatırlatma bulunamadı.
+2025-06-11 23:20:03.238 +03:00 [INF] Yaklaşan hatırlatıcılar kontrol ediliyor...
+2025-06-11 23:20:03.275 +03:00 [INF] Bekleyen hatırlatma bulunamadı.
+2025-06-11 23:25:03.290 +03:00 [INF] Yaklaşan hatırlatıcılar kontrol ediliyor...
+2025-06-11 23:25:03.319 +03:00 [INF] Bekleyen hatırlatma bulunamadı.
+2025-06-11 23:30:03.331 +03:00 [INF] Yaklaşan hatırlatıcılar kontrol ediliyor...
+2025-06-11 23:30:03.486 +03:00 [INF] Bekleyen hatırlatma bulunamadı.
+2025-06-11 23:35:03.499 +03:00 [INF] Yaklaşan hatırlatıcılar kontrol ediliyor...
+2025-06-11 23:35:03.535 +03:00 [INF] Bekleyen hatırlatma bulunamadı.
+2025-06-11 23:37:15.113 +03:00 [INF] Veritabanına bağlantı başarılı. Migrationlar uygulanıyor...
+2025-06-11 23:37:17.884 +03:00 [INF] Veritabanı işlemleri başarıyla tamamlandı.
+2025-06-11 23:37:18.152 +03:00 [INF] Todo Hatırlatıcı Servisi başlatıldı.
+2025-06-11 23:37:18.154 +03:00 [INF] Yaklaşan hatırlatıcılar kontrol ediliyor...
+2025-06-11 23:37:18.291 +03:00 [INF] Bekleyen hatırlatma bulunamadı.
+2025-06-11 23:41:37.118 +03:00 [INF] Veritabanına bağlantı başarılı. Migrationlar uygulanıyor...
+2025-06-11 23:43:06.851 +03:00 [INF] Veritabanına bağlantı başarılı. Migrationlar uygulanıyor...
+2025-06-11 23:43:09.695 +03:00 [INF] Veritabanı işlemleri başarıyla tamamlandı.
+2025-06-11 23:43:09.958 +03:00 [INF] Todo Hatırlatıcı Servisi başlatıldı.
+2025-06-11 23:43:09.961 +03:00 [INF] Yaklaşan hatırlatıcılar kontrol ediliyor...
+2025-06-11 23:43:10.211 +03:00 [INF] Bekleyen hatırlatma bulunamadı.
+2025-06-11 23:43:14.257 +03:00 [INF] Giriş denemesi: admin
+2025-06-11 23:43:14.677 +03:00 [INF] Admin kullanıcısı başarıyla giriş yaptı: admin
+2025-06-11 23:43:14.678 +03:00 [INF] Admin session oluşturuldu: UserID=9e6fc203-37eb-49a7-a470-1551f7bec8b8, UserName=admin
+2025-06-11 23:43:14.679 +03:00 [INF] Yönlendirme adresi: /
+2025-06-11 23:43:14.680 +03:00 [INF] Admin kullanıcısı / adresine yönlendiriliyor
+2025-06-11 23:43:15.243 +03:00 [INF] Aktif session bulundu: UserID=9e6fc203-37eb-49a7-a470-1551f7bec8b8, UserName=admin
+2025-06-11 23:43:15.350 +03:00 [INF] Admin kullanıcısı tespit edildi
+2025-06-11 23:43:15.351 +03:00 [INF] Kimlik doğrulanmış kullanıcı: admin
+2025-06-11 23:43:17.154 +03:00 [INF] TRY dönüşümü için kur değeri hesaplandı: TRY -> USD, Değer: 0.03
+2025-06-11 23:43:17.419 +03:00 [INF] Kur değeri hesaplandı: UZS -> USD, Değer: 0.0000775226832727903141733102
+2025-06-11 23:43:18.239 +03:00 [WRN] Kaynak para birimi kodu bulunamadı: EUR. Varsayılan değer kullanılıyor.
+2025-06-11 23:43:29.402 +03:00 [ERR] Failed executing DbCommand (118ms) [Parameters=[@__id_0='?' (DbType = Guid)], CommandType='"Text"', CommandTimeout='120']
+SELECT TOP(1) [b].[BankaHesapHareketID], [b].[Aciklama], [b].[BankaHesapID], [b].[BankaID], [b].[CariID], [b].[DekontNo], [b].[DovizKuru], [b].[GuncellemeTarihi], [b].[HareketTuru], [b].[HedefBankaID], [b].[HedefKasaID], [b].[IslemYapanKullaniciID], [b].[KarsiBankaAdi], [b].[KarsiIBAN], [b].[KarsiParaBirimi], [b].[KarsiUnvan], [b].[KaynakKasaID], [b].[OlusturmaTarihi], [b].[ReferansID], [b].[ReferansNo], [b].[ReferansTuru], [b].[Silindi], [b].[SonGuncelleyenKullaniciID], [b].[Tarih], [b].[TransferID], [b].[Tutar], [b1].[BankaHesapID], [b1].[Aciklama], [b1].[AcilisBakiye], [b1].[Aktif], [b1].[BankaID], [b1].[GuncelBakiye], [b1].[GuncellemeTarihi], [b1].[HesapAdi], [b1].[HesapNo], [b1].[IBAN], [b1].[OlusturanKullaniciID], [b1].[OlusturmaTarihi], [b1].[ParaBirimi], [b1].[Silindi], [b1].[SonGuncelleyenKullaniciID], [b1].[SubeAdi], [b1].[SubeKodu], [b1].[YetkiliKullaniciID], [b3].[BankaID], [b3].[Aktif], [b3].[BankaAdi], [b3].[GuncellemeTarihi], [b3].[OlusturanKullaniciID], [b3].[OlusturmaTarihi], [b3].[Silindi], [b3].[SonGuncelleyenKullaniciID]
+FROM [BankaHesapHareketleri] AS [b]
+INNER JOIN (
+    SELECT [b0].[BankaHesapID], [b0].[Aciklama], [b0].[AcilisBakiye], [b0].[Aktif], [b0].[BankaID], [b0].[GuncelBakiye], [b0].[GuncellemeTarihi], [b0].[HesapAdi], [b0].[HesapNo], [b0].[IBAN], [b0].[OlusturanKullaniciID], [b0].[OlusturmaTarihi], [b0].[ParaBirimi], [b0].[Silindi], [b0].[SonGuncelleyenKullaniciID], [b0].[SubeAdi], [b0].[SubeKodu], [b0].[YetkiliKullaniciID]
+    FROM [BankaHesaplari] AS [b0]
+    WHERE [b0].[Silindi] = CAST(0 AS bit)
+) AS [b1] ON [b].[BankaHesapID] = [b1].[BankaHesapID]
+INNER JOIN (
+    SELECT [b2].[BankaID], [b2].[Aktif], [b2].[BankaAdi], [b2].[GuncellemeTarihi], [b2].[OlusturanKullaniciID], [b2].[OlusturmaTarihi], [b2].[Silindi], [b2].[SonGuncelleyenKullaniciID]
+    FROM [Bankalar] AS [b2]
+    WHERE [b2].[Silindi] = CAST(0 AS bit) AND [b2].[Aktif] = CAST(1 AS bit)
+) AS [b3] ON [b1].[BankaID] = [b3].[BankaID]
+WHERE [b].[Silindi] = CAST(0 AS bit) AND [b].[BankaHesapHareketID] = @__id_0 AND [b].[Silindi] = CAST(0 AS bit)
+2025-06-11 23:43:29.501 +03:00 [ERR] An exception occurred while iterating over the results of a query for context type 'MuhasebeStokWebApp.Data.ApplicationDbContext'.
+Microsoft.Data.SqlClient.SqlException (0x80131904): Geçersiz sütun adı 'HedefBankaID'.
+   at System.Threading.Tasks.ContinuationResultTaskFromResultTask`2.InnerInvoke()
+   at System.Threading.ExecutionContext.RunInternal(ExecutionContext executionContext, ContextCallback callback, Object state)
+--- End of stack trace from previous location ---
+   at System.Threading.ExecutionContext.RunInternal(ExecutionContext executionContext, ContextCallback callback, Object state)
+   at System.Threading.Tasks.Task.ExecuteWithThreadLocal(Task& currentTaskSlot, Thread threadPoolThread)
+--- End of stack trace from previous location ---
+   at Microsoft.EntityFrameworkCore.Storage.RelationalCommand.ExecuteReaderAsync(RelationalCommandParameterObject parameterObject, CancellationToken cancellationToken)
+   at Microsoft.EntityFrameworkCore.Storage.RelationalCommand.ExecuteReaderAsync(RelationalCommandParameterObject parameterObject, CancellationToken cancellationToken)
+   at Microsoft.EntityFrameworkCore.Query.Internal.SplitQueryingEnumerable`1.AsyncEnumerator.InitializeReaderAsync(AsyncEnumerator enumerator, CancellationToken cancellationToken)
+   at Microsoft.EntityFrameworkCore.SqlServer.Storage.Internal.SqlServerExecutionStrategy.ExecuteAsync[TState,TResult](TState state, Func`4 operation, Func`4 verifySucceeded, CancellationToken cancellationToken)
+   at Microsoft.EntityFrameworkCore.Query.Internal.SplitQueryingEnumerable`1.AsyncEnumerator.MoveNextAsync()
+ClientConnectionId:18c68803-b6e3-4985-8a92-0c1e6d57733d
+Error Number:207,State:1,Class:16
+Microsoft.Data.SqlClient.SqlException (0x80131904): Geçersiz sütun adı 'HedefBankaID'.
+   at System.Threading.Tasks.ContinuationResultTaskFromResultTask`2.InnerInvoke()
+   at System.Threading.ExecutionContext.RunInternal(ExecutionContext executionContext, ContextCallback callback, Object state)
+--- End of stack trace from previous location ---
+   at System.Threading.ExecutionContext.RunInternal(ExecutionContext executionContext, ContextCallback callback, Object state)
+   at System.Threading.Tasks.Task.ExecuteWithThreadLocal(Task& currentTaskSlot, Thread threadPoolThread)
+--- End of stack trace from previous location ---
+   at Microsoft.EntityFrameworkCore.Storage.RelationalCommand.ExecuteReaderAsync(RelationalCommandParameterObject parameterObject, CancellationToken cancellationToken)
+   at Microsoft.EntityFrameworkCore.Storage.RelationalCommand.ExecuteReaderAsync(RelationalCommandParameterObject parameterObject, CancellationToken cancellationToken)
+   at Microsoft.EntityFrameworkCore.Query.Internal.SplitQueryingEnumerable`1.AsyncEnumerator.InitializeReaderAsync(AsyncEnumerator enumerator, CancellationToken cancellationToken)
+   at Microsoft.EntityFrameworkCore.SqlServer.Storage.Internal.SqlServerExecutionStrategy.ExecuteAsync[TState,TResult](TState state, Func`4 operation, Func`4 verifySucceeded, CancellationToken cancellationToken)
+   at Microsoft.EntityFrameworkCore.Query.Internal.SplitQueryingEnumerable`1.AsyncEnumerator.MoveNextAsync()
+ClientConnectionId:18c68803-b6e3-4985-8a92-0c1e6d57733d
+Error Number:207,State:1,Class:16
+2025-06-11 23:43:29.610 +03:00 [ERR] Banka hareketi düzenleme sayfası yüklenirken hata oluştu. ID: "29958e34-9121-474f-ac36-775e2fef0ba6"
+Microsoft.Data.SqlClient.SqlException (0x80131904): Geçersiz sütun adı 'HedefBankaID'.
+   at System.Threading.Tasks.ContinuationResultTaskFromResultTask`2.InnerInvoke()
+   at System.Threading.ExecutionContext.RunInternal(ExecutionContext executionContext, ContextCallback callback, Object state)
+--- End of stack trace from previous location ---
+   at System.Threading.ExecutionContext.RunInternal(ExecutionContext executionContext, ContextCallback callback, Object state)
+   at System.Threading.Tasks.Task.ExecuteWithThreadLocal(Task& currentTaskSlot, Thread threadPoolThread)
+--- End of stack trace from previous location ---
+   at Microsoft.EntityFrameworkCore.Storage.RelationalCommand.ExecuteReaderAsync(RelationalCommandParameterObject parameterObject, CancellationToken cancellationToken)
+   at Microsoft.EntityFrameworkCore.Storage.RelationalCommand.ExecuteReaderAsync(RelationalCommandParameterObject parameterObject, CancellationToken cancellationToken)
+   at Microsoft.EntityFrameworkCore.Query.Internal.SplitQueryingEnumerable`1.AsyncEnumerator.InitializeReaderAsync(AsyncEnumerator enumerator, CancellationToken cancellationToken)
+   at Microsoft.EntityFrameworkCore.SqlServer.Storage.Internal.SqlServerExecutionStrategy.ExecuteAsync[TState,TResult](TState state, Func`4 operation, Func`4 verifySucceeded, CancellationToken cancellationToken)
+   at Microsoft.EntityFrameworkCore.Query.Internal.SplitQueryingEnumerable`1.AsyncEnumerator.MoveNextAsync()
+   at Microsoft.EntityFrameworkCore.Query.ShapedQueryCompilingExpressionVisitor.SingleOrDefaultAsync[TSource](IAsyncEnumerable`1 asyncEnumerable, CancellationToken cancellationToken)
+   at Microsoft.EntityFrameworkCore.Query.ShapedQueryCompilingExpressionVisitor.SingleOrDefaultAsync[TSource](IAsyncEnumerable`1 asyncEnumerable, CancellationToken cancellationToken)
+   at MuhasebeStokWebApp.Controllers.BankaController.HareketDuzenle(Nullable`1 id) in D:\cursor-workspace\MuhasebeStokWebApp\Controllers\BankaController.cs:line 1493
+ClientConnectionId:18c68803-b6e3-4985-8a92-0c1e6d57733d
+Error Number:207,State:1,Class:16
+2025-06-11 23:44:20.991 +03:00 [ERR] Failed executing DbCommand (102ms) [Parameters=[@__id_0='?' (DbType = Guid)], CommandType='"Text"', CommandTimeout='120']
+SELECT TOP(1) [b].[BankaHesapHareketID], [b].[Aciklama], [b].[BankaHesapID], [b].[BankaID], [b].[CariID], [b].[DekontNo], [b].[DovizKuru], [b].[GuncellemeTarihi], [b].[HareketTuru], [b].[HedefBankaID], [b].[HedefKasaID], [b].[IslemYapanKullaniciID], [b].[KarsiBankaAdi], [b].[KarsiIBAN], [b].[KarsiParaBirimi], [b].[KarsiUnvan], [b].[KaynakKasaID], [b].[OlusturmaTarihi], [b].[ReferansID], [b].[ReferansNo], [b].[ReferansTuru], [b].[Silindi], [b].[SonGuncelleyenKullaniciID], [b].[Tarih], [b].[TransferID], [b].[Tutar], [b1].[BankaHesapID], [b1].[Aciklama], [b1].[AcilisBakiye], [b1].[Aktif], [b1].[BankaID], [b1].[GuncelBakiye], [b1].[GuncellemeTarihi], [b1].[HesapAdi], [b1].[HesapNo], [b1].[IBAN], [b1].[OlusturanKullaniciID], [b1].[OlusturmaTarihi], [b1].[ParaBirimi], [b1].[Silindi], [b1].[SonGuncelleyenKullaniciID], [b1].[SubeAdi], [b1].[SubeKodu], [b1].[YetkiliKullaniciID], [b3].[BankaID], [b3].[Aktif], [b3].[BankaAdi], [b3].[GuncellemeTarihi], [b3].[OlusturanKullaniciID], [b3].[OlusturmaTarihi], [b3].[Silindi], [b3].[SonGuncelleyenKullaniciID]
+FROM [BankaHesapHareketleri] AS [b]
+INNER JOIN (
+    SELECT [b0].[BankaHesapID], [b0].[Aciklama], [b0].[AcilisBakiye], [b0].[Aktif], [b0].[BankaID], [b0].[GuncelBakiye], [b0].[GuncellemeTarihi], [b0].[HesapAdi], [b0].[HesapNo], [b0].[IBAN], [b0].[OlusturanKullaniciID], [b0].[OlusturmaTarihi], [b0].[ParaBirimi], [b0].[Silindi], [b0].[SonGuncelleyenKullaniciID], [b0].[SubeAdi], [b0].[SubeKodu], [b0].[YetkiliKullaniciID]
+    FROM [BankaHesaplari] AS [b0]
+    WHERE [b0].[Silindi] = CAST(0 AS bit)
+) AS [b1] ON [b].[BankaHesapID] = [b1].[BankaHesapID]
+INNER JOIN (
+    SELECT [b2].[BankaID], [b2].[Aktif], [b2].[BankaAdi], [b2].[GuncellemeTarihi], [b2].[OlusturanKullaniciID], [b2].[OlusturmaTarihi], [b2].[Silindi], [b2].[SonGuncelleyenKullaniciID]
+    FROM [Bankalar] AS [b2]
+    WHERE [b2].[Silindi] = CAST(0 AS bit) AND [b2].[Aktif] = CAST(1 AS bit)
+) AS [b3] ON [b1].[BankaID] = [b3].[BankaID]
+WHERE [b].[Silindi] = CAST(0 AS bit) AND [b].[BankaHesapHareketID] = @__id_0 AND [b].[Silindi] = CAST(0 AS bit)
+2025-06-11 23:44:21.049 +03:00 [ERR] An exception occurred while iterating over the results of a query for context type 'MuhasebeStokWebApp.Data.ApplicationDbContext'.
+Microsoft.Data.SqlClient.SqlException (0x80131904): Geçersiz sütun adı 'HedefBankaID'.
+   at System.Threading.Tasks.ContinuationResultTaskFromResultTask`2.InnerInvoke()
+   at System.Threading.ExecutionContext.RunInternal(ExecutionContext executionContext, ContextCallback callback, Object state)
+--- End of stack trace from previous location ---
+   at System.Threading.ExecutionContext.RunInternal(ExecutionContext executionContext, ContextCallback callback, Object state)
+   at System.Threading.Tasks.Task.ExecuteWithThreadLocal(Task& currentTaskSlot, Thread threadPoolThread)
+--- End of stack trace from previous location ---
+   at Microsoft.EntityFrameworkCore.Storage.RelationalCommand.ExecuteReaderAsync(RelationalCommandParameterObject parameterObject, CancellationToken cancellationToken)
+   at Microsoft.EntityFrameworkCore.Storage.RelationalCommand.ExecuteReaderAsync(RelationalCommandParameterObject parameterObject, CancellationToken cancellationToken)
+   at Microsoft.EntityFrameworkCore.Query.Internal.SplitQueryingEnumerable`1.AsyncEnumerator.InitializeReaderAsync(AsyncEnumerator enumerator, CancellationToken cancellationToken)
+   at Microsoft.EntityFrameworkCore.SqlServer.Storage.Internal.SqlServerExecutionStrategy.ExecuteAsync[TState,TResult](TState state, Func`4 operation, Func`4 verifySucceeded, CancellationToken cancellationToken)
+   at Microsoft.EntityFrameworkCore.Query.Internal.SplitQueryingEnumerable`1.AsyncEnumerator.MoveNextAsync()
+ClientConnectionId:18c68803-b6e3-4985-8a92-0c1e6d57733d
+Error Number:207,State:1,Class:16
+Microsoft.Data.SqlClient.SqlException (0x80131904): Geçersiz sütun adı 'HedefBankaID'.
+   at System.Threading.Tasks.ContinuationResultTaskFromResultTask`2.InnerInvoke()
+   at System.Threading.ExecutionContext.RunInternal(ExecutionContext executionContext, ContextCallback callback, Object state)
+--- End of stack trace from previous location ---
+   at System.Threading.ExecutionContext.RunInternal(ExecutionContext executionContext, ContextCallback callback, Object state)
+   at System.Threading.Tasks.Task.ExecuteWithThreadLocal(Task& currentTaskSlot, Thread threadPoolThread)
+--- End of stack trace from previous location ---
+   at Microsoft.EntityFrameworkCore.Storage.RelationalCommand.ExecuteReaderAsync(RelationalCommandParameterObject parameterObject, CancellationToken cancellationToken)
+   at Microsoft.EntityFrameworkCore.Storage.RelationalCommand.ExecuteReaderAsync(RelationalCommandParameterObject parameterObject, CancellationToken cancellationToken)
+   at Microsoft.EntityFrameworkCore.Query.Internal.SplitQueryingEnumerable`1.AsyncEnumerator.InitializeReaderAsync(AsyncEnumerator enumerator, CancellationToken cancellationToken)
+   at Microsoft.EntityFrameworkCore.SqlServer.Storage.Internal.SqlServerExecutionStrategy.ExecuteAsync[TState,TResult](TState state, Func`4 operation, Func`4 verifySucceeded, CancellationToken cancellationToken)
+   at Microsoft.EntityFrameworkCore.Query.Internal.SplitQueryingEnumerable`1.AsyncEnumerator.MoveNextAsync()
+ClientConnectionId:18c68803-b6e3-4985-8a92-0c1e6d57733d
+Error Number:207,State:1,Class:16
+2025-06-11 23:46:01.416 +03:00 [INF] Veritabanına bağlantı başarılı. Migrationlar uygulanıyor...
+2025-06-11 23:46:02.770 +03:00 [INF] Veritabanı işlemleri başarıyla tamamlandı.
+2025-06-11 23:46:04.080 +03:00 [INF] Todo Hatırlatıcı Servisi başlatıldı.
+2025-06-11 23:46:04.143 +03:00 [INF] Yaklaşan hatırlatıcılar kontrol ediliyor...
+2025-06-11 23:46:04.771 +03:00 [INF] Bekleyen hatırlatma bulunamadı.
+2025-06-11 23:46:08.281 +03:00 [INF] Giriş denemesi: admin
+2025-06-11 23:46:08.625 +03:00 [INF] Admin kullanıcısı başarıyla giriş yaptı: admin
+2025-06-11 23:46:08.625 +03:00 [INF] Admin session oluşturuldu: UserID=9e6fc203-37eb-49a7-a470-1551f7bec8b8, UserName=admin
+2025-06-11 23:46:08.626 +03:00 [INF] Yönlendirme adresi: /
+2025-06-11 23:46:08.627 +03:00 [INF] Admin kullanıcısı / adresine yönlendiriliyor
+2025-06-11 23:46:09.033 +03:00 [INF] Aktif session bulundu: UserID=9e6fc203-37eb-49a7-a470-1551f7bec8b8, UserName=admin
+2025-06-11 23:46:09.138 +03:00 [INF] Admin kullanıcısı tespit edildi
+2025-06-11 23:46:09.139 +03:00 [INF] Kimlik doğrulanmış kullanıcı: admin
+2025-06-11 23:46:10.761 +03:00 [INF] TRY dönüşümü için kur değeri hesaplandı: TRY -> USD, Değer: 0.03
+2025-06-11 23:46:11.000 +03:00 [INF] Kur değeri hesaplandı: UZS -> USD, Değer: 0.0000775226832727903141733102
+2025-06-11 23:46:11.713 +03:00 [WRN] Kaynak para birimi kodu bulunamadı: EUR. Varsayılan değer kullanılıyor.
+2025-06-11 23:48:36.580 +03:00 [INF] Veritabanına bağlantı başarılı. Migrationlar uygulanıyor...
+2025-06-11 23:48:37.787 +03:00 [INF] Veritabanı işlemleri başarıyla tamamlandı.
+2025-06-11 23:48:38.018 +03:00 [INF] Todo Hatırlatıcı Servisi başlatıldı.
+2025-06-11 23:48:38.020 +03:00 [INF] Yaklaşan hatırlatıcılar kontrol ediliyor...
+2025-06-11 23:48:38.166 +03:00 [INF] Bekleyen hatırlatma bulunamadı.
+2025-06-11 23:48:41.085 +03:00 [INF] Giriş denemesi: admin
+2025-06-11 23:48:41.882 +03:00 [INF] Admin kullanıcısı başarıyla giriş yaptı: admin
+2025-06-11 23:48:41.882 +03:00 [INF] Admin session oluşturuldu: UserID=9e6fc203-37eb-49a7-a470-1551f7bec8b8, UserName=admin
+2025-06-11 23:48:41.883 +03:00 [INF] Yönlendirme adresi: /
+2025-06-11 23:48:41.884 +03:00 [INF] Admin kullanıcısı / adresine yönlendiriliyor
+2025-06-11 23:48:42.367 +03:00 [INF] Aktif session bulundu: UserID=9e6fc203-37eb-49a7-a470-1551f7bec8b8, UserName=admin
+2025-06-11 23:48:42.450 +03:00 [INF] Admin kullanıcısı tespit edildi
+2025-06-11 23:48:42.450 +03:00 [INF] Kimlik doğrulanmış kullanıcı: admin
+2025-06-11 23:48:44.087 +03:00 [INF] TRY dönüşümü için kur değeri hesaplandı: TRY -> USD, Değer: 0.03
+2025-06-11 23:48:44.924 +03:00 [INF] Kur değeri hesaplandı: UZS -> USD, Değer: 0.0000775226832727903141733102
+2025-06-11 23:48:48.435 +03:00 [WRN] Kaynak para birimi kodu bulunamadı: EUR. Varsayılan değer kullanılıyor.
+2025-06-11 23:53:38.169 +03:00 [INF] Yaklaşan hatırlatıcılar kontrol ediliyor...
+2025-06-11 23:53:38.219 +03:00 [INF] Bekleyen hatırlatma bulunamadı.
+2025-06-11 23:55:59.555 +03:00 [INF] TRY dönüşümü için kur değeri hesaplandı: USD -> TRY, Değer: 33.33
+2025-06-11 23:56:03.304 +03:00 [WRN] Hedef para birimi kodu bulunamadı: EUR. Varsayılan değer kullanılıyor.
+2025-06-11 23:56:03.305 +03:00 [INF] Kur değeri hesaplandı: USD -> EUR, Değer: 1
+2025-06-11 23:56:54.638 +03:00 [INF] Veritabanına bağlantı başarılı. Migrationlar uygulanıyor...
+2025-06-11 23:56:55.919 +03:00 [INF] Veritabanı işlemleri başarıyla tamamlandı.
+2025-06-11 23:56:56.147 +03:00 [INF] Todo Hatırlatıcı Servisi başlatıldı.
+2025-06-11 23:56:56.149 +03:00 [INF] Yaklaşan hatırlatıcılar kontrol ediliyor...
+2025-06-11 23:56:56.280 +03:00 [INF] Bekleyen hatırlatma bulunamadı.
+2025-06-11 23:56:59.588 +03:00 [INF] Giriş denemesi: admin
+2025-06-11 23:56:59.910 +03:00 [INF] Admin kullanıcısı başarıyla giriş yaptı: admin
+2025-06-11 23:56:59.911 +03:00 [INF] Admin session oluşturuldu: UserID=9e6fc203-37eb-49a7-a470-1551f7bec8b8, UserName=admin
+2025-06-11 23:56:59.912 +03:00 [INF] Yönlendirme adresi: /
+2025-06-11 23:56:59.913 +03:00 [INF] Admin kullanıcısı / adresine yönlendiriliyor
+2025-06-11 23:57:00.336 +03:00 [INF] Aktif session bulundu: UserID=9e6fc203-37eb-49a7-a470-1551f7bec8b8, UserName=admin
+2025-06-11 23:57:00.440 +03:00 [INF] Admin kullanıcısı tespit edildi
+2025-06-11 23:57:00.441 +03:00 [INF] Kimlik doğrulanmış kullanıcı: admin
+2025-06-11 23:57:02.086 +03:00 [INF] TRY dönüşümü için kur değeri hesaplandı: TRY -> USD, Değer: 0.03
+2025-06-11 23:57:02.323 +03:00 [INF] Kur değeri hesaplandı: UZS -> USD, Değer: 0.0000775226832727903141733102
+2025-06-11 23:57:03.032 +03:00 [WRN] Kaynak para birimi kodu bulunamadı: EUR. Varsayılan değer kullanılıyor.
+2025-06-11 23:57:20.045 +03:00 [INF] TRY dönüşümü için kur değeri hesaplandı: USD -> TRY, Değer: 33.33
+2025-06-11 23:57:23.819 +03:00 [WRN] Hedef para birimi kodu bulunamadı: EUR. Varsayılan değer kullanılıyor.
+2025-06-11 23:57:23.821 +03:00 [INF] Kur değeri hesaplandı: USD -> EUR, Değer: 1

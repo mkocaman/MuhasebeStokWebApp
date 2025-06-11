@@ -130,10 +130,12 @@ namespace MuhasebeStokWebApp.ViewModels.Banka
         public Guid BankaHareketID { get; set; }
         
         public Guid BankaHesapID { get; set; }
-        
+        [Display(Name = "Hesap Adı")]
+        public string HesapAdi { get; set; } = string.Empty;
+
         [Required(ErrorMessage = "Hareket tipi seçimi zorunludur.")]
         [Display(Name = "Hareket Tipi")]
-        public BankaHareketTipi HareketTipi { get; set; }
+        public string HareketTuru { get; set; }
         
         [Required(ErrorMessage = "Tarih girilmesi zorunludur.")]
         [Display(Name = "Tarih")]
@@ -160,17 +162,38 @@ namespace MuhasebeStokWebApp.ViewModels.Banka
         [Display(Name = "Açıklama")]
         [StringLength(500, ErrorMessage = "Açıklama en fazla 500 karakter olabilir.")]
         public string Aciklama { get; set; } = "";
-        
-        [Display(Name = "Cari ile Dengelensin")]
-        public bool CariIleDengelensin { get; set; }
-        
-        [Display(Name = "Hesap Modülüne Kaydet")]
-        public bool HesabaKaydet { get; set; }
-        
-        [Display(Name = "Cari")]
+
+        [Display(Name = "Cari ID")]
         public Guid? CariID { get; set; }
-        
+
+        [Display(Name = "Cari Adı")]
+        public string CariAdi { get; set; } = string.Empty;
+
         [Display(Name = "Karşı Para Birimi")]
         public string KarsiParaBirimi { get; set; } = string.Empty;
+
+        [Display(Name = "Döviz Kuru")]
+        [Range(0.0001, double.MaxValue, ErrorMessage = "Döviz kuru sıfırdan büyük olmalıdır.")]
+        public decimal? DovizKuru { get; set; } = 1;
+
+        [Display(Name = "Hedef Banka ID")]
+        public Guid? HedefBankaID { get; set; }
+
+        [Display(Name = "Hedef Banka Adı")]
+        public string HedefBankaAdi { get; set; } = string.Empty;
+
+        [Display(Name = "Hedef Kasa ID")]
+        public Guid? HedefKasaID { get; set; }
+
+        [Display(Name = "Hedef Kasa Adı")]
+        public string HedefKasaAdi { get; set; } = string.Empty;
+
+        [Display(Name = "Kaynak Kasa ID")]
+        public Guid? KaynakKasaID { get; set; }
+
+        [Display(Name = "Kaynak Kasa Adı")]
+        public string KaynakKasaAdi { get; set; } = string.Empty;
+
+        public Guid? TransferID { get; set; }
     }
 } 

@@ -1307,6 +1307,7 @@ namespace MuhasebeStokWebApp.Controllers
                     TransferID = hareket.TransferID,
                     HedefKasaID = hareket.HedefKasaID,
                     KaynakBankaID = hareket.KaynakBankaID,
+                    HedefBankaID=hareket.HedefBankaID,
                     DovizKuru = yeniKur,
                     KarsiParaBirimi = hareket.KarsiParaBirimi,
                     CariIleDengelensin = hareket.CariID.HasValue

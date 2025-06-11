@@ -506,6 +506,9 @@ namespace MuhasebeStokWebApp.Migrations
                         .HasMaxLength(50)
                         .HasColumnType("nvarchar(50)");
 
+                    b.Property<Guid?>("HedefBankaID")
+                        .HasColumnType("uniqueidentifier");
+
                     b.Property<Guid?>("HedefKasaID")
                         .HasColumnType("uniqueidentifier");
 

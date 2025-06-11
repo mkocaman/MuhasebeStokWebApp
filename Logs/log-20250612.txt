@@ -1,0 +1,6 @@
+2025-06-12 00:00:27.244 +03:00 [INF] Kur değeri önbellekten alındı: USD -> TRY, Değer: 33.33
+2025-06-12 00:00:30.338 +03:00 [INF] Kur değeri önbellekten alındı: USD -> EUR, Değer: 1
+2025-06-12 00:01:56.289 +03:00 [INF] Yaklaşan hatırlatıcılar kontrol ediliyor...
+2025-06-12 00:01:56.326 +03:00 [INF] Bekleyen hatırlatma bulunamadı.
+2025-06-12 00:06:56.338 +03:00 [INF] Yaklaşan hatırlatıcılar kontrol ediliyor...
+2025-06-12 00:06:56.794 +03:00 [INF] Bekleyen hatırlatma bulunamadı.

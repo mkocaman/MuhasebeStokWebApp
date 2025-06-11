@@ -23,6 +23,7 @@ namespace MuhasebeStokWebApp.Data.Entities
         // Transfer işlemleri için
         public Guid? KaynakKasaID { get; set; }
         public Guid? HedefKasaID { get; set; }
+        public Guid? HedefBankaID { get; set; }
         public Guid? TransferID { get; set; }
         
         // Cari işlemleri için

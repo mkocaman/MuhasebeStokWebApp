@@ -360,7 +360,7 @@ namespace MuhasebeStokWebApp.Controllers
             var bankaHesapHareket = new BankaHesapHareket
             {
                 BankaHesapHareketID = Guid.NewGuid(),
-                BankaHesapID = hedefBankaHesap.BankaHesapID,
+                HedefBankaID = hedefBankaHesap.BankaHesapID,
                 BankaID = hedefBankaHesap.BankaID,
                 HareketTuru = "Para Yatırma",
                 Tutar = hedefTutar,
@@ -454,7 +454,7 @@ namespace MuhasebeStokWebApp.Controllers
             var kasaHareket = new KasaHareket
             {
                 KasaHareketID = Guid.NewGuid(),
-                KasaID = hedefKasa.KasaID,
+                HedefKasaID = hedefKasa.KasaID,
                 HareketTuru = "Giriş",
                 IslemTuru = "BankaTransfer",
                 Tutar = hedefTutar,
@@ -541,13 +541,14 @@ namespace MuhasebeStokWebApp.Controllers
             var hedefHareket = new BankaHesapHareket
             {
                 BankaHesapHareketID = Guid.NewGuid(),
-                BankaHesapID = hedefBankaHesap.BankaHesapID,
+                HedefBankaID = hedefBankaHesap.BankaHesapID,
                 BankaID = hedefBankaHesap.BankaID,
                 HareketTuru = "Havale/EFT Alma",
                 Tutar = hedefTutar,
                 Tarih = model.Tarih,
                 Aciklama = model.Aciklama ?? $"Bankadan bankaya transfer: {kaynakBankaHesap.Banka.BankaAdi} - {kaynakBankaHesap.HesapAdi} -> {hedefBankaHesap.Banka.BankaAdi} - {hedefBankaHesap.HesapAdi}",
                 ReferansNo = model.ReferansNo,
+                BankaHesapID= kaynakBankaHesap.BankaHesapID,
                 DekontNo = model.ReferansNo,
                 ReferansTuru = "Transfer",
                 TransferID = model.TransferID,

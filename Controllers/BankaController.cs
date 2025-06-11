@@ -19,6 +19,7 @@ using MuhasebeStokWebApp.Services.Menu;
 using MuhasebeStokWebApp.Services.Interfaces;
 using MuhasebeStokWebApp.ViewModels.Transfer;
 using MuhasebeStokWebApp.TempModels;
+using System.Globalization;
 
 namespace MuhasebeStokWebApp.Controllers
 {
@@ -902,7 +903,7 @@ namespace MuhasebeStokWebApp.Controllers
                 await transaction.CommitAsync();
 
                 await _logService.Log(
-                    $"Banka hesap hareketi silindi: {bankaHesap.Banka?.BankaAdi} - {bankaHesap.HesapAdi}, {hareket.HareketTuru}, {hareket.Tutar} {bankaHesap.ParaBirimi}",
+                    $"Banka hareketi silindi: {bankaHesap.Banka?.BankaAdi} - {bankaHesap.HesapAdi}, {hareket.HareketTuru}, {hareket.Tutar} {bankaHesap.ParaBirimi}",
                     Enums.LogTuru.Bilgi
                 );
 
@@ -911,7 +912,7 @@ namespace MuhasebeStokWebApp.Controllers
             catch (Exception ex)
             {
                 await transaction.RollbackAsync();
-                _logger.LogError(ex, "Banka hesap hareketi silinirken hata oluştu. ID: {Id}", id);
+                _logger.LogError(ex, "Banka hareketi silinirken hata oluştu. ID: {Id}", id);
                 TempData["ErrorMessage"] = "Hareket silinirken bir hata oluştu. Lütfen tekrar deneyin.";
                 return RedirectToAction(nameof(HareketSil), new { id });
             }
@@ -947,7 +948,15 @@ namespace MuhasebeStokWebApp.Controllers
                     new SelectListItem { Text = "Evet", Value = "true", Selected = true },
                     new SelectListItem { Text = "Hayır", Value = "false" }
                 };
-                
+                ViewBag.Kasalar = await _context.Kasalar
+                .Where(k => !k.Silindi && k.Aktif)
+                .ToListAsync();
+
+                // Aktif banka hesaplarını getir
+                ViewBag.BankaHesaplari = await _context.BankaHesaplari
+                    .Include(bh => bh.Banka)
+                    .Where(bh => !bh.Silindi && bh.Aktif)
+                    .ToListAsync();
                 // Cari listesini getir
                 var cariler = await _context.Cariler
                     .Where(c => !c.Silindi && c.AktifMi)
@@ -1053,8 +1062,8 @@ namespace MuhasebeStokWebApp.Controllers
             }
             catch (Exception ex)
             {
-                _logger.LogError(ex, "Banka hesap hareketleri sayfası yüklenirken hata oluştu. HesapID: {Id}", id);
-                TempData["ErrorMessage"] = "Banka hesap hareketleri sayfası yüklenirken bir hata oluştu.";
+                _logger.LogError(ex, "Banka hareketleri sayfası yüklenirken hata oluştu. HesapID: {Id}", id);
+                TempData["ErrorMessage"] = "Banka hareketleri sayfası yüklenirken bir hata oluştu.";
                 return RedirectToAction(nameof(Index));
             }
         }
@@ -1468,6 +1477,471 @@ namespace MuhasebeStokWebApp.Controllers
                 _logger.LogError(ex, "YeniTransfer modal yüklenirken hata oluştu: {Message}", ex.Message);
                 return Json(new { success = false, message = "İşlem sırasında bir hata oluştu: " + ex.Message });
             }
+        }
+
+        // GET: Banka/HareketDuzenle/5
+        public async Task<IActionResult> HareketDuzenle(Guid? id)
+        {
+            if (id == null)
+            {
+                return NotFound();
+            }
+
+            try
+            {
+                // ID'ye göre banka hareketini getir
+                var hareket = await _context.BankaHesapHareketleri
+                    .Include(h => h.BankaHesap)
+                        .ThenInclude(bh => bh.Banka)
+                    .FirstOrDefaultAsync(h => h.BankaHesapHareketID == id && !h.Silindi);
+
+                if (hareket == null)
+                {
+                    return NotFound();
+                }
+
+                // Dropdown listeleri hazırla
+                await PrepareDropdownsAsync();
+                var bankalar = await _unitOfWork.Repository<BankaHesap>().GetAsync(
+                    filter: k => !k.Silindi && k.Aktif,
+                    orderBy: q => q.OrderBy(k => k.HesapAdi)
+                );
+                var kasalar = await _unitOfWork.Repository<Kasa>().GetAsync(
+                    filter: k => !k.Silindi && k.Aktif,
+                    orderBy: q => q.OrderBy(k => k.KasaAdi)
+                );
+                // Seçili banka hesabını ViewBag'e ekle
+                ViewBag.BankaHesap = hareket.BankaHesap;
+
+                // Cari listesini hazırla
+                var cariler = await _unitOfWork.CariRepository.GetAll()
+                    .Where(c => !c.Silindi && c.AktifMi)
+                    .Include(a => a.VarsayilanParaBirimi)
+                    .OrderBy(c => c.Ad)
+                    .ToListAsync();
+
+                ViewBag.Cariler = cariler;
+                ViewBag.BankaHesaplar = bankalar;
+                ViewBag.Kasalar=kasalar;
+                // Hareket tiplerini sadece Gelir ve Gider olarak ayarla
+                ViewBag.HareketTipleri = new List<SelectListItem>
+                {
+                    new SelectListItem { Text = "Gelir", Value = "0" },
+                    new SelectListItem { Text = "Gider", Value = "1" }
+                };
+
+                // Döviz kuru formatını ayarla
+                decimal dovizKuru = hareket.DovizKuru.HasValue ? hareket.DovizKuru.Value : 1m;
+                string formattedKur = dovizKuru.ToString("N4", new CultureInfo("tr-TR"));
+                decimal yeniKur = decimal.Parse(formattedKur, new CultureInfo("tr-TR"));
+
+                // Entity'yi EditViewModel'e dönüştür
+                var viewModel = new BankaHareketEditViewModel
+                {
+                    BankaHareketID = hareket.BankaHesapHareketID,
+                    BankaHesapID = hareket.BankaHesapID,
+                    HesapAdi=hareket.BankaHesap.HesapAdi,
+                    HareketTuru = hareket.HareketTuru,
+                    Tarih = hareket.Tarih,
+                    Tutar = hareket.Tutar,
+                    ReferansNo = hareket.ReferansNo,
+                    ReferansTuru = hareket.ReferansTuru,
+                    DekontNo = hareket.DekontNo,
+                    Aciklama = hareket.Aciklama,
+                    CariID = hareket.CariID,
+                    TransferID=hareket.TransferID,
+                    KaynakKasaID=hareket.KaynakKasaID,
+                    HedefBankaID=hareket.HedefBankaID,
+                    HedefKasaID=hareket.HedefKasaID,
+                    DovizKuru = yeniKur,
+                    KarsiParaBirimi = hareket.KarsiParaBirimi ?? hareket.BankaHesap.ParaBirimi
+                };
+                
+                bool isTransfer = hareket.ReferansTuru == "Transfer" || hareket.ReferansTuru == "Havale/EFT Gönderme"; 
+                if (isTransfer)
+                {
+                    if (hareket.KaynakKasaID.HasValue)
+                    {
+                        var kaynakKasa = await _unitOfWork.Repository<Kasa>().GetByIdAsync(hareket.KaynakKasaID.Value);
+                        if (kaynakKasa != null && !kaynakKasa.Silindi)
+                        {
+                            viewModel.KaynakKasaAdi = kaynakKasa.KasaAdi;
+                        }
+                    }
+                    if (hareket.HedefKasaID.HasValue)
+                    {
+                        var hedefKasa = await _unitOfWork.Repository<Kasa>().GetByIdAsync(hareket.HedefKasaID.Value);
+                        if (hedefKasa != null && !hedefKasa.Silindi)
+                        {
+                            viewModel.HedefKasaAdi = hedefKasa.KasaAdi;
+                        }
+                    }
+
+                    if (hareket.HedefBankaID.HasValue)
+                    {
+                        var bankaHesap = await _context.BankaHesaplari
+                            .Include(b => b.Banka)
+                            .FirstOrDefaultAsync(b => b.BankaHesapID == hareket.HedefBankaID && !b.Silindi);
+
+                        if (bankaHesap != null)
+                        {
+                            viewModel.HedefBankaAdi = $"{bankaHesap.Banka.BankaAdi} - {bankaHesap.HesapAdi}";
+                        }
+                    }
+                }
+
+                // Cari bilgisini getir (varsa)
+                if (hareket.CariID.HasValue)
+                {
+                    var cari = await _unitOfWork.CariRepository.GetAll().Include(c => c.VarsayilanParaBirimi).FirstOrDefaultAsync(c => c.CariID == hareket.CariID.Value);
+                    if (cari != null && !cari.Silindi)
+                    {
+                        viewModel.CariAdi = cari.Ad;
+                        ViewBag.SecilenCari = cari;
+                    }
+                }
+
+                return View(viewModel);
+            }
+            catch (Exception ex)
+            {
+                _logger.LogError(ex, "Banka hareketi düzenleme sayfası yüklenirken hata oluştu. ID: {Id}", id);
+                TempData["ErrorMessage"] = "Hareket düzenleme sayfası yüklenirken bir hata oluştu.";
+                return RedirectToAction(nameof(Index));
+            }
+        }
+
+        // POST: Banka/HareketDuzenle/5
+        [HttpPost]
+        [ValidateAntiForgeryToken]
+        public async Task<IActionResult> HareketDuzenle(Guid id, BankaHareketEditViewModel viewModel)
+        {
+            if (id != viewModel.BankaHareketID)
+            {
+                return NotFound();
+            }
+
+            // AJAX isteği kontrolü
+            bool isAjaxRequest = Request.Headers["X-Requested-With"] == "XMLHttpRequest";
+
+            if (ModelState.IsValid)
+            {
+                using var transaction = await _context.Database.BeginTransactionAsync();
+
+                try
+                {
+                    // Mevcut banka hareketini getir
+                    var hareket = await _context.BankaHesapHareketleri
+                        .Include(h => h.BankaHesap)
+                        .FirstOrDefaultAsync(h => h.BankaHesapHareketID == id && !h.Silindi);
+
+                    if (hareket == null)
+                    {
+                        if (isAjaxRequest)
+                            return Json(new { success = false, message = "Hareket bulunamadı veya silinmiş durumda." });
+                        return NotFound();
+                    }
+
+                    // Banka hesabı bilgisini getir
+                    var bankaHesap = hareket.BankaHesap;
+                    if (bankaHesap == null || bankaHesap.Silindi)
+                    {
+                        if (isAjaxRequest)
+                            return Json(new { success = false, message = "Banka hesabı bulunamadı veya silinmiş durumda." });
+                        return NotFound();
+                    }
+
+                    // Önceki cari ID'yi sakla
+                    var eskiCariID = hareket.CariID;
+
+                    // Hareket türünü belirle
+                    string yeniHareketTuru = viewModel.HareketTuru;
+
+                    // Önce eski tutarın etkisini geri al
+                    if (hareket.HareketTuru == "Giriş")
+                    {
+                        bankaHesap.GuncelBakiye -= hareket.Tutar;
+                    }
+                    else
+                    {
+                        bankaHesap.GuncelBakiye += hareket.Tutar;
+                    }
+
+                    // Hareketi güncelle
+                    hareket.Tutar = viewModel.Tutar;
+                    hareket.HareketTuru = yeniHareketTuru;
+                    hareket.Tarih = viewModel.Tarih;
+                    hareket.Aciklama = viewModel.Aciklama;
+                    hareket.CariID = viewModel.CariID;
+                    hareket.ReferansNo = viewModel.ReferansNo;
+                    hareket.ReferansTuru = viewModel.ReferansTuru;
+                    hareket.DekontNo = viewModel.DekontNo;
+                    hareket.GuncellemeTarihi = DateTime.Now;
+                    hareket.SonGuncelleyenKullaniciID = GetCurrentUserId();
+                    hareket.KarsiParaBirimi = viewModel.KarsiParaBirimi;
+                    hareket.DovizKuru = viewModel.DovizKuru;
+
+                    // Yeni tutarın etkisini uygula
+                    if (yeniHareketTuru == "Giriş")
+                    {
+                        bankaHesap.GuncelBakiye += hareket.Tutar;
+                    }
+                    else
+                    {
+                        bankaHesap.GuncelBakiye -= hareket.Tutar;
+                    }
+
+                    // Değişiklikleri kaydet
+                    _context.Update(hareket);
+                    _context.Update(bankaHesap);
+
+                    // Transfer işlemlerini güncelle
+                    bool isTransfer = string.Equals(hareket.ReferansTuru?.Trim(), "Transfer", StringComparison.OrdinalIgnoreCase);
+                    var karsiHareket = "";
+                    if (isTransfer && hareket.TransferID.HasValue)
+                    {
+                        // Transfer detaylarını güncelle
+                        if (viewModel.HedefKasaID.HasValue)
+                        {
+                            // Bankadan kasaya transfer
+                            var hedefKasa = await _unitOfWork.Repository<Kasa>().GetByIdAsync(viewModel.HedefKasaID.Value);
+                            if (hedefKasa != null && !hedefKasa.Silindi)
+                            {
+                                // Hedef kasa hareketini bul
+                                var hedefHareket = await _unitOfWork.Repository<KasaHareket>().GetAsync(
+                                    filter: h => h.TransferID == hareket.TransferID && h.KasaID == viewModel.HedefKasaID.Value && !h.Silindi
+                                );
+                                
+                                var hedefKasaHareket = hedefHareket.FirstOrDefault();
+                                if (hedefKasaHareket != null)
+                                {
+                                    // Önce eski tutarın etkisini geri al
+                                    if (hareket.HareketTuru == "Giriş")
+                                    {
+                                        hedefKasa.GuncelBakiye += hedefKasaHareket.Tutar;
+                                        karsiHareket = "Çıkış";
+                                    }
+                                    else
+                                    {
+                                        hedefKasa.GuncelBakiye -= hedefKasaHareket.Tutar;
+                                        karsiHareket = "Giriş";
+                                    }
+                                    
+                                    // Hesaplanan kur ile hedef tutarını güncelle
+                                    decimal hedefTutar = viewModel.Tutar;
+                                    if (viewModel.DovizKuru.HasValue && viewModel.DovizKuru.Value > 0)
+                                    {
+                                        hedefTutar = viewModel.Tutar * viewModel.DovizKuru.Value;
+                                    }
+
+                                    // Hedef hareketi güncelle
+                                    hedefKasaHareket.Tutar = hedefTutar;
+                                    hedefKasaHareket.Tarih = viewModel.Tarih;
+                                    hedefKasaHareket.Aciklama = viewModel.Aciklama;
+                                    hedefKasaHareket.GuncellemeTarihi = DateTime.Now;
+                                    hedefKasaHareket.SonGuncelleyenKullaniciID = GetCurrentUserId();
+                                    hedefKasaHareket.HareketTuru = karsiHareket;
+
+                                    // Yeni tutarın etkisini uygula
+                                    if (hareket.HareketTuru == "Giriş")
+                                    {
+                                        hedefKasa.GuncelBakiye -= hedefKasaHareket.Tutar;
+                                    }
+                                    else
+                                    {
+                                        hedefKasa.GuncelBakiye += hedefKasaHareket.Tutar;
+                                    }
+
+                                    // Değişiklikleri kaydet
+                                    _unitOfWork.Repository<KasaHareket>().Update(hedefKasaHareket);
+                                    _unitOfWork.Repository<Kasa>().Update(hedefKasa);
+                                    await _unitOfWork.CompleteAsync();
+                                }
+                            }
+                        }
+                        else if (viewModel.HedefBankaID.HasValue)
+                        {
+                            // Bankadan bankaya transfer
+                            var hedefBankaHesap = await _context.BankaHesaplari
+                                .Include(b => b.Banka)
+                                .FirstOrDefaultAsync(b => b.BankaHesapID == viewModel.HedefBankaID && !b.Silindi);
+
+                            if (hedefBankaHesap != null)
+                            {
+                                // Hedef banka hareketini bul
+                                var hedefBankaHareket = await _context.BankaHesapHareketleri
+                                    .FirstOrDefaultAsync(h => h.TransferID == hareket.TransferID && h.BankaHesapID == viewModel.HedefBankaID && !h.Silindi);
+
+                                if (hedefBankaHareket != null)
+                                {
+                                    // Önce eski tutarın etkisini geri al
+                                    if (hareket.HareketTuru == "Giriş")
+                                    {
+                                        hedefBankaHesap.GuncelBakiye += hedefBankaHareket.Tutar;
+                                        karsiHareket = "Çıkış";
+                                    }
+                                    else
+                                    {
+                                        hedefBankaHesap.GuncelBakiye -= hedefBankaHareket.Tutar;
+                                        karsiHareket = "Giriş";
+                                    }
+                                    
+                                    // Hesaplanan kur ile hedef tutarını güncelle
+                                    decimal hedefTutar = viewModel.Tutar;
+                                    if (viewModel.DovizKuru.HasValue && viewModel.DovizKuru.Value > 0)
+                                    {
+                                        hedefTutar = viewModel.Tutar * viewModel.DovizKuru.Value;
+                                    }
+
+                                    // Hedef banka hareketini güncelle
+                                    hedefBankaHareket.Tutar = hedefTutar;
+                                    hedefBankaHareket.Tarih = viewModel.Tarih;
+                                    hedefBankaHareket.Aciklama = viewModel.Aciklama;
+                                    hedefBankaHareket.GuncellemeTarihi = DateTime.Now;
+                                    hedefBankaHareket.SonGuncelleyenKullaniciID = GetCurrentUserId();
+                                    hedefBankaHareket.HareketTuru = karsiHareket;
+
+                                    // Yeni tutarın etkisini uygula
+                                    if (hareket.HareketTuru == "Giriş")
+                                    {
+                                        hedefBankaHesap.GuncelBakiye -= hedefBankaHareket.Tutar;
+                                    }
+                                    else
+                                    {
+                                        hedefBankaHesap.GuncelBakiye += hedefBankaHareket.Tutar;
+                                    }
+
+                                    // Değişiklikleri kaydet
+                                    _context.BankaHesapHareketleri.Update(hedefBankaHareket);
+                                    _context.BankaHesaplari.Update(hedefBankaHesap);
+                                    await _context.SaveChangesAsync();
+                                }
+                            }
+                        }
+                    }
+                    // Normal (Transfer olmayan) hareket işlemleri
+                    else if (viewModel.CariID.HasValue)
+                    {
+                        // Mevcut cari hareketi bul
+                        var cariHareket = await _cariHareketService.GetByReferenceAsync(hareket.BankaHesapHareketID, "BankaHesapHareket");
+                        var tutar = hareket.Tutar;
+                        
+                        // Döviz kurunu hesaba kat
+                        if (viewModel.DovizKuru.HasValue && viewModel.DovizKuru.Value > 0)
+                        {
+                            tutar = hareket.Tutar * viewModel.DovizKuru.Value;
+                        }
+
+                        if (cariHareket != null)
+                        {
+                            // Cari ID değişmiş mi kontrol et
+                            if (eskiCariID != viewModel.CariID)
+                            {
+                                // Eskisini sil, yenisini oluştur
+                                await _cariHareketService.IptalEtCariHareketFromBankaAsync(hareket.BankaHesapHareketID);
+                                
+                                // Yeni cari hareketi oluştur
+                                bool borcMu = yeniHareketTuru == "Çıkış"; // Banka çıkışı ise cari borçlanır
+                                await _cariHareketService.CreateFromBankaHareketAsync(hareket, borcMu);
+                            }
+                            else
+                            {
+                                // Aynı cari - hareketi güncelle
+                                bool borcMu = yeniHareketTuru == "Çıkış"; // Banka çıkışı ise cari borçlanır
+                                cariHareket.Tarih = hareket.Tarih;
+                                cariHareket.Aciklama = $"Banka hareketi (Güncellendi): {hareket.Aciklama}";
+                                cariHareket.HareketTuru = borcMu ? "Ödeme" : "Tahsilat";
+                                cariHareket.Tutar = tutar;
+                                cariHareket.TutarDoviz = viewModel.DovizKuru ?? 1m;
+                                cariHareket.ParaBirimi = viewModel.KarsiParaBirimi;
+                                cariHareket.Borc = borcMu ? tutar : 0;
+                                cariHareket.Alacak = !borcMu ? tutar : 0;
+                                cariHareket.GuncellemeTarihi = DateTime.Now;
+
+                                await _cariHareketService.UpdateHareketAsync(cariHareket);
+                            }
+                        }
+                        else
+                        {
+                            // Cari hareketi yoksa yeni oluştur
+                            bool borcMu = yeniHareketTuru == "Çıkış"; // Banka çıkışı ise cari borçlanır
+                            await _cariHareketService.CreateFromBankaHareketAsync(hareket, borcMu);
+                        }
+                    }
+                    else if (eskiCariID.HasValue && !isTransfer)
+                    {
+                        // Cari kaldırıldıysa ve transfer değilse, ilişkili cari hareketini iptal et
+                        await _cariHareketService.IptalEtCariHareketFromBankaAsync(hareket.BankaHesapHareketID);
+                    }
+
+                    await _context.SaveChangesAsync();
+                    await transaction.CommitAsync();
+
+                    await _logService.Log(
+                        $"Banka hareketi düzenlendi: {bankaHesap.Banka?.BankaAdi} - {bankaHesap.HesapAdi}, {hareket.HareketTuru}, {hareket.Tutar} {bankaHesap.ParaBirimi}",
+                        Enums.LogTuru.Bilgi
+                    );
+
+                    if (isAjaxRequest)
+                        return Json(new { success = true, message = "Hareket başarıyla güncellendi." });
+
+                    TempData["SuccessMessage"] = "Banka hareketi başarıyla güncellendi.";
+                    return RedirectToAction(nameof(GetHesapHareketler), new { id = hareket.BankaHesapID });
+                }
+                catch (Exception ex)
+                {
+                    await transaction.RollbackAsync();
+                    _logger.LogError(ex, "Banka hareketi güncellenirken hata oluştu. ID: {Id}", id);
+
+                    if (isAjaxRequest)
+                        return Json(new { success = false, message = "Banka hareketi güncellenirken bir hata oluştu." });
+
+                    TempData["ErrorMessage"] = "Banka hareketi güncellenirken bir hata oluştu. Lütfen tekrar deneyin.";
+                    ModelState.AddModelError("", "Banka hareketi güncellenirken bir hata oluştu.");
+                }
+            }
+
+            // ModelState geçerli değilse
+            if (isAjaxRequest)
+            {
+                var errors = ModelState.Values.SelectMany(v => v.Errors).Select(e => e.ErrorMessage);
+                return Json(new { success = false, message = "Doğrulama hatası oluştu.", errors = errors });
+            }
+
+            // Hata durumunda dropdown listeleri tekrar hazırla
+            await PrepareDropdownsAsync();
+
+            // Banka hesabı bilgisini getir
+            var hesap = await _context.BankaHesaplari
+                .Include(b => b.Banka)
+                .FirstOrDefaultAsync(b => b.BankaHesapID == viewModel.BankaHesapID && !b.Silindi);
+
+            if (hesap != null)
+            {
+                ViewBag.BankaHesap = hesap;
+            }
+
+            // Cari listesini tekrar hazırla
+            var cariler = await _context.Cariler
+                .Where(c => !c.Silindi && c.AktifMi)
+                .OrderBy(c => c.Ad)
+                .Include(c => c.VarsayilanParaBirimi)
+                .Select(c => new SelectListItem
+                {
+                    Value = c.CariID.ToString(),
+                    Text = c.Ad
+                }).ToListAsync();
+
+            ViewBag.Cariler = cariler;
+
+            // Hareket tiplerini tekrar ayarla
+            ViewBag.HareketTipleri = new List<SelectListItem>
+            {
+                new SelectListItem { Text = "Gelir", Value = "0" },
+                new SelectListItem { Text = "Gider", Value = "1" }
+            };
+
+            return View(viewModel);
         }
     }
 } 

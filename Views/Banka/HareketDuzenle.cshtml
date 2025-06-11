@@ -3,6 +3,9 @@
     ViewData["Title"] = "Hareket Düzenle";
     Layout = "~/Views/Shared/_Layout.cshtml";
     var bankaHesap = ViewBag.BankaHesap as MuhasebeStokWebApp.Data.Entities.BankaHesap;
+    var secilenCari = ViewBag.SecilenCari as MuhasebeStokWebApp.Data.Entities.Cari;
+	var hareketler = ViewBag.HareketTipleri;
+	bool isTransfer = string.Equals(Model?.ReferansTuru?.Trim(), "Transfer", StringComparison.OrdinalIgnoreCase);
 }
 
 <div class="container-fluid px-4">
@@ -35,27 +38,43 @@
                     <form asp-action="HareketDuzenle" method="post">
                         <input type="hidden" asp-for="BankaHareketID" />
                         <input type="hidden" asp-for="BankaHesapID" />
+                        <input type="hidden" asp-for="ReferansTuru" />
+                        <input type="hidden" asp-for="TransferID" />
                         <div asp-validation-summary="ModelOnly" class="text-danger"></div>
 
                         <div class="row">
                             <div class="col-md-6">
                                 <div class="form-group mb-3">
-                                    <label asp-for="HareketTipi" class="control-label"></label>
-                                    <select asp-for="HareketTipi" asp-items="Html.GetEnumSelectList<MuhasebeStokWebApp.Enums.BankaHareketTipi>()" class="form-select">
-                                    </select>
-                                    <span asp-validation-for="HareketTipi" class="text-danger"></span>
+									<label asp-for="HareketTuru" class="control-label">İşlem Türü</label>
+									@if (isTransfer)
+									{
+										<select asp-for="HareketTuru" class="form-select">
+											<option value="">İşlem Türü Seçiniz</option>
+											<option value="Giriş" selected="@(Model.HareketTuru == "Giriş")">Giriş</option>
+											<option value="Çıkış" selected="@(Model.HareketTuru == "Çıkış")">Çıkış</option>
+										</select>
+									}
+									else
+									{
+										<select asp-for="HareketTuru" class="form-select">
+											<option value="">İşlem Türü Seçiniz</option>
+											<option value="Giriş" selected="@(Model.HareketTuru == "Giriş")">Giriş</option>
+											<option value="Çıkış" selected="@(Model.HareketTuru == "Çıkış")">Çıkış</option>
+										</select>
+									}
+									<span asp-validation-for="HareketTuru" class="text-danger"></span>
                                 </div>
                                 
                                 <div class="form-group mb-3">
-                                    <label asp-for="Tarih" class="control-label"></label>
-                                    <input asp-for="Tarih" type="date" class="form-control" />
-                                    <span asp-validation-for="Tarih" class="text-danger"></span>
+									<label asp-for="Tarih" class="control-label">İşlem Tarihi</label>
+									<input asp-for="Tarih" class="form-control" type="datetime-local" />
+									<span asp-validation-for="Tarih" class="text-danger"></span>
                                 </div>
                                 
                                 <div class="form-group mb-3">
                                     <label asp-for="Tutar" class="control-label"></label>
                                     <div class="input-group">
-                                        <input asp-for="Tutar" type="number" step="0.01" min="0.01" class="form-control" />
+                                        <input asp-for="Tutar" type="number" step="0.01" min="0.01" class="form-control" id="Tutar" />
                                         <span class="input-group-text">@bankaHesap.ParaBirimi</span>
                                     </div>
                                     <span asp-validation-for="Tutar" class="text-danger"></span>
@@ -70,29 +89,128 @@
                             
                             <div class="col-md-6">
                                 <div class="form-group mb-3">
-                                    <label asp-for="ReferansTuru" class="control-label"></label>
-                                    <select asp-for="ReferansTuru" asp-items="ViewBag.ReferansTurleri" class="form-select">
-                                    </select>
-                                    <span asp-validation-for="ReferansTuru" class="text-danger"></span>
-                                </div>
-                                
-                                <div class="form-group mb-3">
                                     <label asp-for="DekontNo" class="control-label"></label>
                                     <input asp-for="DekontNo" class="form-control" />
                                     <span asp-validation-for="DekontNo" class="text-danger"></span>
                                 </div>
-                                
-                                <div class="form-check mb-3">
-                                    <input asp-for="CariIleDengelensin" class="form-check-input" />
-                                    <label asp-for="CariIleDengelensin" class="form-check-label"></label>
+
+
+								<div class="form-group mb-3">
+									@if (!isTransfer)
+									{
+										<div class="form-group">
+											<label asp-for="CariID" class="control-label">Cari</label>
+											<select asp-for="CariID" class="form-select" id="CariID">
+												<option value="">Cari Seçiniz</option>
+												@foreach (var cari in ViewBag.Cariler)
+												{
+													if (Model.CariID == cari.CariID)
+													{
+														<option value="@cari.CariID" data-parabirimi="@cari.VarsayilanParaBirimi?.Kod" selected>@cari.Ad - @cari.CariTipi</option>
+													}
+													else
+													{
+														<option value="@cari.CariID" data-parabirimi="@cari.VarsayilanParaBirimi?.Kod">@cari.Ad - @cari.CariTipi</option>
+													}
+												}
+											</select>
+											<span asp-validation-for="CariID" class="text-danger"></span>
+										</div>
+									}
+									else
+									{
+										<div class="form-group">
+											<label class="control-label">Hedef</label>
+											@if (Model.HedefKasaID.HasValue)
+											{
+												<select id="HedefKasaID" name="HedefKasaID" class="form-select">
+													<option value="">Hedef Kasa Seçiniz</option>
+													@foreach (var kasa in ViewBag.Kasalar)
+													{
+														if (Model.HedefKasaID == kasa.KasaID)
+														{
+															<option value="@kasa.KasaID" data-parabirimi="@kasa.ParaBirimi" selected>
+																@kasa.KasaAdi (@kasa.ParaBirimi) - Bakiye: @kasa.GuncelBakiye.ToString("N2")
+															</option>
+														}
+														else
+														{
+															<option value="@kasa.KasaID" data-parabirimi="@kasa.ParaBirimi">
+																@kasa.KasaAdi (@kasa.ParaBirimi) - Bakiye: @kasa.GuncelBakiye.ToString("N2")
+															</option>
+														}
+													}
+												</select>
+											}
+											else if (Model.HedefBankaID.HasValue)
+											{
+												<select id="HedefBankaID" name="HedefBankaID" class="form-select">
+													<option value="">Hedef Banka Seçiniz</option>
+													@foreach (var banka in ViewBag.BankaHesaplar)
+													{
+														if (Model.HedefBankaID == banka.BankaHesapID)
+														{
+															<option value="@banka.BankaHesapID" data-parabirimi="@banka.ParaBirimi" selected>
+																@banka.Banka.BankaAdi - @banka.HesapAdi (@banka.ParaBirimi)
+															</option>
+														}
+														else if (banka.BankaHesapID != Model.BankaHesapID)
+														{
+															<option value="@banka.BankaHesapID" data-parabirimi="@banka.ParaBirimi">
+																@banka.Banka.BankaAdi - @banka.HesapAdi (@banka.ParaBirimi)
+															</option>
+														}
+													}
+												</select>
+											}
+											else if (Model.KaynakKasaID.HasValue)
+											{
+												<select id="KaynakKasaID" name="KaynakKasaID" class="form-select">
+													<option value="">Kaynak Kasa Seçiniz</option>
+													@foreach (var kasa in ViewBag.Kasalar)
+													{
+														if (Model.KaynakKasaID == kasa.KasaID)
+														{
+															<option value="@kasa.KasaID" data-parabirimi="@kasa.ParaBirimi" selected>
+																@kasa.Kasa.KasaAdi - @kasa.KasaAdi (@kasa.ParaBirimi)
+															</option>
+														}
+														else
+														{
+															<option value="@kasa.KasaID" data-parabirimi="@kasa.ParaBirimi">
+																@kasa.Kasa.KasaAdi - @kasa.KasaAdi (@kasa.ParaBirimi)
+															</option>
+														}
+													}
+												</select>
+											}
+										</div>
+									}
+								</div>
+
+
+								<input type="hidden" asp-for="KarsiParaBirimi" id="KarsiParaBirimi" />
+
+                                <div id="dovizRow" class="form-group mb-3">
+                                    <label asp-for="DovizKuru" class="control-label"></label>
+                                    <div class="input-group">
+                                        <input asp-for="DovizKuru" type="number" step="0.0001" min="0.0001" class="form-control" id="DovizKuru" />
+                                        <button type="button" class="btn btn-info" id="btnGetirKur">
+                                            <i class="fas fa-sync"></i> Kur Getir
+                                        </button>
+                                    </div>
+                                    <span asp-validation-for="DovizKuru" class="text-danger"></span>
                                 </div>
-                                
-                                <div id="cariSecimDiv" class="form-group mb-3" style="display: @(Model.CariIleDengelensin ? "block" : "none");">
-                                    <label asp-for="CariID" class="control-label"></label>
-                                    <select asp-for="CariID" asp-items="ViewBag.Cariler" class="form-select">
-                                        <option value="">-- Cari Seçiniz --</option>
-                                    </select>
-                                    <span asp-validation-for="CariID" class="text-danger"></span>
+
+                                <div id="dovizKarsiligi" class="form-group mb-3">
+                                    <label for="DovizKarsiligi" class="form-label">Döviz Karşılığı</label>
+                                    <div class="input-group">
+                                        <input type="number" id="DovizKarsiligi" class="form-control" 
+                                               min="0.01" step="0.01" value="0" />
+                                        <span class="input-group-text" id="karsiParaBirimiLabel">
+                                            @Model.KarsiParaBirimi
+                                        </span>
+                                    </div>
                                 </div>
                             </div>
                         </div>
@@ -119,13 +237,183 @@
     
     <script>
         $(document).ready(function () {
-            // Cari ile dengelensin checkbox'ına tıklandığında cari seçim alanını göster/gizle
-            $('#CariIleDengelensin').change(function () {
-                if ($(this).is(':checked')) {
-                    $('#cariSecimDiv').show();
+            var isTransfer = @Html.Raw(System.Text.Json.JsonSerializer.Serialize(isTransfer));
+            
+            // Başlangıçta döviz alanının görünürlüğünü ayarla
+            updateDovizGorunumu();
+            
+            function updateDovizGorunumu() {
+                var cariID = $("#CariID").val();
+                var hesapParaBirimi = "@bankaHesap.ParaBirimi";
+                var cariParaBirimi = "";
+				console.log(hesapParaBirimi);
+                if (!isTransfer) {
+                    cariParaBirimi = $("#CariID option:selected").data("parabirimi");
+					console.log(cariParaBirimi);
+                    if (cariParaBirimi && hesapParaBirimi && (cariParaBirimi !== hesapParaBirimi)) {
+                        $('#dovizRow').show();
+                        $('#dovizKarsiligi').show();
+                        $('#KarsiParaBirimi').val(cariParaBirimi);
+                        $('#karsiParaBirimiLabel').text(cariParaBirimi);
+                        // İlk yüklemede döviz karşılığını hesapla
+                        hesaplaDovizKarsiligi();
+                    } else {
+                        $('#dovizRow').hide();
+                        $('#dovizKarsiligi').hide();
+                        $('#KarsiParaBirimi').val(hesapParaBirimi);
+                        $('#DovizKuru').val("1.0000");
+                    }
                 } else {
-                    $('#cariSecimDiv').hide();
-                    $('#CariID').val('');
+                    // Transfer durumunda her zaman göster
+                    $('#dovizRow').show();
+                    $('#dovizKarsiligi').show();
+
+                    // Hedef para birimini al
+                    var hedefParaBirimi = $('#HedefKasaID option:selected').data('parabirimi') || 
+                                         $('#HedefBankaID option:selected').data('parabirimi') ||
+                                         $('#KaynakBankaID option:selected').data('parabirimi') || "";
+                    $('#KarsiParaBirimi').val(hedefParaBirimi);
+                    $('#karsiParaBirimiLabel').text(hedefParaBirimi);
+                    // İlk yüklemede döviz karşılığını hesapla
+                    hesaplaDovizKarsiligi();
+                }
+            }
+            
+            // Döviz kurunu çek
+            function getDovizKuru(from, to) {
+                // Sweet Alert ile işlem sürerken bekle mesajı göster
+                Swal.fire({
+                    title: 'Döviz Kuru Getiriliyor',
+                    html: from + ' -> ' + to,
+                    allowOutsideClick: false,
+                    didOpen: () => {
+                        Swal.showLoading();
+                    }
+                });
+                
+                $.ajax({
+                    url: '/api/Kur/DovizKuru',
+                    type: 'GET',
+                    data: { fromCurrency: from, toCurrency: to },
+                    success: function(data) {
+                        Swal.close();
+                        if (data && data.success) {
+                            $("#DovizKuru").val(parseFloat(data.kurDegeri).toFixed(4));
+                            hesaplaDovizKarsiligi();
+                            
+                            // Başarı mesajı göster
+                            Swal.fire({
+                                icon: 'success',
+                                title: 'Başarılı!',
+                                text: 'Döviz kuru başarıyla getirildi.',
+                                confirmButtonText: 'Tamam',
+                                timer: 1500
+                            });
+                        } else {
+                            // Hata mesajı göster
+                            Swal.fire({
+                                icon: 'error',
+                                title: 'Hata!',
+                                text: 'Döviz kuru getirilemedi. Lütfen manuel olarak girin.',
+                                confirmButtonText: 'Tamam'
+                            });
+                            $("#DovizKuru").val("1.0000");
+                        }
+                    },
+                    error: function(xhr, status, error) {
+                        Swal.close();
+                        
+                        // Hata mesajı göster
+                        Swal.fire({
+                            icon: 'error',
+                            title: 'Hata!',
+                            text: 'Döviz kuru getirilemedi: ' + error,
+                            confirmButtonText: 'Tamam'
+                        });
+                        $("#DovizKuru").val("1.0000");
+                    }
+                });
+            }
+            
+            // Kur Getir butonuna tıklanınca
+            $(document).on('click', '#btnGetirKur', function() {
+                var hesapParaBirimi = "@bankaHesap.ParaBirimi";
+                var karsiParaBirimi = "";
+                
+                if (!isTransfer) {
+                    karsiParaBirimi = $("#CariID option:selected").data("parabirimi") || "@(secilenCari?.VarsayilanParaBirimi?.Kod ?? "TRY")";
+                } else {
+                    karsiParaBirimi = $('#HedefKasaID option:selected').data('parabirimi') || 
+                                      $('#HedefBankaID option:selected').data('parabirimi') ||
+                                      $('#KaynakBankaID option:selected').data('parabirimi') || "TRY";
+                }
+                
+                if (hesapParaBirimi === karsiParaBirimi) {
+                    Swal.fire({
+                        icon: 'info',
+                        title: 'Bilgi',
+                        text: 'Para birimleri aynı olduğu için kur değeri 1 olarak ayarlandı.',
+                        confirmButtonText: 'Tamam'
+                    });
+                    $("#DovizKuru").val("1.0000");
+                    hesaplaDovizKarsiligi();
+                    return;
+                }
+                
+                getDovizKuru(hesapParaBirimi, karsiParaBirimi);
+            });
+            
+            // Tutar değiştiğinde döviz karşılığını hesapla
+            function hesaplaDovizKarsiligi() {
+                var tutar = parseFloat($("#Tutar").val()) || 0;
+                var dovizKuru = parseFloat($("#DovizKuru").val()) || 1;
+                
+                if (tutar > 0 && dovizKuru > 0) {
+                    var dovizKarsiligi = tutar * dovizKuru;
+                    $("#DovizKarsiligi").val(dovizKarsiligi.toFixed(2));
+                }
+            }
+            
+            // Döviz karşılığı değiştiğinde tutarı hesapla
+            function hesaplaTutar() {
+                var dovizKarsiligi = parseFloat($("#DovizKarsiligi").val()) || 0;
+                var dovizKuru = parseFloat($("#DovizKuru").val()) || 1;
+                
+                if (dovizKarsiligi > 0 && dovizKuru > 0) {
+                    var tutar = dovizKarsiligi / dovizKuru;
+                    $("#Tutar").val(tutar.toFixed(2));
+                }
+            }
+
+            // Cari seçildiğinde
+            $("#CariID").change(function() {
+                updateDovizGorunumu();
+            });
+            
+            // Hedef kasa/banka değiştiğinde
+            $('#HedefKasaID, #HedefBankaID, #KaynakBankaID').on('change', function() {
+                updateDovizGorunumu();
+            });
+            
+            // Tutar değiştiğinde
+            $("#Tutar").on('input', function() {
+                hesaplaDovizKarsiligi();
+            });
+            
+            // Döviz karşılığı değiştiğinde
+            $("#DovizKarsiligi").on('input', function() {
+                hesaplaTutar();
+            });
+            
+            // Döviz kuru değiştiğinde
+            $("#DovizKuru").on('input', function() {
+                hesaplaDovizKarsiligi();
+            });
+            
+            // Sayfa yüklendiğinde döviz karşılığını hesapla
+            $(document).ready(function() {
+                if ($("#DovizKuru").val() && $("#Tutar").val()) {
+                    hesaplaDovizKarsiligi();
                 }
             });
         });
