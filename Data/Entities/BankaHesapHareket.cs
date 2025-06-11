@@ -37,7 +37,9 @@ namespace MuhasebeStokWebApp.Data.Entities
         
         [Required]
         public DateTime Tarih { get; set; } = DateTime.Now;
-        
+        [Column(TypeName = "decimal(18,6)")]
+        public decimal? DovizKuru { get; set; } = 1;
+
         [StringLength(50)]
         public string ReferansNo { get; set; }
         

@@ -1,147 +1,197 @@
 @model MuhasebeStokWebApp.Data.Entities.BankaHesap
-
 @{
-    ViewData["Title"] = "Hesap Hareketleri";
-    Layout = "~/Views/Shared/_Layout.cshtml";
+	ViewData["Title"] = "Hesap Hareketleri";
+	Layout = "~/Views/Shared/_Layout.cshtml";
 }
 
 <div class="container-fluid px-4">
-    <div class="row mt-4">
-        <div class="col-md-12">
-            <div class="card">
-                <div class="card-header bg-primary text-white">
-                    <div class="row">
-                        <div class="col-md-6">
-                            <h5>@Model.Banka.BankaAdi - @Model.HesapAdi Hesap Hareketleri</h5>
-                        </div>
-                        <div class="col-md-6 text-end">
-                            <a asp-action="YeniHareket" asp-route-id="@Model.BankaHesapID" class="btn btn-sm btn-light">
-                                <i class="fas fa-plus"></i> Yeni Hareket
-                            </a>
-                            <a asp-action="Hesaplar" class="btn btn-sm btn-light">
-                                <i class="fas fa-list"></i> Hesaplar
-                            </a>
-                            <a asp-action="HesapDetails" asp-route-id="@Model.BankaHesapID" class="btn btn-sm btn-light">
-                                <i class="fas fa-info-circle"></i> Hesap Detayı
-                            </a>
-                        </div>
-                    </div>
-                </div>
-                <div class="card-body">
-                    <div class="row mb-3">
-                        <div class="col-md-12">
-                            <div class="alert alert-info">
-                                <div class="row">
-                                    <div class="col-md-4">
-                                        <strong>IBAN:</strong> @Model.IBAN
-                                    </div>
-                                    <div class="col-md-4">
-                                        <strong>Hesap No:</strong> @Model.HesapNo
-                                    </div>
-                                    <div class="col-md-4">
-                                        <strong>Şube:</strong> @Model.SubeAdi - @Model.SubeKodu
-                                    </div>
-                                </div>
-                                <div class="row mt-2">
-                                    <div class="col-md-4">
-                                        <strong>Bakiye:</strong> @Model.GuncelBakiye.ToString("N2") @Model.ParaBirimi
-                                    </div>
-                                    <div class="col-md-4">
-                                        <strong>Para Birimi:</strong> @Model.ParaBirimi
-                                    </div>
-                                    <div class="col-md-4">
-                                        <strong>Durum:</strong> @(Model.Aktif ? "Aktif" : "Pasif")
-                                    </div>
-                                </div>
-                            </div>
-                        </div>
-                    </div>
-                    <div class="row">
-                        <div class="col-md-12">
-                            <table class="table table-striped table-bordered" id="hareketlerTable">
-                                <thead class="table-light">
-                                    <tr>
-                                        <th>Tarih</th>
-                                        <th>İşlem Türü</th>
-                                        <th>Referans No</th>
-                                        <th>Referans Türü</th>
-                                        <th>Açıklama</th>
-                                        <th>Tutar</th>
-                                        <th>İşlemler</th>
-                                    </tr>
-                                </thead>
-                                <tbody>
-                                    <!-- Veriler DataTables tarafından doldurulacak -->
-                                </tbody>
-                            </table>
-                        </div>
-                    </div>
-                </div>
-            </div>
-        </div>
-    </div>
+	<div class="row mt-4">
+		<div class="col-md-12">
+			<div class="card">
+				<div class="card-header bg-primary text-white d-flex justify-content-between align-items-center">
+					<h5 class="mb-0">@Model.Banka.BankaAdi - @Model.HesapAdi Hesap Hareketleri</h5>
+					<div>
+						<button type="button" class="btn btn-sm btn-light me-1" id="btnYeniHareket" data-bs-toggle="modal" data-bs-target="#bankaHareketModal" data-hesapid="@Model.BankaHesapID">
+							<i class="fas fa-plus"></i> Yeni Hareket
+						</button>
+						<button type="button" class="btn btn-sm btn-light" id="btnYeniTransfer" data-bs-toggle="modal" data-bs-target="#bankaTransferModal" data-hesapid="@Model.BankaHesapID">
+							<i class="fas fa-exchange-alt"></i> Transfer
+						</button>
+					</div>
+				</div>
+				<div class="card-body">
+					<div class="alert alert-info mb-4">
+						<div class="row">
+							<div class="col-md-4"><strong>IBAN:</strong> @Model.IBAN</div>
+							<div class="col-md-4"><strong>Hesap No:</strong> @Model.HesapNo</div>
+							<div class="col-md-4"><strong>Şube:</strong> @Model.SubeAdi - @Model.SubeKodu</div>
+						</div>
+						<div class="row mt-2">
+							<div class="col-md-4"><strong>Bakiye:</strong> @Model.GuncelBakiye.ToString("N2") @Model.ParaBirimi</div>
+							<div class="col-md-4"><strong>Para Birimi:</strong> @Model.ParaBirimi</div>
+							<div class="col-md-4"><strong>Durum:</strong> @(Model.Aktif ? "Aktif" : "Pasif")</div>
+						</div>
+					</div>
+
+					<div class="table-responsive">
+						<table id="hareketlerTable" class="table table-striped table-bordered table-hover">
+							<thead class="table-light">
+								<tr>
+									<th>Referans No</th>
+									<th>Referans Türü</th>
+									<th>Tarih</th>
+									<th>Hareket Türü</th>
+									<th>Tutar</th>
+									<th>Cari</th>
+									<th>İşlemler</th>
+								</tr>
+							</thead>
+							<tbody>
+								<!-- DataTables will populate -->
+							</tbody>
+						</table>
+					</div>
+				</div>
+			</div>
+		</div>
+	</div>
+</div>
+
+<!-- Yeni Hareket Modal -->
+<div class="modal fade" id="bankaHareketModal" tabindex="-1" aria-hidden="true">
+	<div class="modal-dialog modal-lg modal-dialog-centered">
+		<div class="modal-content" id="bankaHareketModalContainer">
+			<div class="modal-body text-center">
+				<div class="spinner-border text-primary" role="status"><span class="visually-hidden">Yükleniyor...</span></div>
+				<p class="mt-2">Yükleniyor...</p>
+			</div>
+		</div>
+	</div>
+</div>
+
+<!-- Transfer Modal -->
+<div class="modal fade" id="bankaTransferModal" tabindex="-1" aria-hidden="true">
+	<div class="modal-dialog modal-lg modal-dialog-centered">
+		<div class="modal-content" id="bankaTransferModalContainer">
+			<div class="modal-body text-center">
+				<div class="spinner-border text-primary" role="status"><span class="visually-hidden">Yükleniyor...</span></div>
+				<p class="mt-2">Yükleniyor...</p>
+			</div>
+		</div>
+	</div>
 </div>
 
 @section Scripts {
-    <script>
-        $(document).ready(function () {
-            var table = $('#hareketlerTable').DataTable({
-                "processing": true,
-                "serverSide": true,
-                "filter": true,
-                "orderMulti": false,
-                "pageLength": 10,
-                "language": {
-                    "url": "/lib/datatables/tr.json"
-                },
-                "ajax": {
-                    "url": "@Url.Action("GetHesapHareketler", "Banka", new { id = Model.BankaHesapID })",
-                    "type": "POST",
-                    "datatype": "json"
-                },
-                "columnDefs": [
-                    {
-                        "targets": 3,
-                        "className": "text-end",
-                        "render": function (data, type, row) {
-                            var islemTuru = row.hareketTuru;
-                            var tutar = parseFloat(data).toLocaleString('tr-TR', { minimumFractionDigits: 2, maximumFractionDigits: 2 });
-                            var paraBirimi = '@Model.ParaBirimi';
-                            
-                            if (islemTuru === "Giriş") {
-                                return `<span class="text-success">+${tutar} ${paraBirimi}</span>`;
-                            } else {
-                                return `<span class="text-danger">-${tutar} ${paraBirimi}</span>`;
-                            }
-                        }
-                    },
-                    {
-                        "targets": -1,
-                        "data": null,
-                        "orderable": false,
-                        "searchable": false,
-                        "render": function (data, type, row) {
-                            var referansTuru = row.referansTuru;
-                            var isManuel = referansTuru === "Manuel";
-                            var detayBtn = `<a href="/Banka/HareketDetay/${row.bankaHesapHareketID}" class="btn btn-sm btn-info me-1" title="Detay"><i class="fas fa-info-circle"></i></a>`;
-                            var duzenleBtn = isManuel ? `<a href="/Banka/HareketDuzenle/${row.bankaHesapHareketID}" class="btn btn-sm btn-warning me-1" title="Düzenle"><i class="fas fa-edit"></i></a>` : '';
-                            var silBtn = isManuel ? `<a href="/Banka/HareketSil/${row.bankaHesapHareketID}" class="btn btn-sm btn-danger" title="Sil"><i class="fas fa-trash"></i></a>` : '';
-                            
-                            return detayBtn + duzenleBtn + silBtn;
-                        }
-                    }
-                ],
-                "columns": [
-                    { "data": "tarih", "name": "Tarih", "autoWidth": true },
-                    { "data": "hareketTuru", "name": "HareketTuru", "autoWidth": true },
-                    { "data": "referansNo", "name": "ReferansNo", "autoWidth": true },
-                    { "data": "referansTuru", "name": "ReferansTuru", "autoWidth": true },
-                    { "data": "aciklama", "name": "Aciklama", "autoWidth": true },
-                    { "data": "tutar", "name": "Tutar", "autoWidth": true },
-                    { "data": null, "name": "İşlemler", "autoWidth": true }
-                ],
-                "order": [[1, "desc"]]
-            });
-        });
-    </script>
-} 
+	<script>
+		$(document).ready(function () {
+			var table = $('#hareketlerTable').DataTable({
+				processing: true,
+				serverSide: true,
+				orderMulti: false,
+				pageLength: 10,
+				language: { url: '/lib/datatables/tr.json' },
+				ajax: {
+					url: '@Url.Action("GetHesapHareketler", "Banka", new { id = Model.BankaHesapID })',
+					type: 'POST',
+					datatype: 'json'
+				},
+				columnDefs: [
+					{
+						targets: 4, // Tutar
+						className: 'text-end',
+						render: function(data, type, row) {
+							var t = parseFloat(data).toLocaleString('tr-TR',{ minimumFractionDigits:2, maximumFractionDigits:2 });
+							var p = '@Model.ParaBirimi';
+							return row.hareketTuru === 'Giriş'
+								? `<span class="text-success fw-bold">+${t} ${p}</span>`
+								: `<span class="text-danger fw-bold">-${t} ${p}</span>`;
+						}
+					},
+					{
+						targets: -1, // İşlemler
+						orderable: false,
+						searchable: false,
+						render: function(data, type, row) {
+							var id = row.bankaHesapHareketID;
+							return `
+								<a href="/Banka/HareketDetay/${id}" class="btn btn-sm btn-dark me-1" title="Detay">
+									<i class="fas fa-info-circle"></i>
+								</a>
+								<a href="/Banka/HareketDuzenle/${id}" class="btn btn-sm btn-warning me-1" title="Düzenle">
+									<i class="fas fa-edit"></i>
+								</a>
+								<a href="/Banka/HareketSil/${id}" class="btn btn-sm btn-danger" title="Sil">
+									<i class="fas fa-trash-alt"></i>
+								</a>`;
+						}
+					}
+				],
+				columns: [
+					{ data: 'referansNo',    name: 'ReferansNo' },
+					{ data: 'referansTuru',  name: 'ReferansTuru' },
+					{ data: 'tarih',         name: 'Tarih' },
+					{ data: 'hareketTuru',   name: 'HareketTuru' },
+					{ data: 'tutar',         name: 'Tutar' },
+					{ data: 'cariUnvani',       name: 'CariUnvani' },
+					{ data: null,            name: 'İşlemler' }
+				],
+				order: [[2,'desc']]
+			});
+
+			// Modals reset & loading
+			$('#bankaHareketModal').on('show.bs.modal', function () {
+				$('#bankaHareketModalContainer').html(
+					'<div class="modal-body text-center">' +
+						'<div class="spinner-border text-primary" role="status"><span class="visually-hidden">Yükleniyor...</span></div>' +
+						'<p class="mt-2">Yükleniyor...</p>' +
+					'</div>'
+				);
+			});
+			$('#bankaTransferModal').on('show.bs.modal', function () {
+				$('#bankaTransferModalContainer').html(
+					'<div class="modal-body text-center">' +
+						'<div class="spinner-border text-primary" role="status"><span class="visually-hidden">Yükleniyor...</span></div>' +
+						'<p class="mt-2">Yükleniyor...</p>' +
+					'</div>'
+				);
+			});
+			$('#bankaHareketModal, #bankaTransferModal').on('hidden.bs.modal', function () {
+				$(this).find('select').each(function() {
+					if ($(this).data('select2')) $(this).select2('destroy');
+				});
+				$(this).find('.modal-content').html('');
+			});
+
+			// Yeni Hareket
+			$('#btnYeniHareket').click(function(e) {
+				e.preventDefault();
+				var id = $(this).data('hesapid');
+				$.get('/Banka/YeniHareket', { id: id })
+				 .done(data => $('#bankaHareketModalContainer').html(data))
+				 .fail(() => $('#bankaHareketModalContainer').html(
+					'<div class="modal-body"><div class="alert alert-danger">Yükleme hatası</div></div>' +
+					'<div class="modal-footer"><button class="btn btn-secondary" data-bs-dismiss="modal">Kapat</button></div>'
+				 ));
+			});
+
+			// Yeni Transfer
+			$('#btnYeniTransfer').click(function(e) {
+				e.preventDefault();
+				var id = $(this).data('hesapid');
+				$.get('/Banka/YeniTransfer', { hesapId: id })
+				 .done(data => {
+					$('#bankaTransferModalContainer').html(data);
+					setTimeout(() => {
+						$('#bankaTransferModal select').each(function(){
+							$(this).select2({ theme:'bootstrap-5', width:'100%', dropdownParent:$('#bankaTransferModalContainer') });
+						});
+					},100);
+				 })
+				 .fail(() => $('#bankaTransferModalContainer').html(
+					'<div class="modal-body"><div class="alert alert-danger">Yükleme hatası</div></div>' +
+					'<div class="modal-footer"><button class="btn btn-secondary" data-bs-dismiss="modal">Kapat</button></div>'
+				 ));
+			});
+		});
+	</script>
+}

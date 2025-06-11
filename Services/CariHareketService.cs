@@ -104,7 +104,7 @@ namespace MuhasebeStokWebApp.Services
             
             if (bankaHareket.CariID == null || bankaHareket.CariID == Guid.Empty)
                 throw new ArgumentException("Banka hareketinde geçerli bir Cari ID yok", nameof(bankaHareket.CariID));
-            
+            var tutar = bankaHareket.Tutar * bankaHareket.DovizKuru;
             var cariHareket = new CariHareket
             {
                 CariHareketID = Guid.NewGuid(),
@@ -115,9 +115,9 @@ namespace MuhasebeStokWebApp.Services
                 ReferansTuru = "BankaHareket",
                 ReferansID = bankaHareket.BankaHesapHareketID,
                 HareketTuru = bankaHareket.HareketTuru == "Para Yatırma" ? "Tahsilat" : "Ödeme",
-                Borc = borcMu ? bankaHareket.Tutar : 0,
-                Alacak = borcMu ? 0 : bankaHareket.Tutar,
-                Tutar = bankaHareket.Tutar,
+                Borc = borcMu ? (tutar ?? 0) : 0,
+                Alacak = borcMu ? 0 : (tutar ?? 0),
+                Tutar = tutar ?? 0,
                 OlusturmaTarihi = DateTime.Now,
                 OlusturanKullaniciID = bankaHareket.IslemYapanKullaniciID
             };

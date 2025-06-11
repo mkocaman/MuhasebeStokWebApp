@@ -218,7 +218,7 @@
                                             {
                                                 toplamBorc = Model.CariHareketler.Sum(h => h.Borc);
                                                 toplamAlacak = Model.CariHareketler.Sum(h => h.Alacak);
-                                                sonBakiye = toplamBorc - toplamAlacak;
+                                                sonBakiye = toplamAlacak - toplamBorc;
                                             }
                                         }
                                         <div class="col-md-4">

@@ -104,8 +104,14 @@ namespace MuhasebeStokWebApp.ViewModels.Banka
         
         [Display(Name = "Açıklama")]
         [StringLength(500, ErrorMessage = "Açıklama en fazla 500 karakter olabilir.")]
-        public string Aciklama { get; set; } = "";
-        
+        public string Aciklama { get; set; } = string.Empty;
+
+        [Display(Name = "Kur Değeri")]
+        public decimal? DovizKuru { get; set; }
+
+        [Display(Name = "Para Birimi")]
+        public string ParaBirimi { get; set; } = "TRY";
+
         [Display(Name = "Cari ile Dengelensin")]
         public bool CariIleDengelensin { get; set; }
         

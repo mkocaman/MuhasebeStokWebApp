@@ -18,6 +18,7 @@ using MuhasebeStokWebApp.Models;
 using MuhasebeStokWebApp.Services.Menu;
 using MuhasebeStokWebApp.Services.Interfaces;
 using MuhasebeStokWebApp.ViewModels.Transfer;
+using MuhasebeStokWebApp.TempModels;
 
 namespace MuhasebeStokWebApp.Controllers
 {
@@ -933,7 +934,7 @@ namespace MuhasebeStokWebApp.Controllers
                 // Referans türleri dropdown
                 ViewBag.ReferansTurleri = new List<SelectListItem>
                 {
-                    new SelectListItem { Text = "Manuel", Value = "Manuel" },
+                    new SelectListItem { Text = "Manuel", Value = "Manuel", Selected = true },
                     new SelectListItem { Text = "Fatura", Value = "Fatura" },
                     new SelectListItem { Text = "Çek", Value = "Çek" },
                     new SelectListItem { Text = "Senet", Value = "Senet" },
@@ -1170,7 +1171,7 @@ namespace MuhasebeStokWebApp.Controllers
                         tarih = h.Tarih.ToString("dd.MM.yyyy"),
                         hareketTuru = h.HareketTuru ?? "",
                         tutar = h.Tutar.ToString("N2"),
-                        cari = h.Cari != null ? h.Cari.Ad : "",
+                        cariUnvani = h.Cari != null ? h.Cari.Ad : "",
                         dekontNo = h.DekontNo ?? "",
                         referansNo = h.ReferansNo ?? "",
                         referansTuru = h.ReferansTuru ?? "",
@@ -1201,7 +1202,7 @@ namespace MuhasebeStokWebApp.Controllers
         }
 
         // GET: Banka/YeniHareket/5
-        public async Task<IActionResult> YeniHareket(Guid id)
+        public async Task<IActionResult> YeniHareket(Guid? id = null, Guid? cariId = null)
         {
             try
             {
@@ -1210,6 +1211,10 @@ namespace MuhasebeStokWebApp.Controllers
                     .Include(bh => bh.Banka)
                     .FirstOrDefaultAsync(bh => bh.BankaHesapID == id && !bh.Silindi);
 
+                var bankalar = await _unitOfWork.Repository<BankaHesap>().GetAsync(
+                    filter: k => !k.Silindi && k.Aktif,
+                    orderBy: q => q.OrderBy(k => k.HesapAdi)
+                );
                 if (bankaHesap == null)
                 {
                     TempData["ErrorMessage"] = "Banka hesabı bulunamadı.";
@@ -1219,9 +1224,17 @@ namespace MuhasebeStokWebApp.Controllers
                 // Dropdown listeleri hazırla
                 await PrepareDropdownsAsync();
 
+                
+                var cariler = await _unitOfWork.CariRepository.GetAll()
+                    .IgnoreQueryFilters() // Filtreleri devre dışı bırak
+                    .Where(c => !c.Silindi && c.AktifMi)
+                    .OrderBy(c => c.Ad)
+                    .Include(c => c.VarsayilanParaBirimi)
+                .ToListAsync();
                 // ViewBag'e banka hesabını ekle
                 ViewBag.BankaHesap = bankaHesap;
-
+                ViewBag.Cariler = cariler.ToList();
+                ViewBag.BankaHesaplar = bankalar.ToList();
                 // Model oluştur
                 var model = new BankaHareketCreateViewModel
                 {
@@ -1230,8 +1243,16 @@ namespace MuhasebeStokWebApp.Controllers
                     HareketTipi = Enums.BankaHareketTipi.Gelir,
                     ReferansTuru = "Manuel",
                     HesabaKaydet = true,
-                    KarsiParaBirimi = bankaHesap.ParaBirimi ?? "TRY"
+                    KarsiParaBirimi = bankaHesap.ParaBirimi ?? "TRY",
+                    ReferansNo = $"BNK-{DateTime.Now:yyMMdd}-{new Random().Next(1000):000}",
+                    CariIleDengelensin = true  // Her zaman true olarak ayarlıyoruz
                 };
+
+                // AJAX isteği kontrolü
+                if (Request.Headers["X-Requested-With"] == "XMLHttpRequest")
+                {
+                    return PartialView("_YeniHareketPartial", model);
+                }
 
                 return View(model);
             }
@@ -1248,6 +1269,9 @@ namespace MuhasebeStokWebApp.Controllers
         [ValidateAntiForgeryToken]
         public async Task<IActionResult> YeniHareket(BankaHareketCreateViewModel model)
         {
+            // AJAX isteği kontrolü
+            bool isAjaxRequest = Request.Headers["X-Requested-With"] == "XMLHttpRequest";
+            
             if (ModelState.IsValid)
             {
                 using var transaction = await _context.Database.BeginTransactionAsync();
@@ -1261,6 +1285,11 @@ namespace MuhasebeStokWebApp.Controllers
 
                     if (bankaHesap == null)
                     {
+                        if (isAjaxRequest)
+                        {
+                            return Json(new { success = false, message = "Banka hesabı bulunamadı." });
+                        }
+                        
                         TempData["ErrorMessage"] = "Banka hesabı bulunamadı.";
                         return RedirectToAction(nameof(Index));
                     }
@@ -1293,25 +1322,35 @@ namespace MuhasebeStokWebApp.Controllers
                         BankaID = bankaHesap.BankaID,
                         Tutar = Math.Abs(model.Tutar),
                         HareketTuru = isGiris ? "Giriş" : "Çıkış",
+                        DovizKuru=model.DovizKuru ?? 1,
                         Tarih = model.Tarih,
-                        ReferansNo = model.ReferansNo,
-                        ReferansTuru = model.ReferansTuru,
-                        DekontNo = string.IsNullOrEmpty(model.DekontNo) ? $"DKT-{DateTime.Now:yyMMdd}-{new Random().Next(1000):000}" : model.DekontNo,
+                        ReferansNo = model.ReferansNo ?? $"BNK-{DateTime.Now:yyMMdd}-{new Random().Next(1000):000}",
+                        ReferansTuru = isGiris ? "Tahsilat" : "Ödeme",
+                        DekontNo = model.ReferansNo ?? $"BNK-{DateTime.Now:yyMMdd}-{new Random().Next(1000):000}",
                         CariID = model.CariID,
                         KarsiParaBirimi = model.KarsiParaBirimi,
-                        Aciklama = model.Aciklama,
+                        Aciklama = $"Banka hareketi: {model.Aciklama}",
                         IslemYapanKullaniciID = GetCurrentUserId(),
                         OlusturmaTarihi = DateTime.Now,
                         SonGuncelleyenKullaniciID = GetCurrentUserId(),
                         Silindi = false
                     };
 
-                    _context.BankaHesapHareketleri.Add(hareket);
-                    _context.Update(bankaHesap);
-                    await _context.SaveChangesAsync();
-
-                    // Cari ile dengelenecekse
-                    if (model.CariID.HasValue && model.CariID != Guid.Empty && model.CariIleDengelensin)
+                    try
+                    {
+                        _context.BankaHesapHareketleri.Add(hareket);
+                        _context.Update(bankaHesap);
+                        await _context.SaveChangesAsync();
+                    }
+                    catch (DbUpdateException ex)
+                    {
+                        // Inner exception'daki gerçek SQL hatasını al
+                        var sqlEx = ex.InnerException?.Message ?? ex.Message;
+                        Console.WriteLine("Veritabanı güncelleme hatası: " + sqlEx);
+                        throw;
+                    }
+                    // Cari seçilmişse, cari hareketi oluştur
+                    if (model.CariID.HasValue && model.CariID != Guid.Empty)
                     {
                         // Cari hareketi oluştur
                         await _cariHareketService.CreateFromBankaHareketAsync(hareket, !isGiris);
@@ -1324,6 +1363,15 @@ namespace MuhasebeStokWebApp.Controllers
                         Enums.LogTuru.Bilgi
                     );
 
+                    if (isAjaxRequest)
+                    {
+                        return Json(new { 
+                            success = true, 
+                            message = "Banka hareketi başarıyla oluşturuldu.",
+                            redirectUrl = Url.Action(nameof(HesapHareketler), new { id = model.BankaHesapID })
+                        });
+                    }
+
                     TempData["SuccessMessage"] = "Banka hareketi başarıyla oluşturuldu.";
                     return RedirectToAction(nameof(HesapHareketler), new { id = model.BankaHesapID });
                 }
@@ -1331,8 +1379,23 @@ namespace MuhasebeStokWebApp.Controllers
                 {
                     await transaction.RollbackAsync();
                     _logger.LogError(ex, "Banka hareketi oluşturulurken hata oluştu");
+                    
+                    if (isAjaxRequest)
+                    {
+                        return Json(new { success = false, message = "Banka hareketi oluşturulurken bir hata oluştu: " + ex.Message });
+                    }
+                    
                     ModelState.AddModelError("", "Banka hareketi oluşturulurken bir hata oluştu. Lütfen tekrar deneyin.");
                 }
+            }
+            else if (Request.Headers["X-Requested-With"] == "XMLHttpRequest")
+            {
+                var errors = ModelState.Values.SelectMany(v => v.Errors).Select(e => e.ErrorMessage).ToList();
+                return Json(new { 
+                    success = false, 
+                    message = "Geçersiz form verileri, lütfen kontrol ediniz.", 
+                    errors = errors 
+                });
             }
 
             // Hata durumunda dropdown listelerini yeniden yükle
@@ -1345,6 +1408,12 @@ namespace MuhasebeStokWebApp.Controllers
 
             ViewBag.BankaHesap = hesap;
 
+            // AJAX isteği ise partial view döndür
+            if (Request.Headers["X-Requested-With"] == "XMLHttpRequest")
+            {
+                return PartialView("_YeniHareketPartial", model);
+            }
+
             return View(model);
         }
 
@@ -1353,37 +1422,52 @@ namespace MuhasebeStokWebApp.Controllers
         /// </summary>
         public async Task<IActionResult> YeniTransfer(Guid? hesapId = null)
         {
-            // Kasaları getir
-            var kasalar = await _unitOfWork.Repository<Kasa>().GetAsync(
-                filter: k => !k.Silindi && k.Aktif,
-                orderBy: q => q.OrderBy(k => k.KasaAdi)
-            );
+            try {
+                // Kasaları getir
+                var kasalar = await _unitOfWork.Repository<Kasa>().GetAsync(
+                    filter: k => !k.Silindi && k.Aktif,
+                    orderBy: q => q.OrderBy(k => k.KasaAdi)
+                );
 
-            // Banka hesaplarını getir
-            var bankaHesaplari = await _context.BankaHesaplari
-                .Include(h => h.Banka)
-                .Where(h => !h.Silindi && h.Aktif)
-                .OrderBy(h => h.Banka.BankaAdi)
-                .ThenBy(h => h.HesapAdi)
-                .ToListAsync();
+                // Banka hesaplarını getir
+                var bankaHesaplari = await _context.BankaHesaplari
+                    .Include(h => h.Banka)
+                    .Where(h => !h.Silindi && h.Aktif)
+                    .OrderBy(h => h.Banka.BankaAdi)
+                    .ThenBy(h => h.HesapAdi)
+                    .ToListAsync();
 
-            if (!bankaHesaplari.Any())
-            {
-                return Json(new { success = false, message = "Sistemde kayıtlı aktif banka hesabı bulunamadı. Lütfen önce bir banka hesabı ekleyin." });
+                if (!bankaHesaplari.Any())
+                {
+                    return Json(new { success = false, message = "Sistemde kayıtlı aktif banka hesabı bulunamadı. Lütfen önce bir banka hesabı ekleyin." });
+                }
+
+                ViewBag.Kasalar = kasalar.ToList();
+                ViewBag.BankaHesaplari = bankaHesaplari;
+
+                // Varsayılan transfer türü belirleme (eğer hesapId varsa)
+                string transferTuru = "BankadanBankaya";
+                if (hesapId.HasValue)
+                {
+                    transferTuru = "BankadanBankaya"; // Bankadan bankaya transfer varsayılan olarak seçili olsun
+                }
+
+                var model = new MuhasebeStokWebApp.ViewModels.Transfer.IcTransferViewModel
+                {
+                    TransferTuru = transferTuru,
+                    Tarih = DateTime.Now,
+                    ReferansNo = "TRF-" + DateTime.Now.ToString("yyMMdd") + "-" + new Random().Next(100, 999).ToString(),
+                    KaynakBankaHesapID = hesapId
+                };
+                
+                // Modal için Kasa controller'ın kullandığı view'u kullanıyoruz
+                return PartialView("~/Views/Kasa/_TransferModalPartial.cshtml", model);
             }
-
-            ViewBag.Kasalar = kasalar.ToList();
-            ViewBag.BankaHesaplari = bankaHesaplari;
-
-            var model = new MuhasebeStokWebApp.ViewModels.Transfer.IcTransferViewModel
+            catch (Exception ex)
             {
-                TransferTuru = "BankadanKasaya",
-                Tarih = DateTime.Now,
-                ReferansNo = "TRNSFR-" + DateTime.Now.ToString("yyMMdd") + "-" + new Random().Next(100, 999).ToString(),
-                KaynakBankaHesapID = hesapId
-            };
-
-            return PartialView("~/Views/Transfer/_TransferModalPartial.cshtml", model);
+                _logger.LogError(ex, "YeniTransfer modal yüklenirken hata oluştu: {Message}", ex.Message);
+                return Json(new { success = false, message = "İşlem sırasında bir hata oluştu: " + ex.Message });
+            }
         }
     }
 } 

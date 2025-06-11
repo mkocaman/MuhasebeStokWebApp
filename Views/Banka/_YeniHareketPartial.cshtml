@@ -1,0 +1,424 @@
+@using MuhasebeStokWebApp.Enums
+@model MuhasebeStokWebApp.ViewModels.Banka.BankaHareketCreateViewModel
+
+<div class="modal-header">
+	<h5 class="modal-title">Yeni Banka Hareketi</h5>
+	<button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+</div>
+
+<form id="bankaHareketForm" asp-controller="Banka" asp-action="YeniHareket" method="post">
+	<div class="modal-body">
+		<div id="createFormAlert" class="alert alert-danger d-none" role="alert"></div>
+		<div asp-validation-summary="ModelOnly" class="text-danger"></div>
+
+		<div class="row">
+			<div class="col-md-6">
+				<div class="form-group mb-3">
+					<label for="BankaHesapID" class="form-label">Banka Hesabı</label>
+					@{
+						bool isDisabled = Model.BankaHesapID != Guid.Empty;
+						var bankaHesaplar = ViewBag.BankaHesaplar as List<MuhasebeStokWebApp.Data.Entities.BankaHesap> ?? new List<MuhasebeStokWebApp.Data.Entities.BankaHesap>();
+						var secilenHesap = ViewBag.BankaHesap as MuhasebeStokWebApp.Data.Entities.BankaHesap;
+					}
+					<select id="BankaHesapID" name="BankaHesapID" class="form-select" required @(isDisabled ? "disabled" : "")>
+						<option value="">Hesap Seçiniz</option>
+						@foreach (var hesap in bankaHesaplar)
+						{
+							if (Model.BankaHesapID == hesap.BankaHesapID)
+							{
+								<option value="@hesap.BankaHesapID" data-parabirimi="@hesap.ParaBirimi" selected="selected">
+									@hesap.Banka?.BankaAdi - @hesap.HesapAdi (@hesap.ParaBirimi) - Bakiye: @hesap.GuncelBakiye.ToString("N2")
+								</option>
+							}
+							else
+							{
+								<option value="@hesap.BankaHesapID" data-parabirimi="@hesap.ParaBirimi">
+									@hesap.Banka?.BankaAdi - @hesap.HesapAdi (@hesap.ParaBirimi) - Bakiye: @hesap.GuncelBakiye.ToString("N2")
+								</option>
+							}
+						}
+					</select>
+					@if (isDisabled && Model.BankaHesapID != Guid.Empty)
+					{
+						<input type="hidden" name="BankaHesapID" value="@Model.BankaHesapID" />
+					}
+					<span asp-validation-for="BankaHesapID" class="text-danger"></span>
+				</div>
+			</div>
+			<div class="col-md-6">
+				<div class="form-group mb-3">
+					<label for="HareketTipi" class="form-label">Hareket Türü</label>
+					<select id="HareketTipi" name="HareketTipi" class="form-select" required>
+						<option value="">Hareket Türü Seçiniz</option>
+						<option value="Gelir" selected="@(Model.HareketTipi == MuhasebeStokWebApp.Enums.BankaHareketTipi.Gelir)">Gelir (Para Girişi)</option>
+						<option value="Gider" selected="@(Model.HareketTipi == MuhasebeStokWebApp.Enums.BankaHareketTipi.Gider)">Gider (Para Çıkışı)</option>
+					</select>
+					<span asp-validation-for="HareketTipi" class="text-danger"></span>
+				</div>
+			</div>
+		</div>
+
+		<div class="row">
+			<div class="col-md-6">
+				<div class="form-group mb-3">
+					<label for="CariID" class="form-label">Cari</label>
+					@{
+						var cariler = ViewBag.Cariler as List<MuhasebeStokWebApp.Data.Entities.Cari> ?? new List<MuhasebeStokWebApp.Data.Entities.Cari>();
+						var secilenCari = ViewBag.SecilenCari as MuhasebeStokWebApp.Data.Entities.Cari;
+					}
+					<select id="CariID" name="CariID" class="form-select">
+						<option value="">Cari Seçiniz</option>
+						@foreach (var cari in cariler)
+						{
+							if (Model.CariID == cari.CariID)
+							{
+								<option value="@cari.CariID" data-parabirimi="@cari.VarsayilanParaBirimi.Kod" selected>
+									@cari.Ad - @cari.CariTipi
+								</option>
+							}
+							else
+							{
+								<option value="@cari.CariID" data-parabirimi="@cari.VarsayilanParaBirimi.Kod">
+									@cari.Ad - @cari.CariTipi
+								</option>
+							}
+						}
+					</select>
+					<span asp-validation-for="CariID" class="text-danger"></span>
+				</div>
+				
+				<div class="form-check mb-3">
+					<input asp-for="CariIleDengelensin" type="checkbox" id="CariIleDengelensin" name="CariIleDengelensin" class="form-check-input" checked />
+					<label asp-for="CariIleDengelensin" class="form-check-label" for="CariIleDengelensin">Cari ile Dengelensin</label>
+				</div>
+			</div>
+			<div class="col-md-6">
+				<div class="form-group mb-3">
+					<label for="Tutar" class="form-label">Tutar</label>
+					<div class="input-group">
+						<input type="number" id="Tutar" name="Tutar" class="form-control" 
+							   min="0.01" step="0.01" required value="@(Model.Tutar > 0 ? Model.Tutar : 0)" />
+						<span class="input-group-text" id="paraBirimiLabel">
+							@(secilenHesap != null ? secilenHesap.ParaBirimi : "TRY")
+						</span>
+					</div>
+					<span asp-validation-for="Tutar" class="text-danger"></span>
+				</div>
+			</div>
+		</div>
+
+		<div id="dovizRow" class="row @(secilenHesap != null && secilenCari != null && secilenHesap.ParaBirimi != secilenCari.VarsayilanParaBirimi.Kod ? "" : "d-none")">
+			<div class="col-md-6">
+				<div class="form-group mb-3">
+					<label for="DovizKuru" class="form-label">Döviz Kuru</label>
+					<div class="input-group">
+						<input type="number" id="DovizKuru" name="DovizKuru" class="form-control" 
+							   value="@(Model.DovizKuru ?? 1)" step="0.0001" min="0.0001" />
+						<button type="button" class="btn btn-info" id="btnGetirKur">
+							<i class="fas fa-sync"></i> Kur Getir
+						</button>
+					</div>
+					<span asp-validation-for="DovizKuru" class="text-danger"></span>
+				</div>
+			</div>
+			<div class="col-md-6">
+				<div class="form-group mb-3">
+					<label for="DovizKarsiligi" class="form-label">Döviz Karşılığı</label>
+					<div class="input-group">
+						<input type="number" id="DovizKarsiligi" name="DovizKarsiligi" class="form-control" 
+							   min="0.01" step="0.01" value="0" />
+						<span class="input-group-text" id="karsiParaBirimiLabel">
+							@(Model.KarsiParaBirimi ?? "TRY")
+						</span>
+					</div>
+				</div>
+			</div>
+		</div>
+
+		<div class="row">
+			<div class="col-md-6">
+				<div class="form-group mb-3">
+					<label for="ReferansNo" class="form-label">Referans/Dekont No</label>
+					<input type="text" id="ReferansNo" name="ReferansNo" class="form-control" value="@Model.ReferansNo" />
+					<span asp-validation-for="ReferansNo" class="text-danger"></span>
+					<small class="form-text text-muted">İşlem numarası otomatik olarak oluşturulur</small>
+					<input type="hidden" id="DekontNo" name="DekontNo" value="@Model.ReferansNo" />
+				</div>
+			</div>
+			<div class="col-md-6">
+				<div class="form-group mb-3">
+					<label for="Tarih" class="form-label">Tarih</label>
+					<input type="datetime-local" id="Tarih" name="Tarih" class="form-control" value="@Model.Tarih.ToString("yyyy-MM-ddTHH:mm")" required />
+					<span asp-validation-for="Tarih" class="text-danger"></span>
+				</div>
+			</div>
+		</div>
+		
+		<div class="form-group mb-3">
+			<label for="Aciklama" class="form-label">Açıklama</label>
+			<textarea id="Aciklama" name="Aciklama" class="form-control" rows="3">@Model.Aciklama</textarea>
+			<span asp-validation-for="Aciklama" class="text-danger"></span>
+		</div>
+
+	</div>
+	<div class="modal-footer">
+		<button type="button" class="btn btn-secondary" data-bs-dismiss="modal">İptal</button>
+		<button type="submit" class="btn btn-primary">Kaydet</button>
+	</div>
+</form>
+
+<script>
+	$(document).ready(function() {
+		// // Select2 ile cari seçimini geliştir
+		// $("#CariID").select2({
+		// 	theme: "bootstrap-5", 
+		// 	width: '100%',
+		// 	language: "tr",
+		// 	placeholder: "Cari seçiniz...",
+		// 	allowClear: true,
+		// 	dropdownParent: $("#bankaHareketModal")
+		// });
+
+		// Form gönderimini AJAX ile yap
+		$("#bankaHareketForm").submit(function(e) {
+			e.preventDefault();
+			var form = $(this);
+			
+			// ReferansNo ve DekontNo senkronizasyonu
+			$("#DekontNo").val($("#ReferansNo").val());
+			
+			// Form verilerini al
+			var formData = form.serialize();
+			
+			// AJAX isteği
+			$.ajax({
+				url: form.attr('action'),
+				type: form.attr('method'),
+				data: formData,
+				headers: {
+					'X-Requested-With': 'XMLHttpRequest'
+				},
+				success: function(response) {
+					if (response.success) {
+						// Başarılı olursa Sweet Alert göster
+						Swal.fire({
+							icon: 'success',
+							title: 'Başarılı!',
+							text: response.message || 'Banka hareketi başarıyla oluşturuldu.',
+							confirmButtonText: 'Tamam'
+						}).then((result) => {
+							// Modal'ı kapat ve sayfayı yenile veya yönlendir
+							$('#bankaHareketModal').modal('hide');
+							if (response.redirectUrl) {
+								window.location.href = response.redirectUrl;
+							} else {
+								location.reload();
+							}
+						});
+					} else {
+						// Başarısız olursa Sweet Alert göster
+						Swal.fire({
+							icon: 'error',
+							title: 'Hata!',
+							text: response.message || 'Banka hareketi oluşturulurken bir hata oluştu.',
+							confirmButtonText: 'Tamam'
+						});
+						
+						// Hata mesajlarını göster (varsa)
+						if (response.errors && response.errors.length > 0) {
+							var errorList = '';
+							$.each(response.errors, function(index, error) {
+								errorList += error + '<br>';
+							});
+							
+							$('#createFormAlert').html(errorList).removeClass('d-none');
+						}
+					}
+				},
+				error: function(xhr, status, error) {
+					// AJAX hatası olursa Sweet Alert göster
+					Swal.fire({
+						icon: 'error',
+						title: 'Hata!',
+						text: 'Banka hareketi oluşturulurken bir hata oluştu. Lütfen tekrar deneyin.',
+						confirmButtonText: 'Tamam'
+					});
+					
+					// Hata mesajını göster
+					$('#createFormAlert').text('Banka hareketi kaydı sırasında bir hata oluştu: ' + error).removeClass('d-none');
+				}
+			});
+		});
+
+		// Para birimi değişikliği
+		function updateParaBirimleri() {
+			var hesapParaBirimi = $("#BankaHesapID option:selected").data("parabirimi") || "TRY";
+			var cariParaBirimi = $("#CariID option:selected").data("parabirimi") || "TRY";
+			
+			$("#paraBirimiLabel").text(hesapParaBirimi);
+			$("#KarsiParaBirimi").val(cariParaBirimi);
+			$("#karsiParaBirimiLabel").text(cariParaBirimi);
+			
+			// Para birimleri farklı ise döviz alanlarını göster
+			if (hesapParaBirimi !== cariParaBirimi) {
+				$("#dovizRow").removeClass("d-none");
+				// Güncel döviz kurunu çek
+				getDovizKuru(hesapParaBirimi, cariParaBirimi);
+			} else {
+				$("#dovizRow").addClass("d-none");
+			}
+		}
+		
+		// Döviz kuru servisi
+		function getDovizKuru(from, to) {
+			// Sweet Alert ile işlem sürerken bekle mesajı göster
+			Swal.fire({
+				title: 'Döviz Kuru Getiriliyor',
+				html: 'Lütfen bekleyin...',
+				allowOutsideClick: false,
+				didOpen: () => {
+					Swal.showLoading();
+				}
+			});
+			
+			$.ajax({
+				url: '/api/Kur/DovizKuru',
+				type: 'GET',
+				data: { fromCurrency: from, toCurrency: to },
+				success: function(data) {
+					Swal.close();
+					if (data && data.success) {
+						$("#DovizKuru").val(parseFloat(data.kurDegeri).toFixed(4));
+						hesaplaDovizKarsiligi();
+						
+						// Başarı mesajı göster
+						Swal.fire({
+							icon: 'success',
+							title: 'Başarılı!',
+							text: 'Döviz kuru başarıyla getirildi.',
+							confirmButtonText: 'Tamam',
+							timer: 1500
+						});
+					} else {
+						// Hata mesajı göster
+						Swal.fire({
+							icon: 'error',
+							title: 'Hata!',
+							text: 'Döviz kuru getirilemedi. Lütfen manuel olarak girin.',
+							confirmButtonText: 'Tamam'
+						});
+						
+						// Varsayılan değer olarak 1 atama
+						$("#DovizKuru").val("1.0000");
+					}
+				},
+				error: function(xhr, status, error) {
+					Swal.close();
+					
+					// Hata mesajı göster
+					Swal.fire({
+						icon: 'error',
+						title: 'Hata!',
+						text: 'Döviz kuru getirilemedi: ' + error,
+						confirmButtonText: 'Tamam'
+					});
+					
+					// Varsayılan değer olarak 1 atama
+					$("#DovizKuru").val("1.0000");
+				}
+			});
+		}
+		
+		// Kur Getir butonuna tıklanınca
+		$(document).on('click', '#btnGetirKur', function() {
+			var hesapParaBirimi = $("#BankaHesapID option:selected").data("parabirimi") || "TRY";
+			var cariParaBirimi = $("#CariID option:selected").data("parabirimi") || "TRY";
+			
+			if (hesapParaBirimi === cariParaBirimi) {
+				Swal.fire({
+					icon: 'info',
+					title: 'Bilgi',
+					text: 'Hesap ve cari para birimleri aynı olduğu için kur değeri 1 olarak ayarlandı.',
+					confirmButtonText: 'Tamam'
+				});
+				$("#DovizKuru").val("1.0000");
+				return;
+			}
+			
+			getDovizKuru(hesapParaBirimi, cariParaBirimi);
+		});
+		
+		// Tutar değiştiğinde döviz karşılığını hesapla
+		function hesaplaDovizKarsiligi() {
+			var tutar = parseFloat($("#Tutar").val()) || 0;
+			var dovizKuru = parseFloat($("#DovizKuru").val()) || 1;
+			
+			if (tutar > 0 && dovizKuru > 0) {
+				var dovizKarsiligi = tutar * dovizKuru;
+				$("#DovizKarsiligi").val(dovizKarsiligi.toFixed(2));
+			}
+		}
+		
+		// Döviz karşılığı değiştiğinde tutarı hesapla
+		function hesaplaTutar() {
+			var dovizKarsiligi = parseFloat($("#DovizKarsiligi").val()) || 0;
+			var dovizKuru = parseFloat($("#DovizKuru").val()) || 1;
+			
+			if (dovizKarsiligi > 0 && dovizKuru > 0) {
+				var tutar = dovizKarsiligi / dovizKuru;
+				$("#Tutar").val(tutar.toFixed(2));
+			}
+		}
+		
+		// Döviz kuru değiştiğinde döviz karşılığını hesapla
+		function hesaplaDovizKuruDegisince() {
+			var tutar = parseFloat($("#Tutar").val()) || 0;
+			var dovizKuru = parseFloat($("#DovizKuru").val()) || 1;
+			
+			if (tutar > 0 && dovizKuru > 0) {
+				var dovizKarsiligi = tutar * dovizKuru;
+				$("#DovizKarsiligi").val(dovizKarsiligi.toFixed(2));
+			}
+		}
+
+		// Banka hesabı seçildiğinde
+		$("#BankaHesapID").change(function() {
+			updateParaBirimleri();
+		});
+
+		// Cari seçildiğinde
+		$("#CariID").change(function() {
+			updateParaBirimleri();
+		});
+		
+		// Tutar değiştiğinde - input olayı kullanılıyor
+		$("#Tutar").on('input', function() {
+			hesaplaDovizKarsiligi();
+		});
+		
+		// Döviz karşılığı değiştiğinde - input olayı kullanılıyor
+		$("#DovizKarsiligi").on('input', function() {
+			hesaplaTutar();
+		});
+		
+		// Döviz kuru değiştiğinde - input olayı kullanılıyor
+		$("#DovizKuru").on('input', function() {
+			hesaplaDovizKuruDegisince();
+		});
+		
+		// Başlangıçta para birimlerini güncelle
+		updateParaBirimleri();
+		
+		// Referans No oluşturma (işlem başlangıcında)
+		if (!$("#ReferansNo").val()) {
+			var today = new Date();
+			var year = today.getFullYear().toString().substr(-2);
+			var month = (today.getMonth() + 1).toString().padStart(2, '0');
+			var day = today.getDate().toString().padStart(2, '0');
+			var random = Math.floor(Math.random() * 1000).toString().padStart(3, '0');
+			
+			$("#ReferansNo").val("BNK-" + year + month + day + "-" + random);
+			$("#DekontNo").val($("#ReferansNo").val());
+		}
+	});
+</script>

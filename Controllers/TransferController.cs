@@ -120,15 +120,49 @@ namespace MuhasebeStokWebApp.Controllers
                         if (isAjaxRequest)
                         {
                             // AJAX yanıtı
+                            string redirectUrl = "";
+                            
+                            // Transfer türüne göre yönlendirme URL'sini belirle
+                            switch (model.TransferTuru)
+                            {
+                                case "KasadanKasaya":
+                                case "KasadanBankaya":
+                                    if (model.KaynakKasaID.HasValue)
+                                        redirectUrl = Url.Action("Hareketler", "Kasa", new { id = model.KaynakKasaID.Value });
+                                    break;
+                                case "BankadanKasaya":
+                                case "BankadanBankaya":
+                                    if (model.KaynakBankaHesapID.HasValue)
+                                        redirectUrl = Url.Action("HesapHareketler", "Banka", new { id = model.KaynakBankaHesapID.Value });
+                                    break;
+                            }
+                            
                             return Json(new { 
                                 success = true, 
                                 message = "Transfer başarıyla gerçekleştirildi.", 
-                                transferID = model.TransferID 
+                                transferID = model.TransferID,
+                                redirectUrl = redirectUrl
                             });
                         }
 
                         // Normal form gönderimi yanıtı
                         TempData["SuccessMessage"] = "Transfer başarıyla gerçekleştirildi.";
+                        
+                        // Transfer türüne göre yönlendirme
+                        switch (model.TransferTuru)
+                        {
+                            case "KasadanKasaya":
+                            case "KasadanBankaya":
+                                if (model.KaynakKasaID.HasValue)
+                                    return RedirectToAction("Hareketler", "Kasa", new { id = model.KaynakKasaID.Value });
+                                break;
+                            case "BankadanKasaya":
+                            case "BankadanBankaya":
+                                if (model.KaynakBankaHesapID.HasValue)
+                                    return RedirectToAction("HesapHareketler", "Banka", new { id = model.KaynakBankaHesapID.Value });
+                                break;
+                        }
+                        
                         return RedirectToAction("Index", "Kasa");
                     }
                     catch (Exception ex)
@@ -179,6 +213,12 @@ namespace MuhasebeStokWebApp.Controllers
 
             ViewBag.Kasalar = kasalar.ToList();
             ViewBag.BankaHesaplari = bankaHesaplari;
+            
+            // AJAX isteği ise partial view döndür
+            if (isAjaxRequest)
+            {
+                return PartialView("~/Views/Kasa/_TransferModalPartial.cshtml", model);
+            }
 
             return View(model);
         }
