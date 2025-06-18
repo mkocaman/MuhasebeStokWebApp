@@ -153,8 +153,6 @@ namespace MuhasebeStokWebApp.ViewModels.Kasa
         
         [Display(Name = "Transfer ID")]
         public Guid? TransferID { get; set; }
-        
-        [Display(Name = "Hedef Kasa ID")]
         public Guid? HedefKasaID { get; set; }
         
         [Display(Name = "Hedef Kasa Adı")]
@@ -174,14 +172,10 @@ namespace MuhasebeStokWebApp.ViewModels.Kasa
         
         [Display(Name = "Hesap Modülüne Kaydet")]
         public bool HesabaKaydet { get; set; }
-        
-        [Display(Name = "Hedef Banka ID")]
         public Guid? HedefBankaID { get; set; }
         
         [Display(Name = "Hedef Banka Adı")]
         public string HedefBankaAdi { get; set; } = string.Empty;
-        
-        [Display(Name = "Kaynak Banka ID")]
         public Guid? KaynakBankaID { get; set; }
         
         [Display(Name = "Kaynak Banka Adı")]

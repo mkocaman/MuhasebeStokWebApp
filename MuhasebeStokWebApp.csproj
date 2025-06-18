@@ -70,8 +70,5 @@
     <None Remove="DbScript\**" />
   </ItemGroup>
 
-  <ItemGroup>
-    <Content Include="C:\Users\Ömer Faruk KOCAMAN\OneDrive\Masaüstü\HareketDuzenle.cshtml" Link="HareketDuzenle.cshtml" />
-  </ItemGroup>
 
 </Project>

@@ -506,11 +506,18 @@ namespace MuhasebeStokWebApp.Migrations
                         .HasMaxLength(50)
                         .HasColumnType("nvarchar(50)");
 
+                    b.Property<Guid?>("HedefBankaHesapID")
+                        .HasColumnType("uniqueidentifier");
+
                     b.Property<Guid?>("HedefBankaID")
                         .HasColumnType("uniqueidentifier");
 
                     b.Property<Guid?>("HedefKasaID")
                         .HasColumnType("uniqueidentifier");
+
+                    b.Property<string>("IslemTuru")
+                        .HasMaxLength(50)
+                        .HasColumnType("nvarchar(50)");
 
                     b.Property<Guid?>("IslemYapanKullaniciID")
                         .HasColumnType("uniqueidentifier");
@@ -572,6 +579,8 @@ namespace MuhasebeStokWebApp.Migrations
                     b.HasIndex("BankaID");
 
                     b.HasIndex("CariID");
+
+                    b.HasIndex("HedefBankaHesapID");
 
                     b.HasIndex("HedefKasaID");
 
@@ -1563,8 +1572,8 @@ namespace MuhasebeStokWebApp.Migrations
 
                     b.Property<string>("IslemTuru")
                         .IsRequired()
-                        .HasMaxLength(20)
-                        .HasColumnType("nvarchar(20)");
+                        .HasMaxLength(50)
+                        .HasColumnType("nvarchar(50)");
 
                     b.Property<Guid?>("IslemYapanKullaniciID")
                         .HasColumnType("uniqueidentifier");
@@ -3106,6 +3115,10 @@ namespace MuhasebeStokWebApp.Migrations
                         .WithMany()
                         .HasForeignKey("CariID");
 
+                    b.HasOne("MuhasebeStokWebApp.Data.Entities.BankaHesap", "HedefBanka")
+                        .WithMany()
+                        .HasForeignKey("HedefBankaHesapID");
+
                     b.HasOne("MuhasebeStokWebApp.Data.Entities.Kasa", "HedefKasa")
                         .WithMany()
                         .HasForeignKey("HedefKasaID");
@@ -3119,6 +3132,8 @@ namespace MuhasebeStokWebApp.Migrations
                     b.Navigation("BankaHesap");
 
                     b.Navigation("Cari");
+
+                    b.Navigation("HedefBanka");
 
                     b.Navigation("HedefKasa");
 
@@ -3298,7 +3313,7 @@ namespace MuhasebeStokWebApp.Migrations
                         .WithMany()
                         .HasForeignKey("CariID");
 
-                    b.HasOne("MuhasebeStokWebApp.Data.Entities.Banka", "HedefBanka")
+                    b.HasOne("MuhasebeStokWebApp.Data.Entities.BankaHesap", "HedefBanka")
                         .WithMany()
                         .HasForeignKey("HedefBankaID");
 
@@ -3313,7 +3328,7 @@ namespace MuhasebeStokWebApp.Migrations
                         .OnDelete(DeleteBehavior.NoAction)
                         .IsRequired();
 
-                    b.HasOne("MuhasebeStokWebApp.Data.Entities.Banka", "KaynakBanka")
+                    b.HasOne("MuhasebeStokWebApp.Data.Entities.BankaHesap", "KaynakBanka")
                         .WithMany()
                         .HasForeignKey("KaynakBankaID");
 

@@ -30,7 +30,7 @@ namespace MuhasebeStokWebApp.Data.Entities
         public Guid? HedefKasaID { get; set; }
         public Guid? HedefBankaID { get; set; }
         [Required]
-        [StringLength(20)]
+        [StringLength(50)]
         public string IslemTuru { get; set; } // Normal, KasaTransfer, BankaTransfer
         
         // Döviz işlemleri için
@@ -76,9 +76,9 @@ namespace MuhasebeStokWebApp.Data.Entities
         public virtual Kasa HedefKasa { get; set; }
         
         [ForeignKey("HedefBankaID")]
-        public virtual Banka HedefBanka { get; set; }
+        public virtual BankaHesap? HedefBanka { get; set; }
         
         [ForeignKey("KaynakBankaID")]
-        public virtual Banka KaynakBanka { get; set; }
+        public virtual BankaHesap? KaynakBanka { get; set; }
     }
 } 

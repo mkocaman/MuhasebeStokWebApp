@@ -48,28 +48,34 @@
 						<input type="hidden" asp-for="KarsiParaBirimi" id="KarsiParaBirimi" />
 
 						<div class="row mb-3">
-							<div class="col-md-6">
-								<div class="form-group">
-									<label asp-for="HareketTuru" class="control-label">İşlem Türü</label>
-									@if (isTransfer)
-									{
-										<select asp-for="HareketTuru" class="form-select" disabled>
+						@if (isTransfer)
+						{
+							
+								<div class="col-md-6" hidden>
+									<div class="form-group">
+										<select asp-for="HareketTuru" class="form-select" >
 											<option value="">İşlem Türü Seçiniz</option>
 											<option value="Giriş" selected="@(Model.HareketTuru == "Giriş")">Giriş</option>
 											<option value="Çıkış" selected="@(Model.HareketTuru == "Çıkış")">Çıkış</option>
 										</select>
-                                    }
-                                    else
-                                    {
-                                        <select asp-for="HareketTuru" class="form-select">
-                                            <option value="">İşlem Türü Seçiniz</option>
+										<span asp-validation-for="HareketTuru" class="text-danger"></span>
+									</div>
+								</div>
+                        }
+                        else
+                        {
+							<div class="col-md-6">
+								<div class="form-group">
+										<label asp-for="HareketTuru" class="control-label">İşlem Türü</label>
+										<select asp-for="HareketTuru" class="form-select">
+											<option value="">İşlem Türü Seçiniz</option>
 											<option value="Giriş" selected="@(Model.HareketTuru == "Giriş")">Giriş</option>
 											<option value="Çıkış" selected="@(Model.HareketTuru == "Çıkış")">Çıkış</option>
-                                        </select>
-                                    }
-                                    <span asp-validation-for="HareketTuru" class="text-danger"></span>
-                                </div>
-                            </div>
+										</select>
+									<span asp-validation-for="HareketTuru" class="text-danger"></span>
+								</div>
+							</div>
+                        }
                             <div class="col-md-6">
                                 <div class="form-group">
                                     <label asp-for="Tutar" class="control-label">Tutar</label>
@@ -116,13 +122,19 @@
                                 {
                                     <div class="form-group">
                                         <label class="control-label">Hedef</label>
-                                        @if (Model.HedefKasaID.HasValue)
+                                        @if (Model.IslemTuru=="KasadanKasayaTransfer")
                                         {
-                                            <select id="HedefKasaID" name="HedefKasaID" class="form-select">
+											<select asp-for ="HedefKasaID" class="form-select" id="HedefKasaID" name="HedefKasaID">
                                                 <option value="">Hedef Kasa Seçiniz</option>
                                                 @foreach (var kasa in ViewBag.Kasalar)
                                                 {
-                                                    if (Model.HedefKasaID == kasa.KasaID)
+                                                    if (Model.HedefKasaID == kasa.KasaID&&Model.HareketTuru=="Çıkış")
+                                                    {
+                                                        <option value="@kasa.KasaID" data-parabirimi="@kasa.ParaBirimi" selected>
+                                                            @kasa.KasaAdi (@kasa.ParaBirimi) - Bakiye: @kasa.GuncelBakiye.ToString("N2")
+                                                        </option>
+                                                    }
+                                                    else if (Model.KasaID == kasa.KasaID&&Model.HareketTuru=="Giriş")
                                                     {
                                                         <option value="@kasa.KasaID" data-parabirimi="@kasa.ParaBirimi" selected>
                                                             @kasa.KasaAdi (@kasa.ParaBirimi) - Bakiye: @kasa.GuncelBakiye.ToString("N2")
@@ -137,22 +149,43 @@
                                                 }
                                             </select>
                                         }
-                                        else if (Model.KaynakBankaID.HasValue)
-                                        {
-                                            <select id="KaynakBankaID" name="KaynakBankaID" class="form-select">
+										else if (Model.IslemTuru == "BankadanKasayaTransfer")
+										{
+											<select asp-for="KaynakBankaID" class="form-select" id="KaynakBankaID" name="KaynakBankaID">
                                                 <option value="">Kaynak Banka Seçiniz</option>
                                                 @foreach (var banka in ViewBag.BankaHesaplari)
                                                 {
                                                     if (Model.KaynakBankaID == banka.BankaHesapID)
                                                     {
                                                         <option value="@banka.BankaHesapID" data-parabirimi="@banka.ParaBirimi" selected>
-                                                            @banka.Banka.BankaAdi - @banka.HesapAdi (@banka.ParaBirimi)
+															@banka.Banka.BankaAdi - @banka.HesapAdi (@banka.ParaBirimi) - Bakiye: @banka.GuncelBakiye.ToString("N2")
                                                         </option>
                                                     }
                                                     else
                                                     {
                                                         <option value="@banka.BankaHesapID" data-parabirimi="@banka.ParaBirimi">
-                                                            @banka.Banka.BankaAdi - @banka.HesapAdi (@banka.ParaBirimi)
+															@banka.Banka.BankaAdi - @banka.HesapAdi (@banka.ParaBirimi) - Bakiye: @banka.GuncelBakiye.ToString("N2")
+                                                        </option>
+                                                    }
+                                                }
+                                            </select>
+                                        }
+										else if (Model.IslemTuru == "KasadanBankayaTransfer")
+										{
+											<select asp-for="HedefBankaID" class="form-select" id="HedefBankaID" name="HedefBankaID">
+                                                <option value="">Hedef Banka Seçiniz</option>
+                                                @foreach (var banka in ViewBag.BankaHesaplari)
+                                                {
+													if (Model.HedefBankaID == banka.BankaHesapID)
+													{
+                                                        <option value="@banka.BankaHesapID" data-parabirimi="@banka.ParaBirimi" selected>
+															@banka.Banka.BankaAdi - @banka.HesapAdi (@banka.ParaBirimi) - Bakiye: @banka.GuncelBakiye.ToString("N2")
+                                                        </option>
+                                                    }
+                                                    else
+                                                    {
+                                                        <option value="@banka.BankaHesapID" data-parabirimi="@banka.ParaBirimi">
+															@banka.Banka.BankaAdi - @banka.HesapAdi (@banka.ParaBirimi) - Bakiye: @banka.GuncelBakiye.ToString("N2")
                                                         </option>
                                                     }
                                                 }

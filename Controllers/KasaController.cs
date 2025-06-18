@@ -1276,8 +1276,16 @@ namespace MuhasebeStokWebApp.Controllers
                     .OrderBy(c => c.Ad)
                     .ToListAsync();
 
+
+                var hesaplar=await _unitOfWork.Repository<BankaHesap>().GetAll()
+                    .Where(c => !c.Silindi && c.Aktif)
+                    .Include(a => a.Banka)
+                    .OrderBy(c => c.HesapAdi)
+                    .ToListAsync();
+
                 ViewBag.Kasalar = kasalar.ToList();
                 ViewBag.Cariler = cariler.ToList();
+                ViewBag.BankaHesaplari = hesaplar.ToList();
                 ViewBag.SecilenKasa = kasa;
 
                 // İşlem türleri için dropdown hazırla
@@ -1325,6 +1333,7 @@ namespace MuhasebeStokWebApp.Controllers
                         if (hedefKasa != null && !hedefKasa.Silindi)
                         {
                             viewModel.HedefKasaAdi = hedefKasa.KasaAdi;
+                            ViewBag.SecilenHedefKasa = hedefKasa;
                         }
                     }
                     
@@ -1336,7 +1345,20 @@ namespace MuhasebeStokWebApp.Controllers
                         
                         if (bankaHesap != null)
                         {
-                            viewModel.KaynakBankaAdi = $"{bankaHesap.Banka.BankaAdi} - {bankaHesap.HesapAdi}";
+                            viewModel.KaynakBankaAdi = bankaHesap.HesapAdi;
+                            ViewBag.SecilenBankaHesap = bankaHesap;
+                        }
+                    }
+                    if (hareket.HedefBankaID.HasValue)
+                    {
+                        var bankaHesap = await _context.BankaHesaplari
+                            .Include(b => b.Banka)
+                            .FirstOrDefaultAsync(b => b.BankaHesapID == hareket.HedefBankaID && !b.Silindi);
+                        
+                        if (bankaHesap != null)
+                        {
+                            viewModel.HedefBankaAdi = bankaHesap.HesapAdi;
+                            ViewBag.SecilenBankaHesap = bankaHesap;
                         }
                     }
                 }
@@ -1428,7 +1450,7 @@ namespace MuhasebeStokWebApp.Controllers
                         else
                         {
                             kasa.GuncelBakiye -= hareket.Tutar;
-                            }
+                        }
 
                         // Değişiklikleri kaydet
                         _unitOfWork.Repository<KasaHareket>().Update(hareket);
@@ -1469,9 +1491,8 @@ namespace MuhasebeStokWebApp.Controllers
                         if (isTransfer && hareket.TransferID.HasValue)
                         {
                             // Transfer detaylarını güncelle
-                            if (viewModel.HedefKasaID.HasValue)
+                            if (hareket.IslemTuru=="KasadanKasayaTransfer")
                             {
-                                // Kasadan kasaya transfer
                                 var hedefKasa = await _unitOfWork.Repository<Kasa>().GetByIdAsync(viewModel.HedefKasaID.Value);
                                 if (hedefKasa != null && !hedefKasa.Silindi)
                                 {
@@ -1510,7 +1531,7 @@ namespace MuhasebeStokWebApp.Controllers
                                         hedefKasaHareket.GuncellemeTarihi = DateTime.Now;
                                         hedefKasaHareket.SonGuncelleyenKullaniciID = GetCurrentUserId();
                                         hedefKasaHareket.HareketTuru = karsiHareket;
-
+                                        hedefKasaHareket.DovizKuru = 1 / viewModel.DovizKuru ?? 1;
                                         // Yeni tutarın etkisini uygula
                                         if (hareket.HareketTuru == "Giriş")
                                         {
@@ -1528,7 +1549,7 @@ namespace MuhasebeStokWebApp.Controllers
                                     }
                                 }
                             }
-                            else if (viewModel.HedefBankaID.HasValue)
+                            else if (hareket.IslemTuru == "KasadanBankayaTransfer")
                             {
                                 // Kasadan bankaya transfer
                                 var bankaHesap = await _context.BankaHesaplari
@@ -1570,7 +1591,7 @@ namespace MuhasebeStokWebApp.Controllers
                                         bankaHareket.GuncellemeTarihi = DateTime.Now;
                                         bankaHareket.SonGuncelleyenKullaniciID = GetCurrentUserId();
                                         bankaHareket.HareketTuru = karsiHareket;
-
+                                        bankaHareket.DovizKuru = 1 / viewModel.DovizKuru ?? 1;
                                         // Yeni tutarın etkisini uygula
                                         if (hareket.HareketTuru == "Giriş")
                                         {
@@ -1588,7 +1609,7 @@ namespace MuhasebeStokWebApp.Controllers
                                     }
                                 }
                             }
-                            else if (viewModel.KaynakBankaID.HasValue)
+                            else if (hareket.IslemTuru == "BankadanKasayaTransfer")
                             {
                                 // Bankadan kasaya transfer
                                 var bankaHesap = await _context.BankaHesaplari
@@ -1608,12 +1629,12 @@ namespace MuhasebeStokWebApp.Controllers
                                         // Önce eski tutarın etkisini geri al
                                         if (hareket.HareketTuru == "Giriş")
                                         {
-                                            bankaHesap.GuncelBakiye -= bankaHareket.Tutar;
+                                            bankaHesap.GuncelBakiye += bankaHareket.Tutar;
                                             karsiHareket = "Çıkış";
                                         }
                                         else
                                         {
-                                            bankaHesap.GuncelBakiye += bankaHareket.Tutar;
+                                            bankaHesap.GuncelBakiye -= bankaHareket.Tutar;
                                             karsiHareket = "Giriş";
                                         }
                                         
@@ -1632,15 +1653,15 @@ namespace MuhasebeStokWebApp.Controllers
                                         bankaHareket.GuncellemeTarihi = DateTime.Now;
                                         bankaHareket.SonGuncelleyenKullaniciID = GetCurrentUserId();
                                         bankaHareket.HareketTuru = karsiHareket;
-
+                                        bankaHareket.DovizKuru = 1 / viewModel.DovizKuru ?? 1;
                                         // Yeni tutarın etkisini uygula (çıkış işlemi)
                                         if (hareket.HareketTuru == "Giriş")
                                         {
-                                            bankaHesap.GuncelBakiye += bankaHareket.Tutar;
+                                            bankaHesap.GuncelBakiye -= bankaHareket.Tutar;
                                         }
                                         else
                                         {
-                                            bankaHesap.GuncelBakiye -= bankaHareket.Tutar;
+                                            bankaHesap.GuncelBakiye += bankaHareket.Tutar;
                                         }
 
                                         // Değişiklikleri kaydet
@@ -1851,49 +1872,130 @@ namespace MuhasebeStokWebApp.Controllers
                     }
 
                     // Transfer işlemi mi kontrol et
-                    bool isTransfer = hareket.IslemTuru == "KasaTransfer";
+                    bool isTransfer = hareket.ReferansTuru == "Transfer";
                     
                     // Eğer transferse karşı taraftaki hareketi de bul
                     if (isTransfer && hareket.TransferID.HasValue)
                     {
                         // Diğer transfer hareketlerini bul
-                        var karsiHareketler = await _context.KasaHareketleri
-                            .Where(h => h.TransferID == hareket.TransferID && h.KasaHareketID != hareket.KasaHareketID && !h.Silindi)
-                            .ToListAsync();
-                        
-                        foreach (var karsiHareket in karsiHareketler)
+                        if (hareket.HedefBankaID.HasValue)
                         {
-                            // Karşı hareketin kasasını getir
-                            var karsiKasa = await _unitOfWork.Repository<Kasa>().GetByIdAsync(karsiHareket.KasaID);
-                            if (karsiKasa != null && !karsiKasa.Silindi)
+                            var karsiHareketler = await _context.BankaHesapHareketleri
+                                .Where(h => h.TransferID == hareket.TransferID && h.BankaHesapHareketID != hareket.KasaHareketID && !h.Silindi)
+                                .ToListAsync();
+                            foreach (var karsiHareket in karsiHareketler)
                             {
-                                // Karşı kasa bakiyesini güncelle
-                                if (karsiHareket.HareketTuru == "Giriş")
+                                // Karşı hareketin kasasını getir
+                                var karsiBanka = await _unitOfWork.Repository<BankaHesap>().GetByIdAsync(karsiHareket.BankaHesapID);
+                                if (karsiBanka != null && !karsiBanka.Silindi)
                                 {
-                                    karsiKasa.GuncelBakiye -= karsiHareket.Tutar;
+                                    // Karşı kasa bakiyesini güncelle
+                                    if (karsiHareket.HareketTuru == "Giriş")
+                                    {
+                                        karsiBanka.GuncelBakiye -= karsiHareket.Tutar;
+                                    }
+                                    else
+                                    {
+                                        karsiBanka.GuncelBakiye += karsiHareket.Tutar;
+                                    }
+
+                                    // Karşı hareketi iptal et
+                                    karsiHareket.Silindi = true;
+                                    karsiHareket.GuncellemeTarihi = DateTime.Now;
+                                    karsiHareket.SonGuncelleyenKullaniciID = GetCurrentUserId();
+                                    karsiHareket.Aciklama += " (Transfer iptal edildi)";
+
+                                    // Değişiklikleri kaydet
+                                    _unitOfWork.Repository<BankaHesapHareket>().Update(karsiHareket);
+                                    _unitOfWork.Repository<BankaHesap>().Update(karsiBanka);
+
+                                    // Log
+                                    await _logService.Log(
+                                        $"Transfer karşı hareketi silindi: ID: {karsiHareket.BankaHesapHareketID}, Kasa: {karsiBanka.HesapAdi}, Tutar: {karsiHareket.Tutar}",
+                                        Enums.LogTuru.Bilgi
+                                    );
                                 }
-                                else
-                                {
-                                    karsiKasa.GuncelBakiye += karsiHareket.Tutar;
-                                }
-                                
-                                // Karşı hareketi iptal et
-                                karsiHareket.Silindi = true;
-                                karsiHareket.GuncellemeTarihi = DateTime.Now;
-                                karsiHareket.SonGuncelleyenKullaniciID = GetCurrentUserId();
-                                karsiHareket.Aciklama += " (Transfer iptal edildi)";
-                                
-                                // Değişiklikleri kaydet
-                                _unitOfWork.Repository<KasaHareket>().Update(karsiHareket);
-                                _unitOfWork.Repository<Kasa>().Update(karsiKasa);
-                                
-                                // Log
-                                await _logService.Log(
-                                    $"Transfer karşı hareketi silindi: ID: {karsiHareket.KasaHareketID}, Kasa: {karsiKasa.KasaAdi}, Tutar: {karsiHareket.Tutar}",
-                                    Enums.LogTuru.Bilgi
-                                );
                             }
                         }
+                        else if (hareket.KaynakBankaID.HasValue)
+                        {
+                            var karsiHareketler = await _context.BankaHesapHareketleri
+                                .Where(h => h.TransferID == hareket.TransferID && h.BankaHesapHareketID != hareket.KasaHareketID && !h.Silindi)
+                                .ToListAsync();
+                            foreach (var karsiHareket in karsiHareketler)
+                            {
+                                // Karşı hareketin kasasını getir
+                                var karsiBanka = await _unitOfWork.Repository<BankaHesap>().GetByIdAsync(karsiHareket.BankaHesapID);
+                                if (karsiBanka != null && !karsiBanka.Silindi)
+                                {
+                                    // Karşı kasa bakiyesini güncelle
+                                    if (karsiHareket.HareketTuru == "Giriş")
+                                    {
+                                        karsiBanka.GuncelBakiye -= karsiHareket.Tutar;
+                                    }
+                                    else
+                                    {
+                                        karsiBanka.GuncelBakiye += karsiHareket.Tutar;
+                                    }
+
+                                    // Karşı hareketi iptal et
+                                    karsiHareket.Silindi = true;
+                                    karsiHareket.GuncellemeTarihi = DateTime.Now;
+                                    karsiHareket.SonGuncelleyenKullaniciID = GetCurrentUserId();
+                                    karsiHareket.Aciklama += " (Transfer iptal edildi)";
+
+                                    // Değişiklikleri kaydet
+                                    _unitOfWork.Repository<BankaHesapHareket>().Update(karsiHareket);
+                                    _unitOfWork.Repository<BankaHesap>().Update(karsiBanka);
+
+                                    // Log
+                                    await _logService.Log(
+                                        $"Transfer karşı hareketi silindi: ID: {karsiHareket.BankaHesapHareketID}, Kasa: {karsiBanka.HesapAdi}, Tutar: {karsiHareket.Tutar}",
+                                        Enums.LogTuru.Bilgi
+                                    );
+                                }
+                            }
+                        }
+                        else
+                        {
+                            var karsiHareketler = await _context.KasaHareketleri
+                                .Where(h => h.TransferID == hareket.TransferID && h.KasaHareketID != hareket.KasaHareketID && !h.Silindi)
+                                .ToListAsync();
+                            foreach (var karsiHareket in karsiHareketler)
+                            {
+                                // Karşı hareketin kasasını getir
+                                var karsiKasa = await _unitOfWork.Repository<Kasa>().GetByIdAsync(karsiHareket.KasaID);
+                                if (karsiKasa != null && !karsiKasa.Silindi)
+                                {
+                                    // Karşı kasa bakiyesini güncelle
+                                    if (karsiHareket.HareketTuru == "Giriş")
+                                    {
+                                        karsiKasa.GuncelBakiye -= karsiHareket.Tutar;
+                                    }
+                                    else
+                                    {
+                                        karsiKasa.GuncelBakiye += karsiHareket.Tutar;
+                                    }
+
+                                    // Karşı hareketi iptal et
+                                    karsiHareket.Silindi = true;
+                                    karsiHareket.GuncellemeTarihi = DateTime.Now;
+                                    karsiHareket.SonGuncelleyenKullaniciID = GetCurrentUserId();
+                                    karsiHareket.Aciklama += " (Transfer iptal edildi)";
+
+                                    // Değişiklikleri kaydet
+                                    _unitOfWork.Repository<KasaHareket>().Update(karsiHareket);
+                                    _unitOfWork.Repository<Kasa>().Update(karsiKasa);
+
+                                    // Log
+                                    await _logService.Log(
+                                        $"Transfer karşı hareketi silindi: ID: {karsiHareket.KasaHareketID}, Kasa: {karsiKasa.KasaAdi}, Tutar: {karsiHareket.Tutar}",
+                                        Enums.LogTuru.Bilgi
+                                    );
+                                }
+                            }
+                        }
+                        
                     }
 
                     // Kasa bakiyesini güncelle

@@ -47,6 +47,9 @@ namespace MuhasebeStokWebApp.Data.Entities
         [StringLength(50)]
         public string ReferansTuru { get; set; } // Fatura, Tahsilat, Ödeme, vs.
         
+        [StringLength(50)]
+        public string? IslemTuru { get; set; }
+        
         public Guid? ReferansID { get; set; }
         
         [StringLength(500)]
@@ -81,6 +84,9 @@ namespace MuhasebeStokWebApp.Data.Entities
         // Navigation properties
         [ForeignKey("BankaHesapID")]
         public virtual BankaHesap BankaHesap { get; set; }
+
+        [ForeignKey("HedefBankaHesapID")]
+        public virtual BankaHesap? HedefBanka { get; set; }
         
         [ForeignKey("BankaID")]
         public virtual Banka Banka { get; set; }

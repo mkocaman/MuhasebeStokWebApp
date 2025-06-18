@@ -3,32 +3,24 @@
   "WorkspaceRootPath": "D:\\cursor-workspace\\MuhasebeStokWebApp\\",
   "Documents": [
     {
-      "AbsoluteMoniker": "D:0:0:{13DA124A-8333-3350-EC15-46DC296FA620}|MuhasebeStokWebApp.csproj|d:\\cursor-workspace\\muhasebestokwebapp\\controllers\\transfercontroller.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}",
-      "RelativeMoniker": "D:0:0:{13DA124A-8333-3350-EC15-46DC296FA620}|MuhasebeStokWebApp.csproj|solutionrelative:controllers\\transfercontroller.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}"
-    },
-    {
-      "AbsoluteMoniker": "D:0:0:{13DA124A-8333-3350-EC15-46DC296FA620}|MuhasebeStokWebApp.csproj|d:\\cursor-workspace\\muhasebestokwebapp\\views\\banka\\hesaphareketler.cshtml||{40D31677-CBC0-4297-A9EF-89D907823A98}",
-      "RelativeMoniker": "D:0:0:{13DA124A-8333-3350-EC15-46DC296FA620}|MuhasebeStokWebApp.csproj|solutionrelative:views\\banka\\hesaphareketler.cshtml||{40D31677-CBC0-4297-A9EF-89D907823A98}"
-    },
-    {
       "AbsoluteMoniker": "D:0:0:{13DA124A-8333-3350-EC15-46DC296FA620}|MuhasebeStokWebApp.csproj|d:\\cursor-workspace\\muhasebestokwebapp\\controllers\\bankacontroller.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}",
       "RelativeMoniker": "D:0:0:{13DA124A-8333-3350-EC15-46DC296FA620}|MuhasebeStokWebApp.csproj|solutionrelative:controllers\\bankacontroller.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}"
     },
     {
-      "AbsoluteMoniker": "D:0:0:{13DA124A-8333-3350-EC15-46DC296FA620}|MuhasebeStokWebApp.csproj|d:\\cursor-workspace\\muhasebestokwebapp\\views\\kasa\\hareketduzenle.cshtml||{40D31677-CBC0-4297-A9EF-89D907823A98}",
-      "RelativeMoniker": "D:0:0:{13DA124A-8333-3350-EC15-46DC296FA620}|MuhasebeStokWebApp.csproj|solutionrelative:views\\kasa\\hareketduzenle.cshtml||{40D31677-CBC0-4297-A9EF-89D907823A98}"
-    },
-    {
-      "AbsoluteMoniker": "D:0:0:{13DA124A-8333-3350-EC15-46DC296FA620}|MuhasebeStokWebApp.csproj|d:\\cursor-workspace\\muhasebestokwebapp\\views\\banka\\hareketduzenle.cshtml||{40D31677-CBC0-4297-A9EF-89D907823A98}",
-      "RelativeMoniker": "D:0:0:{13DA124A-8333-3350-EC15-46DC296FA620}|MuhasebeStokWebApp.csproj|solutionrelative:views\\banka\\hareketduzenle.cshtml||{40D31677-CBC0-4297-A9EF-89D907823A98}"
+      "AbsoluteMoniker": "D:0:0:{13DA124A-8333-3350-EC15-46DC296FA620}|MuhasebeStokWebApp.csproj|d:\\cursor-workspace\\muhasebestokwebapp\\controllers\\transfercontroller.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}",
+      "RelativeMoniker": "D:0:0:{13DA124A-8333-3350-EC15-46DC296FA620}|MuhasebeStokWebApp.csproj|solutionrelative:controllers\\transfercontroller.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}"
     },
     {
       "AbsoluteMoniker": "D:0:0:{13DA124A-8333-3350-EC15-46DC296FA620}|MuhasebeStokWebApp.csproj|d:\\cursor-workspace\\muhasebestokwebapp\\controllers\\kasacontroller.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}",
       "RelativeMoniker": "D:0:0:{13DA124A-8333-3350-EC15-46DC296FA620}|MuhasebeStokWebApp.csproj|solutionrelative:controllers\\kasacontroller.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}"
     },
     {
-      "AbsoluteMoniker": "D:0:0:{13DA124A-8333-3350-EC15-46DC296FA620}|MuhasebeStokWebApp.csproj|d:\\cursor-workspace\\muhasebestokwebapp\\data\\entities\\bankahesaphareket.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}",
-      "RelativeMoniker": "D:0:0:{13DA124A-8333-3350-EC15-46DC296FA620}|MuhasebeStokWebApp.csproj|solutionrelative:data\\entities\\bankahesaphareket.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}"
+      "AbsoluteMoniker": "D:0:0:{13DA124A-8333-3350-EC15-46DC296FA620}|MuhasebeStokWebApp.csproj|d:\\cursor-workspace\\muhasebestokwebapp\\views\\banka\\hareketduzenle.cshtml||{40D31677-CBC0-4297-A9EF-89D907823A98}",
+      "RelativeMoniker": "D:0:0:{13DA124A-8333-3350-EC15-46DC296FA620}|MuhasebeStokWebApp.csproj|solutionrelative:views\\banka\\hareketduzenle.cshtml||{40D31677-CBC0-4297-A9EF-89D907823A98}"
+    },
+    {
+      "AbsoluteMoniker": "D:0:0:{13DA124A-8333-3350-EC15-46DC296FA620}|MuhasebeStokWebApp.csproj|d:\\cursor-workspace\\muhasebestokwebapp\\views\\kasa\\hareketduzenle.cshtml||{40D31677-CBC0-4297-A9EF-89D907823A98}",
+      "RelativeMoniker": "D:0:0:{13DA124A-8333-3350-EC15-46DC296FA620}|MuhasebeStokWebApp.csproj|solutionrelative:views\\kasa\\hareketduzenle.cshtml||{40D31677-CBC0-4297-A9EF-89D907823A98}"
     }
   ],
   "DocumentGroupContainers": [
@@ -38,7 +30,7 @@
       "DocumentGroups": [
         {
           "DockedWidth": 200,
-          "SelectedChildIndex": 2,
+          "SelectedChildIndex": 5,
           "Children": [
             {
               "$type": "Bookmark",
@@ -46,88 +38,68 @@
             },
             {
               "$type": "Document",
-              "DocumentIndex": 1,
-              "Title": "HesapHareketler.cshtml",
-              "DocumentMoniker": "D:\\cursor-workspace\\MuhasebeStokWebApp\\Views\\Banka\\HesapHareketler.cshtml",
-              "RelativeDocumentMoniker": "Views\\Banka\\HesapHareketler.cshtml",
-              "ToolTip": "D:\\cursor-workspace\\MuhasebeStokWebApp\\Views\\Banka\\HesapHareketler.cshtml",
-              "RelativeToolTip": "Views\\Banka\\HesapHareketler.cshtml",
-              "ViewState": "AgIAAAkAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAA==",
-              "Icon": "ae27a6b0-e345-4288-96df-5eaf394ee369.000759|",
-              "WhenOpened": "2025-06-11T21:05:32.936Z"
-            },
-            {
-              "$type": "Document",
-              "DocumentIndex": 0,
-              "Title": "TransferController.cs",
-              "DocumentMoniker": "D:\\cursor-workspace\\MuhasebeStokWebApp\\Controllers\\TransferController.cs",
-              "RelativeDocumentMoniker": "Controllers\\TransferController.cs",
-              "ToolTip": "D:\\cursor-workspace\\MuhasebeStokWebApp\\Controllers\\TransferController.cs",
-              "RelativeToolTip": "Controllers\\TransferController.cs",
-              "ViewState": "AgIAAPABAAAAAAAAAAAqwCcCAAAsAAAAAAAAAA==",
-              "Icon": "ae27a6b0-e345-4288-96df-5eaf394ee369.000738|",
-              "WhenOpened": "2025-06-11T17:18:36.881Z",
-              "EditorCaption": ""
-            },
-            {
-              "$type": "Document",
-              "DocumentIndex": 5,
-              "Title": "KasaController.cs",
-              "DocumentMoniker": "D:\\cursor-workspace\\MuhasebeStokWebApp\\Controllers\\KasaController.cs",
-              "RelativeDocumentMoniker": "Controllers\\KasaController.cs",
-              "ToolTip": "D:\\cursor-workspace\\MuhasebeStokWebApp\\Controllers\\KasaController.cs",
-              "RelativeToolTip": "Controllers\\KasaController.cs",
-              "ViewState": "AgIAAP8EAAAAAAAAAAAAAAwFAAA4AAAAAAAAAA==",
-              "Icon": "ae27a6b0-e345-4288-96df-5eaf394ee369.000738|",
-              "WhenOpened": "2025-06-11T17:18:36.894Z"
-            },
-            {
-              "$type": "Document",
-              "DocumentIndex": 2,
-              "Title": "BankaController.cs",
-              "DocumentMoniker": "D:\\cursor-workspace\\MuhasebeStokWebApp\\Controllers\\BankaController.cs",
-              "RelativeDocumentMoniker": "Controllers\\BankaController.cs",
-              "ToolTip": "D:\\cursor-workspace\\MuhasebeStokWebApp\\Controllers\\BankaController.cs",
-              "RelativeToolTip": "Controllers\\BankaController.cs",
-              "ViewState": "AgIAAAsEAAAAAAAAAAAWwBQEAAA5AAAAAAAAAA==",
-              "Icon": "ae27a6b0-e345-4288-96df-5eaf394ee369.000738|",
-              "WhenOpened": "2025-06-11T16:13:42.504Z"
-            },
-            {
-              "$type": "Document",
               "DocumentIndex": 4,
-              "Title": "HareketDuzenle.cshtml",
-              "DocumentMoniker": "D:\\cursor-workspace\\MuhasebeStokWebApp\\Views\\Banka\\HareketDuzenle.cshtml",
-              "RelativeDocumentMoniker": "Views\\Banka\\HareketDuzenle.cshtml",
-              "ToolTip": "D:\\cursor-workspace\\MuhasebeStokWebApp\\Views\\Banka\\HareketDuzenle.cshtml",
-              "RelativeToolTip": "Views\\Banka\\HareketDuzenle.cshtml",
-              "ViewState": "AgIAAJMAAAAAAAAAAAAgwLQAAAA5AAAAAAAAAA==",
-              "Icon": "ae27a6b0-e345-4288-96df-5eaf394ee369.000759|",
-              "WhenOpened": "2025-06-11T16:36:16.134Z"
-            },
-            {
-              "$type": "Document",
-              "DocumentIndex": 3,
               "Title": "HareketDuzenle.cshtml",
               "DocumentMoniker": "D:\\cursor-workspace\\MuhasebeStokWebApp\\Views\\Kasa\\HareketDuzenle.cshtml",
               "RelativeDocumentMoniker": "Views\\Kasa\\HareketDuzenle.cshtml",
               "ToolTip": "D:\\cursor-workspace\\MuhasebeStokWebApp\\Views\\Kasa\\HareketDuzenle.cshtml",
               "RelativeToolTip": "Views\\Kasa\\HareketDuzenle.cshtml",
-              "ViewState": "AgIAAGMAAAAAAAAAAAAAAI8AAABdAAAAAAAAAA==",
+              "ViewState": "AgIAAHgAAAAAAAAAAAAAAIgAAABzAAAAAAAAAA==",
               "Icon": "ae27a6b0-e345-4288-96df-5eaf394ee369.000759|",
-              "WhenOpened": "2025-06-11T17:31:24.76Z"
+              "WhenOpened": "2025-06-18T17:25:13.722Z",
+              "EditorCaption": ""
             },
             {
               "$type": "Document",
-              "DocumentIndex": 6,
-              "Title": "BankaHesapHareket.cs",
-              "DocumentMoniker": "D:\\cursor-workspace\\MuhasebeStokWebApp\\Data\\Entities\\BankaHesapHareket.cs",
-              "RelativeDocumentMoniker": "Data\\Entities\\BankaHesapHareket.cs",
-              "ToolTip": "D:\\cursor-workspace\\MuhasebeStokWebApp\\Data\\Entities\\BankaHesapHareket.cs",
-              "RelativeToolTip": "Data\\Entities\\BankaHesapHareket.cs",
-              "ViewState": "AgIAAAMAAAAAAAAAAAAAABkAAAAfAAAAAAAAAA==",
+              "DocumentIndex": 3,
+              "Title": "HareketDuzenle.cshtml",
+              "DocumentMoniker": "D:\\cursor-workspace\\MuhasebeStokWebApp\\Views\\Banka\\HareketDuzenle.cshtml",
+              "RelativeDocumentMoniker": "Views\\Banka\\HareketDuzenle.cshtml",
+              "ToolTip": "D:\\cursor-workspace\\MuhasebeStokWebApp\\Views\\Banka\\HareketDuzenle.cshtml",
+              "RelativeToolTip": "Views\\Banka\\HareketDuzenle.cshtml",
+              "ViewState": "AgIAADIAAAAAAAAAAAAhwE0AAAAOAAAAAAAAAA==",
+              "Icon": "ae27a6b0-e345-4288-96df-5eaf394ee369.000759|",
+              "WhenOpened": "2025-06-18T15:53:59.421Z",
+              "EditorCaption": ""
+            },
+            {
+              "$type": "Document",
+              "DocumentIndex": 1,
+              "Title": "TransferController.cs",
+              "DocumentMoniker": "D:\\cursor-workspace\\MuhasebeStokWebApp\\Controllers\\TransferController.cs",
+              "RelativeDocumentMoniker": "Controllers\\TransferController.cs",
+              "ToolTip": "D:\\cursor-workspace\\MuhasebeStokWebApp\\Controllers\\TransferController.cs",
+              "RelativeToolTip": "Controllers\\TransferController.cs",
+              "ViewState": "AgIAANwBAAAAAAAAAAAawPcBAAAIAAAAAAAAAA==",
               "Icon": "ae27a6b0-e345-4288-96df-5eaf394ee369.000738|",
-              "WhenOpened": "2025-06-11T20:28:49.671Z"
+              "WhenOpened": "2025-06-18T12:25:17.477Z",
+              "EditorCaption": ""
+            },
+            {
+              "$type": "Document",
+              "DocumentIndex": 2,
+              "Title": "KasaController.cs",
+              "DocumentMoniker": "D:\\cursor-workspace\\MuhasebeStokWebApp\\Controllers\\KasaController.cs",
+              "RelativeDocumentMoniker": "Controllers\\KasaController.cs",
+              "ToolTip": "D:\\cursor-workspace\\MuhasebeStokWebApp\\Controllers\\KasaController.cs",
+              "RelativeToolTip": "Controllers\\KasaController.cs",
+              "ViewState": "AgIAAHgFAAAAAAAAAAAhwG0FAAAIAAAAAAAAAA==",
+              "Icon": "ae27a6b0-e345-4288-96df-5eaf394ee369.000738|",
+              "WhenOpened": "2025-06-18T10:46:14.067Z",
+              "EditorCaption": ""
+            },
+            {
+              "$type": "Document",
+              "DocumentIndex": 0,
+              "Title": "BankaController.cs",
+              "DocumentMoniker": "D:\\cursor-workspace\\MuhasebeStokWebApp\\Controllers\\BankaController.cs",
+              "RelativeDocumentMoniker": "Controllers\\BankaController.cs",
+              "ToolTip": "D:\\cursor-workspace\\MuhasebeStokWebApp\\Controllers\\BankaController.cs",
+              "RelativeToolTip": "Controllers\\BankaController.cs",
+              "ViewState": "AgIAANkGAAAAAAAAAAAawOIGAAAIAAAAAAAAAA==",
+              "Icon": "ae27a6b0-e345-4288-96df-5eaf394ee369.000738|",
+              "WhenOpened": "2025-06-18T10:08:13.942Z",
+              "EditorCaption": ""
             }
           ]
         }

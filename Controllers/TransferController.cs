@@ -260,7 +260,7 @@ namespace MuhasebeStokWebApp.Controllers
                 KasaHareketID = Guid.NewGuid(),
                 KasaID = kaynakKasa.KasaID,
                 HareketTuru = "Çıkış",
-                IslemTuru = "KasaTransfer",
+                IslemTuru = "KasadanKasayaTransfer",
                 Tutar = model.Tutar,
                 DovizKuru = model.DovizKuru ?? 1,
                 KarsiParaBirimi = hedefKasa.ParaBirimi,
@@ -280,9 +280,9 @@ namespace MuhasebeStokWebApp.Controllers
                 KasaHareketID = Guid.NewGuid(),
                 KasaID = hedefKasa.KasaID,
                 HareketTuru = "Giriş",
-                IslemTuru = "KasaTransfer",
+                IslemTuru = "KasadanKasayaTransfer",
                 Tutar = hedefTutar,
-                DovizKuru = model.DovizKuru ?? 1,
+                DovizKuru = (1/model.DovizKuru) ?? 1,
                 KarsiParaBirimi = kaynakKasa.ParaBirimi,
                 Tarih = model.Tarih,
                 Aciklama = model.Aciklama ?? $"Kasadan kasaya transfer: {kaynakKasa.KasaAdi} -> {hedefKasa.KasaAdi}",
@@ -342,7 +342,7 @@ namespace MuhasebeStokWebApp.Controllers
                 KasaHareketID = Guid.NewGuid(),
                 KasaID = kaynakKasa.KasaID,
                 HareketTuru = "Çıkış",
-                IslemTuru = "BankaTransfer",
+                IslemTuru = "KasadanBankayaTransfer",
                 Tutar = model.Tutar,
                 DovizKuru = model.DovizKuru ?? 1,
                 KarsiParaBirimi = hedefBankaHesap.ParaBirimi,
@@ -351,7 +351,7 @@ namespace MuhasebeStokWebApp.Controllers
                 ReferansNo = model.ReferansNo,
                 ReferansTuru = "Transfer",
                 TransferID = model.TransferID,
-                HedefBankaID = hedefBankaHesap.BankaID,
+                HedefBankaID = hedefBankaHesap.BankaHesapID,
                 IslemYapanKullaniciID = GetCurrentUserId(),
                 OlusturmaTarihi = DateTime.Now
             };
@@ -361,8 +361,11 @@ namespace MuhasebeStokWebApp.Controllers
             {
                 BankaHesapHareketID = Guid.NewGuid(),
                 HedefBankaID = hedefBankaHesap.BankaHesapID,
+                BankaHesapID=hedefBankaHesap.BankaHesapID,
                 BankaID = hedefBankaHesap.BankaID,
-                HareketTuru = "Para Yatırma",
+                DovizKuru= (1 / model.DovizKuru)??1,
+                HareketTuru = "Giriş",
+                IslemTuru= "KasadanBankayaTransfer",
                 Tutar = hedefTutar,
                 Tarih = model.Tarih,
                 Aciklama = model.Aciklama ?? $"Kasadan bankaya transfer: {kaynakKasa.KasaAdi} -> {hedefBankaHesap.Banka.BankaAdi} - {hedefBankaHesap.HesapAdi}",
@@ -436,8 +439,10 @@ namespace MuhasebeStokWebApp.Controllers
                 BankaHesapHareketID = Guid.NewGuid(),
                 BankaHesapID = kaynakBankaHesap.BankaHesapID,
                 BankaID = kaynakBankaHesap.BankaID,
-                HareketTuru = "Para Çekme",
+                HareketTuru = "Çıkış",
+                IslemTuru= "BankadanKasayaTransfer",
                 Tutar = model.Tutar,
+                DovizKuru=model.DovizKuru??1,
                 Tarih = model.Tarih,
                 DekontNo = model.ReferansNo,
                 Aciklama = model.Aciklama ?? $"Bankadan kasaya transfer: {kaynakBankaHesap.Banka.BankaAdi} - {kaynakBankaHesap.HesapAdi} -> {hedefKasa.KasaAdi}",
@@ -455,17 +460,18 @@ namespace MuhasebeStokWebApp.Controllers
             {
                 KasaHareketID = Guid.NewGuid(),
                 HedefKasaID = hedefKasa.KasaID,
+                KasaID=hedefKasa.KasaID,
                 HareketTuru = "Giriş",
-                IslemTuru = "BankaTransfer",
+                IslemTuru = "BankadanKasayaTransfer",
                 Tutar = hedefTutar,
-                DovizKuru = model.DovizKuru ?? 1,
+                DovizKuru = (1 / model.DovizKuru) ?? 1,
                 KarsiParaBirimi = kaynakBankaHesap.ParaBirimi,
                 Tarih = model.Tarih,
                 Aciklama = model.Aciklama ?? $"Bankadan kasaya transfer: {kaynakBankaHesap.Banka.BankaAdi} - {kaynakBankaHesap.HesapAdi} -> {hedefKasa.KasaAdi}",
                 ReferansNo = model.ReferansNo,
                 ReferansTuru = "Transfer",
                 TransferID = model.TransferID,
-                KaynakBankaID = kaynakBankaHesap.BankaID,
+                KaynakBankaID = kaynakBankaHesap.BankaHesapID,
                 IslemYapanKullaniciID = GetCurrentUserId(),
                 OlusturmaTarihi = DateTime.Now
             };
@@ -474,13 +480,23 @@ namespace MuhasebeStokWebApp.Controllers
             kaynakBankaHesap.GuncelBakiye -= model.Tutar;
             hedefKasa.GuncelBakiye += hedefTutar;
 
-            // Veritabanına kaydet
-            _context.BankaHesapHareketleri.Add(bankaHesapHareket);
-            await _unitOfWork.Repository<KasaHareket>().AddAsync(kasaHareket);
-            _context.BankaHesaplari.Update(kaynakBankaHesap);
-            _unitOfWork.Repository<Kasa>().Update(hedefKasa);
-            await _context.SaveChangesAsync();
-            await _unitOfWork.CompleteAsync();
+            try
+            {
+                // Veritabanına kaydet
+                _context.BankaHesapHareketleri.Add(bankaHesapHareket);
+                await _unitOfWork.Repository<KasaHareket>().AddAsync(kasaHareket);
+                _context.BankaHesaplari.Update(kaynakBankaHesap);
+                _unitOfWork.Repository<Kasa>().Update(hedefKasa);
+                await _context.SaveChangesAsync();
+                await _unitOfWork.CompleteAsync();
+            }
+            catch (DbUpdateException ex)
+            {
+                // Inner exception'daki gerçek SQL hatasını al
+                var sqlEx = ex.InnerException?.Message ?? ex.Message;
+                Console.WriteLine("Veritabanı güncelleme hatası: " + sqlEx);
+                throw;
+            }
         }
 
         // Bankadan Bankaya Transfer
@@ -524,7 +540,10 @@ namespace MuhasebeStokWebApp.Controllers
                 BankaHesapHareketID = Guid.NewGuid(),
                 BankaHesapID = kaynakBankaHesap.BankaHesapID,
                 BankaID = kaynakBankaHesap.BankaID,
-                HareketTuru = "Havale/EFT Gönderme",
+                HedefBankaID=hedefBankaHesap.BankaHesapID,
+                DovizKuru=model.DovizKuru??1,
+                HareketTuru = "Çıkış",
+                IslemTuru= "BankadanBankayaTransfer",
                 Tutar = model.Tutar,
                 Tarih = model.Tarih,
                 Aciklama = model.Aciklama ?? $"Bankadan bankaya transfer: {kaynakBankaHesap.Banka.BankaAdi} - {kaynakBankaHesap.HesapAdi} -> {hedefBankaHesap.Banka.BankaAdi} - {hedefBankaHesap.HesapAdi}",
@@ -543,8 +562,10 @@ namespace MuhasebeStokWebApp.Controllers
                 BankaHesapHareketID = Guid.NewGuid(),
                 HedefBankaID = hedefBankaHesap.BankaHesapID,
                 BankaID = hedefBankaHesap.BankaID,
-                HareketTuru = "Havale/EFT Alma",
+                HareketTuru = "Giriş",
+                IslemTuru = "BankadanBankayaTransfer",
                 Tutar = hedefTutar,
+                DovizKuru= (1 / model.DovizKuru)??1,
                 Tarih = model.Tarih,
                 Aciklama = model.Aciklama ?? $"Bankadan bankaya transfer: {kaynakBankaHesap.Banka.BankaAdi} - {kaynakBankaHesap.HesapAdi} -> {hedefBankaHesap.Banka.BankaAdi} - {hedefBankaHesap.HesapAdi}",
                 ReferansNo = model.ReferansNo,

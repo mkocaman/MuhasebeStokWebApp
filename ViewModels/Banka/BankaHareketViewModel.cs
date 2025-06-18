@@ -52,6 +52,9 @@ namespace MuhasebeStokWebApp.ViewModels.Banka
         public string CariUnvani { get; set; } = "";
         
         public Guid? CariID { get; set; }
+
+        [Display(Name = "Cari Adı")]
+        public string CariAdi { get; set; } = string.Empty;
         
         [Display(Name = "Cari ile Dengelensin")]
         public bool CariIleDengelensin { get; set; }
@@ -66,6 +69,27 @@ namespace MuhasebeStokWebApp.ViewModels.Banka
         [Display(Name = "Oluşturma Tarihi")]
         [DisplayFormat(DataFormatString = "{0:dd.MM.yyyy HH:mm}", ApplyFormatInEditMode = false)]
         public DateTime OlusturmaTarihi { get; set; }
+
+        // Transfer ile ilgili alanlar
+        public Guid? TransferID { get; set; }
+
+        [Display(Name = "Hedef Banka ID")]
+        public Guid? HedefBankaID { get; set; }
+
+        [Display(Name = "Hedef Banka Adı")]
+        public string HedefBankaAdi { get; set; } = string.Empty;
+
+        [Display(Name = "Hedef Kasa ID")]
+        public Guid? HedefKasaID { get; set; }
+
+        [Display(Name = "Hedef Kasa Adı")]
+        public string HedefKasaAdi { get; set; } = string.Empty;
+
+        [Display(Name = "Kaynak Kasa ID")]
+        public Guid? KaynakKasaID { get; set; }
+
+        [Display(Name = "Kaynak Kasa Adı")]
+        public string KaynakKasaAdi { get; set; } = string.Empty;
     }
     
     public class BankaHareketCreateViewModel
@@ -154,6 +178,10 @@ namespace MuhasebeStokWebApp.ViewModels.Banka
         [Display(Name = "Referans Türü")]
         [StringLength(50, ErrorMessage = "Referans türü en fazla 50 karakter olabilir.")]
         public string ReferansTuru { get; set; } = "Manuel";
+        
+        [Display(Name = "İşlem Türü")]
+        [StringLength(50, ErrorMessage = "İşlem türü en fazla 50 karakter olabilir.")]
+        public string? IslemTuru { get; set; }
         
         [Display(Name = "Dekont No")]
         [StringLength(50, ErrorMessage = "Dekont no en fazla 50 karakter olabilir.")]

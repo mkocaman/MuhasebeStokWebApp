@@ -1,77 +1,158 @@
 @model MuhasebeStokWebApp.ViewModels.Banka.BankaHareketViewModel
 @{
-    ViewData["Title"] = "Hareket Sil";
-    Layout = "~/Views/Shared/_Layout.cshtml";
+    ViewData["Title"] = "Banka Hareketi Sil";
+    var isTransfer = !string.IsNullOrEmpty(Model.ReferansTuru) && (Model.ReferansTuru == "Transfer" || Model.ReferansTuru == "Havale/EFT Gönderme");
 }
 
-<div class="container-fluid px-4">
-    <div class="row mt-4">
+<div class="container-fluid">
+    <div class="page-title">
+        <div class="row">
+            <div class="col-6">
+                <h3>Banka Hareketi Sil</h3>
+            </div>
+            <div class="col-6">
+                <ol class="breadcrumb">
+                    <li class="breadcrumb-item"><a href="/"><i data-feather="home"></i></a></li>
+                    <li class="breadcrumb-item"><a asp-controller="Banka" asp-action="Index">Bankalar</a></li>
+                    <li class="breadcrumb-item"><a asp-action="HesapHareketler" asp-route-id="@Model.BankaHesapID">Banka Hareketleri</a></li>
+                    <li class="breadcrumb-item active">Hareket Sil</li>
+                </ol>
+            </div>
+        </div>
+    </div>
+</div>
+
+<div class="container-fluid">
+    <div class="row">
         <div class="col-md-12">
             <div class="card">
                 <div class="card-header bg-danger text-white">
-                    <div class="d-flex justify-content-between align-items-center">
-                        <h5 class="mb-0">Banka Hareketi Sil</h5>
-                        <a asp-action="HesapHareketler" asp-route-id="@Model.BankaHesapID" class="btn btn-sm btn-light">
-                            <i class="fas fa-arrow-left"></i> Hareketlere Dön
-                        </a>
-                    </div>
+                    <h5>Banka Hareketi Silme Onayı</h5>
                 </div>
                 <div class="card-body">
-                    <div class="alert alert-warning">
-                        <i class="fas fa-exclamation-triangle"></i> <strong>Uyarı!</strong> Bu işlem geri alınamaz. Hareketi silmek istediğinizden emin misiniz?
+                    <div class="alert alert-warning" role="alert">
+                        <h4 class="alert-heading">Dikkat!</h4>
+                        <p>Bu banka hareketini silmek istediğinizden emin misiniz? Bu işlem banka hesap bakiyesini ve ilişkili kayıtları etkileyecektir.</p>
+                        <hr>
+                        <p class="mb-0">Silme işlemi geri alınamaz.</p>
                     </div>
+
+                    @if (isTransfer)
+                    {
+                        <div class="alert alert-info" role="alert">
+                            <i class="fa fa-info-circle"></i> <strong>Transfer işlemi:</strong> Bu hareket bir transfer işlemine aittir. 
+                            Silme işlemi hem bu hareketi hem de karşı taraftaki transfer hareketini silecektir.
+                        </div>
+                    }
 
                     <div class="row mb-4">
                         <div class="col-md-6">
-                            <table class="table table-bordered">
-                                <tbody>
-                                    <tr>
-                                        <th width="30%">Banka / Hesap</th>
-                                        <td>@Model.BankaAdi / @Model.HesapAdi</td>
-                                    </tr>
-                                    <tr>
-                                        <th>Hareket Türü</th>
-                                        <td>
-                                            @if (Model.HareketTuru == "Giriş")
-                                            {
-                                                <span class="badge bg-success">@Model.HareketTuru</span>
-                                            }
-                                            else
-                                            {
-                                                <span class="badge bg-danger">@Model.HareketTuru</span>
-                                            }
-                                        </td>
-                                    </tr>
-                                    <tr>
-                                        <th>Tarih</th>
-                                        <td>@Model.Tarih.ToString("dd.MM.yyyy HH:mm")</td>
-                                    </tr>
-                                    <tr>
-                                        <th>Tutar</th>
-                                        <td>
-                                            <span class="@(Model.HareketTuru == "Giriş" ? "text-success" : "text-danger") fw-bold">
-                                                @Model.Tutar.ToString("N2") @Model.ParaBirimi
-                                            </span>
-                                        </td>
-                                    </tr>
-                                    <tr>
-                                        <th>Referans Türü</th>
-                                        <td>@Model.ReferansTuru</td>
-                                    </tr>
-                                    <tr>
-                                        <th>Açıklama</th>
-                                        <td>@Model.Aciklama</td>
-                                    </tr>
-                                </tbody>
-                            </table>
+                            <div class="mb-3">
+                                <h6 class="text-muted">Banka / Hesap Bilgisi</h6>
+                                <h5>@Model.BankaAdi / @Model.HesapAdi</h5>
+                            </div>
+                            <div class="mb-3">
+                                <h6 class="text-muted">İşlem Tarihi</h6>
+                                <h5>@Model.Tarih.ToString("dd.MM.yyyy HH:mm")</h5>
+                            </div>
+                            <div class="mb-3">
+                                <h6 class="text-muted">İşlem Türü</h6>
+                                <h5>
+                                    @if (Model.HareketTuru == "Giriş")
+                                    {
+                                        <span class="badge bg-success">@Model.HareketTuru</span>
+                                    }
+                                    else
+                                    {
+                                        <span class="badge bg-danger">@Model.HareketTuru</span>
+                                    }
+                                    @if (isTransfer)
+                                    {
+                                        <span class="badge bg-info">Transfer</span>
+                                    }
+                                </h5>
+                            </div>
+                        </div>
+                        <div class="col-md-6">
+                            <div class="mb-3">
+                                <h6 class="text-muted">Referans No</h6>
+                                <h5>@Model.ReferansNo</h5>
+                            </div>
+                            <div class="mb-3">
+                                <h6 class="text-muted">Referans Türü</h6>
+                                <h5>@Model.ReferansTuru</h5>
+                            </div>
+                            <div class="mb-3">
+                                <h6 class="text-muted">Tutar</h6>
+                                <h5 class="@(Model.HareketTuru == "Giriş" ? "text-success" : "text-danger")">
+                                    @(Model.HareketTuru == "Giriş" ? "+" : "-")@Model.Tutar.ToString("N2") @Model.ParaBirimi
+                                </h5>
+                            </div>
                         </div>
                     </div>
 
+                    <div class="row mb-4">
+                        <div class="col-md-12">
+                            <div class="mb-3">
+                                <h6 class="text-muted">Açıklama</h6>
+                                <p>@Model.Aciklama</p>
+                            </div>
+                        </div>
+                    </div>
+
+                    @if (isTransfer)
+                    {
+                        <div class="row mb-4">
+                            <div class="col-md-12">
+                                <div class="mb-3">
+                                    <h6 class="text-muted">Transfer Bilgileri</h6>
+                                    @if (Model.HedefKasaID.HasValue)
+                                    {
+                                        <h5>Hedef Kasa: @Model.HedefKasaAdi</h5>
+                                    }
+                                    else if (Model.HedefBankaID.HasValue)
+                                    {
+                                        <h5>Hedef Banka Hesabı: @Model.HedefBankaAdi</h5>
+                                    }
+                                    else if (Model.KaynakKasaID.HasValue)
+                                    {
+                                        <h5>Kaynak Kasa: @Model.KaynakKasaAdi</h5>
+                                    }
+                                    <div class="alert alert-warning">
+                                        <i class="fa fa-exclamation-triangle"></i> Bu işlem transfer zincirindeki tüm hareketleri silecektir.
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                    }
+                    else if (!string.IsNullOrEmpty(Model.CariAdi))
+                    {
+                        <div class="row mb-4">
+                            <div class="col-md-12">
+                                <div class="mb-3">
+                                    <h6 class="text-muted">İlişkili Cari</h6>
+                                    <h5>@Model.CariAdi</h5>
+                                    <div class="alert alert-info">
+                                        <i class="fa fa-info-circle"></i> Bu banka hareketi ile ilişkili cari hareket kaydı da silinecektir.
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                    }
+
                     <form asp-action="HareketSil" method="post">
                         <input type="hidden" name="id" value="@Model.BankaHareketID" />
-                        <div class="form-group text-end">
-                            <button type="submit" class="btn btn-danger"><i class="fas fa-trash"></i> Hareketi Sil</button>
-                            <a asp-action="HesapHareketler" asp-route-id="@Model.BankaHesapID" class="btn btn-secondary"><i class="fas fa-times"></i> İptal</a>
+                        <input type="hidden" asp-for="TransferID" />
+                        <input type="hidden" asp-for="ReferansTuru" />
+                        <div class="row">
+                            <div class="col-md-12 text-center">
+                                <button type="submit" class="btn btn-danger">
+                                    <i class="fa fa-trash"></i> Evet, Sil
+                                </button>
+                                <a asp-action="HesapHareketler" asp-route-id="@Model.BankaHesapID" class="btn btn-secondary">
+                                    <i class="fa fa-arrow-left"></i> İptal
+                                </a>
+                            </div>
                         </div>
                     </form>
                 </div>
