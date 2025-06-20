@@ -218,13 +218,23 @@ namespace MuhasebeStokWebApp.Controllers
                 return NotFound();
             }
 
-            var viewModel = _mapper.Map<BirimEditViewModel>(birim);
-
-            if (Request.Headers["X-Requested-With"] == "XMLHttpRequest")
+            try
             {
-                return PartialView("_EditPartial", viewModel);
+                var viewModel = _mapper.Map<BirimEditViewModel>(birim);
+                if (Request.Headers["X-Requested-With"] == "XMLHttpRequest")
+                {
+                    return PartialView("_EditPartial", viewModel);
+                }
+                return View(viewModel);
             }
-            return View(viewModel);
+            catch (AutoMapperMappingException ex)
+            {
+                Console.WriteLine("AutoMapper Hatası: " + ex.Message);
+                Console.WriteLine("Inner: " + ex.InnerException?.Message);
+                throw;
+            }
+
+            
         }
 
         // POST: Birim/Edit/5

@@ -1,0 +1,354 @@
+2025-06-20 17:46:46.345 +03:00 [INF] Veritabanına bağlantı başarılı. Migrationlar uygulanıyor...
+2025-06-20 17:46:47.476 +03:00 [INF] Veritabanı işlemleri başarıyla tamamlandı.
+2025-06-20 17:46:47.746 +03:00 [INF] Todo Hatırlatıcı Servisi başlatıldı.
+2025-06-20 17:46:47.748 +03:00 [INF] Yaklaşan hatırlatıcılar kontrol ediliyor...
+2025-06-20 17:46:47.850 +03:00 [INF] Bekleyen hatırlatma bulunamadı.
+2025-06-20 17:47:00.494 +03:00 [INF] Giriş denemesi: admin
+2025-06-20 17:47:00.722 +03:00 [INF] Admin kullanıcısı başarıyla giriş yaptı: admin
+2025-06-20 17:47:00.723 +03:00 [INF] Admin session oluşturuldu: UserID=9e6fc203-37eb-49a7-a470-1551f7bec8b8, UserName=admin
+2025-06-20 17:47:00.723 +03:00 [INF] Yönlendirme adresi: /
+2025-06-20 17:47:00.724 +03:00 [INF] Admin kullanıcısı / adresine yönlendiriliyor
+2025-06-20 17:47:01.033 +03:00 [INF] Aktif session bulundu: UserID=9e6fc203-37eb-49a7-a470-1551f7bec8b8, UserName=admin
+2025-06-20 17:47:01.131 +03:00 [INF] Admin kullanıcısı tespit edildi
+2025-06-20 17:47:01.131 +03:00 [INF] Kimlik doğrulanmış kullanıcı: admin
+2025-06-20 17:47:02.902 +03:00 [INF] TRY dönüşümü için kur değeri hesaplandı: TRY -> USD, Değer: 0.03
+2025-06-20 17:47:03.065 +03:00 [INF] Kur değeri hesaplandı: UZS -> USD, Değer: 0.0000775226832727903141733102
+2025-06-20 17:47:03.943 +03:00 [WRN] Kaynak para birimi kodu bulunamadı: EUR. Varsayılan değer kullanılıyor.
+2025-06-20 17:47:13.668 +03:00 [INF] Birim sayısı: Aktif=2, Pasif=0, Silinmiş=0
+2025-06-20 17:47:16.767 +03:00 [ERR] Hata: 00-15f46178e99517f1e45658db7b884e6a-eadb70ce94fd65f9-00, Kullanıcı: admin, Path: /Birim/Edit/1bd57fd0-d982-482d-9ef3-9be19fb28aae, Method: GET, QueryString: , IP: ::1, UserAgent: Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/137.0.0.0 Safari/537.36
+AutoMapper.AutoMapperMappingException: Missing type map configuration or unsupported mapping.
+
+Mapping types:
+Birim -> BirimEditViewModel
+MuhasebeStokWebApp.Data.Entities.Birim -> MuhasebeStokWebApp.ViewModels.Birim.BirimEditViewModel
+   at lambda_method4253(Closure, Object, BirimEditViewModel, ResolutionContext)
+   at MuhasebeStokWebApp.Controllers.BirimController.Edit(Nullable`1 id) in D:\cursor-workspace\MuhasebeStokWebApp\Controllers\BirimController.cs:line 221
+   at Microsoft.AspNetCore.Mvc.Infrastructure.ActionMethodExecutor.TaskOfIActionResultExecutor.Execute(ActionContext actionContext, IActionResultTypeMapper mapper, ObjectMethodExecutor executor, Object controller, Object[] arguments)
+   at Microsoft.AspNetCore.Mvc.Infrastructure.ControllerActionInvoker.<InvokeActionMethodAsync>g__Awaited|12_0(ControllerActionInvoker invoker, ValueTask`1 actionResultValueTask)
+   at Microsoft.AspNetCore.Mvc.Infrastructure.ControllerActionInvoker.<InvokeNextActionFilterAsync>g__Awaited|10_0(ControllerActionInvoker invoker, Task lastTask, State next, Scope scope, Object state, Boolean isCompleted)
+   at Microsoft.AspNetCore.Mvc.Infrastructure.ControllerActionInvoker.Rethrow(ActionExecutedContextSealed context)
+   at Microsoft.AspNetCore.Mvc.Infrastructure.ControllerActionInvoker.Next(State& next, Scope& scope, Object& state, Boolean& isCompleted)
+   at Microsoft.AspNetCore.Mvc.Infrastructure.ControllerActionInvoker.<InvokeInnerFilterAsync>g__Awaited|13_0(ControllerActionInvoker invoker, Task lastTask, State next, Scope scope, Object state, Boolean isCompleted)
+   at Microsoft.AspNetCore.Mvc.Infrastructure.ResourceInvoker.<InvokeNextResourceFilter>g__Awaited|25_0(ResourceInvoker invoker, Task lastTask, State next, Scope scope, Object state, Boolean isCompleted)
+   at Microsoft.AspNetCore.Mvc.Infrastructure.ResourceInvoker.Rethrow(ResourceExecutedContextSealed context)
+   at Microsoft.AspNetCore.Mvc.Infrastructure.ResourceInvoker.Next(State& next, Scope& scope, Object& state, Boolean& isCompleted)
+   at Microsoft.AspNetCore.Mvc.Infrastructure.ResourceInvoker.<InvokeFilterPipelineAsync>g__Awaited|20_0(ResourceInvoker invoker, Task lastTask, State next, Scope scope, Object state, Boolean isCompleted)
+   at Microsoft.AspNetCore.Mvc.Infrastructure.ResourceInvoker.<InvokeAsync>g__Awaited|17_0(ResourceInvoker invoker, Task task, IDisposable scope)
+   at Microsoft.AspNetCore.Mvc.Infrastructure.ResourceInvoker.<InvokeAsync>g__Awaited|17_0(ResourceInvoker invoker, Task task, IDisposable scope)
+   at Microsoft.AspNetCore.Localization.RequestLocalizationMiddleware.Invoke(HttpContext context)
+   at MuhasebeStokWebApp.Middleware.GlobalExceptionHandlingMiddleware.InvokeAsync(HttpContext context) in D:\cursor-workspace\MuhasebeStokWebApp\Middleware\GlobalExceptionHandlingMiddleware.cs:line 38
+2025-06-20 17:47:21.925 +03:00 [ERR] Hata: 00-649c82186474a46bd4c76dc2ac24a824-a8a7a2a1817b5944-00, Kullanıcı: admin, Path: /Birim/Edit/1bd57fd0-d982-482d-9ef3-9be19fb28aae, Method: GET, QueryString: , IP: ::1, UserAgent: Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/137.0.0.0 Safari/537.36
+AutoMapper.AutoMapperMappingException: Missing type map configuration or unsupported mapping.
+
+Mapping types:
+Birim -> BirimEditViewModel
+MuhasebeStokWebApp.Data.Entities.Birim -> MuhasebeStokWebApp.ViewModels.Birim.BirimEditViewModel
+   at lambda_method4253(Closure, Object, BirimEditViewModel, ResolutionContext)
+   at MuhasebeStokWebApp.Controllers.BirimController.Edit(Nullable`1 id) in D:\cursor-workspace\MuhasebeStokWebApp\Controllers\BirimController.cs:line 221
+   at Microsoft.AspNetCore.Mvc.Infrastructure.ActionMethodExecutor.TaskOfIActionResultExecutor.Execute(ActionContext actionContext, IActionResultTypeMapper mapper, ObjectMethodExecutor executor, Object controller, Object[] arguments)
+   at Microsoft.AspNetCore.Mvc.Infrastructure.ControllerActionInvoker.<InvokeActionMethodAsync>g__Awaited|12_0(ControllerActionInvoker invoker, ValueTask`1 actionResultValueTask)
+   at Microsoft.AspNetCore.Mvc.Infrastructure.ControllerActionInvoker.<InvokeNextActionFilterAsync>g__Awaited|10_0(ControllerActionInvoker invoker, Task lastTask, State next, Scope scope, Object state, Boolean isCompleted)
+   at Microsoft.AspNetCore.Mvc.Infrastructure.ControllerActionInvoker.Rethrow(ActionExecutedContextSealed context)
+   at Microsoft.AspNetCore.Mvc.Infrastructure.ControllerActionInvoker.Next(State& next, Scope& scope, Object& state, Boolean& isCompleted)
+   at Microsoft.AspNetCore.Mvc.Infrastructure.ControllerActionInvoker.<InvokeInnerFilterAsync>g__Awaited|13_0(ControllerActionInvoker invoker, Task lastTask, State next, Scope scope, Object state, Boolean isCompleted)
+   at Microsoft.AspNetCore.Mvc.Infrastructure.ResourceInvoker.<InvokeNextResourceFilter>g__Awaited|25_0(ResourceInvoker invoker, Task lastTask, State next, Scope scope, Object state, Boolean isCompleted)
+   at Microsoft.AspNetCore.Mvc.Infrastructure.ResourceInvoker.Rethrow(ResourceExecutedContextSealed context)
+   at Microsoft.AspNetCore.Mvc.Infrastructure.ResourceInvoker.Next(State& next, Scope& scope, Object& state, Boolean& isCompleted)
+   at Microsoft.AspNetCore.Mvc.Infrastructure.ResourceInvoker.<InvokeFilterPipelineAsync>g__Awaited|20_0(ResourceInvoker invoker, Task lastTask, State next, Scope scope, Object state, Boolean isCompleted)
+   at Microsoft.AspNetCore.Mvc.Infrastructure.ResourceInvoker.<InvokeAsync>g__Awaited|17_0(ResourceInvoker invoker, Task task, IDisposable scope)
+   at Microsoft.AspNetCore.Mvc.Infrastructure.ResourceInvoker.<InvokeAsync>g__Awaited|17_0(ResourceInvoker invoker, Task task, IDisposable scope)
+   at Microsoft.AspNetCore.Localization.RequestLocalizationMiddleware.Invoke(HttpContext context)
+   at MuhasebeStokWebApp.Middleware.GlobalExceptionHandlingMiddleware.InvokeAsync(HttpContext context) in D:\cursor-workspace\MuhasebeStokWebApp\Middleware\GlobalExceptionHandlingMiddleware.cs:line 38
+2025-06-20 17:47:51.812 +03:00 [ERR] Hata: 00-e2dac01171deb74803c882555d94107c-6800332a89d20f7c-00, Kullanıcı: admin, Path: /Birim/Edit/1bd57fd0-d982-482d-9ef3-9be19fb28aae, Method: GET, QueryString: , IP: ::1, UserAgent: Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/137.0.0.0 Safari/537.36
+AutoMapper.AutoMapperMappingException: Missing type map configuration or unsupported mapping.
+
+Mapping types:
+Birim -> BirimEditViewModel
+MuhasebeStokWebApp.Data.Entities.Birim -> MuhasebeStokWebApp.ViewModels.Birim.BirimEditViewModel
+   at lambda_method4253(Closure, Object, BirimEditViewModel, ResolutionContext)
+   at MuhasebeStokWebApp.Controllers.BirimController.Edit(Nullable`1 id) in D:\cursor-workspace\MuhasebeStokWebApp\Controllers\BirimController.cs:line 221
+   at Microsoft.AspNetCore.Mvc.Infrastructure.ActionMethodExecutor.TaskOfIActionResultExecutor.Execute(ActionContext actionContext, IActionResultTypeMapper mapper, ObjectMethodExecutor executor, Object controller, Object[] arguments)
+   at Microsoft.AspNetCore.Mvc.Infrastructure.ControllerActionInvoker.<InvokeActionMethodAsync>g__Awaited|12_0(ControllerActionInvoker invoker, ValueTask`1 actionResultValueTask)
+   at Microsoft.AspNetCore.Mvc.Infrastructure.ControllerActionInvoker.<InvokeNextActionFilterAsync>g__Awaited|10_0(ControllerActionInvoker invoker, Task lastTask, State next, Scope scope, Object state, Boolean isCompleted)
+   at Microsoft.AspNetCore.Mvc.Infrastructure.ControllerActionInvoker.Rethrow(ActionExecutedContextSealed context)
+   at Microsoft.AspNetCore.Mvc.Infrastructure.ControllerActionInvoker.Next(State& next, Scope& scope, Object& state, Boolean& isCompleted)
+   at Microsoft.AspNetCore.Mvc.Infrastructure.ControllerActionInvoker.<InvokeInnerFilterAsync>g__Awaited|13_0(ControllerActionInvoker invoker, Task lastTask, State next, Scope scope, Object state, Boolean isCompleted)
+   at Microsoft.AspNetCore.Mvc.Infrastructure.ResourceInvoker.<InvokeNextResourceFilter>g__Awaited|25_0(ResourceInvoker invoker, Task lastTask, State next, Scope scope, Object state, Boolean isCompleted)
+   at Microsoft.AspNetCore.Mvc.Infrastructure.ResourceInvoker.Rethrow(ResourceExecutedContextSealed context)
+   at Microsoft.AspNetCore.Mvc.Infrastructure.ResourceInvoker.Next(State& next, Scope& scope, Object& state, Boolean& isCompleted)
+   at Microsoft.AspNetCore.Mvc.Infrastructure.ResourceInvoker.<InvokeFilterPipelineAsync>g__Awaited|20_0(ResourceInvoker invoker, Task lastTask, State next, Scope scope, Object state, Boolean isCompleted)
+   at Microsoft.AspNetCore.Mvc.Infrastructure.ResourceInvoker.<InvokeAsync>g__Awaited|17_0(ResourceInvoker invoker, Task task, IDisposable scope)
+   at Microsoft.AspNetCore.Mvc.Infrastructure.ResourceInvoker.<InvokeAsync>g__Awaited|17_0(ResourceInvoker invoker, Task task, IDisposable scope)
+   at Microsoft.AspNetCore.Localization.RequestLocalizationMiddleware.Invoke(HttpContext context)
+   at MuhasebeStokWebApp.Middleware.GlobalExceptionHandlingMiddleware.InvokeAsync(HttpContext context) in D:\cursor-workspace\MuhasebeStokWebApp\Middleware\GlobalExceptionHandlingMiddleware.cs:line 38
+2025-06-20 17:48:40.185 +03:00 [ERR] Hata: 00-39e9bff91b17d19da5d57165f91bbc8a-da5c5f921cc0b229-00, Kullanıcı: admin, Path: /Birim/Edit/e4c008f8-9b3a-4f74-a206-50ed3a0983ab, Method: GET, QueryString: , IP: ::1, UserAgent: Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/137.0.0.0 Safari/537.36
+AutoMapper.AutoMapperMappingException: Missing type map configuration or unsupported mapping.
+
+Mapping types:
+Birim -> BirimEditViewModel
+MuhasebeStokWebApp.Data.Entities.Birim -> MuhasebeStokWebApp.ViewModels.Birim.BirimEditViewModel
+   at lambda_method4253(Closure, Object, BirimEditViewModel, ResolutionContext)
+   at MuhasebeStokWebApp.Controllers.BirimController.Edit(Nullable`1 id) in D:\cursor-workspace\MuhasebeStokWebApp\Controllers\BirimController.cs:line 221
+   at Microsoft.AspNetCore.Mvc.Infrastructure.ActionMethodExecutor.TaskOfIActionResultExecutor.Execute(ActionContext actionContext, IActionResultTypeMapper mapper, ObjectMethodExecutor executor, Object controller, Object[] arguments)
+   at Microsoft.AspNetCore.Mvc.Infrastructure.ControllerActionInvoker.<InvokeActionMethodAsync>g__Awaited|12_0(ControllerActionInvoker invoker, ValueTask`1 actionResultValueTask)
+   at Microsoft.AspNetCore.Mvc.Infrastructure.ControllerActionInvoker.<InvokeNextActionFilterAsync>g__Awaited|10_0(ControllerActionInvoker invoker, Task lastTask, State next, Scope scope, Object state, Boolean isCompleted)
+   at Microsoft.AspNetCore.Mvc.Infrastructure.ControllerActionInvoker.Rethrow(ActionExecutedContextSealed context)
+   at Microsoft.AspNetCore.Mvc.Infrastructure.ControllerActionInvoker.Next(State& next, Scope& scope, Object& state, Boolean& isCompleted)
+   at Microsoft.AspNetCore.Mvc.Infrastructure.ControllerActionInvoker.<InvokeInnerFilterAsync>g__Awaited|13_0(ControllerActionInvoker invoker, Task lastTask, State next, Scope scope, Object state, Boolean isCompleted)
+   at Microsoft.AspNetCore.Mvc.Infrastructure.ResourceInvoker.<InvokeNextResourceFilter>g__Awaited|25_0(ResourceInvoker invoker, Task lastTask, State next, Scope scope, Object state, Boolean isCompleted)
+   at Microsoft.AspNetCore.Mvc.Infrastructure.ResourceInvoker.Rethrow(ResourceExecutedContextSealed context)
+   at Microsoft.AspNetCore.Mvc.Infrastructure.ResourceInvoker.Next(State& next, Scope& scope, Object& state, Boolean& isCompleted)
+   at Microsoft.AspNetCore.Mvc.Infrastructure.ResourceInvoker.<InvokeFilterPipelineAsync>g__Awaited|20_0(ResourceInvoker invoker, Task lastTask, State next, Scope scope, Object state, Boolean isCompleted)
+   at Microsoft.AspNetCore.Mvc.Infrastructure.ResourceInvoker.<InvokeAsync>g__Awaited|17_0(ResourceInvoker invoker, Task task, IDisposable scope)
+   at Microsoft.AspNetCore.Mvc.Infrastructure.ResourceInvoker.<InvokeAsync>g__Awaited|17_0(ResourceInvoker invoker, Task task, IDisposable scope)
+   at Microsoft.AspNetCore.Localization.RequestLocalizationMiddleware.Invoke(HttpContext context)
+   at MuhasebeStokWebApp.Middleware.GlobalExceptionHandlingMiddleware.InvokeAsync(HttpContext context) in D:\cursor-workspace\MuhasebeStokWebApp\Middleware\GlobalExceptionHandlingMiddleware.cs:line 38
+2025-06-20 17:49:40.299 +03:00 [ERR] Hata: 00-e51d9a6ecabc644e5b5376a40c6b8b09-c366b56f8d92b402-00, Kullanıcı: admin, Path: /Birim/Edit/e4c008f8-9b3a-4f74-a206-50ed3a0983ab, Method: GET, QueryString: , IP: ::1, UserAgent: Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/137.0.0.0 Safari/537.36
+AutoMapper.AutoMapperMappingException: Missing type map configuration or unsupported mapping.
+
+Mapping types:
+Birim -> BirimEditViewModel
+MuhasebeStokWebApp.Data.Entities.Birim -> MuhasebeStokWebApp.ViewModels.Birim.BirimEditViewModel
+   at lambda_method4253(Closure, Object, BirimEditViewModel, ResolutionContext)
+   at MuhasebeStokWebApp.Controllers.BirimController.Edit(Nullable`1 id) in D:\cursor-workspace\MuhasebeStokWebApp\Controllers\BirimController.cs:line 221
+   at Microsoft.AspNetCore.Mvc.Infrastructure.ActionMethodExecutor.TaskOfIActionResultExecutor.Execute(ActionContext actionContext, IActionResultTypeMapper mapper, ObjectMethodExecutor executor, Object controller, Object[] arguments)
+   at Microsoft.AspNetCore.Mvc.Infrastructure.ControllerActionInvoker.<InvokeActionMethodAsync>g__Awaited|12_0(ControllerActionInvoker invoker, ValueTask`1 actionResultValueTask)
+   at Microsoft.AspNetCore.Mvc.Infrastructure.ControllerActionInvoker.<InvokeNextActionFilterAsync>g__Awaited|10_0(ControllerActionInvoker invoker, Task lastTask, State next, Scope scope, Object state, Boolean isCompleted)
+   at Microsoft.AspNetCore.Mvc.Infrastructure.ControllerActionInvoker.Rethrow(ActionExecutedContextSealed context)
+   at Microsoft.AspNetCore.Mvc.Infrastructure.ControllerActionInvoker.Next(State& next, Scope& scope, Object& state, Boolean& isCompleted)
+   at Microsoft.AspNetCore.Mvc.Infrastructure.ControllerActionInvoker.<InvokeInnerFilterAsync>g__Awaited|13_0(ControllerActionInvoker invoker, Task lastTask, State next, Scope scope, Object state, Boolean isCompleted)
+   at Microsoft.AspNetCore.Mvc.Infrastructure.ResourceInvoker.<InvokeNextResourceFilter>g__Awaited|25_0(ResourceInvoker invoker, Task lastTask, State next, Scope scope, Object state, Boolean isCompleted)
+   at Microsoft.AspNetCore.Mvc.Infrastructure.ResourceInvoker.Rethrow(ResourceExecutedContextSealed context)
+   at Microsoft.AspNetCore.Mvc.Infrastructure.ResourceInvoker.Next(State& next, Scope& scope, Object& state, Boolean& isCompleted)
+   at Microsoft.AspNetCore.Mvc.Infrastructure.ResourceInvoker.<InvokeFilterPipelineAsync>g__Awaited|20_0(ResourceInvoker invoker, Task lastTask, State next, Scope scope, Object state, Boolean isCompleted)
+   at Microsoft.AspNetCore.Mvc.Infrastructure.ResourceInvoker.<InvokeAsync>g__Awaited|17_0(ResourceInvoker invoker, Task task, IDisposable scope)
+   at Microsoft.AspNetCore.Mvc.Infrastructure.ResourceInvoker.<InvokeAsync>g__Awaited|17_0(ResourceInvoker invoker, Task task, IDisposable scope)
+   at Microsoft.AspNetCore.Localization.RequestLocalizationMiddleware.Invoke(HttpContext context)
+   at MuhasebeStokWebApp.Middleware.GlobalExceptionHandlingMiddleware.InvokeAsync(HttpContext context) in D:\cursor-workspace\MuhasebeStokWebApp\Middleware\GlobalExceptionHandlingMiddleware.cs:line 38
+2025-06-20 17:49:40.689 +03:00 [ERR] Hata: 00-a0a8e691e40a716c542e255d5322ab1b-b823ca2e972ade95-00, Kullanıcı: admin, Path: /Birim/Edit/1bd57fd0-d982-482d-9ef3-9be19fb28aae, Method: GET, QueryString: , IP: ::1, UserAgent: Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/137.0.0.0 Safari/537.36
+AutoMapper.AutoMapperMappingException: Missing type map configuration or unsupported mapping.
+
+Mapping types:
+Birim -> BirimEditViewModel
+MuhasebeStokWebApp.Data.Entities.Birim -> MuhasebeStokWebApp.ViewModels.Birim.BirimEditViewModel
+   at lambda_method4253(Closure, Object, BirimEditViewModel, ResolutionContext)
+   at MuhasebeStokWebApp.Controllers.BirimController.Edit(Nullable`1 id) in D:\cursor-workspace\MuhasebeStokWebApp\Controllers\BirimController.cs:line 221
+   at Microsoft.AspNetCore.Mvc.Infrastructure.ActionMethodExecutor.TaskOfIActionResultExecutor.Execute(ActionContext actionContext, IActionResultTypeMapper mapper, ObjectMethodExecutor executor, Object controller, Object[] arguments)
+   at Microsoft.AspNetCore.Mvc.Infrastructure.ControllerActionInvoker.<InvokeActionMethodAsync>g__Awaited|12_0(ControllerActionInvoker invoker, ValueTask`1 actionResultValueTask)
+   at Microsoft.AspNetCore.Mvc.Infrastructure.ControllerActionInvoker.<InvokeNextActionFilterAsync>g__Awaited|10_0(ControllerActionInvoker invoker, Task lastTask, State next, Scope scope, Object state, Boolean isCompleted)
+   at Microsoft.AspNetCore.Mvc.Infrastructure.ControllerActionInvoker.Rethrow(ActionExecutedContextSealed context)
+   at Microsoft.AspNetCore.Mvc.Infrastructure.ControllerActionInvoker.Next(State& next, Scope& scope, Object& state, Boolean& isCompleted)
+   at Microsoft.AspNetCore.Mvc.Infrastructure.ControllerActionInvoker.<InvokeInnerFilterAsync>g__Awaited|13_0(ControllerActionInvoker invoker, Task lastTask, State next, Scope scope, Object state, Boolean isCompleted)
+   at Microsoft.AspNetCore.Mvc.Infrastructure.ResourceInvoker.<InvokeNextResourceFilter>g__Awaited|25_0(ResourceInvoker invoker, Task lastTask, State next, Scope scope, Object state, Boolean isCompleted)
+   at Microsoft.AspNetCore.Mvc.Infrastructure.ResourceInvoker.Rethrow(ResourceExecutedContextSealed context)
+   at Microsoft.AspNetCore.Mvc.Infrastructure.ResourceInvoker.Next(State& next, Scope& scope, Object& state, Boolean& isCompleted)
+   at Microsoft.AspNetCore.Mvc.Infrastructure.ResourceInvoker.<InvokeFilterPipelineAsync>g__Awaited|20_0(ResourceInvoker invoker, Task lastTask, State next, Scope scope, Object state, Boolean isCompleted)
+   at Microsoft.AspNetCore.Mvc.Infrastructure.ResourceInvoker.<InvokeAsync>g__Awaited|17_0(ResourceInvoker invoker, Task task, IDisposable scope)
+   at Microsoft.AspNetCore.Mvc.Infrastructure.ResourceInvoker.<InvokeAsync>g__Awaited|17_0(ResourceInvoker invoker, Task task, IDisposable scope)
+   at Microsoft.AspNetCore.Localization.RequestLocalizationMiddleware.Invoke(HttpContext context)
+   at MuhasebeStokWebApp.Middleware.GlobalExceptionHandlingMiddleware.InvokeAsync(HttpContext context) in D:\cursor-workspace\MuhasebeStokWebApp\Middleware\GlobalExceptionHandlingMiddleware.cs:line 38
+2025-06-20 17:49:41.089 +03:00 [ERR] Hata: 00-ab76c7514c591315412c814b4ceeab2c-adba315b876cad1d-00, Kullanıcı: admin, Path: /Birim/Edit/1bd57fd0-d982-482d-9ef3-9be19fb28aae, Method: GET, QueryString: , IP: ::1, UserAgent: Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/137.0.0.0 Safari/537.36
+AutoMapper.AutoMapperMappingException: Missing type map configuration or unsupported mapping.
+
+Mapping types:
+Birim -> BirimEditViewModel
+MuhasebeStokWebApp.Data.Entities.Birim -> MuhasebeStokWebApp.ViewModels.Birim.BirimEditViewModel
+   at lambda_method4253(Closure, Object, BirimEditViewModel, ResolutionContext)
+   at MuhasebeStokWebApp.Controllers.BirimController.Edit(Nullable`1 id) in D:\cursor-workspace\MuhasebeStokWebApp\Controllers\BirimController.cs:line 221
+   at Microsoft.AspNetCore.Mvc.Infrastructure.ActionMethodExecutor.TaskOfIActionResultExecutor.Execute(ActionContext actionContext, IActionResultTypeMapper mapper, ObjectMethodExecutor executor, Object controller, Object[] arguments)
+   at Microsoft.AspNetCore.Mvc.Infrastructure.ControllerActionInvoker.<InvokeActionMethodAsync>g__Awaited|12_0(ControllerActionInvoker invoker, ValueTask`1 actionResultValueTask)
+   at Microsoft.AspNetCore.Mvc.Infrastructure.ControllerActionInvoker.<InvokeNextActionFilterAsync>g__Awaited|10_0(ControllerActionInvoker invoker, Task lastTask, State next, Scope scope, Object state, Boolean isCompleted)
+   at Microsoft.AspNetCore.Mvc.Infrastructure.ControllerActionInvoker.Rethrow(ActionExecutedContextSealed context)
+   at Microsoft.AspNetCore.Mvc.Infrastructure.ControllerActionInvoker.Next(State& next, Scope& scope, Object& state, Boolean& isCompleted)
+   at Microsoft.AspNetCore.Mvc.Infrastructure.ControllerActionInvoker.<InvokeInnerFilterAsync>g__Awaited|13_0(ControllerActionInvoker invoker, Task lastTask, State next, Scope scope, Object state, Boolean isCompleted)
+   at Microsoft.AspNetCore.Mvc.Infrastructure.ResourceInvoker.<InvokeNextResourceFilter>g__Awaited|25_0(ResourceInvoker invoker, Task lastTask, State next, Scope scope, Object state, Boolean isCompleted)
+   at Microsoft.AspNetCore.Mvc.Infrastructure.ResourceInvoker.Rethrow(ResourceExecutedContextSealed context)
+   at Microsoft.AspNetCore.Mvc.Infrastructure.ResourceInvoker.Next(State& next, Scope& scope, Object& state, Boolean& isCompleted)
+   at Microsoft.AspNetCore.Mvc.Infrastructure.ResourceInvoker.<InvokeFilterPipelineAsync>g__Awaited|20_0(ResourceInvoker invoker, Task lastTask, State next, Scope scope, Object state, Boolean isCompleted)
+   at Microsoft.AspNetCore.Mvc.Infrastructure.ResourceInvoker.<InvokeAsync>g__Awaited|17_0(ResourceInvoker invoker, Task task, IDisposable scope)
+   at Microsoft.AspNetCore.Mvc.Infrastructure.ResourceInvoker.<InvokeAsync>g__Awaited|17_0(ResourceInvoker invoker, Task task, IDisposable scope)
+   at Microsoft.AspNetCore.Localization.RequestLocalizationMiddleware.Invoke(HttpContext context)
+   at MuhasebeStokWebApp.Middleware.GlobalExceptionHandlingMiddleware.InvokeAsync(HttpContext context) in D:\cursor-workspace\MuhasebeStokWebApp\Middleware\GlobalExceptionHandlingMiddleware.cs:line 38
+2025-06-20 17:51:47.853 +03:00 [INF] Yaklaşan hatırlatıcılar kontrol ediliyor...
+2025-06-20 17:51:47.867 +03:00 [INF] Bekleyen hatırlatma bulunamadı.
+2025-06-20 17:53:19.747 +03:00 [INF] Veritabanına bağlantı başarılı. Migrationlar uygulanıyor...
+2025-06-20 17:53:20.793 +03:00 [INF] Veritabanı işlemleri başarıyla tamamlandı.
+2025-06-20 17:53:21.090 +03:00 [INF] Todo Hatırlatıcı Servisi başlatıldı.
+2025-06-20 17:53:21.094 +03:00 [INF] Yaklaşan hatırlatıcılar kontrol ediliyor...
+2025-06-20 17:53:21.203 +03:00 [INF] Bekleyen hatırlatma bulunamadı.
+2025-06-20 17:53:22.499 +03:00 [WRN] Session bulunamadı, kullanıcı giriş yapmamış olabilir
+2025-06-20 17:53:22.538 +03:00 [INF] Kimlik doğrulanmış kullanıcı: admin
+2025-06-20 17:53:24.329 +03:00 [INF] TRY dönüşümü için kur değeri hesaplandı: TRY -> USD, Değer: 0.03
+2025-06-20 17:53:24.501 +03:00 [INF] Kur değeri hesaplandı: UZS -> USD, Değer: 0.0000775226832727903141733102
+2025-06-20 17:53:25.006 +03:00 [WRN] Kaynak para birimi kodu bulunamadı: EUR. Varsayılan değer kullanılıyor.
+2025-06-20 17:53:29.148 +03:00 [INF] Birim sayısı: Aktif=2, Pasif=0, Silinmiş=0
+2025-06-20 17:53:31.282 +03:00 [ERR] Hata: 00-aaba7c2bf7cfb961b52c315e81954bd1-da5d22bd860a3e11-00, Kullanıcı: admin, Path: /Birim/Edit/1bd57fd0-d982-482d-9ef3-9be19fb28aae, Method: GET, QueryString: , IP: ::1, UserAgent: Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/137.0.0.0 Safari/537.36
+AutoMapper.AutoMapperMappingException: Missing type map configuration or unsupported mapping.
+
+Mapping types:
+Birim -> BirimEditViewModel
+MuhasebeStokWebApp.Data.Entities.Birim -> MuhasebeStokWebApp.ViewModels.Birim.BirimEditViewModel
+   at lambda_method4196(Closure, Object, BirimEditViewModel, ResolutionContext)
+   at MuhasebeStokWebApp.Controllers.BirimController.Edit(Nullable`1 id) in D:\cursor-workspace\MuhasebeStokWebApp\Controllers\BirimController.cs:line 223
+   at Microsoft.AspNetCore.Mvc.Infrastructure.ActionMethodExecutor.TaskOfIActionResultExecutor.Execute(ActionContext actionContext, IActionResultTypeMapper mapper, ObjectMethodExecutor executor, Object controller, Object[] arguments)
+   at Microsoft.AspNetCore.Mvc.Infrastructure.ControllerActionInvoker.<InvokeActionMethodAsync>g__Awaited|12_0(ControllerActionInvoker invoker, ValueTask`1 actionResultValueTask)
+   at Microsoft.AspNetCore.Mvc.Infrastructure.ControllerActionInvoker.<InvokeNextActionFilterAsync>g__Awaited|10_0(ControllerActionInvoker invoker, Task lastTask, State next, Scope scope, Object state, Boolean isCompleted)
+   at Microsoft.AspNetCore.Mvc.Infrastructure.ControllerActionInvoker.Rethrow(ActionExecutedContextSealed context)
+   at Microsoft.AspNetCore.Mvc.Infrastructure.ControllerActionInvoker.Next(State& next, Scope& scope, Object& state, Boolean& isCompleted)
+   at Microsoft.AspNetCore.Mvc.Infrastructure.ControllerActionInvoker.<InvokeInnerFilterAsync>g__Awaited|13_0(ControllerActionInvoker invoker, Task lastTask, State next, Scope scope, Object state, Boolean isCompleted)
+   at Microsoft.AspNetCore.Mvc.Infrastructure.ResourceInvoker.<InvokeNextResourceFilter>g__Awaited|25_0(ResourceInvoker invoker, Task lastTask, State next, Scope scope, Object state, Boolean isCompleted)
+   at Microsoft.AspNetCore.Mvc.Infrastructure.ResourceInvoker.Rethrow(ResourceExecutedContextSealed context)
+   at Microsoft.AspNetCore.Mvc.Infrastructure.ResourceInvoker.Next(State& next, Scope& scope, Object& state, Boolean& isCompleted)
+   at Microsoft.AspNetCore.Mvc.Infrastructure.ResourceInvoker.<InvokeFilterPipelineAsync>g__Awaited|20_0(ResourceInvoker invoker, Task lastTask, State next, Scope scope, Object state, Boolean isCompleted)
+   at Microsoft.AspNetCore.Mvc.Infrastructure.ResourceInvoker.<InvokeAsync>g__Awaited|17_0(ResourceInvoker invoker, Task task, IDisposable scope)
+   at Microsoft.AspNetCore.Mvc.Infrastructure.ResourceInvoker.<InvokeAsync>g__Awaited|17_0(ResourceInvoker invoker, Task task, IDisposable scope)
+   at Microsoft.AspNetCore.Localization.RequestLocalizationMiddleware.Invoke(HttpContext context)
+   at MuhasebeStokWebApp.Middleware.GlobalExceptionHandlingMiddleware.InvokeAsync(HttpContext context) in D:\cursor-workspace\MuhasebeStokWebApp\Middleware\GlobalExceptionHandlingMiddleware.cs:line 38
+2025-06-20 17:56:49.482 +03:00 [INF] Veritabanına bağlantı başarılı. Migrationlar uygulanıyor...
+2025-06-20 17:56:50.416 +03:00 [INF] Veritabanı işlemleri başarıyla tamamlandı.
+2025-06-20 17:56:50.635 +03:00 [INF] Todo Hatırlatıcı Servisi başlatıldı.
+2025-06-20 17:56:50.638 +03:00 [INF] Yaklaşan hatırlatıcılar kontrol ediliyor...
+2025-06-20 17:56:50.807 +03:00 [INF] Bekleyen hatırlatma bulunamadı.
+2025-06-20 17:56:51.971 +03:00 [WRN] Session bulunamadı, kullanıcı giriş yapmamış olabilir
+2025-06-20 17:56:52.010 +03:00 [INF] Kimlik doğrulanmış kullanıcı: admin
+2025-06-20 17:56:53.683 +03:00 [INF] TRY dönüşümü için kur değeri hesaplandı: TRY -> USD, Değer: 0.03
+2025-06-20 17:56:53.834 +03:00 [INF] Kur değeri hesaplandı: UZS -> USD, Değer: 0.0000775226832727903141733102
+2025-06-20 17:56:54.329 +03:00 [WRN] Kaynak para birimi kodu bulunamadı: EUR. Varsayılan değer kullanılıyor.
+2025-06-20 17:56:59.632 +03:00 [INF] Birim sayısı: Aktif=2, Pasif=0, Silinmiş=0
+2025-06-20 17:57:13.574 +03:00 [INF] ClearCacheAsync metodu başlatıldı. Parametre yok
+2025-06-20 17:57:13.575 +03:00 [INF] Birim önbellekleri temizleniyor...
+2025-06-20 17:57:13.659 +03:00 [INF] Tüm birim, ürün ve ilgili önbellekler başarıyla temizlendi
+2025-06-20 17:57:13.660 +03:00 [INF] ClearCacheAsync metodu tamamlandı. Sonuç: True
+2025-06-20 17:57:14.653 +03:00 [INF] Birim sayısı: Aktif=2, Pasif=0, Silinmiş=0
+2025-06-20 17:57:26.040 +03:00 [INF] ClearCacheAsync metodu başlatıldı. Parametre yok
+2025-06-20 17:57:26.041 +03:00 [INF] Birim önbellekleri temizleniyor...
+2025-06-20 17:57:26.067 +03:00 [INF] Tüm birim, ürün ve ilgili önbellekler başarıyla temizlendi
+2025-06-20 17:57:26.068 +03:00 [INF] ClearCacheAsync metodu tamamlandı. Sonuç: True
+2025-06-20 17:57:26.794 +03:00 [INF] Birim sayısı: Aktif=2, Pasif=0, Silinmiş=0
+2025-06-20 17:58:01.109 +03:00 [INF] Toplam depo sayısı: 2
+2025-06-20 17:58:01.110 +03:00 [INF] Aktif depo sayısı: 1
+2025-06-20 17:58:01.111 +03:00 [INF] Pasif depo sayısı: 0
+2025-06-20 17:58:01.112 +03:00 [INF] Silinmiş depo sayısı: 1
+2025-06-20 17:58:03.544 +03:00 [ERR] Hata: 00-53ed12de2e7f30b7dce572bf41b68861-51a98af0487bee61-00, Kullanıcı: admin, Path: /Depo/Edit/3274c196-b806-41fe-9fcc-3ba78035fe5d, Method: GET, QueryString: , IP: ::1, UserAgent: Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/137.0.0.0 Safari/537.36
+AutoMapper.AutoMapperMappingException: Missing type map configuration or unsupported mapping.
+
+Mapping types:
+Depo -> DepoEditViewModel
+MuhasebeStokWebApp.Data.Entities.Depo -> MuhasebeStokWebApp.ViewModels.Depo.DepoEditViewModel
+   at lambda_method4768(Closure, Object, DepoEditViewModel, ResolutionContext)
+   at MuhasebeStokWebApp.Controllers.DepoController.Edit(Nullable`1 id) in D:\cursor-workspace\MuhasebeStokWebApp\Controllers\DepoController.cs:line 206
+   at Microsoft.AspNetCore.Mvc.Infrastructure.ActionMethodExecutor.TaskOfIActionResultExecutor.Execute(ActionContext actionContext, IActionResultTypeMapper mapper, ObjectMethodExecutor executor, Object controller, Object[] arguments)
+   at Microsoft.AspNetCore.Mvc.Infrastructure.ControllerActionInvoker.<InvokeActionMethodAsync>g__Awaited|12_0(ControllerActionInvoker invoker, ValueTask`1 actionResultValueTask)
+   at Microsoft.AspNetCore.Mvc.Infrastructure.ControllerActionInvoker.<InvokeNextActionFilterAsync>g__Awaited|10_0(ControllerActionInvoker invoker, Task lastTask, State next, Scope scope, Object state, Boolean isCompleted)
+   at Microsoft.AspNetCore.Mvc.Infrastructure.ControllerActionInvoker.Rethrow(ActionExecutedContextSealed context)
+   at Microsoft.AspNetCore.Mvc.Infrastructure.ControllerActionInvoker.Next(State& next, Scope& scope, Object& state, Boolean& isCompleted)
+   at Microsoft.AspNetCore.Mvc.Infrastructure.ControllerActionInvoker.<InvokeInnerFilterAsync>g__Awaited|13_0(ControllerActionInvoker invoker, Task lastTask, State next, Scope scope, Object state, Boolean isCompleted)
+   at Microsoft.AspNetCore.Mvc.Infrastructure.ResourceInvoker.<InvokeNextResourceFilter>g__Awaited|25_0(ResourceInvoker invoker, Task lastTask, State next, Scope scope, Object state, Boolean isCompleted)
+   at Microsoft.AspNetCore.Mvc.Infrastructure.ResourceInvoker.Rethrow(ResourceExecutedContextSealed context)
+   at Microsoft.AspNetCore.Mvc.Infrastructure.ResourceInvoker.Next(State& next, Scope& scope, Object& state, Boolean& isCompleted)
+   at Microsoft.AspNetCore.Mvc.Infrastructure.ResourceInvoker.<InvokeFilterPipelineAsync>g__Awaited|20_0(ResourceInvoker invoker, Task lastTask, State next, Scope scope, Object state, Boolean isCompleted)
+   at Microsoft.AspNetCore.Mvc.Infrastructure.ResourceInvoker.<InvokeAsync>g__Awaited|17_0(ResourceInvoker invoker, Task task, IDisposable scope)
+   at Microsoft.AspNetCore.Mvc.Infrastructure.ResourceInvoker.<InvokeAsync>g__Awaited|17_0(ResourceInvoker invoker, Task task, IDisposable scope)
+   at Microsoft.AspNetCore.Localization.RequestLocalizationMiddleware.Invoke(HttpContext context)
+   at MuhasebeStokWebApp.Middleware.GlobalExceptionHandlingMiddleware.InvokeAsync(HttpContext context) in D:\cursor-workspace\MuhasebeStokWebApp\Middleware\GlobalExceptionHandlingMiddleware.cs:line 38
+2025-06-20 17:58:37.923 +03:00 [ERR] Hata: 00-86395d2143a8c32e7b5da96361b21ff7-06c9889da73cce82-00, Kullanıcı: admin, Path: /Depo/Edit/3274c196-b806-41fe-9fcc-3ba78035fe5d, Method: GET, QueryString: , IP: ::1, UserAgent: Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/137.0.0.0 Safari/537.36
+AutoMapper.AutoMapperMappingException: Missing type map configuration or unsupported mapping.
+
+Mapping types:
+Depo -> DepoEditViewModel
+MuhasebeStokWebApp.Data.Entities.Depo -> MuhasebeStokWebApp.ViewModels.Depo.DepoEditViewModel
+   at lambda_method4768(Closure, Object, DepoEditViewModel, ResolutionContext)
+   at MuhasebeStokWebApp.Controllers.DepoController.Edit(Nullable`1 id) in D:\cursor-workspace\MuhasebeStokWebApp\Controllers\DepoController.cs:line 206
+   at Microsoft.AspNetCore.Mvc.Infrastructure.ActionMethodExecutor.TaskOfIActionResultExecutor.Execute(ActionContext actionContext, IActionResultTypeMapper mapper, ObjectMethodExecutor executor, Object controller, Object[] arguments)
+   at Microsoft.AspNetCore.Mvc.Infrastructure.ControllerActionInvoker.<InvokeActionMethodAsync>g__Awaited|12_0(ControllerActionInvoker invoker, ValueTask`1 actionResultValueTask)
+   at Microsoft.AspNetCore.Mvc.Infrastructure.ControllerActionInvoker.<InvokeNextActionFilterAsync>g__Awaited|10_0(ControllerActionInvoker invoker, Task lastTask, State next, Scope scope, Object state, Boolean isCompleted)
+   at Microsoft.AspNetCore.Mvc.Infrastructure.ControllerActionInvoker.Rethrow(ActionExecutedContextSealed context)
+   at Microsoft.AspNetCore.Mvc.Infrastructure.ControllerActionInvoker.Next(State& next, Scope& scope, Object& state, Boolean& isCompleted)
+   at Microsoft.AspNetCore.Mvc.Infrastructure.ControllerActionInvoker.<InvokeInnerFilterAsync>g__Awaited|13_0(ControllerActionInvoker invoker, Task lastTask, State next, Scope scope, Object state, Boolean isCompleted)
+   at Microsoft.AspNetCore.Mvc.Infrastructure.ResourceInvoker.<InvokeNextResourceFilter>g__Awaited|25_0(ResourceInvoker invoker, Task lastTask, State next, Scope scope, Object state, Boolean isCompleted)
+   at Microsoft.AspNetCore.Mvc.Infrastructure.ResourceInvoker.Rethrow(ResourceExecutedContextSealed context)
+   at Microsoft.AspNetCore.Mvc.Infrastructure.ResourceInvoker.Next(State& next, Scope& scope, Object& state, Boolean& isCompleted)
+   at Microsoft.AspNetCore.Mvc.Infrastructure.ResourceInvoker.<InvokeFilterPipelineAsync>g__Awaited|20_0(ResourceInvoker invoker, Task lastTask, State next, Scope scope, Object state, Boolean isCompleted)
+   at Microsoft.AspNetCore.Mvc.Infrastructure.ResourceInvoker.<InvokeAsync>g__Awaited|17_0(ResourceInvoker invoker, Task task, IDisposable scope)
+   at Microsoft.AspNetCore.Mvc.Infrastructure.ResourceInvoker.<InvokeAsync>g__Awaited|17_0(ResourceInvoker invoker, Task task, IDisposable scope)
+   at Microsoft.AspNetCore.Localization.RequestLocalizationMiddleware.Invoke(HttpContext context)
+   at MuhasebeStokWebApp.Middleware.GlobalExceptionHandlingMiddleware.InvokeAsync(HttpContext context) in D:\cursor-workspace\MuhasebeStokWebApp\Middleware\GlobalExceptionHandlingMiddleware.cs:line 38
+2025-06-20 17:59:20.097 +03:00 [INF] Veritabanına bağlantı başarılı. Migrationlar uygulanıyor...
+2025-06-20 17:59:26.050 +03:00 [INF] Veritabanı işlemleri başarıyla tamamlandı.
+2025-06-20 17:59:26.267 +03:00 [INF] Todo Hatırlatıcı Servisi başlatıldı.
+2025-06-20 17:59:26.270 +03:00 [INF] Yaklaşan hatırlatıcılar kontrol ediliyor...
+2025-06-20 17:59:27.089 +03:00 [INF] Bekleyen hatırlatma bulunamadı.
+2025-06-20 17:59:27.796 +03:00 [WRN] Session bulunamadı, kullanıcı giriş yapmamış olabilir
+2025-06-20 17:59:27.836 +03:00 [INF] Kimlik doğrulanmış kullanıcı: admin
+2025-06-20 17:59:29.551 +03:00 [INF] TRY dönüşümü için kur değeri hesaplandı: TRY -> USD, Değer: 0.03
+2025-06-20 17:59:29.713 +03:00 [INF] Kur değeri hesaplandı: UZS -> USD, Değer: 0.0000775226832727903141733102
+2025-06-20 17:59:30.146 +03:00 [WRN] Kaynak para birimi kodu bulunamadı: EUR. Varsayılan değer kullanılıyor.
+2025-06-20 17:59:53.324 +03:00 [INF] Toplam depo sayısı: 2
+2025-06-20 17:59:53.325 +03:00 [INF] Aktif depo sayısı: 1
+2025-06-20 17:59:53.326 +03:00 [INF] Pasif depo sayısı: 0
+2025-06-20 17:59:53.327 +03:00 [INF] Silinmiş depo sayısı: 1
+2025-06-20 18:00:07.053 +03:00 [INF] Toplam depo sayısı: 2
+2025-06-20 18:00:07.054 +03:00 [INF] Aktif depo sayısı: 1
+2025-06-20 18:00:07.055 +03:00 [INF] Pasif depo sayısı: 0
+2025-06-20 18:00:07.056 +03:00 [INF] Silinmiş depo sayısı: 1
+2025-06-20 18:00:12.683 +03:00 [INF] Toplam depo sayısı: 2
+2025-06-20 18:00:12.684 +03:00 [INF] Aktif depo sayısı: 1
+2025-06-20 18:00:12.685 +03:00 [INF] Pasif depo sayısı: 0
+2025-06-20 18:00:12.685 +03:00 [INF] Silinmiş depo sayısı: 1
+2025-06-20 18:00:44.552 +03:00 [ERR] Hata: 00-a820dc60959706386d4e2e919a7d6779-06e882820e8878fe-00, Kullanıcı: admin, Path: /UrunKategori/Edit/145b90b8-b440-4c32-a6d7-03068b3207c0, Method: GET, QueryString: , IP: ::1, UserAgent: Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/137.0.0.0 Safari/537.36
+AutoMapper.AutoMapperMappingException: Missing type map configuration or unsupported mapping.
+
+Mapping types:
+UrunKategori -> UrunKategoriEditViewModel
+MuhasebeStokWebApp.Data.Entities.UrunKategori -> MuhasebeStokWebApp.ViewModels.UrunKategori.UrunKategoriEditViewModel
+   at lambda_method4637(Closure, Object, UrunKategoriEditViewModel, ResolutionContext)
+   at MuhasebeStokWebApp.Controllers.UrunKategoriController.Edit(Nullable`1 id) in D:\cursor-workspace\MuhasebeStokWebApp\Controllers\UrunKategoriController.cs:line 183
+   at Microsoft.AspNetCore.Mvc.Infrastructure.ActionMethodExecutor.TaskOfIActionResultExecutor.Execute(ActionContext actionContext, IActionResultTypeMapper mapper, ObjectMethodExecutor executor, Object controller, Object[] arguments)
+   at Microsoft.AspNetCore.Mvc.Infrastructure.ControllerActionInvoker.<InvokeActionMethodAsync>g__Awaited|12_0(ControllerActionInvoker invoker, ValueTask`1 actionResultValueTask)
+   at Microsoft.AspNetCore.Mvc.Infrastructure.ControllerActionInvoker.<InvokeNextActionFilterAsync>g__Awaited|10_0(ControllerActionInvoker invoker, Task lastTask, State next, Scope scope, Object state, Boolean isCompleted)
+   at Microsoft.AspNetCore.Mvc.Infrastructure.ControllerActionInvoker.Rethrow(ActionExecutedContextSealed context)
+   at Microsoft.AspNetCore.Mvc.Infrastructure.ControllerActionInvoker.Next(State& next, Scope& scope, Object& state, Boolean& isCompleted)
+   at Microsoft.AspNetCore.Mvc.Infrastructure.ControllerActionInvoker.<InvokeInnerFilterAsync>g__Awaited|13_0(ControllerActionInvoker invoker, Task lastTask, State next, Scope scope, Object state, Boolean isCompleted)
+   at Microsoft.AspNetCore.Mvc.Infrastructure.ResourceInvoker.<InvokeNextResourceFilter>g__Awaited|25_0(ResourceInvoker invoker, Task lastTask, State next, Scope scope, Object state, Boolean isCompleted)
+   at Microsoft.AspNetCore.Mvc.Infrastructure.ResourceInvoker.Rethrow(ResourceExecutedContextSealed context)
+   at Microsoft.AspNetCore.Mvc.Infrastructure.ResourceInvoker.Next(State& next, Scope& scope, Object& state, Boolean& isCompleted)
+   at Microsoft.AspNetCore.Mvc.Infrastructure.ResourceInvoker.<InvokeFilterPipelineAsync>g__Awaited|20_0(ResourceInvoker invoker, Task lastTask, State next, Scope scope, Object state, Boolean isCompleted)
+   at Microsoft.AspNetCore.Mvc.Infrastructure.ResourceInvoker.<InvokeAsync>g__Awaited|17_0(ResourceInvoker invoker, Task task, IDisposable scope)
+   at Microsoft.AspNetCore.Mvc.Infrastructure.ResourceInvoker.<InvokeAsync>g__Awaited|17_0(ResourceInvoker invoker, Task task, IDisposable scope)
+   at Microsoft.AspNetCore.Localization.RequestLocalizationMiddleware.Invoke(HttpContext context)
+   at MuhasebeStokWebApp.Middleware.GlobalExceptionHandlingMiddleware.InvokeAsync(HttpContext context) in D:\cursor-workspace\MuhasebeStokWebApp\Middleware\GlobalExceptionHandlingMiddleware.cs:line 38
+2025-06-20 18:01:37.545 +03:00 [INF] Veritabanına bağlantı başarılı. Migrationlar uygulanıyor...
+2025-06-20 18:01:38.942 +03:00 [INF] Veritabanı işlemleri başarıyla tamamlandı.
+2025-06-20 18:01:39.183 +03:00 [INF] Todo Hatırlatıcı Servisi başlatıldı.
+2025-06-20 18:01:39.186 +03:00 [INF] Yaklaşan hatırlatıcılar kontrol ediliyor...
+2025-06-20 18:01:40.942 +03:00 [INF] Bekleyen hatırlatma bulunamadı.
+2025-06-20 18:01:42.317 +03:00 [WRN] Session bulunamadı, kullanıcı giriş yapmamış olabilir
+2025-06-20 18:01:42.357 +03:00 [INF] Kimlik doğrulanmış kullanıcı: admin
+2025-06-20 18:01:44.605 +03:00 [INF] TRY dönüşümü için kur değeri hesaplandı: TRY -> USD, Değer: 0.03
+2025-06-20 18:01:44.881 +03:00 [INF] Kur değeri hesaplandı: UZS -> USD, Değer: 0.0000775226832727903141733102
+2025-06-20 18:01:45.565 +03:00 [WRN] Kaynak para birimi kodu bulunamadı: EUR. Varsayılan değer kullanılıyor.
+2025-06-20 18:01:50.656 +03:00 [WRN] Session bulunamadı, kullanıcı giriş yapmamış olabilir
+2025-06-20 18:01:50.657 +03:00 [INF] Kimlik doğrulanmış kullanıcı: admin
+2025-06-20 18:01:50.701 +03:00 [INF] Kur değeri önbellekten alındı: TRY -> USD, Değer: 0.03
+2025-06-20 18:01:50.702 +03:00 [INF] Kur değeri önbellekten alındı: UZS -> USD, Değer: 0.0000775226832727903141733102
+2025-06-20 18:01:50.845 +03:00 [WRN] Kaynak para birimi kodu bulunamadı: EUR. Varsayılan değer kullanılıyor.
+2025-06-20 18:03:23.132 +03:00 [INF] Urun ID: 2216d3ad-9370-49a9-847e-c374b130978d soft delete yapıldı
+2025-06-20 18:03:35.790 +03:00 [INF] Ürün geri getirildi: UrunID=2216d3ad-9370-49a9-847e-c374b130978d, Kullanıcı=admin
+2025-06-20 18:06:10.725 +03:00 [INF] Urun ID: 2216d3ad-9370-49a9-847e-c374b130978d soft delete yapıldı
+2025-06-20 18:06:40.953 +03:00 [INF] Yaklaşan hatırlatıcılar kontrol ediliyor...
+2025-06-20 18:06:40.967 +03:00 [INF] Bekleyen hatırlatma bulunamadı.
+2025-06-20 18:11:09.783 +03:00 [INF] Veritabanına bağlantı başarılı. Migrationlar uygulanıyor...
+2025-06-20 18:11:10.800 +03:00 [INF] Veritabanı işlemleri başarıyla tamamlandı.
+2025-06-20 18:11:11.099 +03:00 [INF] Todo Hatırlatıcı Servisi başlatıldı.
+2025-06-20 18:11:11.102 +03:00 [INF] Yaklaşan hatırlatıcılar kontrol ediliyor...
+2025-06-20 18:11:11.211 +03:00 [INF] Bekleyen hatırlatma bulunamadı.
+2025-06-20 18:11:12.548 +03:00 [WRN] Session bulunamadı, kullanıcı giriş yapmamış olabilir
+2025-06-20 18:11:12.587 +03:00 [INF] Kimlik doğrulanmış kullanıcı: admin
+2025-06-20 18:11:14.384 +03:00 [INF] TRY dönüşümü için kur değeri hesaplandı: TRY -> USD, Değer: 0.03
+2025-06-20 18:11:14.553 +03:00 [INF] Kur değeri hesaplandı: UZS -> USD, Değer: 0.0000775226832727903141733102
+2025-06-20 18:11:15.071 +03:00 [WRN] Kaynak para birimi kodu bulunamadı: EUR. Varsayılan değer kullanılıyor.
+2025-06-20 18:11:31.141 +03:00 [INF] Ürün geri getirildi: UrunID=2216d3ad-9370-49a9-847e-c374b130978d, Kullanıcı=admin
+2025-06-20 18:11:40.602 +03:00 [INF] Urun ID: 2216d3ad-9370-49a9-847e-c374b130978d soft delete yapıldı
+2025-06-20 18:11:49.740 +03:00 [INF] Urun ID: f4a13d75-0da6-4625-9cc7-029eb491fbc3 soft delete yapıldı
+2025-06-20 18:11:57.665 +03:00 [INF] Urun ID: f4a13d75-0da6-4625-9cc7-029eb491fbc3 soft delete yapıldı
+2025-06-20 18:12:13.985 +03:00 [INF] Urun ID: 2216d3ad-9370-49a9-847e-c374b130978d soft delete yapıldı

@@ -913,7 +913,7 @@ namespace MuhasebeStokWebApp.Controllers
                 {
                     // İlişkili kayıtlar varsa silme, pasife al
                     urun.Aktif = false;
-                    urun.Silindi = true;
+                    urun.Silindi = false;
                     urun.GuncellemeTarihi = DateTime.Now;
                     urun.SonGuncelleyenKullaniciID = GetCurrentUserId();
                     

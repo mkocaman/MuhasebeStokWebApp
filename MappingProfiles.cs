@@ -43,18 +43,21 @@ namespace MuhasebeStokWebApp
             CreateMap<BirimViewModel, Birim>();
             CreateMap<BirimCreateViewModel, Birim>();
             CreateMap<BirimEditViewModel, Birim>();
-            
+            CreateMap<Birim, BirimEditViewModel>();
+
             // Depo entity ve viewmodel'leri arasındaki eşleştirmeler
             CreateMap<Depo, DepoViewModel>();
             CreateMap<DepoViewModel, Depo>();
             CreateMap<DepoCreateViewModel, Depo>();
             CreateMap<DepoEditViewModel, Depo>();
+            CreateMap<Depo, DepoEditViewModel>();
             
             // UrunKategori entity ve viewmodel'leri arasındaki eşleştirmeler
             CreateMap<UrunKategori, ViewModels.UrunKategori.UrunKategoriViewModel>();
             CreateMap<ViewModels.UrunKategori.UrunKategoriViewModel, UrunKategori>();
             CreateMap<ViewModels.UrunKategori.UrunKategoriCreateViewModel, UrunKategori>();
             CreateMap<ViewModels.UrunKategori.UrunKategoriEditViewModel, UrunKategori>();
+            CreateMap<UrunKategori, ViewModels.UrunKategori.UrunKategoriEditViewModel>();
             
             // Cari entity ve viewmodel'leri arasındaki eşleştirmeler
             CreateMap<Cari, CariViewModel>();
